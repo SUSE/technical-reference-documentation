@@ -1,0 +1,42 @@
+# Leverage main [README.md](./README.md) sections
+- Content
+- Output Creation
+- Content Modification / Validation / Submission
+
+# Reference Architecture variant
+- At this point, you can now start editing the configuration/structure/content to to the reference enterprise architecture approach
+  - NOTE: every portion of text that cites "FixMe" is a flag to encourage modification
+  - in the top-level directory
+    - for the default configuration/structure (chapter/section/sub-section)
+      - review the DAPS configuration templatee [TRD-Kubernetes-RA](./TRD-Kubernetes-RA)
+        - verify the global ADOC_ATTRIBUTES+=" --attribute RA=1" line is uncommentd to toggle to this variant
+          - then re-do the above validation step to generate the target output
+        - as needed/desired, also review/edit the same section's set of ADOC_ATTRIBUTES to match what content you with to provide
+  - in the main "adoc" directory
+    - review the [adoc/SA.adoc](./adoc/SA.adoc) main file that pulls in the selected sections
+      - if the respective ADOC_ATTRIBUTES value is set (value = 1 and uncommented) in the DAPS config file, then the conditional "ifdef" will include that content in the output
+    - review/edit the [adoc/SA_vars.adoc](./adoc/SA_vars.adoc) file to change global variable settings, like
+      - companyName
+      - title (relative to your attribute setting)
+      - github references
+    - review/edit the general sections, that are generally included
+      - Summary : [adoc/SA-Summary.adoc](./adoc/SA-Summary.adoc)
+    - review/edit the general sections, that your ADOC_ATTRIBUTES settings will include
+      - References : [adoc/SA-References.adoc](./adoc/SA-References.adoc)
+      - Glossary : [adoc/SA-Glossary.adoc](./adoc/SA-Glossary.adoc)
+      - Appendices : [adoc/SA-Appendix.adoc](./adoc/SA-Appendix.adoc)
+      - Legal Notice + Document License
+    - the corresponding layers of an enterprise architecture, which correspond to the suggested chapters, as noted below
+      - RA-Introduction  : [adoc/i/SA.adoc](./adoc/i/SA.adoc)
+      - RA-BusinessProblemBusinessValue (BPBV) : 2/ii [adoc/ii/SA-RA-BPBV.adoc](./adoc/ii/SA-RA-BPBV.adoc)
+      - RA-Requirements : 3/iii [adoc/iii/SA-RA-Requirements.adoc](./adoc/iii/SA-RA-Requirements.adoc)
+      - RA-ArchitectureOverview : 4/iv [adoc/iv/SA-RA-ArchOv.adoc](./adoc/iv/SA-RA-ArchOv.adoc)
+      - RA-ComponentModel (CompMod) : 5/v [adoc/v/SA-RA-CompMod.adoc](./adoc/v/SA-RA-CompMod.adoc)
+      - RA-Deployment : 6/vi [adoc/vi/SA-RA-Deployment.adoc](./adoc/vi/SA-RA-Deployment.adoc)
+      - in each of these chapters' directories, you will notice the main SA.doc references, via ifdef, and will utilize the alternative file content from SA-RA-layerName.adoc and more modules of content.
+        - so you typically don't need to edit/touch each chapter's SA.adoc
+    - review/edit the chapter/section/sub-section content, that you wish to include
+  - miscellaneous 
+    - you can also add images/media content as needed in those subdirectories
+    - do not forget to check in your iterations as well to have a source repository and ability to rollback to a known working state
+

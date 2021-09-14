@@ -1,0 +1,37 @@
+
+ifdef::RA,RC,RI[]
+
+ifdef::IHV-Fujitsu[]
+include::../IHV/Fujitsu/SA-RA-CompMod.adoc[]
+ifdef::focusRKE1[]
+endif::focusRKE1[]
+endif::IHV-Fujitsu[]
+
+ifdef::focusRancher[]
+include::./SA-RA-CompMod-{an_Rancher}.adoc[]
+endif::focusRancher[]
+
+ifdef::focusK3s[]
+include::./SA-RA-CompMod-{an_K3s}.adoc[]
+endif::focusK3s[]
+
+ifdef::focusRKE1[]
+include::./SA-RA-CompMod-{an_RKE1}1.adoc[]
+endif::focusRKE1[]
+
+ifdef::focusRKE2[]
+include::./SA-RA-CompMod-{an_RKE2}.adoc[]
+endif::focusRKE2[]
+
+
+////
+
+Provide brief descriptions of the components that make up a solution and this could include the individual components of a solution such as a product breakdown
+	SUSE Linux Enterprise Server
+	Docker
+	Kubernetes
+Or functional components that make up the solution such as Nova, Keystone, Swift, etc in an OpenStack solution 
+
+////
+
+endif::RA,RC,RI[]

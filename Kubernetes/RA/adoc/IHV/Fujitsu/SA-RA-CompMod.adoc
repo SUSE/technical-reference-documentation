@@ -1,0 +1,47 @@
+include::./PRIMERGY_vars.adoc[]
+
+ifdef::IHV-Fujitsu-PRIMERGY[]
+
+NOTE: {an_Fujitsu} https://www.fujitsu.com/fts/products/computing/servers/primergy/os/linux/suse/[Servers Support & OS Certification Matrices] outlines the minimum version of SLE required for installation, yet later service pack releases may also be used.
+
+include::../../{companyName}/YES.adoc[]
+
+Server product-line and model options abound in the https://www.fujitsu.com/fts/products/computing/servers/[{an_Fujitsu} portfolio], including:
+
+// include::./PRIMERGY.adoc[]
+
+Even with the broad certification and support model across the range of available {an_Fujitsu} platform models, the following table summarizes which might be a best-practice selection for the various deployment types and sizes (**__S__**mall, **__M__**edium, **__L__**arge, **__XL__**arge).
+
+NOTE: {an_Fujitsu} https://www.fujitsu.com/fts/products/computing/servers/primergy/os/linux/suse/[Servers Support & OS Certification Matrices] outlines the minimum version of SLE required for installation, yet later service pack releases may also be used.
+
+include::../../{companyName}/YES.adoc[]
+
+.{vn_Fujitsu} Platform Matrix for Deployments for this reference
+[width="80%",valign="middle",halign="center",options="header"]
+|===
+
+| System Platform |
+//ifdef::CapOpt[ *_<<G_CapOpt,Capacity Optimized>>_* |] 
+//ifdef::Balance[ *_<<G_Balance,Balance>>_* |] 
+//ifdef::PerfOpt[ *_<<G_PerfOpt,Performance Optimized>>_* ] 
+Baremetal |
+Hypervisor
+
+| PRIMERGY servers |
+{modelFujitsu-RX2530},{modelFujitsu-RX2540} |
+{modelFujitsu-RX2530},{modelFujitsu-RX2540} |
+
+|===
+
+////
+//   Commented out this part of the table
+
+| PRIMERGY servers
+ifdef::CapOpt[|*_(XL) =_* {modelFujitsu-RX2540}]
+ifdef::Balance[|*_(XL) =_* {modelFujitsu-RX2540} *_(L) =_* {modelFujitsu-RX2540}]
+ifdef::PerfOpt[|*_(L) =_* {modelFujitsu-RX2540}]
+
+////
+
+endif::IHV-Fujitsu-PRIMERGY[]
+

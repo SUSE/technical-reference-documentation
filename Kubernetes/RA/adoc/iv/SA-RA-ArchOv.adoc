@@ -1,0 +1,80 @@
+
+== Architectural overview
+
+This section outlines the core elements of the
+ifdef::focusRancher[]
+{pn_Rancher}
+endif::focusRancher[]
+ifdef::focusK3s[]
+{pn_K3s}
+endif::focusK3s[]
+ifdef::focusRKE1[]
+{pn_RKE1}
+endif::focusRKE1[]
+ifdef::focusRKE2[]
+{pn_RKE2}
+endif::focusRKE2[]
+solution, along with the suggested target platforms and components.
+
+=== Solution architecture
+
+////
+An outline should be provided of the solution and the components required to successfully architect the solution
+	e.g., A SUSE Enterprise Stroage solution outline should outline a block level diagram of Admin, OSD, MON and Gateway nodes.
+	e.g., A SUSE OpenStack Cloud solution show a block diagram of OpenStack components or elements for the Control, compute and storage pools
+////
+
+ifdef::focusRancher[]
+include::./SA-RA-ArchOv-{an_Rancher}.adoc[]
+endif::focusRancher[]
+ifdef::focusK3s[]
+include::./SA-RA-ArchOv-{an_K3s}.adoc[]
+endif::focusK3s[]
+ifdef::focusRKE1[]
+include::./SA-RA-ArchOv-{an_RKE1}1.adoc[]
+endif::focusRKE1[]
+ifdef::focusRKE2[]
+include::./SA-RA-ArchOv-{an_RKE2}.adoc[]
+endif::focusRKE2[]
+
+////
+FixMe - As needed, include high-level table
+.FixMe - Architecture Overview 
+[width="80%",valign="middle",halign="center",options="header"]
+|===
+
+|Column|Column|Column|Column
+|Row   | | |
+|Row   | | |
+|Row   | | |
+
+|===
+////
+
+ifdef::ArchOvNetworkArch[]
+
+=== Networking architecture
+
+FixMe - Varius sit amet mattis vulputate. Nisi scelerisque eu ultrices vitae auctor eu augue ut ...
+
+////
+Any special network segmentation, vlan, or performance requirements should be outlined and justified here.
+////
+
+FixMe - Include high-level network diagram
+
+// image::RA-overview-network.png[title="FixMe - Architecture Network", scaledwidth=80%]
+
+FixMe - As needed, include high-level table
+.FixMe - Architecture Network
+[width="80%",valign="middle",halign="center",options="header"]
+|===
+
+|Column|Column|Column|Column
+|Row   | | |
+|Row   | | |
+|Row   | | |
+
+|===
+
+endif::ArchOvNetworkArch[]

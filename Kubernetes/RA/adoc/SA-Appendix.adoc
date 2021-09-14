@@ -1,0 +1,193 @@
+
+ifdef::RC,RI,GS[]
+
+[appendix]
+
+== Appendix
+
+The following provide a bill of materials listing for the respective component layer(s) of the described deployment.
+
+
+ifdef::RC,RI[]
+=== Compute Platform Bill of Materials
+
+Recommended set of computing platform models, components and resources.
+
+[cols="2,1,3,3a,2a",options=header,frame=topbot,grid=rows]
+|===
+
+|Role |Qty |SKU |Component |Notes
+
+ifndef::iIHV[]
+|System
+ifdef::GS[|1]
+ifndef::GS[|1-3]
+|n/a
+|
+
+* Virtual Machine,
+* Single Board Computer (SBC) or
+* Industry Standard Server
+|Configuration
+
+ifdef::focusRancher[]
+* see {pn_Rancher_HWReqURL}[installation resource requirements]
+endif::focusRancher[]
+ifdef::focusK3s[]
+* see {pn_K3s_HWReqURL}[resource profiling]
+endif::focusK3s[]
+endif::iIHV[]
+
+ifdef::RC+iIHV[]
+ifdef::IHV-Cisco[include::./IHV/Cisco/C240-SD_BOM.adoc[]]
+ifdef::IHV-DELL+IHV-DELL-PowerEdge[include::./IHV/DELL/R640_BOM.adoc[]]
+ifdef::IHV-DELL+IHV-DELL-PowerEdge[include::./IHV/DELL/R740_BOM.adoc[]]
+ifdef::IHV-DELL+IHV-DELL-PowerEdge[include::./IHV/DELL/R650_BOM.adoc[]]
+ifdef::IHV-DELL+IHV-DELL-PowerEdge[include::./IHV/DELL/R750_BOM.adoc[]]
+ifdef::IHV-Fujitsu+IHV-Fujitsu-PRIMERGY[include::./IHV/Fujitsu/PRIMERGY_BOM.adoc[]]
+ifdef::IHV-HPE+IHV-HPE-Apollo[include::./IHV/HPE/Apollo_BOM.adoc[]]
+ifdef::IHV-HPE+IHV-HPE-Edgeline[include::./IHV/HPE/Edgeline_BOM.adoc[]]
+ifdef::IHV-HPE+IHV-HPE-ProLiant[include::./IHV/HPE/ProLiant_BOM.adoc[]]
+ifdef::IHV-HPE+IHV-HPE-Synergy[include::./IHV/HPE/Synergy_BOM.adoc[]]
+ifdef::IHV-Supermicro[include::../adoc/IHV/Supermicro/SuperServer/SYS-120C-TN10R_BOM.adoc[]]
+ifdef::IHV-Supermicro[include::../adoc/IHV/Supermicro/SuperServer/SYS-620C-TN12R_BOM.adoc[]]
+
+endif::RC+iIHV[]
+
+|===
+endif::RC,RI[]
+
+
+=== Software Bill of Materials
+
+Recommended set of software, support and services.
+
+[cols="2,1,3,3a,2a",options=header,frame=topbot,grid=rows]
+
+|===
+
+|Role |Qty |SKU |Component |Notes
+
+ifdef::layerSLES[]
+|Operating System
+ifdef::GS[|1]
+ifndef::GS[|1-3]
+|874-006875
+|{pn_SLES},
+
+* x86_64,
+* Priority Subscription,
+* 1 Year
+|Configuration:
+
+* per node (up to 2 sockets, stackable) or 2 VMs
+
+endif::layerSLES[]
+ifdef::layerSLEMicro[]
+|Operating System
+ifdef::GS[|1]
+ifndef::GS[|1-3]
+|874-007864 
+|{pn_SLEMicro},
+
+* x86_64,
+* Priority Subscription,
+* 1 Year
+|Configuration:
+
+* per node (up to 16 cores, stackable)
+
+endif::layerSLEMicro[]
+|Kubernetes Management
+|1
+|R-0001-PS1 
+|{pn_Rancher},
+
+* x86-64,
+* Priority Subscription,
+* 1 Year
+| Configuration:
+
+* per deployed instance
+
+|{portfolioName} Management
+|2
+|R-0004-PS1
+|{portfolioName} 10 Nodes
+
+* x86-64 or aarch64,
+* Priority Subscription,
+* 1 Year,
+| Configuration:
+
+* requires priority server subscription
+
+|Consulting and Training
+|1
+|R-0001-QSO 
+|{portfolioName} Quick Start,
+
+* Go Live Services
+
+| 
+
+// | Terms:
+// 
+// * Review of client architecture
+// * Bi-weekly cadence calls for 12 weeks
+// * On-demand consulting (24 hours)
+// ** Two developer workshops
+
+ifdef::layerLonghorn[]
+|Longhorn
+|1
+|L-0004-PS1 
+|{pn_LonghornRancher},
+
+* x86-64,aarch64
+* Priority Subscription,
+* 1 Year
+| Configuration:
+
+* up to 10 nodes
+** requires priority server subscription
+
+endif::layerLonghorn[]
+
+|===
+
+NOTE: For the software components, other durations of support terms are also available.
+
+
+ifdef::RC+iISV[]
+=== Workload Bill of Materials
+
+Recommended set of workload components.
+
+[cols="2,1,3,3a,2a",options=header,frame=topbot,grid=rows]
+|===
+
+|Role |Qty |SKU |Component |Notes
+
+|FixMe |FixMe |FixMe |FixMe |FixMe
+
+|===
+endif::RC+iISV[]
+
+
+ifeval::[ "{daps-adoc-attributes}" != "" ]
+=== Documentation Configuration / Attributes
+
+This document was built using the following https://github.com/asciidoc/asciidoc[AsciiDoc] and DocBook Authorting and Publishing Suite ( https://github.com/openSUSE/daps[DAPS] ) attributes:
+
+[source, subs="attributes"]
+
+----
+
+{daps-adoc-attributes}
+
+----
+
+endif::[]
+
+endif::RC,RI,GS[]

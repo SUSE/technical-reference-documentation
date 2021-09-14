@@ -1,0 +1,54 @@
+
+ifdef::IHV-Fujitsu-PRIMERGY[]
+
+The base, starting configuration can reside all within a single {vn_Fujitsu} {familyHPE-S} Frame. Based upon the relatively small resource requirements for a
+ifdef::focusRancher[{pn_Rancher}]
+ifdef::focusK3s[{pn_K3s}]
+deployment, a viable approach is to deploy as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like KVM.
+
+//-
+Preparation(s)::
+For a physical host, like {modelHPE-SY480URL}[{modelHPE-SY480}] used in the deployment:
+
+. Setup the necessary items in the {vn_Fujitsu} {vn_HPE_ComposerTech} interface, including:
+** Settings -> Addresses and Identifiers (Subnets and Address Ranges)
+** Networks -> Create (associate subnets and designate bandwidths)
+** Network Sets -> Create (aggregate all the necessary Networks)
+** Logical Interconnects -> Edit (include the respective Network Sets)
+** Logical Interconnect Groups -> Edit (include the respective Network Sets)
+** Server Profile Templates -> Create (or utilize existing hypervisor templates)
+** OS Deployment mode -> could be configured to boot from PXE, local storage, shared storage
+** Firmware (upgrade to the latest and strive for consistency across node types)
+** Manage Connections (assign the Network Set to be bonded across NICs)
+** Local Storage (create the internal RAID1 set and request additional drives for the respective roles)
+** Manage Boot/BIOS/iLO Settings
+** Server Profile -> Create (assign the role template to the target model)
++
+. Add Servers and Assign Server Roles
+** Utilize the Discover function to link {pn_Rancher} and {vn_Fujitsu} {vn_HPE_ComposerTech} to see all of the available nodes that can be assigned to to their respective roles:
+** Then drag and drop the nodes into the roles and ensure there is no missing configuration information, by reviewing and editing each node's server details
+** Manage Settings - setup DNS/NTP, designate Disk Models/NIC Mappings/Interface Model/Networks
+** Manage Subnet and Netmask - edit Management Network information, ensuring a match exists to those setup in {vn_Fujitsu} {vn_HPE_ComposerTech}
+
+//-
+Deployment Process::
+On the respective compute module node, determine if a hypervisor is already available for the solution's virtual machines.
+
+. If this will be the first use of this node, an option is to deploy a KVM hypervisor, based upon {pn_SLES} by following the {pn_SLES_VirtDocURL}[Virtualization Guide].
+** Given the simplicity of the deployment, the operating system and hypervisor can be installed with the {pn_SLES} ISO media and the {vn_Fujitsu} {vn_HPE_BMC} virtual media and virtual console methodology.
+. Then for the solution VM, utilize the hypervisor user interface to allocate the necessary CPU, memory, disk and networking as noted in the {pn_Rancher} {pn_Rancher_HWReqURL}[hardware requirements].
+
+//-
+Deployment Consideration(s)::
+To further optimize deployment factors, leverage the following practices:
+
+ifdef::FCTR+Automation[]
+* <<G_Automation>>
+** To simplify multiple compute module setups and configurations, leverage the {vn_Fujitsu} {vn_HPE_ComposerTech} {vn_HPE_OVTerraformURL}[SDK for Terraform Provider].
+endif::FCTR+Automation[]
+ifdef::FCTR+Availability[]
+* <<G_Availability>>
+** While the initial deployment only requires a single VM, as noted in later deployment sections, having multiple VMs provides resiliency to accomplish high availability. To reduce single points of failure, it would be beneficial to have the multi-VM deployments spread across multiple hypervisor nodes. So consideration of consistent hypervisor and compute module configurations, with the needed resources for the {pn_Rancher} VMs will yield a robust, reliable production implementation.
+endif::FCTR+Availability[]
+
+endif::IHV-Fujitsu-PRIMERGY[]

@@ -1,0 +1,53 @@
+
+=== Business problem
+
+Kubernetes is the leading solution to address edge computing use cases in industry verticals such as manufacturing, transportation, power generation, healthcare, retail and banking. Typical edge systems that leverage Kubernetes to run complex workloads include energy meters, aircraft engines, gas & oil rigs, cruise ships, high-speed trains, retail scanners, wind turbine base stations, internet-connected cars, ATMs and much more.
+
+For such target edge systems, which are often unattended, resource constrained and remote, orchestrating containerized workloads on Kubernetes deployments may seem overbearingly complext. 
+
+=== Business value
+
+After two years of research and development in June 2020, {pn_K3s} was donated to the CNCF. The donation is a testament of the commitment to the open source community and their mission to run Kubernetes everywhere. 
+
+Perfect for Edge::
+{pn_K3s} is a highly available, certified Kubernetes distribution specifically designed for production workloads in unattended, resource-constrained, remote locations or inside IoT appliances.
+
+Simplified & Secure::
+{pn_K3s} is packaged as a tiny, single binary that reduces the dependencies and steps needed to install, run and auto-update a production Kubernetes cluster. For workloads, automated Manifest and Helm Chart managment deployments can be utilized. Also, multiple architectures, like x86_64, ARM64, and ARMv7, are supported with binaries and images available.
+
+Given its extensive Kubernetes capabilities, {pn_K3s} can also be a suitable choice for:
+
+* embedded platforms,
+* continuous integration and continuous deployment platforms,
+* branch locations or individual developer deployments, and
+* even core or cloud production instances
+
+ifdef::BP+iRancher[]
+TIP: When {pn_K3s} is imported and combined with {pn_Rancher}, organizations are equipped with an easy, complete and reliable management solution for Kubernetes at the edge.
+endif::BP+iRancher[]
+ifdef::BP+iLonghorn[]
+TIP: To address localized storage needs, {pn_K3s} can leverage {pn_Longhorn}, as a storage class providing persistent, block storage access for containerized workload, which is very relevant for edge scenarios.
+endif::BP+iLonghorn[]
+
+ifdef::RC[]
+With this increased consistency of the managed Kubernetes infrastructure clusters, organizations benefit from an even higher level of the Cloud Native Computing model where each layer only relies upon the API and version of the adjacent layer. For example:
+
+ifdef::iISV[]
+Workloads::
+Each managed cluster has defined access control and a designated Kubernetes version, so deployment containerized services can easily be scaled to other compatible clusters
+endif::iISV[]
+
+ifdef::iCSP,iIHV[]
+ifdef::iIHV[]
+ifdef::IHV-Cisco[include::../IHV/Cisco/SA-RA-BPBV.adoc[]]
+ifdef::IHV-DELL[include::../IHV/DELL/SA-RA-BPBV.adoc[]]
+ifdef::IHV-HPE[include::../IHV/HPE/SA-RA-BPBV.adoc[]]
+ifdef::IHV-Supermicro[include::../IHV/Supermicro/SuperServer/SA-RA-BPBV.adoc[]]
+endif::iIHV[]
+//ifdef::iCSP[]
+//FixMe
+//endif::iCSP[]
+endif::iCSP,iIHV[]
+
+endif::RC[]
+

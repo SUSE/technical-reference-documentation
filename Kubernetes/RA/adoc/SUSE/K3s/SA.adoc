@@ -1,0 +1,30 @@
+
+{pn_K3s} is packaged as a single binary, which is about 50 megabytes in size. Bundled in that single binary is everything needed to run Kubernetes anywhere, including low-powered IoT and Edge-based devices. The binary includes:
+
+* the container runtime
+* any important host utilities like
+** iptables, socat and du.
+
+The only OS dependencies are the Linux kernel itself and a proper dev, proc and sysfs mounts (this is done automatically on all modern Linux distributions). {pn_K3s} bundles the Kubernetes components:
+
+* kube-apiserver,
+* kube-controller-manager,
+* kube-scheduler,
+* kubelet and
+* kube-proxy
+
+into combined processes that are presented as a simple server and agent model, as represented in the following figure:
+
+image::{pn_K3s}-Overview.svg[title="Overview of {pn_K3s}", scaledwidth=80%]
+
+{pn_K3s} can run as a complete cluster on a single node or can be expanded into a multi-node cluster. Besides the core Kubernetes components, these are also included:
+
+* containerd,
+* Flannel,
+* CoreDNS,
+* ingress controller and
+* a simple host port-based service load balancer.
+
+All of these components are optional and can be swapped out for your implementation of choice. With these included components, you get a fully functional and CNCF-conformant cluster so you can start running apps right away. {pn_K3s} is now a CNCF Sandbox project, being the first Kubernetes distribution ever to be adopted into sandbox.
+
+Learn more information about {pn_K3s} at https://k3s.io

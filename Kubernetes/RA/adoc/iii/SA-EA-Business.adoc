@@ -1,0 +1,167 @@
+
+== Business
+
+////
+Business Layer elements are used to model the operational organization of an enterprise in a technology-independent manner, whereas strategy elements are used to model the strategic direction and choices of the enterprise.
+////
+
+FixMe - Nascetur ridiculus mus mauris vitae ultricies leo integer malesuada. Ornare lectus sit amet est placerat. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. At imperdiet dui accumsan sit amet nulla facilisi morbi. Ornare lectus sit amet est placerat in egestas erat imperdiet. Egestas egestas fringilla phasellus faucibus scelerisque eleifend. In hac habitasse platea dictumst quisque sagittis purus. Ut sem nulla pharetra diam sit amet nisl suscipit adipiscing. Auctor elit sed vulputate mi sit amet mauris commodo. Ullamcorper eget nulla facilisi etiam dignissim diam. Laoreet non curabitur gravida arcu ac. Id eu nisl nunc mi ipsum faucibus vitae aliquet nec. Neque convallis a cras semper. Maecenas accumsan lacus vel facilisis. Lectus proin nibh nisl condimentum id venenatis a condimentum vitae. Massa massa ultricies mi quis. Adipiscing enim eu turpis egestas pretium aenean pharetra magna.
+
+// image::SA-Business.png[title="Solution Architecture - {useCase} Business", scaledwidth=80%]
+
+=== Roles and Collaboration
+
+FixMe - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt nunc pulvinar sapien. Hendrerit dolor magna eget est lorem. Bibendum enim facilisis gravida neque convallis a cras semper auctor. Sit amet mattis vulputate enim nulla aliquet porttitor. Semper feugiat nibh sed pulvinar proin gravida. Tincidunt lobortis feugiat vivamus at augue eget arcu dictum varius. Tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada proin. Pretium quam vulputate dignissim suspendisse in. Lectus proin nibh nisl condimentum id venenatis a. Neque aliquam vestibulum morbi blandit cursus risus at ultrices mi.
+
+=== Processes and Functions
+
+FixMe - Egestas egestas fringilla phasellus faucibus scelerisque. Aliquet porttitor lacus luctus accumsan. Ornare arcu odio ut sem nulla pharetra diam. Interdum velit euismod in pellentesque massa. Nulla at volutpat diam ut. Volutpat sed cras ornare arcu dui vivamus arcu felis bibendum. Ut faucibus pulvinar elementum integer. Urna cursus eget nunc scelerisque. Quisque sagittis purus sit amet volutpat consequat mauris nunc. Quis varius quam quisque id diam. Pretium aenean pharetra magna ac placerat vestibulum lectus mauris ultrices. Purus faucibus ornare suspendisse sed. Placerat orci nulla pellentesque dignissim enim sit amet venenatis. Gravida neque convallis a cras semper auctor neque vitae tempus. Vel pharetra vel turpis nunc eget. Facilisis volutpat est velit egestas dui id ornare arcu odio. Aliquam vestibulum morbi blandit cursus risus at ultrices mi.
+
+=== Factors, Flavors and Deployment Types
+
+FixMe - Id diam maecenas ultricies mi eget mauris. Cras fermentum odio eu feugiat pretium nibh ipsum consequat. Mi sit amet mauris commodo. Quam nulla porttitor massa id neque aliquam vestibulum morbi blandit. Pretium viverra suspendisse potenti nullam ac tortor vitae purus faucibus. Diam donec adipiscing tristique risus nec feugiat in fermentum. Dui id ornare arcu odio ut sem nulla. Eu sem integer vitae justo. Elementum eu facilisis sed odio. Ut morbi tincidunt augue interdum velit euismod in pellentesque massa. Gravida neque convallis a cras semper. Tellus at urna condimentum mattis. Faucibus purus in massa tempor nec feugiat nisl pretium fusce. Ut lectus arcu bibendum at varius vel pharetra vel turpis. Velit egestas dui id ornare arcu odio ut sem. Faucibus interdum posuere lorem ipsum. In ante metus dictum at tempor commodo. Sed id semper risus in hendrerit gravida rutrum. Mauris pharetra et ultrices neque ornare aenean euismod. Sit amet tellus cras adipiscing enim eu turpis egestas pretium.
+
+ifdef::FCTR+FLVR+DT[]
+
+.Scope of Covered Factors, Flavors, and Deployment Types
+[width="80%",valign="middle",halign="center",options="header"]
+|===
+
+| |
+ifdef::Availability[ *_<<G_Availability,Availability>>_* |]
+ifdef::Performance[ *_<<G_Performance,Performance>>_* |]
+ifdef::Security[ *_<<G_Security,Security>>_* |]
+ifdef::Integrity[ *_<<G_Integrity,Integrity>>_* ]
+
+ifdef::PoC[]
+| *_<<G_PoC,Proof-of-Concept>>_*
+ifdef::Availability[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Availability[]
+ifdef::Performance[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Performance[]
+ifdef::Security[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Security[]
+ifdef::Integrity[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Integrity[]
+endif::PoC[]
+
+ifdef::Production[]
+|*_<<G_Production,Production>>_*
+ifdef::Availability[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Availability[]
+ifdef::Performance[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Performance[]
+ifdef::Security[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Security[]
+ifdef::Integrity[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Integrity[]
+endif::Production[]
+
+ifdef::Scaling[]
+|*_<<G_Scaling,Scaling>>_*
+ifdef::Availability[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Availability[]
+ifdef::Performance[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Performance[]
+ifdef::Security[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Security[]
+ifdef::Integrity[]
+^|
+ifdef::DT1[ <<G_DT1,DT1>> ] 
+ifdef::DT2[ <<G_DT2,DT2>> ] 
+endif::Integrity[]
+endif::Scaling[]
+
+|===
+
+endif::FCTR+FLVR+DT[]
+
+ifdef::FCTR[]
+
+==== Factors
+
+
+ifdef::Availability[]
+[[B_Availability]]include::./SA-Availability.adoc[]
+endif::Availability[]
+
+ifdef::Performance[]
+[[B_Performance]]include::./SA-Performance.adoc[]
+endif::Performance[]
+
+ifdef::Security[]
+[[B_Security]]include::./SA-Security.adoc[]
+endif::Security[]
+
+ifdef::Integrity[]
+[[B_Integrity]]include::./SA-Integrity.adoc[]
+endif::Integrity[]
+
+endif::FCTR[]
+
+ifdef::FLVR[]
+
+==== Flavors 
+
+ifdef::PoC[]
+[[B_PoC]]include::./SA-PoC.adoc[]
+endif::PoC[]
+
+ifdef::Production[]
+[[B_Production]]include::./SA-Production.adoc[]
+endif::Production[]
+
+ifdef::Scaling[]
+[[B_Scaling]]include::./SA-Scaling.adoc[]
+endif::Scaling[]
+
+endif::FLVR[]
+
+ifdef::DT[]
+
+// rename DT* to more specific ones
+==== Deployment Types
+
+ifdef::DT1[]
+[[B_DT1]]include::./SA-DT1.adoc[]
+endif::DT1[]
+
+ifdef::DT2[]
+[[B_DT2]]include::./SA-DT2.adoc[]
+endif::DT2[]
+
+endif::DT[]
+

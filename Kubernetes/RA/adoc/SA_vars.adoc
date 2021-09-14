@@ -1,0 +1,161 @@
+
+:companyName: SUSE
+:portfolioName: Rancher
+
+:useCase: Enterprise Kubernetes
+
+include::./CSP/SA_vars.adoc[]
+include::./IHV/SA_vars.adoc[]
+include::./ISV/SA_vars.adoc[]
+include::./SUSE/SA_vars.adoc[]
+
+ifdef::iHarvester[]
+include::SUSE/Harvester/SA_vars.adoc[]
+endif::iHarvester[]
+
+ifdef::iLonghorn[]
+include::SUSE/Longhorn/SA_vars.adoc[]
+endif::iLonghorn[]
+
+ifdef::iRancher[]
+include::SUSE/Rancher/SA_vars.adoc[]
+endif::iRancher[]
+
+ifdef::iRKE1[]
+include::SUSE/RKE1/SA_vars.adoc[]
+endif::iRKE1[]
+
+ifdef::iRKE2[]
+include::SUSE/RKE2/SA_vars.adoc[]
+endif::iRKE2[]
+
+ifdef::iK3s[]
+include::SUSE/K3s/SA_vars.adoc[]
+endif::iK3s[]
+
+ifdef::iRMT[]
+include::SUSE/RMT/SA_vars.adoc[]
+endif::iRMT[]
+
+ifdef::iSLEMicro[]
+include::SUSE/SLE-Micro/SA_vars.adoc[]
+endif::iSLEMicro[]
+
+ifdef::iSLES[]
+include::SUSE/SLES/SA_vars.adoc[]
+endif::iSLES[]
+
+ifdef::iSUMa[]
+include::SUSE/SUMa/SA_vars.adoc[]
+endif::iSUMa[]
+
+ifndef::EA[]
+:title: Digital Transformation - {useCase}
+endif::EA[]
+
+ifdef::SS[]
+:title: Solution Stack - {useCase}
+endif::SS[]
+
+ifdef::RA,RC,RI,GS[]
+
+ifdef::focusRancher[]
+:productname: {pn_Rancher} {pn_Rancher_Version}
+ifdef::RA[:title: Reference Architecture - {pn_Rancher}]
+ifdef::RC[]
+:title: Reference Configuration - {pn_Rancher}
+ifdef::layerK3s[:productname: {pn_K3s} {pn_K3s_Version}, {productname}]
+ifdef::layerRKE1[:productname: {pn_RKE1} {pn_RKE1_Version}, {productname}]
+ifdef::layerRKE2[:productname: {pn_RKE2} {pn_RKE2_Version}, {productname}]
+endif::RC[]
+ifdef::RI[]
+:title: Reference Implementation - {pn_Rancher}
+ifdef::layerK3s[:productname: {pn_K3s} {pn_K3s_Version}, {productname}]
+ifdef::layerRKE1[:productname: {pn_RKE1} {pn_RKE1_Version}, {productname}]
+ifdef::layerRKE2[:productname: {pn_RKE2} {pn_RKE2_Version}, {productname}]
+endif::RI[]
+ifdef::GS[:title: {pn_Rancher} - Getting Started]
+endif::focusRancher[]
+
+ifdef::focusK3s[]
+:productname: {pn_K3s} {pn_K3s_Version}
+ifdef::RA[:title: Reference Architecture - {pn_K3s}]
+ifdef::RC[:title: Reference Configuration - {pn_K3s}]
+ifdef::RI[:title: Reference Implementation - {pn_K3s}]
+ifdef::GS[:title: {pn_K3s} - Getting Started]
+endif::focusK3s[]
+
+ifdef::focusRKE1[]
+:productname: {pn_RKE1} {pn_RKE1_Version}
+ifdef::RA[:title: Reference Architecture - {pn_RKE1}]
+ifdef::RC[:title: Reference Configuration - {pn_RKE1}]
+ifdef::RI[:title: Reference Implementation - {pn_RKE1}]
+ifdef::GS[:title: {pn_RKE1} - Getting Started]
+endif::focusRKE1[]
+
+ifdef::focusRKE2[]
+:productname: {pn_RKE1} {pn_RKE1_Version}
+ifdef::RA[:title: Reference Architecture - {pn_RKE2}]
+ifdef::RC[:title: Reference Configuration - {pn_RKE2}]
+ifdef::RI[:title: Reference Implementation - {pn_RKE2}]
+ifdef::GS[:title: {pn_RKE2} - Getting Started]
+endif::focusRKE2[]
+
+ifdef::layerSLEMicro[:productname: {pn_SLEMicro} {pn_SLEMicro_Version}, {productname}]
+ifdef::layerSLES[:productname: {pn_SLES} {pn_SLES_Version}, {productname}]
+
+
+endif::RA,RC,RI,GS[]
+
+:subtitle:
+ifdef::RC[]
+:subtitle: Including integration content from
+ifdef::iIHV[]
+ifdef::IHV-Ampere[:subtitle: {subtitle} {vn_Ampere}]
+ifdef::IHV-Cisco[:subtitle: {subtitle} {vn_Cisco}]
+ifdef::IHV-DELL[:subtitle: {subtitle} {vn_Dell}]
+ifdef::IHV-Fujitsu[:subtitle: {subtitle} {vn_Fujitsu}]
+ifdef::IHV-HPE[:subtitle: {subtitle} {vn_HPE}]
+ifdef::IHV-HPI[:subtitle: {subtitle} {vn_HPI}]
+ifdef::IHV-IBM[:subtitle: {subtitle} {vn_IBM}]
+ifdef::IHV-Lenovo[:subtitle: {subtitle} {vn_Lenovo}]
+ifdef::IHV-Supermicro[:subtitle: {subtitle} {vn_SMCi}]
+endif::iIHV[]
+endif::RC[]
+
+////
+:author: TBD
+:authorEmail: TBD
+////
+
+:authorGHURL: https://github.com/SUSE/technical-reference-documentation
+
+:imagesdir: ../media/
+
+ifdef::env-github[]
+:imagesdir: {authorGHURL}/blob/main/media/
+endif::env-github[]
+
+
+ifdef::RA[]
+ifdef::RC,RI,GS[]
+
+:preface: The purpose of this document is to provide an overview and procedure of implementing {companyName} (R)
+ifdef::iCSP,iIHV,iISV[:preface: {preface} and partner]
+:preface: {preface} offerings for
+ifdef::focusRancher[]
+:preface: {preface} {pn_Rancher}, as a multi-cluster container management platform for organizations that deploy containerized workloads, orchestrated by Kubernetes. {pn_Rancher} makes it easy to deploy, manage, and use Kubernetes everywhere, meet IT requirements, and empower DevOps teams.
+endif::focusRancher[]
+ifdef::focusK3s[]
+:preface: {preface} {pn_K3s}, an official CNCF sandbox project that delivers a lightweight yet powerful certified Kubernetes distribution designed for production workloads across resource-restrained, remote locations or on Edge IoT devices.
+endif::focusK3s[]
+ifdef::focusRKE1[]
+:preface: {preface} {pn_RKE1} ( {an_RKE1} ), a Kubernetes distribution that runs entirely within containers on bare-metal and virtualized nodes. {an_RKE1} solves the problem of installation complexity and the operation is both simplified and easily automated, while entirely accommodating the operating system and platform it is running on.
+endif::focusRKE1[]
+ifdef::focusRKE2[]
+:preface: {preface} {pn_RKE2} ( {an_RKE2} ), a Kubernetes distribution that runs entirely within containers on bare-metal and virtualized nodes. {an_RKE2} solves the problem of installation complexity and the operation is both simplified and easily automated, while entirely accommodating the operating system and platform it is running on. Also being a hardened, FIPS-enabled version, it adopts a compliance-based approach towards security, targeting standard risk management frameworks and best practices with the goal of stronger defense for cloud-native apps.
+endif::focusRKE2[]
+
+endif::RC,RI,GS[]
+endif::RA[]
+

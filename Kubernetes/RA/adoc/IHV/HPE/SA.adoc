@@ -1,0 +1,89 @@
+
+ifdef::IHV-HPE[]
+
+include::./Apollo_vars.adoc[]
+include::./Edgeline_vars.adoc[]
+include::./ProLiant_vars.adoc[]
+include::./Synergy_vars.adoc[]
+
+=== {vn_HPE}
+
+Utilizing the above software application and technology solutions with the server platforms offered by {vn_HPE} [ {an_HPE} ] provides many alternative for scale, cost-effectiveness and performance options that could align with local IT staff platform preferences:
+
+* density-optimized - high performance and efficiency for big data and the most demanding workloads
+* mission-critical - systems of intelligence to fuel your digital transformation in a world where time and data are the new currency and business continuity is expected
+* composable - fully adaptable and ready for Hybrid-IT to future-proof your data center for today's workloads and tomorrow's disruptors
+* IoT - realize the potential of the Internet of Things to provide compute at the network edge
+* cloud - high-capacity, mass-compute open infrastructure with security and software to match
+* and virtualized use cases.
+
+ifdef::IHV-HPE-Apollo,IHV-HPE-Edgeline,IHV-HPE-ProLiant,IHV-HPE-Synergy[]
+
+NOTE: {an_HPE} https://techlibrary.hpe.com/us/en/enterprise/servers/supportmatrix/suse_linux.aspx[Servers Support & OS Certification Matrices] outlines the minimum version of SLE required for installation, yet later service pack releases may also be used.
+
+include::../../{companyName}/YES.adoc[]
+
+Server product-line and model options abound in the https://www.hpe.com/uk/en/servers.html[{an_HPE} portfolio], including:
+
+ifdef::IHV-HPE-Apollo[]
+include::./Apollo.adoc[]
+endif::IHV-HPE-Apollo[]
+
+ifdef::IHV-HPE-Edgeline[]
+include::./Edgeline.adoc[]
+endif::IHV-HPE-Edgeline[]
+
+ifdef::IHV-HPE-ProLiant[]
+include::./ProLiant.adoc[]
+endif::IHV-HPE-ProLiant[]
+
+ifdef::IHV-HPE-Synergy[]
+include::./Synergy.adoc[]
+endif::IHV-HPE-Synergy[]
+
+==== Suggested Platform Models
+
+Even with the broad certification and support model across the range of available {an_HPE} platform models, the following table summarizes which might be a best-practice selection for the various deployment types and sizes (**__S__**mall, **__M__**edium, **__L__**arge, **__XL__**arge).
+
+.{vn_HPE} Platform Matrix for Deployment Types
+[width="80%",valign="middle",halign="center",options="header"]
+|===
+
+| System Platform |
+ifdef::CapOpt[ *_<<G_CapOpt,Capacity Optimized>>_* |] 
+ifdef::Balance[ *_<<G_Balance,Balance>>_* |] 
+ifdef::PerfOpt[ *_<<G_PerfOpt,Performance Optimized>>_* ] 
+
+ifdef::IHV-HPE-Apollo[]
+| Apollo
+ifdef::CapOpt[|*_(XL) =_* {modelHPE-A4510}]
+ifdef::Balance[|*_(XL) =_* {modelHPE-A4510} *_(L) =_* {modelHPE-A4200}]
+ifdef::PerfOpt[|*_(L) =_* {modelHPE-A4200}]
+endif::IHV-HPE-Apollo[]
+
+ifdef::IHV-HPE-Edgeline[]
+| Edgeline 
+ifdef::CapOpt[|]
+ifdef::Balance[|EL8000, e910]
+ifdef::PerfOpt[|]
+endif::IHV-HPE-Edgeline[]
+
+ifdef::IHV-HPE-ProLiant[]
+| ProLiant 
+ifdef::CapOpt[|*_(M) =_* {modelHPE-DL380},{modelHPE-DL385}]
+ifdef::Balance[|*_(S) =_*  {modelHPE-DL360},{modelHPE-DL325} *_(M) =_* {modelHPE-DL380},{modelHPE-DL385}]
+ifdef::PerfOpt[|*_(M) =_* {modelHPE-DL380},{modelHPE-DL385}]
+endif::IHV-HPE-ProLiant[]
+
+ifdef::IHV-HPE-Synergy[]
+| Synergy
+ifdef::CapOpt[|]
+ifdef::Balance[|SY460, D3940]
+ifdef::PerfOpt[|]
+endif::IHV-HPE-Synergy[]
+
+|===
+
+endif::IHV-HPE-Apollo,IHV-HPE-Edgeline,IHV-HPE-ProLiant,IHV-HPE-Synergy[]
+
+endif::IHV-HPE[]

@@ -1,0 +1,286 @@
+
+== Deployment
+
+This section describes the process steps for the deployment of the
+ifdef::focusRancher[{pn_Rancher}]
+ifdef::focusK3s[{pn_K3s}]
+ifdef::focusRKE1[{pn_RKE1}]
+ifdef::focusRKE2[{pn_RKE2}]
+solution.
+ifdef::GS[]
+This simplified target stack
+ifdef::RA+FLVR[]
+ifdef::PoC[begins as a functional <<G_PoC>>,]
+ifdef::Production[has tips on migration towards <<G_Production>>,]
+ifdef::Scaling[provides <<G_Scaling>> guidance]
+and
+endif::RA+FLVR[]
+includes the base preparations required from the underlying layer.
+endif::GS[]
+ifdef::RC,RI[]
+It describes the process steps to deploy each of the component layers
+ifdef::RA+FLVR[]
+ifdef::PoC[starting as a base functional <<G_PoC>>,]
+ifdef::Production[having considerations on migration towards <<G_Production>>,]
+ifdef::Scaling[providing <<G_Scaling>> guidance]
+endif::RA+FLVR[]
+that is needed to create the solution.
+endif::RC,RI[]
+
+ifdef::BP+GS+focusRancher[]
+IMPORTANT: This single-node configuration described is for development and testing environments. Additional use cases and reduced risk factors can be accomplished if the configuration database utilizes an external database, like MySQL, or if etcd data persists on a volume to avoid loss.
+endif::BP+GS+focusRancher[]
+
+
+////
+The following typographical conventions are used in this manual:
+    • /etc/passwd: directory names and file names
+    • placeholder: replace placeholder with the actual value
+    • PATH: the environment variable PATH
+    • Alt, Alt+F1: a key to press or a key combination; keys are shown in uppercase as on a keyboard
+    • File, File > Save As: menu items, buttons
+    • command line: commands executed in the console
+////
+
+=== Deployment overview
+
+ifdef::RC,RI,GS[]
+
+// For this documented deployment process, a single node is installed with the operating system supporting a single Kubernetes instance to host {pn_Rancher}.
+// ifdef::BP[For maximum flexibility, these layers are deployed in a manner that would allow expanding this single-node into a highly available, multi-node cluster, by following the steps in the deployment consideration sections.]
+
+The deployment stack is represented in the following figure:
+
+ifdef::RC[]
+
+ifdef::focusRancher[]
+
+ifdef::layerK3s+layerSLEMicro[]
+ifdef::iIHV+IHV-Cisco[]
+image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLEMicro}-{an_Cisco}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Cisco[]
+ifdef::iIHV+IHV-DELL[]
+image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLEMicro}-{an_Dell}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-DELL[]
+ifdef::iIHV+IHV-HPE[]
+image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLEMicro}-{an_HPE}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-HPE[]
+ifdef::iIHV+IHV-Supermicro[]
+image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLEMicro}-{an_SMCi}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Supermicro[]
+// image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLEMicro}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::layerK3s+layerSLEMicro[]
+
+ifdef::layerK3s+layerSLES[]
+ifdef::iIHV+IHV-Cisco[]
+image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLES}-{an_Cisco}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Cisco[]
+ifdef::iIHV+IHV-DELL[]
+image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLES}-{an_Dell}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-DELL[]
+ifdef::iIHV+IHV-HPE[]
+image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLES}-{an_HPE}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-HPE[]
+ifdef::iIHV+IHV-Supermicro[]
+image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLES}-{an_SMCi}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Supermicro[]
+// image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLES}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::layerK3s+layerSLES[]
+
+// ifdef::layerK3s+layerSLES[]
+// image::RC-Deployment-{an_Rancher}-{an_K3s}-{an_SLES}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+// endif::layerK3s+layerSLES[]
+
+ifdef::layerRKE1+layerSLES[]
+image::RC-Deployment-{an_Rancher}-{an_RKE1}1-{an_SLES}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::layerRKE1+layerSLES[]
+
+ifdef::layerRKE2+layerSLES[]
+image::RC-Deployment-{an_Rancher}-{an_RKE2}-{an_SLES}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::layerRKE2+layerSLES[]
+
+endif::focusRancher[]
+
+ifdef::focusK3s[]
+
+ifdef::layerSLEMicro[]
+ifdef::iIHV+IHV-Cisco[]
+image::RC-Deployment-{an_K3s}-{an_SLEMicro}-{an_Cisco}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Cisco[]
+ifdef::iIHV+IHV-DELL[]
+image::RC-Deployment-{an_K3s}-{an_SLEMicro}-{an_Dell}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-DELL[]
+ifdef::iIHV+IHV-HPE[]
+image::RC-Deployment-{an_K3s}-{an_SLEMicro}-{an_HPE}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-HPE[]
+ifdef::iIHV+IHV-Supermicro[]
+image::RC-Deployment-{an_K3s}-{an_SLEMicro}-{an_SMCi}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Supermicro[]
+// image::RC-Deployment-{an_K3s}-{an_SLEMicro}.png[title="{pn_K3s} Deployment Stack", scaledwidth=80%]
+endif::layerSLEMicro[]
+
+ifdef::layerSLES[]
+image::RC-Deployment-{an_K3s}-{an_SLES}.png[title="{pn_K3s} Deployment Stack", scaledwidth=80%]
+endif::layerSLES[]
+
+endif::focusK3s[]
+
+ifdef::focusRKE1+layerSLES[]
+
+ifdef::iIHV+IHV-Cisco[]
+image::RC-Deployment-{an_RKE1}1-{an_SLES}-{an_Cisco}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Cisco[]
+ifdef::iIHV+IHV-DELL[]
+image::RC-Deployment-{an_RKE1}1-{an_SLES}-{an_Dell}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-DELL[]
+ifdef::iIHV+IHV-HPE[]
+image::RC-Deployment-{an_RKE1}1-{an_SLES}-{an_HPE}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-HPE[]
+ifdef::iIHV+IHV-Supermicro[]
+image::RC-Deployment-{an_RKE1}1-{an_SLES}-{an_SMCi}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Supermicro[]
+// image::RC-Deployment-{an_RKE1}1-{an_SLES}.png[title="{pn_RKE1} Deployment Stack", scaledwidth=80%]
+
+endif::focusRKE1+layerSLES[]
+
+ifdef::focusRKE2+layerSLES[]
+
+ifdef::iIHV+IHV-Cisco[]
+image::RC-Deployment-{an_RKE2}-{an_SLES}-{an_Cisco}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Cisco[]
+ifdef::iIHV+IHV-DELL[]
+image::RC-Deployment-{an_RKE2}-{an_SLES}-{an_Dell}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-DELL[]
+ifdef::iIHV+IHV-HPE[]
+image::RC-Deployment-{an_RKE2}-{an_SLES}-{an_HPE}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-HPE[]
+ifdef::iIHV+IHV-Supermicro[]
+image::RC-Deployment-{an_RKE2}-{an_SLES}-{an_SMCi}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::iIHV+IHV-Supermicro[]
+// image::RC-Deployment-{an_RKE2}-{an_SLES}.png[title="{pn_RKE2} Deployment Stack", scaledwidth=80%]
+
+endif::focusRKE2+layerSLES[]
+
+endif::RC[]
+
+ifdef::RI[]
+
+ifdef::focusRancher[]
+
+ifdef::layerK3s+layerSLEMicro[]
+image::RI-Deployment-{an_Rancher}-{an_K3s}-{an_SLEMicro}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::layerK3s+layerSLEMicro[]
+ifdef::layerK3s+layerSLES[]
+image::RI-Deployment-{an_Rancher}-{an_K3s}-{an_SLES}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::layerK3s+layerSLES[]
+
+ifdef::layerRKE1+layerSLES[]
+image::RI-Deployment-{an_Rancher}-{an_RKE1}1-{an_SLES}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::layerRKE1+layerSLES[]
+
+endif::focusRancher[]
+
+ifdef::focusK3s[]
+ifdef::layerSLEMicro[]
+image::RI-Deployment-{an_K3s}-{an_SLEMicro}.png[title="{pn_K3s} Deployment Stack", scaledwidth=80%]
+endif::layerSLEMicro[]
+ifdef::layerSLES[]
+image::RI-Deployment-{an_K3s}-{an_SLES}.png[title="{pn_K3s} Deployment Stack", scaledwidth=80%]
+endif::layerSLES[]
+endif::focusK3s[]
+
+ifdef::focusRKE1+layerSLES[]
+image::RI-Deployment-{an_RKE1}1-{an_SLES}.png[title="{pn_RKE1} Deployment Stack", scaledwidth=80%]
+endif::focusRKE1+layerSLES[]
+
+ifdef::focusRKE2+layerSLES[]
+image::RI-Deployment-{an_RKE2}-{an_SLES}.png[title="{pn_RKE2} Deployment Stack", scaledwidth=80%]
+endif::focusRKE2+layerSLES[]
+
+endif::RI[]
+
+ifdef::GS[]
+
+ifdef::focusRancher[]
+image::GS-Deployment-{an_Rancher}.png[title="{pn_Rancher} Deployment Stack", scaledwidth=80%]
+endif::focusRancher[]
+
+ifdef::focusK3s[]
+image::GS-Deployment-{an_K3s}.png[title="{pn_K3s} Deployment Stack", scaledwidth=80%]
+endif::focusK3s[]
+
+ifdef::focusRKE1[]
+image::GS-Deployment-{an_RKE1}1.png[title="{pn_RKE1} Deployment Stack", scaledwidth=80%]
+endif::focusRKE1[]
+
+ifdef::focusRKE2[]
+image::GS-Deployment-{an_RKE2}.png[title="{pn_RKE2} Deployment Stack", scaledwidth=80%]
+endif::focusRKE2[]
+
+endif::GS[]
+
+ifdef::RC,RI[]
+and details are covered for each layer in the following sections.
+
+NOTE: The following section's content is ordered and described from the bottom layer up to the top.
+endif::RC,RI[]
+
+endif::RC,RI,GS[]
+
+ifdef::HWDepCfg[]
+
+// Compute Platform Section Inclusion
+// ==================================
+ifdef::RC,RI[] 
+include::SA-RA-Deployment-Hardware.adoc[]
+endif::RC,RI[] 
+
+endif::HWDepCfg[]
+
+ifdef::SWDepCfg[]
+
+// Operating System Section Inclusion
+// ==================================
+ifdef::RC,RI[] 
+include::SA-RA-Deployment-OS.adoc[]
+endif::RC,RI[] 
+
+// Kubernetes Section Inclusion
+// ============================
+// ifdef::RC,RI[] 
+// include::SA-RA-Deployment-Kubernetes.adoc[]
+// endif::RC,RI[] 
+// ifdef::RC,RI,GS[]
+// ifdef::focusK3s[]
+// include::SA-RA-Deployment-Kubernetes.adoc[]
+// endif::focusK3s[]
+// endif::RC,RI,GS[]
+
+ifdef::RC,RI,GS[]
+ifdef::layerK3s,focusK3s[]
+include::SA-RA-Deployment-K3s.adoc[]
+endif::layerK3s,focusK3s[]
+ifdef::layerRKE1,focusRKE1[]
+include::SA-RA-Deployment-RKE1.adoc[]
+endif::layerRKE1,focusRKE1[]
+ifdef::layerRKE2,focusRKE2[]
+include::SA-RA-Deployment-RKE2.adoc[]
+endif::layerRKE2,focusRKE2[]
+endif::RC,RI,GS[]
+
+// Multi-Cluster Management Section Inclusion
+// ==========================================
+ifdef::RC,RI,GS[]
+ifdef::focusRancher[]
+include::SA-RA-Deployment-Rancher.adoc[]
+endif::focusRancher[]
+endif::RC,RI,GS[]
+
+// Software Workload Section Inclusion
+// ===================================
+ifdef::RC,RI[]
+include::SA-RA-Deployment-Workload.adoc[]
+endif::RC,RI[]
+
+endif::SWDepCfg[]
+

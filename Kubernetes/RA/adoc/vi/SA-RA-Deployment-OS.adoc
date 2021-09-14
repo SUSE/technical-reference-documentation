@@ -1,0 +1,41 @@
+
+ifdef::layerSLEMicro[]
+=== {pn_SLEMicro}
+endif::layerSLEMicro[]
+
+ifdef::layerSLES[]
+=== {pn_SLES}
+endif::layerSLES[]
+
+include::./SA-RA-Deployment-OS-prep.adoc[]
+
+//-
+Deployment Process::
+On the compute platform node, install the noted {companyName} operating system, by following these steps:
+
+ifdef::layerSLEMicro[]
+. Download the {pn_SLEMicro_Download}[{pn_SLEMicro}] product (either for the ISO or Virtual Machine image)
+. The installation process is described and can be performed with default values by following steps from the {pn_SLEMicro} product documentation, see {pn_SLEMicro_InstallationDocURL}[Installation Quick Start]
++
+TIP: Adjust both the password and the local network addressing setup to comply with local environment guidelines and requirements.
+endif::layerSLEMicro[]
+
+ifdef::BP+FCTR[]
+
+//-
+Deployment Consideration(s)::
+To further optimize deployment factors, leverage the following practices:
+
+ifdef::FCTR+Automation[]
+* <<G_Automation>>
+** To reduce user intervention, unattended deployments of {pn_SLEMicro} can be automated
+*** for ISO-based installations, by referring to the {pn_SLEMicro_AutoYaSTDocURL}[AutoYaST Guide]
+*** for raw-image based installation, by configuring the Ignition and Combustion tooling as described in the {pn_SLEMicro_InstallationDocURL}[Installation Quick Start]
+endif::FCTR+Automation[]
+
+////
+TIP: An additional consideration is, for the first node deployed, to create an additional IP address on the host network interface card. This can be used for the {pn_Rancher} access, which may also become managed by a load-balancer if a multi-node cluster becomes the base.
+////
+
+endif::BP+FCTR[]
+
