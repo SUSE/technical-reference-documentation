@@ -82,7 +82,7 @@ endif::layerSLEMicro[]
 **** Use Ctrl+c to exit the watch loop after all deployment pods are running
 +
 ifdef::BP[]
-TIP: To address <<G_Availability>> and possible <<G_Scaling>> to a multiple node cluster, etcd is enabled instead of using the default SQLite datastore.
+TIP: To address <<g-availability>> and possible <<g-scaling>> to a multiple node cluster, etcd is enabled instead of using the default SQLite datastore.
 endif::BP[]
 
 ifdef::BP[]
@@ -90,7 +90,7 @@ ifdef::BP[]
 Deployment Consideration(s)::
 To further optimize deployment factors, leverage the following practices:
 ifdef::FCTR+Availability[]
-* <<G_Availability>>
+* <<g-availability>>
 ** A full high-availability {pn_RKE1} cluster is recommended for production workloads. For this use case, two additional hosts should be added; for a total of three. All three hosts will perform the roles of control-plane, etcd, and worker.
 +
 . Deploy the same operating system on the new compute platform nodes, and prepare them in the same way as the first node

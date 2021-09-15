@@ -21,7 +21,7 @@ sudo docker run \
 ----
 +
 ifdef::BP[]
-TIP: This process deploys an auto-generated, self-signed security certificate for the {pn_Rancher} service. Other <<G_Security>> certificate authority options are described in the "Install/Upgrade {portfolioName} on a Kubernetes Cluster" in the {pn_Rancher} {pn_Rancher_DocURL}[product documentation].
+TIP: This process deploys an auto-generated, self-signed security certificate for the {pn_Rancher} service. Other <<g-security>> certificate authority options are described in the "Install/Upgrade {portfolioName} on a Kubernetes Cluster" in the {pn_Rancher} {pn_Rancher_DocURL}[product documentation].
 endif::BP[]
 +
 . Once the previous command completes, from a client system connect via a web browser to the {pn_Rancher} node via *_IPAddress_* or *_HostName_* and accept the service certificate (if deemed valid).
@@ -206,15 +206,15 @@ IMPORTANT: On the second configuration page, ensure the "Rancher Server URL" is 
 Deployment Consideration(s)::
 To further optimize deployment factors, leverage the following practices
 ifdef::FCTR+Availability[]
-* <<G_Availability>>
+* <<g-availability>>
 ** In instances where a load balancer is used to access a {pn_K3s} cluster, deploying two additional {pn_K3s} cluster nodes, for a total of three, will automatically make {pn_Rancher} highly available.
 endif::FCTR+Availability[]
 ifdef::FCTR+Security[]
-* <<G_Security>>
+* <<g-security>>
 ** The basic deployment steps described above are for deploying {pn_Rancher} with automatically generated, self-signed security certificates. Other options are to have {pn_Rancher} create public certificates via Let's Encrypt associated with with a publicly resolvable hostname for the {pn_Rancher} server, or to provide preconfigured, private certificates. See {pn_Rancher} https://rancher.com/docs/rancher/v2.x/en/installation/install-rancher-on-k8s/#3-choose-your-ssl-configuration[product documentation] for more information.
 endif::FCTR+Security[]
 ifdef::FCTR+Integrity[]
-* <<G_Integrity>>
+* <<g-integrity>>
 ** This deployment of {pn_Rancher} uses the {pn_K3s} etcd key/value store to persist its data and configuration, which offers several advantages. With a multi-node cluster and this resiliency through replication, having to provide highly-available storage isn't needed. In addition, backing up the {pn_K3s} etcd store protects the cluster as well as the installation of {pn_Rancher} and permits restoration of a given state.
 endif::FCTR+Integrity[]
 

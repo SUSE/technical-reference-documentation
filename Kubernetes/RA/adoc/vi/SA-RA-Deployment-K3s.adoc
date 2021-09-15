@@ -38,7 +38,7 @@ curl -sfL https://get.k3s.io | \
 ----
 +
 ifdef::BP[]
-TIP: To address <<G_Availability>> and possible <<G_Scaling>> to a multiple node cluster, etcd is enabled instead of using the default SQLite datastore.
+TIP: To address <<g-availability>> and possible <<g-scaling>> to a multiple node cluster, etcd is enabled instead of using the default SQLite datastore.
 +
 endif::BP[]
 ** Monitor the progress of the installation: `watch -c "kubectl get deployments -A"`
@@ -50,7 +50,7 @@ ifdef::BP[]
 Deployment Consideration(s)::
 To further optimize deployment factors, leverage the following practices:
 ifdef::FCTR+Availability[]
-* <<G_Availability>>
+* <<g-availability>>
 ** A full high-availability {pn_K3s} cluster is recommended for production workloads. The etcd key/value store (aka database) requires an odd number of servers (aka master nodes) be allocated to the {pn_K3s} cluster. In this case, two additional control-plane servers should be added; for a total of three.
 +
 . Deploy the same operating system on the new compute platform nodes, then log into the new nodes as root or as a user with sudo privileges.

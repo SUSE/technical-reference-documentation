@@ -65,7 +65,7 @@ ifdef::BP[]
 Deployment Consideration(s)::
 To further optimize deployment factors, leverage the following practices:
 ifdef::FCTR+Availability[]
-* <<G_Availability>>
+* <<g-availability>>
 ** While a single {pn_K3s} node works perfectly fine, a full high-availability {pn_K3s} cluster is recommended for production workloads. The etcd key/value store (aka database) requires an odd number of nodes be allocated to the {pn_K3s} plane (aka master nodes). In this case, two additional control-plane nodes will be added; for a total of three.
 +
 . Deploy the same operating system on the new compute platform nodes, then log into the new nodes as root or as a user with sudo privileges.

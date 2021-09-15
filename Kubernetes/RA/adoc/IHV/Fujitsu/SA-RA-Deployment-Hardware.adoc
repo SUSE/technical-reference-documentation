@@ -43,11 +43,11 @@ Deployment Consideration(s)::
 To further optimize deployment factors, leverage the following practices:
 
 ifdef::FCTR+Automation[]
-* <<G_Automation>>
+* <<g-automation>>
 ** To simplify multiple compute module setups and configurations, leverage the {vn_Fujitsu} {vn_HPE_ComposerTech} {vn_HPE_OVTerraformURL}[SDK for Terraform Provider].
 endif::FCTR+Automation[]
 ifdef::FCTR+Availability[]
-* <<G_Availability>>
+* <<g-availability>>
 ** While the initial deployment only requires a single VM, as noted in later deployment sections, having multiple VMs provides resiliency to accomplish high availability. To reduce single points of failure, it would be beneficial to have the multi-VM deployments spread across multiple hypervisor nodes. So consideration of consistent hypervisor and compute module configurations, with the needed resources for the {pn_Rancher} VMs will yield a robust, reliable production implementation.
 endif::FCTR+Availability[]
 
