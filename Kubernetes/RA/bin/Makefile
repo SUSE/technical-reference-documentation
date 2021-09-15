@@ -35,7 +35,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 	    # Getting Started
 	      [ "${template}" = "GS" ] && {
 
-		output=${template}-${focus}-${layerOS} && echo ${output}
+		output=$(echo ${template}-${focus}-${layerOS} | tr '[:upper:]' '[:lower:]') && echo ${output}
 		DC="DC-TRD-Kubernetes-${output}"
 		[ ! -e "./${DC}" ] && {
 		  cp ${templateDC} ${DC} && {
@@ -63,7 +63,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 		    if [ "${focus}" = "Rancher" ]
 		      then
 
-	  		output=${template}-${focus}-${layerK8s}-${layerOS} && echo ${output}
+	  		output=$( echo ${template}-${focus}-${layerK8s}-${layerOS} | tr '[:upper:]' '[:lower:]') && echo ${output}
 		        DC="DC-TRD-Kubernetes-${output}"
 			[ ! -e "./${DC}" ] && {
 			  cp ${templateDC} ${DC} && {
@@ -86,7 +86,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 
 		      else
 
-	  		output=${template}-${focus}-${layerOS} && echo ${output}
+	  		output=$( echo ${template}-${focus}-${layerOS} | tr '[:upper:]' '[:lower:]') && echo ${output}
 		        DC="DC-TRD-Kubernetes-${output}"
 			[ ! -e "./${DC}" ] && {
 			  cp ${templateDC} ${DC} && {
@@ -136,7 +136,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 			  if [ "${focus}" = "Rancher" ]
 			    then
 
-			      output=${template}-${focus}-${layerK8s}-${layerOS}-${partner}-${productline} && echo ${output}
+			      output=$( echo ${template}-${focus}-${layerK8s}-${layerOS}-${partner}-${productline} | tr '[:upper:]' '[:lower:]') && echo ${output}
 			      DC="DC-TRD-Kubernetes-${output}"
 			      [ ! -e "./${DC}" ] && {
 			        cp ${templateDC} ${DC} && {
@@ -163,7 +163,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 
 			    else
 
-			      output=${template}-${focus}-${layerOS}-${partner}-${productline} && echo ${output}
+			      output=$( echo ${template}-${focus}-${layerOS}-${partner}-${productline} | tr '[:upper:]' '[:lower:]' ) && echo ${output}
 			      DC="DC-TRD-Kubernetes-${output}"
 			      [ ! -e "./${DC}" ] && {
 			        cp ${templateDC} ${DC} && {
