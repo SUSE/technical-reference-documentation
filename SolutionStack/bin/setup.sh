@@ -15,6 +15,7 @@ solutionstack="ss"
 
   # get PartnerName
   read -p "Please enter the name of the collaborative partner : " PartnerName
+  partnername=$( echo ${PartnerName} | tr '[:upper:]' '[:lower:]' )
 
   # get DocumentType
   echo "Please enter the document scope type"
@@ -30,10 +31,10 @@ solutionstack="ss"
   echo
   echo "=== Create default directory structure"
 
-  [ -d ${PartnerName} ] || mkdir ${PartnerName}
-  cd ${PartnerName}
+  [ -d ${partnername} ] || mkdir ${partnername}
+  cd ${partnername}
 
-    touch DC-TRD-${StackLayer}-${solutionstack}-${PartnerName}-${documenttype}
+    touch DC-TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}
     [ -d adoc ] || mkdir -p adoc
 
     echo "    - for Asciidoc (and common elements)"
@@ -46,14 +47,14 @@ solutionstack="ss"
 		ln -s ../../../common/adoc/common_trd_legal_notice.adoc .
 	[ -L common_docinfo_vars.adoc ] || \
 		ln -s ../../../common/adoc/common_docinfo_vars.adoc .
-	[ -e TRD-${StackLayer}-${solutionstack}-${PartnerName}-${documenttype}.adoc ] || { \
-		touch TRD-${StackLayer}-${solutionstack}-${PartnerName}--${documenttype}.adoc
+	[ -e TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}.adoc ] || { \
+		touch TRD-${StackLayer}-${solutionstack}-${partnername}--${documenttype}.adoc
 	}
-	[ -e TRD-${StackLayer}-${solutionstack}-${PartnerName}-${documenttype}-docinfo.adoc ] || { \
-		touch TRD-${StackLayer}-${solutionstack}-${PartnerName}--${documenttype}-docinfo.adoc
+	[ -e TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}-docinfo.adoc ] || { \
+		touch TRD-${StackLayer}-${solutionstack}-${partnername}--${documenttype}-docinfo.adoc
 	}
-	[ -e TRD-${StackLayer}-${solutionstack}-${PartnerName}-${documenttype}-docinfo.xml ] || { \
-		touch TRD-${StackLayer}-${solutionstack}-${PartnerName}-${documenttype}-docinfo.xml
+	[ -e TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}-docinfo.xml ] || { \
+		touch TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}-docinfo.xml
 	}
     } && cd ..
 
