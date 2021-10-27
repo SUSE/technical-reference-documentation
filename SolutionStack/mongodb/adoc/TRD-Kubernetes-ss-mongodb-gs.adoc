@@ -89,7 +89,7 @@ Kubernetes Stateful Sets). A replica set is a group of MongoDB instances that ma
 several data-bearing nodes and optionally one arbiter node. Of the data-bearing nodes, one and only one member is deemed the primary node,
 while the other nodes are deemed secondary nodes.  Resiliency of the data is achieved, as illustrated below.
 
-image::rancher-mongo-1.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-mongodb-1.png[scaledwidth="75%", align="center"]
 
 In this configuration, the failover process generally completes within a minute.  
 It may take about 30 seconds for the members of a replica set to declare a primary inaccessible. 
@@ -110,12 +110,12 @@ It consists of three major components:
 Rancher has the capabilities to manage any Kubernetes cluster from a central location, via the
 Rancher server.  As illustrated below, Rancher can manage any Kubernetes flavor and is not restricted to RKE.
 
-image::rancher-mongo-2.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-mongodb-2.png[scaledwidth="75%", align="center"]
 
 For reference, see Rancher deployment guides for specific details on installation.    
 By the end of this step, you should have a cluster with one master and three worker nodes.
 
-image::rancher-mongo-3.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-mongodb-3.png[scaledwidth="75%", align="center"]
 
 
 == Storage considerations
