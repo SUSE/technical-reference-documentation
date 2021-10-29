@@ -46,15 +46,15 @@ To get started, install the Sysdig agent in your cluster. Choose one of the foll
 
 * *Install from Rancher Apps & Marketplace:*  From the top-left Rancher menu select “Apps & Marketplace.”
 
-image::../images/src/png/TRD-Kubernetes-ss-sysdig-gs-image-marketplace-overview.png[scaledwidth="75%", align="center"]
-image::../images/src/png/TRD-Kubernetes-ss-sysdig-gs-image-marketplace.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-marketplace-overview.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-marketplace.png[scaledwidth="75%", align="center"]
 
 You will be taken to the Charts page. Locate Sysdig Monitor & Secure to install using the Sysdig https://github.com/sysdiglabs/charts-rancher[helm chart.]
 
 This will automate the installation of the Sysdig agent. In the UI, you will need to provide a namespace and the https://docs.sysdig.com/en/docs/administration/administration-settings/agent-installation-overview-and-key/#agent-installation-overview-and-key[Sysdig access key.]
 
-IMAGE 3
-IMAGE 4
+image::TRD-Kubernetes-ss-sysdig-gs-image-install-1.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-install-2.png[scaledwidth="75%", align="center"]
 
 Once you initiate the helm chart, within 15 minutes you should begin seeing data and activity in your Sysdig UI.
 
@@ -73,49 +73,49 @@ NOTE: For the sake of this example we are creating a *simple* custom rule that c
 
 Log in to Sysdig Secure, and In the Sysdig UI, on the left panel, select Policies > Runtime Policies.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-select-runtime.png[scaledwidth="75%", align="center"]
 
 This opens the *Runtime Policies* screen where you can see the policies pre-defined by Sysdig.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-Runtime-Policies.png[scaledwidth="75%", align="center"]
 
 Let’s create our own, custom policy that will detect terminal shell activity. Select Add Policy in the upper right corner. In the pop-up screen, select Workload Policy.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-choose-policy.png[scaledwidth="75%", align="center"]
 
 In the New Policy screen, enter a name and a description:
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-new-policy-name.png[scaledwidth="75%", align="center"]
 
 Keep the policy defaults: Enabled with severity level of High. You can customize the scope of this rule, indicating where it should apply. In our example, we’ve scoped it to a namespace called terminal-shell-in-container. You can also set this to a broader scope, such as kubernetes.cluster.name, for example.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-policy-scope.png[scaledwidth="75%", align="center"]
 
 Next, you’ll want to assign a rule to use with the policy. Select Import from Library.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-import.png[scaledwidth="75%", align="center"]
 
 Find and select Terminal shell in a container in the Rules Library, then click in Import Rules.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-rules-library.png[scaledwidth="75%", align="center"]
 
 You should now see the Terminal shell in a container rule assigned to your policy.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-rule-config.png[scaledwidth="75%", align="center"]
 
 Next, under Actions, you can choose whether you’d like to kill, stop, or pause the container when the policy is triggered. Read more about Actions https://docs.sysdig.com/en/docs/sysdig-secure/policies/manage-policies/#define-actions[here].  Leave this set to Nothing for this exercise.
 
 You can also select a notification channel. Your email will be the default notification channel. You can configure additional options under settings > notification channels. In our example, we’ve chosen Slack Channel from our list of options.  You can also leave this blank.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-actions-config.png[scaledwidth="75%", align="center"]
 
 Finally, you can enable a Capture to record system call data surrounding an event. For this exercise, toggle on the capture, provide a file name, and choose the number of seconds before and after the event to record. For example, 10 seconds before, and 20 seconds after the event.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-capture-config.png[scaledwidth="75%", align="center"]
 
 When the above steps are complete, click on Save.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-save-policy.png[scaledwidth="75%", align="center"]
 
 *Triggering a Test Event*
 
@@ -125,11 +125,11 @@ Using the below test instructions, you can trigger a test event to observe how S
 
 You can open a terminal shell from any container that is running in your Rancher cluster. Simply go to the Workloads section and get into any Pod with at least a running container (we used the self sysdig agent pod in this example)
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-open-terminal-shell-from-rancher-ui-1.png[scaledwidth="75%", align="center"]
 
 From the right menu you can click “Execute Shell” option and a new terminal shell will be shown at the bottom of the screen.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-open-terminal-shell-from-rancher-ui-2.png[scaledwidth="75%", align="center"]
 
 That is enough to be caught in red-handed by Sysdig Secure.
 
@@ -139,7 +139,7 @@ You can also type a few commands of your choice to generate additional data that
 
 Once the runtime security policy created above is triggered, you can click on Events in the left pane to view more information about the event.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-events.png[scaledwidth="75%", align="center"]
 
 Next, click on the Terminal shell in a container entry to open and view additional information about the event. You can scroll through this panel to see information such as:
 
@@ -149,61 +149,43 @@ Next, click on the Terminal shell in a container entry to open and view addition
 
 * “Tags” that indicate applicable compliance standards violated, etc.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-event-details.png[scaledwidth="75%", align="center"]
 
 To dig deeper, click on Respond at the top of this panel, and select, View Activity Audit.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-view-audit.png[scaledwidth="75%", align="center"]
 
 In the *Activity Audit* screen you will find details about the incident, including commands issued, file activity, network activity and kube exec activity.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-activity-audit.png[scaledwidth="75%", align="center"]
 
 If you click on a line item, you’ll see additional details such as user, host, and scope.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-Kubernetes-details.png[scaledwidth="75%", align="center"]
 
 In addition to the Activity Audit, you can also open the Capture file created when the incident triggered to drill into further detail such as the contents of files written and/or read.
 
 Select Captures from the top of the *Activity Audit* page.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-view-capture-1.png[scaledwidth="75%", align="center"]
 
 Then, to the right of the Terminal shell in a container capture file, click the shovel icon to open the capture automatically with Sysdig Inspect.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-view-capture-2.png[scaledwidth="75%", align="center"]
 
 A new tab will open that presents you with a set of tiles that categorize the available details within the capture file. You can select any of these tiles to identify where the activity is within the timeline and drag the bars at the bottom to narrow into a specific area within the file.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
+image::TRD-Kubernetes-ss-sysdig-gs-image-Inspect.png[scaledwidth="75%", align="center"]
 
 Next, if you click on one of the tiles such as Executed Interactive Commands, you will be able to view further information about that particular activity and continue to drill down and investigate the incident.
 
-image::TRD-Kubernetes-ss-sysdig-gs-image-X.png[scaledwidth="75%", align="center"]
-
-
+image::TRD-Kubernetes-ss-sysdig-gs-image-IO-streams-capture.png[scaledwidth="75%", align="center"]
 
 == Summary
 
 Security and monitoring are critical capabilities required to ensure uninterrupted operation and protection of applications and data running on SUSE Rancher. Sysdig integrates with SUSE Rancher to help you embed security into your DevOps workflows from build through production.
 
 Automating the security of Kubernetes and containers, as illustrated in our runtime security example above, will ensure you can quickly identify threats and reduce risk. To learn more about the capabilities of Sysdig together with SUSE Rancher, check out some of the additional references linked below.
-
-
-
-
-
-[source,bash]
-----
-kubectl describe deployments Sysdig -n <namespace>
-
-
-helm install <chart-name> helm_chart \
-     --values helm_chart/values.yaml \
-----
-
-
-
 
 == Additional resources
 
