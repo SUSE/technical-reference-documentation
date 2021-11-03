@@ -6,29 +6,29 @@ The figure below illustrates the high-level architecture of {pn_K3s}:
 image::ArchitectureOverview-{pn_K3s}.png[title="Architecture Overview - {pn_K3s}", scaledwidth=80%]
 
 Container Runtime::
-Containerd & runc
-Kine as a datastore shim that allows etcd to be replaced with other databases
+* Containerd & runc
+* Kine as a datastore shim that allows `etcd` to be replaced with other databases
 
 Networking::
-Flannel for CNI 
-Kube-router for network policy
+* Flannel for CNI
+* Kube-router for network policy
 
 Services::
-CoreDNS
-Metrics Server
-Traefik for ingress
-Klipper-lb as an embedded service loadbalancer provider
-Local-path-provisioner for provisioning volumes using local storage
+* CoreDNS
+* Metrics Server
+* Traefik for ingress
+* Klipper-lb as an embedded service load balancer provider
+* Local-path-provisioner for provisioning volumes using local storage
 
 Workloads::
 Helm-controller to allow for CRD-driven deployment of helm manifests
 
 Host utilities::
-iptables/nftables, ebtables, ethtool, & socat
+iptables/nftables, ebtables, ethtool, and socat
 
-Once setup, users can potentially interact with {pn_K3s} via
+Once set up, users can interact with {pn_K3s} via
 
-* kubectl 
+* kubectl
 ** directly on the {pn_K3s} host or
 ** remotely, leveraging the KUBECONFIG file of the {pn_K3s} cluster's deployment (`/etc/rancher/k3s/k3s.yaml`)
 * manual or automatic, manifest or Helm Chart based, workload deployments
