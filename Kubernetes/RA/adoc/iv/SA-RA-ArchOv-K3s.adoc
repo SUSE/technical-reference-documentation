@@ -3,7 +3,7 @@ ifdef::iK3s[]
 
 The figure below illustrates the high-level architecture of {pn_K3s}:
 
-image::ArchitectureOverview-{pn_K3s}.png[title="FixMe - Architecture Overview - {pn_K3s}", scaledwidth=80%]
+image::ArchitectureOverview-{pn_K3s}.png[title="Architecture Overview - {pn_K3s}", scaledwidth=80%]
 
 Container Runtime::
 Containerd & runc
@@ -26,13 +26,12 @@ Helm-controller to allow for CRD-driven deployment of helm manifests
 Host utilities::
 iptables/nftables, ebtables, ethtool, & socat
 
-Once setup, users can potentially interact with {pn_K3s}
-FixMe - through the web-based user interface (UI), the command-line interface ( CLI ), and programatically through the application programming interface ( API ). Depending upon the assigned roles, group membership and privileges, a user could:
+Once setup, users can potentially interact with {pn_K3s} via
 
 * kubectl 
 ** directly on the {pn_K3s} host or
-** remotely, leveraging the KUBECONFIG file of the {pn_K3s) cluster's deployment ( FixMe )
-* manual or automatic, Manifest or Helm Chart based, workload deployments
+** remotely, leveraging the KUBECONFIG file of the {pn_K3s} cluster's deployment ( /etc/rancher/k3s/k3s.yaml )
+* manual or automatic, manifest or Helm Chart based, workload deployments
 
 // ifdef::RC,RI[]
 // FixMe - For the best performance and security, the recommended deployment is a dedicated Kubernetes cluster for the {pn_Rancher} management server. Running user workloads on this cluster is not advised. After deploying {pn_Rancher}, one can then create or import clusters for orchestrated workloads.
