@@ -11,8 +11,8 @@ Content:
 Output Creation:
 - Assumptions
   - review tutorial - https://github.com/bwgartner/AsciiDoc-to-DAPS
-  - install DocBook Authoring and Publishing Suite DAPS ( https://github.com/openSUSE/daps ) ... suggest installation of 3.1.x version or later
-  - the overall template is based upon the RA flavor of Solution Architecture template ( https://github.com/bwgartner/SA-template )
+  - install DocBook Authoring and Publishing Suite DAPS (https://github.com/openSUSE/daps) ... suggest installation of 3.1.x version or later
+  - the overall template is based upon the RA flavor of Solution Architecture template (https://github.com/bwgartner/SA-template)
 - Process
   - git clone this repo (and either regularly fetch/pull to stay current)
     - many technical reference documents (TRD) can come from this repository

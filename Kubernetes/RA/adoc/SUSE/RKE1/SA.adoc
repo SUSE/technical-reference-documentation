@@ -1,15 +1,14 @@
 
-FixMe-{pn_RKE1} is packaged as a single binary, which is about 50 megabytes in size. Bu
-ndled in that single binary is everything needed to run Kubernetes anywhere, inc
-luding low-powered IoT and Edge-based devices. The binary includes:
+FixMe-{pn_RKE1} is packaged as a single binary, which is about 50 megabytes in size.
+Bundled in that single binary is everything needed to run Kubernetes anywhere, including low-powered IoT and Edge-based devices.
+The binary includes:
 
 * the container runtime
-* any important host utilities like
-** iptables, socat and du.
+* important host utilities such as iptables, socat and du
 
 FixMe-The only OS dependencies are the Linux kernel itself and a proper dev, proc and 
-sysfs mounts (this is done automatically on all modern Linux distributions). {pn
-_K3s} bundles the Kubernetes components:
+sysfs mounts (this is done automatically on all modern Linux distributions).
+{pn_K3s} bundles the Kubernetes components:
 
 * kube-apiserver,
 * kube-controller-manager,
@@ -17,8 +16,7 @@ _K3s} bundles the Kubernetes components:
 * kubelet and
 * kube-proxy
 
-into combined processes that are presented as a simple server and agent model, a
-s represented in the following figure:
+into combined processes that are presented as a simple server and agent model, as represented in the following figure:
 
 image::{an_RKE1}-Overview.png[title="FixMe-Overview of {pn_RKE1}", scaledwidth=80%]
 
