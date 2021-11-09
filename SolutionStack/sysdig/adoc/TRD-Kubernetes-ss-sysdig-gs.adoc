@@ -43,7 +43,9 @@ This document is intended for DevOps and DevSecOps engineers, security professio
 
 == Technical overview
 
-Sysdig security and monitoring capabilities for SUSE Rancher are enabled by deploying the Sysdig agent on the nodes of your cluster.  Relevant data and metadata are collected and available in the Sysdig SaaS backend and accessible via the Sysdig user interface (UI).  The Sysdig UI also provides the ability to customize aspects like policies, alerts, visualizations, permissions, etc.
+Sysdig security and monitoring capabilities for SUSE Rancher are enabled by deploying the Sysdig agent on the nodes of your cluster.
+Relevant data and metadata are collected and available in the Sysdig SaaS backend and accessible via the Sysdig user interface (UI).
+The Sysdig UI also provides the ability to customize aspects like policies, alerts, visualizations, permissions, etc.
 
 Minimum requirements:
 
@@ -56,7 +58,8 @@ You can find the prerequisites for the Sysdig agent install on Kubernetes in htt
 
 == Installation
 
-Get started by installing the Sysdig agent in your cluster.  This can be done by leveraging automation through the SUSE Rancher Apps & Marketplace or by a manual process.
+Get started by installing the Sysdig agent in your cluster.
+You can do so by using the SUSE Rancher Apps & Marketplace or by installing manually.
 
 === Install from the SUSE Rancher Apps & Marketplace
 
@@ -86,9 +89,11 @@ To install the Sysdig agent using manual steps, follow the instructions in https
 
 == Demo / Use case
 
-Sysdig Secure runtime security provides policy-driven detections, based on open-source https://falco.org[Falco.]  Using out-of-the-box and custom policies, you can automate detection and alerting of suspicious and unexpected activity across containers, clusters, and clouds.
+Sysdig Secure runtime security provides policy-driven detections, based on open-source https://falco.org[Falco].
+Using out-of-the-box and custom policies, you can automate detection and alerting of suspicious and unexpected activity across containers, clusters, and clouds.
 
-In this example use case, we will create a custom runtime security policy that will detect when a shell is spawned in a container with an attached terminal.  Commands being executed with a terminal inside a running container can be an indicator of a potential infiltration or attack.
+In this example use case, we will create a custom runtime security policy that will detect when a shell is spawned in a container with an attached terminal.
+Commands being executed with a terminal inside a running container can be an indicator of a potential infiltration or attack.
 
 NOTE: For this example we are creating a *simple* custom rule that can be inhibited by other rules; thus we strongly recommend disallowing “Suspicious Container Activity” default rule before adding the new rule (Policies > Runtime Policies > Suspicious Container Activity).  After the experiment you may want to reactivate it again.
 
@@ -104,7 +109,8 @@ This opens the *Runtime Policies* page, where you can see the pre-defined polici
 image::TRD-Kubernetes-ss-sysdig-gs-image-Runtime-Policies.png[scaledwidth="75%", align="center"]
 
 
-To create your own, custom policy, first select Add Policy in the upper right corner.  Then, in the pop-up screen, select Workload Policy.
+To create your own, custom policy, first select Add Policy in the upper right corner.
+Then, in the pop-up screen, select Workload Policy.
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-choose-policy.png[scaledwidth="75%", align="center"]
 
@@ -112,11 +118,15 @@ In the New Policy screen, enter a name and a description:
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-new-policy-name.png[scaledwidth="75%", align="center"]
 
-Keep the policy defaults: Enabled with severity level of High.i  You can customize the scope of this rule, indicating where it should apply.  In this example, the scope is contained to a namespace, called terminal-shell-in-container.  You can also set this to a broader scope, such as kubernetes.cluster.name, for example.
+Keep the policy defaults: Enabled with severity level of High.
+You can customize the scope of this rule, indicating where it should apply.
+In this example, the scope is contained to a namespace, called terminal-shell-in-container.
+You can also set this to a broader scope, such as kubernetes.cluster.name, for example.
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-policy-scope.png[scaledwidth="75%", align="center"]
 
-Next, you’ll want to assign a rule to use with the policy.  Select Import from Library.
+Next, you’ll want to assign a rule to use with the policy.
+Select Import from Library.
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-import.png[scaledwidth="75%", align="center"]
 
@@ -129,13 +139,19 @@ You should now see the "Terminal shell in a container" rule assigned to your pol
 image::TRD-Kubernetes-ss-sysdig-gs-image-rule-config.png[scaledwidth="75%", align="center"]
 
 
-Next, under Actions, you can choose whether you’d like to kill, stop, or pause the container when the policy is triggered.  For this example, leave this set to Nothing.  Read more about Actions https://docs.sysdig.com/en/docs/sysdig-secure/policies/manage-policies/#define-actions[here].
+Next, under Actions, you can choose whether you’d like to kill, stop, or pause the container when the policy is triggered.
+For this example, leave this set to Nothing.
+Read more about Actions https://docs.sysdig.com/en/docs/sysdig-secure/policies/manage-policies/#define-actions[here].
 
-Your email is the default notification channel, but you can configure additional options under settings > notification channels. For example, you can choose to send notifications to a Slack Channel.  You can also leave this blank.
+Your email is the default notification channel, but you can configure additional options under settings > notification channels.
+For example, you can choose to send notifications to a Slack Channel.
+You can also leave this blank.
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-actions-config.png[scaledwidth="75%", align="center"]
 
-Next, you can enable a Capture to record system call data surrounding an event. For this example, toggle on the capture, provide a file name, and choose the number of seconds before and after the event to record.  For example, 10 seconds before, and 20 seconds after the event.
+Next, you can enable a Capture to record system call data surrounding an event.
+For this example, toggle on the capture, provide a file name, and choose the number of seconds before and after the event to record.
+For example, 10 seconds before, and 20 seconds after the event.
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-capture-config.png[scaledwidth="75%", align="center"]
 
@@ -148,7 +164,9 @@ image::TRD-Kubernetes-ss-sysdig-gs-image-save-policy.png[scaledwidth="75%", alig
 
 You can trigger a test event to observe how Sysdig Secure detects the terminal shell in a container event and drill into the captured information to help you investigate the incident.
 
-First, open a terminal shell from any container that is running in your SUSE Rancher cluster.  Simply go to the Workloads section and get into any Pod with a running container.  Just for example purposes, the Sysdig agent pod will do.
+First, open a terminal shell from any container that is running in your SUSE Rancher cluster.
+Simply go to the Workloads section and get into any Pod with a running container.
+Just for example purposes, the Sysdig agent pod will do.
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-open-terminal-shell-from-rancher-ui-1.png[scaledwidth="75%", align="center"]
 
@@ -167,7 +185,8 @@ Once the runtime security policy created above is triggered, click Events in the
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-events.png[scaledwidth="75%", align="center"]
 
-Next, click the "Terminal shell in a container" entry to open and view additional information about the event. You can scroll through this panel to see information, such as:
+Next, click the "Terminal shell in a container" entry to open and view additional information about the event.
+You can scroll through this panel to see information, such as:
 
 * Information about the policy and rule(s) triggered.
 
@@ -200,7 +219,8 @@ Then, to the right of the "Terminal shell in a container" capture file, click th
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-view-capture-2.png[scaledwidth="75%", align="center"]
 
-A new tab opens to present you with a set of tiles that categorize the available details within the capture file.  You can select any of these tiles to identify where the activity is within the timeline and drag the bars at the bottom to narrow into a specific area within the file.
+A new tab opens to present you with a set of tiles that categorize the available details within the capture file.
+You can select any of these tiles to identify where the activity is within the timeline and drag the bars at the bottom to narrow into a specific area within the file.
 
 image::TRD-Kubernetes-ss-sysdig-gs-image-Inspect.png[scaledwidth="75%", align="center"]
 
@@ -213,7 +233,8 @@ image::TRD-Kubernetes-ss-sysdig-gs-image-IO-streams-capture.png[scaledwidth="75%
 
 Security and monitoring are critical capabilities required to ensure uninterrupted operation and provide protection for applications and data running in your Kubernetes landscape.
 
-Sysdig integrated with SUSE Rancher enables you to embed security into your DevOps workflows, from build through production.  With powerful automation to enhance Kubernetes and container security, you can quickly identify threats and reduce your risk profile.
+Sysdig integrated with SUSE Rancher enables you to embed security into your DevOps workflows, from build through production.
+With powerful automation to enhance Kubernetes and container security, you can quickly identify threats and reduce your risk profile.
 
 
 
