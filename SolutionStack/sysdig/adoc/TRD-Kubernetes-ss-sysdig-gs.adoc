@@ -95,7 +95,13 @@ Using standard and custom policies, you can automate detection and alerting of s
 In this example use case, we will create a custom runtime security policy that will detect when a shell is spawned in a container with an attached terminal.
 Commands being executed with a terminal inside a running container can be an indicator of a potential infiltration or attack.
 
-NOTE: For this example we are creating a *simple* custom rule that can be inhibited by other rules; thus we strongly recommend disallowing “Suspicious Container Activity” default rule before adding the new rule (Policies > Runtime Policies > Suspicious Container Activity).  After the experiment you may want to reactivate it again.
+[NOTE]
+====
+For this example we are creating a *simple* custom rule that can be inhibited by other rules.
+We strongly recommend disallowing __Suspicious Container Activity__ default rule before adding the new rule (__Policies__ > __Runtime Policies__ > __Suspicious Container Activity__).
+
+Reactivate the rule again after the experiment.
+====
 
 
 === Create the custom runtime security policy
