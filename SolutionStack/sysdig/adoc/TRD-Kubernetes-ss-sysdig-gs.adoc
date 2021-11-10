@@ -26,8 +26,13 @@ Sysdig Secure DevOps Platform gives you enhanced visibility and is designed to e
 Sysdig Secure DevOps Platform provides a number of capabilities to help you securely run your applications in your SUSE Rancher Kubernetes landscape:
 
 * *Secure the build* – Automate image scanning in CI/CD pipelines and registries, efficiently flag vulnerabilities and owners, and block risky images.
-* *Detect and respond to threats* – Identify threats across containers and cloud services and prevent intrusion and lateral movement. Respond quickly and conduct forensics using detailed activity audits.
-* *Continuously validate cloud configurations and compliance* – Identify misconfigurations and compliance violations, and measure progress with detailed reports. Save time with out-of-the-box policies for standards such as PCI, NIST, HIPAA, and SOC 2.
+
+* *Detect and respond to threats* – Identify threats across containers and cloud services and prevent intrusion and lateral movement.
+Respond quickly and conduct forensics using detailed activity audits.
+
+* *Continuously validate cloud configurations and compliance* – Identify misconfigurations and compliance violations, and measure progress with detailed reports.
+Save time with out-of-the-box policies for standards such as PCI, NIST, HIPAA, and SOC 2.
+
 * *Monitor and troubleshoot infrastructure and services* – Maximize performance and availability using Kubernetes and cloud monitoring with full Prometheus compatibility.
 
 
@@ -49,9 +54,15 @@ The Sysdig UI also provides the ability to customize aspects like policies, aler
 
 Minimum requirements:
 
-* A Sysdig cloud account. You can get started with a free trial by visiting https://sysdig.com/start-free/[https://sysdig.com/start-free].
-* A SUSE Rancher cluster with a RKE, K3s, or any CNCF-certified Kubernetes cluster.  Clusters can be located on-premises or in the cloud.  You can also begin with community Rancher.
-* Outbound Internet access (at least port 6443).  This allows collected information to be sent to the Sysdig back-end.
+* A Sysdig cloud account.
+You can get started with a free trial by visiting https://sysdig.com/start-free/[https://sysdig.com/start-free].
+
+* A SUSE Rancher cluster with a RKE, K3s, or any CNCF-certified Kubernetes cluster.
+Clusters can be located on-premises or in the cloud.
+You can also begin with community Rancher.
+
+* Outbound Internet access (at least port 6443).
+This allows collected information to be sent to the Sysdig back-end.
 
 You can find the prerequisites for the Sysdig agent install on Kubernetes in https://docs.sysdig.com/en/docs/installation/sysdig-agent/agent-installation/agent-install-kubernetes/#agent-install-kubernetes[the Sysdig documentation].
 
@@ -79,7 +90,8 @@ image::TRD-Kubernetes-ss-sysdig-gs-image-install-1.png[scaledwidth="75%", align=
 +
 image::TRD-Kubernetes-ss-sysdig-gs-image-install-2.png[scaledwidth="75%", align="center"]
 
-.. Click Install.  Once you initiate the Helm chart, within 15 minutes you should begin seeing data and activity in your Sysdig UI.
+.. Click Install.
+Once you initiate the Helm chart, within 15 minutes you should begin seeing data and activity in your Sysdig UI.
 
 
 . Install using generic/manual steps
@@ -158,9 +170,7 @@ For more information about Actions, see the https://docs.sysdig.com/en/docs/sysd
 .. Set your desired notification channel.
 +
 Your email is the default notification channel, but you can configure additional options under __Settings__ > __Notification Channels__.
-+
 For example, you can choose to send notifications to a Slack Channel.
-+
 You can also leave this blank.
 +
 image::TRD-Kubernetes-ss-sysdig-gs-image-actions-config.png[scaledwidth="75%", align="center"]
