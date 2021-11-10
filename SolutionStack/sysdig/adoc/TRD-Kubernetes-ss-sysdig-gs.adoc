@@ -102,7 +102,7 @@ To install the Sysdig agent using manual steps, follow the instructions in https
 == Use case and demonstration
 
 Sysdig Secure runtime security provides policy-driven detections, based on the https://falco.org[Falco] open-source project.
-Using standard and custom policies, you can automate detection and alerting of suspicious and unexpected activity across containers, clusters, clouds.
+Using predefined and custom policies, you can automate detection and alerting of suspicious and unexpected activity across containers, clusters, clouds.
 
 In this example use case, we will create a custom runtime security policy that will detect when a shell is spawned in a container with an attached terminal.
 Commands being executed with a terminal inside a running container can be an indicator of a potential infiltration or attack.
@@ -110,7 +110,7 @@ Commands being executed with a terminal inside a running container can be an ind
 [NOTE]
 ====
 For this example we are creating a *simple* custom rule that can be inhibited by other rules.
-We strongly recommend disallowing __Suspicious Container Activity__ default rule before adding the new rule (__Policies__ > __Runtime Policies__ > __Suspicious Container Activity__).
+We strongly recommend disallowing the predefined rule __Suspicious Container Activity__ before adding the new rule (__Policies__ > __Runtime Policies__ > __Suspicious Container Activity__).
 
 Reactivate the rule again after the experiment.
 ====
@@ -124,7 +124,7 @@ Reactivate the rule again after the experiment.
 +
 image::TRD-Kubernetes-ss-sysdig-gs-image-select-runtime.png[scaledwidth="50%", align="center"]
 +
-This opens the __Runtime Policies__ page, where you can see the pre-defined policies.
+This opens the __Runtime Policies__ page, where you can see the predefined policies.
 +
 image::TRD-Kubernetes-ss-sysdig-gs-image-Runtime-Policies.png[scaledwidth="75%", align="center"]
 
