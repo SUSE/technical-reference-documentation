@@ -110,9 +110,9 @@ Commands being executed with a terminal inside a running container can be an ind
 [NOTE]
 ====
 For this example we are creating a *simple* custom rule that can be inhibited by other rules.
-We strongly recommend disallowing the predefined rule __Suspicious Container Activity__ before adding the new rule (__Policies__ > __Runtime Policies__ > __Suspicious Container Activity__).
+We strongly recommend disallowing the predefined rule __Suspicious Container Activity__ before adding the new rule (via __Policies__ > __Runtime Policies__ > __Suspicious Container Activity__).
 
-Reactivate the rule again after the experiment.
+After the experiment, reactivate the __Suspicious Container Activity__ rule again.
 ====
 
 
@@ -138,8 +138,8 @@ image::TRD-Kubernetes-ss-sysdig-gs-image-choose-policy.png[scaledwidth="75%", al
 image::TRD-Kubernetes-ss-sysdig-gs-image-new-policy-name.png[scaledwidth="75%", align="center"]
 ... Keep the policy defaults: Enabled with severity level of High.
 ... You can customize the scope of this rule, indicating where it should apply.
-In this example, the scope is contained to a namespace, called terminal-shell-in-container.
-You can also set this to a broader scope, such as kubernetes.cluster.name, for example.
+In this example, the scope is contained to a namespace, called `terminal-shell-in-container`.
+You can also set this to a broader scope, such as `kubernetes.cluster.name`, for example.
 +
 image::TRD-Kubernetes-ss-sysdig-gs-image-policy-scope.png[scaledwidth="75%", align="center"]
 
@@ -150,11 +150,11 @@ image::TRD-Kubernetes-ss-sysdig-gs-image-policy-scope.png[scaledwidth="75%", ali
 +
 image::TRD-Kubernetes-ss-sysdig-gs-image-import.png[scaledwidth="75%", align="center"]
 
-.. Find and select "Terminal shell in a container" from the __Rules Library__, then click __Import Rules__.
+.. Find and select __Terminal shell in a container__ from the __Rules Library__, then click __Import Rules__.
 +
 image::TRD-Kubernetes-ss-sysdig-gs-image-rules-library.png[scaledwidth="75%", align="center"]
 
-.. You should now see the "Terminal shell in a container" rule assigned to your policy.
+.. You should now see the __Terminal shell in a container__ rule assigned to your policy.
 +
 image::TRD-Kubernetes-ss-sysdig-gs-image-rule-config.png[scaledwidth="75%", align="center"]
 
