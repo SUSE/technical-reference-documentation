@@ -50,9 +50,6 @@ solutionstack="ss"
 	[ -e TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}.adoc ] || { \
 		touch TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}.adoc
 	}
-	[ -e TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}-docinfo.adoc ] || { \
-		touch TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}-docinfo.adoc
-	}
 	[ -e TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}-docinfo.xml ] || { \
 		touch TRD-${StackLayer}-${solutionstack}-${partnername}-${documenttype}-docinfo.xml
 	}
