@@ -15,7 +15,7 @@ Output Creation:
   - the overall template is based upon the RA flavor of Solution Architecture template (https://github.com/bwgartner/SA-template)
 - Process
   - git clone this repo (and either regularly fetch/pull to stay current)
-    - many technical reference documents (TRD) can come from this repository
+    - many Technical Reference Documentation (TRD) can come from this repository
   - change directory to the local path where the cloned content resides
   - determine which type of document to generate ![TechnicalRefDocsVennDiagram](./media/src/png/TechnicalRefDocsVennDiagram.png),  see [SA-Glossary.adoc](./adoc/SA-Glossary.adoc) for descriptions
     - Getting Started (GS)

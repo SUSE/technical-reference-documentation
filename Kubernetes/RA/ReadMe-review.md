@@ -2,7 +2,7 @@
 Peer Review:
 - Prep work
   - review [SUSE Documentation Style Guide](https://documentation.suse.com/style/current/single-html/docu_styleguide/index.html)
-  - for Technical Reference Document (TRD), refer to the [TechnicalRefDocsVennDiagram](./media/src/png/TechnicalRefDocsVennDiagram.png) to get an overview of document type/scope/factors/flavors) and [adoc/SA-Glossary.adoc](./adoc/SA-Glossary.adoc)
+  - for Technical Reference Documentation (TRD), refer to the [TechnicalRefDocsVennDiagram](./media/src/png/TechnicalRefDocsVennDiagram.png) to get an overview of document type/scope/factors/flavors) and [adoc/SA-Glossary.adoc](./adoc/SA-Glossary.adoc)
 
 - Suggested Approach ... for any of generated output in [build](./build)
   - use a viewing tool that allows annotations/comments to be saved
