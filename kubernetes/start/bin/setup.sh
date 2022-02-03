@@ -122,7 +122,7 @@ echo
   cd ${partnername}
 
   # create DC- file
-  cp ../.templates/DC-kubernetes_gs_suseprod_partner-partnerprod \
+  cp ../.templates/_template_DC-kubernetes_gs_suseprod_partner-partnerprod \
     ./DC-${documentbase}
   # update adoc reference
   sed -i "s/MAIN=\"kubernetes_gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ./DC-${documentbase}
@@ -143,12 +143,12 @@ echo
 
   # create .adoc file
   [ -f "${documentbase}.adoc" ] || \
-    cp ../../.templates/kubernetes_gs_suseprod_partner-partnerprod.adoc \
+    cp ../../.templates/_template_kubernetes_gs_suseprod_partner-partnerprod.adoc \
       ./${documentbase}.adoc
 
   # create -docinfo.xml file
   [ -f "${documentbase}-docinfo.xml" ] || \
-    cp ../../.templates/kubernetes_gs_suseprod_partner-partnerprod-docinfo.xml \
+    cp ../../.templates/_template_kubernetes_gs_suseprod_partner-partnerprod-docinfo.xml \
       ./${documentbase}-docinfo.xml
 
   # create media directory structure
@@ -186,4 +186,5 @@ echo
 # - Terry Smith <terry.smith@suse.com>
 # Revisions:
 # - 20220127: Leverage template files
+# - 20220203: Use renamed template files to avoid GitHub Actions validation
 
