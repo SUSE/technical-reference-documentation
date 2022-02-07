@@ -1,4 +1,4 @@
-<h1>Reference Implementations and Reference Architectures</h1>
+<h1>Reference Implementations and Reference Configurations</h1>
 
 <h2>Reference Implementations</h2>
 Guides that outline an introductory architectural approach and basis for deploying the highlighted components of the SUSE portfolio.
