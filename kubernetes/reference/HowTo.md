@@ -1,6 +1,6 @@
 
 Content:
-- Rancher (refer to [DC-kubernetes-reference](./DC-kubernetes-reference) for a general configuration template) (e.g. SUSE Rancher, K3s ... coming soon RKE1, RKE2)
+- Rancher (refer to [TRD-kubernetes-reference](./TRD-kubernetes-reference) for a general configuration template) (e.g. SUSE Rancher, K3s ... coming soon RKE1, RKE2)
   - Getting Started (GS)
     - simplified tutorial launch deployment for a PoC or just to try functionality for the focused component
   - Reference Implementation (RI)
@@ -25,7 +25,7 @@ Output Creation:
     - ./bin/Makefile <output-format>
       - where <output-format> = epub, html, html --single, pdf
       - then look in the generated, respective [build](./build) directory
-    - note the key attributes (as shown as command like arguments in the [Makefile](./Makefile) that should be enabled for a document build (and referring to the [DC-kubernetes-reference](./DC-kubernetes-reference) as that catalog of all attributes)
+    - note the key attributes (as shown as command like arguments in the [Makefile](./Makefile) that should be enabled for a document build (and referring to the [TRD-kubernetes-reference](./TRD-kubernetes-reference) as that catalog of all attributes)
       - ADOC_ATTRIBUTES+=" --attribute RC=1"
       - adjust/enable the focus and layer attributes
         - focusPROD : to represent the top level SUSE product
@@ -41,7 +41,7 @@ Content Modification / Validation / Submission
   - NOTE: every portion of text that cites "FixMe" is a flag to encourage modification
   - in the top-level directory
     - for the default configuration/structure (chapter/section/sub-section)
-      - review the DAPS configuration templatee [DC-kubernetes-reference](./DC-kubernetes-reference)
+      - review the DAPS configuration templatee [TRD-kubernetes-reference](./TRD-kubernetes-reference)
         - verify the global ADOC_ATTRIBUTES+=" --attribute RA=1" line is uncommentd to toggle to this variant
           - then re-do the above validation step to generate the target output
         - as needed/desired, also review/edit the same section's set of ADOC_ATTRIBUTES to match what content you with to provide

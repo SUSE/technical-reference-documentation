@@ -15,7 +15,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 # setup
 #
   # utilize DAPS Configuration template file
-  templateDC="DC-kubernetes_reference"
+  templateDC="TRD-kubernetes_reference"
 
   # source completed/ready/available document variations
   [ -e ./bin/Makefile.cf ] && source ./bin/Makefile.cf
