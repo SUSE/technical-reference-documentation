@@ -1,0 +1,33 @@
+:pn_Rancher: SUSE Rancher
+:pn_K3s: K3s
+:pn_SLEMicro: SLEMicro
+
+//// ////
+
+==== Deploy and import downstream Kubernetes cluster
+
+{pn_Rancher} has the ability to manage thousands of downstream Kubernetes clusters across virtually any platform from datacenter core to cloud to edge environments. There many ways to bring a Kubernetes cluster under {pn_Rancher} management. The majority of CNCF certified Kubernetes clusters, including K3s, can be imported directly into {pn_Rancher}. 
+
+The following sections describe deploying {pn_K3s} on a cluster of nodes running the {pn_slemicro} Linux operating system, with the process for importing the {pn_k3s} at the end. The import procedure applies to virtually all CNCF certified Kuberenetes distributions.
+
+(Pull in SA-RA-Deployment-OS.adoc)
+
+(PUll in SA-RA-Deployment-Kubernetes.adoc)
+
+===== Import downstream Kubernetes cluster
+
+Most {pn_Rancher} user accounts can import Kubernetes clusters. If any difficulties are encounted with the following procedures, contact the {pn_rancher} administrator to ensure sufficient privileges are available to perform the needed tasks.
+
+.Complete the following tasks to import a Kubernetes cluster
+1. Once loggined into the {pn_Rancher} user interface, navigate to the Clusters page, then select "Add Cluster"
+2. Under "Register an existing Kubernetes cluster", select "Other Cluster"
+3. Provide a "Cluster Name" that is unique to the {pn_rancher} management server
+4. Provide additional "Member Roles" and "Labels & Annotations", as needed
+5. If needed, provide specific "Environmental Variables" for this cluster, found under "Advanced Options" (This is not common)
+6. Click "Create"
+7. The Import Cluster page that follows provides three commands plus descriptions of which to use for different environments and conditions. The second command (the one that start with "kubectl apply -f") is the only one that is needed for most cluster import operations. 
+8. Copy the "kubectl apply -f ..." command and run it with cluster-admin privileges on the {pn_k3s} or other CNCF certified Kubernetes cluster to be imported into {pn_rancher} server
+9. Click "Done" and monitor the Clusters page for the imported cluster or reach a state of "Active"
+
+The newly imported cluster is ready for application deployments, that can also be accomplished through the {pn_rancher} server UI.
+
