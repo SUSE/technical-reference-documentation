@@ -31,21 +31,51 @@ echo
   echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo
 
+  # get solution category
+  while read -p "Please enter the relevant category (i.e., 'k' for Kubernetes or 'l' for Linux) : " response
+  do
+    case ${response} in
+      'k' | 'K' | 'Kubernetes' | 'kubernetes')
+        category='kubernetes'
+        break
+        ;;
+      'l' | 'L' | 'Linux' | 'linux')
+        category='linux'
+        break
+        ;;
+      'q' | 'quit')
+        echo "Quitting ... nothing done."
+        exit 1
+        ;;
+      *)
+        echo "Invalid input.  Please try again or enter 'q' to quit."
+        ;;
+    esac
+  done
+
+
   # get primary SUSE product
   while read -p "Please enter the primary SUSE product name (e.g., 'sles', 'slehpc', 'slemicro', 'suma', etc.) : " response
   do
     suseprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
     # validate SUSE product
     case $suseprod in
-      'sles' | 'slehpc' | 'slemicro' | 'suma')
+      'sles' | 'slemicro' | 'sled' | 'slessap')
         break
+	;;
+      'sleha' | 'slehpc' | 'slelp' | 'slewe')
+        break
+	;;
+      'suma')
+        break
+	;;
       'q' | 'quit')
         echo "Quitting ... nothing done."
         exit 2
-      ;;
+        ;;
       *)
         echo "Invalid input.  Please try again or enter 'q' to quit."
-      ;;
+        ;;
     esac
   done
 
