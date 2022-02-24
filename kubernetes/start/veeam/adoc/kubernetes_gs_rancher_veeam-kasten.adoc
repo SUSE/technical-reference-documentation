@@ -1,0 +1,186 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+
+// Variables & Attributes
+:title: Kasten K10 by Veeam with SUSE Rancher
+:productname: SUSE Rancher 2.6
+:author1: Adam Bergh, Solutions Architect, Cloud Native Technical Partnerships, Kasten by Veeam
+:author2: Gerson Guevara, IHV Solutions Architect, SUSE
+:revdate: March 02, 2022
+:revnumber: 20220302
+//:toc2:
+//:toc-title: {title}
+//:toclevels: 4
+
+
+= {title}
+
+
+
+== Introduction
+
+=== Motivation
+
+// Why this would be of interest
+// Challenges
+// Benefits
+
+Organizations are shifting to cloud native, leveraging containerized workloads and Kubernetes management platforms, like SUSE Rancher, to gain greater flexibility, scale, and resilience in order to accelerate innovation and quickly adjust to dynamic conditions.
+In this always-on IT environment, application mobility, and data protection are critical considerations. 
+
+
+The Kasten K10 by Veeam® data management platform provides enterprise operations teams with an easy-to-use, scalable, and secure system for backup and restore, disaster recovery, and mobility of cloud native applications. 
+
+
+=== Scope
+
+// This guide will help you take the first steps to 
+This guide provides an introductory overview of the steps to install and set up Kasten K10 by Veeam in your SUSE Rancher Kubernetes environment and to perform a simple backup and restore of an application.
+
+
+=== Audience
+
+// This document is intended for 
+This document is intended for IT operations teams, backup administrators, DevOps and DevSecOps teams, and others who are responsible for ensuring business continuity, disaster recovery, ransomware and threat protection, and application migration for cloud native landscapes.
+
+
+
+== Technical overview
+
+// Description
+The Kasten K10 by Veeam® data management platform has deep integrations with SUSE Rancher and has an extensive ecosystem of support across Kubernetes distributions and cloud platforms to provide enterprise operations teams flexibility to choose the deployment environments that best meet their needs - on-premises, public cloud, and hybrid.
+K10 is policy-driven and extensible, delivering enterprise features, such as full-spectrum consistency, database integrations, automatic application discovery, multi-cloud mobility, and a powerful web-based user interface.
+
+// Architecture diagram
+image::kubernetes_gs_rancher_veeam-kasten_image_architecture-1.png[scaledwidth="85%", align="center"]
+
+
+== Prerequisites
+// Minimum requirements (prerequisites) for this guide
+// * Requirement 1 https://url[url]
+// * Requirement 2 https://url[url]
+For this guide, it is assumed that you have the following prepared:
+
+* SUSE Rancher
++
+See https://rancher.com/docs/rancher/v2.6/en/installation/requirements/[SUSE Rancher installation guide]
+
+* Kubernetes cluster managed by SUSE Rancher
++
+See https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-3/[SUSE Rancher Support Matrix]
+
+* Storage for backup target
+
+* Application to back up and restore
++
+For example, WordPress can be easily installed by https://bitnami.com/stack/wordpress/helm[Helm chart].
+
+
+K10 can be installed in a variety of different environments.
+To ensure a smooth installation experience, run the pre-flight checks to ensure that the prerequisites are met. 
+
+Assuming that your default kubectl context is pointed to the cluster you want to install K10 on, you can run pre-flight checks by deploying the primer tool. This tool runs in a pod in the cluster and does the following:
+
+* Validates if the Kubernetes settings meet the K10 requirements. 
+
+* Catalogs the available StorageClasses. 
+
+* If a CSI provisioner exists, it will also perform a basic validation of the cluster's CSI capabilities and any relevant objects that may be required.
++
+It is strongly recommended that the same tool be used to also perform a more complete CSI validation using https://docs.kasten.io/latest/install/storage.html#csi-preflight[the documentation]
+
+Run the following command to deploy the pre-check tool: 
+[source, bash]
+----
+curl https://docs.kasten.io/tools/k10_primer.sh | bash
+----
+
+NOTE: This will create and clean up a ServiceAccount and ClusterRoleBinding to perform sanity checks on your Kubernetes cluster.
+
+
+
+== Installation
+
+
+//=== Install from the SUSE Rancher Apps & Marketplace
+//Use an ordered list for steps.
+//Link elements (with '+') to maintain consistent indentation.
+//E.g.:
+//. From the top-left Rancher menu select __Apps & Marketplace__.
+//From here, you will be taken to the __Charts__ page.
+//Notice __underscores__ are emphasis to indicate a specific
+//UI element.
+//+
+//image::kubernetes_gs_suseprod_partner-partnerprod_image_description.png[scaledwidth="85%", align="center"]
+
+//. Step 2.
+
+//. Step 3.
+
+
+
+//=== Install using generic/manual steps
+
+//Provide steps or link to existing document.
+//[source, bash]
+//---
+//echo "Use code blocks for command-line steps."
+//---
+
+
+
+== Use case and demonstration
+
+//Describe use case and demonstration.
+
+//[NOTE]
+//====
+// Use admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING) as needed.
+//====
+
+
+//Use sections to break up major actions, such as:
+//=== Prepare the demonstration environment (beyond installation)
+//=== Perform action (to illustrate capability)
+//=== Examine results (verifying capability)
+//Use ordered lists for steps.
+//Minimize/consolidate images whenever possible.
+
+
+
+== Summary
+
+//Summarize the motivation
+//Summarize what was demonstrated
+//Hint at other capabilities.
+
+
+
+== Additional resources
+
+//Learn more about the capabilities of {title} with these additional references.
+//Use an unordred lists for references
+//* https://url[reference-title]
+//* https://url/[reference-title]
+
+
+++++
+<?pdfpagebreak?>
+++++
+
+// Standard SUSE Technical Reference Documents includes
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
