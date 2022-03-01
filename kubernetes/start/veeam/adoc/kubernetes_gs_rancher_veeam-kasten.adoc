@@ -161,7 +161,28 @@ After setting your chart values, click next to go the Step 3.  Accept the defaul
 
 image::kubernetes_gs_rancher_veeam-kasten_image_step3-1.png[scaledwidth="85%", align="center"]
 
+Validating the installation
 
+To validate that K10 has been installed properly, the following command can be run in K10's namespace (the install default is kasten-io) to watch for the status of all K10 pods:
+
+[source, bash]
+----
+kubectl get pods --namespace kasten-io --watch
+----
+
+It may take a couple of minutes for all pods to come up but all pods should ultimately display the status of Running.
+
+[source, bash]
+----
+kubectl get pods --namespace kasten-io
+NAMESPACE     NAME                                    READY   STATUS    RESTARTS   AGE
+kasten-io     aggregatedapis-svc-b45d98bb5-w54pr      1/1     Running   0          1m26s
+kasten-io     auth-svc-8549fc9c59-9c9fb               1/1     Running   0          1m26s
+kasten-io     catalog-svc-f64666fdf-5t5tv             2/2     Running   0          1m26s
+...
+----
+
+In the unlikely scenario that pods that are stuck in any other state, please follow the https://docs.kasten.io/latest/operating/support.html#support[support] documentation to debug further.
 
 
 == Use case and demonstration
