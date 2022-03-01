@@ -128,6 +128,40 @@ NOTE: This will create and clean up a ServiceAccount and ClusterRoleBinding to p
 //echo "Use code blocks for command-line steps."
 //---
 
+Kasten K10 can be easily deployed from the SUSE Rancher Apps & Marketplace. 
+
+Step 1) Create a new namespace for the Kasten K10 application.  
+
+Navigate to “Clusters” -> “Project/Namespaces” 
+
+image::kubernetes_gs_rancher_veeam-kasten_image_step1-1.png[scaledwidth="85%", align="center"]
+
+•  Create a new namespace for Kasten K10 called “kasten-io”.
+
+image::kubernetes_gs_rancher_veeam-kasten_image_step1-2.png[scaledwidth="85%", align="center"]
+
+Step 2) Install Kasten K10
+•  Navigate to “Apps & Marketplace” -> “Charts” within the SUSE Rancher web interface and search for “Kasten”.
+
+image::kubernetes_gs_rancher_veeam-kasten_image_step2-1.png[scaledwidth="85%", align="center"]
+
+•  Click the K10 chart and then click “Install”.
+
+image::kubernetes_gs_rancher_veeam-kasten_image_step2-2.png[scaledwidth="85%", align="center"]
+
+•  Set the namespace to “kasten-io” and check the box “Customize Helm Options”.
+
+image::kubernetes_gs_rancher_veeam-kasten_image_step2-3.png[scaledwidth="85%", align="center"]
+
+The chart values screen “Install: Step 2” – allows for customization of the Kasten K10 deployment. This is a necessary set depending on the Kubernetes distribution to which you are installing.  For a detailed explanation of the installation options available see https://docs.kasten.io/latest/install/advanced.html#complete-list-of-k10-helm-options.
+
+image::kubernetes_gs_rancher_veeam-kasten_image_step2-4.png[scaledwidth="85%", align="center"]
+
+After setting your chart values, click next to go the Step 3.  Accept the default values and click “Install” to being the installation of Kasten K10.
+
+image::kubernetes_gs_rancher_veeam-kasten_image_step3-1.png[scaledwidth="85%", align="center"]
+
+
 
 
 == Use case and demonstration
