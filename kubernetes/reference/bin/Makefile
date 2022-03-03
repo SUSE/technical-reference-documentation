@@ -195,3 +195,6 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
           done
       done
   done
+
+# update matrix of included adoc files per DC
+./bin/asciidoctor-include

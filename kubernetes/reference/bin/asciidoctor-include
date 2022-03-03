@@ -1,0 +1,61 @@
+#! /bin/sh
+
+##
+# Create CSV matrix of included AsciiDoc files for each DAPS configuration (DC)
+#	row = DC + checkmarks of included adoc files
+#	column = available adoc filenames
+##
+
+[ -d adoc ] || {
+  echo "Present working directory should be where DC files are and adoc directory exists" >&2
+  exit 1
+}
+
+# matrix output file prep
+  [ -d ./reports ] || mkdir -p ./reports
+  OF="./reports/matrix-adoc-include.csv"
+  # leave initial 1st column blank
+  echo -n "," > ${OF}
+
+# columns file
+  CF="/tmp/col-values"
+  echo > ${CF}
+  # create sorted, master list of all available adoc files in this directory
+  find adoc -type f -name *.adoc | sed s#^adoc/## | sort >> ${CF}
+
+  for c in $(cat ${CF})
+    do
+	echo -n "${c}," >> ${OF}
+  done
+  echo >> ${OF}
+
+# rows file
+  for dc in $(ls DC*)
+    do
+
+	# provide context of which DC file is being checked
+	echo ${dc}
+
+	# obtain MAIN (top-level) adoc file from respective DC file
+	ad_file="./adoc/$(grep ^MAIN= ${dc} | cut -f2 -d '"')"
+
+	# collect DC's respective designated AsciiDoc attributes
+	attr_file="/tmp/attrs"
+	echo > ${attr_file}
+	echo $(grep -v ^# ${dc} | grep ADOC_ATTRIBUTES | awk '{print $NF}' | sed s/^/\'/g | sed s/\"/\',/g) >> ${attr_file}
+
+	# utilize AsciiDoctor Ruby API for doc.catalog include: entries
+	ifile="/tmp/include-files"
+	echo "$(./bin/asciidoctor-include.rb ${ad_file} ${attr_file}).adoc" | sort > ${ifile}
+
+	# create associated matrix data row
+	echo -n "${dc}," >> ${OF}
+	for entry in $(cat ${CF} | sed s/.adoc$// )
+	  do
+		grep $entry ${ifile} >/dev/null 2>&1 && \
+		  echo -n "x," >> ${OF} ||
+		  echo -n "," >> ${OF}
+	  done
+	echo >> ${OF}
+
+    done
