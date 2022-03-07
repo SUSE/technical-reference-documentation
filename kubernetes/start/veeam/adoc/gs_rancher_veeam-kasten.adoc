@@ -53,7 +53,7 @@ The Kasten K10 by Veeam® data management platform has deep integrations with SU
 K10 is policy-driven and extensible, delivering enterprise features, such as full-spectrum consistency, database integrations, automatic application discovery, multi-cloud mobility, and a powerful web-based user interface.
 
 // Architecture diagram
-image::kubernetes_gs_rancher_veeam-kasten_image_architecture-1.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_architecture-1.png[scaledwidth="85%", align="center"]
 
 
 == Prerequisites
@@ -134,32 +134,32 @@ Step 1) Create a new namespace for the Kasten K10 application.
 
 Navigate to “Clusters” -> “Project/Namespaces” 
 
-image::kubernetes_gs_rancher_veeam-kasten_image_step1-1.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_step1-1.png[scaledwidth="85%", align="center"]
 
 •  Create a new namespace for Kasten K10 called “kasten-io”.
 
-image::kubernetes_gs_rancher_veeam-kasten_image_step1-2.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_step1-2.png[scaledwidth="85%", align="center"]
 
 Step 2) Install Kasten K10
 •  Navigate to “Apps & Marketplace” -> “Charts” within the SUSE Rancher web interface and search for “Kasten”.
 
-image::kubernetes_gs_rancher_veeam-kasten_image_step2-1.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_step2-1.png[scaledwidth="85%", align="center"]
 
 •  Click the K10 chart and then click “Install”.
 
-image::kubernetes_gs_rancher_veeam-kasten_image_step2-2.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_step2-2.png[scaledwidth="85%", align="center"]
 
 •  Set the namespace to “kasten-io” and check the box “Customize Helm Options”.
 
-image::kubernetes_gs_rancher_veeam-kasten_image_step2-3.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_step2-3.png[scaledwidth="85%", align="center"]
 
 The chart values screen “Install: Step 2” – allows for customization of the Kasten K10 deployment. This is a necessary set depending on the Kubernetes distribution to which you are installing.  For a detailed explanation of the installation options available see https://docs.kasten.io/latest/install/advanced.html#complete-list-of-k10-helm-options.
 
-image::kubernetes_gs_rancher_veeam-kasten_image_step2-4.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_step2-4.png[scaledwidth="85%", align="center"]
 
 After setting your chart values, click next to go the Step 3.  Accept the default values and click “Install” to being the installation of Kasten K10.
 
-image::kubernetes_gs_rancher_veeam-kasten_image_step3-1.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_step3-1.png[scaledwidth="85%", align="center"]
 
 Validating the installation
 
@@ -233,7 +233,7 @@ https://docs.kasten.io/latest/access/authentication.html#id7 [Token] authenticat
 Once the dashboard is configured, you will be prompted to provide a bearer token that will be used when accessing the dashboard.
 
 //kubernetes_gs_rancher_veeam-kasten_image_kasten_signin-1
-image::kubernetes_gs_rancher_veeam-kasten_image_kasten_signin-1.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_kasten_signin-1.png[scaledwidth="85%", align="center"]
 
 Token authentication allows using any token that can be verified by the Kubernetes server.  For more information about token authentication, see:
 
@@ -274,7 +274,7 @@ Kasten K10 Dashboard Overview
 The K10 dashboard is broken up into several different sections. A brief description is provided in the sections below.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-1
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-1.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-1.png[scaledwidth="85%", align="center"]
 
 It is also possible to perform an interactive walkthrough of the K10 dashboard via a Guided Tour. The tour is available when the K10 dashboard is accessed for the first time or via the Dashboard option on the https://docs.kasten.io/latest/usage/overview.html#k10-settings [Settings] page.
 
@@ -283,7 +283,7 @@ System Overview
 The top of the K10 dashboard displays a list of applications (currently mapped to namespaces), any policies that might exist in the system, and a summary of the cluster's backup data footprint.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-2
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-2.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-2.png[scaledwidth="85%", align="center"]
 
 After filtering to only include applications that have stateful services (defined as containing a persistent volume), the above screen breaks down each section into three categories:
 
@@ -298,20 +298,20 @@ The K10 platform by default equates names to applications for ease of use and co
 Assuming you have already installed applications, clicking on the Applications card on the dashboard will take you to the following view. Note that if you clicked on one of the Compliant/Non-Compliant/Unmanaged buttons, it would automatically filter the view below for you.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-3
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-3.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-3.png[scaledwidth="85%", align="center"]
 
 An application, in turn, is made up of multiple Kubernetes resources and workloads including deployments and stateful sets. 
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-4
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-4.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-4.png[scaledwidth="85%", align="center"]
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-5
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-5.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-5.png[scaledwidth="85%", align="center"]
 
 Within K10, policies are used to automate your data management workflows. Going back to the main dashboard, you will find a section on how to manage policies right next to the Applications card. To achieve this, they combine actions you want to take (e.g., snapshot), a frequency or schedule for how often you want to take that action, and selection criteria for the resources you want to manage.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-6
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-6.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-6.png[scaledwidth="85%", align="center"]
 
 If you click on the Policies card, you will notice in the above screenshot that no default policies are created at install time but a policy can be either created from this page or from the application page shown earlier.
 
@@ -321,13 +321,13 @@ K10 can usually invoke protection operations such as snapshots within a cluster 
 To enable these actions that span the lifetime of any one cluster, K10 needs to be configured with access to external object storage or external NFS file storage. This is accomplished via the creation of Location Profiles.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-7
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-7.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-7.png[scaledwidth="85%", align="center"]
 
 Profile creation can be accessed from the Settings icon in the top-right corner of the dashboard or via the https://docs.kasten.io/latest/api/profiles.html#api-profile [CRD-based Profiles API].
 Location profiles are used to create backups from snapshots, move applications and their data across clusters and potentially across different clouds, and to subsequently import these backups or exports into another cluster. To create a location profile, click New Profile on the profiles page.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-8
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-8.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-8.png[scaledwidth="85%", align="center"]
 
 Object Storage Location
 
@@ -340,7 +340,7 @@ NOTES: When certain cloud providers (e.g., AWS) are selected, provider-specific 
 When Validate and Save is selected, the config profile will be created and a profile similar to the following will appear:
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-9
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-9.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-9.png[scaledwidth="85%", align="center"]
 
 Protecting Applications
 
@@ -354,12 +354,12 @@ This section demonstrates how to use these concepts in the context of a K10 poli
 While you can always create a policy from scratch from the policies page, the easiest way to define policies for unprotected applications is to click on the Applications card on the main dashboard. This will take you to a page where you can see all applications in your Kubernetes cluster.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-10
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-10.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-10.png[scaledwidth="85%", align="center"]
 
 To protect any unmanaged application, simply click Create a policy and, as shown below, that will take you to the policy creation section with an auto-populated policy name that you can change. The concepts highlighted above will be described in the below sections in the context of the policy creation workflow.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-11
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-11.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-11.png[scaledwidth="85%", align="center"]
 
 Snapshots and Backups
 
@@ -368,7 +368,7 @@ All policies center around the execution of actions and, for protecting applicat
 Snapshots
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-12
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-12.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-12.png[scaledwidth="85%", align="center"]
 
 Note
 
@@ -383,7 +383,7 @@ However, storage snapshots usually also suffer from constraints such as having r
 Backups
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-13
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-13.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-13.png[scaledwidth="85%", align="center"]
 
 Scheduling
 
@@ -397,7 +397,7 @@ There are four components to scheduling:
 Action Frequency
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-14
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-14.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-14.png[scaledwidth="85%", align="center"]
 
 Actions can be set to execute at an hourly, daily, weekly, monthly, or yearly granularity, or on demand. By default, actions set to hourly will execute at the top of the hour and other actions will execute at midnight UTC.
 
@@ -408,19 +408,19 @@ Sub-hourly actions are useful when you are protecting mostly Kubernetes objects 
 Snapshot Exports to Backups
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-15
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-15.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-15.png[scaledwidth="85%", align="center"]
 
 Backups performed via exports, by default, will be set up to export every snapshot into a backup. However, it is also possible to select a subset of snapshots for exports (e.g., only convert every daily snapshot into a backup).
 
 Retention Schedules
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-16
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-16.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-16.png[scaledwidth="85%", align="center"]
 
 A powerful scheduling feature in K10 is the ability to use a https://en.wikipedia.org/wiki/Backup_rotation_scheme#Grandfather-father-son [GFS retention scheme] for cost savings and compliance reasons. With this backup rotation scheme, hourly snapshots and backups are rotated on an hourly basis with one graduating to daily every day and so on. It is possible to set the number of hourly, daily, weekly, monthly, and yearly copies that need to be retained and K10 will take care of both cleanup at every retention tier as well as graduation to the next one. For on demand policies it is not possible to set a retention schedule
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-17
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-17.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-17.png[scaledwidth="85%", align="center"]
 
 By default, backup retention schedules will be set to be the same as snapshot retention schedules but these can be set to independent schedules if needed. This allows users to create policies where a limited number of snapshots are retained for fast recovery from accidental outages while a larger number of backups will be stored for long-term recovery needs. This separate retention schedule is also valuable when limited number of snapshots are supported on the volume but a larger backup retention count is needed for compliance reasons.
 
@@ -429,14 +429,14 @@ The retention schedule for a policy does not apply to snapshots and backups prod
 Advanced Schedule Options
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-18
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-18.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-18.png[scaledwidth="85%", align="center"]
 
 By default, actions set to hourly will execute at the top of the hour and other actions will execute at midnight UTC.
 
 The Advanced Options settings enable picking how many times and when actions are executed within the interval of the frequency. For example, for a daily frequency, what hour or hours within each day and what minute within each hour can be set.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-19
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-19.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-19.png[scaledwidth="85%", align="center"]
 
 The retention schedule for the policy can be customized to select which snapshots and backups will graduate and be retained according to the longer period retention counts.
 
@@ -458,33 +458,33 @@ You can select applications by two specific methods:
 Selecting By Application Name
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-20
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-20.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-20.png[scaledwidth="85%", align="center"]
 
 The most straightforward way to apply a policy to an application is to use its name (which is derived from the namespace name). Note that you can select multiple application names in the same policy.
 
 Selecting By Application Name Wildcard
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-21
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-21.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-21.png[scaledwidth="85%", align="center"]
 
 For policies that need to span similar applications, you can select applications by an application name wildcard. Wildcard selection will match all application that start with the wildcard specified.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-22
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-22.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-22.png[scaledwidth="85%", align="center"]
 
 For policies that need to span all applications, you can select all applications with a * wildcard.
 
 Selecting No Applications
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-23
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-23.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-23.png[scaledwidth="85%", align="center"]
 
 For policies that protect only cluster-scoped resources and do not target any applications, you can select "None". For more information about protecting cluster-scoped resources, see https://docs.kasten.io/latest/usage/clusterscoped.html#clusterscoped [Cluster-Scoped Resources.]
 
 Selecting By Labels
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-24
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-24.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-24.png[scaledwidth="85%", align="center"]
 
 For policies that need to span multiple applications (e.g., protect all applications that use MongoDB or applications that have been annotated with the gold label), you can select applications by label. Any application (namespace) that has a matching label as defined in the policy will be selected. Matching occurs on labels applied to namespaces, deployments, and statefulsets. If multiple labels are selected, a union (logical OR) will be performed when deciding to which applications the policy will be applied. All applications with at least one matching label will be selected.
 
@@ -495,14 +495,14 @@ Working With Policies
 Once you have created a policy and have navigated back to the main dashboard, you will see the selected applications quickly switch from unmanaged to non-compliant (i.e., a policy covers the objects but no action has been taken yet). They will switch to compliant as snapshots and backups are run as scheduled or manually and the application enters a protected state. You can also scroll down on the page to see the activity, how long each snapshot took, and the generated artifacts. Your page will now look similar to this:
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-25
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-25.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-25.png[scaledwidth="85%", align="center"]
 
 More detailed job information can be obtained by clicking on the in-progress or completed jobs.
 
 Manual Policy Runs
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-26
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-26.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-26.png[scaledwidth="85%", align="center"]
 
 It is possible to manually create a policy run by going to the policy page and clicking the run once button on the desired policy. Note that any artifacts created by this action will not be eligible for automatic retirement and will need to be manually cleaned up.
 
@@ -512,10 +512,10 @@ Restoring Existing Applications
 Restoring an application is accomplished via the Applications page. One needs to simply click the Restore icon. 
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-27
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-27.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-27.png[scaledwidth="85%", align="center"]
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-28
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-28.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-28.png[scaledwidth="85%", align="center"]
 
 While the UI uses the Export term for backups, no Import policy is needed to restore from a backup. Import policies are only needed when you want to restore the application into a different cluster.
 
@@ -524,12 +524,12 @@ At that point, one has the option to pick a restore point, a grouped collection 
 It also distinguishes between snapshots and backups. When both are present, as seen above, a layered box is shown to indicate more than one kind of restore point is present for the same data. If you want to restore a version of the application stack, clicking on the layered restore point will present the below option to select between the local snapshot and exported backup.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-29
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-29.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-29.png[scaledwidth="85%", align="center"]
 
 Selecting a restore point will bring up a side-panel containing more details on the restore point for you to preview, if needed, before you initiate an application restore.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-30
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-30.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-30.png[scaledwidth="85%", align="center"]
 
 Note
 
@@ -542,7 +542,7 @@ Restoring Deleted Applications
 The process of restoring a deleted application is nearly identical to the above process. The only difference is that, by default, removed applications are not shown on the Applications page. To discover them, you simply need to filter and select Removed.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-31
-image::kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-31.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-31.png[scaledwidth="85%", align="center"]
 
 Once the filter is in effect, you will see applications that K10 has previously protected but no longer exist. These can now be restored using the normal restore workflow.
 
