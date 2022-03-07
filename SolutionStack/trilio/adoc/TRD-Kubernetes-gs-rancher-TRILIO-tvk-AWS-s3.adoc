@@ -4,8 +4,9 @@ include::./common_docinfo_vars.adoc[]
 // = {title}
 = TITLE: SUSE Rancher with TrilioVault for Kubernetes and AWS S3 Storage - Getting Started
 
-// :author: Kevin Ayres, Public Cloud Solutions Architect, SUSE
-// :author: Prashanto Kochavara, Director of Product, Trilio
+// :author: Kevin Ayres - SUSE
+// :author: Prashanto Kochavara, Stefan Kroll - Trilio
+// :author: David Rocha, AWS
 :revnumber: 0.0.1
 :toc2:
 :toc-title: TITLE: SUSE Rancher with TrilioVault for Kubernetes and AWS S3 Storage - Getting Started
@@ -14,125 +15,184 @@ include::./common_docinfo_vars.adoc[]
 
 :productname: SUSE Rancher
 
-
 == Introduction
 
 === Motivation
 
-// Describe the motivation for the solution and document - use content from stack worksheet as needed
+// General terms here then mention specific value of partners at the end. 
 
+One of the primary benefits of running a Kubernetes environment is flexibility, the ability to easily adapt to varying circumstances.  
+Traditional database deployments exist in fairly static configurations and environments.  The beauty of running a data-oriented service 
+on Kubernetes lies in maintaining stability while enabling adaptability to meet real-world situations.
+
+Imagine a scenario where your e-commerce site is consistently taking 100 orders per day.  Suddenly, a viral marketing event occurs, 
+and your site is pushed to 5000 orders per day for a day.  This increase could easily lead to data overload – or worse, corruption or downtime, which could result to considerable loss of revenue.  Having a way to design for such failure scenarios and maintain resilient operations is a tangible market advantage. Quite simply, when it comes to your data, all the eggs are literally in one basket. The entire value of you corporate IP is attached to this living data. Designing around failure scenarios is key to business continuity. 
+
+Today’s IT environment is shifting to cloud native solutions focused on containerized applications in Kubernetes clusters running everywhere – from on-premises data centers, to the cloud and at the edge. Business continuity in this diverse and dynamic landscape requires new approaches. 
+
+SUSE, Trilio, and Amazon Web Services (AWS) empower you with the tools and capabilities to successfully deploy, manage, and protect your cloud native environment and enable rapid operational recovery of workloads and data. SUSE, Trilio, and Amazon Web Services (AWS) have come together to empower organizations with tools and capabilities to successfully deploy, manage, and protect cloud-native applications while enabling rapid operational recovery of workloads and data. 
+
+Are you developing cloud-native applications, managing complex app migrations, or need data protection for your Kubernetes landscape? TrilioVault for Kubernetes is a SUSE Rancher certified, cloud native, app-centric data protection platform. It is designed from the ground up to support the scale, performance, and compliance requirements of your cloud and hybrid-cloud Kubernetes landscapes. 
+
+TrilioVault for Kubernetes enables cloud architects, backup admins, and DevOps engineers with the ability to easily back up and restore the entire app environment, including data, metadata, and any other associated Kubernetes objects. Leverage TrilioVault with SUSE Rancher to manage your backup policies, handle migrations and app mobility, and implement effective disaster recovery strategies. And, now, you can take advantage of immutable S3 targets to mitigate the risk of ransomware. Business continuity and workload resiliency are more important than ever. 
+
+The modern, cloud native IT landscape consists of a diverse and dynamic weave of containerized microservices, running anywhere – from core to cloud to edge. SUSE Rancher with TrilioVault for Kubernetes, and Amazon Web Services (AWS) S3 storage empower organizations to manage this complex app landscape, ensure business continuity with robust app-centric backup and restore capability, and protect backups from malicious attacks, like ransomware., with scalable, immutable storage
+
+Agility is the name of the game in modern application development.  This is driving developers toward more agile, 
+cloud native methodologies that focus on microservices architectures and streamlined workflows.  
+Container technologies, like Kubernetes, embody this agile approach and help promote cloud native transformation. 
+
+SUSE Rancher simplifies Kubernetes management, empowering you to take control of your IT landscape and create 
+an agile data platform that accelerates achievement of your goals. Rancher enables you to manage dynamic, robust, multi-cluster Kubernetes environments and supports any CNCF-certified Kubernetes distribution.  With built-in resilience and scalability, unified security and policy management, and a rich catalog of shared tools and services, Rancher helps you accelerate development-to-production and innovate everywhere.
+
+Amazon Web Services the world leader in public cloud services. Native Kubernetes cluster services such as Elastic Kubernetes Service (EKS), as well as native storage services provide an ideal integration point for SUSE Rancher with TrilioVault backups. By leveraging low touch EKS deployment, and the immutable storage capabilities within TrilioVault, Amazon S3 and Glacier, the administrator is empowered with unparalleled data integrity, agility, and mobility. 
+
+TrilioVault is a cloud native backup technology that brings all the power of the traditional, backup software and provides a more natural way to work with modern data.  TrilioVault offers a variety of compelling features that make it a natural partner for a SUSE Rancher agile data platform, including: 
+
+Data Protection::
+
+Based on Trilio's backup and recovery technology, point-in-time backups and restores can be created for cloud-native applications protecting them from data corruption or other malicious activity on production data.
+
+Disaster Recovery::
+Based on Trilio's backup and recovery technology, point-in-time backups and restores can be created for cloud-native applications protecting them from data corruption or other malicious activity on production data. The same backup and recovery technology can be leveraged in case of outages at the primary site to restore an entire environment to a separate location, fulfilling Disaster Recovery.
+
+TrilioVault backups are application aware and include all artifacts that define the application. These include persistent data, Pod definitions, config maps, secrets, and other items. It recovers the entire application allowing you to achieve the most optimal RTO possible. 
+
+Migration and data mobility::
+You may need to migrate applications from one cloud platform to another or one Kubernetes cluster to a different Kubernetes cluster. Most businesses and compliance initiatives are now mandating IT organizations to have a proven multi-cloud strategy - so that they are not locked to a specific cloud vendor. IT departments are now required to demonstrate their multi-cloud strategy by recovering business applications in multiple clouds. By choosing cloud storage as backup target, TrilioVault can demonstrate an application migration use case. In this scenario, customers can easily migrate their workloads to Amazon EKS and manage them with Rancher. 
+
+Test and Development::
+Another popular use case is test and development for DevOps. There are a plethora of tools that can help you achieve DevOps, but most of them lack the capability to version control the production data. Exiting DevOp tools can help version control the code and help you streamline processes. However, in some instances you may a need point-in-time of production data for you DevOps processes including identifying performance bottlenecks, troubleshooting data corruption and other issues. TrilioVault can reliably restore a point-in-time of your production application including its associated data for test and development needs.
+
+Ransomware Protection::
+Trilio provides and will continue to innovate its strategy to protect against ransomware attacks. Ransomware protection from Trilio is aligned to the pillars of the NIST and NCCoE cybersecurity frameworks. The pillars are defined as Identify and Protect, Detect and Mitigate, and Recover. Trilio has built (and is building) features to align with these pillars:
+
+. Identify and Protect - Application discovery, Security Validations Immutable backups, Encryption, Zero-Trust etc.
+. Detect and Mitigate - Scanning of Backups, Anomaly Detection, Notifications into Slack/Teams etc.
+. Recover - Deep logging, Isolation testing, DR workflows and multiple target types to increase recoverability surface.
 
 
 === Scope
 
-// Describe what the document will cover
-This guide will help you take the first steps to 
-
+This guide will help you take the first steps in implementing SUSE Rancher on AWS with TrilioVault software to defeat Ransomware. 
 
 
 === Audience
 
-// Describe the roles and responsibilities for whom this document would be of interest
-This document is intended for 
+This document is intended for technical partners and customers. 
 
 
 == Technical overview
 
-// Give a brief, verbal description of the technical architecture
+=== Architecture
+// IDG architectural diagram here
+
+SUSE Rancher is a lightweight Kubernetes installer and orchestration tool that supports installation on bare-metal and virtualized machines and instances.  Rancher solves a common issue in the Kubernetes community: installation complexity and manageability.  With Rancher, Kubernetes is greatly simplified. Rancher manages landscapes across k8s distributions and geographies from a single pane of glass.
+
+This document reviews considerations for deploying and managing a highly secure microservice application backup topology using SUSE Rancher, TrilioVault and Amazon S3 storage.
+
+In practice, the process is as follows:
+
+* Deploy your control plane EKS cluster and install Rancher Server as a pod using command line tools such as 'eksctl' and HELM per https://rancher.com/docs/rancher/v2.6/en/installation/install-rancher-on-k8s/amazon-eks/ 
+* Use Rancher to deploy a second AWS EKS Cluster for production Pods. 
+* Configure a cloud native storage solution on Kubernetes such as Amazon S3. 
+* Configure a storage class and define storage requirements via Operator
+* Install TrilioVault via HELM. 
+* Test backup, recovery, and data immutability (delete/rename/encrypt protection.) 
 
 
-Minimum requirements:
+=== Prerequisites
 
 // List prerequisites ... the reader will be expected to have these prior to following the steps outlined in the document.  Link to existing references (product websites, installation instructions, etc.) whenever possible.
-* REQ1
-WHAT-IT-DOES-AND-HOW-TO-GET-IT
 
-* REQ2
-WHAT-IT-DOES-AND-HOW-TO-GET-IT
+. Working SUSE Rancher Cluster environment
 
-* REQ3
-WHAT-IT-DOES-AND-HOW-TO-GET-IT
+.. Manual installation of SUSE Rancher[https://rancher.com/docs/rancher/v2.5/en/installation/install-rancher-on-k8s/amazon-eks/]
 
-// Include any special notes, if needed
-[NOTE]
-====
-TEXT
-====
+.. Amazon EKS-Rancher QuickStart[https://aws.amazon.com/quickstart/architecture/eks-rancher/]
 
 
-== Installation
+... If you create your SUSE Rancher Cluster environment on EKS using the SUSE Rancher AWS QuickStart, it build all of the necessary resources including DNS records, Ingress Route, CSI driver, and other resources required for the Rancher Server and EKS infrastructure functionality as outlined in the mazon EKS-Rancher QuickStart, including AWS IAM or root account for the console https://aws.amazon.com/ with the necessary privileges to run an AWS CloudFormation QuickStart. 
 
-// Give a brief overview of the installation, such as "The product can be easily installed from the SUSE Rancher Apps & Marketplace."
-// If there is more than one installation method, provide these under subheadings.
+... The "AdministratorAccess" managed policy within IAM provides sufficient permissions, although your organization may choose to use a custom policy with more restrictions and this is recommended in keeping with the Principle of Least Provilege ideal consistent with your organizational policies. 
 
-// Provide steps in an ordered list, include descriptions, commands, or screenshots, as needed.
-. STEP1
-TEXT
-+
-image::TRD-Kubernetes-gs-SUSEPRODS-PARTNERPRODS-DESCRIPTION.png[scaledwidth="85%", align="center"]
+.. Terraform Automation[https://github.com/rancher/quickstart]
 
-. STEP2
-TEXT
-+
-image::TRD-Kubernetes-gs-SUSEPRODS-PARTNERPRODS-DESCRIPTION.png[scaledwidth="85%", align="center"]
+. AWS Account with the ability to create all of the insfrastructure resources necessary to support https://aws.amazon.com/s3/[Amazon S3] storage. 
 
+. TrilioVault for Kubernetes license. 
+You can obtain a free trial at https://connect.trilio.io/tv-kubernetes-freetrial. 
 
+== Installation of TrilioVault for Kubernetes 
 
+. Connect to SUSE Rancher Server
+Leverage the output from your SUSE Rancher EKS QuickStart or manual installation to find the URL and administrative credentials to connect to the SUSE Rancher UI. 
 
-== Use case and demonstration
+. Install The TrilioVault for Kubernetes Connector from the SUSE Rancher Apps and Marketplace, which simplifies the installation of the TrilioVault application. 
 
-DESCRIPTION-OF-USE-CASE
+// screenshot here 
 
+// other steps here
 
+. Using the connector, install the TVK application
+// steps here 
+// helm? 
 
-=== PREPARATION
+. License TVK to meet your needs per this guidance https://docs.trilio.io/kubernetes/overview/licensing 
 
-. STEP1
+== Configuration of S3 storage bucket 
 
-.. STEP1a
-+
-image::TRD-Kubernetes-gs-SUSEPRODS-PARTNERPRODS-DESCRIPTION.png[scaledwidth="50%", align="center"]
-+
-MORE-TEXT-FOR-THIS-STEP
+. An AWS hosted S3 bucket with the appropriate access permissions referenced below is required for the TVK target. An Amazon S3 bucket is available as a snapshot target with the properties outlined here: 
+// URL for Immutable S3 config from AWS 
+Object Lock must be enabled during creation, which also turns on Bucket Versioning.  
+The following permissions should be employed: https://docs.trilio.io/kubernetes/v/2.1.0/appendix/aws-s3-target-permissions 
 
-.. STEP1b
-+
-TEXT-IMAGE
-
-. STEP2
-+
-TEXT-IMAGE
+// multiple screen snippets here or clear description
 
 
-=== PERFORM-THE-DEMO
+== Configure backup
+. Connect to SUSE Rancher Server
+Leverage the output from your SUSE Rancher EKS QuickStart or manual installation to find the URL and administrative credentials to connect to the SUSE Rancher UI. 
 
-DESCRIBE-PROCESS
+. Configure TVK to connect to your S3 bucket as a backup target 
+// check verbiage above
+// steps
 
-. STEP1
-+
-TEXT-IMAGE
+. Configure Backup plan
+.. Create Namespace
 
-. STEP2
-+
-TEXT-IMAGE
+== Demonstrate Snapshot Immutability
 
-
-CLARIFY-WHAT-HAPPENED-IF-NEEDED
+. Perform Snapshot
+.. confirm S3 filename
 
 
+. delete application
+// clarify deletion from TVK vs kubectl vs bucket level
+.. delete via Rancher UI
+.. confirm via kubectl
+.. confirm file in S3
+
+. restore application via TVK
+.. Create new Namespace
+.. Restore from Snapshot with TVK UI
+.. Verify application running with Rancher UI and kubectl
 
 == Summary
 
-SUMMARY-TEXT
+TrilioVault for Kubernetes provides data management and data protection capabilities for your Kubernetes based applications running on SUSE Rancher. Trilio can be managed and operated fully via the CLI as well as the feature rich management console provided by Trilio.
 
 
 == Additional resources
 
-Learn more about ...
+Learn more about SUSE Rancher, TrilioVault for Kubernetes, and Amazon S3 storage by visiting: 
 
-* https://URL[LINK-TEXT]
-* https://URL[LINK-TEXT]
-* https://URL[LINK-TEXT]
+*	https://rancher.com/docs/rancher/v2.x/en/best-practices/[Rancher best practices guide]
+*	https://rancher.com/docs/rancher/v2.x/en/troubleshooting/[Rancher troubleshooting tips]
+*	https://docs.trilio.io/kubernetes/[TrilioVault for Kubernetes Documentation]
+*	https://docs.trilio.io/kubernetes/use-triliovault/installing-triliovault#rancher-deployments[Trilio Documentation for Rancher Deployments]
+*	https://docs.trilio.io/kubernetes/overview/getting-started [TrilioVault for Kubernetes Getting-Started]
+*	https://docs.trilio.io/kubernetes/architecture/custom-resource-definitions-application-1 [TrilioVault API Reference]
 
 
 ++++
