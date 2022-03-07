@@ -15,8 +15,8 @@ endif::GS[]
 //-
 Preparation(s)::
 To meet the solution stack prerequisites and requirements, {companyName} operating system offerings, like
-ifdef::layerSLEMicro[{pn_SLEMicro_ProductPage}[{pn_SLEMicro}]]
-ifdef::layerSLES[{pn_SLES_ProductPage}[{pn_SLES}]]
+ifdef::layerSLEMicro[link:{pn_SLEMicro_ProductPage}[{pn_SLEMicro}]]
+ifdef::layerSLES[link:{pn_SLES_ProductPage}[{pn_SLES}]]
 can be utilized.
 +
 . Ensure these services are in place and configured for this node to use:
@@ -24,14 +24,14 @@ can be utilized.
 ** Domain Name Service (DNS) - an external network-accessible service to map IP Addresses to hostnames
 ** Network Time Protocol (NTP) - an external network-accessible service to obtain and synchronize system times to aid in timestamp consistency
 ** Software Update Service - access to a network-based repository for software update packages. This can be accessed directly from each node via registration to
-*** the general, internet-based {suseSCCPage}[{companyName} Customer Center] (SCC) or
-*** an organization's {pn_SUMa_ProductPage}[{pn_SUMa}] infrastructure or
-*** a local server running an instance of {pn_RMT_DocURL}[{pn_RMT}] ({an_RMT})
+*** the general, internet-based link:{suseSCCPage}[{companyName} Customer Center] (SCC) or
+*** an organization's link:{pn_SUMa_ProductPage}[{pn_SUMa}] infrastructure or
+*** a local server running an instance of link:{pn_RMT_DocURL}[{pn_RMT}] ({an_RMT})
 +
-NOTE: During the node's installation, it can be pointed to the respective update service. This can also be accomplished post-installation with the command-line tool named {kb_SUSEConnect}[SUSEConnect].
+NOTE: During the node's installation, it can be pointed to the respective update service. This can also be accomplished post-installation with the command-line tool named link:{kb_SUSEConnect}[SUSEConnect].
 +
 ifdef::GS[]
-ifdef::focusRancher,focusRKE1[]
+ifdef::focusRancher,layerRKE1,focusRKE1[]
 . On the target node with a default installation of
 ifdef::layerSLEMicro[{pn_SLEMicro}]
 ifdef::layerSLES[{pn_SLES}]
@@ -46,7 +46,7 @@ sudo systemctl enable --now docker.service
 endif::layerSLEMicro[]
 ifdef::layerSLES[]
 ----
-sudo SUSEConnect -p sle-module-containers/15.2/x86_64
+sudo SUSEConnect -p sle-module-containers/15.3/x86_64
 sudo zypper refresh ; zypper install docker
 sudo systemctl enable --now docker.service
 ----
@@ -58,5 +58,5 @@ endif::layerSLES[]
 sudo systemctl status docker.service
 sudo docker ps --all
 ----
-endif::focusRancher,focusRKE1[]
+endif::focusRancher,layerRKE1,focusRKE1[]
 endif::GS[]

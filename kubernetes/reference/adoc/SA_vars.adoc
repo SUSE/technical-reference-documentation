@@ -62,7 +62,7 @@ ifdef::RI[]
 endif::RI[]
 
 ifdef::GS[]
-:title: Tutorial Launch
+:title: Tutorial Instance
 :subtitle: Getting Started
 endif::GS[]
 
@@ -87,23 +87,17 @@ endif::focusRancher[]
 
 ifdef::focusK3s[]
 :productname: {pn_K3s} {pn_K3s_Version}
-ifdef::RC[:title: {title} of {pn_K3s}]
-ifdef::RI[:title: {title} of {pn_K3s}]
-ifdef::GS[:title: {title} of {pn_K3s}]
+:title: {title} of {pn_K3s}
 endif::focusK3s[]
 
 ifdef::focusRKE1[]
 :productname: {pn_RKE1} {pn_RKE1_Version}
-ifdef::RC[:title: {title} of {pn_RKE1}]
-ifdef::RI[:title: {title} of {pn_RKE1}]
-ifdef::GS[:title: {title} of {pn_RKE1}]
+:title: {title} of {pn_RKE1}
 endif::focusRKE1[]
 
 ifdef::focusRKE2[]
-:productname: {pn_RKE1} {pn_RKE1_Version}
-ifdef::RC[:title: {title} of {pn_RKE2}]
-ifdef::RI[:title: {title} of {pn_RKE2}]
-ifdef::GS[:title: {title} of {pn_RKE2}]
+:productname: {pn_RKE2} {pn_RKE2_Version}
+:title: {title} of {pn_RKE2}
 endif::focusRKE2[]
 
 ifdef::layerSLEMicro[:productname: {pn_SLEMicro} {pn_SLEMicro_Version}, {productname}]
@@ -155,7 +149,7 @@ ifdef::focusRKE1[]
 :preface: {preface} {pn_RKE1} ({an_RKE1}), a Kubernetes distribution that runs entirely within containers on bare-metal and virtualized nodes. {an_RKE1} solves the problem of installation complexity and the operation is both simplified and easily automated, while entirely accommodating the operating system and platform it is running on.
 endif::focusRKE1[]
 ifdef::focusRKE2[]
-:preface: {preface} {pn_RKE2} ({an_RKE2}), a Kubernetes distribution that runs entirely within containers on bare-metal and virtualized nodes. {an_RKE2} solves the problem of installation complexity and the operation is both simplified and easily automated, while entirely accommodating the operating system and platform it is running on. Also being a hardened, FIPS-enabled version, it adopts a compliance-based approach towards security, targeting standard risk management frameworks and best practices with the goal of stronger defense for cloud-native apps.
+:preface: {preface} {pn_RKE2} ({an_RKE2}), a Kubernetes distribution that runs entirely within containers on bare-metal and virtualized nodes. {an_RKE2} solves the problem of installation complexity and the operation is both simplified and easily automated, while entirely accommodating the operating system and platform it is running on. Also being a hardened, FIPS-enabled version, it adopts a compliance-based approach towards security, targeting standard risk management frameworks and best practices with the goal of stronger defense for cloud-native applications.
 endif::focusRKE2[]
 
 endif::RA,RC,RI,GS[]

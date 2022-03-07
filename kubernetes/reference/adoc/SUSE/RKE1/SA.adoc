@@ -1,33 +1,45 @@
 
-FixMe-{pn_RKE1} is packaged as a single binary, which is about 50 megabytes in size.
-Bundled in that single binary is everything needed to run Kubernetes anywhere, including low-powered IoT and Edge-based devices.
-The binary includes:
+{pn_RKE1} is a CNCF-certified Kubernetes distribution that runs entirely within Docker containers. It solves the common frustration of installation complexity with Kubernetes by removing most host dependencies and presenting a stable path for deployment, upgrades, and rollbacks.
 
-* the container runtime
-* important host utilities such as iptables, socat and du
+With {pn_RKE1} [{an_RKE1}], the operation of Kubernetes is easily automated and entirely independent of the operating system and platform you’re running. As long as you can run a supported version of Docker, you can deploy and run Kubernetes with {an_RKE1}. It builds a cluster from a single command in just a few minutes, and its declarative configuration makes Kubernetes upgrades atomic and safe.
 
-FixMe-The only OS dependencies are the Linux kernel itself and a proper dev, proc and 
-sysfs mounts (this is done automatically on all modern Linux distributions).
-{pn_K3s} bundles the Kubernetes components:
+What is provided with {pn_RKE1}::
+* CNCF Certification
+** {pn_RKE1} CNCF certification means that every release supports the same APIs as upstream Kubernetes. This gives enterprises the confidence that their Kubernetes resources are portable between {an_RKE1} and other CNCF-certified Kubernetes distributions.
+* Simplified installation
+** Installation is via a single binary and it uses a single YAML file, meaning that even non-experts can deploy Kubernetes with a single command. The command connects to remote hosts via SSH, so Rancher or any staff member with SSH access can deploy and manage {an_RKE1} instances anywhere in the world.
+* Automated Operation
+** When used with {pn_Rancher}, operators can perform automated installation and upgrades of {an_RKE1} clusters with just a few clicks.
+* Vendor Independence
+** {an_RKE1} is not locked into a specific vendor operating system, Kubernetes Management Platform or proprietary tooling.
+* Safe, Atomic Upgrades
+** Since {an_RKE1} is built using containers, it doesn’t have any touch points with the underlying operating system beyond the container engine. Containers make it easy to upgrade to a new version and to roll back to the previous version if necessary. 
+* 24x7 Enterprise-level Support
+** Ensures around-the-clock support from technical experts when you need it.
 
-* kube-apiserver,
-* kube-controller-manager,
-* kube-scheduler,
-* kubelet and
-* kube-proxy
+The fundamental roles for the nodes and core functionality of {pn_RKE1} are represented in the following figure:
 
-into combined processes that are presented as a simple server and agent model, as represented in the following figure:
+image::{an_RKE1}1_overview.png[title="Component Overview - {pn_RKE1}", scaledwidth=80%]
 
-image::{an_RKE1}-Overview.png[title="FixMe-Component Overview - {pn_RKE1}", scaledwidth=80%]
+* Kubernetes API Server,
+** interacts with kubelet on all the nodes, plus addresses authentication, user interface (UI), command-line interface (CLI) and API for external access and cluster management via {pn_Rancher} cluster controller to agent
 
-{pn_RKE1} can run as a complete cluster on a single node or can be expanded into a multi-node cluster. Besides the core Kubernetes components, these are also included:
+ifdef::RC,RI[]
+While all {pn_RKE1} roles can be installed on a single system, for the best availability, performance and security, the recommended deployment of a {pn_RKE1} cluster is a pair of nodes for the control plane role, at least three etcd role-based nodes and three or more worker nodes.
+endif::RC,RI[]
 
-* containerd,
-* Flannel,
-* CoreDNS,
-* ingress controller and
-* a simple host port-based service load balancer.
+ifdef::GS[]
+To aid in planning, training or assessing functionality like in a [<<g-poc,proof-of-concept>>] deployment, {pn_RKE1} can be installed on a single node as described later in this document.
+endif::GS[]
 
-FixMe-All of these components are optional and can be swapped out for your implementation of choice. With these included components, you get a fully functional and CNCF-conformant cluster so you can start running apps right away. {pn_RKE1} is now a CNCF Sandbox project, being the first Kubernetes distribution ever to be adopt ed into sandbox.
+{pn_RKE1} can run as a complete cluster on a single node or can be expanded into a multi-node cluster. Besides the core Kubernetes components, these are also configurable and included:
 
-Learn more information about {pn_RKE1} at {pn_RKE1_DocURL}.
+* Multiple Kubernetes versions
+* CoreDNS, Metrics, Ingress controller
+* CNI : Canal, Calico, Flannel, Weave
+* Support for a Windows worker agent node (only with Flannel)
+* Fleet Agent : for GitOps deployment of cloud-native applications
+
+All of these components are configurable and can be swapped out for your implementation of choice. With these included components, you get a fully functional and CNCF-conformant cluster so you can start running apps right away.
+
+TIP: Learn more information about {pn_RKE1} at {pn_RKE1_DocURL}.
