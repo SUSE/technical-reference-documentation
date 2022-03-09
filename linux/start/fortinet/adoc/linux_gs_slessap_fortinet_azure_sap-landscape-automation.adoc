@@ -1,5 +1,5 @@
 :docinfo:
-include::./common_docinfo_vars.adoc[]
+include::../../../../common/adoc/common_docinfo_vars.adoc[]
 
 // the ifdef's make it possible to only change the DC file for generating the right document
 ifdef::Azure[]
@@ -17,6 +17,8 @@ endif::[]
 //:toc-title: {title}
 //:toclevels: 4
 
+:partner: Fortinet
+
 :sles: SUSE Linux Enterprise Server
 :sles4sap: {sles} for SAP applications
 :hana_version: SAP HANA 2.0 SPS05
@@ -26,15 +28,16 @@ endif::[]
 
 == Introduction
 
-What is Project Mayerhofen?
-
-Project Mayerhofen is a secure automated SAP deployment on Azure.
-
 === Motivation
 
 // Why this would be of interest
 // Challenges
 // Benefits
+What is Project Mayerhofen?
+
+Project Mayerhofen is a secure automated SAP deployment on Azure, based on the SUSE initiated Github project https://github.com/SUSE/ha-sap-terraform-deployments[Automated SAP/HA Deployments in Public/Private Clouds with Terraform].
+
+
 As organizations upgrade their existing systems and migrate to S/4 HANA, there is the opportunity to migrate to Azure for more flexibility and scalability on demand. However, this also shifts the attack surface for the SAP system as they are no longer in their own datacenter.
 
 A very useful approach to start with in the cloud is Infrastructure-as-Code (IaS), as all steps of deployments can be automated from begin on.
@@ -50,7 +53,7 @@ Some key values of the solution are:
 . Combine SUSE SAP automation with an automated Fortinet Security Fabric provisioning
 . Provides security, optimized connectivity and faster rollout of SAP landscapes
 
-Adding the Fortinet deployment, it is the same workflow as with the normal SUSE SAP automation project, you only need to enable “with fortinet” to benefit from the additional installation of the Fortinet Fabric.
+Adding the Fortinet deployment, it is the same workflow as with the normal SUSE SAP automation project, you only need to enable “with fortinet” switch to benefit from the additional installation of the Fortinet Fabric.
 
 
 === Scope
@@ -71,7 +74,7 @@ For simplicity, this guide uses the Azure Cloud Shell to perform the deployment,
 
 // This document is intended for
 
-Everybody who want to try out the solution.
+Everybody who want to build a secure SAP Landscape in Azure.
 
 == Technical overview
 
@@ -101,11 +104,16 @@ If a HA scenario is chosen, additionally
 // Minimum requirements (prerequisites) for this guide
 // * Requirement 1 https://url[url]
 // * Requirement 2 https://url[url]
+The minimum requirements to get started are:
+
+* an Azure account, to be able to deploy the solution
+* an SAP account, to get the needed SAP media for the solution you want to deploy
+
 === The Fortinet Solutions
 
 ==== FortiGate
-FortiGate NGFWs enable security-driven networking and consolidate industry-leading security capabilities such as intrusion prevention system (IPS), web filtering, secure sockets layer (SSL) inspection, and automated threat protection.
-This deployment contains an HA Cluster of two FortiGate Instances which provides Segmentation within the HUB network and provides Segmentation and Security Inspection for communication to and from the SAP SPOKE network.
+FortiGate Next Generation Firewall (NGFW) enable security-driven networking and consolidate industry-leading security capabilities such as intrusion prevention system (IPS), web filtering, secure sockets layer (SSL) inspection, and automated threat protection.
+This deployment contains an HA Cluster of two FortiGate instances which provides segmentation within the HUB network and provides segmentation and security inspection for communication to and from the SAP SPOKE network.
 The FortiGate Firewall Cluster can be accessed via HTTPs or via SSH on their public IP and credentials output by the terraform deployment.
 
 Further Information on the configuration can be found within the the following Guides:
@@ -130,7 +138,7 @@ Further Information on the configuration can be found within the the following G
 . https://www.fortinet.com/sap[Fortinet Solutions for SAP]
 
 
-//== Installation
+== Installation
 
 
 //=== Install from the SUSE Rancher Apps & Marketplace
@@ -148,8 +156,6 @@ Further Information on the configuration can be found within the the following G
 
 //. Step 3.
 
-
-
 //=== Install using generic/manual steps
 
 //Provide steps or link to existing document.
@@ -157,7 +163,13 @@ Further Information on the configuration can be found within the the following G
 //---
 //echo "Use code blocks for command-line steps."
 //---
-== Configuring the Cloud Shell
+
+The overall process looks like
+
+image::Flow-SAPAutomation2.png[title=Workflow of the Automation,scaledwidth=85%,align="center"]
+
+
+=== Configuring the Cloud Shell
 
 ifeval::[ "{cloud}" == "Azure" ]
 Start an Azure Cloud Shell simply from the top menu within Azure Portal. It is the small icon with the commandline prompt.
@@ -204,7 +216,7 @@ TIP: For more details about creating GCP Service Account key, refer to https://c
 NOTE: For simplification, the default GCP Service Account will be used in this guide.
 endif::[]
 
-== Ensuring Terraform is installed
+=== Ensuring Terraform is installed
 
 ifeval::[ "{cloud}" == "Azure" ]
 Terraform is already deployed as part of the Azure Cloud Shell. The following command output shows the Terraform version used at the time of creating this guide:
@@ -252,7 +264,7 @@ on linux_amd64
 endif::[]
 
 
-== Preparing the SAP  media
+=== Preparing the SAP media
 
 With the correct entitlement, SAP media can be downloaded from the SAP Web site at https://support.sap.com/en/my-support/software-downloads.html. The SAP Media needs to be made available so it can be accessed during the deployment.
 
@@ -368,7 +380,7 @@ endif::[]
 
 
 
-== Downloading and configuring the Automation code
+=== Downloading and configuring the Automation code
 
 The SUSE and Fortinet SAP Automation code is published in GitHub.
 
@@ -402,7 +414,6 @@ $ cp <GCP Service Account Key> suse-sap-automation/ha-sap-terraform-deployments/
 ----
 endif::[]
 
-
 NOTE: If the following SSH keys already exist, the next step can be skipped.
 
 Then, generate SSH key pairs to allow for accessing the SAP HANA instances:
@@ -412,7 +423,7 @@ $ cd ~
 $ ssh-keygen -q -t rsa -N '' -f  ~/.ssh/id_rsa
 ----
 
-=== Configuring the deployment options and modifying the Terraform variables
+==== Configuring the deployment options and modifying the Terraform variables
 
 The files that need to be configured are contained in a subdirectory of the project. Use that as the working directory:
 
@@ -785,14 +796,14 @@ fortiadc_vm_username    = "azureuser"
 fortiadc_vm_password    = "xxxxxxxxx^"
 ----
 
-== Finalizing the automation configuration
+=== Finalizing the automation configuration
 
 ifeval::[ "{cloud}" == "Azure" ]
 Ensure that the subscription used to host the SAP HANA HA cluster meets the infrastructure quota requirements. For more info, refer to https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/get-started
 endif::[]
 
 ifeval::[ "{cloud}" == "AWS" ]
-=== Subscribing to the AWS Marketplace offer
+==== Subscribing to the AWS Marketplace offer
 
 To automatically deploy instances from the AWS Marketplace, ensure to *Subscribe* to the offering.
 
@@ -801,7 +812,7 @@ A link for {sles4sap} 15 SP2 can be found at link:https://aws.amazon.com/marketp
 If a different version of {sles4sap} is required, subscribe to the relevant version on the marketplace.
 
 
-== Configuring IAM policies
+=== Configuring IAM policies
 
 If the deployment is being run from the root user of the AWS account, or if the user specified when configuring the AWS CLI has
 Admin privileges in your AWS account, you can skip this step.
@@ -853,7 +864,7 @@ Ensure that the GCP Project used to host the SAP HANA HA cluster meets the infra
 endif::[]
 
 
-== Deploying the project
+=== Deploying the project
 
 Terraform will create and name resources when running the deployment based on the "workspace" in use.
 It is highly recommended to create a unique workspace from which to run the deployment.
@@ -865,7 +876,7 @@ $ terraform apply
 ----
 
 TIP: The Cloud Shell has a timeout of around 20 minutes and the shell will close if left
-unattended, resulting in a failed deployment.  It is strongly advised to retain focus on the Cloud Shell window to ensure the timeout does not occur.
+unattended, resulting in a failed deployment.  It is strongly advised to retain focus on the Cloud Shell window to ensure the timeout does not occur as a full deployment could take nearly four hours.
 
 
 ifeval::[ "{cloud}" == "Azure" ]
@@ -1056,7 +1067,7 @@ netweaver_public_name = []
 -----
 endif::[]
 
-== Tearing down
+=== Tearing down
 
 When finished with the deployment, or even if the deployment has failed, ensure that Terraform is used to tear down the environment.
 
@@ -1110,11 +1121,14 @@ endif::[]
 Combining the SUSE SAP automation with a automated Fortinet Security Fabric provisioning results in an architecture which provides added security, optimized connectivity and faster rollout of an SAP landscape in Azure.
 
 
-//== Additional resources
+== Additional resources
 
-//Learn more about the capabilities of {title} with these additional references.
+Learn more about the capabilities of {title} with these additional references.
 //Use an unordred lists for references
-//* https://url[reference-title]
+
+* https://www.fortinet.com/sap[Fortinet Solutions for SAP]
+* https://www.suse.com/partners/alliance/sap/[SUSE Solutions for SAP]
+* https://docs.microsoft.com/en-us/azure/architecture/solution-ideas/articles/sap-workload-automation-suse[SAP workload automation using SUSE on Azure]
 //* https://url/[reference-title]
 
 
@@ -1127,7 +1141,7 @@ Combining the SUSE SAP automation with a automated Fortinet Security Fabric prov
 :leveloffset: 0
 
 == Legal notice
-include::common_trd_legal_notice.adoc[]
+include::../../../../common/adoc/common_trd_legal_notice.adoc[]
 
 ++++
 <?pdfpagebreak?>
@@ -1135,6 +1149,6 @@ include::common_trd_legal_notice.adoc[]
 
 
 :leveloffset: 0
-include::common_gfdl1.2_i.adoc[]
+include::../../../../common/adoc/common_gfdl1.2_i.adoc[]
 
 //end
