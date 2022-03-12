@@ -199,7 +199,11 @@ https://docs.kasten.io/latest/access/authentication.html#id5[Direct access] to t
 If accessing the K10 API directly or using kubectl, any authentication method configured for the cluster is acceptable.  For more information, see https://kubernetes.io/docs/reference/access-authn-authz/authentication/[Kubernetes authentication].
 
 
-https://docs.kasten.io/latest/access/authentication.html#id6[Basic] authentication allows you to protect access to the K10 dashboard with a user name and password. To enable basic authentication, you will first need to generate https://httpd.apache.org/docs/2.4/programs/htpasswd.html[htpasswd] credentials by either using an online http://www.htaccesstools.com/htpasswd-generator/[tool] or via the htpasswd binary found on most systems. Once generated, you need to supply the resulting string with the Helm install or upgrade command using the following flags:
+*Basic authentication*
+https://docs.kasten.io/latest/access/authentication.html#id6[Basic] authentication allows you to protect access to the K10 dashboard with a user name and password.
+
+To enable basic authentication, you will first need to generate https://httpd.apache.org/docs/2.4/programs/htpasswd.html[htpasswd] credentials by either using an online http://www.htaccesstools.com/htpasswd-generator/[tool] or via the htpasswd binary found on most systems.
+Once generated, you need to supply the resulting string with the Helm install or upgrade command using the following flags:
 +
 [source, bash]
 ----
@@ -207,7 +211,9 @@ https://docs.kasten.io/latest/access/authentication.html#id6[Basic] authenticati
 --set auth.basicAuth.htpasswd='example:$apr1$qrAVXu.v$Q8YVc50vtiS8KPmiyrkld0'
 ----
 
-Alternatively, you can use an existing secret that contains a file created with htpasswd. The secret must be in the K10 namespace. This secret must be created with the key named auth and the value as the password generated using htpasswd in the data field of the secret.
+Alternatively, you can use an existing secret that contains a file created with htpasswd.
+The secret must be in the K10 namespace.
+This secret must be created with the key named auth and the value as the password generated using htpasswd in the data field of the secret.
 +
 [source, bash]
 ----
@@ -215,63 +221,71 @@ Alternatively, you can use an existing secret that contains a file created with 
 --set auth.basicAuth.secretName=my-basic-auth-secret
 ----
 
-https://docs.kasten.io/latest/access/authentication.html#id7[Token] authentication is also supported.  To enable token authentication, use the following flag as part of the initial Helm install or subsequent Helm upgrade command.
+*Token authentication*
+https://docs.kasten.io/latest/access/authentication.html#id7[Token] authentication is also supported.
+Token authentication allows using any token that can be verified by the Kubernetes server.
+For more information about token authentication, see:
++
+*  https://docs.kasten.io/latest/access/authentication.html#id8[Obtaining Tokens]
+*  https://kubernetes.io/docs/reference/access-authn-authz/authentication/#authentication-strategies[Authentication Strategies]
+
+
+. To enable token authentication, use the following flag as part of the initial Helm install or subsequent Helm upgrade command.
 +
 [source, bash]
 ----
 --set auth.tokenAuth.enabled=true
 ----
 
-Once the dashboard is configured, you will be prompted to provide a bearer token that will be used when accessing the dashboard.
-
+. Once the dashboard is configured, you will be prompted to provide a bearer token that will be used when accessing the dashboard.
++
 //kubernetes_gs_rancher_veeam-kasten_image_kasten_signin-1
 image::rancher_veeam-kasten_kasten_signin-1.png[scaledwidth="85%", align="center"]
 
 
-Token authentication allows using any token that can be verified by the Kubernetes server.  For more information about token authentication, see:
-
-•  https://docs.kasten.io/latest/access/authentication.html#id8 [Obtaining Tokens]
-•  https://kubernetes.io/docs/reference/access-authn-authz/authentication/#authentication-strategies [Authentication Strategies]
-
 The most common token type that you can use is a service account bearer token.
-You can use kubectl to extract such a token from a service account that you know has the proper permissions.
 
-•  Get the SA secret
+. You can use kubectl to extract such a token from a service account that you know has the proper permissions.
 
+.. Get the SA secret
++
 [source, bash]
 ----
 sa_secret=$(kubectl get serviceaccount my-kasten-sa -o jsonpath="{.secrets[0].name}" --namespace kasten-io)
 ----
 
-•  Extract the token
-
+.. Extract the token
++
 [source, bash]
 ----
 kubectl get secret $sa_secret --namespace kasten-io -ojsonpath="{.data.token}{'\n'}" | base64 --decode
 ----
 
-Alternatively, you can create a new service account from which to extract the token.
-
+. Alternatively, you can create a new service account from which to extract the token.
++
 [source, bash]
 ----
 kubectl create serviceaccount my-kasten-sa --namespace kasten-io
 ----
-
++
 In this case, you will need to create a role binding or cluster role binding for the account to ensure that it has the appropriate permissions for K10.
-To learn more about the necessary K10 permissions, see https://docs.kasten.io/latest/access/authorization.html#authz [Authorization.]
+To learn more about the necessary K10 permissions, see https://docs.kasten.io/latest/access/authorization.html#authz[Authorization].
 
-Demonstration
 
-Kasten K10 Dashboard Overview
+== Demonstration
 
-The K10 dashboard is broken up into several different sections. A brief description is provided in the sections below.
+=== Kasten K10 Dashboard Overview
+
+The K10 dashboard is divided into several different sections, described below.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-1
 image::rancher_veeam-kasten_K10_Dashboard-1.png[scaledwidth="85%", align="center"]
 
-It is also possible to perform an interactive walkthrough of the K10 dashboard via a Guided Tour. The tour is available when the K10 dashboard is accessed for the first time or via the Dashboard option on the https://docs.kasten.io/latest/usage/overview.html#k10-settings [Settings] page.
+NOTE: It is also possible to perform an interactive walkthrough of the K10 dashboard via a Guided Tour.
+The tour is available when the K10 dashboard is accessed for the first time or via the Dashboard option on the https://docs.kasten.io/latest/usage/overview.html#k10-settings[Settings] page.
 
-System Overview
+
+*System Overview*
 
 The top of the K10 dashboard displays a list of applications (currently mapped to namespaces), any policies that might exist in the system, and a summary of the cluster's backup data footprint.
 
@@ -279,82 +293,101 @@ The top of the K10 dashboard displays a list of applications (currently mapped t
 image::rancher_veeam-kasten_K10_Dashboard-2.png[scaledwidth="85%", align="center"]
 
 After filtering to only include applications that have stateful services (defined as containing a persistent volume), the above screen breaks down each section into three categories:
++
+* Unmanaged: There are no protection policies that cover this object
+* Non-compliant: A policy applies to this object, but the actions associated with the policy are failing (e.g., due to underlying storage slowness, configuration problems, etc.) or the actions haven't been invoked yet (e.g., right after policy creation)
+* Compliant: Objects to which both policies apply and the policy SLAs are being respected
 
-•  Unmanaged: There are no protection policies that cover this object
-•  Non-compliant: A policy applies to this object but the actions associated with the policy are failing (e.g., due to underlying storage slowness, configuration problems, etc.) or the actions haven't been invoked yet (e.g., right after policy creation)
-•  Compliant: Objects that both policies apply to and the policy SLAs are being respected
 
-Applications, Namespaces, and Workloads
+*Applications, Namespaces, and Workloads*
 
-The K10 platform by default equates names to applications for ease of use and consistency with Kubernetes best practices, use of RBAC, and to mirror the most common application deployment pattern. However, as shown later, policies can be defined to operate on more than one namespace or only operate on a subset of an application residing in a single namespace.
+The K10 platform by default equates names to applications for ease of use and consistency with Kubernetes best practices, use of RBAC, and to mirror the most common application deployment pattern.
+However, as shown later, policies can be defined to operate on more than one namespace or only operate on a subset of an application residing in a single namespace.
 
-Assuming you have already installed applications, clicking on the Applications card on the dashboard will take you to the following view. Note that if you clicked on one of the Compliant/Non-Compliant/Unmanaged buttons, it would automatically filter the view below for you.
-
+Assuming you have already installed applications, clicking on the Applications card on the dashboard will take you to the following view.
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-3
 image::rancher_veeam-kasten_K10_Dashboard-3.png[scaledwidth="85%", align="center"]
 
-An application, in turn, is made up of multiple Kubernetes resources and workloads including deployments and stateful sets. 
+NOTE: If you click on the ___Compliant__, __Non-Compliant__, or __Unmanaged buttons__, it would automatically filter the view for you.
 
+
+An application is made up of multiple Kubernetes resources and workloads, including deployments and stateful sets. 
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-4
 image::rancher_veeam-kasten_K10_Dashboard-4.png[scaledwidth="85%", align="center"]
-
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-5
 image::rancher_veeam-kasten_K10_Dashboard-5.png[scaledwidth="85%", align="center"]
 
-Within K10, policies are used to automate your data management workflows. Going back to the main dashboard, you will find a section on how to manage policies right next to the Applications card. To achieve this, they combine actions you want to take (e.g., snapshot), a frequency or schedule for how often you want to take that action, and selection criteria for the resources you want to manage.
 
+Within K10, policies are used to automate your data management workflows.
+Going back to the main dashboard, you will find a section on how to manage policies right next to the __Applications__ card.
+To achieve this, policies combine actions you want to take (e.g., snapshot), a frequency or schedule for how often you want to take that action, and selection criteria for the resources you want to manage.
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-6
 image::rancher_veeam-kasten_K10_Dashboard-6.png[scaledwidth="85%", align="center"]
 
-If you click on the Policies card, you will notice in the above screenshot that no default policies are created at install time but a policy can be either created from this page or from the application page shown earlier.
+If you click the __Policies__ card, you will notice that no default policies are created at install time, but a policy can be either created from this page or from the application page shown earlier.
 
-Creating a Location Profile 
 
-K10 can usually invoke protection operations such as snapshots within a cluster without requiring additional credentials. While this might be sufficient if K10 is running in some of (but not all) the major public clouds and if actions are limited to a single cluster, it is not sufficient for essential operations such as performing real backups, enabling cross-cluster and cross-cloud application migration, and enabling DR of the K10 system itself.
-To enable these actions that span the lifetime of any one cluster, K10 needs to be configured with access to external object storage or external NFS file storage. This is accomplished via the creation of Location Profiles.
+=== Creating a Location Profile 
 
+K10 can usually invoke protection operations such as snapshots within a cluster without requiring additional credentials.
+While this might be sufficient if K10 is running in some (but not all) of the major public clouds and if actions are limited to a single cluster, it is not sufficient for essential operations such as performing real backups, enabling cross-cluster and cross-cloud application migration, and enabling DR of the K10 system itself.
+To enable these actions that span the lifetime of any one cluster, K10 needs to be configured with access to external object storage or external NFS file storage.
+This is accomplished via the creation of Location Profiles.
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-7
 image::rancher_veeam-kasten_K10_Dashboard-7.png[scaledwidth="85%", align="center"]
 
-Profile creation can be accessed from the Settings icon in the top-right corner of the dashboard or via the https://docs.kasten.io/latest/api/profiles.html#api-profile [CRD-based Profiles API].
-Location profiles are used to create backups from snapshots, move applications and their data across clusters and potentially across different clouds, and to subsequently import these backups or exports into another cluster. To create a location profile, click New Profile on the profiles page.
-
+Profile creation can be accessed from the __Settings__ icon in the top-right corner of the dashboard or via the https://docs.kasten.io/latest/api/profiles.html#api-profile[CRD-based Profiles API].
+Location profiles are used to create backups from snapshots, move applications and their data across clusters and potentially across different clouds, and to subsequently import these backups or exports into another cluster.
+To create a location profile, click __New Profile__ on the profiles page.
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-8
 image::rancher_veeam-kasten_K10_Dashboard-8.png[scaledwidth="85%", align="center"]
 
-Object Storage Location
+When exporting to or importing from an object storage location, you are required to pick an object storage provider, a region for the bucket if being used in a public cloud, and the bucket name.
+If a bucket with the given name does not exist, it will be created.
 
-As mentioned above, exporting or importing data requires an object storage location. You are therefore required to pick an object storage provider, a region for the bucket if being used in a public cloud, and the bucket name. If a bucket with the given name does not exist, it will be created.
+If an S3-compatible object storage system is used that is not hosted by one of the supported cloud providers, an S3 endpoint URL will need to be specified and optionally, SSL verification might need to be disabled.
+Disabling SSL verification is only recommended for test setups.
 
-If an S3-compatible object storage system is used that is not hosted by one of the supported cloud providers, an S3 endpoint URL will need to be specified and optionally, SSL verification might need to be disabled. Disabling SSL verification is only recommended for test setups.
+NOTE: When certain cloud providers (e.g., AWS) are selected, provider-specific options (e.g., IAM Roles) will appear for configuration, if needed.
 
-NOTES: When certain cloud providers (e.g., AWS) are selected, provider-specific options (e.g., IAM Roles) will appear for configuration if needed.
 
-When Validate and Save is selected, the config profile will be created and a profile similar to the following will appear:
-
+Once you click __Validate__ or __Save__, the config profile will be created and a profile similar to the following will appear:
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-9
 image::rancher_veeam-kasten_K10_Dashboard-9.png[scaledwidth="85%", align="center"]
 
-Protecting Applications
 
-Protecting an application with K10, usually accomplished by creating a policy, requires the understanding and use of three concepts:
-•  Snapshots and Backups: Depending on your environment and requirement, you might need just one or both of these data capture mechanisms
-•  Scheduling: Specification of application capture frequency and snapshot/backup retention objectives
-•  Selection: This defines not just which applications are protected by a policy but, whenever finer-grained control is needed, resource filtering can be used to restrict what is captured on a per-application basis
+=== Protecting Applications
 
-This section demonstrates how to use these concepts in the context of a K10 policy to protect applications. Today, an application for K10 is defined as a collection of namespaced Kubernetes resources (e.g., ConfigMaps, Secrets), relevant non-namespaced resources used by the application (e.g., StorageClasses), Kubernetes workloads (i.e., Deployments, StatefulSets, OpenShift DeploymentConfigs, and standalone Pods), deployment and release information available from Helm v3, and all persistent storage resources (e.g., PersistentVolumeClaims and PersistentVolumes) associated with the workloads.
+Protecting an application with K10, usually accomplished by creating a policy, which requires understanding three concepts:
 
-While you can always create a policy from scratch from the policies page, the easiest way to define policies for unprotected applications is to click on the Applications card on the main dashboard. This will take you to a page where you can see all applications in your Kubernetes cluster.
+* Snapshots and Backups: Data capture mechanisms - depending on your environment and requirements, you might need just one or both
+* Scheduling: Specification of application capture frequency and snapshot/backup retention objectives
+* Selection: Identification of the applications protected by a policy - resource filtering can be used to restrict what is captured on a per-application basis
 
+This section demonstrates how to use these concepts in the context of a K10 policy to protect applications.
+Today, an application for K10 is defined as a collection of namespaced Kubernetes resources (e.g., ConfigMaps, Secrets), relevant non-namespaced resources used by the application (e.g., StorageClasses), Kubernetes workloads (e.g., Deployments, StatefulSets, standalone pods, etc.), deployment and release information available from Helm v3, and all persistent storage resources (e.g., PersistentVolumeClaims and PersistentVolumes) associated with the workloads.
+
+While you can always create a policy from scratch from the Policies page, the easiest way to define policies for unprotected applications is to click on the __Applications__ card on the main dashboard.
+This will take you to a page where you can see all applications in your Kubernetes cluster.
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-10
 image::rancher_veeam-kasten_K10_Dashboard-10.png[scaledwidth="85%", align="center"]
 
-To protect any unmanaged application, simply click Create a policy and, as shown below, that will take you to the policy creation section with an auto-populated policy name that you can change. The concepts highlighted above will be described in the below sections in the context of the policy creation workflow.
-
+To protect any unmanaged application, simply click __Create a policy__ and, as shown below, this will take you to the policy creation section with an auto-populated policy name that you can change.
+The concepts highlighted above will be described below in the context of the policy creation workflow.
++
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-11
 image::rancher_veeam-kasten_K10_Dashboard-11.png[scaledwidth="85%", align="center"]
 
-Snapshots and Backups
+
+=== Snapshots and Backups
 
 All policies center around the execution of actions and, for protecting applications, you start by selecting the snapshot action with an optional backup (currently called export) option to that action.
 
