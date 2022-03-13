@@ -391,47 +391,63 @@ image::rancher_veeam-kasten_K10_Dashboard-11.png[scaledwidth="85%", align="cente
 
 All policies center around the execution of actions and, for protecting applications, you start by selecting the snapshot action with an optional backup (currently called export) option to that action.
 
-Snapshots
+*Snapshots*
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-12
 image::rancher_veeam-kasten_K10_Dashboard-12.png[scaledwidth="85%", align="center"]
 
-Note
-
-A number of public cloud providers (e.g., AWS, Azure, Google Cloud) actually store snapshots in object storage and they are retained independent of the lifecycle of the primary volume. However, this is not true of all public clouds (e.g., IBM Cloud) and you might also need to enable backups in public clouds for safety. Please check with your cloud provider's documentation for more information.
-
-Snapshots are the basis of persistent data capture in K10. They are usually used in the context of disk volumes (PVC/PVs) used by the application but can also apply to application-level data capture (e.g., with Kanister).
+Snapshots are the basis of persistent data capture in K10.
+They are usually used in the context of disk volumes (PVC/PVs) used by the application but can also apply to application-level data capture (e.g., with Kanister).
 
 Snapshots, in most storage systems, are very efficient in terms of having a very low performance impact on the primary workload, requiring no downtime, supporting fast restore times, and implementing incremental data capture.
 
-However, storage snapshots usually also suffer from constraints such as having relatively low limits on the maximum number of snapshots per volume or per storage array. Most importantly, snapshots are not always durable. First, catastrophic storage system failure will destroy your snapshots along with your primary data. Further, in a number of storage systems, a snapshot's lifecycle is tied to the source volume. So, if the volume is deleted, all related snapshots might automatically be garbage collected at the same time. It is therefore highly recommended that you create backups of your application snapshots too.
+However, storage snapshots usually also suffer from constraints such as having relatively low limits on the maximum number of snapshots per volume or per storage array.
+Most importantly, snapshots are not always durable.
+Catastrophic storage system failure will destroy your snapshots along with your primary data.
+Further, in a number of storage systems, a snapshot's lifecycle is tied to the source volume.
+So, if the volume is deleted, all related snapshots might automatically be garbage collected at the same time.
+It is therefore highly recommended that you create backups of your application snapshots too.
 
-Backups
+NOTE: A number of public cloud providers (e.g., AWS, Azure, Google Cloud) actually store snapshots in object storage, and they are retained independent of the lifecycle of the primary volume.
+However, this is not true of all public clouds (e.g., IBM Cloud), and you might need to enable backups in public clouds for safety.  Please check with your cloud provider's documentation for more information.
+
+
+*Backups*
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-13
 image::rancher_veeam-kasten_K10_Dashboard-13.png[scaledwidth="85%", align="center"]
 
-Scheduling
+*[WHAT TEXT GOES HERE]*
+
+
+=== Scheduling
 
 There are four components to scheduling:
 
-•  How frequently the primary snapshot action should be performed
-•  How often snapshots should be exported into backups
-•  Retention schedule of snapshots and backups
-•  When the primary snapshot action should be performed
+* How frequently the primary snapshot action should be performed
+* How often snapshots should be exported into backups
+* Retention schedule of snapshots and backups
+* When the primary snapshot action should be performed
 
-Action Frequency
+
+*Action Frequency*
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-14
 image::rancher_veeam-kasten_K10_Dashboard-14.png[scaledwidth="85%", align="center"]
 
-Actions can be set to execute at an hourly, daily, weekly, monthly, or yearly granularity, or on demand. By default, actions set to hourly will execute at the top of the hour and other actions will execute at midnight UTC.
+Actions can be set to execute at an hourly, daily, weekly, monthly, or yearly granularity, or on demand.
+By default, actions set to hourly will execute at the top of the hour and other actions will execute at midnight UTC.
 
-It is also possible to select the time at which scheduled actions will execute and sub-frequencies that execute multiple actions per frequency. See https://docs.kasten.io/latest/usage/protect.html#advanced-schedule-options [Advanced Schedule] Options below.
+It is also possible to select the time at which scheduled actions will execute and sub-frequencies that execute multiple actions per frequency.
+See https://docs.kasten.io/latest/usage/protect.html#advanced-schedule-options[Advanced Schedule Options].
 
-Sub-hourly actions are useful when you are protecting mostly Kubernetes objects or small data sets. Care should be taken with more general-purpose workloads because of the risk of stressing underlying storage infrastructure or running into storage API rate limits. Further, sub-frequencies will also interact with retention (described below). For example, retaining 24 hourly snapshots at 15-minute intervals would only retain 6 hours of snapshots.
+Sub-hourly actions are useful when you are protecting mostly Kubernetes objects or small data sets.
+Care should be taken with more general-purpose workloads because of the risk of stressing underlying storage infrastructure or running into storage API rate limits.
+Further, sub-frequencies will also interact with retention (described below).
+For example, retaining 24 hourly snapshots at 15-minute intervals would only retain 6 hours of snapshots.
 
-Snapshot Exports to Backups
+
+=== Snapshot Exports to Backups
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-15
 image::rancher_veeam-kasten_K10_Dashboard-15.png[scaledwidth="85%", align="center"]
