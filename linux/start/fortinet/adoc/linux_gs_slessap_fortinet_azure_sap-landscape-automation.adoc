@@ -428,6 +428,8 @@ $ ssh-keygen -q -t rsa -N '' -f  ~/.ssh/id_rsa
 The files that need to be configured are contained in a subdirectory of the project. Use that as the working directory:
 
 ifeval::[ "{cloud}" == "Azure" ]
+The project itself has code for several cloud service providers and virtual infrastructures, but the Fortinet addition is at the moment only available for Azure. Please get in contact with us if you would like to see it for others too.
+
 ----
 cd ~/ha-sap-terraform-deployments/azure
 ----
@@ -593,6 +595,8 @@ pre_deployment = true
 ifeval::[ "{cloud}" == "Azure" ]
 The Jumphost server (Bastion Host Server) is enabled by default, and provide the public IP address to the database.
 Otherwise the deployed instances will all get a public ip
+
+With the Fortinet additon it is mandatory to have the bastion host enabled.
 ----
 bastion_enabled = true
 ----
@@ -617,7 +621,7 @@ The default is set to some standard types, and you only need to enable and chang
 
 ifeval::[ "{cloud}" == "Azure" ]
 ----
-#hana_vm_size = "Standard_E4s_v3"
+#hana_vm_size = "Standard_E8s_v3"
 ----
 endif::[]
 
@@ -728,7 +732,7 @@ netweaver_sapexe_folder   =  "your_download_basket"
 netweaver_additional_dvds = ["your_export_folder", "your_hdbclient_folder"]
 ----
 
-In order to additionally deploy the Fortinet services, remember we need to choose a HUB-SPOKE network scenario and enable the flag
+In order to additionally deploy the Fortinet services, remember we need to choose a HUB-SPOKE network scenario and enable the flag for Fortinet
 ----
 fortinet_enabled=true
 ----
@@ -748,7 +752,7 @@ fortiadc_vm_password    = "SuSE1234x"
 
 All other values should be set by defaults and use the PAYG instances of Fortinet.
 
-If you want to use BYOL you need to copy the Fortinet license files into the directory
+If you want to use BYOL with your Fortinet services, you need to buy and then copy the Fortinet license files into the directory
 ----
 cp *.lic ~/ha-sap-terraform-deployments/azure
 ----
@@ -793,8 +797,32 @@ fortinet_enabled         = true
 fortigate_vm_username    = "azureuser"
 fortigate_vm_password    = "xxxxxxxxx"
 fortiadc_vm_username    = "azureuser"
-fortiadc_vm_password    = "xxxxxxxxx^"
+fortiadc_vm_password    = "xxxxxxxxx"
 ----
+
+[NOTE]
+====
+Here how the Fortinet section looks for the BYOL chance_variable:
+..
+fortinet_vm_license_type = "byol"
+
+fortigate_a_license_file = "license_fortigate_a.lic"
+fortigate_b_license_file = "license_fortigate_b.lic"
+fortigate_os_image = "fortinet:fortinet_fortigate-vm_v5:fortinet_fg-vm:7.0.2"
+..
+fortinet_enabled         = true
+fortigate_vm_username    = "azureuser"
+fortigate_vm_password    = "xxxxxxxxx"
+fortiadc_vm_username    = "azureuser"
+fortiadc_vm_password    = "xxxxxxxxx"
+..
+fortiadc_a_license_file = "license_fortiadc_a.lic"
+fortiadc_b_license_file = "license_fortiadc_b.lic"
+fortiadc_os_image = "fortinet:fortinet-fortiadc:fad-vm-byol:6.1.3"
+..
+====
+
+
 
 === Finalizing the automation configuration
 
