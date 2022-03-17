@@ -4,7 +4,31 @@ ifdef::focusRancher[]
 === {pn_Rancher}
 
 // leverage multiple prep sections
-ifdef::layerSLEMicro,layerSLES[include::./SA-RA-Deployment-OS-prep.adoc[]]
+ifndef::layerSLEMicro,layerSLES[include::./SA-RA-Deployment-OS-prep.adoc[]]
+Preparation(s)::
++
+. For the respective node's firewall service, either
+* enable and configure the necessary inbound link:{pn_Rancher_PortURL}[ports] or
+* stop and completely disable the firewall service.
+ifdef::layerK3s,layerRKE1,layerRKE2[]
++
+. Determine the desired link:{pn_Rancher_TLSURL}[SSL configuration] for TLS termination
+* Rancher-generated TLS certificate
+NOTE: This is the easiest way of installing {pn_Rancher} with self-signed certificates.
+* Let’s Encrypt
+* Bring your own certificate
+endif::layerK3s,layerRKE1,layerRKE2[]
+ifndef::layerK3s[]
++
+. Obtain a link:{kubectl_DownloadURL}[kubectl] binary matching the respective Kubernetes version for this {pn_Rancher} implementation.
+endif::layerK3s[]
++
+. Obtain a link:{helm_DownloadURL}[Helm] binary matching the respective Kubernetes version for this {pn_Rancher} implementation.
++
+NOTE: Enable the respective kubeconfig setting for kubectl
+ifdef::layerK3s[, {pn_K3s} - /etc/rancher/k3s/k3s.yml,]
+ifdef::layerRKE2[, {pn_RKE2} - /etc/rancher/rke2/rke2.yaml,]
+to be leveraged by helm command.
 
 Deployment Process::
 While logged into the node, as root or with sudo privileges, install {pn_Rancher}:
@@ -21,7 +45,7 @@ sudo docker run \
 ----
 +
 ifdef::BP[]
-TIP: This process deploys an auto-generated, self-signed security certificate for the {pn_Rancher} service. Other <<g-security>> certificate authority options are described in the "Install/Upgrade {portfolioName} on a Kubernetes Cluster" in the {pn_Rancher} {pn_Rancher_DocURL}[product documentation].
+TIP: This process deploys an auto-generated, self-signed security certificate for the {pn_Rancher} service. Other <<g-security>> certificate authority options are described in the "Install/Upgrade {portfolioName} on a Kubernetes Cluster" in the {pn_Rancher} link:{pn_Rancher_DocURL}[product documentation].
 endif::BP[]
 +
 . Once the previous command completes, from a client system connect via a web browser to the {pn_Rancher} node via *_IPAddress_* or *_HostName_* and accept the service certificate (if deemed valid).
@@ -30,89 +54,95 @@ endif::BP[]
 IMPORTANT: On the second configuration page, also ensure the "Server URL" is set to the *_IPAddress_* or *_HostName_* of this deployed {pn_Rancher} node.
 endif::GS[]
 ifdef::RC,RI[]
-. Create the Helm Chart custom resource for cert-manager:
+. Install cert-manager
 * Set the following variable with the desired version of cert-manager
 +
 ----
 CERT_MANAGER_VERSION=""
 ----
 +
-NOTE: At this time, the most current, supported version of cert-manager is v1.0.4
+NOTE: At this time, the most current, supported version of cert-manager is {pn_Rancher_certVer}
 +
-// ** e.g., `CERT_MANAGER_VERSION="v1.0.4"`
-* Create the cert-manager Helm Chart custom resource manifest
-+
-----
-cat <<EOF> cert-manager-helm-crd.yaml
-apiVersion: helm.cattle.io/v1
-kind: HelmChart
-metadata:
-  name: cert-manager
-  namespace: kube-system
-spec:
-  chart: cert-manager
-  targetNamespace: cert-manager
-  version: ${CERT_MANAGER_VERSION}
-  repo: https://charts.jetstack.io
-EOF
-----
-+
-* Create the cert-manager CRDs and apply the Helm Chart resource manifest: 
+* Create the cert-manager CRDs and apply the Helm Chart resource manifest
 +
 ----
-kubectl create namespace cert-manager
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.crds.yaml
 
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.crds.yaml 
+# Add the Jetstack Helm repository
+helm repo add jetstack https://charts.jetstack.io
 
-sudo mv cert-manager-helm-crd.yaml /var/lib/rancher/k3s/server/manifests/
+# Update your local Helm chart repository cache
+helm repo update
+
+# Install the cert-manager Helm chart
+helm install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version ${CERT_MANAGER_VERSION}
 ----
 +
-** Monitor the progress of the installation: `watch -c "kubectl get deployments -A"`
-*** The deployment is complete when all deployments (cert-manager, cert-manager-cainjector, cert-manager-webhook) show at least "1" as "AVAILABLE"
-*** Use Ctrl+c to exit the watch loop after all pods are running
+** Check the progress of the installation, looking for all pods to be in running status:
 +
-ifdef::layerK3s[]
-. Create the Helm Chart custom resource for {pn_Rancher}:
+----
+kubectl get pods --namespace cert-manager
+----
++
+. Add the {pn_Rancher} helm chart repository:
++
+----
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+----
++
+. Create a namespace for {pn_Rancher}
++
+----
+kubectl create namespace cattle-system
+----
++
+. Prepare to use the Helm Chart for {pn_Rancher}:
 * Set the following variable to the hostname of the {pn_Rancher} server instance
 +
 ----
 HOSTNAME=""
 ----
 +
-// ** e.g., `HOSTNAME="suse-rancher.sandbox.local"`
-// +
-NOTE: This hostname should be resolvable to an IP address of the {pn_K3s} host, or a load balancer/proxy server that supports this installation of {pn_Rancher}.
+NOTE: This hostname should be resolvable to an IP address of the
+ifdef::layerK3s[{pn_K3s}]
+ifdef::layerRKE1[{pn_RKE1}]
+ifdef::layerRKE2[{pn_RKE2}]
+host, or a load balancer/proxy server that supports this installation of {pn_Rancher}.
 +
-* Create the {pn_Rancher} Helm Chart custom resource manifest
-+
-----
-cat <<EOF> suse-rancher-helm-crd.yaml
-apiVersion: helm.cattle.io/v1
-kind: HelmChart
-metadata:
-  name: rancher
-  namespace: kube-system
-spec:
-  chart: rancher
-  targetNamespace: cattle-system
-  repo: https://releases.rancher.com/server-charts/stable
-  set:
-    hostname: ${HOSTNAME}
-EOF
-----
-+
-* Apply the Helm Chart resource manifest: 
+* Set the following variable to the number of deployed
+ifdef::layerK3s[{pn_K3s}]
+ifdef::layerRKE1[{pn_RKE1}]
+ifdef::layerRKE2[{pn_RKE2}]
+nodes planned to host the {pn_Rancher} service
 +
 ----
-kubectl create namespace cattle-system
-sudo mv suse-rancher-helm-crd.yaml /var/lib/rancher/k3s/server/manifests/
+REPLICAS=""
 ----
 +
-** Monitor the progress of the installation: `watch -c "kubectl get pods -n cattle-system"`
-*** The installation is complete when all pods have a status of "Completed" or a status of "Running" with the number of "READY" pods being "1/1", "2/2", etc.
-*** Use Ctrl+c to exit the watch loop after all pods are running
+* Set the following variable to the desired version of {pn_Rancher} server instance
 +
-endif::layerK3s[]
+----
+RANCHER_VERSION=""
+----
++
+* Install the {pn_Rancher} Helm Chart
++
+----
+helm install rancher rancher-stable/rancher \
+  --namespace cattle-system \
+  --set hostname=${HOSTNAME} \
+  --set replicas=${REPLICAS} \
+  --version=${RANCHER_VERSION}
+----
++
+** Monitor the progress of the installation:
++
+----
+kubectl -n cattle-system rollout status deploy/rancher
+----
 
 ifdef::layerRKE1[]
 
@@ -193,14 +223,11 @@ ssh -N -D 8080 user@Linux-host
 +
 NOTE: This will route all traffic from this web browser through the remote Linux host. Be sure to close the tunnel and revert the SOCKS Host settings when you're done.
 +
-. Connect to the {pn_Rancher} web UI and configure {pn_Rancher}:
-* On the client system, use a web browser to connect to the {pn_Rancher} service
-** e.g., `https://suse-rancher.sandbox.local`
+. Connect to the {pn_Rancher} web UI
+* On a client system, use a web browser to connect to the {pn_Rancher} service, via https
 * Provide a new Admin password
 +
-IMPORTANT: On the second configuration page, ensure the "Rancher Server URL" is set to the hostname specified when creating the {pn_Rancher} HelmChart custom resource and the port is 443.
-+
-** e.g., `suse-rancher.sandbox.local:443`
+IMPORTANT: On the second configuration page, ensure the "Rancher Server URL" is set to the hostname specified when installing the {pn_Rancher} Helm Chart and the port is 443.
 
 //-
 Deployment Consideration(s)::
@@ -211,7 +238,7 @@ ifdef::FCTR+Availability[]
 endif::FCTR+Availability[]
 ifdef::FCTR+Security[]
 * <<g-security>>
-** The basic deployment steps described above are for deploying {pn_Rancher} with automatically generated, self-signed security certificates. Other options are to have {pn_Rancher} create public certificates via Let's Encrypt associated with with a publicly resolvable hostname for the {pn_Rancher} server, or to provide preconfigured, private certificates. See {pn_Rancher} https://rancher.com/docs/rancher/v2.x/en/installation/install-rancher-on-k8s/#3-choose-your-ssl-configuration[product documentation] for more information.
+** The basic deployment steps described above are for deploying {pn_Rancher} with automatically generated, self-signed security certificates. Other options are to have {pn_Rancher} create public certificates via Let's Encrypt associated with with a publicly resolvable hostname for the {pn_Rancher} server, or to provide preconfigured, private certificates.
 endif::FCTR+Security[]
 ifdef::FCTR+Integrity[]
 * <<g-integrity>>
@@ -221,7 +248,7 @@ endif::FCTR+Integrity[]
 endif::RC,RI[]
 
 // Next Steps::
-After this successful deployment of the {pn_Rancher} solution, review the {pn_Rancher_DocURL}[product documentation] for details on how downstream Kubernetes clusters can be:
+After this successful deployment of the {pn_Rancher} solution, review the link:{pn_Rancher_DocURL}[product documentation] for details on how downstream Kubernetes clusters can be:
 
 * deployed (refer to sub-section "Setting up Kubernetes Clusters in {portfolioName}") or
 * imported (refer to sub-section "Importing Existing Clusters"), then 

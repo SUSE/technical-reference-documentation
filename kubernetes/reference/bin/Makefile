@@ -92,7 +92,6 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 			  cp ${templateDC} ${DC} && {
 			    echo ADOC_ATTRIBUTES+=\" --attribute ${template}=1\"
 			    echo ADOC_ATTRIBUTES+=\" --attribute focus${focus}=1\"
-			    echo ADOC_ATTRIBUTES+=\" --attribute layer${layerK8s}=1\"
 			    echo ADOC_ATTRIBUTES+=\" --attribute layer${layerOS}=1\"
 			    echo ADOC_ATTRIBUTES+=\" --attribute FLVR=1\"
 			    echo ADOC_ATTRIBUTES+=\" --attribute PoC=1\"

@@ -2,7 +2,7 @@
 == Component model
 
 ifdef::focusRKE2[]
-FixMe-This section describes the various components being used to create a {pn_RKE2} deployment, in the perspective of top to bottom ordering. Once completed, the {pn_RKE2} instance enables the management of multiple Kubernetes clusters, as shown in the following figure:
+This section describes the various components being used to create a {pn_RKE2} solution deployment, in the perspective of top to bottom ordering. Once completed, the {pn_RKE2} instance can be used as the application infrastructure for cloud-native workloads and can be imported into {pn_Rancher} for management.
 endif::focusRKE2[]
 
 === Component overview
@@ -11,7 +11,9 @@ By utilizing:
 
 * Kubernetes Platform - {pn_RKE2}
 ifndef::GS[]
-* Operating System - ifdef::iSLES[{pn_SLES}] ifdef::iSLEMicro[{pn_SLEMicro}}]
+* Operating System -
+ifdef::layerSLEMicro[{pn_SLEMicro}]
+ifdef::layerSLES[{pn_SLES}]
 * Compute Platform
 endif::GS[]
 
@@ -24,22 +26,30 @@ ifdef::SWComp[]
 include::../SUSE/RKE2/SA.adoc[]
 
 ifdef::RC,RI[]
-As {pn_RKE2} relies upon being deployed on a Kubernetes platform, the next section describes such a suggested component layer.
+While all {pn_RKE2} roles can be installed on a single system, a multi-node cluster, is a more production-like approach and will be described in the deployment section.
+
+ifdef::BP[]
+TIP: To improve availability, performance and security, the recommended deployment of a {pn_RKE2} cluster is a pair of nodes for the control plane role, at least three etcd role-based nodes and three or more worker nodes.
+endif::BP[]
 endif::RC,RI[]
+
 ifdef::GS[]
 As {pn_RKE2} can be deployed on a single node, only some prerequisites for the underlying operating system are needed and will be detailed in the deployment section.
 endif::GS[]
 
 ifndef::GS[]
 
-ifdef::iSLEMicro[]
+ifdef::layerSLEMicro[]
 === Software - {pn_SLEMicro}
 
 include::../SUSE/SLE-Micro/SA.adoc[]
+endif::layerSLEMicro[]
 
-With the flexibility of {pn_SLEMicro}, multiple compute platform variants can be considered, as outlined in the next section.
+ifdef::layerSLES[]
+=== Software - {pn_SLES}
 
-endif::iSLEMicro[]
+include::../SUSE/SLES/SA.adoc[]
+endif::layerSLES[]
 
 ////
 Depending on the number and complexity of the components this proceeding section might better be represented as a table with brief descriptions.   Fewer components can be expressed in short paragraph form.
@@ -75,6 +85,7 @@ ifdef::iIHV[]
 ifdef::IHV-Cisco[include::../IHV/Cisco/SA-RA-CompMod.adoc[]]
 ifdef::IHV-DELL[include::../IHV/DELL/SA-RA-CompMod.adoc[]]
 ifdef::IHV-HPE[include::../IHV/HPE/SA-RA-CompMod.adoc[]]
+ifdef::IHV-Fujitsu[include::../IHV/Fujitsu/SA-RA-CompMod.adoc[]]
 ifdef::IHV-Supermicro[include::../IHV/Supermicro/SuperServer/SA-RA-CompMod.adoc[]]
 endif::iIHV[]
 
