@@ -67,6 +67,15 @@ curl -sfL https://get.k3s.io | \
         sh -s -
 ----
 endif::layerSLES+layerK3s+focusRancher[]
+ifdef::focusK3s[]
++
+----
+curl -sfL https://get.k3s.io | \
+        INSTALL_K3S_VERSION=${K3s_VERSION} \
+        INSTALL_K3S_EXEC='server --cluster-init --write-kubeconfig-mode=644' \
+        sh -s -
+----
+endif::focusK3s[]
 ifdef::layerSLEMicro+focusK3s[]
 +
 ** Since SELinux is resident on {pn_SLEMicro}, the {pn_K3s} install command will include another required package "k3s-selinux" as a transactional-update in a new snapshot. So a reboot is required to access the installed package and complete the deployment.
