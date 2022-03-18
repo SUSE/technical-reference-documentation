@@ -267,7 +267,7 @@ endif::[]
 
 === Preparing the SAP media
 
-With the correct entitlement, SAP media can be downloaded from the SAP Web site at https://support.sap.com/en/my-support/software-downloads.html. The SAP Media needs to be made available so it can be accessed during the deployment.
+With the correct entitlement, SAP media can be downloaded from the SAP Web site at https://support.sap.com/en/my-support/software-downloads.html. Make the SAP Media available to be accessed during the deployment.
 
 The SUSE Automation for SAP Applications project allows for three methods for presenting the SAP media:
 
@@ -724,7 +724,7 @@ Again we need to provide the file share for the Netweaver media, which normally 
 ----
 netweaver_storage_account_name = "YOUR_STORAGE_ACCOUNT_NAME
 netweaver_storage_account_key = "YOUR_STORAGE_ACCOUNT_KEY"
-netweaver_storage_account = "//YOUR_STORAGE_ACCOUNT_NAME.file.core.windows.net/path/to/your/nw/installation/master"
+netweaver_storage_account = "//YOUR_STORAGE_ACCOUNT_NAME.file.core.windows.net/path/to/your/nw/installation/media"
 ----
 
 And where the folders for the SAP installer are, relative to the mountpoint of the Netweaver storage account
