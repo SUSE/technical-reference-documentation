@@ -51,6 +51,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 		    echo ADOC_ATTRIBUTES+=\" --attribute Security=1\"
 		    } >> ${DC}
 		}
+		sed -i s/docdate=yyyy-mm-dd/docdate=$(date +%Y-%m-%d)/g ${DC}
 		daps --force -d ${DC} $@ --name "${output}"
 
 	      }
@@ -82,6 +83,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 			    echo ADOC_ATTRIBUTES+=\" --attribute Integrity=1\"
 			  } >> ${DC}
 			}
+			sed -i s/docdate=yyyy-mm-dd/docdate=$(date +%Y-%m-%d)/g ${DC}
 			daps --force -d ${DC} $@ --name "${output}"
 
 		      else
@@ -105,6 +107,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 			    echo ADOC_ATTRIBUTES+=\" --attribute Integrity=1\"
 			  } >> ${DC}
 			}
+			sed -i s/docdate=yyyy-mm-dd/docdate=$(date +%Y-%m-%d)/g ${DC}
 			daps --force -d ${DC} $@ --name "${output}"
 
 		    fi
@@ -158,6 +161,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 			          echo ADOC_ATTRIBUTES+=\" --attribute IHV-${partner}-${productline}=1\"
 			        } >> ${DC}
 			      }
+			      sed -i s/docdate=yyyy-mm-dd/docdate=$(date +%Y-%m-%d)/g ${DC}
 			      daps --force -d ${DC} $@ --name "${output}"
 
 			    else
@@ -184,6 +188,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 			          echo ADOC_ATTRIBUTES+=\" --attribute IHV-${partner}-${productline}=1\"
 			        } >> ${DC}
 			      }
+			      sed -i s/docdate=yyyy-mm-dd/docdate=$(date +%Y-%m-%d)/g ${DC}
 			      daps --force -d ${DC} $@ --name "${output}"
 
 			  fi
