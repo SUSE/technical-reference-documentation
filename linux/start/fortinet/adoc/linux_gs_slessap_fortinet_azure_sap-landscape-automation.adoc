@@ -35,10 +35,10 @@ endif::[]
 // Benefits
 What is Project Mayerhofen?
 
-Project Mayerhofen is a secure automated SAP deployment on Azure, based on the SUSE initiated Github project https://github.com/SUSE/ha-sap-terraform-deployments[Automated SAP/HA Deployments in Public/Private Clouds with Terraform].
+Project Mayerhofen is a secure automated SAP deployment on Azure. It is based on the SUSE initiated GitHub project https://github.com/SUSE/ha-sap-terraform-deployments[Automated SAP/HA Deployments in Public/Private Clouds with Terraform].
 
 
-As organizations upgrade their existing systems and migrate to S/4 HANA, there is the opportunity to migrate to Azure for more flexibility and scalability on demand. However, this also shifts the attack surface for the SAP system as they are no longer in their own datacenter.
+As organizations upgrade their existing systems and migrate to S/4 HANA, there is the opportunity to migrate to Azure for more flexibility and scalability on demand. But, this also shifts the attack surface for the SAP system as they are no longer in their own data center.
 
 A very useful approach to start with in the cloud is Infrastructure-as-Code (IaS), as all steps of deployments can be automated from begin on.
 
@@ -112,7 +112,7 @@ The minimum requirements to get started are:
 === The Fortinet Solutions
 
 ==== FortiGate
-FortiGate Next Generation Firewall (NGFW) enable security-driven networking and consolidate industry-leading security capabilities such as intrusion prevention system (IPS), web filtering, secure sockets layer (SSL) inspection, and automated threat protection.
+FortiGate _Next Generation Firewall_ (NGFW) enable security-driven networking and consolidate industry-leading security capabilities such as _intrusion prevention system_ (IPS), web filtering, _secure sockets layer_ (SSL) inspection, and automated threat protection.
 This deployment contains an HA Cluster of two FortiGate instances which provides segmentation within the HUB network and provides segmentation and security inspection for communication to and from the SAP SPOKE network.
 The FortiGate Firewall Cluster can be accessed via HTTPs or via SSH on their public IP and credentials output by the terraform deployment.
 
@@ -123,11 +123,10 @@ Further Information on the configuration can be found within the the following G
 . https://www.fortinet.com/sap[Fortinet Solutions for SAP]
 
 ==== FortiADC
-FortiADC is an advanced Application Delivery Controller (ADC) that ensures application availability, application security, and
-application optimization. FortiADC offers advanced security features (WAF, DDoS, and AV) and application connectors
-for easy deployment and full visibility to your networks and applications.
+FortiADC is an advanced _Application Delivery Controller_ (ADC) that ensures application availability, application security, and
+application optimization. FortiADC offers advanced security features (WAF, DDoS, and AV) and application connectors for easy deployment and full visibility to your networks and applications.
 
-FortiADC provides a dedicated Connector specific for SAP to allow the same load balancing capabilities like SAP Web Dispatcher with the addition of a Web Application Firewall (WAF).
+FortiADC provides a dedicated Connector specific for SAP to allow the same load balancing capabilities like SAP Web Dispatcher with the addition of a _Web Application Firewall_ (WAF).
 This deployment contains a Cluster of two FortiADC Instances.
 The FortiADC Cluster can be accessed via HTTPs or via SSH on their public IP and credentials output by the terraform deployment.
 
@@ -168,12 +167,12 @@ The overall process looks like
 
 image::linux_gs_slessap_fortinet_azure_sap-landscape-automation_Flow-SAPAutomation2.png[title=Workflow of the Automation,scaledwidth=85%,align="center"]
 
-INFO: The project uses PAYG images by default, so you do not require any subscriptions or license files to provide a simple easy start. But you can use BYOS/BYOL too. The needed changes are mentioned in the tfvars example files.
+INFO: The project use PAYG images by default, so you do not require any subscriptions or license files to provide a simple easy start. But you can use BYOS/BYOL too. The needed changes are mentioned in the tfvars example files.
 
 === Configuring the Cloud Shell
 
 ifeval::[ "{cloud}" == "Azure" ]
-Start an Azure Cloud Shell simply from the top menu within Azure Portal. It is the small icon with the commandline prompt.
+Start an Azure Cloud Shell simply from the top menu within Azure Portal. It is the small icon with the command line prompt.
 
 When Cloud Shell is started the first time you can select between "Bash" and "Powershell". Please use "Bash"
 
@@ -198,7 +197,7 @@ This is described in the documentation linked above.
 
 The command generates a file in `$HOME/.aws/credentials` which is referenced later.
 
-IMPORTANT: The user specified in this step needs certain AWS permissions to ensure the deployment is successful.
+IMPORTANT: The user specified in this step require certain AWS permissions to ensure the deployment is successful.
 endif::[]
 
 ifeval::[ "{cloud}" == "GCP" ]
@@ -267,7 +266,7 @@ endif::[]
 
 === Preparing the SAP media
 
-With the correct entitlement, SAP media can be downloaded from the SAP Web site at https://support.sap.com/en/my-support/software-downloads.html. Make the SAP Media available to be accessed during the deployment.
+With the correct entitlement, SAP media can be downloaded from the SAP Website at https://support.sap.com/en/my-support/software-downloads.html. Make the SAP Media available to be accessed during the deployment.
 
 The SUSE Automation for SAP Applications project allows for three methods for presenting the SAP media:
 
@@ -461,7 +460,8 @@ $ cp terraform.tfvars.example terraform.tfvars
 
 
 Edit the `terraform.tfvars` file and modify it as explained below.
-As there are many option possible, we will describe only one path which will setup the Fortinet appliances and a HANA HSR and a NW HA.
+
+As there are many options possible, we will describe only one possible path, which will set up the Fortinet appliances and a HA HANA System and a Netweaver HA system.
 If you are duplicating the lines before modification, ensure the original is commented out, or the deployment will fail.
 
 ifeval::[ "{cloud}" == "Azure" ]
@@ -760,7 +760,7 @@ If you want to use BYOL with your Fortinet services, you need to buy and then co
 cp *.lic ~/ha-sap-terraform-deployments/azure
 ----
 
-Here is a example tfvars file for a Fortinet deployment in the Hub, and a HA NW750 install with a HA HANA setup in the spoke:
+Here is an example tfvars file for a Fortinet deployment in the Hub, and a HA NW750 install with a HA HANA setup in the spoke:
 ----
 az_region = "westeurope"
 deployment_name = "psfn6"
@@ -1127,7 +1127,6 @@ You need to delete the following GCP components manually:
 * GCP Project
 endif::[]
 
-
 //== Use case and demonstration
 
 //Describe use case and demonstration.
@@ -1136,7 +1135,6 @@ endif::[]
 //====
 // Use admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING) as needed.
 //====
-
 
 //Use sections to break up major actions, such as:
 //=== Prepare the demonstration environment (beyond installation)
