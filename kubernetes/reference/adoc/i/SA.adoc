@@ -7,48 +7,62 @@ With its large community of developers and abundant features and capabilities, K
 
 === Motivation
 
+// ifdef::focusRancher[ include::./SA-{an_Rancher}.adoc[]]
+
+// ifdef::focusK3s,focusRKE1,focusRKE2[ include::./SA-Kubernetes.adoc[]]
+
+// ifdef::RC[]
+Once on such a digital transformation journey, also relevant to focus on areas like:
+
+Workload(s)::
+Determine how to manage and launch internally developed containerized, microservice workloads
++
+ifdef::iISV[]
+or leverage provided offerings from Independent Software Vendors (ISV) such as
+ifdef::ISV-FixMe[]
++
+** add an ISV pointer (R)
+endif::ISV-FixMe[]
+endif::iISV[]
+
+Kubernetes::
++
 ifdef::focusRancher[]
 include::./SA-{an_Rancher}.adoc[]
 endif::focusRancher[]
-
 ifdef::focusK3s,focusRKE1,focusRKE2[]
 include::./SA-Kubernetes.adoc[]
 endif::focusK3s,focusRKE1,focusRKE2[]
 
-ifdef::RC[]
-Once on such a digital transformation journey, some of the next focus areas are:
-
-ifdef::iISV[]
-* Workloads
-** Determine how to launch either internally developed containerized, microservice workloads or leverage offerings from Independent Software Vendors (ISV).
-endif::iISV[]
-
+Compute Platform(s)::
+To optimize availability, performance, scalability and integrity, assess current system or hosting platforms
++
 ifdef::iCSP,iIHV[]
-* Compute Platform
-** To optimize availability, performance, scalability and integrity, assess current system platforms or acquire and utilize new variations from:
 ifdef::iIHV[]
-*** Independent Hardware Vendors (IHV), such as
+from Independent Hardware Vendors (IHV), such as
 ifdef::IHV-Ampere[link:{vn_Ampere_homePage}[{vn_Ampere}] (R)]
 ifdef::IHV-Cisco[link:{vn_Cisco_homePage}[{vn_Cisco}] (R)]
-ifdef::IHV-DELL[link:{vn_Dell_homePage}[{vn_Dell}] (R)]
+ifdef::IHV-Dell[link:{vn_Dell_homePage}[{vn_Dell}] (R)]
 ifdef::IHV-Fujitsu[link:{vn_Fujitsu_homePage}[{vn_Fujitsu}] (R)]
 ifdef::IHV-HPE[link:{vn_HPE_homePage}[{vn_HPE}] (R)]
 ifdef::IHV-HPI[link:{vn_HPI_homePage}[{vn_HPI}] (R)]
 ifdef::IHV-IBM[link:{vn_IBM_homePage}[{vn_IBM}] (R)]
 ifdef::IHV-Lenovo[link:{vn_Lenovo_homePage}[{vn_Lenovo}] (R)]
 ifdef::IHV-Supermicro[link:{vn_SMCi_homePage}[{vn_SMCi}] (R)]
-, as the platform for physical, baremetal, hypervisors and virtual machines
+as the platform for physical, baremetal, hypervisors and virtual machines
 endif::iIHV[]
 ifdef::iCSP[]
-*** Cloud Service Providers (CSP), like
+from Cloud Service Providers (CSP), such as
++
 ifdef::CSP-Amazon[link:{pn_EKS_homePage}[{pn_EKS}] (R)]
 ifdef::CSP-Google[link:{pn_GKS_homePage}[{pn_GKS}] (R)]
 ifdef::CSP-Microsoft[link:{pn_AKS_homePage}[{pn_AKS}] (R)]
-which can also include baremetal, virtual machines plus hosted Kubernetes services
++
+which can span baremetal, virtual machines plus hosted Kubernetes services
 endif::iCSP[]
 endif::iCSP,iIHV[]
 
-endif::RC[]
+// endif::RC[]
 
 === Scope
 

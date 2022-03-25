@@ -124,7 +124,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 		    case ${partner} in
 
 		      Cisco) PL="${trdIHVCiscoPlatform}" ;;
-		      DELL) PL="${trdIHVDELLPlatform}" ;;
+		      Dell) PL="${trdIHVDellPlatform}" ;;
 		      Fujitsu) PL="${trdIHVFujitsuPlatform}" ;;
 		      HPE) PL="${trdIHVHPEPlatform}" ;;
 		      Supermicro) PL="${trdIHVSupermicroPlatform}" ;;
