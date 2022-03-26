@@ -127,7 +127,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 		      Dell) PL="${trdIHVDellPlatform}" ;;
 		      Fujitsu) PL="${trdIHVFujitsuPlatform}" ;;
 		      HPE) PL="${trdIHVHPEPlatform}" ;;
-		      Supermicro) PL="${trdIHVSupermicroPlatform}" ;;
+		      SMCi) PL="${trdIHVSMCiPlatform}" ;;
 		      *) break ;;
 
 		    esac
