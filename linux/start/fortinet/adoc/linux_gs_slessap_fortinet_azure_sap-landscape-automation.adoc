@@ -182,7 +182,7 @@ The overall process is visualized in the figure below:
 
 image::linux_gs_slessap_fortinet_azure_sap-landscape-automation_Flow-SAPAutomation2.png[title=Workflow of the Automation,scaledwidth=85%,align="center"]
 
-INFO: The project uses PAYG images by default. This means there is no need for subscriptions or license files to provide for an easy start. 
+NOTE: The project uses PAYG images by default. This means there is no need for subscriptions or license files to provide for an easy start. 
 But you can use BYOS/BYOL, too. The required changes are mentioned in the _tfvars_ example files.
 
 === Configuring the Cloud Shell
@@ -298,7 +298,7 @@ The different formats have some benefits and drawbacks:
 . The uncompressed/extracted media are the fastest installation method. However, as more files are copied to the cloud share, this also takes time beforehand during preparation.
 
 ifeval::[ "{cloud}" != "GCP" ]
-Here in the example, we use the compressed archives for the installataion (exe/RAR) as this is the easiest method to download and upload to the cloud share.
+Here in the example, we use the compressed archives for the installation (exe/RAR) as this is the easiest method to download and upload to the cloud share.
 
 This guide uses the most recent SAP HANA media, {hana_version}. The SAP HANA media file name downloaded at the time of creating this guide is `{hana_archive_version}`.
 Follow the SAP instructions to download the SAP HANA media.
@@ -323,7 +323,7 @@ Also, have a look at how far away your share for the SAP media is from the regio
 It is good practice to have the SAP Media versioned on the cloud share to build a library for automatic installs and (re)deployments.
 Thus, give some thought to your SAP media structure in advance.
 
-As an *example*, see below how a full SAP Application media tree (in a compressed format) for an S/4HANA version 1809 installation could look like:
+As an *example*, see below how a full SAP application media tree (in a compressed format) for an S/4HANA version 1809 installation could look like:
 ----
 <FS>/s4hana1809
        ├SWPM_CD
