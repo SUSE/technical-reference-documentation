@@ -1,0 +1,10 @@
+
+The base, starting configuration can reside all within a single server. Based upon the relatively small resource requirements for a
+ifdef::focusRancher[{pn_Rancher}]
+ifdef::focusK3s[{pn_K3s}]
+ifdef::focusRKE1[{pn_RKE1}]
+ifdef::focusRKE2[{pn_RKE2}]
+deployment, a viable approach is to deploy directly on baremetal or as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like KVM. For physical host, there are tools that can be used during the setup of the server, see below:
+
+* The link:{SMCiBMC-URL}[{SMCiBMC}] (BMC) provides remote access to multiple users at different locations for networking. It also allows a system administrator to monitor system health and manage computer events remotely, including media redirection of software image files used for installing operating systems and and HTML5 web console interaction.
+
