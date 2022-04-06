@@ -144,7 +144,7 @@ documentbase=""
 
   # create DC- file
   cp ../.templates/_DC-file \
-    ./DC-${documentbase}
+    ./_DC-${documentbase}
   # update adoc reference
   sed -i "s/MAIN=\"kubernetes_gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ./DC-${documentbase}
 
