@@ -1,15 +1,51 @@
+include::./SA_vars.adoc[]
 include::./Apollo_vars.adoc[]
 include::./Edgeline_vars.adoc[]
 include::./ProLiant_vars.adoc[]
 include::./Synergy_vars.adoc[]
 
+Even with the broad certification and support model across the range of available {an_HPE} platform models, the following table summarizes which might be a best-practice selection for the various deployment types and focus areas:
+
+.{vn_HPE} Platform Matrix for Deployment Types
+[width="80%",valign="middle",halign="center",options="header"]
+|===
+| System Platform | Baremetal | Hypervisor | Virtual Machine 
+
+ifdef::IHV-HPE-Apollo[]
+| Apollo FixMe | | |
+endif::IHV-HPE-Apollo[]
+
+ifdef::IHV-HPE-Edgeline[]
+| Edgeline  FixMe | | |
+endif::IHV-HPE-Edgeline[]
+
+ifdef::IHV-HPE-ProLiant[]
+| {familyHPE-DL}
+| {modelHPE-DL360},{modelHPE-DL380}
+| {modelHPE-DL360},{modelHPE-DL380}
+| (hosting)
+endif::IHV-HPE-ProLiant[]
+
+ifdef::IHV-HPE-Synergy[]
+| {familyHPE-S}
+| {modelHPE-SY480}
+| {modelHPE-SY480}
+| (hosting)
+endif::IHV-HPE-Synergy[]
+
+|===
+
 ifdef::IHV-HPE-Apollo,IHV-HPE-Edgeline,IHV-HPE-ProLiant,IHV-HPE-Synergy[]
 
-NOTE: {an_HPE} https://techlibrary.hpe.com/us/en/enterprise/servers/supportmatrix/suse_linux.aspx[Servers Support & OS Certification Matrices] outlines the minimum version of SLE required for installation, yet later service pack releases may also be used.
+As listed in the previous table, multiple server product-line and model options abound in the link:{familyHPE-serversURL}[{an_HPE} server portfolio], as detailed in the following sections.
 
-include::../../{companyName}/YES.adoc[]
+==== link:{vn_HPE_BMCURL}[{vn_HPE} {an_HPE_BMC}]
+The {vn_HPE} {vn_HPE_BMC} [{an_HPE_BMC}] arms you with the tools to manage your servers efficiently, resolve issues quickly, and keep your business running – from anywhere in the world, allowing you to manage your entire server environment with ease. Upgrade the basic {an_HPE_BMC} license for additional functionality, such as graphical remote console, multi-user collaboration, video record/playback, remote management, and much more. The latest {an_HPE_BMC} innovations include:
 
-Server product-line and model options abound in the https://www.hpe.com/uk/en/servers.html[{an_HPE} portfolio], including:
+* Security and performance
+* Support for Simple Certificate Enrollment Protocol [SCEP]
+* Enablement for 802.1x protocol to securly onboarc servers into a network
+* Redfish API Conformance
 
 ifdef::IHV-HPE-Apollo[]
 include::./Apollo.adoc[]
@@ -26,58 +62,5 @@ endif::IHV-HPE-ProLiant[]
 ifdef::IHV-HPE-Synergy[]
 include::./Synergy.adoc[]
 endif::IHV-HPE-Synergy[]
-
-Even with the broad certification and support model across the range of available {an_HPE} platform models, the following table summarizes which might be a best-practice selection for the various deployment types and sizes (**__S__**mall, **__M__**edium, **__L__**arge, **__XL__**arge).
-
-NOTE: {an_HPE} https://techlibrary.hpe.com/us/en/enterprise/servers/supportmatrix/suse_linux.aspx[Servers Support & OS Certification Matrices] outlines the minimum version of SLE required for installation, yet later service pack releases may also be used.
-
-include::../../{companyName}/YES.adoc[]
-
-.{vn_HPE} Platform Matrix for Deployment Types
-[width="80%",valign="middle",halign="center",options="header"]
-|===
-
-| System Platform |
-//ifdef::CapOpt[ *_<<g-capopt,Capacity Optimized>>_* |] 
-//ifdef::Balance[ *_<<g-balance,Balance>>_* |] 
-//ifdef::PerfOpt[ *_<<g-perfopt,Performance Optimized>>_* ] 
-Baremetal |
-Hypervisor |
-Virtual Machine 
-
-ifdef::IHV-HPE-Apollo[]
-| Apollo
-ifdef::CapOpt[|*_(XL) =_* {modelHPE-A4510}]
-ifdef::Balance[|*_(XL) =_* {modelHPE-A4510} *_(L) =_* {modelHPE-A4200}]
-ifdef::PerfOpt[|*_(L) =_* {modelHPE-A4200}]
-endif::IHV-HPE-Apollo[]
-
-ifdef::IHV-HPE-Edgeline[]
-| Edgeline 
-ifdef::CapOpt[|]
-ifdef::Balance[|EL8000, e910]
-ifdef::PerfOpt[|]
-endif::IHV-HPE-Edgeline[]
-
-ifdef::IHV-HPE-ProLiant[]
-| ProLiant |
-// ifdef::CapOpt[|*_(M) =_* {modelHPE-DL380},{modelHPE-DL385}]
-// ifdef::Balance[|*_(S) =_*  {modelHPE-DL360},{modelHPE-DL325} *_(M) =_* {modelHPE-DL380},{modelHPE-DL385}]
-//  ifdef::PerfOpt[|*_(M) =_* {modelHPE-DL380},{modelHPE-DL385}]
-{modelHPE-DL380},{modelHPE-DL380}, {modelHPE-DL360},{modelHPE-DL360} |
-{modelHPE-DL380},{modelHPE-DL380}, {modelHPE-DL360},{modelHPE-DL360} |
-endif::IHV-HPE-ProLiant[]
-
-ifdef::IHV-HPE-Synergy[]
-| Synergy |
- {modelHPE-SY480}, {modelHPE-SY660} |
- {modelHPE-SY480}, {modelHPE-SY660} |
-
-// ifdef::CapOpt[|]
-// ifdef::Balance[|{modelHPE-SY480}, {modelHPE-SY660}]
-// ifdef::PerfOpt[|]
-endif::IHV-HPE-Synergy[]
-
-|===
 
 endif::IHV-HPE-Apollo,IHV-HPE-Edgeline,IHV-HPE-ProLiant,IHV-HPE-Synergy[]
