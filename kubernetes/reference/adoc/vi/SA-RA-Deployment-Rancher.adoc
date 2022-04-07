@@ -48,7 +48,7 @@ ifdef::BP[]
 TIP: This process deploys an auto-generated, self-signed security certificate for the {pn_Rancher} service. Other <<g-security>> certificate authority options are described in the "Install/Upgrade {portfolioName} on a Kubernetes Cluster" in the {pn_Rancher} link:{pn_Rancher_DocURL}[product documentation].
 endif::BP[]
 +
-. Once the previous command completes, from a client system connect via a web browser to the {pn_Rancher} node via *_IPAddress_* or *_HostName_* and accept the service certificate (if deemed valid).
+. When the previous command completes, from a client system connect via a Web browser to the {pn_Rancher} node via *_IPAddress_* or *_HostName_* and accept the service certificate (if deemed valid).
 ** Enter a new admin password
 +
 IMPORTANT: On the second configuration page, also ensure the "Server URL" is set to the *_IPAddress_* or *_HostName_* of this deployed {pn_Rancher} node.
@@ -100,13 +100,13 @@ kubectl create namespace cattle-system
 ----
 +
 . Prepare to use the Helm Chart for {pn_Rancher}:
-* Set the following variable to the hostname of the {pn_Rancher} server instance
+* Set the following variable to the host name of the {pn_Rancher} server instance
 +
 ----
 HOSTNAME=""
 ----
 +
-NOTE: This hostname should be resolvable to an IP address of the
+NOTE: This host name should be resolvable to an IP address of the
 ifdef::layerK3s[{pn_K3s}]
 ifdef::layerRKE1[{pn_RKE1}]
 ifdef::layerRKE2[{pn_RKE2}]
@@ -172,7 +172,7 @@ CERT_MANAGER_VERSION=""
 +
 NOTE: At the time of writing, the most current, supported version of cert-manager is v1.0.4
 +
-// ** e.g., `CERT_MANAGER_VERSION="v1.0.4"`
+// ** for example, `CERT_MANAGER_VERSION="v1.0.4"`
 * Add the jetstack repo and install the cert-manager Helm chart
 ----
 helm repo add jetstack https://charts.jetstack.io
@@ -211,7 +211,7 @@ endif::layerRKE1[]
 
 . (Optional) Create an SSH tunnel to access {pn_Rancher}: 
 +
-NOTE: This optional step is useful in cases where NAT routers and/or firewalls prevent the client web browser from reaching the exposed {pn_Rancher} server IP address and/or port. This step requires that a Linux host is accessible through SSH from the client system and that the Linux host can reach the exposed {pn_Rancher} service. The {pn_Rancher} hostname should be resolvable to the appropriate IP address by the local workstation.
+NOTE: This optional step is useful in cases where NAT routers and/or firewalls prevent the client Web browser from reaching the exposed {pn_Rancher} server IP address and/or port. This step requires that a Linux host is accessible through SSH from the client system and that the Linux host can reach the exposed {pn_Rancher} service. The {pn_Rancher} host name should be resolvable to the appropriate IP address by the local workstation.
 +
 * Create an SSH tunnel through the Linux host to the IP address of the {pn_Rancher} server on the NodePort, as noted in Step 3:
 +
@@ -219,15 +219,15 @@ NOTE: This optional step is useful in cases where NAT routers and/or firewalls p
 ssh -N -D 8080 user@Linux-host
 ----
 +
-* On the local workstation web browser, change the SOCKS Host settings to "127.0.0.1" and port "8080"
+* On the local workstation Web browser, change the SOCKS Host settings to "127.0.0.1" and port "8080"
 +
-NOTE: This will route all traffic from this web browser through the remote Linux host. Be sure to close the tunnel and revert the SOCKS Host settings when you're done.
+NOTE: This will route all traffic from this Web browser through the remote Linux host. Be sure to close the tunnel and revert the SOCKS Host settings when you're done.
 +
-. Connect to the {pn_Rancher} web UI
-* On a client system, use a web browser to connect to the {pn_Rancher} service, via https
+. Connect to the {pn_Rancher} Web UI
+* On a client system, use a Web browser to connect to the {pn_Rancher} service, via https
 * Provide a new Admin password
 +
-IMPORTANT: On the second configuration page, ensure the "Rancher Server URL" is set to the hostname specified when installing the {pn_Rancher} Helm Chart and the port is 443.
+IMPORTANT: On the second configuration page, ensure the "Rancher Server URL" is set to the host name specified when installing the {pn_Rancher} Helm Chart and the port is 443.
 
 //-
 Deployment Consideration(s)::
@@ -238,7 +238,7 @@ ifdef::FCTR+Availability[]
 endif::FCTR+Availability[]
 ifdef::FCTR+Security[]
 * <<g-security>>
-** The basic deployment steps described above are for deploying {pn_Rancher} with automatically generated, self-signed security certificates. Other options are to have {pn_Rancher} create public certificates via Let's Encrypt associated with with a publicly resolvable hostname for the {pn_Rancher} server, or to provide preconfigured, private certificates.
+** The basic deployment steps described above are for deploying {pn_Rancher} with automatically generated, self-signed security certificates. Other options are to have {pn_Rancher} create public certificates via Let's Encrypt associated with with a publicly resolvable host name for the {pn_Rancher} server, or to provide preconfigured, private certificates.
 endif::FCTR+Security[]
 ifdef::FCTR+Integrity[]
 * <<g-integrity>>

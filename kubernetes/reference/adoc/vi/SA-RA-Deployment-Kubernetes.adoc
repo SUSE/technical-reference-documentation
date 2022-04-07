@@ -21,8 +21,8 @@ To meet the {pn_Rancher} prerequisites and requirements on supported Kubernetes 
 ifdef::layerK3s[link:{pn_K3s_ProductPage}[{pn_K3s}]]
 can be utilized, and as desired later scaled out to a production cluster.
 +
-. Identify the appropriate, supported version of the {pn_K3s} binary, by reviewing the "{portfolioName} Support Matrix" on the link:{pn_Rancher_SupURL}[Support and Maintenance Terms of Service] web page.
-. Log into the node's operating system, either as root or as a user with sudo privileges.
+. Identify the appropriate, supported version of the {pn_K3s} binary, by reviewing the "{portfolioName} Support Matrix" on the link:{pn_Rancher_SupURL}[Support and Maintenance Terms of Service] Web page.
+. Log in to the node's operating system, either as root or as a user with sudo privileges.
 endif::focusRancher[]
 
 While it is highly recommended that Kubernetes workloads are isolated from the Kubernetes control-plane and data-plane, this design will maintain all functions, including the {pn_Rancher}, on this node. The {pn_Rancher} workload is a known quantity and no other workloads will be run on this Kubernetes cluster. For this reason the {pn_Rancher} deployment is more closely aligned with appliance-based approach.
@@ -31,8 +31,8 @@ While it is highly recommended that Kubernetes workloads are isolated from the K
 Preparation(s)::
 {pn_K3s} provides the certified Kubernetes functionality, can be deployed on a single node and as desired later scaled out to a production cluster.
 +
-. Identify the appropriate, released version of the {pn_K3s} binary, by reviewing the link:{pn_K3s_Download}[download] web page.
-. Log into the node's operating system, either as root or as a user with sudo privileges.
+. Identify the appropriate, released version of the {pn_K3s} binary, by reviewing the link:{pn_K3s_Download}[download] Web page.
+. Log in to the node's operating system, either as root or as a user with sudo privileges.
 
 //-
 Deployment Process::
@@ -68,7 +68,7 @@ ifdef::FCTR+Availability[]
 * <<g-availability>>
 ** While a single {pn_K3s} node works perfectly fine, a full high-availability {pn_K3s} cluster is recommended for production workloads. The etcd key/value store (aka database) requires an odd number of nodes be allocated to the {pn_K3s} plane (aka master nodes). In this case, two additional control-plane nodes will be added; for a total of three.
 +
-. Deploy the same operating system on the new compute platform nodes, then log into the new nodes as root or as a user with sudo privileges.
+. Deploy the same operating system on the new compute platform nodes, then log in to the new nodes as root or as a user with sudo privileges.
 . Execute the following sets of commands on each of the remaining control-plane nodes:
 +
 ----

@@ -13,12 +13,12 @@ endif::focusRancher+layerK3s[]
 ifndef::focusRancher[]
 ** the "Supported {pn_K3s} Versions" associated with the respective link:{pn_Rancher_SupportMatrixURL}[{pn_Rancher}] version from "{pn_K3s} Downstream Clusters" section, or 
 endif::focusRancher[]
-** the "Releases" on the {pn_K3s_Download}[Download] web page.
+** the "Releases" on the {pn_K3s_Download}[Download] Web page.
 ifdef::layerSLEMicro+focusK3s[]
 +
 . On the target node with a default installation of
 {pn_SLEMicro}
-operating system, log into the node either as root or as a user with sudo privileges and install a required package for the next layer.
+operating system, log in to the node either as root or as a user with sudo privileges and install a required package for the next layer.
 +
 ----
 sudo transactional-update pkg install apparmor-parser
@@ -101,7 +101,7 @@ ifdef::FCTR+Availability[]
 * <<g-availability>>
 ** A full high-availability {pn_K3s} cluster is recommended for production workloads. The etcd key/value store (aka database) requires an odd number of servers (aka master nodes) be allocated to the {pn_K3s} cluster. In this case, two additional control-plane servers should be added; for a total of three.
 +
-. Deploy the same operating system on the new compute platform nodes, then log into the new nodes as root or as a user with sudo privileges.
+. Deploy the same operating system on the new compute platform nodes, then log in to the new nodes as root or as a user with sudo privileges.
 . Execute the following sets of commands on each of the remaining control-plane nodes:
 +
 *** Set the following additional variables, as appropriate for this cluster
