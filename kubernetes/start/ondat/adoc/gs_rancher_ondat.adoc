@@ -26,26 +26,117 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
+Ondat is the Kubernetes native persistent storage platform, designed to deliver high performance, guaranteed high availability and security for all your critical stateful workloads.  
+
+Ondat is focused on delivering the best storage solution that is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.   
+
+By combining SUSE Rancher and Ondat, you can experience a complete cloud and Kubernetes native technical stack that does not compromise on the key features modern developers and businesses expect in today's data driven environment.  
+
+Some of the key capabilities that Ondat and SUSE Rancher enable for your data needs include:
+
+* *Data replication and high availability*
++
+Leverage resilient storage with automatic failover and healing to ensure uninterrupted access to your data.
+
+* *High performance*
++
+Experience top performance with low latency access to data for stateful applications enabling you to run your own databases (e.g., Database-as-a-Service or DBaaS) and other stateful applications in your Kubernetes clusters.
+
+* *Security*
++
+Secure your application data with encryption at rest and in transit on a per volume basis.
+
+* *Scalability*
++
+Scale your storage horizontally by adding more cluster nodes or vertically by adding more capacity to existing nodes.
+
+* *Platform freedom*
++
+Escape infrastructure lock-in with support for all CNCF-certified Kubernetes distributions and cloud platforms.
+
 
 === Scope
 
 // This guide will help you take the first steps to 
+This guide walks through the basic steps for deploying Ondat with SUSE Rancher and demonstrates the high availability use case with a stateful application.
 
 
 === Audience
 
 // This document is intended for 
+This document is intended for DevOps engineers, site reliability engineers (SREs), platform engineers, software engineers and developers who are responsible for managing and running stateful workloads in Kubernetes clusters.
+
 
 
 == Technical overview
 
-// Description
-
 // Architecture diagram
+
+// Description
+Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users - storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with storageos.com/.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
+
+Key Ondat components are: 
+* Ondat Cluster Operator
+Creates and maintains the Ondat storage cluster by ensuring all relevant components are running. 
+
+* Ondat Controlplane
+Monitors and maintains the state of volumes and nodes, working with etcd to maintain state consensus. 
+
+ 
+* Ondat Dataplane
+Handles all I/O path related tasks, including reading, writing, compression, and caching. 
+
+
+* Ondat Scheduler
+Helps ensure applications are scheduled on the same node as their volumes. 
+
+* CSI Helper
+Registers Ondat with Kubernetes as a CSI driver, creating and deleting volumes in response to PersistentVolumeClaims. 
+
+* Ondat API Manager
+Facilitates communication between various APIs and the Ondat Controlplane API.  It continually monitors the state of the cluster and moves it towards the desired state as necessary.
+
+
+NOTE: The Controlplane and Dataplane run in a single container, managed by a daemonset. 
+
+
+== Prerequisites
 
 // Minimum requirements (prerequisites) for this guide
 // * Requirement 1 https://url[url]
 // * Requirement 2 https://url[url]
+
+Ensure that you have checked that the following prerequisites have been met before proceeding to the next section. 
+
+* https://www.suse.com/products/suse-rancher/[SUSE Rancher]
+
+** Ensure that you have a SUSE Rancher Kubernetes cluster with at least 3 worker nodes and sufficient https://rancher.com/docs/rancher/v2.6/en/admin-settings/rbac/[Role-Based Access Control (RBAC)] permissions to deploy and manage applications in the cluster.
+For more guidance, see the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation]. 
+
+** Ensure that you have enough block storage available on each of the worker nodes, as Ondat will utilize this to create a single storage pool for storing persistent data. 
+
+NOTE: In this guide, we use SUSE Rancher v2.6.3 with an RKE v1.20.15 cluster that has 3 master nodes and 5 worker nodes for the Ondat install and demonstration. 
+
+* https://www.ondat.io/[Ondat] 
+
+** Ensure that you have met the minimum resource requirements for Ondat to successfully run. Review the main https://docs.ondat.io/docs/prerequisites/[Ondat prerequisites page] for more information. 
+
+** For Ondat to successfully run, ensure that your cluster nodes have the following LinuxIO kernel modules loaded: 
+
+*** target_core_mod 
+*** tcm_loop 
+*** target_core_file 
+*** configfs 
+*** target_core_user 
+*** uio 
+
+ 
+* Essential CLI utilities 
+Ensure that the following these CLI utilities are installed on your local machine and are available in your $PATH: 
+
+** https://kubernetes.io/docs/tasks/tools/#kubectl[kubectl]
+
+** https://docs.ondat.io/docs/reference/kubectl-plugin/[kubectl-storageos]
 
 
 
