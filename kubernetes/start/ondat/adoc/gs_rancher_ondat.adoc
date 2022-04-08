@@ -2,8 +2,8 @@
 include::./common_docinfo_vars.adoc[]
 
 // Variables & Attributes
-:title: Ondat Data Plane with SUSE Rancher
-:productname: SUSEProd version
+:title: Ondat with SUSE Rancher
+:productname: SUSE Rancher 2.6
 :author1: Rodney Karemba, Solutions Architect, Ondat
 :author2: Andy King, Alliances Solutions Architect, SUSE
 :author3: Terry Smith, Partner Solutions Director, SUSE
@@ -75,29 +75,32 @@ This document is intended for DevOps engineers, site reliability engineers (SREs
 // Description
 Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users - storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with storageos.com/.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
 
-Key Ondat components are: 
-* Ondat Cluster Operator
+Key Ondat components are:
+
+* *Ondat Cluster Operator*
++
 Creates and maintains the Ondat storage cluster by ensuring all relevant components are running. 
 
-* Ondat Controlplane
+* *Ondat Controlplane*
++
 Monitors and maintains the state of volumes and nodes, working with etcd to maintain state consensus. 
 
- 
-* Ondat Dataplane
+* *Ondat Dataplane*
++
 Handles all I/O path related tasks, including reading, writing, compression, and caching. 
 
-
-* Ondat Scheduler
+* *Ondat Scheduler*
++
 Helps ensure applications are scheduled on the same node as their volumes. 
 
-* CSI Helper
+* *CSI Helper*
++
 Registers Ondat with Kubernetes as a CSI driver, creating and deleting volumes in response to PersistentVolumeClaims. 
 
-* Ondat API Manager
+* *Ondat API Manager*
++
 Facilitates communication between various APIs and the Ondat Controlplane API.  It continually monitors the state of the cluster and moves it towards the desired state as necessary.
 
-
-NOTE: The Controlplane and Dataplane run in a single container, managed by a daemonset. 
 
 
 == Prerequisites
