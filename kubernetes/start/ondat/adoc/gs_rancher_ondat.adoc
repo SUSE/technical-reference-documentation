@@ -250,7 +250,7 @@ This enables key Ondat features, such as:
 * [Encryption](https://docs.ondat.io/docs/reference/encryption/)
 
 
-1. Define custom region https://docs.ondat.io/docs/reference/labels/[feature labels] for the nodes in the cluster.
+. Define custom region https://docs.ondat.io/docs/reference/labels/[feature labels] for the nodes in the cluster.
 +
 [source, bash]
 ----
@@ -266,7 +266,7 @@ kubectl describe nodes | grep "custom-region"
 ----
 
 
-2. Create a custom Ondat StorageClass, named __ondat-replication__.
+. Create a custom Ondat StorageClass, named __ondat-replication__.
 +
 [source, bash]
 ----
@@ -289,25 +289,89 @@ EOF
 ----
 
 
+. Mark the custom Ondat StorageClass as default for the cluster.
++
+[source, bash]
+----
+# Set as default.
+kubectl patch storageclass ondat-replication -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+# Inspect the StorageClass and ensure it's now the default.
+kubectl get storageclasses | grep "ondat-replication"
+----
+
+
+. Install the Ondat CLI utility.
+
+Before the demonstration, deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[Ondat CLI utility as a deployment] so that you can interact and manage Ondat through __kubectl__.
+
+.. Deploy the CLI utility in the __storageos__ namespace.
++
+[source, bash]
+----
+# Create the deployment for the Ondat CLI.
+cat <<EOF | kubectl create --filename -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storageos-cli
+  namespace: storageos
+  labels:
+    app: storageos
+    run: cli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storageos-cli
+      run: cli
+  template:
+    metadata:
+      labels:
+        app: storageos-cli
+        run: cli
+    spec:
+      containers:
+      - command:
+        - /bin/sh
+        - -c
+        - "while true; do sleep 3600; done"
+        env:
+        - name: STORAGEOS_ENDPOINTS
+          value: http://storageos:5705
+        - name: STORAGEOS_USERNAME
+          value: "admin"
+        - name: STORAGEOS_PASSWORD
+          value: "password"
+        image: storageos/cli:v2.5.0
+        name: cli
+EOF
+----
+
+.. Obtain the CLI utility pod name for future reference.
++
+[source, bash]
+----
+# Get the CLI utility pod name.
+kubectl --namespace=storageos get pod -ocustom-columns=_:.metadata.name --no-headers -lapp=storageos-cli
+----
+
+//ADD output example here
 
 
 
-== Use case and demonstration
+
+== Demonstration
 
 //Describe use case and demonstration.
 
-//[NOTE]
-//====
-// Use admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING) as needed.
-//====
+Next, you will explore how Ondat with SUSE Rancher helps ensure that stateful workload data are always highly available by:
++
+1. Deploying a stateful application that leverages the __ondat-replication__ StorageClass created earlier.
++
+2. Simulating a node failure scenario to demonstrate how Ondat's replication feature is able to quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
 
 
-//Use sections to break up major actions, such as:
-//=== Prepare the demonstration environment (beyond installation)
-//=== Perform action (to illustrate capability)
-//=== Examine results (verifying capability)
-//Use ordered lists for steps.
-//Minimize/consolidate images whenever possible.
 
 
 
