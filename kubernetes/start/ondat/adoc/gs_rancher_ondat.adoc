@@ -28,11 +28,17 @@ include::./common_docinfo_vars.adoc[]
 
 The design of your cloud native, Kubernetes environment requires a number of critical selections to meet operational, performance, flexibility, resilience, and security needs.
 
-SUSE Rancher is often the multi-cluster, Kubernetes management platform of choice, unifying your cloud native application landscape to ensure consistent, streamlined operations and enterprise-grade security from core to cloud to edge.
 
-Another serious consideration is the selection of a persistent storage solution for your cloud native application data.  Ondat is a Kubernetes native, persistent storage platform, designed to deliver high performance, guaranteed high availability, and security for all your critical workloads.  Like SUSE Rancher, Ondat is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.
+https://www.suse.com/products/suse-rancher/[SUSE Rancher] is often the multi-cluster, Kubernetes management platform of choice, unifying your cloud native application landscape to ensure consistent, streamlined operations and enterprise-grade security from core to cloud to edge.
+
+
+Another serious consideration is the selection of a persistent storage solution for your cloud native application data.
+https://www.ondat.io/[Ondat] is a Kubernetes native, persistent storage platform, designed to deliver high performance, guaranteed high availability, and security for all your critical workloads.
+Like SUSE Rancher, Ondat is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.
+
 
 SUSE Rancher and Ondat enable you to experience a complete cloud and Kubernetes native technical stack that does not compromise on the key features modern developers and businesses expect in today's data driven environment.
+
 
 Key features include:
 
@@ -66,7 +72,7 @@ This guide walks through the basic steps for deploying Ondat with SUSE Rancher a
 === Audience
 
 // This document is intended for 
-This document is intended for DevOps engineers, site reliability engineers (SREs), platform engineers, software engineers and developers who are responsible for managing and running stateful workloads in Kubernetes clusters.
+This document is intended for DevOps engineers, site reliability engineers (SREs), platform engineers, software engineers, and developers who are responsible for managing and running stateful workloads in Kubernetes clusters.
 
 
 
@@ -78,13 +84,13 @@ image::rancher_ondat_arch-diagram-high-level.png[scaledwidth="75%", align="cente
 
 
 // Description
-Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users - storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with storageos.com/.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
+Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users - storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with __storageos.com/__.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
 
 
 image::rancher_ondat_arch-diagram-components.png[scaledwidth="75%", align="center"]
 
 
-Key Ondat components are:
+Core Ondat components are:
 
 * *Ondat Cluster Operator*
 +
@@ -120,34 +126,32 @@ Facilitates communication between various APIs and the Ondat Controlplane API.  
 
 Ensure that you have checked that the following prerequisites have been met before proceeding to the next section. 
 
-* https://www.suse.com/products/suse-rancher/[SUSE Rancher]
+* Kubernetes cluster with at least 3 worker nodes.
++
+Review https://docs.ondat.io/docs/prerequisites/[Ondat prerequisites] for more on minimal and recommended resource requirements. 
++
+NOTE: This guide uses a SUSE Rancher v2.6.3 environment with an RKE v1.20.15 cluster consisting of 3 master nodes and 5 worker nodes.
 
-** Ensure that you have a SUSE Rancher Kubernetes cluster with at least 3 worker nodes and sufficient https://rancher.com/docs/rancher/v2.6/en/admin-settings/rbac/[Role-Based Access Control (RBAC)] permissions to deploy and manage applications in the cluster.
+* Sufficient https://rancher.com/docs/rancher/v2.6/en/admin-settings/rbac/[Role-Based Access Control (RBAC)] permissions to deploy and manage applications in the cluster.
++
 For more guidance, see the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation]. 
 
-** Ensure that you have enough block storage available on each of the worker nodes, as Ondat will utilize this to create a single storage pool for storing persistent data. 
+* Block storage available on each worker node.  Ondat will utilize these to create a single storage pool for storing persistent data. 
 
-NOTE: In this guide, we use SUSE Rancher v2.6.3 with an RKE v1.20.15 cluster that has 3 master nodes and 5 worker nodes for the Ondat install and demonstration. 
+* The following LinuxIO https://documentation.suse.com/sles/15-SP3/html/SLES-all/cha-mod.html[kernel modules] loaded on the worker nodes: 
++
+** target_core_mod
+** tcm_loop 
+** target_core_file 
+** configfs 
+** target_core_user 
+** uio 
 
-* https://www.ondat.io/[Ondat] 
-
-** Ensure that you have met the minimum resource requirements for Ondat to successfully run. Review the main https://docs.ondat.io/docs/prerequisites/[Ondat prerequisites page] for more information. 
-
-** For Ondat to successfully run, ensure that your cluster nodes have the following LinuxIO kernel modules loaded: 
-
-*** target_core_mod 
-*** tcm_loop 
-*** target_core_file 
-*** configfs 
-*** target_core_user 
-*** uio 
-
- 
 * Essential CLI utilities 
-Ensure that the following these CLI utilities are installed on your local machine and are available in your $PATH: 
-
++
+Ensure these CLI utilities are installed on your local machine and are available in your $PATH: 
++
 ** https://kubernetes.io/docs/tasks/tools/#kubectl[kubectl]
-
 ** https://docs.ondat.io/docs/reference/kubectl-plugin/[kubectl-storageos]
 
 
@@ -160,15 +164,17 @@ Ensure that the following these CLI utilities are installed on your local machin
 //echo "Use code blocks for command-line steps."
 //---
 
-Installing Ondat into your SUSE Rancher Kubernetes cluster is easy.  The recommended installation methods are:
-1. Through the https://rancher.com/docs/rancher/v2.6/en/helm-charts/[SUSE Rancher Apps & Marketplace] using the https://github.com/rancher/partner-charts/tree/main/charts/ondat-operator/ondat-operator[Ondat Helm Chart].
-2. With the https://docs.ondat.io/docs/reference/kubectl-plugin/[Ondat kubectl plugin].
+Installing Ondat into your SUSE Rancher Kubernetes cluster is easy.  Two recommended methods are:
+
+. Through https://rancher.com/docs/rancher/v2.6/en/helm-charts/[SUSE Rancher Apps & Marketplace] using the https://github.com/rancher/partner-charts/tree/main/charts/ondat-operator/ondat-operator[Ondat Helm Chart].
+
+. With the https://docs.ondat.io/docs/reference/kubectl-plugin/[Ondat kubectl plugin].
 
 
 In this guide, you will use the Ondat kubectl plugin to install Ondat and deploy an etcd cluster operator in your SUSE Rancher Kubernetes cluster.
 
 
-1. Install local path provisioner.
+. Install local path provisioner.
 +
 By default, a newly provisioned SUSE Rancher Kubernetes cluster does not have a deployed CSI driver.
 +
@@ -187,7 +193,7 @@ kubectl get storageclass
 ----
 
 
-2. Conduct preflight checks.
+. Conduct preflight checks.
 +
 Run the following kubectl-storageos plugin command to conduct preflight checks against the SUSE Rancher Kubernetes cluster to validate that key Ondat prerequisites have been met before proceeding.
 +
@@ -198,9 +204,9 @@ kubectl storageos preflight
 ----
 
 
-3. Create your Ondat credentials.
+. Create your Ondat credentials.
 +
-Define and export the __STORAGEOS_USERNAME__ and __STORAGEOS_PASSWORD__ environment variables that will be used as your credentials to access and manage your Ondat instance.
+Define and export the STORAGEOS_USERNAME and STORAGEOS_PASSWORD environment variables that will be used as your credentials to access and manage your Ondat instance.
 +
 [source, bash]
 ----
@@ -209,9 +215,9 @@ export STORAGEOS_PASSWORD="password"
 ----
 
 
-4. Install Ondat.
+. Install Ondat.
 +
-Run the following __kubectl-storageos__ plugin command to install Ondat.
+Run the following kubectl-storageos plugin command to install Ondat.
 +
 [source, bash]
 ----
@@ -227,7 +233,7 @@ kubectl storageos install \
 NOTE: The installation process may take a few minutes.
 
 
-5. Verify the Ondat installation.
+. Verify the Ondat installation.
 +
 Once installation is complete, inspect Ondat’s resources.  The core components should all show a status of __RUNNING__.
 +
@@ -239,24 +245,25 @@ kubectl get all --namespace=storageos-etcd
 kubectl get storageclasses | grep "storageos"
 ----
 
-6. Apply a licence to the cluster.
+. Apply a licence to the cluster.
 +
 Newly installed Ondat clusters will run unlicensed for 24 hours without any limitations.
 Thereafter, the Ondat cluster must be licensed to ensure that new operations, such as volume provisioning or adding nodes, continue to work.
 +
-Review the https://docs.ondat.io/docs/operations/licensing[licensing overview] to learn about Ondat licensing and how to obtain a free trial.
+Review the https://docs.ondat.io/docs/operations/licensing[licensing overview] to learn about Ondat licensing, including free options.
 
 
 
 == Configuration
 
-Now that you have Ondat successfully deployed and running, you need to create a custom Ondat __StorageClass__ and configure it as the default for the cluster.
+Now that you have Ondat installed and running, you need to create a custom Ondat StorageClass and configure it as the default for your cluster to enable these key features:
 
-This enables key Ondat features, such as:
-+
 * [Replication](https://docs.ondat.io/docs/concepts/replication/)
 * [Topology-Aware Placement (TAP)](https://docs.ondat.io/docs/operations/tap/)
 * [Encryption](https://docs.ondat.io/docs/reference/encryption/)
+
+
+Follow the steps below to configure your Ondat cluster.
 
 
 . Define custom region https://docs.ondat.io/docs/reference/labels/[feature labels] for the nodes in the cluster.
@@ -309,12 +316,12 @@ kubectl patch storageclass ondat-replication -p '{"metadata": {"annotations":{"s
 kubectl get storageclasses | grep "ondat-replication"
 ----
 
+Your Ondat cluster is now configured.
 
-. Install the Ondat CLI utility.
 
-Before the demonstration, deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[Ondat CLI utility as a deployment] so that you can interact and manage Ondat through __kubectl__.
+Before proceeding to the demonstration, follow the steps below to deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[Ondat CLI utility as a deployment] so that you can interact and manage Ondat through kubectl.
 
-.. Deploy the CLI utility in the __storageos__ namespace.
+. Deploy the CLI utility in the __storageos__ namespace.
 +
 [source, bash]
 ----
@@ -357,7 +364,7 @@ spec:
 EOF
 ----
 
-.. Obtain the CLI utility pod name for future reference.
+. Obtain the CLI utility pod name for future reference.
 +
 [source, bash]
 ----
@@ -375,17 +382,17 @@ kubectl --namespace=storageos get pod -ocustom-columns=_:.metadata.name --no-hea
 //Describe use case and demonstration.
 
 Next, you will explore how Ondat with SUSE Rancher helps ensure that stateful workload data are always highly available by:
-+
-1. Deploying a stateful application that leverages the __ondat-replication__ StorageClass created earlier.
-+
-2. Simulating a node failure scenario to demonstrate how Ondat's replication feature is able to quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
+
+. Deploying a stateful application that leverages the __ondat-replication__ StorageClass created earlier.
+
+. Simulating a node failure scenario to demonstrate how Ondat's replication feature is able to quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
 
 
 === Deploy a stateful application
 
-For this demonstration, you will deploy MongoDB as the stateful application.  The https://github.com/percona/percona-postgresql-operator[MongoDB operator] is developed and maintained by Percona.
+For this demonstration, you will deploy MongoDB as the stateful application, using the https://github.com/percona/percona-postgresql-operator[MongoDB operator] developed and maintained by Percona.
 
-. Run the following __kubectl__ commands to deploy the  operator:
+. Deploy the  operator with kubctl.
 +
 [source, bash]
 ----
@@ -482,7 +489,7 @@ Replicas:
 ----
 
 As shown in this output, the master volume and each replica volume are deployed on a different nodes to ensure data protection and high availability in the event of a transient node failure.
-This is the TAP feature in action, which is leveraging the custom regions node labels that were created in the previous step.
+This is the TAP feature in action, which is leveraging the custom regions node labels that were created earlier.
 
 
 === Simulate a node failure
@@ -494,7 +501,7 @@ From the output of the previous command, you know that the master volume resides
 When __demo-worker-node-2__ goes offline, Ondat automatically detects that the master volume no longer exists and elects one of the replicas to become a master as well as creates a new replica on a different node to maintain the defined replica volume count.
 
 
-NOTE: The nodes where the volumes reside may be different for your cluster.  Ensure that you substitute the correct node names in the commands.
+NOTE: The nodes where the volumes reside may be different for your cluster.  Ensure that you substitute the correct node names in the commands below.
 
 
 . Delete __demo-worker-node-2__ (containing the master volume).
@@ -596,8 +603,8 @@ minimal-cluster-rs0-0                              1/1     Running   0          
 percona-server-mongodb-operator-5dd88ff7f7-ncqcn   1/1     Running   0          51m
 ----
 
-In this example output, notice that Ondat elected the replica volume on node __demo-worker-node-3__  to host the master volume since __demo-worker-node-2__ no longer exists.
-Also notice that a new replica volume was automatically created on node __demo-worker-node-5__ to ensure that the replica count remains at two, as defined.
+In this example output, notice that Ondat elected the replica volume on __demo-worker-node-3__ to host the master volume since __demo-worker-node-2__ no longer exists.
+Also notice that a new replica volume was automatically created on __demo-worker-node-5__ to ensure that the replica count remains at two, as defined.
 
 
 
@@ -625,8 +632,8 @@ With Ondat and SUSE Rancher, you can create a Kubernetes native stack that ensur
 //* https://url/[reference-title]
 
 * https://www.ondat.io/[Ondat.io]
-* https://docs.ondat.io/[Ondat documentation]
 * https://www.suse.com/[SUSE.com]
+* https://docs.ondat.io/[Ondat documentation]
 * https://rancher.com/docs/[SUSE Rancher documentation]
 * https://www.suse.com/community/[SUSE & Rancher Community]
 * https://www.percona.com/doc/kubernetes-operator-for-psmongodb/index.html[Percona distribution for MongoDB operator]
