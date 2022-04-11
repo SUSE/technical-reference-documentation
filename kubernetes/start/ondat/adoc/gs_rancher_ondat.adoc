@@ -145,31 +145,150 @@ Ensure that the following these CLI utilities are installed on your local machin
 
 == Installation
 
-
-//=== Install from the SUSE Rancher Apps & Marketplace
-//Use an ordered list for steps.
-//Link elements (with '+') to maintain consistent indentation.
-//E.g.:
-//. From the top-left Rancher menu select __Apps & Marketplace__.
-//From here, you will be taken to the __Charts__ page.
-//Notice __underscores__ are emphasis to indicate a specific
-//UI element.
-//+
-//image::kubernetes_gs_suseprod_partner-partnerprod_image_description.png[scaledwidth="85%", align="center"]
-
-//. Step 2.
-
-//. Step 3.
-
-
-
-//=== Install using generic/manual steps
-
 //Provide steps or link to existing document.
 //[source, bash]
 //---
 //echo "Use code blocks for command-line steps."
 //---
+
+Installing Ondat into your SUSE Rancher Kubernetes cluster is easy.  The recommended installation methods are:
+1. Through the https://rancher.com/docs/rancher/v2.6/en/helm-charts/[SUSE Rancher Apps & Marketplace] using the https://github.com/rancher/partner-charts/tree/main/charts/ondat-operator/ondat-operator[Ondat Helm Chart].
+2. With the https://docs.ondat.io/docs/reference/kubectl-plugin/[Ondat kubectl plugin].
+
+
+In this guide, you will use the Ondat kubectl plugin to install Ondat and deploy an etcd cluster operator in your SUSE Rancher Kubernetes cluster.
+
+
+1. Install local path provisioner.
++
+By default, a newly provisioned SUSE Rancher Kubernetes cluster does not have a deployed CSI driver.
++
+Run the following commands against the cluster to deploy a https://github.com/rancher/local-path-provisioner[Local Path Provisioner] to provide local storage for an etcd cluster.
++
+NOTE: The Local Path Provisioner stores all data locally on the individual nodes and is not recommended for production installations. 
++
+[source, bash]
+----
+# Install the local path provisioner.
+kubectl apply --filename="https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.21/deploy/local-path-storage.yaml"
+
+# Inspect the status of the pod and storageclass.
+kubectl get pod --namespace=local-path-storage
+kubectl get storageclass
+----
+
+
+2. Conduct preflight checks.
++
+Run the following kubectl-storageos plugin command to conduct preflight checks against the SUSE Rancher Kubernetes cluster to validate that key Ondat prerequisites have been met before proceeding.
++
+[source, bash]
+----
+# Conduct preflight checks.
+kubectl storageos preflight
+----
+
+
+3. Create your Ondat credentials.
++
+Define and export the __STORAGEOS_USERNAME__ and __STORAGEOS_PASSWORD__ environment variables that will be used as your credentials to access and manage your Ondat instance.
++
+[source, bash]
+----
+export STORAGEOS_USERNAME="admin"
+export STORAGEOS_PASSWORD="password"
+----
+
+
+4. Install Ondat.
++
+Run the following __kubectl-storageos__ plugin command to install Ondat.
++
+[source, bash]
+----
+# Install Ondat.
+kubectl storageos install \
+  --include-etcd \
+  --etcd-tls-enabled \
+  --etcd-storage-class="local-path" \
+  --admin-username="$STORAGEOS_USERNAME" \
+  --admin-password="$STORAGEOS_PASSWORD"
+----
++
+NOTE: The installation process may take a few minutes.
+
+
+5. Verify the Ondat installation.
++
+Once installation is complete, inspect Ondat’s resources.  The core components should all show a status of __RUNNING__.
++
+[source, bash]
+----
+# Inspect Ondat resources that have been created.
+kubectl get all --namespace=storageos
+kubectl get all --namespace=storageos-etcd
+kubectl get storageclasses | grep "storageos"
+----
+
+6. Apply a licence to the cluster.
++
+Newly installed Ondat clusters will run unlicensed for 24 hours without any limitations.
+Thereafter, the Ondat cluster must be licensed to ensure that new operations, such as volume provisioning or adding nodes, continue to work.
++
+Review the https://docs.ondat.io/docs/operations/licensing[licensing overview] to learn about Ondat licensing and how to obtain a free trial.
+
+
+
+== Configuration
+
+Now that you have Ondat successfully deployed and running, you need to create a custom Ondat __StorageClass__ and configure it as the default for the cluster.
+
+This enables key Ondat features, such as:
++
+* [Replication](https://docs.ondat.io/docs/concepts/replication/)
+* [Topology-Aware Placement (TAP)](https://docs.ondat.io/docs/operations/tap/)
+* [Encryption](https://docs.ondat.io/docs/reference/encryption/)
+
+
+1. Define custom region https://docs.ondat.io/docs/reference/labels/[feature labels] for the nodes in the cluster.
++
+[source, bash]
+----
+# Label the worker nodes to define custom regions for the TAP feature.
+kubectl label node demo-worker-node-1 custom-region=1 
+kubectl label node demo-worker-node-2 custom-region=2
+kubectl label node demo-worker-node-3 custom-region=3
+kubectl label node demo-worker-node-4 custom-region=1
+kubectl label node demo-worker-node-5 custom-region=2
+
+# Check that the worker nodes have been labeled successfully.
+kubectl describe nodes | grep "custom-region"
+----
+
+
+2. Create a custom Ondat StorageClass, named __ondat-replication__.
++
+[source, bash]
+----
+# Create the Ondat StorageClass.
+cat <<EOF | kubectl create --filename -
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ondat-replication
+provisioner: csi.storageos.com
+allowVolumeExpansion: true
+parameters:
+  csi.storage.k8s.io/fstype: ext4
+  storageos.com/replicas: "2"
+  storageos.com/topology-aware: "true"
+  storageos.com/topology-key: "custom-region"
+  csi.storage.k8s.io/secret-name: storageos-api
+  csi.storage.k8s.io/secret-namespace: storageos
+EOF
+----
+
+
 
 
 
