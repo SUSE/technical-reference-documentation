@@ -72,14 +72,14 @@ This document is intended for DevOps engineers, site reliability engineers (SREs
 
 // Architecture diagrams
 
-image::rancher_ondat_arch-diagram-high-level.png[scalewidth="85%", align="center"]
+image::rancher_ondat_arch-diagram-high-level.png[scaledwidth="75%", align="center"]
 
 
 // Description
 Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users - storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with storageos.com/.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
 
 
-image::rancher_ondat_arch-diagram-components.png[scalewidth="85%", align="center"]
+image::rancher_ondat_arch-diagram-components.png[scaledwidth="75%", align="center"]
 
 
 Key Ondat components are:
