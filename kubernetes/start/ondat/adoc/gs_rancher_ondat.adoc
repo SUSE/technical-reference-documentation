@@ -372,6 +372,223 @@ Next, you will explore how Ondat with SUSE Rancher helps ensure that stateful wo
 2. Simulating a node failure scenario to demonstrate how Ondat's replication feature is able to quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
 
 
+=== Deploy a stateful application
+
+For this demonstration, you will deploy MongoDB as the stateful application.  The https://github.com/percona/percona-postgresql-operator[MongoDB operator] is developed and maintained by Percona.
+
+. Run the following __kubectl__ commands to deploy the  operator:
++
+[source, bash]
+----
+# Create a namespace for the operator.
+kubectl create namespace mongodb
+
+# Deploy the MongoDB operator.
+kubectl --namespace=mongodb apply --filename="https://raw.githubusercontent.com/percona/percona-server-mongodb-operator/v1.11.0/deploy/bundle.yaml"
+
+# Inspect that the status of the pod is in a `Running` state.
+kubectl get pods --namespace=mongodb
+----
+
+
+. After the operator is ready, create the database cluster itself from the example __cr-minimal.yaml__ custom resource located in the MongoDB operator repository.
++
+[source, bash]
+----
+# Deploy the database cluster.
+kubectl --namespace=mongodb apply --filename="https://raw.githubusercontent.com/percona/percona-server-mongodb-operator/v1.11.0/deploy/cr-minimal.yaml"
+
+# Inspect and wait until that the resources have been successfully created in the `mongodb` namespace.
+kubectl get pods --namespace=mongodb
+----
+
+
+. Once the database is running, you will notice that Ondat automatically created two replica volumes for each master volume.  Verify this with the following command:
++
+[source, bash]
+----
+# Get the volumes in the `mongodb` namespace using `kubectl`
+kubectl get pvc --namespace=mongodb
+
+NAME                                STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS        AGE
+mongod-data-minimal-cluster-cfg-0   Bound    pvc-e875c38a-0d86-4851-9a65-5e1f6c6b811b   3Gi        RWO            ondat-replication   4m35s
+mongod-data-minimal-cluster-rs0-0   Bound    pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99   3Gi        RWO            ondat-replication   4m35s
+
+# Get the volumes in the `mongodb` namespace using the Ondat CLI.
+kubectl --namespace=storageos exec storageos-cli-77748d9c84-dtbg7 -- storageos get volumes --namespace=mongodb
+
+NAMESPACE  NAME                                      SIZE     LOCATION                     ATTACHED ON         REPLICAS  AGE
+mongodb    pvc-e875c38a-0d86-4851-9a65-5e1f6c6b811b  3.0 GiB  demo-worker-node-2 (online)  demo-worker-node-2  2/2       5 minutes ago
+mongodb    pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99  3.0 GiB  demo-worker-node-2 (online)  demo-worker-node-2  2/2       5 minutes ago
+
+# Describe the `pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99` volume.
+kubectl --namespace=storageos exec storageos-cli-77748d9c84-dtbg7 -- storageos describe volume pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99 --namespace=mongodb
+
+ID                  d4f7d463-1bf3-4521-b248-0e9ebe1143a0
+Name                pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99
+Description
+AttachedOn          demo-worker-node-2 (0b61b84d-7b35-4b55-80ee-b65b92f65e0d)
+Attachment Type     host
+NFS
+  Service Endpoint
+  Exports:
+Namespace           mongodb (54f0f4cc-c6a3-48d0-aa64-446cde6ac288)
+Labels              app.kubernetes.io/component=mongod,
+                    app.kubernetes.io/instance=minimal-cluster,
+                    app.kubernetes.io/managed-by=percona-server-mongodb-operator,
+                    app.kubernetes.io/name=percona-server-mongodb,
+                    app.kubernetes.io/part-of=percona-server-mongodb,
+                    app.kubernetes.io/replset=rs0,
+                    csi.storage.k8s.io/pv/name=pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99,
+                    csi.storage.k8s.io/pvc/name=mongod-data-minimal-cluster-rs0-0,
+                    csi.storage.k8s.io/pvc/namespace=mongodb,
+                    storageos.com/nocompress=true,
+                    storageos.com/replicas=2,
+                    storageos.com/topology-aware=true,
+                    storageos.com/topology-key=custom-region
+Filesystem          ext4
+Size                3.0 GiB (3221225472 bytes)
+Version             Mw
+Created at          2022-03-23T12:55:31Z (8 minutes ago)
+Updated at          2022-03-23T12:55:37Z (7 minutes ago)
+
+Master:
+  ID                961c827c-6b00-4e36-972d-2d187ec3729f
+  Node              demo-worker-node-2 (0b61b84d-7b35-4b55-80ee-b65b92f65e0d)
+  Health            online
+  Topology Domain   2
+
+Replicas:
+  ID                371cc374-9644-4b21-ae4b-ae640a2601b7
+  Node              demo-worker-node-1 (50071bba-e908-4cf0-ad5c-1e62096a9ecf)
+  Health            ready
+  Promotable        true
+  Topology Domain   1
+
+  ID                cd0ee062-9369-4639-9ed7-2cfbdf4a4ab2
+  Node              demo-worker-node-3 (707f17cb-67af-447a-87de-73832c2945ee)
+  Health            ready
+  Promotable        true
+  Topology Domain   3
+----
+
+As shown in this output, the master volume and each replica volume are deployed on a different nodes to ensure data protection and high availability in the event of a transient node failure.
+This is the TAP feature in action, which is leveraging the custom regions node labels that were created in the previous step.
+
+
+=== Simulate a node failure
+
+Ondat automatically fails over to a replica volume on a different node in the event of a sudden node outage.  To see this, you will purposefully delete the node hosting the stateful application's master volume.
+
+From the output of the previous command, you know that the master volume resides on __demo-worker-node-2__ and the related replica volumes reside on __demo-worker-node-1__ and __demo-worker-node-3__.
+
+When __demo-worker-node-2__ goes offline, Ondat automatically detects that the master volume no longer exists and elects one of the replicas to become a master as well as creates a new replica on a different node to maintain the defined replica volume count.
+
+
+NOTE: The nodes where the volumes reside may be different for your cluster.  Ensure that you substitute the correct node names in the commands.
+
+
+. Delete __demo-worker-node-2__ (containing the master volume).
++
+[source, bash]
+----
+# Delete the node with a master volume.
+kubectl delete node/demo-worker-node-2
+
+# Check that the node has been successfully deleted.
+kubectl get nodes
+
+NAME                 STATUS   ROLES               AGE     VERSION
+demo-master-node-1   Ready    controlplane,etcd   3h5m    v1.20.15
+demo-master-node-2   Ready    controlplane,etcd   3h6m    v1.20.15
+demo-master-node-3   Ready    controlplane,etcd   3h12m   v1.20.15
+demo-worker-node-1   Ready    worker              3h4m    v1.20.15
+demo-worker-node-3   Ready    worker              3h4m    v1.20.15
+demo-worker-node-4   Ready    worker              3h4m    v1.20.15
+demo-worker-node-5   Ready    worker              3h11m   v1.20.15
+----
+
+
+. Wait a couple minutes, then review the volumes again.
++
+[source, bash]
+----
+kubectl --namespace=storageos exec storageos-cli-77748d9c84-dtbg7 -- storageos get volumes --namespace=mongodb
+
+NAMESPACE  NAME                                      SIZE     LOCATION                     ATTACHED ON  REPLICAS  AGE
+mongodb    pvc-e875c38a-0d86-4851-9a65-5e1f6c6b811b  3.0 GiB  demo-worker-node-1 (online)               2/2       24 minutes ago
+mongodb    pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99  3.0 GiB  demo-worker-node-3 (online)               2/2       24 minutes ago
+
+# Get the volumes in the `mongodb` namespace using `kubectl`
+kubectl get pvc --namespace=mongodb
+
+NAME                                STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS        AGE
+mongod-data-minimal-cluster-cfg-0   Bound    pvc-e875c38a-0d86-4851-9a65-5e1f6c6b811b   3Gi        RWO            ondat-replication   25m
+mongod-data-minimal-cluster-rs0-0   Bound    pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99   3Gi        RWO            ondat-replication   25m
+
+# Describe the volume `pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99`.
+kubectl --namespace=storageos exec storageos-cli-77748d9c84-dtbg7 -- storageos describe volume pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99 --namespace=mongodb
+
+ID                  d4f7d463-1bf3-4521-b248-0e9ebe1143a0
+Name                pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99
+Description
+AttachedOn          demo-worker-node-1 (50071bba-e908-4cf0-ad5c-1e62096a9ecf)
+Attachment Type     host
+NFS
+  Service Endpoint
+  Exports:
+Namespace           mongodb (54f0f4cc-c6a3-48d0-aa64-446cde6ac288)
+Labels              app.kubernetes.io/component=mongod,
+                    app.kubernetes.io/instance=minimal-cluster,
+                    app.kubernetes.io/managed-by=percona-server-mongodb-operator,
+                    app.kubernetes.io/name=percona-server-mongodb,
+                    app.kubernetes.io/part-of=percona-server-mongodb,
+                    app.kubernetes.io/replset=rs0,
+                    csi.storage.k8s.io/pv/name=pvc-9af262b3-ab50-4d68-87bc-60eb825f1f99,
+                    csi.storage.k8s.io/pvc/name=mongod-data-minimal-cluster-rs0-0,
+                    csi.storage.k8s.io/pvc/namespace=mongodb,
+                    storageos.com/nocompress=true,
+                    storageos.com/replicas=2,
+                    storageos.com/topology-aware=true,
+                    storageos.com/topology-key=custom-region
+Filesystem          ext4
+Size                3.0 GiB (3221225472 bytes)
+Version             OQ
+Created at          2022-03-23T12:55:31Z (45 minutes ago)
+Updated at          2022-03-23T13:21:54Z (19 minutes ago)
+
+Master:
+  ID                cd0ee062-9369-4639-9ed7-2cfbdf4a4ab2
+  Node              demo-worker-node-3 (707f17cb-67af-447a-87de-73832c2945ee)
+  Health            online
+  Topology Domain   3
+
+Replicas:
+  ID                371cc374-9644-4b21-ae4b-ae640a2601b7
+  Node              demo-worker-node-1 (50071bba-e908-4cf0-ad5c-1e62096a9ecf)
+  Health            ready
+  Promotable        true
+  Topology Domain   1
+
+  ID                0322ffc6-49b0-458a-a08b-44ebdd8f152c
+  Node              demo-worker-node-5 (0c62c0c2-871d-4289-87c4-509d9edfff0c)
+  Health            ready
+  Promotable        true
+  Topology Domain   2
+
+# Check the status of the pods running in `mongodb` and wait until 
+# they have been successfully initialised and are in a `Running` state.
+kubectl get pods --namespace=mongodb
+
+NAME                                               READY   STATUS    RESTARTS   AGE
+minimal-cluster-cfg-0                              1/1     Running   0          28m
+minimal-cluster-mongos-6d57dc7cd-zzdwz             1/1     Running   2          49m
+minimal-cluster-rs0-0                              1/1     Running   0          28m
+percona-server-mongodb-operator-5dd88ff7f7-ncqcn   1/1     Running   0          51m
+----
+
+In this example output, notice that Ondat elected the replica volume on node __demo-worker-node-3__  to host the master volume since __demo-worker-node-2__ no longer exists.
+Also notice that a new replica volume was automatically created on node __demo-worker-node-5__ to ensure that the replica count remains at two, as defined.
 
 
 
