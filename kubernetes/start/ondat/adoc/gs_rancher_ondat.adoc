@@ -364,16 +364,13 @@ spec:
 EOF
 ----
 
-. Obtain the CLI utility pod name for future reference.
+. Obtain the CLI utility pod name for later reference.
 +
 [source, bash]
 ----
 # Get the CLI utility pod name.
 kubectl --namespace=storageos get pod -ocustom-columns=_:.metadata.name --no-headers -lapp=storageos-cli
 ----
-
-//ADD output example here
-
 
 
 
