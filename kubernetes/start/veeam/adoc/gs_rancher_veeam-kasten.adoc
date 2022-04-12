@@ -365,31 +365,35 @@ image::rancher_veeam-kasten_K10_Dashboard-9.png[scaledwidth="85%", align="center
 
 === Protecting Applications
 
-Protecting an application with K10, usually accomplished by creating a policy, which requires understanding three concepts:
+Protecting an application with K10, is usually accomplished by creating a policy.  Understanding these three concepts is essential:
 
-* Snapshots and Backups: Data capture mechanisms - depending on your environment and requirements, you might need just one or both
-* Scheduling: Specification of application capture frequency and snapshot/backup retention objectives
-* Selection: Identification of the applications protected by a policy - resource filtering can be used to restrict what is captured on a per-application basis
+* Snapshots and Backups: These are data capture mechanisms.  You may require just one or both, depending on your environment and requirements.
+* Scheduling: This is specification of application capture frequency and snapshot/backup retention objectives.
+* Selection: This is identification of the applications protected by a policy.  Resource filtering can be used to restrict what is captured on a per-application basis.
 
 This section demonstrates how to use these concepts in the context of a K10 policy to protect applications.
-Today, an application for K10 is defined as a collection of namespaced Kubernetes resources (e.g., ConfigMaps, Secrets), relevant non-namespaced resources used by the application (e.g., StorageClasses), Kubernetes workloads (e.g., Deployments, StatefulSets, standalone pods, etc.), deployment and release information available from Helm v3, and all persistent storage resources (e.g., PersistentVolumeClaims and PersistentVolumes) associated with the workloads.
 
-While you can always create a policy from scratch from the Policies page, the easiest way to define policies for unprotected applications is to click on the __Applications__ card on the main dashboard.
-This will take you to a page where you can see all applications in your Kubernetes cluster.
+K10 defines an application as a collection of namespaced Kubernetes resources associated with a workload (such as ConfigMaps and Secrets), relevant non-namespaced resources used by the application (such as StorageClasses), Kubernetes workloads (including Deployments, StatefulSets, standalone pods, etc.), deployment and release information available from Helm v3, and all persistent storage resources (such as PersistentVolumeClaims and PersistentVolumes).
+
+While you can always create a policy from scratch through the Policies page, the easiest way to define policies for unprotected applications is to click on the __Applications__ card on the main dashboard.
+This will allow you to see all applications in your Kubernetes cluster.
 +
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-10
 image::rancher_veeam-kasten_K10_Dashboard-10.png[scaledwidth="85%", align="center"]
 
-To protect any unmanaged application, simply click __Create a policy__ and, as shown below, this will take you to the policy creation section with an auto-populated policy name that you can change.
-The concepts highlighted above will be described below in the context of the policy creation workflow.
+To protect any unmanaged application, simply click __Create New Policy__ and, as shown below, this will open a New Policy dialog.
 +
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-11
 image::rancher_veeam-kasten_K10_Dashboard-11.png[scaledwidth="85%", align="center"]
 
 
+The key policy concepts noted above are described below in the context of the policy creation workflow.
+
+
 === Snapshots and Backups
 
-All policies center around the execution of actions and, for protecting applications, you start by selecting the snapshot action with an optional backup (currently called export) option to that action.
+All policies center around the execution of actions.  You start by selecting the snapshot action with an optional backup (currently called an export).
+
 
 *Snapshots*
 
@@ -397,19 +401,19 @@ All policies center around the execution of actions and, for protecting applicat
 image::rancher_veeam-kasten_K10_Dashboard-12.png[scaledwidth="85%", align="center"]
 
 Snapshots are the basis of persistent data capture in K10.
-They are usually used in the context of disk volumes (PVC/PVs) used by the application but can also apply to application-level data capture (e.g., with Kanister).
+They are typically used in the context of disk volumes (PVC/PVs) used by the application but can also apply to application-level data capture (such as with https://docs.kasten.io/latest/kanister/kanister.html#kanister[Kanister]).
 
 Snapshots, in most storage systems, are very efficient in terms of having a very low performance impact on the primary workload, requiring no downtime, supporting fast restore times, and implementing incremental data capture.
 
-However, storage snapshots usually also suffer from constraints such as having relatively low limits on the maximum number of snapshots per volume or per storage array.
+However, storage snapshots usually suffer from constraints such as having relatively low limits on the maximum number of snapshots per volume or per storage array.
 Most importantly, snapshots are not always durable.
 Catastrophic storage system failure will destroy your snapshots along with your primary data.
 Further, in a number of storage systems, a snapshot's lifecycle is tied to the source volume.
 So, if the volume is deleted, all related snapshots might automatically be garbage collected at the same time.
 It is therefore highly recommended that you create backups of your application snapshots too.
 
-NOTE: A number of public cloud providers (e.g., AWS, Azure, Google Cloud) actually store snapshots in object storage, and they are retained independent of the lifecycle of the primary volume.
-However, this is not true of all public clouds (e.g., IBM Cloud), and you might need to enable backups in public clouds for safety.  Please check with your cloud provider's documentation for more information.
+NOTE: A number of public cloud providers (including AWS, Azure, and Google Cloud) actually store snapshots in object storage, and they are retained independent of the lifecycle of the primary volume.
+However, this is not true of all public clouds, and an independent backup would provide essential safety.  Please check with your cloud provider's documentation for more information.
 
 
 *Backups*
@@ -417,7 +421,10 @@ However, this is not true of all public clouds (e.g., IBM Cloud), and you might 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-13
 image::rancher_veeam-kasten_K10_Dashboard-13.png[scaledwidth="85%", align="center"]
 
-*[WHAT TEXT GOES HERE]*
+Backups overcome the limitations of application and volume snapshots by converting them to an infrastructure-independent format, deduplicating, compressing, and encrypting them before they are stored in an external object store or NFS volume.
+
+To convert your snapshots into backups, activate __Enable Backups via Snapshot Exports__ during policy creation.
+
 
 
 === Scheduling
@@ -447,13 +454,13 @@ Further, sub-frequencies will also interact with retention (described below).
 For example, retaining 24 hourly snapshots at 15-minute intervals would only retain 6 hours of snapshots.
 
 
-=== Snapshot Exports to Backups
+*Snapshot Exports to Backups*
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-15
 image::rancher_veeam-kasten_K10_Dashboard-15.png[scaledwidth="85%", align="center"]
 
 By default, backups performed via exports will be set up to export every snapshot into a backup.
-However, it is also possible to select a subset of snapshots for exports (e.g., only convert every daily snapshot into a backup).
+However, it is also possible to select a subset of snapshots for exports.  For example, you could only convert daily snapshots into backups.
 
 Retention Schedules
 
