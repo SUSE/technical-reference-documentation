@@ -244,8 +244,12 @@ kubectl get all --namespace=storageos
 kubectl get all --namespace=storageos-etcd
 kubectl get storageclasses | grep "storageos"
 ----
++
+You can also review the status of the components in the Rancher Server UI.
++
+image::rancher_ondat_server-ui-components-status.png[scaledwidth="75%", align="center"]
 
-. Apply a license to the cluster.
+. Apply a licence to the cluster.
 +
 Newly installed Ondat clusters will run unlicensed for 24 hours without any limitations.
 Thereafter, the Ondat cluster must be licensed to ensure that new operations, such as volume provisioning or adding nodes, continue to work.
@@ -318,6 +322,12 @@ kubectl get storageclasses | grep "ondat-replication"
 
 Your Ondat cluster is now configured.
 
+You can also review the custom Ondat StorageClass through the Rancher Server UI.
+
+// Rancher Server UI - Custom Ondat StorageClass 
+
+image::rancher_ondat_server-ui-custom-ondat-storageclass.png[scaledwidth="75%", align="center"]
+
 
 Before proceeding to the demonstration, follow the steps below to deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[Ondat CLI utility as a deployment] so that you can interact and manage Ondat through `kubectl`.
 
@@ -372,6 +382,12 @@ EOF
 kubectl --namespace=storageos get pod -ocustom-columns=_:.metadata.name --no-headers -lapp=storageos-cli
 ----
 
+* Example output from the command above.
++
+[source, bash]
+----
+storageos-cli-77748d9c84-dtbg7
+----
 
 
 == Demonstration
