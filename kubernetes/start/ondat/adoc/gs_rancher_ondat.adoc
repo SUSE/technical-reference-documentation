@@ -26,10 +26,10 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
-The design of your cloud native, Kubernetes environment requires a number of critical selections to meet operational, performance, flexibility, resilience, and security needs.
+The design of your cloud native Kubernetes environment requires several critical selections to meet operational, performance, flexibility, resilience, and security needs.
 
 
-https://www.suse.com/products/suse-rancher/[SUSE Rancher] is often the multi-cluster, Kubernetes management platform of choice, unifying your cloud native application landscape to ensure consistent, streamlined operations and enterprise-grade security from core to cloud to edge.
+https://www.suse.com/products/suse-rancher/[SUSE Rancher] is often the multi-cluster Kubernetes management platform of choice, unifying your cloud native application landscape to ensure consistent, streamlined operations and enterprise-grade security from core to cloud to edge.
 
 
 Another serious consideration is the selection of a persistent storage solution for your cloud native application data.
@@ -37,7 +37,7 @@ https://www.ondat.io/[Ondat] is a Kubernetes native, persistent storage platform
 Like SUSE Rancher, Ondat is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.
 
 
-SUSE Rancher and Ondat enable you to experience a complete cloud and Kubernetes native technical stack that does not compromise on the key features modern developers and businesses expect in today's data driven environment.
+SUSE Rancher and Ondat provide you with a complete cloud and Kubernetes native technical stack that does not compromise on the key features modern developers and businesses expect in today's data driven environment.
 
 
 Key features include:
@@ -48,7 +48,7 @@ Leverage resilient storage with automatic failover and healing to ensure uninter
 
 * *High performance*
 +
-Experience top performance with low latency access to data for stateful applications enabling you to run your own databases (such as Database-as-a-Service or DBaaS) and other stateful applications in your Kubernetes clusters.
+Get top performance with low latency access to data for stateful applications enabling you to run your own databases (such as Database-as-a-Service or DBaaS) and other stateful applications in your Kubernetes clusters.
 
 * *Security*
 +
@@ -84,7 +84,7 @@ image::rancher_ondat_arch-diagram-high-level.png[scaledwidth="75%", align="cente
 
 
 // Description
-Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users - storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with __storageos.com/__.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
+Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users: storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with __storageos.com/__.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
 
 
 image::rancher_ondat_arch-diagram-components.png[scaledwidth="75%", align="center"]
@@ -114,7 +114,7 @@ Registers Ondat with Kubernetes as a CSI driver, creating and deleting volumes i
 
 * *Ondat API Manager*
 +
-Facilitates communication between various APIs and the Ondat Controlplane API.  It continually monitors the state of the cluster and moves it towards the desired state as necessary.
+Facilitates communication between various APIs and the Ondat Controlplane API.  It continually monitors the state of the cluster and moves it toward the desired state as necessary.
 
 
 
@@ -136,7 +136,7 @@ NOTE: This guide uses a SUSE Rancher v2.6.3 environment with an RKE v1.20.15 clu
 +
 For more guidance, see the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation]. 
 
-* Block storage available on each worker node.  Ondat will utilize these to create a single storage pool for storing persistent data. 
+* Block storage available on each worker node.  Ondat will use these to create a single storage pool for storing persistent data. 
 
 * The following LinuxIO https://documentation.suse.com/sles/15-SP3/html/SLES-all/cha-mod.html[kernel modules] loaded on the worker nodes: 
 +
@@ -171,7 +171,7 @@ Installing Ondat into your SUSE Rancher Kubernetes cluster is easy.  Two recomme
 . With the https://docs.ondat.io/docs/reference/kubectl-plugin/[Ondat kubectl plugin].
 
 
-In this guide, you will use the Ondat kubectl plugin to install Ondat and deploy an etcd cluster operator in your SUSE Rancher Kubernetes cluster.
+In this guide, you will use the Ondat `kubectl` plugin to install Ondat and deploy an etcd cluster operator in your SUSE Rancher Kubernetes cluster.
 
 
 . Install local path provisioner.
@@ -195,7 +195,7 @@ kubectl get storageclass
 
 . Conduct preflight checks.
 +
-Run the following kubectl-storageos plugin command to conduct preflight checks against the SUSE Rancher Kubernetes cluster to validate that key Ondat prerequisites have been met before proceeding.
+Run the following `kubectl-storageos` plugin command to conduct preflight checks against the SUSE Rancher Kubernetes cluster to validate that key Ondat prerequisites have been met before proceeding.
 +
 [source, bash]
 ----
@@ -217,7 +217,7 @@ export STORAGEOS_PASSWORD="password"
 
 . Install Ondat.
 +
-Run the following kubectl-storageos plugin command to install Ondat.
+Run the following `kubectl-storageos` plugin command to install Ondat.
 +
 [source, bash]
 ----
@@ -235,7 +235,7 @@ NOTE: The installation process may take a few minutes.
 
 . Verify the Ondat installation.
 +
-Once installation is complete, inspect Ondat’s resources.  The core components should all show a status of __RUNNING__.
+When the installation is complete, inspect Ondat’s resources.  The core components should all show a status of __RUNNING__.
 +
 [source, bash]
 ----
@@ -245,7 +245,7 @@ kubectl get all --namespace=storageos-etcd
 kubectl get storageclasses | grep "storageos"
 ----
 
-. Apply a licence to the cluster.
+. Apply a license to the cluster.
 +
 Newly installed Ondat clusters will run unlicensed for 24 hours without any limitations.
 Thereafter, the Ondat cluster must be licensed to ensure that new operations, such as volume provisioning or adding nodes, continue to work.
@@ -256,7 +256,7 @@ Review the https://docs.ondat.io/docs/operations/licensing[licensing overview] t
 
 == Configuration
 
-Now that you have Ondat installed and running, you need to create a custom Ondat StorageClass and configure it as the default for your cluster to enable these key features:
+After Ondat is installed and running, you need to create a custom Ondat StorageClass and configure it as the default for your cluster to enable these key features:
 
 * [Replication](https://docs.ondat.io/docs/concepts/replication/)
 * [Topology-Aware Placement (TAP)](https://docs.ondat.io/docs/operations/tap/)
@@ -319,7 +319,7 @@ kubectl get storageclasses | grep "ondat-replication"
 Your Ondat cluster is now configured.
 
 
-Before proceeding to the demonstration, follow the steps below to deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[Ondat CLI utility as a deployment] so that you can interact and manage Ondat through kubectl.
+Before proceeding to the demonstration, follow the steps below to deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[Ondat CLI utility as a deployment] so that you can interact and manage Ondat through `kubectl`.
 
 . Deploy the CLI utility in the __storageos__ namespace.
 +
@@ -380,16 +380,16 @@ kubectl --namespace=storageos get pod -ocustom-columns=_:.metadata.name --no-hea
 
 Next, you will explore how Ondat with SUSE Rancher helps ensure that stateful workload data are always highly available by:
 
-. Deploying a stateful application that leverages the __ondat-replication__ StorageClass created earlier.
+. deploying a stateful application that leverages the __ondat-replication__ StorageClass created earlier.
 
-. Simulating a node failure scenario to demonstrate how Ondat's replication feature is able to quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
+. simulating a node failure scenario to demonstrate how Ondat's replication feature can to quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
 
 
 === Deploy a stateful application
 
 For this demonstration, you will deploy MongoDB as the stateful application, using the https://github.com/percona/percona-postgresql-operator[MongoDB operator] developed and maintained by Percona.
 
-. Deploy the  operator with kubctl.
+. Deploy the  operator with `kubctl`.
 +
 [source, bash]
 ----
@@ -416,7 +416,7 @@ kubectl get pods --namespace=mongodb
 ----
 
 
-. Once the database is running, you will notice that Ondat automatically created two replica volumes for each master volume.  Verify this with the following command:
+. When the database is running, you will notice that Ondat automatically created two replica volumes for each master volume.  Verify this with the following command:
 +
 [source, bash]
 ----
@@ -495,7 +495,8 @@ Ondat automatically fails over to a replica volume on a different node in the ev
 
 From the output of the previous command, you know that the master volume resides on __demo-worker-node-2__ and the related replica volumes reside on __demo-worker-node-1__ and __demo-worker-node-3__.
 
-When __demo-worker-node-2__ goes offline, Ondat automatically detects that the master volume no longer exists and elects one of the replicas to become a master as well as creates a new replica on a different node to maintain the defined replica volume count.
+When __demo-worker-node-2__ goes offline, Ondat automatically detects that the master volume no longer exists.
+Then it elects one of the replicas to become a master and creates a new replica on a different node to maintain the defined replica volume count.
 
 
 NOTE: The nodes where the volumes reside may be different for your cluster.  Ensure that you substitute the correct node names in the commands below.
@@ -613,9 +614,9 @@ Also notice that a new replica volume was automatically created on __demo-worker
 
 In this guide, you:
 
-* Deployed Ondat into a Kubernetes cluster in your SUSE Rancher cloud native landscape.
-* Created a custom StorageClass, which enabled replication and Topology-Aware Placement (TAP) to guarantee two replica volumes distributed on nodes in different availability zones.
-* Demonstrated how Ondat can automatically detect an offline master volume, elect a replica volume to become master, and create a new replica on a different node to maintain the defined configuration.
+* deployed Ondat into a Kubernetes cluster in your SUSE Rancher cloud native landscape.
+* created a custom StorageClass, which enabled replication and Topology-Aware Placement (TAP) to guarantee two replica volumes distributed on nodes in different availability zones.
+* demonstrated how Ondat can automatically detect an offline master volume, elect a replica volume to become master, and create a new replica on a different node to maintain the defined configuration.
 
 With Ondat and SUSE Rancher, you can create a Kubernetes native stack that ensures your critical, stateful workloads are highly available and durable.
 
