@@ -319,14 +319,12 @@ kubectl patch storageclass ondat-replication -p '{"metadata": {"annotations":{"s
 # Inspect the StorageClass and ensure it's now the default.
 kubectl get storageclasses | grep "ondat-replication"
 ----
++
+You can also review the custom Ondat StorageClass through the Rancher Server UI.
++
+image::rancher_ondat_server-ui-custom-ondat-storageclass.png[scaledwidth="75%", align="center"]
 
 Your Ondat cluster is now configured.
-
-You can also review the custom Ondat StorageClass through the Rancher Server UI.
-
-// Rancher Server UI - Custom Ondat StorageClass 
-
-image::rancher_ondat_server-ui-custom-ondat-storageclass.png[scaledwidth="75%", align="center"]
 
 
 Before proceeding to the demonstration, follow the steps below to deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[Ondat CLI utility as a deployment] so that you can interact and manage Ondat through `kubectl`.
@@ -380,12 +378,7 @@ EOF
 ----
 # Get the CLI utility pod name.
 kubectl --namespace=storageos get pod -ocustom-columns=_:.metadata.name --no-headers -lapp=storageos-cli
-----
 
-* Example output from the command above.
-+
-[source, bash]
-----
 storageos-cli-77748d9c84-dtbg7
 ----
 
