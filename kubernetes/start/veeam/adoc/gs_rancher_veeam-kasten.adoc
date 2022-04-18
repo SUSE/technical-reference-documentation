@@ -470,15 +470,15 @@ For example, you could convert only daily snapshots into backups.
 image::rancher_veeam-kasten_K10_Dashboard-16.png[scaledwidth="85%", align="center"]
 
 A powerful scheduling feature in K10 is the ability to use a https://en.wikipedia.org/wiki/Backup_rotation_scheme#Grandfather-father-son [GFS retention scheme] for cost savings and compliance.
-With this backup rotation scheme, hourly snapshots and backups are rotated on an hourly basis with one graduating to daily every day and so on.
+With this backup rotation scheme, hourly snapshots and backups are rotated on an hourly basis with one graduating to daily every day, daily snapshots and backups are rotated each day with one graduating to weekly, and so on.
 It is possible to set the number of hourly, daily, weekly, monthly, and yearly copies that need to be retained, and K10 will take care of cleanup at every retention tier as well as graduation to the next one.
-It is not possible to set a retention schedule for On Demand policies.
+It is not possible to set a retention schedule for on demand policies.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-17
 image::rancher_veeam-kasten_K10_Dashboard-17.png[scaledwidth="85%", align="center"]
 
 By default, backup retention schedules will be the same as snapshot retention schedules, but these can be set to independent schedules if needed.
-This allows users to create policies where a limited number of snapshots are retained for fast recovery from accidental outages while a larger number of backups are stored for long-term recovery needs.
+This allows you to create policies where a limited number of snapshots are retained for fast recovery from accidental outages while a larger number of backups are stored for long-term recovery needs.
 This separate retention schedule is also valuable when a limited number of snapshots are supported on the volume but a larger backup retention count is needed for compliance.
 
 The retention schedule for a policy does not apply to snapshots and backups produced by https://docs.kasten.io/latest/usage/protect.html#manual-policy-runs [manual policy runs].
@@ -501,6 +501,7 @@ image::rancher_veeam-kasten_K10_Dashboard-19.png[scaledwidth="85%", align="cente
 
 The retention schedule for the policy can be customized to select which snapshots and backups will graduate and be retained according to the longer period retention counts.
 
+The default re
 By default, hourly retention counts apply to the hourly at the top of the hour, daily retention counts apply to the action at midnight, weekly retention counts refer to midnight Sunday, monthly retention counts refer to midnight on the 1st of each month, and yearly retention counts refer to midnight on the 1st of January (all UTC).
 
 When using sub-frequencies with multiple actions per period, all of the actions are retained according to the retention count for that frequency.
