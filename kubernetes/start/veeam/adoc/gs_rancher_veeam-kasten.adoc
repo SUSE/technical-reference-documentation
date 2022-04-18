@@ -429,12 +429,13 @@ To convert your snapshots into backups, activate __Enable Backups via Snapshot E
 
 === Scheduling
 
-There are four components to scheduling:
+There are four components to K10 scheduling:
 
-* How frequently the primary snapshot action should be performed
-* How often snapshots should be exported into backups
-* Retention schedule of snapshots and backups
-* When the primary snapshot action should be performed
+* Action frequency: how frequently the primary snapshot action should be performed
+* Export frequency: how often snapshots should be exported to backups
+* Retention schedule: how snapshots and backups are rotated and retained
+* Timing: when the primary snapshot action should be performed
+
 
 
 *Action frequency*
@@ -442,70 +443,70 @@ There are four components to scheduling:
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-14
 image::rancher_veeam-kasten_K10_Dashboard-14.png[scaledwidth="85%", align="center"]
 
-Actions can be set to execute at an hourly, daily, weekly, monthly, or yearly frequency, or on demand.
-By default, actions set to hourly will execute at the top of the hour and other actions will execute at midnight UTC.
+Snapshots can be set to execute at an hourly, daily, weekly, monthly, or yearly frequency, or on demand.
 
-It is also possible to select the time at which scheduled actions will execute and sub-frequencies that execute multiple actions per frequency.
+By default, hourly snapshots execute at the top of the hour, while weekly, monthly, and yearly snapshots execute at midnight UTC.  You can also specify the time at which scheduled actions execute and sub-frequencies that execute multiple actions per frequency.
 See https://docs.kasten.io/latest/usage/protect.html#advanced-schedule-options[Advanced Schedule Options].
+Sub-hourly actions can be useful when you are protecting mostly Kubernetes objects or small data sets.
 
-Sub-hourly actions are useful when you are protecting mostly Kubernetes objects or small data sets.
-Care should be taken with more general-purpose workloads due to the risk of stressing the underlying storage infrastructure or running into storage API rate limits.
-Further, sub-frequencies will also interact with retention (described below).
+WARNING: Care should be taken not to stress the underlying storage infrastructure or running into storage API rate limits.
+Further, sub-frequencies do also interact with retention (described below).
 For example, retaining 24 hourly snapshots at 15-minute intervals would only retain 6 hours of snapshots.
 
 
-*Snapshot exports to backups*
+*Export frequency*
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-15
 image::rancher_veeam-kasten_K10_Dashboard-15.png[scaledwidth="85%", align="center"]
 
-By default, backups performed via exports will export every snapshot into a backup.
-However, it is also possible to select a subset of snapshots for exports.
-For example, you could convert only daily snapshots into backups.
+When __Enable Backups via Snapshot Exports__ is enabled, snapshots are exported as backups.
+By default, every snapshot is exported, but you can limit this to a subset by selecting a daily, weekly, monthly, or yearly export frequency.
 
 
-*Retention schedules*
+
+*Retention schedule*
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-16
 image::rancher_veeam-kasten_K10_Dashboard-16.png[scaledwidth="85%", align="center"]
 
 A powerful scheduling feature in K10 is the ability to use a https://en.wikipedia.org/wiki/Backup_rotation_scheme#Grandfather-father-son [GFS retention scheme] for cost savings and compliance.
 With this backup rotation scheme, hourly snapshots and backups are rotated on an hourly basis with one graduating to daily every day, daily snapshots and backups are rotated each day with one graduating to weekly, and so on.
-It is possible to set the number of hourly, daily, weekly, monthly, and yearly copies that need to be retained, and K10 will take care of cleanup at every retention tier as well as graduation to the next one.
-It is not possible to set a retention schedule for on demand policies.
+It is possible to set the number of hourly, daily, weekly, monthly, and yearly copies that need to be retained, and K10 will take care of cleanup.
+
+NOTE: It is not possible to set a retention schedule for on demand policies.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-17
 image::rancher_veeam-kasten_K10_Dashboard-17.png[scaledwidth="85%", align="center"]
 
-By default, backup retention schedules will be the same as snapshot retention schedules, but these can be set to independent schedules if needed.
-This allows you to create policies where a limited number of snapshots are retained for fast recovery from accidental outages while a larger number of backups are stored for long-term recovery needs.
+By default, the backup retention schedule is the same as the snapshot retention schedule.  You can make these independent schedules, if needed.
+This allows you to create policies where a limited number of snapshots are retained for fast recovery from accidental outages while a larger number of backups are stored for long-term recovery.
 This separate retention schedule is also valuable when a limited number of snapshots are supported on the volume but a larger backup retention count is needed for compliance.
 
-The retention schedule for a policy does not apply to snapshots and backups produced by https://docs.kasten.io/latest/usage/protect.html#manual-policy-runs [manual policy runs].
-Any artifacts created by manual policy runs will need to be cleaned up.
 Snapshots and backups created by scheduled runs of a policy can be retained and omitted from the retention counts by adding a `k10.kasten.io/doNotRetire: "true"` label to the https://docs.kasten.io/latest/api/actions.html#api-run-action[RunAction] created for the policy run.
 
+NOTE: The retention schedule for a policy does not apply to snapshots and backups produced by https://docs.kasten.io/latest/usage/protect.html#manual-policy-runs [manual policy runs].
+And you will need to clean up any artifacts created by manual policy runs.
 
-*Advanced schedule options*
+
+
+*Timing*
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-18
 image::rancher_veeam-kasten_K10_Dashboard-18.png[scaledwidth="85%", align="center"]
 
-By default, actions set to hourly will execute at the top of the hour and other actions will execute at midnight UTC.
-If you require finer control of timing, you can find this in __Advanced Options__.
-For example, if the Action Frequency is set to Daily, you can specify the hour of the day and the minutes after the hour when the action will start as well as whether to use UTC or local time.
+By default, actions set to hourly execute at the top of the hour and other action frequencies execute at midnight UTC.
+Unhide __Advanced Options__ to select how many times actions are executed within the frequency interval. 
+For example, if the action frequency is daily, you can specify the hour of the day and the minutes after the hour when the action is to start.
 
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-19
 image::rancher_veeam-kasten_K10_Dashboard-19.png[scaledwidth="85%", align="center"]
 
-The retention schedule for the policy can be customized to select which snapshots and backups will graduate and be retained according to the longer period retention counts.
+You can also customize the retention schedule by selecting which snapshots and backups will graduate and be retained for longer periods.
 
-The default re
-By default, hourly retention counts apply to the hourly at the top of the hour, daily retention counts apply to the action at midnight, weekly retention counts refer to midnight Sunday, monthly retention counts refer to midnight on the 1st of each month, and yearly retention counts refer to midnight on the 1st of January (all UTC).
+NOTE: You can toggle whether to display and enter times in local time or UTC, but all times are converted to UTC and do not change for daylight savings time.
 
-When using sub-frequencies with multiple actions per period, all of the actions are retained according to the retention count for that frequency.
-The Advanced Options settings allows a user to display and enter times in either local time or UTC. All times are converted to UTC and K10 policy schedules do not change for daylight savings time.
+
 
 Application Selection and Exceptions
 
