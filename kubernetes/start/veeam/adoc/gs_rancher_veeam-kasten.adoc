@@ -110,7 +110,7 @@ NOTE: This will create and clean up a ServiceAccount and ClusterRoleBinding to p
 
 Kasten K10 can be easily deployed from the SUSE Rancher __Apps & Marketplace__. 
 
-. Create a new namespace for the Kasten K10 application. 
+. Create a new https://rancher.com/docs/rancher/v2.6/en/project-admin/namespaces/[namespace] for the Kasten K10 application. 
 
 .. In the SUSE Rancher user interface (UI), navigate to __Clusters__ -> __Project/Namespaces__.
 +
@@ -172,7 +172,7 @@ kasten-io     catalog-svc-f64666fdf-5t5tv             2/2     Running   0       
 In the unlikely scenario that pods that are stuck in any other state, please eehe https://docs.kasten.io/latest/operating/support.html#support[support documentation] to debug further.
 
 
-== Accessing the K10 Dashboard
+== Accessing the K10 dashboard
 
 There are several options for accessing the Kasten K10 dashboard.
 
@@ -274,42 +274,41 @@ To learn more about the necessary K10 permissions, see https://docs.kasten.io/la
 
 == Demonstration
 
-=== Kasten K10 Dashboard Overview
+=== Kasten K10 dashboard overview
 
 The K10 dashboard is divided into several different sections, described below.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-1
 image::rancher_veeam-kasten_K10_Dashboard-1.png[scaledwidth="85%", align="center"]
 
-NOTE: It is also possible to perform an interactive walkthrough of the K10 dashboard via a Guided Tour.
-The tour is available when the K10 dashboard is accessed for the first time or via the Dashboard option on the https://docs.kasten.io/latest/usage/overview.html#k10-settings[Settings] page.
+NOTE: A guided tour of the K10 dashboard is available when the K10 dashboard is accessed for the first time or via the dashboard option on the https://docs.kasten.io/latest/usage/overview.html#k10-settings[Settings] page.
 
 
-*System Overview*
+*System overview*
 
 The top of the K10 dashboard displays a list of applications (currently mapped to namespaces), any policies that might exist in the system, and a summary of the cluster's backup data footprint.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-2
 image::rancher_veeam-kasten_K10_Dashboard-2.png[scaledwidth="85%", align="center"]
 
-After filtering to only include applications that have stateful services (defined as containing a persistent volume), the above screen breaks down each section into three categories:
+After filtering for applications that have stateful services (defined as containing a persistent volume), the above screen breaks down each section into three categories:
 +
-* Unmanaged: There are no protection policies that cover this object
-* Non-compliant: A policy applies to this object, but the actions associated with the policy are failing (e.g., due to underlying storage slowness, configuration problems, etc.) or the actions haven't been invoked yet (e.g., right after policy creation)
-* Compliant: Objects to which both policies apply and the policy SLAs are being respected
+* Unmanaged: There are no protection policies that cover this object.
+* Non-compliant: A policy applies to this object, but the actions associated with the policy are failing (such as due to underlying storage slowness, configuration problems, etc.) or the actions haven't been invoked yet.
+* Compliant: Objects with policies and the policy SLAs are being respected.
 
 
-*Applications, Namespaces, and Workloads*
+*Applications, namespaces, and workloads*
 
-The K10 platform by default equates names to applications for ease of use and consistency with Kubernetes best practices, use of RBAC, and to mirror the most common application deployment pattern.
+The K10 platform equates namespaces to applications for ease of use and consistency with Kubernetes best practices, use of role-based authentication controls (RBAC), and to mirror the most common application deployment patterns.
 However, as shown later, policies can be defined to operate on more than one namespace or only operate on a subset of an application residing in a single namespace.
 
-Assuming you have already installed applications, clicking on the Applications card on the dashboard will take you to the following view.
+Assuming you have already installed applications, clicking on the __Applications__ card on the dashboard will take you to the following view.
 +
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-3
 image::rancher_veeam-kasten_K10_Dashboard-3.png[scaledwidth="85%", align="center"]
 
-NOTE: If you click on the ___Compliant__, __Non-Compliant__, or __Unmanaged buttons__, it would automatically filter the view for you.
+NOTE: You can filter the view by clicking on the ___Compliant__, __Non-Compliant__, or __Unmanaged__ buttons.
 
 
 An application is made up of multiple Kubernetes resources and workloads, including deployments and stateful sets. 
@@ -321,22 +320,22 @@ image::rancher_veeam-kasten_K10_Dashboard-4.png[scaledwidth="85%", align="center
 image::rancher_veeam-kasten_K10_Dashboard-5.png[scaledwidth="85%", align="center"]
 
 
-Within K10, policies are used to automate your data management workflows.
-Going back to the main dashboard, you will find a section on how to manage policies right next to the __Applications__ card.
-To achieve this, policies combine actions you want to take (e.g., snapshot), a frequency or schedule for how often you want to take that action, and selection criteria for the resources you want to manage.
+K10 policies are used to automate your data management workflows.
+In the main dashboard, you will find a section on how to manage policies next to the __Applications__ card.
+Policies combine actions you want to take (such as making a snapshot), frequency or schedule for how often you want to perform the action, and selection criteria for the resources you want to manage.
 +
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-6
 image::rancher_veeam-kasten_K10_Dashboard-6.png[scaledwidth="85%", align="center"]
 
-If you click the __Policies__ card, you will notice that no default policies are created at install time, but a policy can be either created from this page or from the application page shown earlier.
+When you click the __Policies__ card, you will notice that no default policies are created at install time, but a policy can be either created from this page or from the application page shown earlier.
 
 
-=== Creating a Location Profile 
+=== Creating a location profile 
 
-K10 can usually invoke protection operations such as snapshots within a cluster without requiring additional credentials.
-While this might be sufficient if K10 is running in some (but not all) of the major public clouds and if actions are limited to a single cluster, it is not sufficient for essential operations such as performing real backups, enabling cross-cluster and cross-cloud application migration, and enabling DR of the K10 system itself.
+K10 can invoke protection operations, such as snapshots, within a cluster without requiring additional credentials, and this may be sufficient if K10 is running in the major public clouds and actions are limited to a single cluster.
+However, in most production situations, such as performing real backups, enabling cross-cluster and cross-cloud application migration, and enabling disaster recovery
 To enable these actions that span the lifetime of any one cluster, K10 needs to be configured with access to external object storage or external NFS file storage.
-This is accomplished via the creation of Location Profiles.
+This is accomplished via the creation of location profiles.
 +
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-7
 image::rancher_veeam-kasten_K10_Dashboard-7.png[scaledwidth="85%", align="center"]
@@ -363,7 +362,7 @@ Once you click __Validate__ or __Save__, the config profile will be created and 
 image::rancher_veeam-kasten_K10_Dashboard-9.png[scaledwidth="85%", align="center"]
 
 
-=== Protecting Applications
+=== Protecting applications
 
 Protecting an application with K10, is usually accomplished by creating a policy.  Understanding these three concepts is essential:
 
@@ -508,7 +507,7 @@ NOTE: You can toggle whether to display and enter times in local time or UTC, bu
 
 
 
-Application Selection and Exceptions
+=== Application selection and exceptions
 
 This section describes how policies can be bound to applications, how namespaces can be excluded from policies, how policies can protect cluster-scoped resources, and how exceptions can be handled.
 
