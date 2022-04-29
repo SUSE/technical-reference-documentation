@@ -131,7 +131,7 @@ curl -sfL https://get.k3s.io | \
 ----
 +
 endif::layerSLEMicro+layerK3s+focusRancher[]
-ifdef::layerSLES+layerK3s+focusRancher[]
+ifndef::layerSLEMicro+layerK3s+focusRancher[]
 ----
 curl -sfL https://get.k3s.io | \
 	INSTALL_K3S_VERSION=${K3s_VERSION} \
@@ -141,7 +141,7 @@ curl -sfL https://get.k3s.io | \
 	sh -
 ----
 +
-endif::layerSLES+layerK3s+focusRancher[]
+endif::layerSLEMicro+layerK3s+focusRancher[]
 *** Monitor the progress of the installation: `watch -c "kubectl get deployments -A"`
 **** The {pn_K3s} deployment is complete when elements of all the deployments (coredns, local-path-provisioner, metrics-server, and traefik) show at least "1" as "AVAILABLE"
 **** Use Ctrl+c to exit the watch loop after all deployment pods are running
@@ -154,6 +154,18 @@ NOTE: This can be changed to the normal Kubernetes default by adding a taint to 
 +
 *** (Optional) In cases where agent nodes are desired, execute the following sets of commands, using the same "_K3s_VERSION_", "_FIRST_SERVER_IP_", and "_NODE_TOKEN_" variable settings as above, on each of the agent nodes to add it to the {pn_K3s} cluster:
 +
+ifdef::layerSLEMicro+layerK3s+focusRancher[]
+----
+curl -sfL https://get.k3s.io | \
+	INSTALL_K3S_VERSION=${K3s_VERSION} \
+	INSTALL_K3S_SKIP_SELINUX_RPM=true \
+	K3S_URL=https://${FIRST_SERVER_IP}:6443 \
+	K3S_TOKEN=${NODE_TOKEN} \
+	K3S_KUBECONFIG_MODE="644" \
+	sh -
+----
+endif::layerSLEMicro+layerK3s+focusRancher[]
+ifndef::layerSLEMicro+layerK3s+focusRancher[]
 ----
 curl -sfL https://get.k3s.io | \
 	INSTALL_K3S_VERSION=${K3s_VERSION} \
@@ -162,6 +174,7 @@ curl -sfL https://get.k3s.io | \
 	K3S_KUBECONFIG_MODE="644" \
 	sh -
 ----
+endif::layerSLEMicro+layerK3s+focusRancher[]
 endif::FCTR+Availability[]
 endif::BP[]
 
