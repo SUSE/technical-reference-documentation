@@ -579,62 +579,74 @@ image::rancher_veeam-kasten_K10_Dashboard-23.png[scaledwidth="75%", align="cente
 
 == Working with policies
 
-Once you have created a policy and have navigated back to the main dashboard, you will see the selected applications quickly switch from unmanaged to non-compliant (that is, a policy covers the objects but no action has been taken yet).i
+Once you have created a policy and have navigated back to the main dashboard, you will see the selected applications quickly switch from unmanaged to non-compliant.
+That is, a policy covers the objects but no action has been taken yet.
 The applications will switch to compliant as snapshots and backups are run and the application enters a protected state.
 You can also scroll down the page to see the activity, how long each snapshot took, and the generated artifacts.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-25
-image::rancher_veeam-kasten_K10_Dashboard-25.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-25.png[scaledwidth="75%", align="center"]
 
 
 NOTE: More detailed job information can be obtained by clicking on the in-progress or completed jobs.
 
 
-*Manual policy runs*
+=== Manual policy runs
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-26
-image::rancher_veeam-kasten_K10_Dashboard-26.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-26.png[scaledwidth="75%", align="center"]
 
 It is possible to manually create a policy run by going to the policy page and clicking the run once button on the desired policy. Note that any artifacts created by this action will not be eligible for automatic retirement and will need to be manually cleaned up.
 
 
-*Restoring existing applications*
+=== Restoring existing applications
 
 Restoring an application is accomplished via the __Applications__ page.
-To restore an application, simply click the __Restore__ icon in the application's card. 
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-27
 image::rancher_veeam-kasten_K10_Dashboard-27.png[scaledwidth="85%", align="center"]
 
-//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-28
-image::rancher_veeam-kasten_K10_Dashboard-28.png[scaledwidth="85%", align="center"]
-
-
+[NOTE]
+====
 While the UI uses the __Export__ term for backups, no import policy is needed to restore from a backup.
 Import policies are only needed when you want to restore the application into a different cluster.
+====
 
-At that point, one has the option to pick a restore point, a grouped collection of data artifacts belonging to the application, to restore from. As seen above, this view distinguishes manually generated restore points from automated policy-generated ones.
 
-It also distinguishes between snapshots and backups. When both are present, as seen above, a layered box is shown to indicate more than one kind of restore point is present for the same data. If you want to restore a version of the application stack, clicking on the layered restore point will present the below option to select between the local snapshot and exported backup.
+To restore an application, simply click the __Restore__ icon in the application's card. 
+
+//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-28
+image::rancher_veeam-kasten_K10_Dashboard-28.png[scaledwidth="75%", align="center"]
+
+
+Next, you can select a restore point.
+These are distinguished in the UI as having been generated manually or automatically through a backup policy.
+
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-29
-image::rancher_veeam-kasten_K10_Dashboard-29.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-29.png[scaledwidth="75%", align="center"]
 
-Selecting a restore point will bring up a side-panel containing more details on the restore point for you to preview, if needed, before you initiate an application restore.
+A restore point may include snapshots (native to the cluster) and backups (exported outside the cluster) with the same data.
+When both snapshots and backups are present, as seen above, the UI provides you the option to select the instance you wish to use to restore the application.
+
+Selecting a restore point will bring up a side-panel containing more details on the restore point for you to preview before you initiate an application restore.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-30
-image::rancher_veeam-kasten_K10_Dashboard-30.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-30.png[scaledwidth="75%", align="center"]
+
+Once you click __Restore Application__, the system will automatically recreate the entire application stack into the selected namespace.
+This not only includes data associated with the original application but also the versioned container images.
 
 
 [NOTE]
 ====
 Restored PersistentVolumes may not have the annotations specified in the original PersistentVolume.
-
-After the restore completes, you will be able to go back to your application and verify that the state was restored to what existed at the time the restore point was obtained.
 ====
 
+After the restore completes, you will be able to go back to your application and verify that the state was restored to what existed at the time the restore point was obtained.
 
-*Restoring Deleted Applications*
+
+=== Restoring Deleted Applications
 
 The process of restoring a deleted application is nearly identical to the above process. The only difference is that, by default, removed applications are not shown on the Applications page. To discover them, you simply need to filter and select Removed.
 
