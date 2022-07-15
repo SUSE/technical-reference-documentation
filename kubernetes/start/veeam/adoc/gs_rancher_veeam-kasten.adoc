@@ -608,7 +608,7 @@ image::rancher_veeam-kasten_K10_Dashboard-27.png[scaledwidth="85%", align="cente
 
 [NOTE]
 ====
-While the UI uses the __Export__ term for backups, no import policy is needed to restore from a backup.
+While the UI uses the "Export" term for backups, no import policy is needed to restore from a backup.
 Import policies are only needed when you want to restore the application into a different cluster.
 ====
 
@@ -643,35 +643,21 @@ This not only includes data associated with the original application but also th
 Restored PersistentVolumes may not have the annotations specified in the original PersistentVolume.
 ====
 
+
 After the restore completes, you will be able to go back to your application and verify that the state was restored to what existed at the time the restore point was obtained.
 
 
-=== Restoring Deleted Applications
+=== Restoring deleted applications
 
-The process of restoring a deleted application is nearly identical to the above process. The only difference is that, by default, removed applications are not shown on the Applications page. To discover them, you simply need to filter and select Removed.
+The process to restore a deleted application is nearly identical.
+The only difference is that removed applications are not shown on the Applications page by default.
+To discover them, you simply need to filter and select __Removed__.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-31
-image::rancher_veeam-kasten_K10_Dashboard-31.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_K10_Dashboard-31.png[scaledwidth="75%", align="center"]
 
-Once the filter is in effect, you will see applications that K10 has previously protected but no longer exist. These can now be restored using the normal restore workflow.
-
-== Use case and demonstration
-
-//Describe use case and demonstration.
-
-//[NOTE]
-//====
-// Use admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING) as needed.
-//====
-
-
-//Use sections to break up major actions, such as:
-//=== Prepare the demonstration environment (beyond installation)
-//=== Perform action (to illustrate capability)
-//=== Examine results (verifying capability)
-//Use ordered lists for steps.
-//Minimize/consolidate images whenever possible.
-
+Once the filter is in effect, you will see applications that K10 has previously protected but no longer exist.
+These can now be restored using the normal restore workflow.
 
 
 == Summary
@@ -680,14 +666,25 @@ Once the filter is in effect, you will see applications that K10 has previously 
 //Summarize what was demonstrated
 //Hint at other capabilities.
 
+The combination of SUSE Rancher and Kasten K10 by Veeam enable enterprises to achieve cloud native transformation goals with streamlined and unified, secure, multi-cluster Kubernetes management with Kubernetes native application backup and restore, disaster recovery, and application mobility.
+
+In this guide, you learned how to seamlessly deploy Kasten K10 into your Rancher Kubernetes landscape, create policy-driven backups, and restore applications.
 
 
-== Additional resources
 
-//Learn more about the capabilities of {title} with these additional references.
+== Resources
+
+Learn more about the capabilities of {title} with these additional references.
 //Use an unordred lists for references
 //* https://url[reference-title]
-//* https://url/[reference-title]
+* https://youtu.be/c_mSNy6Q9RU["Cloud native workload protection with Kasten K10 by Veeam and SUSE Rancher" - demonstration video]
+* https://www.suse.com/c/kasten-k10-by-veeam-and-suse-rancher-enterprise-k8s-data-protection/["Kasten K10 by Veeam and SUSE Rancher: Enterprise K8s data protection" - blog article]
+* https://www.suse.com/c/deploying-multicluster-day-2-operations-with-suse-rancher-fleet-and-kasten-k10/["Deploying Multicluster Day 2 Operations with SUSE Rancher, Fleet, and Kasten K10" - blog article]
+* https://www.suse.com/products/suse-rancher/get-started/[Get started with SUSE Rancher in 2 easy steps]
+* https://www.kasten.io/free-kubernetes[Download Kasten K10 for free and use it for up to 5 nodes]
+* https://docs.kasten.io/latest/index.html[Kasten K10 Documentation]
+* https://rancher.com/docs/rancher/v2.x/en/[Rancher Documentation]
+
 
 
 
