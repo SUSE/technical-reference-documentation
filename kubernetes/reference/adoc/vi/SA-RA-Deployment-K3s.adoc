@@ -3,15 +3,34 @@ ifdef::focusK3s,layerK3s[]
 === {pn_K3s}
 
 // leverage multiple prep sections
-ifdef::layerSLEMicro,layerSLES[include::./SA-RA-Deployment-OS-prep.adoc[]]
-ifdef::focusRancher[]
+ifndef::layerSLEMicro,layerSLES[include::./SA-RA-Deployment-OS-prep.adoc[]]
+ifdef::layerSLEMicro,layerSLES[Preparation(s)::]
+. Identify the appropriate, desired version of the {pn_K3s} binary (e.g. vX.YY.ZZ+k3s1) by reviewing
 +
-. Identify the appropriate, supported version of the {pn_K3s} binary (e.g. vX.YY.ZZ+k3s1), by reviewing the "{portfolioName} Support Matrix" on the {pn_Rancher_SupURL}[Support and Maintenance Terms of Service] web page. 
-endif::focusRancher[]
+ifdef::focusRancher+layerK3s[]
+** the "Installing {pn_Rancher} on {pn_K3s}" associated with the respective link:{pn_Rancher_SupportMatrixURL}[{pn_Rancher}] version, or 
+endif::focusRancher+layerK3s[]
 ifndef::focusRancher[]
-+
-. Identify the appropriate, desired version of the {pn_K3s} binary (e.g. vX.YY.ZZ+k3s1), by reviewing the "Releases" on the {pn_K3s_Download}[Download] web page. 
+** the "Supported {pn_K3s} Versions" associated with the respective link:{pn_Rancher_SupportMatrixURL}[{pn_Rancher}] version from "{pn_K3s} Downstream Clusters" section, or 
 endif::focusRancher[]
+** the "Releases" on the {pn_K3s_Download}[Download] Web page.
+ifdef::layerSLEMicro+focusK3s[]
++
+. On the target node with a default installation of
+{pn_SLEMicro}
+operating system, log in to the node either as root or as a user with sudo privileges and install a required package for the next layer.
++
+----
+sudo transactional-update pkg install apparmor-parser
+sudo reboot
+----
+endif::layerSLEMicro+focusK3s[]
++
+. For the underlying operating system firewall service, either
+** enable and configure the necessary inbound link:{pn_K3s_HWReqURL}[ports] or
+** stop and completely disable the firewall service.
+
+// endif::focusRancher[]
 
 //-
 Deployment Process::
@@ -19,8 +38,8 @@ Perform the following steps to install the first {pn_K3s} server on one of the n
 // ifdef::focusK3s[]
 // ifdef::layerK3s[]
 // To meet the {pn_Rancher} prerequisites and requirements on supported Kubernetes instances,
-// ifdef::layerK3s[{pn_K3s_ProductPage}[{pn_K3s}]]
-// can be utilized, and as desired later scaled out to a production cluster.
+// ifdef::layerK3s[link:{pn_K3s_ProductPage}[{pn_K3s}]]
+// can be used, and as desired later scaled out to a production cluster.
 +
 . Set the following variable with the noted version of {pn_K3s}, as found during the preparation steps.
 +
@@ -29,13 +48,42 @@ K3s_VERSION=""
 ----
 +
 . Install the version of {pn_K3s} with embedded etcd enabled:
+ifdef::layerSLEMicro+layerK3s+focusRancher[]
 +
 ----
 curl -sfL https://get.k3s.io | \
 	INSTALL_K3S_VERSION=${K3s_VERSION} \
+	INSTALL_K3S_SKIP_SELINUX_RPM=true \
 	INSTALL_K3S_EXEC='server --cluster-init --write-kubeconfig-mode=644' \
 	sh -s -
 ----
+endif::layerSLEMicro+layerK3s+focusRancher[]
+ifdef::layerSLES+layerK3s+focusRancher[]
++
+----
+curl -sfL https://get.k3s.io | \
+        INSTALL_K3S_VERSION=${K3s_VERSION} \
+        INSTALL_K3S_EXEC='server --cluster-init --write-kubeconfig-mode=644' \
+        sh -s -
+----
+endif::layerSLES+layerK3s+focusRancher[]
+ifdef::focusK3s[]
++
+----
+curl -sfL https://get.k3s.io | \
+        INSTALL_K3S_VERSION=${K3s_VERSION} \
+        INSTALL_K3S_EXEC='server --cluster-init --write-kubeconfig-mode=644' \
+        sh -s -
+----
+endif::focusK3s[]
+ifdef::layerSLEMicro+focusK3s[]
++
+** Since SELinux is resident on {pn_SLEMicro}, the {pn_K3s} install command will include another required package "k3s-selinux" as a transactional-update in a new snapshot. So a reboot is required to access the installed package and complete the deployment.
++
+----
+systemctl reboot
+----
+endif::layerSLEMicro+focusK3s[]
 +
 ifdef::BP[]
 TIP: To address <<g-availability>> and possible <<g-scaling>> to a multiple node cluster, etcd is enabled instead of using the default SQLite datastore.
@@ -53,7 +101,7 @@ ifdef::FCTR+Availability[]
 * <<g-availability>>
 ** A full high-availability {pn_K3s} cluster is recommended for production workloads. The etcd key/value store (aka database) requires an odd number of servers (aka master nodes) be allocated to the {pn_K3s} cluster. In this case, two additional control-plane servers should be added; for a total of three.
 +
-. Deploy the same operating system on the new compute platform nodes, then log into the new nodes as root or as a user with sudo privileges.
+. Deploy the same operating system on the new compute platform nodes, then log in to the new nodes as root or as a user with sudo privileges.
 . Execute the following sets of commands on each of the remaining control-plane nodes:
 +
 *** Set the following additional variables, as appropriate for this cluster
@@ -71,6 +119,19 @@ K3s_VERSION=""
 +
 *** Install {pn_K3s}
 +
+ifdef::layerSLEMicro+layerK3s+focusRancher[]
+----
+curl -sfL https://get.k3s.io | \
+	INSTALL_K3S_VERSION=${K3s_VERSION} \
+	INSTALL_K3S_SKIP_SELINUX_RPM=true \
+	K3S_URL=https://${FIRST_SERVER_IP}:6443 \
+	K3S_TOKEN=${NODE_TOKEN} \
+	K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC='server' \
+	sh -
+----
++
+endif::layerSLEMicro+layerK3s+focusRancher[]
+ifndef::layerSLEMicro+layerK3s+focusRancher[]
 ----
 curl -sfL https://get.k3s.io | \
 	INSTALL_K3S_VERSION=${K3s_VERSION} \
@@ -80,6 +141,7 @@ curl -sfL https://get.k3s.io | \
 	sh -
 ----
 +
+endif::layerSLEMicro+layerK3s+focusRancher[]
 *** Monitor the progress of the installation: `watch -c "kubectl get deployments -A"`
 **** The {pn_K3s} deployment is complete when elements of all the deployments (coredns, local-path-provisioner, metrics-server, and traefik) show at least "1" as "AVAILABLE"
 **** Use Ctrl+c to exit the watch loop after all deployment pods are running
@@ -92,6 +154,18 @@ NOTE: This can be changed to the normal Kubernetes default by adding a taint to 
 +
 *** (Optional) In cases where agent nodes are desired, execute the following sets of commands, using the same "_K3s_VERSION_", "_FIRST_SERVER_IP_", and "_NODE_TOKEN_" variable settings as above, on each of the agent nodes to add it to the {pn_K3s} cluster:
 +
+ifdef::layerSLEMicro+layerK3s+focusRancher[]
+----
+curl -sfL https://get.k3s.io | \
+	INSTALL_K3S_VERSION=${K3s_VERSION} \
+	INSTALL_K3S_SKIP_SELINUX_RPM=true \
+	K3S_URL=https://${FIRST_SERVER_IP}:6443 \
+	K3S_TOKEN=${NODE_TOKEN} \
+	K3S_KUBECONFIG_MODE="644" \
+	sh -
+----
+endif::layerSLEMicro+layerK3s+focusRancher[]
+ifndef::layerSLEMicro+layerK3s+focusRancher[]
 ----
 curl -sfL https://get.k3s.io | \
 	INSTALL_K3S_VERSION=${K3s_VERSION} \
@@ -100,12 +174,13 @@ curl -sfL https://get.k3s.io | \
 	K3S_KUBECONFIG_MODE="644" \
 	sh -
 ----
+endif::layerSLEMicro+layerK3s+focusRancher[]
 endif::FCTR+Availability[]
 endif::BP[]
 
 ifdef::focusK3s[]
 // Next Steps::
-After this successful deployment of the {pn_K3s} solution, review the {pn_K3s_DocURL}[product documentation] for details on how to directly utilize this Kubernetes cluster. Furthermore, by reviewing the {pn_Rancher} {pn_Rancher_DocURL}[product documentation] this solution can also be:
+After this successful deployment of the {pn_K3s} solution, review the link:{pn_K3s_DocURL}[product documentation] for details on how to directly use this Kubernetes cluster. Furthermore, by reviewing the {pn_Rancher} link:{pn_Rancher_DocURL}[product documentation] this solution can also be:
 
 * imported (refer to sub-section "Importing Existing Clusters"), then
 * managed (refer to sub-section "Cluster Administration") and

@@ -3,15 +3,44 @@ ifdef::focusRKE2,layerRKE2[]
 === {pn_RKE2}
 
 // leverage multiple prep sections
-ifdef::layerSLEMicro,layerSLES[include::./SA-RA-Deployment-OS-prep.adoc[]]
-ifdef::focusRancher[]
+ifndef::layerSLEMicro,layerSLES[include::./SA-RA-Deployment-OS-prep.adoc[]]
+ifdef::layerSLEMicro,layerSLES[Preparation(s)::]
+. Identify the appropriate, desired version of the {pn_RKE2} (for example vX.YY.ZZ+rke2rV) by reviewing
 +
-. Identify the appropriate, supported version of the {pn_RKE2} binary (e.g. vX.YY.ZZ+rke2r1), by reviewing the "{portfolioName} Support Matrix" on the {pn_Rancher_SupURL}[Support and Maintenance Terms of Service] web page. 
-endif::focusRancher[]
+ifdef::focusRancher+layerRKE2[]
+** the "Installing {pn_Rancher} on {pn_RKE2}" associated with the respective link:{pn_Rancher_SupportMatrixURL}[{pn_Rancher}] version, or
+endif::focusRancher+layerRKE2[]
 ifndef::focusRancher[]
-+
-. Identify the appropriate, desired version of the {pn_RKE2} binary (e.g. vX.YY.ZZ+rke2r1), by reviewing the "Releases" on the {pn_RKE2_Download}[Download] web page. 
+** the "Supported {pn_RKE2} Versions" associated with the respective link:{pn_Rancher_SupportMatrixURL}[{pn_Rancher}] version from "{pn_RKE2} Downstream Clusters" section, or
 endif::focusRancher[]
+** the "Releases" on the {pn_RKE2_Download}[Download] Web page.
++
+. For {pn_RKE2} versions 1.21 and higher, if the host kernel supports AppArmor, the AppArmor tools (usually available via the "apparmor-parser" package) must also be present prior to installing {pn_RKE2}.
+ifdef::layerSLEMicro[]
++
+** On the {pn_SLEMicro} node, install this required package
++
+----
+transactional-update pkg install apparmor-parser
+----
++
+Then a reboot is required to access the installed package and complete the deployment.
++
+----
+systemctl reboot
+----
+endif::layerSLEMicro[]
+ifdef::layerSLES[]
+** On the {pn_SLES} node, install this required package
++
+----
+zypper install apparmor-parser
+----
+endif::layerSLES[]
++
+. For the underlying operating system firewall service, either
+** enable and configure the necessary inbound link:{pn_RKE1_PortURL}[ports] or
+** stop and completely disable the firewall service.
 
 //-
 Deployment Process::
@@ -19,8 +48,8 @@ Perform the following steps to install the first {pn_RKE2} server on one of the 
 // ifdef::focusRKE2[]
 // ifdef::layerRKE2[]
 // To meet the {pn_Rancher} prerequisites and requirements on supported Kubernetes instances,
-// ifdef::layerRKE2[{pn_RKE2_ProductPage}[{pn_RKE2}]]
-// can be utilized, and as desired later scaled out to a production cluster.
+// ifdef::layerRKE2[link:{pn_RKE2_ProductPage}[{pn_RKE2}]]
+// can be used, and as desired later scaled out to a production cluster.
 +
 . Set the following variable with the noted version of {pn_RKE2}, as found during the preparation steps.
 +
@@ -192,7 +221,7 @@ endif::BP[]
 
 ifdef::focusRKE2[]
 // Next Steps::
-After this successful deployment of the {pn_RKE2} solution, review the {pn_RKE2_DocURL}[product documentation] for details on how to directly utilize this Kubernetes cluster. Furthermore, by reviewing the {pn_Rancher} {pn_Rancher_DocURL}[product documentation] this solution can also be:
+After this successful deployment of the {pn_RKE2} solution, review the link:{pn_RKE2_DocURL}[product documentation] for details on how to directly use this Kubernetes cluster. Furthermore, by reviewing the {pn_Rancher} link:{pn_Rancher_DocURL}[product documentation] this solution can also be:
 
 * imported (refer to sub-section "Importing Existing Clusters"), then
 * managed (refer to sub-section "Cluster Administration") and

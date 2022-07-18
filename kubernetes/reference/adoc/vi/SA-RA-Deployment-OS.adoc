@@ -13,24 +13,51 @@ include::./SA-RA-Deployment-OS-prep.adoc[]
 Deployment Process::
 On the compute platform node, install the noted {companyName} operating system, by following these steps:
 
-ifdef::layerSLEMicro[]
-. Download the {pn_SLEMicro_Download}[{pn_SLEMicro}] product (either for the ISO or Virtual Machine image)
-. The installation process is described and can be performed with default values by following steps from the {pn_SLEMicro} product documentation, see {pn_SLEMicro_InstallationDocURL}[Installation Quick Start]
+. Download the
+ifdef::layerSLEMicro[link:{pn_SLEMicro_Download}[{pn_SLEMicro}]]
+ifdef::layerSLES[link:{pn_SLES_Download}[{pn_SLES}]]
+product (either for the ISO or Virtual Machine image)
+** Identify the appropriate, supported version of
+ifdef::layerSLEMicro[{pn_SLEMicro}]
+ifdef::layerSLES[{pn_SLES}]
+by reviewing the support matrix for link:{pn_Rancher_SupportMatrixURL}[{pn_Rancher}] versions Web page.
++
+. The installation process is described and can be performed with default values by following steps from the product documentation, see
+ifdef::layerSLEMicro[link:{pn_SLEMicro_InstallationDocURL}[Installation Quick Start]]
+ifdef::layerSLES[link:{pn_SLES_InstallationDocURL}[Installation Quick Start]]
 +
 TIP: Adjust both the password and the local network addressing setup to comply with local environment guidelines and requirements.
-endif::layerSLEMicro[]
 
-ifdef::BP+FCTR[]
+ifdef::layerK3s,focusK3s[]
+// ifdef::layerSLEMicro+focusK3s[]
+// . On the target node with a default installation of
+// {pn_SLEMicro}
+// operating system, log in to the node either as root or as a user with sudo privileges and install a required package for the next layer.
+// +
+// ----
+// sudo transactional-update pkg install apparmor-parser
+// sudo reboot
+// ----
+// endif::layerSLEMicro+focusK3s[]
+endif::layerK3s,focusK3s[]
 
 //-
+ifdef::BP+FCTR[]
 Deployment Consideration(s)::
 To further optimize deployment factors, leverage the following practices:
 
 ifdef::FCTR+Automation[]
 * <<g-automation>>
-** To reduce user intervention, unattended deployments of {pn_SLEMicro} can be automated
-*** for ISO-based installations, by referring to the {pn_SLEMicro_AutoYaSTDocURL}[AutoYaST Guide]
-*** for raw-image based installation, by configuring the Ignition and Combustion tooling as described in the {pn_SLEMicro_InstallationDocURL}[Installation Quick Start]
+** To reduce user intervention, unattended deployments of
+ifdef::layerSLEMicro[{pn_SLEMicro}]
+ifdef::layerSLES[{pn_SLES}]
+can be automated
+*** for ISO-based installations, by referring to the
+ifdef::layerSLES[link:{pn_SLES_AutoYaSTDocURL}[AutoYaST Guide]]
+ifdef::layerSLEMicro[link:{pn_SLEMicro_AutoYaSTDocURL}[AutoYaST Guide]]
+ifdef::layerSLEMicro[]
+*** for raw-image based installation, by configuring the Ignition and Combustion tooling as described in the link:{pn_SLEMicro_InstallationDocURL}[Installation Quick Start]
+endif::layerSLEMicro[]
 endif::FCTR+Automation[]
 
 ////

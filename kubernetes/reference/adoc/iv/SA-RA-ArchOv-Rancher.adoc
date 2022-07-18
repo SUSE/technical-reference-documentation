@@ -1,13 +1,13 @@
 
 The figure below illustrates the high-level architecture of the {pn_Rancher} installation that manages multiple downstream Kubernetes clusters: 
 
-image::ArchitectureOverview-{portfolioName}.png[title="Architecture Overview - {pn_Rancher}", scaledwidth=80%]
+image::{portfolioName}_architecture.png[title="Architecture Overview - {pn_Rancher}", scaledwidth=80%]
 
 Authentication Proxy::
 A user is authenticated via {pn_Rancher} and then, if authorized, can access both the {pn_Rancher} environment and the downstream clusters and workloads.
 
 API Server::
-This provides the programmatic interface backend for a user, utilizing command-line interactions with {pn_Rancher} and the managed clusters.
+This provides the programmatic interface backend for a user, using command-line interactions with {pn_Rancher} and the managed clusters.
 
 Data Store::
 The purpose of this service is to capture the configuration and state of {pn_Rancher} and the managed clusters to aid in backup and recovery processes.
@@ -33,7 +33,7 @@ IMPORTANT: Regardless of the deployment target, {pn_Rancher} should always run o
 To aid in planning, training or assessing functionality like in a <<g-poc>> deployment, {pn_Rancher} can be installed on a single node running a Linux operating system as described later in this document.
 
 ifdef::BP[]
-TIP: To improve <<g-availability>>, the {pn_Rancher} backup operator can then be used to {pn_Rancher_MigrateURL}[migrate] from the single node to a <<g-production>> installation on a multi-node, high-availability Kubernetes cluster.
+TIP: To improve <<g-availability>>, the {pn_Rancher} backup operator can then be used to link:{pn_Rancher_MigrateURL}[migrate] from the single node to a <<g-production>> installation on a multi-node, high-availability Kubernetes cluster.
 endif::BP[]
 endif::GS[]
 

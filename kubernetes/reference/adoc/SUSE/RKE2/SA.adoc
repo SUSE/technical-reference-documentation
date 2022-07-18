@@ -1,2 +1,51 @@
+{pn_RKE2} also known as {an_RKE2}, is Rancher's next-generation Kubernetes distribution. It is a fully conformant Kubernetes distribution that focuses on security and compliance within the U.S. Federal Government sector. It solves the common frustration of installation complexity with Kubernetes by removing most host dependencies and presenting a stable path for deployment, upgrades, and rollbacks.
 
-FixMe
+To meet these goals, {pn_RKE2} does the following:
+
+* launches control plane components as static pods, managed by the kubelet. The embedded container runtime is containerd.
+* provides defaults and configuration options that allow clusters to pass the CIS Kubernetes Benchmark v1.5 or v1.6 with minimal operator intervention
+* enables FIPS 140-2 compliance
+* regularly scans components for CVEs using trivy in our build pipeline
+
+With {pn_RKE2} we take lessons learned from developing and maintaining our lightweight Kubernetes distribution, {pn_K3s}, and apply them to build an enterprise-ready distribution with K3s ease-of-use. What this means is that {pn_RKE2} is, at its simplest, a single binary to be installed and configured on all nodes expected to participate in the Kubernetes cluster. Once started, {pn_RKE2} is then able to bootstrap and supervise role-appropriate agents per node while sourcing needed content from the network.
+
+The fundamental roles for the nodes and core functionality of {pn_RKE2} are represented in the following figure:
+
+image::{an_RKE2}_overview.png[title="Component Overview - {pn_RKE2}", scaledwidth=80%]
+
+{pn_RKE2} brings together a number of Open Source technologies to make this all work:
+
+* {pn_K3s} - link:{pn_K3s_HelmControllerURL}[Helm Controller]
+* Kubernetes
+** API Server
+** Controller Manager
+** Kubelet
+** Scheduler
+** Proxy
+* etcd
+* Container Runtime - runc, containerd/cri
+* CoreDNS
+* NGINX Ingress Controller
+* Metrics Server
+* Helm
+
+All of these, except the NGINX Ingress Controller, are compiled and statically linked with {wj}footnote:[https://github.com/golang/go/tree/dev.boringcrypto/misc/boring]
+
+ifdef::RC,RI[]
+While all {pn_RKE2} roles can be installed on a single system, for the best availability, performance and security, the recommended deployment of a {pn_RKE2} cluster is a pair of nodes for the control plane role, at least three etcd role-based nodes and three or more worker nodes.
+endif::RC,RI[]
+
+ifdef::GS[]
+To aid in planning, training or assessing functionality like in a [<<g-poc,proof-of-concept>>] deployment, {pn_RKE2} can be installed on a single node as described later in this document.
+endif::GS[]
+
+{pn_RKE2} can run as a complete cluster on a single node or can be expanded into a multi-node cluster. Besides the core Kubernetes components, these are also configurable and included:
+
+* Multiple Kubernetes versions
+* CoreDNS, Metrics, Ingress controller
+* CNI: Canal (Calico & Flannel), Cilium or Calico
+* Fleet Agent : for GitOps deployment of cloud-native applications
+
+All of these components are configurable and can be swapped out for your implementation of choice. With these included components, you get a fully functional and CNCF-conformant cluster so you can start running apps right away.
+
+TIP: Learn more information about {pn_RKE2} at {pn_RKE2_DocURL}.

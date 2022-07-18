@@ -1,0 +1,1230 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+// include::../../../../common/adoc/common_docinfo_vars.adoc[]
+
+// the ifdef's make it possible to only change the DC file for generating the right document
+ifdef::Azure[]
+:cloud: Azure
+endif::[]
+
+// Variables & Attributes
+:topic: Using SUSE and Fortinet automation to deploy a secured SAP landscape on Azure Cloud Platform: Getting Started
+
+:productname: SUSE Linux Enterprise Server for SAP Applications
+
+:author1: Peter Schinagl, Sr. Technical Architect, SUSE
+//:author2: First Last, title, Partner
+
+:revdate: March 30, 2022
+:revnumber: 20220301
+
+//:toc2:
+//:toc-title: {topic}
+//:toclevels: 4
+
+:partner: Fortinet
+
+:sles: SUSE Linux Enterprise Server
+:sles4sap: {sles} for SAP Applications
+:hana_version: SAP HANA 2.0 SPS05
+:hana_archive_version: 51054623
+
+= {topic}
+//= Using SUSE and Fortinet automation to deploy a secured SAP landscape on Azure Cloud Platform
+
+== Introduction
+
+=== Motivation
+
+// Why this would be of interest
+// Challenges
+// Benefits
+
+// The 3 sentences about Project Mayerhofen seem do not make much sense to me. They seem to be unrelated, there is no more mention, no background information. What is the point here?
+What is Project Mayerhofen?
+
+Project Mayerhofen is a secure automated SAP deployment on Azure. It is based on the SUSE initiated GitHub project https://github.com/SUSE/ha-sap-terraform-deployments[Automated SAP/HA Deployments in Public/Private Clouds with Terraform].
+
+
+As organizations upgrade their existing systems and migrate to S/4 HANA, there is the opportunity to migrate to Azure for more flexibility and scalability on demand. 
+But this also shifts the attack surface for the SAP systems as they are no longer hosted in their own protected data center.
+
+A very useful approach to start with in the cloud is Infrastructure-as-Code (IaS), as all steps of deployments can be automated right from the start.
+
+Combining the SUSE SAP automation with an automated Fortinet Security Fabric provisioning results in an architecture which provides added security, optimized connectivity and faster rollout of an SAP landscape in Azure.
+
+Some key values of the solution are:
+
+. Simplifying SAP Cloud deployments on Azure
+. Increasing flexibility and scalability on demand
+. Improving builds and time to production
+. Using industry standards for automated deployment and configuration
+. Combining SUSE SAP automation with an automated Fortinet Security Fabric provisioning
+. Providing security, optimized connectivity and faster rollout of SAP landscapes
+
+Adding the Fortinet deployment, it is the same workflow as with the normal SUSE SAP automation project.
+You only need to enable the “with fortinet” switch to benefit from the additional installation of the Fortinet Fabric.
+
+
+=== Scope
+
+// This guide will help you take the first steps to
+This document will walk you through a simple deployment of an HA SAP Landscape using the SUSE Automation Project for SAP Solutions project and Fortinet's secure fabric on {cloud}. 
+The project can be customized quite extensively. The goal of this document is to provide you with an easy-to-start example.
+
+The first part of the project uses Terraform to build the {cloud} infrastructure where the Fortinet part is deployed in a HUB and the SAP Landscape is deployed on SUSE in a SPOKE.
+The HUB virtual network is the connection point to on-premises networks and serves as central location for services used by SPOKE virtual networks. 
+The SPOKE virtual networks are peered with the HUB and can be used to isolate workloads in their own virtual network.
+
+The second part of the project uses Salt to deploy and configure the operating system ({sles4sap}), SAP software (SAP HANA and SAP Netweaver),
+and, if chosen, a SUSE Linux Enterprise High Availability (HA) cluster for the SAP applications.
+
+If extensive configuration and customization are required, refer to the project documentation at https://github.com/SUSE/ha-sap-terraform-deployments and the Solution Architecture Document available from the SUSE Partner Program.
+
+For simplicity, this guide uses the Azure Cloud Shell to perform the deployment, as it provides easy access to most of the required tooling. 
+It is possible to use a local Linux or macOS computer, but some commands may need modification or omission.
+
+=== Audience
+
+This document is targeted at everybody who wants to build a secure SAP landscape on Azure.
+
+== Technical overview
+
+// Description
+// Architecture diagram
+
+The architecture for the deployment is similar to the one below:
+
+ifeval::[ "{cloud}" == "Azure" ]
+image::linux_gs_slessap_fortinet_azure_sap-landscape-automation_Project_Mayerhofer_general_v1.4.svg[title=Azure Automation Architecture,scaledwidth=99%]
+endif::[]
+
+The project performs the following actions:
+
+* Deploying an Azure VPN Gateway as entry point to the Azure Hub/Spoke network
+* Deploying an Azure Hub network
+* Deploying FortiGate and FortiADC HA pairs in the HUB
+* Deploying a Spoke-Network for the SAP Landscape
+* Deploying instances SAP HANA Instance (in an HA scenario)
+* Deploying SAP Netweaver/S4HANA Instances (in an HA scenario)
+* Configuring the operating system for SAP workload
+
+If an HA scenario is chosen, the following actions are performed in addition:
+
+* Configuring SAP HANA System Replication (HSR)
+* Configuring SAP Netweaver ENQ Replication
+* Configuring SUSE Linux Enterprise High Availability cluster components
+
+// Minimum requirements (prerequisites) for this guide
+// * Requirement 1 https://url[url]
+// * Requirement 2 https://url[url]
+
+The minimum requirements to get started are
+
+* an Azure account, to be able to deploy the solution.
+* an SAP account, to get the needed SAP media for the solution you want to deploy.
+
+=== The Fortinet Solutions
+
+==== FortiGate
+FortiGate _Next Generation Firewall_ (NGFW) enables security-driven networking and consolidates industry-leading security capabilities such as _intrusion prevention system_ (IPS), 
+Web filtering, _secure sockets layer_ (SSL) inspection, and automated threat protection.
+This deployment contains an HA cluster of two FortiGate instances which provides segmentation within the HUB network and segmentation and security inspection for communication to and from the SAP SPOKE network.
+The FortiGate Firewall cluster can be accessed via HTTPs or via SSH on its public IP and credentials output by the Terraform deployment.
+
+Further Information on the configuration can be found in the following guides:
+
+. http://docs.fortinet.com/document/fortigate-public-cloud/7.0.0/azure-administration-guide/128029/about-fortigate-vm-for-azure[FortiGate Documentation for Azure]
+. https://docs.fortinet.com/document/fortigate/7.0.4/administration-guide/954635/getting-started[FortiGate Administration Guide]
+. https://www.fortinet.com/sap[Fortinet Solutions for SAP]
+
+==== FortiADC
+FortiADC is an advanced _Application Delivery Controller_ (ADC) that ensures application availability, application security, and application optimization. 
+FortiADC offers advanced security features (WAF, DDoS, and AV) and application connectors for easy deployment and full visibility to your networks and applications.
+
+FortiADC provides a dedicated connector specific for SAP to allow the same load balancing capabilities like SAP Web Dispatcher with the addition of a _Web Application Firewall_ (WAF).
+This deployment contains a Cluster of two FortiADC Instances.
+The FortiADC cluster can be accessed via HTTPs or via SSH on its public IP and credentials output by the Terraform deployment.
+
+Further Information on the configuration can be found in the following guides:
+
+. https://docs.fortinet.com/document/fortiadc/6.2.2/handbook/105358/introduction[FortiADC Administration Guide]
+. https://docs.fortinet.com/document/fortiadc/6.2.2/handbook/382594/sap-connector[FortiADC SAP Connector Configuration]
+. https://www.fortinet.com/sap[Fortinet Solutions for SAP]
+
+
+== Installation
+
+
+//=== Install from the SUSE Rancher Apps & Marketplace
+//Use an ordered list for steps.
+//Link elements (with '+') to maintain consistent indentation.
+//E.g.:
+//. From the top-left Rancher menu select __Apps & Marketplace__.
+//From here, you will be taken to the __Charts__ page.
+//Notice __underscores__ are emphasis to indicate a specific
+//UI element.
+//+
+//image::kubernetes_gs_suseprod_partner-partnerprod_image_description.png[scaledwidth="85%", align="center"]
+
+//. Step 2.
+
+//. Step 3.
+
+//=== Install using generic/manual steps
+
+//Provide steps or link to existing document.
+//[source, bash]
+//---
+//echo "Use code blocks for command line steps."
+//---
+
+The overall process is visualized in the figure below: 
+
+image::linux_gs_slessap_fortinet_azure_sap-landscape-automation_Flow-SAPAutomation2.png[title=Workflow of the Automation,scaledwidth=85%,align="center"]
+
+NOTE: The project uses PAYG images by default. This means there is no need for subscriptions or license files to provide for an easy start. 
+But you can use BYOS/BYOL, too. The required changes are mentioned in the _tfvars_ example files.
+
+=== Configuring the Cloud Shell
+
+ifeval::[ "{cloud}" == "Azure" ]
+From the top menu of the Azure Portal, start an Azure Cloud Shell. To do so, use the small icon with the command line prompt.
+
+When Cloud Shell is started the first time, you can select between "Bash" and "Powershell". Use "Bash"
+
+The Cloud Shell is a managed service by Microsoft. It comes with the most popular command line tools and needed language support.
+The Cloud Shell also securely authenticates automatically for instant access to your resources through the Azure CLI or Azure PowerShell `cmdlets`.
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+Start an AWS Cloud Shell from the AWS Services menu.
+
+When the shell has launched, the next step is to configure the CLI and provide API access keys to allow the creation of AWS resources and infrastructure.
+The API keys are created from the AWS console. For more details, refer to
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html
+
+The quickest way to configure the AWS CLI is by running the command:
+
+----
+aws configure
+----
+
+This is described in the documentation mentioned above.
+
+The command generates a file in _$HOME/.aws/credentials_ which is referenced later.
+
+IMPORTANT: The user specified in this step requires certain AWS permissions to ensure the deployment is successful.
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+IMPORTANT: The GCP user specified in the below-mentioned step needs certain GCP project permissions to ensure the deployment is successful.
+For simplification, the GCP user used in this guide has the _Project Owner_ IAM role.
+
+The following procedures show the minimum steps required to prepare the GCP infrastructure to host the SAP HANA environment:
+
+. Create a new GCP Project to host the SAP HANA environment.
+. Enable the GCP Compute Engine API.
+. Using the newly created GCP project console, start a GCP Cloud Shell.
+. Using the GCP Cloud Shell, create a new GCP Key for the default GCP Service Account. The key will be used by Terraform to access the GCP infrastructure.
++
+TIP: For more details about creating a GCP Service Account key, refer to 
+https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-gcloud
++
+NOTE: For simplification, the default GCP Service Account will be used in this guide.
+endif::[]
+
+=== Ensuring Terraform is installed
+
+ifeval::[ "{cloud}" == "Azure" ]
+Terraform is already deployed as part of the Azure Cloud Shell. The following command output shows the Terraform version used at the time of creating this guide:
+----
+$ terraform -v
+Terraform v1.0.0
+on linux_amd64
+----
+
+The project could run with higher versions, too, but you may get some warnings.
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+
+Terraform is currently not deployed as part of the AWS Cloud Shell. In this step, Terraform is downloaded and installed to the _~/bin_ directory.
+Update the command below with the latest version of Terraform as needed.
+As Terraform is updated on a regular basis, it may be necessary to update after installation, or specify a different version to download.
+
+From the _~_ directory, run:
+
+----
+mkdir ~/bin
+cd ~/bin
+wget https://releases.hashicorp.com/terraform/0.14.7/terraform_0.14.7_linux_amd64.zip
+unzip terraform_0.14.7_linux_amd64.zip
+cd ~
+----
+
+Check if Terraform is working by running the following command:
+
+----
+terraform --version
+----
+
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+Terraform is already deployed as part of the GCP Cloud Shell. The following command output shows the Terraform version used at the time of creating this guide:
+
+----
+$ terraform -v
+Terraform v1.0.0
+on linux_amd64
+----
+endif::[]
+
+
+=== Preparing the SAP media
+
+With the correct entitlement, SAP media can be downloaded from the SAP Web site at https://support.sap.com/en/my-support/software-downloads.html. 
+Make the SAP Media available to be accessed during the deployment.
+
+The SUSE Automation for SAP Applications project allows for three methods for presenting the SAP media:
+
+. SAR file and SAPCAR executable (SAP HANA Database only)
+. Multipart exe/RAR files
+. Extracted media
+
+The different formats have some benefits and drawbacks:
+
+. The compressed archives (SAR and RAR) provide a simple copy to the cloud but a longer install time because of extracting them during the process.
+. The uncompressed/extracted media are the fastest installation method. However, as more files are copied to the cloud share, this also takes time beforehand during preparation.
+
+ifeval::[ "{cloud}" != "GCP" ]
+Here in the example, we use the compressed archives for the installation (exe/RAR) as this is the easiest method to download and upload to the cloud share.
+
+This guide uses the most recent SAP HANA media, {hana_version}. The SAP HANA media file name downloaded at the time of creating this guide is `{hana_archive_version}`.
+Follow the SAP instructions to download the SAP HANA media.
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+In this example, we use the extracted archives for the installation, as this is the fastest deployment way.
+endif::[]
+
+[NOTE]
+====
+Extraction depends on the way used to download the SAP media. If multiple compressed files are downloaded, the official SAP extract tool `SAPCAR` tool must be used to extract the SAP media.
+
+Extracted SAP Media will contain a lot of extracted files. Depending on your network speed, uploading the extracted SAP media files can take a lot of time.
+The CSP's infrastructure usually provides a good network speed. But if you encounter problems, a viable workaround  would be to create a workstation machine in the cloud to download/upload the SAP media.
+
+Also, have a look at how far away your share for the SAP media is from the region where you install the machines - it should preferably be the same region.
+====
+
+[TIP]
+====
+It is good practice to have the SAP Media versioned on the cloud share to build a library for automatic installs and (re)deployments.
+Thus, give some thought to your SAP media structure in advance.
+
+As an *example*, see below how a full SAP application media tree (in a compressed format) for an S/4HANA version 1809 installation could look like:
+----
+<FS>/s4hana1809
+       ├SWPM_CD
+       │  ├SWPM20SP07_5-80003424.SAR
+       │  └SAPCAR_721-20010450.EXE
+       │
+       ├EXP_CD
+       │  ├S4CORE104_INST_EXPORT_1.zip
+       │  ├S4CORE104_INST_EXPORT_2.zip
+       │  └...
+       ├DBCLIENT_CD
+       │  └IMDB_CLIENT20_005_111-80002082.SAR
+       ├BASKET_CD
+       │   ├SAPHOSTAGENT24_24-20009394.SAR
+       │   ├igshelper_4-10010245.sar
+       │   ├igsexe_1-80001746.sar
+       │   ├SAPEXEDB_400-80000698.SAR
+       │   └SAPEXE_400-80000699.SAR
+       └HANA
+          ├51053061_part1.exe
+          ├51053061_part2.rar
+          ├51053061_part3.rar
+          └51053061_part4.rar
+
+
+ HANA       : contains the HANA Database install
+ BASKET_ CD : contains SAP kernel, patch + more like hostagent.
+ DBCLIENT_CD: contains the package corresponding to DB CLIENT, e.g HANA
+ EXP_CD     : contains the package corresponding to EXPORT files
+ SWPM_CD    : must contain the .exe file corresponding to SAPCAR and the
+              .sar file corresponding to SWPM.
+              The file suffix must be .exe and .sar.
+----
+====
+
+
+The next steps explain an example for a simple HANA install download.
+
+ifeval::[ "{cloud}" == "Azure" ]
+For Azure, an Azure File Share is used to host the SAP media.
+
+Using the Azure Portal or the Azure CLI, perform the following actions:
+
+* Create a storage account.
+* Create a directory within the Storage Account, for example _mysapmedia_.
+* Upload the SAP media files to the Storage Account.
+
+You will later need the Storage Account name and one key as password for the Terraform run.
+
+image::linux_gs_slessap_fortinet_azure_sap-landscape-automation_TRD_SLES-SAP-HA-automation-quickstart-cloud-Azure-Storage.png[width=470]
+
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+For AWS, an S3 bucket is used.
+
+Using the AWS Console, perform the following actions:
+
+* Create an S3 bucket. (The example shows a bucket called mysapmedia, but a unique name should be used.)
+* Create a folder within the bucket.
+* Upload the SAP media to the folder in the S3 bucket.
+
+image::TRD_SLES-SAP-HA-automation-quickstart-cloud-s3-bucket.png[width=470]
+
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+A GCP Cloud Storage bucket is used to host the SAP HANA extracted media. Using the GCP Console, perform the following actions:
+
+* Create a new GCP bucket. (The example shows a GCP Cloud Storage bucket called `mysapmedia`, but a unique name should be used.)
+* Upload the SAP HANA media extracted directory to the GCP Cloud Storage bucket. The following figure shows the uploaded SAP HANA media-extracted directory:
++
+image::trd_sles-sap-ha-automation-quickstart-cloud-gcp-bucket.png[title=SAP HANA GCP Storage Bucket, scaledwidth=99%]
+endif::[]
+
+
+
+=== Downloading and configuring the Automation code
+
+The SUSE and Fortinet SAP Automation code is published in GitHub.
+
+ifeval::[ "{cloud}" == "GCP"]
+The following commands will:
+
+. create a new GCP Cloud Shell directory to host the SUSE SAP automation code.
+. change directory to the newly created directory.
+
+----
+$ mkdir suse-sap-automation
+$ cd suse-sap-automation
+----
+endif::[]
+
+
+The following command will clone the project to the Cloud Shell ready for configuration:
+// fix the URL and Branch
+// $ git clone --depth 1 --branch 7.2.0 https://github.com/SUSE/Project-Mayerhofen.git
+// other way would be use the tagged version and download the zip file
+----
+$ git clone --depth 1 https://github.com/Project-Mayerhofen/ha-sap-terraform-deployments.git
+----
+The --depth 1 make sure that you only get the latest commits and not the whole history for the project
+
+ifeval::[ "{cloud}" == "GCP" ]
+Next, move the generated GCP Service Account Key to the SUSE SAP Automation GCP directory:
+----
+$ cd ~
+$ cp <GCP Service Account Key> suse-sap-automation/ha-sap-terraform-deployments/gcp
+----
+endif::[]
+
+NOTE: If the following SSH keys already exist, the next step can be skipped.
+
+Then, generate SSH key pairs to allow for accessing the SAP HANA instances:
+----
+#optional if ssh-keys already exist
+$ cd ~
+$ ssh-keygen -q -t rsa -N '' -f  ~/.ssh/id_rsa
+----
+
+==== Configuring the deployment options and modifying the Terraform variables
+
+The files that need to be configured are contained in a subdirectory of the project. Use that as the working directory:
+
+ifeval::[ "{cloud}" == "Azure" ]
+The project itself has code for several cloud service providers and virtual infrastructures, but currently the Fortinet addition is only available for Azure. 
+Get in contact with us if you want to see it for others, too.
+
+----
+cd ~/ha-sap-terraform-deployments/azure
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+----
+cd ~/ha-sap-terraform-deployments/aws
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+----
+$ cd ~/suse-sap-automation/ha-sap-terraform-deployments/gcp
+----
+endif::[]
+
+
+A Terraform example template is provided. For a demo environment consisting of a simple SAP Scenario, only a handful of parameters will need to be changed, 
+as most of the possible values come with a useful default as a good and safe starting point.
+
+
+Copy the Terraform example file to _terraform.tfvars_:
+----
+$ cp terraform.tfvars.example terraform.tfvars
+----
+
+
+Edit the `terraform.tfvars` file and modify it as explained below.
+
+As there are many options possible, we will describe only one possible path, which will set up the Fortinet appliances and an HA HANA System and a Netweaver HA system.
+If you are duplicating the lines before modification, ensure the original is commented out, or the deployment will fail.
+
+ifeval::[ "{cloud}" == "Azure" ]
+// nothing needed for AZURE
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+
+With this parameter, Terraform will use the AWS credentials file created above. This is the easiest way to provide credentials for the deployment.
+----
+aws_credentials = "~/.aws/credentials"
+----
+
+If not used, ensure the following lines are commented out, or the deployment will fail.
+
+----
+#aws_access_key_id = my-access-key-id
+#aws_secret_access_key = my-secret-access-key
+----
+endif::[]
+
+
+ifeval::[ "{cloud}" == "GCP" ]
+First, choose the GCP Project ID for the deployment:
+----
+# GCP project id
+project = "<PROJECT ID>"
+----
+
+Then, choose the GCP Service Account Key file path. With the following parameter, Terraform will use the GCP Service Account Key file created above:
+----
+# Credentials file for GCP
+gcp_credentials_file = "<GCP Service Account Key Path and Name>"
+----
+endif::[]
+
+
+Choose the region for the deployment, for example:
+ifeval::[ "{cloud}" == "Azure" ]
+----
+# Region where to deploy the configuration
+az_region = "westeurope"
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+----
+# Region where to deploy the configuration
+aws_region = "eu-central-1"
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+----
+# Region where to deploy the configuration
+region = "europe-west1"
+----
+endif::[]
+
+The following parameters select the version of {sles4sap} to deploy:
+
+NOTE: The values shown would also be the defaults used. All defaults point to PAYG images for an easy start. So you only need to enable or change the variables if you want something different.
+
+ifeval::[ "{cloud}" == "Azure" ]
+Set this variable to give the deployment a unique name, which will be shown at most resources as suffix, for example:
+----
+# The name must be unique among different deployments
+deployment_name = "mydev123"
+----
+endif::[]
+
+Provide a name for the OS user for the machines:
+----
+# Admin user for the created machines
+admin_user = "cloudadmin"
+----
+
+ifeval::[ "{cloud}" == "Azure" ]
+If you want to go with the default PAYG image, you do NOT need to change anything here. 
+However, if you want to use a BYOS image, you need to make sure that you provide the subscription key and e-mail to register against SUSE Customer Center (SCC). 
+This requires also that you have not blocked Internet access to reach SCC.
+
+// this is also the default
+----
+#os_image = "sles-sap-15-sp2:gen2"
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+ // this is also the default
+For simplicity, the 'os_owner' is set to use PAYG instances from the AWS Marketplace. If an existing SUSE subscription needs to be used, this section can be changed to use BYOS images. 
+Refer to the project documentation.
+----
+#os_image = "suse-sles-sap-15-sp2"
+#os_owner = "679593333241"
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+// this is also the default
+----
+#os_image = "suse-sap-cloud/sles-15-sp2-sap"
+----
+endif::[]
+
+Next, enter the path for the public and private SSH keys that were generated earlier. Below is an example using the SSH keys created by default:
+----
+# SSH Public key location to configure access to the remote instances
+public_key  = "~/.ssh/id_rsa.pub"
+
+# Private SSH Key location
+private_key = "~/.ssh/id_rsa"
+----
+
+ifeval::[ "{cloud}" == "Azure" ]
+As the deployment needs a Hub/Spoke network setup, set the following variables:
+----
+network_topology = "hub_spoke"
+vnet_hub_create = true
+bastion_enabled = true
+spoke_name = "sap-1"
+----
+
+To use an existing hub/spoke network, have a look at the other examples provided.
+The deployment with Fortinet *requires* the hub/spoke architecture.
+endif::[]
+
+To keep the cluster architecture and deployment simple and to provide additional packages needed to deploy, uncomment and set the following parameters:
+----
+ha_sap_deployment_repo = "https://download.opensuse.org/repositories/network:/ha-clustering:/sap-deployments:/v7/"
+----
+
+Then, enable the `pre_deployment` parameter:
+----
+pre_deployment = true
+----
+
+ifeval::[ "{cloud}" == "Azure" ]
+The Jumphost server (Bastion Host Server) is enabled by default, and provides the public IP address to the database.
+Otherwise the deployed instances will all get a public IP.
+
+With the Fortinet additon, it is mandatory to have the Bastion Host Server enabled:
+----
+bastion_enabled = true
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+// Question to Ab:  Why do you disable the bastion?
+The Jumphost server (Bastion Host Server) is enabled by default, and provide the public IP address to the database.
+Otherwise the two HANA servers will get a public ip.
+
+Disable the Bastion Host Server creation parameter `bastion_enabled`:
+----
+bastion_enabled = false
+----
+endif::[]
+
+Next, set which SAP HANA instance machine type should be selected.
+The default is set to some standard types, and you only need to enable and change the variable if you want other sizes.
+
+ifeval::[ "{cloud}" == "Azure" ]
+----
+#hana_vm_size = "Standard_E8s_v3"
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+----
+#hana_instancetype = "r3.xlarge"
+----
+
+Next, set the host name for the instances, without the domain part:
+----
+name = "hana"
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+----
+#machine_type = "n1-highmem-32"
+----
+endif::[]
+
+
+Modify the following parameter to point to SAP media that was uploaded to the storage location:
+
+ifeval::[ "{cloud}" == "Azure" ]
+----
+storage_account_name = "YOUR_STORAGE_ACCOUNT_NAME"
+storage_account_key = "YOUR_STORAGE_ACCOUNT_KEY"
+----
+
+The "hana_inst_master" needs to be set according to your settings of the file share you created before.
+
+Example:
+// all three should be better aligned and build on a fixed structure
+----
+hana_inst_master = "//YOUR_STORAGE_ACCOUNT_NAME.file.core.windows.net/mysapmedia"
+
+hana_archive_file = "s4hana1809/HANA/{hana_archive_version}.exe"
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+----
+hana_inst_master = "s3://mysapmedia/s4hana1809/HANA"
+
+hana_archive_file = "{hana_archive_version}.exe"
+----
+
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+[subs="attributes"]
+----
+hana_inst_master = "mysapmedia/{hana_archive_version}"
+----
+endif::[]
+
+To create the cluster, you need to set this parameter to true, otherwise only a single system is created.
+----
+# Enable system replication and HA cluster
+hana_ha_enabled = true
+----
+
+Finally, to ensure a fully automated deployment, it is possible to set passwords within the _terraform.tfvars_ file. Uncomment and set the following parameters to your own value:
+----
+hana_master_password = "SAP_Pass123"
+----
+
+NOTE: If the parameters are not set in the _terraform.tfvars_ file, they must be entered when running the deployment.
+
+IMPORTANT: All passwords must conform to SAP password policies, or the deployment will fail.
+
+Optional: If a monitoring instance should be a part of the deployment, find and uncomment the following:
+
+----
+monitoring_enabled = true
+----
+
+As you want to deploy a Netweaver scenario, you need a highly available NFS-Share. To build one with Linux, use DRBD and pacemaker:
+----
+# Enable drbd cluster
+drbd_enabled = true
+----
+
+There is a similar set of variables needed for Netweaver as it was for HANA:
+----
+netweaver_enabled = true
+netweaver_app_server_count = 2
+netweaver_master_password = "SuSE1234x"
+----
+
+The Netweaver product version which should be installed needs to be set via product ID.
+Have a look at the examples to pick the right one for your deployment:
+----
+netweaver_product_id = "NW750.HDB.ABAPHA"
+----
+
+Again, provide the file share for the Netweaver media, which normally are at the same share:
+----
+netweaver_storage_account_name = "YOUR_STORAGE_ACCOUNT_NAME
+netweaver_storage_account_key = "YOUR_STORAGE_ACCOUNT_KEY"
+netweaver_storage_account = "//YOUR_STORAGE_ACCOUNT_NAME.file.core.windows.net/path/to/your/nw/installation/media"
+----
+
+Now define where the directories for the SAP installer are located, relative to the mount point of the Netweaver storage account:
+----
+netweaver_sapcar_exe = "your_sapcar_exe_file_path"
+netweaver_swpm_sar = "your_swpm_sar_file_path"
+netweaver_sapexe_folder   =  "your_download_basket"
+netweaver_additional_dvds = ["your_export_folder", "your_hdbclient_folder"]
+----
+
+To additionally deploy the Fortinet services, remember you need to choose a HUB-SPOKE network scenario and enable the flag for Fortinet:
+----
+fortinet_enabled=true
+----
+
+You need credentials for the FortiGate instances, too. Ensure to change them to your values:
+----
+fortigate_vm_username    = "azureuser"
+fortigate_vm_password    = "SuSE1234x"
+----
+
+Do the same for the FortiADC instances:
+
+----
+fortiadc_vm_username    = "azureuser"
+fortiadc_vm_password    = "SuSE1234x"
+----
+
+All other values should be set by default and use the PAYG instances of Fortinet.
+
+If you want to use BYOL with your Fortinet services, you need to buy and then copy the Fortinet license files into the directory:
+----
+cp *.lic ~/ha-sap-terraform-deployments/azure
+----
+
+Here is an example _tfvars_ file for a Fortinet deployment in the Hub, and an HA NW750 installation with an HA HANA setup in the SPOKE:
+----
+az_region = "westeurope"
+deployment_name = "psfn6"
+admin_user = "cloudadmin"
+public_key  = "/home/<YOURUSER>/.ssh/azure.id_rsa.pub"
+private_key = "/home/<YOURUSER>.ssh/azure.id_rsa"
+cluster_ssh_pub = "salt://sshkeys/cluster.id_rsa.pub"
+cluster_ssh_key = "salt://sshkeys/cluster.id_rsa"
+network_topology = "hub_spoke"
+vnet_hub_create = true
+bastion_enabled = true
+spoke_name = "sap-1"
+ha_sap_deployment_repo = "https://download.opensuse.org/repositories/network:/ha-clustering:/sap-deployments:/devel/"
+pre_deployment = true
+hana_count = "2"
+storage_account_name = "<YOURSTORAGEACCOUNT>"
+storage_account_key = "<YOURACCOUNTKEY>"
+hana_inst_master = "//YOURSTORAGEACCOUNT>.file.core.windows.net/sapbits/HANA/51054623"
+hana_ha_enabled = true
+hana_master_password = "xxxxxxxx"
+monitoring_enabled = true
+drbd_enabled = true
+netweaver_enabled = true
+netweaver_app_server_count = 2
+netweaver_master_password = "xxxxxxxx"
+netweaver_ha_enabled = true
+netweaver_cluster_fencing_mechanism = "sbd"
+netweaver_product_id = "NW750.HDB.ABAPHA"
+netweaver_storage_account_name = "<YOURSTORAGEACCOUNT>"
+netweaver_storage_account_key = "<YOURACCOUNTKEY>"
+netweaver_storage_account = "<YOURSTORAGEACCOUNT>.file.core.windows.net/sapbits"
+netweaver_sapcar_exe = "netweaver/SAPCAR"
+netweaver_swpm_sar   = "netweaver/SWPM10SP26_6-20009701.SAR"
+netweaver_sapexe_folder = "netweaver/kernel_nw75_sar"
+netweaver_additional_dvds = ["netweaver/51050829_3", "HANA/51054623/DATA_UNITS/HDB_CLIENT_LINUX_X86_64"]
+fortinet_enabled         = true
+fortigate_vm_username    = "azureuser"
+fortigate_vm_password    = "xxxxxxxxx"
+fortiadc_vm_username    = "azureuser"
+fortiadc_vm_password    = "xxxxxxxxx"
+----
+
+[NOTE]
+====
+Here you can see how parts of the Fortinet section look for using BYOL images:
+
+----
+..
+fortinet_vm_license_type = "byol"
+
+fortigate_a_license_file = "license_fortigate_a.lic"
+fortigate_b_license_file = "license_fortigate_b.lic"
+fortigate_os_image = "fortinet:fortinet_fortigate-vm_v5:fortinet_fg-vm:7.0.2"
+..
+fortinet_enabled         = true
+fortigate_vm_username    = "azureuser"
+fortigate_vm_password    = "xxxxxxxxx"
+fortiadc_vm_username    = "azureuser"
+fortiadc_vm_password    = "xxxxxxxxx"
+..
+fortiadc_a_license_file = "license_fortiadc_a.lic"
+fortiadc_b_license_file = "license_fortiadc_b.lic"
+fortiadc_os_image = "fortinet:fortinet-fortiadc:fad-vm-byol:6.1.3"
+..
+----
+====
+
+
+
+=== Finalizing the automation configuration
+
+ifeval::[ "{cloud}" == "Azure" ]
+Ensure that the subscription used to host the SAP HANA HA cluster meets the infrastructure quota requirements. 
+For more info, refer to https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/get-started
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+==== Subscribing to the AWS Marketplace offer
+
+To automatically deploy instances from the AWS Marketplace, ensure to *subscribe* to the offering.
+
+A link for {sles4sap} 15 SP2 can be found at link:https://aws.amazon.com/marketplace/server/procurement?productId=e9701ac9-43ee-4dda-b944-17c6c231c8db[].
+
+If a different version of {sles4sap} is required, subscribe to the relevant version on the marketplace.
+
+
+=== Configuring IAM policies
+
+If the deployment is being run from the root user of the AWS account, or if the user specified when configuring the AWS CLI has
+admin privileges in your AWS account, you can skip this step.
+
+If using an IAM user with limited permissions, additional IAM rights may be required as IAM policies are created and attached
+during deployment. These permissions for example could include accessing and managing EC2 instances, S3 buckets, IAM (to create roles and policies) and EFS storage.
+
+There are two options available to achieve this:
+
+a. Attach the *IAMFullAccess* policy to the user executing the project. However, this is not recommended.
+b. The recommended method is to create a new IAM policy and attach it to the desired user.
+
+TIP: Depending on your own IAM rights, you may need to reach out to an AWS administrator for your account to set this up for you.
+
+Create the following policy and attach it to the IAM user running the deployment:
+
+----
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole",
+                "iam:PassRole",
+                "iam:CreateRole",
+                "iam:TagRole",
+                "iam:GetRole",
+                "iam:DeleteRole",
+                "iam:GetRolePolicy",
+                "iam:PutRolePolicy",
+                "iam:DeleteRolePolicy",
+                "iam:ListInstanceProfilesForRole",
+                "iam:CreateInstanceProfile",
+                "iam:GetInstanceProfile",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:DeleteInstanceProfile",
+                "iam:AddRoleToInstanceProfile"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+Ensure that the GCP Project used to host the SAP HANA HA cluster meets the infrastructure quota requirements set by Google Cloud. 
+For more info, refer to https://cloud.google.com/solutions/sap/docs/sap-hana-planning-guide#quotas
+endif::[]
+
+
+=== Deploying the project
+
+Terraform will create and name resources when running the deployment based on the "workspace" in use.
+It is highly recommended to create a unique workspace from which to run the deployment.
+
+----
+$ terraform init
+$ terraform plan
+$ terraform apply
+----
+
+TIP: The Cloud Shell has a timeout of around 20 minutes and the shell will close if left unattended, resulting in a failed deployment.  
+It is strongly advised to retain focus on the Cloud Shell window to ensure the timeout does not occur, as a full deployment could take nearly four hours.
+
+
+ifeval::[ "{cloud}" == "Azure" ]
+If successful, the output will be the public IP addresses for the cluster nodes, similar to the output below:
+
+----
+
+module.netweaver_node.module.netweaver_provision.null_resource.provision[3] (remote-exec): Total states run:     38
+module.netweaver_node.module.netweaver_provision.null_resource.provision[3] (remote-exec): Total run time: 6339.329 s
+module.netweaver_node.module.netweaver_provision.null_resource.provision[3] (remote-exec): Tue Jan 25 19:12:24 UTC 2022::vmnetweaver04::[INFO] deployment done
+
+Apply complete! Resources: 227 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+bastion_public_ip = "20.2.3.43"
+cluster_nodes_ip = [
+  [
+    "10.74.1.10",
+    "10.74.1.11",
+  ],
+]
+cluster_nodes_name = [
+  [
+    "vmhana01",
+    "vmhana02",
+  ],
+]
+cluster_nodes_public_ip = [
+  [],
+]
+cluster_nodes_public_name = [
+  [],
+]
+drbd_ip = [
+  "10.74.1.6",
+  "10.74.1.7",
+]
+drbd_name = [
+  "vmdrbd01",
+  "vmdrbd02",
+]
+drbd_public_ip = []
+drbd_public_name = []
+fortiadc_a_url = "https://20.2.3.44:41443"
+fortiadc_b_url = "https://20.2.3.44:51443"
+fortigate_a_url = "https://20.2.3.41"
+fortigate_b_url = "https://20.2.3.42"
+fortigate_url = "https://20.2.3.44"
+iscsi_srv_ip = [
+  "10.74.1.4",
+]
+iscsisrv_name = [
+  "vmiscsi01",
+]
+iscsisrv_public_ip = []
+iscsisrv_public_name = []
+monitoring_ip = ""
+monitoring_name = ""
+monitoring_public_ip = ""
+monitoring_public_name = ""
+netweaver_ip = [
+  "10.74.1.60",
+  "10.74.1.61",
+  "10.74.1.62",
+  "10.74.1.63",
+]
+netweaver_name = [
+  "vmnetweaver01",
+  "vmnetweaver02",
+  "vmnetweaver03",
+  "vmnetweaver04",
+]
+netweaver_public_ip = []
+netweaver_public_name = []
+----
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+
+If successful, the output will be the public IP addresses for the cluster nodes, similar to the output below:
+
+----
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec):               ----------
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec):               method:
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec):                   update
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec):               url:
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec):                   /tmp/cluster.config
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec):
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Summary for local
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): -------------
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Succeeded: 34 (changed=26)
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Failed:     0
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): -------------
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Total states run:     34
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Total run time: 1384.111 s
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Thu Aug 26 11:18:58 UTC 2021::hana02::[INFO] deployment done
+module.hana_node.module.hana_provision.null_resource.provision[1]: Creation complete after 43m28s [id=xxxxxxxxxxxxxx]
+
+Apply complete! Resources: 33 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+cluster_nodes_ip = [
+  "10.0.1.10",
+  "10.0.2.11",
+]
+cluster_nodes_name = [
+  "i-0a553e68e157ed667",
+  "i-00887a206e454b0ab",
+]
+cluster_nodes_public_ip = [
+  "18.192.212.32",
+  "3.66.190.173",
+]
+cluster_nodes_public_name = [
+  "ec2-18-192-212-32.eu-central-1.compute.amazonaws.com",
+  "ec2-3-66-190-173.eu-central-1.compute.amazonaws.com",
+]
+drbd_ip = []
+drbd_name = []
+drbd_public_ip = []
+drbd_public_name = []
+iscsisrv_ip = ""
+iscsisrv_name = ""
+iscsisrv_public_ip = ""
+iscsisrv_public_name = ""
+monitoring_ip = ""
+monitoring_name = ""
+monitoring_public_ip = ""
+monitoring_public_name = ""
+netweaver_ip = []
+netweaver_name = []
+netweaver_public_ip = []
+netweaver_public_name = []
+----
+
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+
+If successful, the output lists the public IP addresses for the cluster nodes. This will look similar to the following considering the different public IP addresses for each deployment:
+-----
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Summary for local
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): -------------
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Succeeded: 33 (changed=23)
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Failed:     0
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): -------------
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Total states run:     33
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Total run time: 1028.670 s
+module.hana_node.module.hana_provision.null_resource.provision[1] (remote-exec): Wed Jun 23 10:14:22 UTC 2021::demo-hana02::[INFO] deployment done
+module.hana_node.module.hana_provision.null_resource.provision[1]: Creation complete after 27m24s [id=3463680564647535989]
+
+Apply complete! Resources: 26 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+bastion_public_ip = ""
+cluster_nodes_ip = [
+  "10.0.0.10",
+  "10.0.0.11",
+]
+cluster_nodes_name = [
+  "demo-hana01",
+  "demo-hana02",
+]
+cluster_nodes_public_ip = tolist([
+  "34.127.16.75",
+  "34.145.94.26",
+])
+cluster_nodes_public_name = []
+drbd_ip = []
+drbd_name = []
+drbd_public_ip = []
+drbd_public_name = []
+iscsisrv_ip = ""
+iscsisrv_name = ""
+iscsisrv_public_ip = ""
+iscsisrv_public_name = []
+monitoring_ip = ""
+monitoring_name = ""
+monitoring_public_ip = ""
+monitoring_public_name = ""
+netweaver_ip = []
+netweaver_name = []
+netweaver_public_ip = []
+netweaver_public_name = []
+-----
+endif::[]
+
+=== Tearing down
+
+When finished with the deployment, or even if the deployment has failed, ensure that Terraform is used to tear down the environment.
+
+----
+$ terraform destroy
+----
+
+ifeval::[ "{cloud}" == "Azure" ]
+This method will ensure all resource, such as instances, volumes, networks, etc. are cleaned up.
+You need to delete the following components manually:
+* Azure File Store
+endif::[]
+
+ifeval::[ "{cloud}" == "AWS" ]
+This method will ensure all AWS resource, such as instances, volumes, VPCs, and IAM roles, are cleaned up.
+endif::[]
+
+ifeval::[ "{cloud}" == "GCP" ]
+This method will ensure all GCP resources, such as instances, disks, VPCs, and roles are cleaned up.
+You need to delete the following GCP components manually:
+
+* GCP Cloud Storage bucket
+* GCP Project
+endif::[]
+
+//== Use case and demonstration
+
+//Describe use case and demonstration.
+
+//[NOTE]
+//====
+// Use admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING) as needed.
+//====
+
+//Use sections to break up major actions, such as:
+//=== Prepare the demonstration environment (beyond installation)
+//=== Perform action (to illustrate capability)
+//=== Examine results (verifying capability)
+//Use ordered lists for steps.
+//Minimize/consolidate images whenever possible.
+
+
+
+== Summary
+
+//Summarize the motivation
+//Summarize what was demonstrated
+//Hint at other capabilities.
+Combining the SUSE SAP automation with an automated Fortinet Security Fabric provisioning results in an architecture which provides added security, optimized connectivity and faster rollout of an SAP landscape in Azure.
+
+
+== Additional resources
+
+To learn more about the capabilities of {topic}, refer to the following resources:
+//Use an unordred lists for references
+
+* https://www.fortinet.com/sap[Fortinet Solutions for SAP]
+* https://www.suse.com/partners/alliance/sap/[SUSE Solutions for SAP]
+* https://docs.microsoft.com/en-us/azure/architecture/solution-ideas/articles/sap-workload-automation-suse[SAP workload automation using SUSE on Azure]
+//* https://url/[reference-title]
+
+
+++++
+<?pdfpagebreak?>
+++++
+
+// Standard SUSE Technical Reference Documents includes
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+////
+:leveloffset: 0
+
+== Legal notice
+include::../../../../common/adoc/common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::../../../../common/adoc/common_gfdl1.2_i.adoc[]
+////
+
+//end

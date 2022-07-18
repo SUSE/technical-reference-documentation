@@ -5,7 +5,11 @@ ifndef::iIHV[]
 Preparation(s)::
 For each node used in the deployment:
 
-* Validate the necessary CPU, memory, disk capacity, and network interconnect quantity and type are present for each node and its intended role. Refer to the recommended CPU/Memory/Disk/Networking requirements as noted in the {pn_Rancher_HWReqURL}[{pn_Rancher} Hardware Requirements].
+* Validate the necessary CPU, memory, disk capacity, and network interconnect quantity and type are present for each node and its intended role. Refer to the recommended CPU/Memory/Disk/Networking requirements as noted in the
+ifdef::focusRancher[link:{pn_Rancher_HWReqURL}[{pn_Rancher} Hardware Requirements].]
+ifdef::focusK3s[link:{pn_K3s_HWReqURL}[{pn_K3s} Hardware Requirements].]
+ifdef::focusRKE1[link:{pn_RKE1_HWReqURL}[{pn_RKE1} Hardware Requirements].]
+ifdef::focusRKE2[link:{pn_RKE2_HWReqURL}[{pn_RKE2} Hardware Requirements].]
 * Further suggestions
 ** Disk : Use a pair of local, direct attached, mirrored disk drives is present on each node (SSDs are preferred); these will become the target for the operating system installation.
 ** Network : Prepare an IP addressing scheme and optionally create both a public and private network, along with the respective subnets and desired VLAN designations for the target environment.
@@ -18,14 +22,9 @@ endif::RI[]
 ifdef::RC[]
 ifdef::iIHV[]
 ifdef::IHV-Cisco[include::../IHV/Cisco/SA-RA-Deployment-Hardware.adoc[]]
-ifdef::IHV-DELL[include::../IHV/DELL/SA-RA-Deployment-Hardware.adoc[]]
-ifdef::IHV-HPE[]
-ifdef::IHV-HPE-Synergy[include::../IHV/HPE/SA-RA-Deployment-Hardware.adoc[]]
-endif::IHV-HPE[]
-ifdef::IHV-Supermicro[]
-ifdef::IHV-Supermicro-SuperServer[include::../IHV/Supermicro/SuperServer/SYS-120C-TN10R.adoc[]]
-ifdef::IHV-Supermicro-SuperServer[include::../IHV/Supermicro/SuperServer/SYS-620C-TN12R.adoc[]]
-endif::IHV-Supermicro[]
+ifdef::IHV-Dell[include::../IHV/Dell/SA-RA-Deployment-Hardware.adoc[]]
+ifdef::IHV-HPE[include::../IHV/HPE/SA-RA-Deployment-Hardware.adoc[]]
+ifdef::IHV-SMCi[include::../IHV/SMCi/SA-RA-Deployment-Hardware.adoc[]]
 endif::iIHV[]
 
 // ifdef::iCSP[]

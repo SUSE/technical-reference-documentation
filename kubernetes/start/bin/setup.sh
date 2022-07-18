@@ -22,6 +22,18 @@ echo
 
 
 ##
+# Initialize variables
+##
+category=""
+doctype=""
+suseprod=""
+partnername=""
+partnerprod=""
+usecase=""
+documentbase=""
+
+
+##
 # Gather inputs
 ##
 
@@ -85,12 +97,21 @@ echo
   read -p "Please enter the primary partner product name : " response
   partnerprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
 
+  # get Use Case
+  read -p "If you would like a use case or description (1-3 words), enter it now or just press ENTER : " response
+  if [ -n "$response" ]; then
+    usecase="_$( echo ${response} | tr '[:upper:]' '[:lower:]' | tr ' ' '-' )"
+  else
+    usecase=""
+  fi
+
+
 
 ##
 # build base filename and display
 ##
 
-  documentbase="${category}_gs_${suseprod}_${partnername}-${partnerprod}"
+  documentbase="gs_${suseprod}_${partnername}-${partnerprod}${usecase}"
 
   echo
   echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
@@ -122,8 +143,8 @@ echo
   cd ${partnername}
 
   # create DC- file
-  cp ../.templates/_template_DC-kubernetes_gs_suseprod_partner-partnerprod \
-    ./DC-${documentbase}
+  cp ../.templates/_DC-file \
+    ./_DC-${documentbase}
   # update adoc reference
   sed -i "s/MAIN=\"kubernetes_gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ./DC-${documentbase}
 
@@ -143,12 +164,12 @@ echo
 
   # create .adoc file
   [ -f "${documentbase}.adoc" ] || \
-    cp ../../.templates/_template_kubernetes_gs_suseprod_partner-partnerprod.adoc \
+    cp ../../.templates/_adoc-file \
       ./${documentbase}.adoc
 
   # create -docinfo.xml file
   [ -f "${documentbase}-docinfo.xml" ] || \
-    cp ../../.templates/_template_kubernetes_gs_suseprod_partner-partnerprod-docinfo.xml \
+    cp ../../.templates/_docinfo-file \
       ./${documentbase}-docinfo.xml
 
   # create media directory structure

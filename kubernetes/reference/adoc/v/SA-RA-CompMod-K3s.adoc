@@ -2,12 +2,12 @@
 == Component model
 
 ifdef::focusK3s[]
-This section describes the various components being used to create a {pn_K3s} solution deployment.
+This section describes the various components being used to create a {pn_K3s} solution deployment, in the perspective of top to bottom ordering. Once completed, the {pn_K3s} instance can be used as the application infrastructure for cloud-native workloads and can be imported into {pn_Rancher} for management.
 endif::focusK3s[]
 
 === Component overview
 
-By utilizing:
+By using:
 
 ifdef::RC,RI,GS[]
 * Software
@@ -22,7 +22,7 @@ ifdef::layerSLES[{pn_SLES}]
 * Compute Platform
 endif::GS[]
 
-one can create the necessary infrastructure and services. Further details for these components are described in the following sections.
+you can create the necessary infrastructure and services. Further details for these components are described in the following sections.
 
 ifdef::SWComp[]
 
@@ -74,19 +74,18 @@ ifndef::GS[]
 
 Leveraging the enterprise grade functionality of the operating system mentioned in the previous section, many compute platforms can be the foundation of the deployment:
 
-ifndef::iIHV[]
 * Virtual machines on supported hypervisors or hosted on cloud service providers
 * Physical, baremetal or single-board computers, either on-premise or hosted by cloud service providers
 
-include::../SUSE/YES.adoc[]
-endif::iIHV[]
+include::../SUSE/YES-Process.adoc[]
+include::../SUSE/YES-Search.adoc[]
 
 ifdef::RC[]
 ifdef::iIHV[]
 ifdef::IHV-Cisco[include::../IHV/Cisco/SA-RA-CompMod.adoc[]]
-ifdef::IHV-DELL[include::../IHV/DELL/SA-RA-CompMod.adoc[]]
+ifdef::IHV-Dell[include::../IHV/Dell/SA-RA-CompMod.adoc[]]
 ifdef::IHV-HPE[include::../IHV/HPE/SA-RA-CompMod.adoc[]]
-ifdef::IHV-Supermicro[include::../IHV/Supermicro/SuperServer/SA-RA-CompMod.adoc[]]
+ifdef::IHV-SMCi[include::../IHV/SMCi/SA-RA-CompMod.adoc[]]
 endif::iIHV[]
 
 // ifdef::iCSP[]

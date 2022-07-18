@@ -4,15 +4,51 @@ ifdef::focusRKE1,layerRKE1[]
 === {pn_RKE1}
 
 // leverage multiple prep sections
-ifdef::layerSLEMicro,layerSLES[include::./SA-RA-Deployment-OS-prep.adoc[]]
-ifdef::focusRancher[]
-+
-. Identify the appropriate, supported version of the {pn_RKE1} binary (e.g. vX.Y.Z), by reviewing the "{portfolioName} Support Matrix" on the {pn_Rancher_SupURL}[Support and Maintenance Terms of Service] web page. 
+ifndef::layerSLEMicro,layerSLES[include::./SA-RA-Deployment-OS-prep.adoc[]]
+ifdef::layerSLEMicro,layerSLES[Preparation(s)::]
+. Identify the appropriate, desired version of the {pn_RKE1} binary (for example vX.Y.Z) that includes the needed Kubernetes version by reviewing
+
+ifdef::focusRancher+layerRKE1[]
+** the "Installing {pn_Rancher} on {pn_RKE1}" associated with the respective link:{pn_Rancher_SupportMatrixURL}[{pn_Rancher}] version, or
+endif::focusRancher+layerRKE1[]
+ifndef::focusRancher[]
+** the "Supported {pn_RKE1} Versions" associated with the respective link:{pn_Rancher_SupportMatrixURL}[{pn_Rancher}] version from "{pn_RKE1} Downstream Clusters" section, or
 endif::focusRancher[]
-ifndef::focusRKE1[]
+** the "Releases" on the {pn_RKE1_Download}[Download] Web page.
 +
-. Identify the appropriate, desired version of the {pn_RKE1} binary (e.g. vX.Y.Z), by reviewing the "Releases" on the {pn_K3s_Download}[Download] web page. 
-endif::focusRKE1[]
+ifdef::layerRKE1,focusRKE1[]
+. On the target node with a default installation of
+ifdef::layerSLEMicro[{pn_SLEMicro}]
+ifdef::layerSLES[{pn_SLES}]
+operating system, log in to the node either as root or as a user with sudo privileges and enable the required container runtime engine
+ifdef::layerSLEMicro[]
++
+----
+sudo transactional-update pkg install docker
+sudo reboot
+sudo systemctl enable --now docker.service
+----
+endif::layerSLEMicro[]
+ifdef::layerSLES[]
++
+----
+sudo SUSEConnect -p sle-module-containers/15.3/x86_64
+sudo zypper refresh ; zypper install docker
+sudo systemctl enable --now docker.service
+----
+endif::layerSLES[]
++
+** Then validate the container runtime engine is working
++
+----
+sudo systemctl status docker.service
+sudo docker ps --all
+----
+endif::layerRKE1,focusRKE1[]
+
+. For the underlying operating system firewall service, either
+** enable and configure the necessary inbound link:{pn_RKE1_PortURL}[ports] or
+** stop and completely disable the firewall service.
 
 //-
 Deployment Process::
@@ -21,14 +57,14 @@ The primary steps for deploying this {pn_RKE1} Kubernetes
 // ifdef::layerRKE1[]
 are:
 // To meet the {pn_Rancher} prerequisites and requirements on supported Kubernetes instances,
-// ifdef::layerRKE1[{pn_RKE1_ProductPage}[{pn_RKE1}]]
-// can be utilized, and as desired later scaled out to a production cluster.
+// ifdef::layerRKE1[link:{pn_RKE1_ProductPage}[{pn_RKE1}]]
+// can be used, and as desired later scaled out to a production cluster.
 //+
 +
 NOTE: Installing {pn_RKE1} requires a client system (i.e. admin workstation) that has been configured with kubectl.
 
-. Download the {pn_RKE1} binary according to the instructions on product {pn_RKE1_DocURL}[documentation] page, then follow the directions on that page, but with the following exceptions:
-//. Download the {pn_RKE1} binary according to the instructions on this webpage: https://rancher.com/docs/rke/latest/en/installation/. Follow the directions on that page, but with the following exceptions:
+. Download the {pn_RKE1} binary according to the instructions on product link:{pn_RKE1_DocURL}[documentation] page, then follow the directions on that page, but with the following exceptions:
+//. Download the {pn_RKE1} binary according to the instructions on this Web page: https://rancher.com/docs/rke/latest/en/installation/. Follow the directions on that page, but with the following exceptions:
 . Create the cluster.yml file with the command `rke config`
 +
 NOTE: See product documentation for https://rancher.com/docs/rke/latest/en/example-yamls/[example-yamls] and https://rancher.com/docs/rke/latest/en/config-options/[config-options] for detailed examples and descriptions of the cluster.yml parameters.
@@ -44,9 +80,13 @@ NOTE: See product documentation for https://rancher.com/docs/rke/latest/en/examp
 . If a load balancer has been deployed for the {pn_RKE1} control-plane nodes, update the cluster.yml file before deploying {pn_RKE1} to include the IP address or FQDN of the load balancer. The appropriate location is under authentication.sans. For example:
 +
 ----
+LB_IP_Host=""
+----
++
+----
 authentication:
   strategy: x509
-  sans: ["rancher.susealliances.com"]
+  sans: ["${LB_IP_Host}"]
 ----
 +
 ifdef::layerSLEMicro[]
@@ -132,7 +172,7 @@ endif::BP[]
 
 ifdef::focusRKE1[]
 // Next Steps::
-After this successful deployment of the {pn_RKE1} solution, review the {pn_RKE1_DocURL}[product documentation] for details on how to directly utilize this Kubernetes cluster. Furthermore, by reviewing the {pn_Rancher} {pn_Rancher_DocURL}[product documentation] this solution can also be:
+After this successful deployment of the {pn_RKE1} solution, review the link:{pn_RKE1_DocURL}[product documentation] for details on how to directly use this Kubernetes cluster. Furthermore, by reviewing the {pn_Rancher} link:{pn_Rancher_DocURL}[product documentation] this solution can also be:
 
 * imported (refer to subsection "Importing Existing Clusters"), then
 * managed (refer to subsection "Cluster Administration") and
