@@ -283,11 +283,13 @@ The top of the K10 dashboard displays a list of applications currently mapped to
 image::rancher_veeam-kasten-k10_dashboard_top1.png[scaledwidth="85%", align="center"]
 //image::rancher_veeam-kasten_K10_Dashboard-2.png[scaledwidth="85%", align="center"]
 
-After filtering for applications that have stateful services (defined as containing a persistent volume), the above screen breaks down each section into three categories:
+After filtering for applications that have stateful services (defined as containing a persistent volume), this screen further categorizes applications as:
 
 * Unmanaged: There are no protection policies that cover this object.
 * Non-compliant: A policy applies to this object, but the actions associated with the policy are failing (such as due to underlying storage slowness, configuration problems, etc.) or the actions haven't been invoked yet.
-* Compliant: Objects with policies and the policy SLAs are being respected.
+* Compliant: These objects have policies and the policy SLAs are being respected.
+
+TIP: You can filter the view by clicking on the __Compliant__, __Non-Compliant__, or __Unmanaged__ buttons.
 
 
 ==== Applications, namespaces, and workloads
@@ -299,8 +301,6 @@ Assuming you have already installed applications, clicking on the __Applications
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-3: applications details
 image::rancher_veeam-kasten_K10_Dashboard-3.png[scaledwidth="85%", align="center"]
-
-TIP: You can filter the view by clicking on the __Compliant__, __Non-Compliant__, or __Unmanaged__ buttons.
 
 
 An application is made up of multiple Kubernetes resources and workloads, including deployments and stateful sets. 
