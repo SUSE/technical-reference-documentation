@@ -323,20 +323,23 @@ image::rancher_veeam-kasten_K10_Dashboard-6.png[scaledwidth="85%", align="center
 == Creating a location profile 
 
 K10 can invoke protection operations, such as snapshots, within a cluster without requiring additional credentials, and this may be sufficient if K10 is running in the major public clouds and actions are limited to a single cluster.
-However, in most production situations, such as performing real backups, enabling cross-cluster and cross-cloud application migration, and enabling disaster recovery
+It is not sufficient for most production situations, where performing real backups, enabling cross-cluster and cross-cloud application migration, and enabling disaster recovery are essential.
+
 To enable these actions that span the lifetime of any one cluster, K10 needs to be configured with access to external object storage or external NFS file storage.
-This is accomplished via the creation of location profiles.
+This is accomplished with location profiles.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-7: location profiles
-image::rancher_veeam-kasten_K10_Dashboard-7.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_dashboard-7.png[scaledwidth="65%", align="center"]
 
 
 Profile creation can be accessed from the __Settings__ icon in the top-right corner of the dashboard or via the https://docs.kasten.io/latest/api/profiles.html#api-profile[CRD-based Profiles API].
 Location profiles are used to create backups from snapshots, move applications and their data across clusters and potentially across different clouds, and to subsequently import these backups or exports into another cluster.
+
 To create a location profile, click __New Profile__ on the profiles page.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-8: new profile
-image::rancher_veeam-kasten_K10_Dashboard-8.png[scaledwidth="40%", align="center"]
+image::rancher_veeam-kasten_k10_dashboard_s3_compatible_location_profile1.png[scaledwidth="40%", align="center"]
+//image::rancher_veeam-kasten_K10_Dashboard-8.png[scaledwidth="40%", align="center"]
 
 When exporting to or importing from an object storage location, you are required to pick an object storage provider, a region for the bucket if being used in a public cloud, and the bucket name.
 If a bucket with the given name does not exist, it will be created.
@@ -344,7 +347,7 @@ If a bucket with the given name does not exist, it will be created.
 If an S3-compatible object storage system is used that is not hosted by one of the supported cloud providers, an S3 endpoint URL will need to be specified and optionally, SSL verification might need to be disabled.
 Disabling SSL verification is only recommended for test setups.
 
-NOTE: When certain cloud providers (like AWS or Microsoft Azure) are selected, provider-specific options (such as IAM Roles) will appear for configuration, if needed.
+NOTE: When certain cloud providers (like AWS or Microsoft Azure) are selected, provider-specific options (such as IAM Roles) will appear for configuration.
 
 
 Once you click __Validate__ or __Save__, the config profile will be created and a profile similar to the following will appear:
