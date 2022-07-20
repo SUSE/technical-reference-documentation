@@ -525,20 +525,20 @@ TIP: You can toggle whether to display and enter times in local time or UTC, but
 In K10, you can specify which applications are bound to a policy by name or label.
 
 
-*Selection by name*
+*Selecting by application name*
 
 The most straightforward way to apply a policy to an application in K10 is to use its name (derived from the name of the namespace).
 You can even select multiple application names for the same policy.
 
+// no need for this image
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-20: app selection
-image::rancher_veeam-kasten_K10_Dashboard-20.png[scaledwidth="75%", align="center"]
-
+//image::rancher_veeam-kasten_K10_Dashboard-20.png[scaledwidth="75%", align="center"]
 
 If you need a policy to span similar applications, use the asterisk ('\*') wildcard.
 For example, if you specify 'mysql-*', then K10 will match all applications whose names start with 'mysql-'.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-21: app selection by name
-image::rancher_veeam-kasten_K10_Dashboard-21.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_21_app-selection-by-name-wildcard.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
@@ -558,14 +558,11 @@ For example, you could protect all applications that use MongoDB or applications
 Matching occurs on labels applied to namespaces, deployments, and statefulsets.
 If multiple labels are selected, a union (logical OR) will be performed, matching all applications with at least one of the labels.
 
-//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-24: app selection by label
-image::rancher_veeam-kasten_K10_Dashboard-24.png[scaledwidth="75%", align="center"]
-
-
 Label-based selection can be used to create forward-looking policies, as such policy would automatically apply to any future application with the matching label.
 For example, if you use a label of 'heritage: Tiller' (for Helm v2) or 'heritage: Helm' (for Helm v3), the selector will apply the policy to any new Helm-deployed applications because the label is applied to any Kubernetes workload created by the Helm package manager.
 
-
+//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-24: app selection by label
+image::rancher_veeam-kasten_k10_24_app-selection-by-label.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
