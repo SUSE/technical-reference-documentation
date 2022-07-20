@@ -329,7 +329,7 @@ To enable these actions that span the lifetime of any one cluster, K10 needs to 
 This is accomplished with location profiles.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-7: location profiles
-image::rancher_veeam-kasten_k10_dashboard-7.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_7_location-profiles1.png[scaledwidth="65%", align="center"]
 
 
 Profile creation can be accessed from the __Settings__ icon in the top-right corner of the dashboard or via the https://docs.kasten.io/latest/api/profiles.html#api-profile[CRD-based Profiles API].
@@ -338,7 +338,7 @@ Location profiles are used to create backups from snapshots, move applications a
 To create a location profile, click __New Profile__ on the profiles page.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-8: new profile
-image::rancher_veeam-kasten_k10_dashboard_s3_compatible_location_profile1.png[scaledwidth="40%", align="center"]
+image::rancher_veeam-kasten_K10_8_location-profiles2.png[scaledwidth="40%", align="center"]
 //image::rancher_veeam-kasten_K10_Dashboard-8.png[scaledwidth="40%", align="center"]
 
 When exporting to or importing from an object storage location, you are required to pick an object storage provider, a region for the bucket if being used in a public cloud, and the bucket name.
@@ -361,9 +361,11 @@ image::rancher_veeam-kasten_K10_Dashboard-9.png[scaledwidth="85%", align="center
 Protecting an application with K10, is usually accomplished by creating a policy.
 Understanding these three concepts is essential:
 
-* Snapshots and Backups: These are data capture mechanisms.  You may require just one or both, depending on your environment and requirements.
-* Scheduling: This is specification of application capture frequency and snapshot/backup retention objectives.
-* Selection: This is identification of the applications protected by a policy.  Resource filtering can be used to restrict what is captured on a per-application basis.
+* *Snapshots and Backups*: You may require just one or both of these data capture mechanisms, depending on your environment and requirements.
+
+* *Scheduling*: You specify the application capture frequency and snapshot/backup retention to meet your objectives.
+
+* *Selection*: You identify the applications protected by a policy.  You can also filter resources to restrict what is captured on a per-application basis.
 
 This section demonstrates how to use these concepts in the context of a K10 policy to protect applications.
 
@@ -376,10 +378,11 @@ This will allow you to see all applications in your Kubernetes cluster.
 image::rancher_veeam-kasten_K10_Dashboard-10.png[scaledwidth="85%", align="center"]
 
 
-To protect any unmanaged application, simply click __Create New Policy__ to open the __New Policy__ dialog.
+To protect any unmanaged application, simply click __Create a Policy__ to open the __New Policy__ dialog.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-11: policy - new policy
-image::rancher_veeam-kasten_K10_Dashboard-11.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_policies_create1.png[scaledwidth="85%", align="center"]
+//image::rancher_veeam-kasten_K10_Dashboard-11.png[scaledwidth="85%", align="center"]
 
 
 === Snapshots and backups
@@ -396,22 +399,22 @@ They are typically used in the context of disk volumes (PVC/PVs) used by the app
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-12: snapshots - new policy
 image::rancher_veeam-kasten_K10_Dashboard-12.png[scaledwidth="55%", align="center"]
 
-Snapshots, in most storage systems, are very efficient in terms of having a very low performance impact on the primary workload, requiring no downtime, supporting fast restore times, and implementing incremental data capture.
-
-However, storage snapshots usually suffer from constraints such as having relatively low limits on the maximum number of snapshots per volume or per storage array.
-
-Most importantly, snapshots are not always durable.
-Catastrophic storage system failure will destroy your snapshots along with your primary data.
-Further, in a number of storage systems, a snapshot's lifecycle is tied to the source volume.
-So, if the volume is deleted, all related snapshots might automatically be garbage collected at the same time.
-It is therefore highly recommended that you create backups of your application snapshots.
-
 [NOTE]
 ====
 A number of public cloud providers (including AWS, Azure, and Google Cloud) actually store snapshots in object storage, and they are retained independent of the lifecycle of the primary volume.
 However, this is not true of all public clouds, and an independent backup would provide essential safety.
 Please check with your cloud provider's documentation for more information.
 ====
+
+Snapshots, in most storage systems, are very efficient and have a very low performance impact on the primary workload, require no downtime, support fast restore times, and enable incremental data capture.
+
+Storage snapshots usually suffer from constraints, such as having relatively low limits on the maximum number of snapshots per volume or per storage array.
+Most importantly, snapshots are not always durable.
+A catastrophic storage system failure will destroy your snapshots along with your primary data.
+Further, in a number of storage systems, a snapshot's lifecycle is tied to the source volume.
+So, if the volume is deleted, all related snapshots might automatically be garbage collected at the same time.
+It is therefore highly recommended that you create backups of your application snapshots.
+
 
 
 *Backups*
@@ -422,6 +425,9 @@ To convert your snapshots into backups, activate __Enable Backups via Snapshot E
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-13: backups via exports
 image::rancher_veeam-kasten_K10_Dashboard-13.png[scaledwidth="65%", align="center"]
+
+
+See https://docs.kasten.io/latest/usage/protect.html#snapshots-and-backups[Snapshots and Backups] in the Kasten documentation for more details.
 
 
 
