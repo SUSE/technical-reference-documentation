@@ -445,14 +445,14 @@ There are four components to K10 scheduling:
 *Action frequency*
 
 Snapshots can be set to execute at an hourly, daily, weekly, monthly, or yearly frequency, or on demand.
+By default, hourly snapshots execute at the top of the hour, while weekly, monthly, and yearly snapshots execute at midnight UTC.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-14: backup frequency
-image::rancher_veeam-kasten_K10_Dashboard-14.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_14_backup-frequency.png[scaledwidth="75%", align="center"]
 
-By default, hourly snapshots execute at the top of the hour, while weekly, monthly, and yearly snapshots execute at midnight UTC.
 You can also specify the time at which scheduled actions execute and sub-frequencies that execute multiple actions per frequency.
 Sub-hourly actions can be useful when you are protecting mostly Kubernetes objects or small data sets.
-See https://docs.kasten.io/latest/usage/protect.html#advanced-schedule-options[Advanced Schedule Options] for more information.
+See https://docs.kasten.io/latest/usage/protect.html#advanced-schedule-options[Advanced Schedule Options] in the Kasten documentation for more information.
 
 [WARNING]
 ====
@@ -468,18 +468,18 @@ When __Enable Backups via Snapshot Exports__ is enabled, snapshots are exported 
 By default, every snapshot is exported, but you can limit this to a subset by selecting a daily, weekly, monthly, or yearly export frequency.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-15: export frequency
-image::rancher_veeam-kasten_K10_Dashboard-15.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_15_export-frequency.png[scaledwidth="75%", align="center"]
 
 
 
 *Retention schedule*
 
 A powerful scheduling feature in K10 is the ability to use a https://en.wikipedia.org/wiki/Backup_rotation_scheme#Grandfather-father-son [GFS retention scheme] for cost savings and compliance.
-With this backup rotation scheme, hourly snapshots and backups are rotated on an hourly basis with one graduating to daily every day, daily snapshots and backups are rotated each day with one graduating to weekly, and so on.
+With this backup rotation scheme, hourly snapshots and backups are rotated each hour with one graduating to daily every day, daily snapshots and backups are rotated each day with one graduating to weekly, and so on.
 It is possible to set the number of hourly, daily, weekly, monthly, and yearly copies that need to be retained, and K10 will take care of cleanup.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-16: snapshot retention
-image::rancher_veeam-kasten_K10_Dashboard-16.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_16_snapshot-retention-schedule.png[scaledwidth="65%", align="center"]
 
 NOTE: It is not possible to set a retention schedule for on demand policies.
 
@@ -488,7 +488,7 @@ This allows you to create policies where a limited number of snapshots are retai
 This separate retention schedule is also valuable when a limited number of snapshots are supported on the volume but a larger backup retention count is needed for compliance.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-17: export retention
-image::rancher_veeam-kasten_K10_Dashboard-17.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_17_backup-retention-schedule.png[scaledwidth="65%", align="center"]
 
 Snapshots and backups created by scheduled runs of a policy can be retained and omitted from the retention counts by adding a `k10.kasten.io/doNotRetire: "true"` label to the https://docs.kasten.io/latest/api/actions.html#api-run-action[RunAction] created for the policy run.
 
@@ -508,12 +508,12 @@ Unhide __Advanced Options__ to select how many times actions are executed within
 For example, if the action frequency is daily, you can specify the hour of the day and the minutes after the hour when the action is to start.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-18: action frequency
-image::rancher_veeam-kasten_K10_Dashboard-18.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_18_timing.png[scaledwidth="75%", align="center"]
 
 You can also customize the retention schedule by selecting which snapshots and backups will graduate and be retained for longer periods.
 
-//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-19: snapshot retention
-image::rancher_veeam-kasten_K10_Dashboard-19.png[scaledwidth="75%", align="center"]
+//kubernetes_gs_rancher_veeam-kasten_image_k10_19_timing-snapshot-retention: snapshot retention
+image::rancher_veeam-kasten_k10_19_timing-snapshot-retention.png[scaledwidth="75%", align="center"]
 
 
 TIP: You can toggle whether to display and enter times in local time or UTC, but all times are converted to UTC and do not change for daylight savings time.
