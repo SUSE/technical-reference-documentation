@@ -433,7 +433,6 @@ image::rancher_veeam-kasten_k10_policies_create3.png[scaledwidth="75%", align="c
 
 
 
-
 === Scheduling
 
 There are four components to K10 scheduling:
@@ -445,13 +444,13 @@ There are four components to K10 scheduling:
 
 
 
-*Action frequency*
+==== Action frequency
 
 Snapshots can be set to execute at an hourly, daily, weekly, monthly, or yearly frequency, or on demand.
 By default, hourly snapshots execute at the top of the hour, while weekly, monthly, and yearly snapshots execute at midnight UTC.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-14: backup frequency
-image::rancher_veeam-kasten_k10_14_backup-frequency.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_backup-frequency.png[scaledwidth="75%", align="center"]
 
 You can also specify the time at which scheduled actions execute and sub-frequencies that execute multiple actions per frequency.
 Sub-hourly actions can be useful when you are protecting mostly Kubernetes objects or small data sets.
@@ -465,24 +464,24 @@ For example, retaining 24 hourly snapshots at 15-minute intervals would only ret
 ====
 
 
-*Export frequency*
+==== Export frequency
 
 When __Enable Backups via Snapshot Exports__ is enabled, snapshots are exported as backups.
 By default, every snapshot is exported, but you can limit this to a subset by selecting a daily, weekly, monthly, or yearly export frequency.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-15: export frequency
-image::rancher_veeam-kasten_k10_15_export-frequency.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_export-frequency.png[scaledwidth="75%", align="center"]
 
 
 
-*Retention schedule*
+==== Retention schedule
 
 A powerful scheduling feature in K10 is the ability to use a https://en.wikipedia.org/wiki/Backup_rotation_scheme#Grandfather-father-son [GFS retention scheme] for cost savings and compliance.
 With this backup rotation scheme, hourly snapshots and backups are rotated each hour with one graduating to daily every day, daily snapshots and backups are rotated each day with one graduating to weekly, and so on.
 It is possible to set the number of hourly, daily, weekly, monthly, and yearly copies that need to be retained, and K10 will take care of cleanup.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-16: snapshot retention
-image::rancher_veeam-kasten_k10_16_snapshot-retention-schedule.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_snapshot-retention-schedule.png[scaledwidth="65%", align="center"]
 
 NOTE: It is not possible to set a retention schedule for on demand policies.
 
@@ -491,7 +490,7 @@ This allows you to create policies where a limited number of snapshots are retai
 This separate retention schedule is also valuable when a limited number of snapshots are supported on the volume but a larger backup retention count is needed for compliance.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-17: export retention
-image::rancher_veeam-kasten_k10_17_backup-retention-schedule.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_backup-retention-schedule.png[scaledwidth="65%", align="center"]
 
 Snapshots and backups created by scheduled runs of a policy can be retained and omitted from the retention counts by adding a `k10.kasten.io/doNotRetire: "true"` label to the https://docs.kasten.io/latest/api/actions.html#api-run-action[RunAction] created for the policy run.
 
@@ -503,7 +502,7 @@ And you will need to clean up any artifacts created by manual policy runs.
 ====
 
 
-*Timing*
+==== Timing
 
 By default, actions set to hourly execute at the top of the hour and other action frequencies execute at midnight UTC.
 
@@ -511,24 +510,24 @@ Unhide __Advanced Options__ to select how many times actions are executed within
 For example, if the action frequency is daily, you can specify the hour of the day and the minutes after the hour when the action is to start.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-18: action frequency
-image::rancher_veeam-kasten_k10_18_timing.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_timing1.png[scaledwidth="75%", align="center"]
 
 You can also customize the retention schedule by selecting which snapshots and backups will graduate and be retained for longer periods.
 
 //kubernetes_gs_rancher_veeam-kasten_image_k10_19_timing-snapshot-retention: snapshot retention
-image::rancher_veeam-kasten_k10_19_timing-snapshot-retention.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_timing2-snapshot-retention.png[scaledwidth="75%", align="center"]
 
 
 TIP: You can toggle whether to display and enter times in local time or UTC, but all times are converted to UTC and do not change for daylight savings time.
 
 
 
-=== Application selection
+=== Selection
 
 In K10, you can specify which applications are bound to a policy by name or label.
 
 
-*Selecting by application name*
+==== Application name
 
 The most straightforward way to apply a policy to an application in K10 is to use its name (derived from the name of the namespace).
 You can even select multiple application names for the same policy.
@@ -541,20 +540,16 @@ If you need a policy to span similar applications, use the asterisk ('\*') wildc
 For example, if you specify 'mysql-*', then K10 will match all applications whose names start with 'mysql-'.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-21: app selection by name
-image::rancher_veeam-kasten_k10_21_app-selection-by-name-wildcard.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_selection-by-name-wildcard.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
 For policies that need to span all applications, use just the asterisk wildcard by itself.
-
-// Hide image
-//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-22 - App selection by Name - wildcard
-//image::rancher_veeam-kasten_K10_Dashboard-22.png[scaledwidth="75%", align="center"]
 ====
 
 
 
-*Selecting by label*
+==== Application label
 
 You can also use labels to bind a policy to multiple applications.
 For example, you could protect all applications that use MongoDB or applications that have been annotated with, say, the 'gold' label.
@@ -565,18 +560,20 @@ Label-based selection can be used to create forward-looking policies, as such po
 For example, if you use a label of 'heritage: Tiller' (for Helm v2) or 'heritage: Helm' (for Helm v3), the selector will apply the policy to any new Helm-deployed applications because the label is applied to any Kubernetes workload created by the Helm package manager.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-24: app selection by label
-image::rancher_veeam-kasten_k10_24_app-selection-by-label.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_selection-by-label.png[scaledwidth="75%", align="center"]
 
-[NOTE]
-====
+==== Other resources
+
 K10 can also protect cluster-scoped resources without targeting any applications.
 To specify this, select __None__.
-For more information about protecting cluster-scoped resources, see https://docs.kasten.io/latest/usage/clusterscoped.html#clusterscoped[Cluster-Scoped Resources].
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-23: custer-scoped
-image::rancher_veeam-kasten_K10_Dashboard-23.png[scaledwidth="75%", align="center"]
-====
+image::rancher_veeam-kasten_k10_selection-cluster-scoped.png[scaledwidth="75%", align="center"]
 
+For more information about protecting cluster-scoped resources, see https://docs.kasten.io/latest/usage/clusterscoped.html#clusterscoped[Cluster-Scoped Resources].
+
+
+==== Customization
 
 You can further customize what is and what isn't covered under a K10 application protection policy with:
 
@@ -585,6 +582,7 @@ You can further customize what is and what isn't covered under a K10 application
 * https://docs.kasten.io/latest/usage/protect.html#exceptions[exceptions]
 
 * https://docs.kasten.io/latest/usage/protect.html#resource-filtering[resource filtering]
+
 
 
 == Working with policies
