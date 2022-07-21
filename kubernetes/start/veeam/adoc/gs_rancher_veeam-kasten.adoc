@@ -372,18 +372,17 @@ This section demonstrates how to use these concepts in the context of a K10 poli
 
 K10 defines an application as a collection of namespaced Kubernetes resources associated with a workload (such as ConfigMaps and Secrets), relevant non-namespaced resources used by the application (such as StorageClasses), Kubernetes workloads (including Deployments, StatefulSets, standalone pods, etc.), deployment and release information available from Helm v3, and all persistent storage resources (such as PersistentVolumeClaims and PersistentVolumes).
 
-While you can always create a policy from scratch through the Policies page, the easiest way to define policies for unprotected applications is to click on the __Applications__ card on the main dashboard.
+While you can always create a policy from scratch through the Policies page, the easiest way to define policies for unprotected applications is to click on the __Applications__ card in the main dashboard.
 This will allow you to see all applications in your Kubernetes cluster.
 
-//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-10: applications
-image::rancher_veeam-kasten_K10_Dashboard-10.png[scaledwidth="85%", align="center"]
+//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-3: applications details
+image::rancher_veeam-kasten_k10_9_dashboard-apps1.png[scaledwidth="85%", align="center"]
 
 
 To protect any unmanaged application, simply click __Create a Policy__ to open the __New Policy__ dialog.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-11: policy - new policy
 image::rancher_veeam-kasten_k10_policies_create1.png[scaledwidth="85%", align="center"]
-//image::rancher_veeam-kasten_K10_Dashboard-11.png[scaledwidth="85%", align="center"]
 
 
 === Snapshots and backups
@@ -391,14 +390,16 @@ image::rancher_veeam-kasten_k10_policies_create1.png[scaledwidth="85%", align="c
 All policies center around the execution of actions.
 You start by selecting the snapshot action with an optional backup (called an export).
 
+See https://docs.kasten.io/latest/usage/protect.html#snapshots-and-backups[Snapshots and Backups] in the Kasten documentation for more details.
 
-*Snapshots*
+
+==== Snapshots
 
 Snapshots form the basis of persistent data capture in K10.
 They are typically used in the context of disk volumes (PVC/PVs) used by the application but can also apply to application-level data capture (such as with https://docs.kasten.io/latest/kanister/kanister.html#kanister[Kanister]).
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-12: snapshots - new policy
-image::rancher_veeam-kasten_K10_Dashboard-12.png[scaledwidth="55%", align="center"]
+image::rancher_veeam-kasten_k10_policies_create2.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
@@ -414,21 +415,22 @@ Most importantly, snapshots are not always durable.
 A catastrophic storage system failure will destroy your snapshots along with your primary data.
 Further, in a number of storage systems, a snapshot's lifecycle is tied to the source volume.
 So, if the volume is deleted, all related snapshots might automatically be garbage collected at the same time.
-It is therefore highly recommended that you create backups of your application snapshots.
+
+[TIP]
+====
+It is highly recommended that you create backups of your application snapshots to ensure durability.
+====
 
 
-
-*Backups*
+==== Backups
 
 Backups overcome the limitations of application and volume snapshots by converting them to an infrastructure-independent format, deduplicating, compressing, and encrypting them before they are stored in an external object store or NFS volume.
 
 To convert your snapshots into backups, activate __Enable Backups via Snapshot Exports__ during policy creation.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-13: backups via exports
-image::rancher_veeam-kasten_K10_Dashboard-13.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_policies_create3.png[scaledwidth="75%", align="center"]
 
-
-See https://docs.kasten.io/latest/usage/protect.html#snapshots-and-backups[Snapshots and Backups] in the Kasten documentation for more details.
 
 
 
