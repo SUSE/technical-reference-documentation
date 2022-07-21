@@ -73,7 +73,7 @@ In this guide, we use Rancher 2.6.
 See https://rancher.com/docs/rancher/v2.6/en/installation/requirements/[SUSE Rancher installation guide] for more information.
 
 * Kubernetes cluster managed by SUSE Rancher
-Any CNCF-certified Kubernetes cluster can be used.  For this guide, we use an Amazon EKS cluster.
+Any CNCF-certified Kubernetes cluster can be used.
 +
 See https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/rancher-v2-6-3/[SUSE Rancher Support Matrix]
 
@@ -121,23 +121,23 @@ image::rancher_veeam-kasten_step1-1.png[scaledwidth="85%", align="center"]
 
 .. Create a "kasten-io" namespace for Kasten K10.
 +
-image::rancher_veeam-kasten_step1-2.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_2_create-namespace.png[scaledwidth="85%", align="center"]
 
 . Install Kasten K10.
 
 .. Navigate to __Apps & Marketplace__ > __Charts__ within the SUSE Rancher UI and search for “Kasten.”
 +
-image::rancher_veeam-kasten_marketplace_11.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_3_marketplace1.png[scaledwidth="85%", align="center"]
 //image::rancher_veeam-kasten_step2-1.png[scaledwidth="85%", align="center"]
 
 .. Select the K10 chart and then click __Install__.
 +
-image::rancher_veeam-kasten_marketplace_21.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_4_marketplace2.png[scaledwidth="85%", align="center"]
 
 .. Select the namespace "kasten-io” from the Namespace dropdown menu.
 Optionally select __Customize Helm options before install__ to customize the deployment.  See the https://docs.kasten.io/latest/install/advanced.html#complete-list-of-k10-helm-options[Complete list of Helm options] for detailed descriptions.
 +
-image::rancher_veeam-kasten_marketplace_31.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_5_marketplace3.png[scaledwidth="85%", align="center"]
 
 .. After setting your chart values, click __Next__ then click __Install__.
 
@@ -232,7 +232,7 @@ For more information about token authentication, see:
 . Next, provide a bearer token that will be used when accessing the dashboard.
 +
 //kubernetes_gs_rancher_veeam-kasten_image_kasten_signin-1
-image::rancher_veeam-kasten_K10_token_login1.png[scaledwidth="50%", align="center"]
+image::rancher_veeam-kasten_k10_6_token-login1.png[scaledwidth="50%", align="center"]
 //image::rancher_veeam-kasten_kasten_signin-1.png[scaledwidth="50%", align="center"]
 
 
@@ -270,7 +270,7 @@ To learn more about the necessary K10 permissions, see https://docs.kasten.io/la
 The K10 dashboard is divided into several different sections, described below.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-1: Welcome
-image::rancher_veeam-kasten_K10_Dashboard-1.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_7_dashboard-welcome.png[scaledwidth="75%", align="center"]
 
 TIP: A guided tour of the K10 dashboard is available when the K10 dashboard is accessed for the first time or via the dashboard option on the https://docs.kasten.io/latest/usage/overview.html#k10-settings[Settings] page.
 
@@ -278,8 +278,7 @@ TIP: A guided tour of the K10 dashboard is available when the K10 dashboard is a
 The top of the K10 dashboard displays a list of applications currently mapped to namespaces, any policies that might exist in the system, and a summary of the cluster's backup data footprint.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-2: system overview
-image::rancher_veeam-kasten-k10_dashboard_top1.png[scaledwidth="85%", align="center"]
-//image::rancher_veeam-kasten_K10_Dashboard-2.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_8_dashboard_overview-top.png[scaledwidth="85%", align="center"]
 
 After filtering for applications that have stateful services (defined as containing a persistent volume), this screen further categorizes applications as:
 
@@ -297,13 +296,13 @@ However, as shown later, policies can be defined to operate on more than one nam
 Assuming you have already installed applications, clicking on the __Applications__ card on the dashboard will take you to the following view.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-3: applications details
-image::rancher_veeam-kasten_K10_Dashboard-3.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_9_dashboard-apps1.png[scaledwidth="85%", align="center"]
 
 
 An application is made up of multiple Kubernetes resources and workloads, including deployments and stateful sets. 
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-4: app details
-image::rancher_veeam-kasten_k10_dashboard-4.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_10_dashboard-apps2.png[scaledwidth="75%", align="center"]
 
 // Why is this image be needed?
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-5
@@ -313,10 +312,13 @@ image::rancher_veeam-kasten_k10_dashboard-4.png[scaledwidth="65%", align="center
 K10 policies are used to automate your data management workflows.
 Policies combine actions you want to take (such as making a snapshot), frequency or schedule for how often you want to perform the action, and selection criteria for the resources you want to manage.
 
+//kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-2: system overview
+image::rancher_veeam-kasten_k10_8_dashboard_overview-top.png[scaledwidth="85%", align="center"]
+
 When you click the __Policies__ card in the main dashboard, you notice that no default policies are created at install time, but a policy can be either created from this page or from the application page shown earlier.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-6: policies
-image::rancher_veeam-kasten_K10_Dashboard-6.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_11_dashboard-policies.png[scaledwidth="85%", align="center"]
 
 
 
@@ -329,7 +331,7 @@ To enable these actions that span the lifetime of any one cluster, K10 needs to 
 This is accomplished with location profiles.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-7: location profiles
-image::rancher_veeam-kasten_k10_7_location-profiles1.png[scaledwidth="65%", align="center"]
+image::rancher_veeam-kasten_k10_12_location-profiles1.png[scaledwidth="65%", align="center"]
 
 
 Profile creation can be accessed from the __Settings__ icon in the top-right corner of the dashboard or via the https://docs.kasten.io/latest/api/profiles.html#api-profile[CRD-based Profiles API].
@@ -338,8 +340,7 @@ Location profiles are used to create backups from snapshots, move applications a
 To create a location profile, click __New Profile__ on the profiles page.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-8: new profile
-image::rancher_veeam-kasten_K10_8_location-profiles2.png[scaledwidth="40%", align="center"]
-//image::rancher_veeam-kasten_K10_Dashboard-8.png[scaledwidth="40%", align="center"]
+image::rancher_veeam-kasten_k10_13_location-profiles2.png[scaledwidth="40%", align="center"]
 
 When exporting to or importing from an object storage location, you are required to pick an object storage provider, a region for the bucket if being used in a public cloud, and the bucket name.
 If a bucket with the given name does not exist, it will be created.
@@ -350,10 +351,10 @@ Disabling SSL verification is only recommended for test setups.
 NOTE: When certain cloud providers (like AWS or Microsoft Azure) are selected, provider-specific options (such as IAM Roles) will appear for configuration.
 
 
-Once you click __Validate__ or __Save__, the config profile will be created and a profile similar to the following will appear:
+Once you click __Validate and Save__, the config profile will be created and a profile similar to the following will appear:
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-9: location profiles
-image::rancher_veeam-kasten_K10_Dashboard-9.png[scaledwidth="85%", align="center"]
+image::rancher_veeam-kasten_k10_13_location-profiles3.png[scaledwidth="85%", align="center"]
 
 
 == Creating a policy
@@ -653,14 +654,13 @@ After the restore completes, you are able to go back to your application and ver
 
 === Restoring deleted applications
 
-The process to restore a deleted application is nearly identical.
-The only difference is that removed applications are not shown on the Applications page by default.
+Restoring a deleted application follows nearly the same process, except that removed applications are not shown on the Applications page by default.
 To discover them, you simply need to filter and select __Removed__.
 
 //kubernetes_gs_rancher_veeam-kasten_image_K10_Dashboard-31: applications - filter removed
-image::rancher_veeam-kasten_K10_Dashboard-31.png[scaledwidth="75%", align="center"]
+image::rancher_veeam-kasten_k10_restore-deleted-app.png[scaledwidth="75%", align="center"]
 
-Once the filter is in effect, you see applications that K10 has previously protected but no longer exist.
+Once the filter is in effect, you see applications that K10 has previously protected but which no longer exist.
 These can now be restored using the normal restore workflow.
 
 
@@ -670,7 +670,7 @@ These can now be restored using the normal restore workflow.
 //Summarize what was demonstrated
 //Hint at other capabilities.
 
-SUSE Rancher enables enterprises to streamline multi-cluster Kubernetes operations everywhere with unified security, policy, and user management.  Kasten K10 by Veeam delivers easy-to-use, Kubernetes native application backup and restore, disaster recovery, and application mobility.  Together, SUSE and Veeam give enterprises the tools they need to reduce risk and accelerate cloud native success.
+SUSE Rancher enables enterprises to streamline multi-cluster Kubernetes operations everywhere with unified security, policy, and user management.  Kasten K10 by Veeam delivers easy-to-use, Kubernetes native application backup and restore, disaster recovery, and application mobility.  Together, SUSE and Veeam provide enterprises with the tools they need to reduce risk and accelerate cloud native success.
 
 In this guide, you learned how to seamlessly deploy Kasten K10 into your Rancher Kubernetes landscape, create policy-driven backups, and restore applications.
 
