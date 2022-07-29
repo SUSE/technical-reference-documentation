@@ -10,16 +10,21 @@
 # Display banner
 ##
 echo
-echo "= = = = = = = = = = = = = = = = = = = = = = = = = = ="
-echo "=   TRD Getting Started Guide: Setup/Preparation    ="
-echo "= = = = = = = = = = = = = = = = = = = = = = = = = = ="
+echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
+echo "= Set up workspace for new TRD getting started guide      ="
+echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo
 echo
-echo "- - - - - - - - - - - - - - - - - - -"
-echo "- Run from the start directory with -"
-echo "- ./bin/setup.sh                    -"
-echo "- - - - - - - - - - - - - - - - - - -"
+echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "- Before proceeding make sure you have:"
+echo "- 1. created a local branch: \`git branch myproject\`"
+echo "- 2. checked out your new branch: \`git checkout myproject\`"
+echo "- 3. changed to the kubernetes/start or"
+echo "-                   linux/start directory (as appropriate)"
+echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
+echo "Are you ready to proceed?"
+read -p "Press ENTER to continue or CTRL-C to cancel."
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -205,9 +210,9 @@ cd ..
 ##
 echo
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "- Setup is complete"
+echo "- Your new workspace has been set up."
 echo "-"
-echo "- Your working directory is:"
+echo "- Access your workspace in:"
 echo "-   ${category}/start/${partnername}"
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo
