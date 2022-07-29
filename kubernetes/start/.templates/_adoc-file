@@ -1,13 +1,45 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that we are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preferences: svg > png > jpg
+//     - Consolidate images wherever possible;
+//       that is, prefer text over images
+//   - Sections and subsections to organize content and break up actions
+// 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Variables & Attributes
+// Follow indicated patterns.
+//   E.g., "Ondat data plane with SUSE Rancher"
+//         "Grace Hopper, Engineer, US Navy"
+//         "SUSE Linux Enterprise Server 15 SP4"
+//         "SUSE Rancher 2.6"
+// NOTE: Some variables & attributes have been deprecated and
+//       have been commented out below.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 :title: Partner PartnerProd with SUSE SUSEProd
 :productname: SUSEProd version
+:partnerproductname: partner product name
 :author1: First Last, title, SUSE
 :author2: First Last, title, Partner
-:revdate: Month dd, YYYY
-:revnumber: YYYYmmdd
+//:revdate: Month dd, YYYY
+//:revnumber: YYYYmmdd
 //:toc2:
 //:toc-title: {title}
 //:toclevels: 4
@@ -21,103 +53,138 @@ include::./common_docinfo_vars.adoc[]
 
 === Motivation
 
-// Why this would be of interest
-// Challenges
-// Benefits
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// In this section, provide motivation for the document.
+// Provide a brief statement (2-4 sentences) to identify
+//   - what products are being highlighted
+//   - what the document is about and why it may be of
+//     interest to the reader and beyond.
+// Include an approved SUSE | Partner logo lock-up
+// Include additional details if needed, like
+//    - the challenges that are or can be addressed
+//    - specific benefits of this solution
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
 === Scope
 
-// This guide will help you take the first steps to 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Specify what this guide covers in no more than 2 sentences.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This guide will help you take the first steps to 
 
 
 === Audience
 
-// This document is intended for 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify for whom this document is intended, perhaps with:
+//   - Topics of interests
+//   - Potential job roles
+//   - Required skills <- This can be critically important
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This document is intended for 
 
 
 == Technical overview
 
-// Description
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a technical overview of the solution.
+// Identify components.
+// Describe how the components fit together.
+// Leverage diagrams as appropriate, including (but not limited to):
+//   - component architecture
+//   - data flow
+//   - workflow
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-// Architecture diagram
 
-// Minimum requirements (prerequisites) for this guide
-// * Requirement 1 https://url[url]
-// * Requirement 2 https://url[url]
+
+
+
+== Prerequisites
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify minimum requirements (prerequisites) the reader
+//   would need to have to follow the steps of this guide.
+// Link to existing resources whenever possible
+//   but don't be afraid to elaborate as needed.
+// * Requirement 1 https://url[linktext]
+// * Requirement 2 https://url[linktext]
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 
 
 
 == Installation
 
-
-//=== Install from the SUSE Rancher Apps & Marketplace
-//Use an ordered list for steps.
-//Link elements (with '+') to maintain consistent indentation.
-//E.g.:
-//. From the top-left Rancher menu select __Apps & Marketplace__.
-//From here, you will be taken to the __Charts__ page.
-//Notice __underscores__ are emphasis to indicate a specific
-//UI element.
-//+
-//image::kubernetes_gs_suseprod_partner-partnerprod_image_description.png[scaledwidth="85%", align="center"]
-
-//. Step 2.
-
-//. Step 3.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Detail the installation steps in an ordered list.
+// The reader should be able to copy and paste commands
+// to a local environment or follow along with screenshots.
+//
+// If multiple installation methods are discussed,
+// create a list here, then detail each method in a subsection.
+//
+// NOTE: For solutions involving SUSE Rancher, it is preferred
+//       to include installation through the Rancher Apps & Marketplace
+//       with appropriate screenshots that show SUSE branding
+//       as well as link to or detail a command-line method.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
 
-//=== Install using generic/manual steps
 
-//Provide steps or link to existing document.
-//[source, bash]
-//---
-//echo "Use code blocks for command-line steps."
-//---
+== Demonstration
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Describe use case / functionality to be demonstrated, followed by
+//   the demonstration itself.
+// Typical demonstration flow is:
+//   1. Prepare (environment for demonstration)
+//   2. Perform (actions of demonstration)
+//   3. Verify (demonstration worked)
+// Depending on the size and complexity of each step,
+//   the demonstration can be broken into subsections.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
-== Use case and demonstration
-
-//Describe use case and demonstration.
-
-//[NOTE]
-//====
-// Use admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING) as needed.
-//====
-
-
-//Use sections to break up major actions, such as:
-//=== Prepare the demonstration environment (beyond installation)
-//=== Perform action (to illustrate capability)
-//=== Examine results (verifying capability)
-//Use ordered lists for steps.
-//Minimize/consolidate images whenever possible.
 
 
 
 == Summary
 
-//Summarize the motivation
-//Summarize what was demonstrated
-//Hint at other capabilities.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize what was covered, including:
+//   - Motivation
+//   - Installation
+//   - Demonstration
+// Include any hints about other capabilities.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 
 
 
 == Additional resources
 
-//Learn more about the capabilities of {title} with these additional references.
-//Use an unordred lists for references
-//* https://url[reference-title]
-//* https://url/[reference-title]
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide any additional resources that may help the reader
+//   continue to explore this topic.
+// Use an unordered list for references.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 ++++
 <?pdfpagebreak?>
 ++++
 
-// Standard SUSE Technical Reference Documents includes
 
 :leveloffset: 0
 
