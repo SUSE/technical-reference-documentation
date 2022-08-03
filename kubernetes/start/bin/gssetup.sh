@@ -4,7 +4,7 @@
 # Collects input on new guide, then generates
 # directory and file structure to allow authors
 # to begin editing content.
-
+##
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # Display banner
@@ -101,7 +101,12 @@ partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
 
 # get Partner Product
 read -p "Please enter the primary partner product name : " response
-partnerprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
+if [ -n "$response" ]; then
+  partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' )"
+else
+  # allow the partner product name to be left blank
+  partnerprod=""
+fi
 
 # get Use Case
 read -p "If you would like a use case or description (1-3 words), enter it now or just press ENTER : " response
@@ -116,7 +121,7 @@ fi
 # build base filename
 ##
 
-documentbase="gs_${suseprod}_${partnername}-${partnerprod}${usecase}"
+documentbase="gs_${suseprod}_${partnername}${partnerprod}${usecase}"
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -164,7 +169,7 @@ cd ${partnername}
 cp ../.templates/_DC-file \
   ./_DC-${documentbase}
 # update adoc reference
-sed -i "s/MAIN=\"kubernetes_gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ./DC-${documentbase}
+sed -i "s/MAIN=\"kubernetes_gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ./_DC-${documentbase}
 
 # create adoc directory if it does not already exist
 [ -d adoc ] || mkdir -p adoc
