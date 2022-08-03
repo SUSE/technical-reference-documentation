@@ -33,11 +33,12 @@ include::./common_docinfo_vars.adoc[]
 //       have been commented out below.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-:title: Partner PartnerProd with SUSE SUSEProd
-:productname: SUSEProd version
-:partnerproductname: partner product name
-:author1: First Last, title, SUSE
-:author2: First Last, title, Partner
+:title: MinIO Object Storage for SUSE Rancher
+:productname: SUSE Rancher 2.6
+:partnerproductname: MinIO
+:author1: Ravind, Kumar, Technical Writer, MinIO
+:author2: Terry Smith, Global Partner Solutions Director, SUSE
+:author3: Samip Parikh, Partner Solutions Architect, SUSE
 //:revdate: Month dd, YYYY
 //:revnumber: YYYYmmdd
 //:toc2:
@@ -66,13 +67,23 @@ include::./common_docinfo_vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+https://www.suse.com/products/suse-rancher/[SUSE Rancher] is the enterprise Kubernetes and container management platform that simplifies and unifies multi-cluster management, enabling consistent operations, workload management, and enterprise-grade security across your entire Kubernetes landscape - on-premises, in the cloud, and at the edge. 
+ 
+https://min.io/product/multicloud-suse-rancher[MinIO] provides Kubernetes-native, consistent, performant, and scalable object storage.  MinIO is S3-compatible, ensuring a familiar API workspace for an entire ecosystem of developers and software platforms.  MinIO natively integrates with SUSE Rancher and the Rancher toolchain, such as the kubectl CLI and the Istio service mesh, enabling infrastructure and DevOps teams with streamlined storage operations across multiple clouds and at the edge. 
+ 
+The combination of MinIO with SUSE Rancher empowers enterprises with a powerful, easy-to-use solution to scale and consistently manage applications across any multi-cloud and hybrid-cloud infrastructure.
+
+
 === Scope
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will help you take the first steps to 
+This guide will introduce some general concepts and basic steps for installing, configuring, and using MinIO Object Storage in a SUSE Rancher Kubernetes environment.
+
+This guide will also provide a general framework for connecting Spark, Presto, or other AI/ML platforms with support for the S3A connector to MinIO for high performance, scalable data workloads within Kubernetes.
+
 
 
 === Audience
@@ -84,7 +95,8 @@ This guide will help you take the first steps to
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for 
+This document is intended for DevOps, IT Professionals, application administrators, and developers who are responsible for building, managing, and using cloud-native object storage resources.
+
 
 
 == Technical overview
