@@ -33,7 +33,7 @@ include::./common_docinfo_vars.adoc[]
 //       have been commented out below.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-:title: MinIO Object Storage for SUSE Rancher
+:title: MinIO Object Storage for SUSE Rancher : Getting Started
 :productname: SUSE Rancher 2.6
 :partnerproductname: MinIO
 :author1: Ravind, Kumar, Technical Writer, MinIO
@@ -65,6 +65,10 @@ include::./common_docinfo_vars.adoc[]
 //    - the challenges that are or can be addressed
 //    - specific benefits of this solution
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// logo lock-up
+image::logo-lockup_suse-minio_hor_dark.svg[scaledwidth="65%", align="center"]
 
 
 https://www.suse.com/products/suse-rancher/[SUSE Rancher] is the enterprise Kubernetes and container management platform that simplifies and unifies multi-cluster management, enabling consistent operations, workload management, and enterprise-grade security across your entire Kubernetes landscape - on-premises, in the cloud, and at the edge. 
@@ -111,6 +115,29 @@ This document is intended for DevOps, IT Professionals, application administrato
 //   - workflow
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+
+MinIO is a Kubernetes-native object store designed to provide high performance through a familiar, S3-compatible API.
+Each MinIO tenant represents an independent MinIO object store within the Kubernetes cluster.
+
+image::gs_rancher_minio_architecture.svg[scaledwidth="75%", align="center"]
+
+
+The MinIO Operator automatically generates the necessary PersistentVolumeClaims (PVCs) for the tenant.
+The Kubernetes cluster must have sufficient PersistentVolumes on the worker nodes for the tenant to start up successfully.  
+
+While Kubernetes supports a variety of storage options, MinIO strongly recommends using direct-attached storage that is local to the workers on which MinIO pods run.
+Specifically, the Kubernetes cluster should have Persistent Volumes associated with that direct-attached storage.
+This guide provides instructions on using MinIO DirectPV for managing and provisioning Persistent Volumes for use with MinIO.
+For other PV types, defer to the documentation for that PV. 
+
+ 
+
+
+ 
+
+ 
+
+To manually provision local persistent volumes, format the underlying drives as XFS and apply an identifiable drive label. Mount drives in `/etc/fstab` using drive label to ensure drive ordering does not change if the host machine restarts. 
 
 
 
