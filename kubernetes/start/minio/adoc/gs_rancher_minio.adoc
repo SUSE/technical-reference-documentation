@@ -71,6 +71,12 @@ include::./common_docinfo_vars.adoc[]
 image::logo-lockup_suse-minio_hor_dark.svg[scaledwidth="65%", align="center"]
 
 
+Kubernetes and object storage have fundamentally changed the modern application landscape, promising advantages of scale, agility, and efficiency that were impossible with monolithic application models and legacy architectures.
+Modern applications are cloud-native.
+They are containerized, data-rich, and designed to run everywhere at hyperscale.
+But to achieve cloud native goals, you need the right tools.
+
+
 https://www.suse.com/products/suse-rancher/[SUSE Rancher] is the enterprise Kubernetes and container management platform that simplifies and unifies multi-cluster management, enabling consistent operations, workload management, and enterprise-grade security across your entire Kubernetes landscape - on-premises, in the cloud, and at the edge. 
  
 https://min.io/product/multicloud-suse-rancher[MinIO] provides Kubernetes-native, consistent, performant, and scalable object storage.  MinIO is S3-compatible, ensuring a familiar API workspace for an entire ecosystem of developers and software platforms.  MinIO natively integrates with SUSE Rancher and the Rancher toolchain, such as the kubectl CLI and the Istio service mesh, enabling infrastructure and DevOps teams with streamlined storage operations across multiple clouds and at the edge. 
@@ -84,9 +90,9 @@ The combination of MinIO with SUSE Rancher empowers enterprises with a powerful,
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will introduce some general concepts and basic steps for installing, configuring, and using MinIO Object Storage in a SUSE Rancher Kubernetes environment.
+This guide will introduce you to some general concepts and basic steps for installing, configuring, and using MinIO Object Storage in a SUSE Rancher Kubernetes environment.
 
-This guide will also provide a general framework for connecting Spark, Presto, or other AI/ML platforms with support for the S3A connector to MinIO for high performance, scalable data workloads within Kubernetes.
+Additionally, you will get a general framework for connecting Spark, Presto, or other AI/ML platforms with support for the S3A connector to MinIO for high performance, scalable data workloads within Kubernetes.
 
 
 
@@ -116,42 +122,114 @@ This document is intended for DevOps, IT Professionals, application administrato
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-MinIO is a Kubernetes-native object store designed to provide high performance through a familiar, S3-compatible API.
-Each MinIO tenant represents an independent MinIO object store within the Kubernetes cluster.
+// architecture diagram
+image::gs_rancher_minio_architecture.svg[scaledwidth="85%", align="center"]
 
-image::gs_rancher_minio_architecture.svg[scaledwidth="75%", align="center"]
+Getting started with MinIO for SUSE Rancher is pretty easy.
+In general, the process is as follows:
 
+. Log into your SUSE Rancher environment and select a managed cluster.
+Deploying or importing Kubernetes clusters is covered elsewhere.
+A good place to start is the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation].
 
-The MinIO Operator automatically generates the necessary PersistentVolumeClaims (PVCs) for the tenant.
-The Kubernetes cluster must have sufficient PersistentVolumes on the worker nodes for the tenant to start up successfully.  
+. Create persistent volumes.
+Persistent volumes are the storage backing for the MinIO object store.
 
-While Kubernetes supports a variety of storage options, MinIO strongly recommends using direct-attached storage that is local to the workers on which MinIO pods run.
-Specifically, the Kubernetes cluster should have Persistent Volumes associated with that direct-attached storage.
-This guide provides instructions on using MinIO DirectPV for managing and provisioning Persistent Volumes for use with MinIO.
-For other PV types, defer to the documentation for that PV. 
+. Install MinIO Operator.
+The MinIO Operator supports deploying and managing MinIO tenants and automatically generates a persistent volume claim (PVC) for each volume.
 
- 
+. Deploy a MinIO tenant.
+The MinIO tenant represents an object store for which an application can be granted access and can have a variety of characteristics, like storage class and size.
 
-
- 
-
- 
-
-To manually provision local persistent volumes, format the underlying drives as XFS and apply an identifiable drive label. Mount drives in `/etc/fstab` using drive label to ensure drive ordering does not change if the host machine restarts. 
-
+. Connect to the MinIO tenant.
+The MinIO tenant is exposed as a Kubernetes service to which application workloads can connect.
 
 
 
-== Prerequisites
+== Creating persistent volumes
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify minimum requirements (prerequisites) the reader
-//   would need to have to follow the steps of this guide.
-// Link to existing resources whenever possible
-//   but don't be afraid to elaborate as needed.
-// * Requirement 1 https://url[linktext]
-// * Requirement 2 https://url[linktext]
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+[TIP]
+====
+Before proceeding, review the concepts of persistent volumes (PVs), persistent volume claims (PVCs), and storage classes in the https://rancher.com/docs/rancher/v2.6/en/cluster-admin/volumes-and-storage/how-storage-works/[Rancher documentation].
+====
+
+While Kubernetes supports a variety of storage options, MinIO strongly recommends using physical storage locally attached to each node intended to support a MinIO tenant.
+This guide provides instructions on using MinIO DirectPV for managing and provisioning persistent volumes for use with MinIO.
+
+[NOTE]
+====
+To manually provision local persistent volumes, format the underlying drives as XFS and apply an identifiable drive label.  Then, mount the drives in `/etc/fstab` using drive label to ensure drive ordering does not change if the host machine restarts.
+====
+
+
+Minimum resource requirements for deploying a MinIO tenant are:
+
+* 4 servers (nodes)
+* 1 disk per server (4 disks in total)
+* 2GiB of RAM available per MinIO pod
+
+The MinIO nodes must have sufficient local persistent volumes and capacity to support the number of drives in the deployment plus two additional drives for the LogSearch and Prometheus pods.
+For example, deploying a tenant with 16 drives requires 18 persistent volumes.
+
+
+
+=== Setting up your storage with DirectPV
+
+https://min.io/directpv[MinIO DirectPV] is a CSI driver that manages locally attached storage and automatically provisions persistent volumes to match incoming persistent volume claims.
+
+MinIO implements https://docs.min.io/minio/baremetal/concepts/erasure-coding.html[erasure coding] to provide object-level healing and resiliency with less overhead than adjacent technologies, such as RAID or replication.
+
+The storage volumes should be unformatted when presented to DirectPV, with no RAID or similar software-level pooling applied.
+
+
+You can format drives with the `kubectl directpv drives format` command.
+
+Here are a couple of examples:
+
+* Format all drives on the specified nodes:
+[source, bash]
+----
+kubectl directpv drives format --nodes kubeworker1, kubeworker2, kubeworker3, kubeworker4
+----
+
+* Format specific drives on the specified nodes:
+[source, bash]
+----
+kubectl directpv drives format --drives /dev/sda,/dev/sdc --nodes kubeworker1, kubeworker2, kubeworker3, kubeworker4
+----
+
+You can verify that the drives are formatted with the `directpv drives ls` command:
+[source, bash]
+----
+kubectl directpv drives ls
+
+ DRIVE  	CAPACITY        ALLOCATED  FILESYSTEM        VOLUMES  NODE                   ACCESS-TIER  STATUS 	 
+ /dev/sda2  1  TiB        -      	LVM2_member       -    	kubecontroller.local  -        	Available    
+ /dev/sda2  1  TiB	-      	LVM2_member       -    	kubeworker1.local 	    -        	Available   
+ /dev/sdb   7.68 TiB	-      	xfs      	-    	kubeworker1.local 	    -        	Ready  	 
+ /dev/sdc   7.68 TiB	-      	xfs      	-    	kubeworker1.local 	    -        	Ready  	 
+ /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker1.local 	    -        	Ready  	 
+ /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker1.local 	    -        	Ready  	 
+ /dev/sda2  1 TiB	         -      	LVM2_member  -    	kubeworker2.local 	    -        	Available   
+ /dev/sdb   7.68 TiB	-      	xfs      	-    	kubeworker2.local 	    -        	Ready  	 
+ /dev/sdc   7.68 TiB	-      	xfs      	-    	kubeworker2.local 	    -        	Ready  	 
+ /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker2.local 	    -        	Ready  	 
+ /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker2.local 	    -        	Ready  	 
+ /dev/sda2  1  TiB	-      	LVM2_member  -    	kubeworker3.local 	    -        	Available   
+ /dev/sdb   7.68 TiB	-      	xfs      	-    	kubeworker3.local 	    -        	Ready  	 
+ /dev/sdc   7.68 TiB	-      	xfs      	-    	kubeworker3.local 	    -        	Ready  	 
+ /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker3.local 	    -        	Ready  	 
+ /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker3.local 	    -        	Ready  	 
+ /dev/sda2  1  TiB	-      	LVM2_member  -    	kubeworker4.local 	    -        	Available   
+ /dev/sdb   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  	 
+ /dev/sdc   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  	 
+ /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  	 
+ /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  
+----
+
+NOTE: Drives marked as `Ready` are managed by DirectPV.
+
+Once formatted, DirectPV responds to any persistent volume claim with a storage class of 'directpv-min-io'.
 
 
 
