@@ -122,8 +122,15 @@ This document is intended for DevOps, IT Professionals, application administrato
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+MinIO makes it easy to deliver robust object storage for Kubernetes-native applications running in your SUSE Rancher environment.
+The MinIO Operator is the key, deploying and managing the MinIO tenant to which your applications connect.
+Your MinIO tenant leverages storage locally attached to worker nodes.
+You can use a variety of storage types, such as public cloud storage, spinning hard disks, and fast solid-state storage, to enable data tiering to satisfy workload and business use cases.
+And MinIO for SUSE Rancher supports use of external encryption key management, identity management, monitoring and alerting, logging and auditing, and more.
+
 // architecture diagram
 image::gs_rancher_minio_architecture.svg[scaledwidth="85%", align="center"]
+
 
 Getting started with MinIO for SUSE Rancher is pretty easy.
 In general, the process is as follows:
