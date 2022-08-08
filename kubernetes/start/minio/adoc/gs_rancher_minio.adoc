@@ -132,6 +132,8 @@ In general, the process is as follows:
 Deploying or importing Kubernetes clusters is covered elsewhere.
 A good place to start is the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation].
 
+. Install the https://krew.sigs.k8s.io/docs/user-guide/setup/install/[krew] utility.
+
 . Create persistent volumes.
 Persistent volumes are the storage backing for the MinIO object store.
 
@@ -172,10 +174,31 @@ The MinIO nodes must have sufficient local persistent volumes and capacity to su
 For example, deploying a tenant with 16 drives requires 18 persistent volumes.
 
 
+Preparing local storage typically involves three steps:
+
+. Formatting the drives 
+MinIO offers the DirectPV CSI driver to simplify management of direct-attached storage for persistent volumes, but you can always prepare your storage manually.
+Both methods are illustrated next.
+
+
 
 === Setting up your storage with DirectPV
 
 https://min.io/directpv[MinIO DirectPV] is a CSI driver that manages locally attached storage and automatically provisions persistent volumes to match incoming persistent volume claims.
+
+// Need to document how to install DirectPV
+
+
+
+DirectPV is designed to be lightweight and scalable to tens of thousands of drives. It is made up of three components:
+
+* Controller - When a volume claim is made, the controller provisions volumes uniformly from a pool of free drives.
+
+* Node driver - One instance of the node driver runs on each node (storage server) and implements volume management functions, such as discovery, format, mount, and monitoring of drives on the node.
+
+* UI - Storate administrators use the DirectPV kubectl CLI plugin to select, manage, and monitor drives.
+
+
 
 MinIO implements https://docs.min.io/minio/baremetal/concepts/erasure-coding.html[erasure coding] to provide object-level healing and resiliency with less overhead than adjacent technologies, such as RAID or replication.
 
@@ -230,6 +253,18 @@ kubectl directpv drives ls
 NOTE: Drives marked as `Ready` are managed by DirectPV.
 
 Once formatted, DirectPV responds to any persistent volume claim with a storage class of 'directpv-min-io'.
+
+
+=== Setting up your storage manually
+
+To set up your local storage manually:
+
+. Create the necessary persistent volumes, whether manually or using a Kubernetes native tool that performs local PV management. 
+
+You must also create a StorageClass to associate with the local PVs. The storage class must set the volumeBindingMode to WaitForFirstConsumer
+
+The following example shows a resource specification for a local persistent volume:
+
 
 
 
