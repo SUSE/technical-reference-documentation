@@ -25,56 +25,61 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
+// B: There is some good text here (https://medium.com/@olivier.borderies/jupyter-python-in-the-corporate-lan-109e2ffde897) to explain why JupyterLab.  We would just want to integrate in SLE value.
+
+
+
 
 === Scope
 
 // This guide will help you take the first steps to 
+
+This guide illustrates how to install, configure, and access JupyterLab on SUSE Linux Enterprise.
 
 
 === Audience
 
 // This document is intended for 
 
+This guide is intended for developers, data scientists, machine learning researchers, and others interested in leveraging the JupyterLab, next generation, interctive, computational notebook environment.
+
 
 == Technical overview
 
 // Description
+// B: Perhaps, describe JupyterLab here, talk about how it's accessed through the web browser, and include a screenshot.
+// B: It probably wouldn't hurt to discuss that JupyterLab also supports other kernels besides Python, such as R and Julia, but I would recommend focusing only on iPython.
 
-// Architecture diagram
+// Architecture diagram - B: This doesn't seem necessary in this doc.  Use a screenshot of the interface instead.
 
 // Minimum requirements (prerequisites) for this guide
 // * Requirement 1 https://url[url]
 // * Requirement 2 https://url[url]
 
+For this guide, you need:
+// B: Flesh out the list below.
+* Computer system // should we include any specs?
+* Internet access // not much else to say, except maybe access to PyPI
+* SUSE Linux Enterprise Server 15 SP4 // okay, expand this to make it clear that we are specifically documenting SLES 15 SP4 but SLED 15 SP4, and openSUSE Leap 15.4 would also work.
+
 
 
 == Installation
-
-
-//=== Install from the SUSE Rancher Apps & Marketplace
-//Use an ordered list for steps.
-//Link elements (with '+') to maintain consistent indentation.
-//E.g.:
-//. From the top-left Rancher menu select __Apps & Marketplace__.
-//From here, you will be taken to the __Charts__ page.
-//Notice __underscores__ are emphasis to indicate a specific
-//UI element.
-//+
-//image::kubernetes_gs_suseprod_partner-partnerprod_image_description.png[scaledwidth="85%", align="center"]
-
-//. Step 2.
-
-//. Step 3.
-
-
-
-//=== Install using generic/manual steps
 
 //Provide steps or link to existing document.
 //[source, bash]
 //---
 //echo "Use code blocks for command-line steps."
 //---
+
+// B: For installation, use https://jupyter.org/install as a guide.
+// B: I recommend walking through creating a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
+// B: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
+// B: I would not introduce conda or mamba.
+// B: Oh, focus on Python3, not Python2.
+
+
+
 
 
 
@@ -87,13 +92,14 @@ include::./common_docinfo_vars.adoc[]
 // Use admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING) as needed.
 //====
 
-
 //Use sections to break up major actions, such as:
 //=== Prepare the demonstration environment (beyond installation)
 //=== Perform action (to illustrate capability)
 //=== Examine results (verifying capability)
 //Use ordered lists for steps.
 //Minimize/consolidate images whenever possible.
+
+// B: Take a look at https://coderefinery.github.io/jupyter/examples/ for some examples.  Let's keep the example here simple.  We're really focused on just getting JupyterLab with SLE into the mind of the reader for this document.
 
 
 
