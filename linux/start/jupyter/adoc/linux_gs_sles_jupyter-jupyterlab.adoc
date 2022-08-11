@@ -24,7 +24,7 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
-// B: There is some good text here (https://medium.com/@olivier.borderies/jupyter-python-in-the-corporate-lan-109e2ffde897) to explain why JupyterLab.  We would just want to integrate in SLE value.
+// TS: There is some good text here (https://medium.com/@olivier.borderies/jupyter-python-in-the-corporate-lan-109e2ffde897) to explain why JupyterLab.  We would just want to integrate in SLE value.
 
 Introducing Machine Learning (ML) into a company strategy is exciting and has potential benefits to bring new information to customers.
 But there are many technical challenges to implementing a successful ML stragegy.
@@ -55,55 +55,53 @@ The deployment instructions in this document assume only an introductory underst
 We hope to help you move quickly from concept to experimentation with the tools that you choose on SLES and Rancher.
 
 
-== Technical overview
+== Prerequisites
+
+// TS: Let's scrap the technical overview for this guide.  It doesn't seem helpful.  Instead, let's jump into prerequisites.
 
 // Description
-// B: Perhaps, describe JupyterLab here, talk about how it's accessed through the web browser, and include a screenshot.
-// B: It probably wouldn't hurt to discuss that JupyterLab also supports other kernels besides Python, such as R and Julia, but I would recommend focusing only on iPython.
+// TS: Perhaps, describe JupyterLab here, talk about how it's accessed through the web browser, and include a screenshot.
+// TS: It probably wouldn't hurt to discuss that JupyterLab also supports other kernels besides Python, such as R and Julia, but I would recommend focusing only on iPython.
 
-// Architecture diagram - B: This doesn't seem necessary in this doc.  Use a screenshot of the interface instead.
+// Architecture diagram - TS: This doesn't seem necessary in this doc.  Use a screenshot of the interface instead.
 
 // Minimum requirements (prerequisites) for this guide
 // * Requirement 1 https://url[url]
 // * Requirement 2 https://url[url]
 
-NOTE: Perhaps we should comment that this is a software environment and then refer to Fujitsu documents or pages for hardware implementations.
-
 // BF: I'm not sure how to expand on this list yet. I think I will come back to this later.
 // Computer system - should we include any specs?
+// > TS: I would be very general.  Perhaps, we drop the computer system from thelist, as it is obvious.
 // Internet access - not much else to say, except maybe access to PyPI
 // SUSE Linux Enterprise Server 15 SP4 - we are specifically documenting SLES 15 SP4. SLED 15 SP4 and openSUSE Leap 15.4 or Tumbleweed would also work.
 
-. For this guide, you need:
-* Computer system
-* Internet access
-* SUSE Linux Enterprise Server 15 SP4
+
+For this guide, you need:
+
+* SUSE Linux Enterprise Server 15 SP4 or openSUSE 15.4.
+
+** If you do not already have SLES, installation instructions can be found here:  https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
+
+** Make sure your SLES installation is up-to-date by running `zypper patch *` or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
+
+* Python3
++
+Python 3.10 is included with SLES 15 SP4 and is used in this guide.
+
+* Access to https://pypi.org/[The Python Package Index (PyPI)].
+PyPI is a repository of software for the Python programming language.
 
 
-== Installation
+== Setting up your Python environment
 
-We are ready to setup your JupyterLab environment.
-Please make sure you have the prerequisites below accomplished.
+SLES 15 SP4 comes with Python 3.10 pre-installed.
+This is adequate to run JupyterLab and many ML toolkits.
+However, ML toolkits are in fast development and may have strict version dependencies.
+To support multiple versions of Python as well as multiple versions of other dependencies in the Python and ML toolchain, you can create isolated, virtual environments.
 
+=== Python Virtual Environment
 
-=== Prerequisites
-
-==== SUSE Linux Enterprise
-You will need an updated version of SLES 15 SP4.
-Installation instructions can be found here:  https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
-
-If you already have SLES 15 SP4 installed, please make sure
-the latest system updates are installed by either running *_zypper patch_* or by starting the YaST module: Online-Update. 
-See: https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html
-
-SLES 15 SP4 comes with Python version 3.6 pre-installed.
-This will be adequate to run both JupyterLab and other AI toolkits.
-But, we recommend that you create a Python virtual environment in which to run various versions of Python-based software.
-
-==== Python Virtual Environment
-The Python 'venv' module gives us a strong tool to isolation software dependencies.
-To learn more about the Python 'venv' module, please see:
-https://docs.python.org/3/tutorial/venv.html
+The https://docs.python.org/3/tutorial/venv.html[Python venv module] gives us a strong tool to isolation software dependencies.
 
 Creating a Python virtual environment is easy.
 Run the following commands as your user:
@@ -144,7 +142,7 @@ https://github.com/pyenv/pyenv
 
 ==== Python Tool Versions and Dependencies
 
-// B: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
+// TS: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
 // https://pip.pypa.io/en/stable/cli/pip_freeze/
 .Advanced: Python Tool Versions and Dependencies:
 ****
@@ -176,7 +174,7 @@ Then, enter the following commands:
 $ pip install jupyterlab
 ----
 
-// B: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
+// TS: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
 
 Once installed, launch JupyterLab with:
 
@@ -194,11 +192,11 @@ NOTE: This is where Brian left off
 //echo "Use code blocks for command-line steps."
 //---
 
-// B: For installation, use https://jupyter.org/install as a guide.
-// B: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
-// B: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
-// B: I would not introduce conda or mamba.
-// B: Oh, focus on Python3, not Python2.
+// TS: For installation, use https://jupyter.org/install as a guide.
+// TS: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
+// TS: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
+// TS: I would not introduce conda or mamba.
+// TS: Oh, focus on Python3, not Python2.
 
 // Example markup:
 //
@@ -246,7 +244,7 @@ NOTE: This is where Brian left off
 //Use ordered lists for steps.
 //Minimize/consolidate images whenever possible.
 
-// B: Take a look at https://coderefinery.github.io/jupyter/examples/ for some examples.  Let's keep the example here simple.  We're really focused on just getting JupyterLab with SLE into the mind of the reader for this document.
+// TS: Take a look at https://coderefinery.github.io/jupyter/examples/ for some examples.  Let's keep the example here simple.  We're really focused on just getting JupyterLab with SLE into the mind of the reader for this document.
 
 
 
