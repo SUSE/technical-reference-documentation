@@ -262,14 +262,14 @@ For example, format all available drives on nodes kubeworker1, kubeworker2, kube
 
 [source, bash]
 ----
-kubectl directpv drives format --nodes kubeworker{1...4}
+kubectl directpv drives format --nodes 'kubeworker{1...4}'
 ----
 
 You can also be more specific about which drives to format:
 
 [source, bash]
 ----
-kubectl directpv drives format --drives /dev/sd{a...e} --nodes kubeworker{1...4}
+kubectl directpv drives format --drives '/dev/sd{a...e}' --nodes 'kubeworker{1...4}'
 ----
 
 
@@ -324,6 +324,22 @@ Use one of the following methods to install the MinIO Operator onto a Rancher-ma
 
 
 === SUSE Rancher Apps & Marketplace
+
+The MinIO Operator can be easily installed through the SUSE Rancher Apps & Marketplace with the following steps.
+
+. Log into SUSE Rancher and select the cluster where you will deploy MinIO.
+
+. Navigate to _Apps & Marketplace > Charts_ in the SUSE Rancher UI and search for 'minio'.
+
+. Select the "MinIO Operator" chart, then click _Install_.
+
+[NOTE]
+====
+The MinIO Operator deploys to the "minio-operator" namespace by default.
+You can modify this during Step 2 of the installation.
+====
+
+
 
 
 === MinIO Operator plugin
