@@ -2,20 +2,17 @@
 include::./common_docinfo_vars.adoc[]
 
 // Variables & Attributes
-:title: Partner PartnerProd with SUSE SUSEProd
-:productname: SUSEProd version
-:author1: First Last, title, SUSE
-:author2: First Last, title, Partner
-:revdate: Month dd, YYYY
-:revnumber: YYYYmmdd
+:title: Getting Started with Jupyter Notebooks
+:subtitle: Fujitsu Machine Learning with SUSE Linux Enterprise and Rancher
+:productname: SLES 15 sp4
+:author1: Brian Fromme, Technical Alliance Manager, SUSE
+:author2: Terry Smith, Partner Solutions Director, SUSE
+:revdate: August, 2022
+:revnumber: 20220804
 //:toc2:
 //:toc-title: {title}
 //:toclevels: 4
-
-
 = {title}
-
-
 
 == Introduction
 
@@ -27,21 +24,33 @@ include::./common_docinfo_vars.adoc[]
 
 // B: There is some good text here (https://medium.com/@olivier.borderies/jupyter-python-in-the-corporate-lan-109e2ffde897) to explain why JupyterLab.  We would just want to integrate in SLE value.
 
+Introducing Machine Learning (ML) into a company strategy is exciting and has potential benefits to bring new information to customers.
+But there are many technical challenges to implementing a successful ML stragegy.
+Deploying and using the software tools on SLES and Rancher shouldn't be one of those challenges.
+SUSE collaborates with Fujitsu to make this process easier to understand, repeatable, and transparent about preferred methods.
 
+==== Why We Start with JupyterLab
 
+You might be wondering why we don't just dive into an ML tookit in this document.
+In one way, we think that we have.
+Jupyter notebooks and JupyterLab are tools that help your company to share data, ideas, experiments and code.
+Futhermore, Jupyter notebooks are self-documenting instructions that promote collaboration and automation of corporate processes in a uniform way.
 
 === Scope
 
-// This guide will help you take the first steps to 
-
 This guide illustrates how to install, configure, and access JupyterLab on SUSE Linux Enterprise.
+We believe that scientists and engineers working with machine learning tend to utilize leading-edge open-source tools.
+With that in mind, we target SLES 15 sp4, as that is that latest operating system release.
+
+This document will help you to successful deploy JupyterLab and to make sure you are ready to take the next steps in your Machine-Learning journey.
+We feel that using Jupyter notebooks will help you with that journey and hope you come to see it in a similar way.
 
 
 === Audience
 
-// This document is intended for 
-
-This guide is intended for developers, data scientists, machine learning researchers, and others interested in leveraging the JupyterLab, next generation, interctive, computational notebook environment.
+This guide is intended for developers, data scientists, machine-learning researchers, and others interested in leveraging the JupyterLab next generation, interactive, computational-notebook environment.
+The deployment instructions in this document assume only an introductory understanding of Linux commands.
+We hope to help you move quickly from concept to experimentation with the tools that you choose on SLES and Rancher.
 
 
 == Technical overview
@@ -56,15 +65,122 @@ This guide is intended for developers, data scientists, machine learning researc
 // * Requirement 1 https://url[url]
 // * Requirement 2 https://url[url]
 
-For this guide, you need:
-// B: Flesh out the list below.
-* Computer system // should we include any specs?
-* Internet access // not much else to say, except maybe access to PyPI
-* SUSE Linux Enterprise Server 15 SP4 // okay, expand this to make it clear that we are specifically documenting SLES 15 SP4 but SLED 15 SP4, and openSUSE Leap 15.4 would also work.
+NOTE: Perhaps we should comment that this is a software environment and then refer to Fujitsu documents or pages for hardware implementations.
 
+// BF: I'm not sure how to expand on this list yet. I think I will come back to this later.
+// Computer system - should we include any specs?
+// Internet access - not much else to say, except maybe access to PyPI
+// SUSE Linux Enterprise Server 15 SP4 - we are specifically documenting SLES 15 SP4. SLED 15 SP4 and openSUSE Leap 15.4 or Tumbleweed would also work.
 
+. For this guide, you need:
+* Computer system
+* Internet access
+* SUSE Linux Enterprise Server 15 SP4
 
 == Installation
+
+We are ready to setup your JupyterLab environment.
+Please make sure you have the prerequisites below accomplished.
+
+=== Prerequisites
+
+==== SUSE Linux Enterprise
+You will need an updated version of SLES 15 sp4.
+Installation instructions can be found here:  https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
+
+If you already have SLES 15 sp4 installed, please make sure
+the latest system updates are installed by either running *_zypper patch_* or by starting the YaST module: Online-Update. 
+See: https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html
+
+SLES 15 sp4 comes with Python version 3.6 pre-installed.
+This will be adequate to run both JupyterLab and other AI toolkits.
+But, we recommend that you create a Python virtual environment in which to run various versions of Python-based software.
+
+==== Python Virtual Environment
+The Python 'venv' module gives us a strong tool to isolation software dependencies.
+To learn more about the Python 'venv' module, please see:
+https://docs.python.org/3/tutorial/venv.html
+
+Creating a Python virtual environment is easy.
+Run the following commands as your user:
+
+.Python 'venv' installation
+[source,bash]
+----
+$ python3 -m venv $HOME/python3-ai
+$ . $HOME/python3-ai/bin/activate
+----
+
+==== Python Pip Command
+We will use the Python 'pip' command to install various Python tools.
+To learn more about 'pip' please see: https://pip.pypa.io/en/stable/
+
+Run the following commands as your user:
+
+.Python 'pip' installation
+[source,bash]
+----
+$ pip install --upgrade pip
+----
+
+.Advanced: Python System Versions:
+****
+Python itself may be a dependency for some of the machine learning toolkits you utilize.
+For that reason, you might also consider the advanced topic of managing multiple versions of Python.
+This would allow you to leverage the SLES-provided version, Python 3.6 for most tasks.
+But, you would need an isolated environment in which to run a newer version of Python, such as Python 3.10.
+
+TIP: For the tools we will introduce in our series of Getting Started Guides, Pythong 3.6 will be adequate.
+
+If you decide that multiple versions of Python are required for your AI toolkits, please see:
+https://github.com/pyenv/pyenv
+****
+
+==== Python Tool Versions and Dependencies
+
+// B: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
+// https://pip.pypa.io/en/stable/cli/pip_freeze/
+.Advanced: Python Tool Versions and Dependencies:
+****
+Python tools have dependencies on other Python components.
+For that reason, you might also consider the advanced topic of managing the versions of your Python tools.
+The idea is to capture your tool dependencies and be able to redeploy those later.
+To do this, we would leverage one of two Python tools:  'pip freeze' or 'pipreqs'
+
+Information about the use of 'pip freeze' can be found here: https://pip.pypa.io/en/stable/cli/pip_freeze/
+Information about the use of 'pipreqs' can be found here: https://pypi.org/project/pipreqs/
+
+TIP: You do not need to keep track of all your tool dependencies. You can always deploy a new virtual environment, if needed.
+****
+
+=== Install JupyterLab
+
+Jupyter notebooks are a collaboration tool, typically used for science and computing domains.
+JupyterLab is the latest web-based interactive development environment for notebooks, code, and data.
+You can read more about JupyterLab here: https://jupyter.org/
+Through JupyterLab, you can define workflows in data science, scientific computing, computational journalism, and machine learning.
+
+To install JupyterLab, please make sure you have read and completed the prerequistes above.
+Then, enter the following commands:
+
+
+.JupyterLab installation
+[source,bash]
+----
+$ pip install jupyterlab
+----
+
+// B: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
+
+Once installed, launch JupyterLab with:
+
+.JupyterLab execution
+[source,bash]
+----
+$ jupyter-lab
+----
+
+NOTE: This is where Brian left off
 
 //Provide steps or link to existing document.
 //[source, bash]
@@ -73,15 +189,40 @@ For this guide, you need:
 //---
 
 // B: For installation, use https://jupyter.org/install as a guide.
-// B: I recommend walking through creating a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
+// B: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
 // B: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
 // B: I would not introduce conda or mamba.
 // B: Oh, focus on Python3, not Python2.
 
-
-
-
-
+// Example markup:
+//
+// Admonition types:
+//   NOTE
+//   TIP
+//   IMPORTANT
+//   CAUTION
+//   WARNING
+//
+// [sidebar]
+//   Sidebars are used to visually separate auxiliary bits of content
+//   that supplement the main text.
+// Delimited sidebar syntax
+//   .Optional Title:
+//   ****
+//   Sidebars are used to visually separate auxiliary bits of content
+//   that supplement the main text.
+//   
+//   TIP: They can contain any type of content.
+//   
+//   .Source code block in a sidebar
+//   [source,js]
+//   ----
+//   const { expect, expectCalledWith, heredoc } = require('../test/test-utils')
+//   ----
+//   ****
+//
+// Links:
+// link:downloads/report.pdf[Get Report]
 
 == Use case and demonstration
 
