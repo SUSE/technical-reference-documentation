@@ -318,34 +318,150 @@ In a Kubernetes environment, provisioning large stateful services requires more 
 
 Use one of the following methods to install the MinIO Operator onto a Rancher-managed Kubernetes cluster:
 
-* SUSE Rancher Apps & Marketplace.
-* MinIO Operator plugin.
-* MinIO Helm chart.
+* From the SUSE Rancher Apps & Marketplace.
+* With the Helm chart.
+* With the Krew plugin manager.
 
-
-=== SUSE Rancher Apps & Marketplace
+=== Install MinIO from SUSE Rancher Apps & Marketplace
 
 The MinIO Operator can be easily installed through the SUSE Rancher Apps & Marketplace with the following steps.
 
 . Log into SUSE Rancher and select the cluster where you will deploy MinIO.
 
 . Navigate to _Apps & Marketplace > Charts_ in the SUSE Rancher UI and search for 'minio'.
++
+image::rancher_minio_ui-install-001.png[scaledwidth="85%", align="center"]
 
-. Select the "MinIO Operator" chart, then click _Install_.
+. Select the "MinIO Operator" chart to proceed to Step 1 of the installation process.
 
+. The MinIO Operator deploys to the "minio-operator" namespace by default.
+You can modify this during Step 1 of the installation process or just click _Next_ to continue.
++
+image::rancher_minio_ui-install-002.png[scaledwidth="85%", align="center"]
+
+. You can configure values used by Helm for installing MinIO Operator in Step 2.
+When ready, click _Install_ to install the MinIO Operator.
++
+image::rancher_minio_ui-install-003.png[scaledwidth="85%", align="center"]
+
+
+=== Install MinIO with the Helm chart
+
+Install MinIO Operator with the MinIO-maintained Helm chart with two commands:
+
+. Add the MinIO Helm repo.
++
+[source, bash]
+----
+helm repo add minio https://operator.min.io/
+----
+
+. Install the MinIO Operator with `helm`.
++
+[source, bash]
+----
+helm install \
+  --namespace minio-operator \
+  --create-namespace \
+  minio-operator minio/operator
+----
+
+
+=== Install MinIO with Krew plugin manager
+
+You can use https://krew.sigs.k8s.io/[Krew] to help you discover `kubectl` plugins, install them, and keep them up-to-date.
+
+. Start by https://krew.sigs.k8s.io/docs/user-guide/setup/install/[installing Krew] on your local system.
+
+. Refresh your local copy of the plugin index.
++
+[source, bash]
+----
+kubectl krew update
+----
+
+. Download, verify, and install the MinIO operator.
++
+[source, bash]
+----
+kubectl krew install minio
+----
+
+. Launch the MinIO Operator.
++
+[source, bash]
+----
+kubectl minio init
+----
++
 [NOTE]
 ====
-The MinIO Operator deploys to the "minio-operator" namespace by default.
-You can modify this during Step 2 of the installation.
+`kubectl` uses the default domain of 'cluster.local'.
+You can specify a different domain with the `--cluster-domain` option.
+See https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/[Customizing DNS Service] for more information.
 ====
 
 
+=== Verify installation
 
+After you have performed one of the above installation methods, validate that the MinIO Operator is installed and running.
 
-=== MinIO Operator plugin
+. List the pods running in the 'minio-operator' namespace.
++
+[source, bash]
+----
+kubectl get all --namespace minio-operator
+----
+This should produce output like the following:
++
+[source, bash]
+----
+NAME                              	READY   STATUS	RESTARTS   AGE
+pod/minio-operator-54896fc474-r7pvw    1/1     Running     0          29s
+pod/console-5bb9b6d8d9-gs6fg           1/1     Running     0          23s
+pod/minio-operator-54896fc474-qvzbz    1/1     Running     0          29s
 
+NAME           	TYPE    	CLUSTER-IP      EXTERNAL-IP    PORT(S)            AGE
+service/operator    ClusterIP       10.43.156.98    <none>         4222/TCP,4221/TCP  34s
+service/console     ClusterIP       10.43.141.45    <none>         9090/TCP,9443/TCP  26s
 
-=== MinIO Helm chart
+NAME                         	READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/minio-operator      2/2 	 2            2           30s
+deployment.apps/console      	1/1 	1        	1       	26s
+
+NAME                                    	DESIRED   CURRENT   READY   AGE
+replicaset.apps/minio-operator-54896fc474  2     	   2         2       30s
+replicaset.apps/console-5bb9b6d8d9      	1     	   1         1       24s
+----
+
+. Verify that you see 'minio-operator' and 'console' pods in the 'Running' stateas well as the 'service/operator' and 'service/console' assigned cluster IP addresses.
+
+. Open the MinIO Operator Console.
++
+You can temporarily forward traffic from the MinIO Operator Console service to your local machine by issuing:
++
+[source, bash]
+----
+kubectl minio proxy
+----
++
+This will produce output like the following:
++
+[source, bash]
+----
+Starting port forward of the Console UI.
+
+To connect open a browser and go to http://localhost:9090
+
+Current JWT to login: TOKEN
+----
++
+where 'TOKEN' will be your unique https://en.wikipedia.org/wiki/JSON_Web_Token[JSON Web Token (JWT)] that you must use to log into the MinIO Operator Console.
+
+. With your web browser, open http://localhost:9090 and log in with your JWT.
++
+image::rancher_minio_ui-tenant-001.png[scaledwidth="85%", align="center"]
+
 
 
 == Deploy the MinIO tenant
