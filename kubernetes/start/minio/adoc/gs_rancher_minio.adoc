@@ -129,22 +129,25 @@ image::gs_rancher_minio_architecture.svg[scaledwidth="85%", align="center"]
 
 Key MinIO components discussed in this guide are:
 
-MinIO Operator:: The MinIO Operator is deployed into your Kubernetes cluster and handles deployment and management of MinIO tenants.
+MinIO Operator:: This Kubernetes operator is deployed into your cluster and handles deployment and management of MinIO tenants.
 
-MinIO Tenant:: MinIO tenants represent the object stores to which your applications connect.  MinIO tenants leverage storage locally attached to worker nodes, such as public cloud storage, spinning hard disks, and fast solid-state storage.  Tenants can be configured to enable data tiering to satisfy workload and business use cases.
+MinIO Tenant:: Tenants represent the object stores to which your applications connect.  MinIO tenants leverage storage locally attached to worker nodes, such as public cloud storage, spinning hard disks, and fast solid-state storage.  Tenants can be configured to enable data tiering to satisfy workload and business use cases.
 
-MinIO Operator Console:: The MinIO Operator Console provides a rich user interface to ease management of MinIO object storage.  The MinIO Operator Console is installed and configured automatically with the MinIO Operator.
+MinIO Operator Console:: This service provides a rich user interface to ease management of MinIO object storage.  The MinIO Operator Console is installed and configured automatically with the MinIO Operator.
+
+MinIO DirectPV:: This CSI driver manages locally attached storage and automatically provisions persistent volumes to match incoming persistent volume claims.
+
+MinIO Kubernetes Plugin:: This plugin for the `kubectl` command-line tool enables deployment of the MinIO Operator and creation of MinIO tenants.
 
 
 Some additional components and tools discussed in this guide include:
 
-* https://min.io/directpv[MinIO DirectPV]: a CSI driver that manages locally attached storage and automatically provisions persistent volumes to match incoming persistent volume claims.
+* https://helm.sh/[Helm]: the package manager for Kubernetes.
 
 * https://kubernetes.io/docs/reference/kubectl/[kubectl]: the command-line tool for communicating with the Kubernetes cluster's control plane via the Kubernetes API.
 
 * https://krew.sigs.k8s.io/[Krew]: a plugin manager for the `kubectl` command-line tool.
 
-* https://helm.sh/[Helm]: the package manager for Kubernetes.
 
 * https://github.com/kubernetes-sigs/kustomize[kustomize]: a standalone tool for programmatically customizing Kubernetes objects.
 
@@ -155,28 +158,23 @@ Getting started with MinIO for SUSE Rancher is pretty easy.
 In general, the process is as follows:
 
 . Log into your SUSE Rancher environment and select a managed cluster.
-Deploying or importing Kubernetes clusters is covered elsewhere.
-A good place to start is the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation].
-
-. Install the https://krew.sigs.k8s.io/docs/user-guide/setup/install/[krew] utility.
 
 . Create persistent volumes.
-Persistent volumes (PVs) are the storage backing for the MinIO object store.
 
 . Install MinIO Operator.
-The MinIO Operator supports deploying and managing MinIO tenants and automatically generates a persistent volume claim (PVC) for each volume.
 
 . Deploy a MinIO tenant.
-The MinIO tenant represents an object store to which an application can be granted access.
 
 . Connect to the MinIO tenant.
-The MinIO tenant is exposed as a Kubernetes service to which application workloads can connect.
 
 
 == Prerequisites
 
 This guide assumes that you have access to an existing Kubernetes cluster managed by https://rancher.com/docs/rancher/v2.6/en/overview/[SUSE Rancher].
-This cluster should have at least four (4) worker nodes for scheduling MinIO pods and services.
+Deploying or importing Kubernetes clusters is covered elsewhere.
+A good place to start is the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation].
+
+The cluster should have at least four worker nodes for scheduling MinIO pods and services.
 
 While MinIO is hardware agnostic and can function on consumer-grade hardware, the following recommendations for each worker node provide a baseline for high performance object storage:
 
@@ -188,13 +186,13 @@ Memory primarily affects the number of simultaneous network connections per pod.
 * 25 GbE Network Interface Card (NIC):
 Network is a primary performance factor and is most likely to constrain performance if throughput cannot satisfy the total aggregated storage of the MinIO tenant.
 
-* Locally-attached storage drives (NVMe, SSD, HDD):
+* Locally-attached storage drives:
 Ensure all drives intended for use by the MinIO tenant are the same type and capacity (e.g., 4 TB NVMe drives) for consistent performance.
 MinIO should have exclusive access to these drives for best results.
 
 [TIP]
 ====
-Be sure drives are provisioned in JBOD (Just a Bunch of Disks) mode with no RAID, ZFS Pooling, or other redundancy or resiliency or tooling layers.
+Be sure drives are provisioned in JBOD (Just a Bunch of Disks) mode with no RAID, ZFS pooling, or other redundancy, resiliency, or tooling layers.
 MinIO implements https://docs.min.io/minio/baremetal/concepts/erasure-coding.html[erasure coding] to provide object-level healing and resiliency with less overhead than adjacent technologies, such as RAID or replication.
 ====
 
@@ -222,21 +220,20 @@ Before proceeding, review the concepts of persistent volumes (PVs), persistent v
 MinIO strongly recommends using direct-attached storage on each worker node.
 ====
 
-
 The MinIO Operator generates PVCs for each storage resource required by the tenant.
 When creating a MinIO tenant, you specify the storage class to assign to each PVC.
 Kubernetes must bind each generated PVC to a PV with matching storage class for the tenant to successfully start.
 
-In this guide, you will use MinIO DirectPV to automatically generate and manage local PVs.
+
+=== Install MinIO DirectPV
+
+https://min.io/directpv[MinIO DirectPV] is a CSI driver that manages locally attached storage and automatically provisions PVs to match incoming PVCs from stateful applications.
+It is designed to be lightweight and scalable to tens of thousands of drives.
 For those clusters where DirectPV cannot be used, local PVs can be https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant.html[manually provisioned].
 
 
-https://min.io/directpv[MinIO DirectPV] is a CSI driver that manages locally attached storage and automatically provisions PVs to match incoming PVCs from stateful application.
-It is designed to be lightweight and scalable to tens of thousands of drives.
-
-
-DirectPV is installed with https://krew.sigs.k8s.io/[Krew], the plugin manage for the `kubectl` command.
-If you do not already have it on your system, https://krew.sigs.k8s.io/docs/user-guide/setup/install/[install Krew] before proceeding.
+DirectPV is installed with https://krew.sigs.k8s.io/[Krew], the plugin manager for the `kubectl` command.
+If not already installed on your system, https://krew.sigs.k8s.io/docs/user-guide/setup/install/[install Krew] before proceeding.
 
 
 Once you have Krew installed, you can install DirectPV with the following steps:
@@ -275,25 +272,28 @@ DirectPV requires unformatted storage volumes and automatically excludes any for
 ====
 
 
+=== Provision local storage
+
 At this point, you can use DirectPV to format and manage the drives in your cluster nodes.
 
-For example, format all available drives on nodes kubeworker1, kubeworker2, kubeworker3, and kubeworker4 with:
-
+. Format the drives on your cluster nodes with the `kubectl directpv drives format` command.
++
+* You can format all available drives on nodes kubeworker1, kubeworker2, kubeworker3, and kubeworker4:
++
 [source, bash]
 ----
 kubectl directpv drives format --nodes 'kubeworker{1...4}'
 ----
-
-You can also be more specific about which drives to format:
-
++
+* Or, you can be more specific about which drives to format:
++
 [source, bash]
 ----
 kubectl directpv drives format --drives '/dev/sd{a...e}' --nodes 'kubeworker{1...4}'
 ----
 
-
-Use the `kubectl directpv drives ls` command to view the status of the drives:
-
+. Use the `kubectl directpv drives ls` command to view drive status.
++
 [source, bash]
 ----
 kubectl directpv drives ls
@@ -321,10 +321,10 @@ kubectl directpv drives ls
  /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  	 
  /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  
 ----
-
++
 [NOTE]
 ====
-Drives marked as `Ready` are managed and DirectPV will respond to any persistent volume claim with a storage class of 'directpv-min-io'.
+Drives marked as 'Ready' are managed and DirectPV will respond to any persistent volume claim with a storage class of 'directpv-min-io'.
 ====
 
 
@@ -333,42 +333,42 @@ Drives marked as `Ready` are managed and DirectPV will respond to any persistent
 
 MinIO is designed to simplify the installation process.  In a bare metal environment, you can deploy a large distributed MinIO cluster using just the MinIO binaries and a handful of environment variables.
 
-In a Kubernetes environment, provisioning large stateful services requires more care as the full lifecycle and behavior of pods, networking, and other transient resources come into play. The MinIO Kubernetes Operator extends the Kubernetes API to support deploying MinIO Tenants via the Operator Console GUI or using the `kubectl minio` plugin. The Operator fully manages all underlying operations associated with deploying and managing Kubernetes resources, allowing operators, administrators, and developers to focus on deploying and using their object storage resource.
+In a Kubernetes environment, provisioning large stateful services requires more care as the full lifecycle and behavior of pods, networking, and other transient resources come into play.
+The MinIO Kubernetes Operator extends the Kubernetes API to support deploying MinIO tenants via the MinIO Operator Console GUI or using the `kubectl minio` plugin.
+The MinIO Operator fully manages all underlying operations associated with deploying and managing Kubernetes resources, allowing DevOps teams to focus on deploying and using their object storage resource.
 
-Use one of the following methods to install the MinIO Operator onto a Rancher-managed Kubernetes cluster:
+You can use one of the three methods described below to deploy the MinIO Operator into a Kubernetes cluster managed by SUSE Rancher.
 
-* From the SUSE Rancher Apps & Marketplace.
-* With the Helm chart.
-* With the Krew plugin manager.
 
 === Install MinIO from SUSE Rancher Apps & Marketplace
 
-The MinIO Operator can be easily installed through the SUSE Rancher Apps & Marketplace with the following steps.
+The MinIO Operator can be easily installed through the SUSE Rancher Apps & Marketplace.
 
-. Log into SUSE Rancher and select the cluster where you will deploy MinIO.
+. Log into the SUSE Rancher UI and select the cluster where you intend to deploy and use MinIO object storage.
 
-. Navigate to _Apps & Marketplace > Charts_ in the SUSE Rancher UI and search for 'minio'.
+. Navigate to _Apps & Marketplace > Charts_ in the Rancher UI and search for 'minio'.
 +
 image::rancher_minio_ui-install-001.png[scaledwidth="85%", align="center"]
 
-. Select the "MinIO Operator" chart to proceed to Step 1 of the installation process.
+. Select the "MinIO Operator" chart to proceed.
 
 . The MinIO Operator deploys to the "minio-operator" namespace by default.
-You can modify this during Step 1 of the installation process or just click _Next_ to continue.
+You can modify this during "Install: Step 1" or just click _Next_ to continue.
 +
 image::rancher_minio_ui-install-002.png[scaledwidth="85%", align="center"]
 
-. You can configure values used by Helm for installing MinIO Operator in Step 2.
-When ready, click _Install_ to install the MinIO Operator.
+. You can configure values used by Helm for installing the MinIO Operator in "Install: Step 2."
+When ready, click _Install_.
 +
 image::rancher_minio_ui-install-003.png[scaledwidth="85%", align="center"]
 
 
 === Install MinIO with the Helm chart
 
-Install MinIO Operator with the MinIO-maintained Helm chart with two commands:
+MinIO maintains a Helm chart for the MinIO Operator.
+You can deploy the MinIO Operator into your cluster with the following steps:
 
-. Add the MinIO Helm repo.
+. Add the MinIO Helm repository.
 +
 [source, bash]
 ----
@@ -386,11 +386,14 @@ helm install \
 ----
 
 
-=== Install MinIO with Krew plugin manager
+=== Install MinIO with the MinIO Kubernetes Plugin
 
-You can use https://krew.sigs.k8s.io/[Krew] to help you discover `kubectl` plugins, install them, and keep them up-to-date.
+The https://github.com/minio/operator/tree/master/kubectl-minio[MinIO Kubernetes Plugin] can be used to deploy the MinIO Operator, create tenant CRDs, define cluster roles and more.
+
+Follow the steps below to install and use the MinIO Kubernetes Plugin:
 
 . Start by https://krew.sigs.k8s.io/docs/user-guide/setup/install/[installing Krew] on your local system.
+You can use https://krew.sigs.k8s.io/[Krew] to help you discover kubectl plugins, install them, and keep them up-to-date.
 
 . Refresh your local copy of the plugin index.
 +
@@ -399,27 +402,29 @@ You can use https://krew.sigs.k8s.io/[Krew] to help you discover `kubectl` plugi
 kubectl krew update
 ----
 
-. Download, verify, and install the MinIO Operator.
+. Download, verify, and install the MinIO Kubernetes Plugin.
 +
 [source, bash]
 ----
 kubectl krew install minio
 ----
 
-. Launch the MinIO Operator.
+. Install the MinIO Operator.
 +
 [source, bash]
 ----
 kubectl minio init
 ----
 +
-[NOTE]
-====
-`kubectl` uses the default domain of 'cluster.local'.
-You can specify a different domain with the `--cluster-domain` option.
-See https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/[Customizing DNS Service] for more information.
-====
+By default, this command deploys the latest MinIO Operator into the 'minio-operator' namespace with the https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/[cluster domain] of 'cluster.local'.
+Additional options can be passed with this command to customize these and other characteristics of the deployment.
 
+
+[TIP]
+====
+Explore https://docs.min.io/minio/k8s/reference/minio-kubectl-plugin.html[MinIO Kubernetes Plugin documentation] for more information on options and capabilities.
+====
+ 
 
 === Verify installation
 
@@ -453,7 +458,7 @@ replicaset.apps/minio-operator-54896fc474  2     	   2         2       30s
 replicaset.apps/console-5bb9b6d8d9      	1     	   1         1       24s
 ----
 
-. Verify that you see 'minio-operator' and 'console' pods in the 'Running' stateas well as the 'service/operator' and 'service/console' assigned cluster IP addresses.
+. Verify that you see 'minio-operator' and 'console' pods in the 'Running' stateas well as the 'service/operator' and 'service/console' assigned to cluster IP addresses.
 
 . Open the MinIO Operator Console.
 +
@@ -487,6 +492,7 @@ image::rancher_minio_ui-tenant-001.png[scaledwidth="85%", align="center"]
 With the MinIO Operator installed, you can now deploy a MinIO tenant to your cluster.
 Choose one of the three methods detailed next.
 
+
 === Deploy a tenant with the MinIO Operator Console
 
 . Open the MinIO Operator Console and select _Tenants_ from the navigation pane.
@@ -499,9 +505,10 @@ See https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant.html[Dep
 image::rancher_minio_ui-tenant-002.png[scaledwidth="85%", align="center"]
 
 
-=== Deploy a tenant with the MinIO `kubectl` plugin
+=== Deploy a tenant with the MinIO Kubernetes Plugin
 
-The MinIO `kubectl` plugin supports creating tenants directly or outputing a YAML file for further customization.
+The MinIO Kubernetes Plugin supports creating tenants directly or outputing a YAML file for further customization.
+
 For example, the following command creates a MinIO tenant, named minio-tenant-1, with four nodes with four drives each, a capacity of 16 TiB, and using the directpv-min-io storage class:
 
 [source, bash]
@@ -514,7 +521,8 @@ kubectl minio tenant create minio-tenant-1   	\
   --namespace           	minio-tenant-1
 ----
 
-See https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant-using-commandline.html[Deploy a MinIO tenant using the MinIO plugin] for more details.
+See the https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant-using-commandline.html[MinIO documentation] for more details.
+
 
 === Deploy a MinIO tenant with Kustomize
 
