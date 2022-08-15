@@ -90,9 +90,7 @@ The combination of MinIO with SUSE Rancher empowers enterprises with a powerful,
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will introduce you to some general concepts and basic steps for installing, configuring, and using MinIO Object Storage in a SUSE Rancher Kubernetes environment.
-
-Additionally, you will get a general framework for connecting Spark, Presto, or other AI/ML platforms with support for the S3A connector to MinIO for high performance, scalable data workloads within Kubernetes.
+This guide introduces the basic concepts and steps to install, configure, and use MinIO object storage in a SUSE Rancher Kubernetes environment to support a variety of application workloads, such as Spark, Presto, and other AI/ML platforms.
 
 
 
@@ -105,7 +103,7 @@ Additionally, you will get a general framework for connecting Spark, Presto, or 
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for DevOps, IT Professionals, application administrators, and developers who are responsible for building, managing, and using cloud-native object storage resources.
+This document is intended for developers, DevOps and IT professionals, and application administrators who are responsible for building, managing, and using cloud-native object storage resources.
 
 
 
@@ -123,14 +121,35 @@ This document is intended for DevOps, IT Professionals, application administrato
 
 
 MinIO makes it easy to deliver robust object storage for Kubernetes-native applications running in your SUSE Rancher environment.
-The MinIO Operator is the key, deploying and managing the MinIO tenant to which your applications connect.
-Your MinIO tenant leverages storage locally attached to worker nodes.
-You can use a variety of storage types, such as public cloud storage, spinning hard disks, and fast solid-state storage, to enable data tiering to satisfy workload and business use cases.
-And MinIO for SUSE Rancher supports use of external encryption key management, identity management, monitoring and alerting, logging and auditing, and more.
 
-// architecture diagram
 image::gs_rancher_minio_architecture.svg[scaledwidth="85%", align="center"]
 
+
+=== Components and tools
+
+Key MinIO components discussed in this guide are:
+
+MinIO Operator:: The MinIO Operator is deployed into your Kubernetes cluster and handles deployment and management of MinIO tenants.
+
+MinIO Tenant:: MinIO tenants represent the object stores to which your applications connect.  MinIO tenants leverage storage locally attached to worker nodes, such as public cloud storage, spinning hard disks, and fast solid-state storage.  Tenants can be configured to enable data tiering to satisfy workload and business use cases.
+
+MinIO Operator Console:: The MinIO Operator Console provides a rich user interface to ease management of MinIO object storage.  The MinIO Operator Console is installed and configured automatically with the MinIO Operator.
+
+
+Some additional components and tools discussed in this guide include:
+
+* https://min.io/directpv[MinIO DirectPV]: a CSI driver that manages locally attached storage and automatically provisions persistent volumes to match incoming persistent volume claims.
+
+* https://kubernetes.io/docs/reference/kubectl/[kubectl]: the command-line tool for communicating with the Kubernetes cluster's control plane via the Kubernetes API.
+
+* https://krew.sigs.k8s.io/[Krew]: a plugin manager for the `kubectl` command-line tool.
+
+* https://helm.sh/[Helm]: the package manager for Kubernetes.
+
+* https://github.com/kubernetes-sigs/kustomize[kustomize]: a standalone tool for programmatically customizing Kubernetes objects.
+
+
+=== Process overview
 
 Getting started with MinIO for SUSE Rancher is pretty easy.
 In general, the process is as follows:
@@ -622,7 +641,7 @@ spec:
 ----
 
 
-== Connect Spark to MinIO
+== Enable Spark with MinIO
 
 Integration into S3 has become a standard feature even for Hadoop-based software like Spark and Presto.
 The S3A connector allows read/write directly to S3 buckets, and advances in the S3A connector have improved reliability and performance such that MinIO object storage can outperform HDFS on similar workloads.
