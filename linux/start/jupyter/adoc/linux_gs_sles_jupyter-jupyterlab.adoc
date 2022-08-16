@@ -87,26 +87,40 @@ For this guide, you need:
 ** Make sure your SLES installation is up-to-date by running `zypper patch` or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python3
-+
-// NOTE:  Python 3.6 is the default in SLES 15 sp4.  See:  https://scc.suse.com/packages/22551627
 Python 3.6 is included with {productname} and is used in this guide.
+This is adequate to run JupyterLab and many ML toolkits.
++
+[NOTE]
+====
+Legacy Python 2.x can also be installed on your system.
+To avoid confusion and to avoid accidentally calling legacy Python 2.x, this guide uses version-explicit commands, like `python3` and `pip3`.
+====
 
 * Access to https://pypi.org/[The Python Package Index (PyPI)].
-PyPI is a repository of software for the Python programming language.
+PyPI is a public repository of software for the Python programming language.
+
 
 
 == Setting up your Python environment
 
-{productname} comes with Python 3.6 pre-installed.
-This is adequate to run JupyterLab and many ML toolkits.
-However, ML toolkits are in fast development and may have strict version dependencies.
-To support multiple versions of Python as well as multiple versions of other dependencies in the Python and ML toolchain, you can create isolated, virtual environments.
+ML toolkits are in fast development and often have strict version dependencies.
+Installing dependent packages to support one project may, thus, break another project.
+For this reason, developers need a way to create isolated environments where they can install the packages they need without impacting other projects or systems operations.
 
-[NOTE]
+[WARNING]
 ====
-Legacy Python 2.x can also be installed on your system.
-To avoid confusion and to avoid accidentally calling legacy Python 2.x, this guide uses explicit version commands, like `python3` and `pip3`.
+Your application may have a hard dependency for a specific version of the Python interpeter itself.
+
+Installing different versions of Python on your system could break system tools, which have their own dependencies.
+
+To mitigate this risk, SUSE names the Python binaries explicitly.
+
+For example, the default Python interpeter binary is actually the file, 'python3.6'.
+This is symbolically linked as 'python3' to simplify usage and offer consistency.
+
+Maintaining multiple versions with a tool like, https://github.com/pyenv/pyenv[pyenv], is out of scope for this guide.
 ====
+
 
 === Creating a Python virtual environment
 
@@ -140,7 +154,7 @@ source ./bin/activate
 ----
 +
 The 'activate' script cannot be run on its own and must be "sourced" in order to update current environment variables in support of the isolated environment.
-
++
 [TIP]
 ====
 When your virtual environment is active, your command prompt is prefixed with the environment name.
@@ -154,24 +168,45 @@ In the present example, you should see '(python3-ai)' before your normal prompt.
 deactivate
 ----
 +
-The `deactivate` script resets all the environment changes (including your prompt).
+When you are done working in this virtual environment, you can use the `deactivate` command to reset all the environment changes (including your prompt).
+This does not delete the virtual environment.
+To reactivte it, simply source the activte script again.
+
+You can use the Python venv module to create as many virtual environments as you need, each in its own working directory.
 
 
-[WARNING]
+[NOTE]
 ====
-Before proceeding to the next section, reactivate the virtual environment with `source $HOME/python3-ai/bin/activate` or just `source ./bin/activate` from within the 'python3-ai' directory.
+If you no longer need a virtual environment and want to delete it, simply:
+
+. Deactivate the environment.
+. Delete its working directory.
 ====
+
 
 
 === Managing Python packages
 
+Python is not the only language or even the best language for all ML software development.
+But Python is popular among ML developers for its simplicity, elegance, and its large open source community of active developers and users.
+ML developers also benefit greatly from a wealth of open source code, much of which has been packaged for easy use in other software.
 
-The Python `pip` command is the preferred installer for Python packages from the https://pypi.org/[Python Package Index (PyPI)].
+The {productname} software repositories include many of these Python packages, tested against the included version of Python.
++
+// TS: Can we include some kind of statement about SUSE support here?
++
+These Python packages are perfect if the version matches what you need for your project and you are installing system-wide.
+
+The https://pypi.org/[Python Package Index (PyPI)] is a public repository of open source licensed packages made available by a community of developers from around the world.
+In PyPI, you can find more Python software packages and package versions.
+
+The Python `pip` command is the preferred installer for Python packages from PyPI as well as other package indexes.
+In this guide, you will use the `pip` command to install packages from PyPI into your active virtual environment and not system-wide.
+See the https://pip.pypa.io/en/stable/[pip documentation] for more features of this powerful tool.
 
 
-To learn more about 'pip' please see: https://pip.pypa.io/en/stable/
 
-Run the following commands as your user:
+. Make sure yourRun the following commands as your user:
 
 .Python 'pip' installation
 [source,bash]
