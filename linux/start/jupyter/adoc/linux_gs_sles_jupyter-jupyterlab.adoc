@@ -83,8 +83,7 @@ For this guide, you need:
 
 ** If you do not already have SLES, installation instructions can be found here:  https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
 
-// TS: Why not `zypper update`?
-** Make sure your SLES installation is up-to-date by running `zypper patch` or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
+** Make sure your SLES installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python3
 Python 3.6 is included with {productname} and is used in this guide.
@@ -191,48 +190,67 @@ Python is not the only language or even the best language for all ML software de
 But Python is popular among ML developers for its simplicity, elegance, and its large open source community of active developers and users.
 ML developers also benefit greatly from a wealth of open source code, much of which has been packaged for easy use in other software.
 
-The {productname} software repositories include many of these Python packages, tested against the included version of Python.
-+
-// TS: Can we include some kind of statement about SUSE support here?
-+
-These Python packages are perfect if the version matches what you need for your project and you are installing system-wide.
+The {productname} repositories include many of these Python packages, tested against the included version of Python.
+These Python packages are perfect if the version matches what you need for your project and you are installing them system-wide.
+
 
 The https://pypi.org/[Python Package Index (PyPI)] is a public repository of open source licensed packages made available by a community of developers from around the world.
-In PyPI, you can find more Python software packages and package versions.
+There are many ways to install Python packages from PyPI, but the preferred method is with the `pip` command.
 
-The Python `pip` command is the preferred installer for Python packages from PyPI as well as other package indexes.
-In this guide, you will use the `pip` command to install packages from PyPI into your active virtual environment and not system-wide.
-See the https://pip.pypa.io/en/stable/[pip documentation] for more features of this powerful tool.
-
+In this guide, you will use the `pip` command to install packages from PyPI into your active virtual environment, isolating them from the rest of your system and other virtual environments.
+See the https://pip.pypa.io/en/stable/[pip documentation] for more details on this powerful tool.
 
 
-. Make sure yourRun the following commands as your user:
+In the following commands, you will perform some basic operations with `pip`.
 
-.Python 'pip' installation
-[source,bash]
+. Activate your virtual environment.
++
+[source, bash]
 ----
-$ pip install --upgrade pip
+cd $HOME/python3-ai
+source ./bin/activate
 ----
 
-.Advanced: Python System Versions:
-****
-Python itself may be a dependency for some of the machine learning toolkits you utilize.
-For that reason, you might also consider the advanced topic of managing multiple versions of Python.
-This would allow you to leverage the SLES-provided version, Python 3.6 for most tasks.
-But, you would need an isolated environment in which to run a newer version of Python, such as Python 3.10.
+. Upgrade the `pip` command itself to the latest version.
++
+[source, bash]
+----
+pip3 install --upgrade pip
+----
 
-TIP: For the tools we will introduce in our series of Getting Started Guides, Pythong 3.6 will be adequate.
+. Install a specific version of the https://pypi.org/project/numpy/1.18.5/[numpy] package.
++
+[source, bash]
+----
+pip3 install numpy==1.18.5
+----
 
-If you decide that multiple versions of Python are required for your AI toolkits, please see:
-https://github.com/pyenv/pyenv
-****
+. Upgrade to the latest compatible version of numpy.
++
+[source, bash]
+----
+pip3 install --upgrade numpy
+----
+
+. Uninstall numpy.
++
+[source, bash]
+----
+pip3 uninstall numpy
+----
+
+
+[NOTE]
+====
+`pip` is capable of determining and installing the dependencies of packages and will attempt to resolve dependency conflicts.
+====
+
 
 ==== Python Tool Versions and Dependencies
+// TS: Brian, move this section below the installation and verification of JupyterLab.  Focus on creating a repeatable, sharable environment by preserving the precise package requirements.
 
-// TS: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
-// https://pip.pypa.io/en/stable/cli/pip_freeze/
 .Advanced: Python Tool Versions and Dependencies:
-****
+====
 Python tools have dependencies on other Python components.
 For that reason, you might also consider the advanced topic of managing the versions of your Python tools.
 The idea is to capture your tool dependencies and be able to redeploy those later.
@@ -240,48 +258,40 @@ To do this, we would leverage one of two Python tools:  'pip freeze' or 'pipreqs
 
 Information about the use of 'pip freeze' can be found here: https://pip.pypa.io/en/stable/cli/pip_freeze/
 Information about the use of 'pipreqs' can be found here: https://pypi.org/project/pipreqs/
+====
 
 TIP: You do not need to keep track of all your tool dependencies. You can always deploy a new virtual environment, if needed.
-****
 
-=== Install JupyterLab
+=== Install and launch JupyterLab
 
 Jupyter notebooks are collaboration tools, typically used for science and computing domains.
 JupyterLab is the latest web-based interactive development environment for notebooks, code, and data.
 You can read more about JupyterLab here: https://jupyter.org/
-Through JupyterLab, you can define workflows in data science, scientific computing, computational journalism, and machine learning.
+Through JupyterLab, you can define workflows in data science, scientific computing, computational journalism, and ML.
 
-To install JupyterLab, please make sure you have read and completed the prerequistes above.
-Then, enter the following commands:
+To install JupyterLab, please make sure you have read and completed the steps outlined above before proceeding.
 
-
-.JupyterLab installation
-[source,bash]
+. Install JupyterLab.
++
+[source, bash]
 ----
-$ pip install jupyterlab
-----
-
-// TS: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
-
-Once installed, you can launch JupyterLab with:
-
-.JupyterLab execution
-[source,bash]
-----
-$ jupyter-lab
+pip3 install jupyterlab
 ----
 
-//Provide steps or link to existing document.
-//[source, bash]
-//---
-//echo "Use code blocks for command-line steps."
-//---
+. Launch JupyterLab
++
+[source, bash]
+----
+jupyter-lab
+----
+
 
 // TS: For installation, use https://jupyter.org/install as a guide.
 // TS: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
 // TS: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
 // TS: I would not introduce conda or mamba.
 // TS: Oh, focus on Python3, not Python2.
+
 
 == Use case and demonstration
 
