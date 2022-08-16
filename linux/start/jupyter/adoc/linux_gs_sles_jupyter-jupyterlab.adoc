@@ -82,11 +82,12 @@ For this guide, you need:
 
 ** If you do not already have SLES, installation instructions can be found here:  https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
 
-** Make sure your SLES installation is up-to-date by running `zypper patch *` or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
+** Make sure your SLES installation is up-to-date by running `zypper patch` or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python3
 +
-Python 3.10 is included with SLES 15 SP4 and is used in this guide.
+// NOTE:  Python 3.6 is the default in SLES 15 sp4.  See:  https://scc.suse.com/packages/22551627
+Python 3.6 is included with SLES 15 SP4 and is used in this guide.
 
 * Access to https://pypi.org/[The Python Package Index (PyPI)].
 PyPI is a repository of software for the Python programming language.
@@ -94,7 +95,7 @@ PyPI is a repository of software for the Python programming language.
 
 == Setting up your Python environment
 
-SLES 15 SP4 comes with Python 3.10 pre-installed.
+SLES 15 SP4 comes with Python 3.6 pre-installed.
 This is adequate to run JupyterLab and many ML toolkits.
 However, ML toolkits are in fast development and may have strict version dependencies.
 To support multiple versions of Python as well as multiple versions of other dependencies in the Python and ML toolchain, you can create isolated, virtual environments.
@@ -159,7 +160,7 @@ TIP: You do not need to keep track of all your tool dependencies. You can always
 
 === Install JupyterLab
 
-Jupyter notebooks are a collaboration tool, typically used for science and computing domains.
+Jupyter notebooks are collaboration tools, typically used for science and computing domains.
 JupyterLab is the latest web-based interactive development environment for notebooks, code, and data.
 You can read more about JupyterLab here: https://jupyter.org/
 Through JupyterLab, you can define workflows in data science, scientific computing, computational journalism, and machine learning.
@@ -176,15 +177,13 @@ $ pip install jupyterlab
 
 // TS: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
 
-Once installed, launch JupyterLab with:
+Once installed, you can launch JupyterLab with:
 
 .JupyterLab execution
 [source,bash]
 ----
 $ jupyter-lab
 ----
-
-NOTE: This is where Brian left off
 
 //Provide steps or link to existing document.
 //[source, bash]
@@ -198,39 +197,71 @@ NOTE: This is where Brian left off
 // TS: I would not introduce conda or mamba.
 // TS: Oh, focus on Python3, not Python2.
 
-// Example markup:
-//
-// Admonition types:
-//   NOTE
-//   TIP
-//   IMPORTANT
-//   CAUTION
-//   WARNING
-//
-// [sidebar]
-//   Sidebars are used to visually separate auxiliary bits of content
-//   that supplement the main text.
-// Delimited sidebar syntax
-//   .Optional Title:
-//   ****
-//   Sidebars are used to visually separate auxiliary bits of content
-//   that supplement the main text.
-//   
-//   TIP: They can contain any type of content.
-//   
-//   .Source code block in a sidebar
-//   [source,js]
-//   ----
-//   const { expect, expectCalledWith, heredoc } = require('../test/test-utils')
-//   ----
-//   ****
-//
-// Links:
-// link:downloads/report.pdf[Get Report]
-
 == Use case and demonstration
 
+Next we will explore an example use case to show how you can use JupyterLab in your machine-learning project.
+We have choose a simple https://en.wikipedia.org/wiki/Logistic_regression[logistic regression,role=external,window=_blank]
+   example from the https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
+
+To run this example, we will need to install Kaggle API tools so we can download the example data.
+We also need to install the Python dependencies for the regression code.
+The instructions for that are below:
+
+.Kaggle installation
+[source,bash]
+----
+$ pip install kaggle
+----
+
+.Regression example - installation of Python dependencies
+[source,bash]
+----
+$ pip install pandas
+$ pip install seaborn
+$ pip install scikit-learn
+----
+
+Now we are ready to try our regression example.
+First, we will run Jupyter, via the command:
+
+.JupyterLab execution
+[source,bash]
+----
+$ jupyter-lab
+----
+
+Then find the browser window that was opened by the preceeding command.
+TIP: If you are running SLES on a headless server, you won't be able to see the browser!
+
+Please do experiment with the Jupyter user interface, if you haven't used it before.
+Once you are ready, we will experiment with a pre-built Jupyter notebook.
+
+The example is a logistic regression that predicts which passengers survived the Titanic shipwreck.
+We hope you find this learning experiment useful.
+
+Next we will run this example on the Kaggle infrastructure, not your own Jupyter installation.
+The goal is to learn how to manipulate Jupyter notebooks and run experiments, preparing you to build your own.
+
+To load the example notebook, please enter this URL into your browser:
+https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning,role=external,window=_blank]
+
+Next, learn more about the notebook and the competition that inspired it here:
+https://www.kaggle.com/competitions/titanic[Titanic - Machine Learning from Disaster,role=external,window=_blank]
+
+At this point, you should have enough guidance to begin experiments with Jupyter.
+We encourage you to find other examples and play with those too.
+At some point, you may want to dive into the code and perhaps even enhance the model.
+
+When you are ready, you can find more examples at:
+https://coderefinery.github.io/jupyter/examples/[Examples of Jupyter features,role=external,window=_blank]
+
+Also, here's a more thorough introduction to Jupyter and JupyterLab:
+https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab,role=external,window=_blank]
+
+
 //Describe use case and demonstration.
+// URL/[Title,role=external,window=_blank]
+
 
 //[NOTE]
 //====
@@ -254,14 +285,29 @@ NOTE: This is where Brian left off
 //Summarize what was demonstrated
 //Hint at other capabilities.
 
+Machine Learning is a fascinating and highly-successful technology that companies are putting into practice.
+The many advantages of SUSE Linux Enterprise operating systems and Rancher container management are a logical place to develop and deploy ML applications.
+This guide is meant to help you to begin your journey into machine learning on SUSE software.
+Other guides in this series will help you to utilize various ML toolkits and create containers that land on Rancher Kubernetes Engine.
+We will build up to an architecture and explanation for how to employ machine learning in your Edge and/or Digital Transformation projects.
+
+This guide simply showed you how Jupyter notebooks can easily be deployed and we hope you find value in that tool.
+
+SUSE collaborates with Fujitsu to bring you reliable hardware and software infrastructure for the enterprise modernization.
+You can count on Fujitsu to deliver a complete solution based on SUSE Linux Enterprise and Rancher software.
+
 
 
 == Additional resources
 
-//Learn more about the capabilities of {title} with these additional references.
-//Use an unordred lists for references
-//* https://url[reference-title]
-//* https://url/[reference-title]
+Learn more about the capabilities of Jupyter with these additional references.
+
+// an unordred lists for references
+* https://jupyter.org/[Project Jupyter | Home]
+* https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab]
+* https://coderefinery.github.io/jupyter/examples/[Examples of Jupyter features]
+* https://www.kaggle.com[Kaggle]
+* https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning]
 
 
 ++++
