@@ -102,6 +102,11 @@ This is adequate to run JupyterLab and many ML toolkits.
 However, ML toolkits are in fast development and may have strict version dependencies.
 To support multiple versions of Python as well as multiple versions of other dependencies in the Python and ML toolchain, you can create isolated, virtual environments.
 
+[NOTE]
+====
+Legacy Python 2.x can also be installed on your system.
+To avoid confusion and to avoid accidentally calling legacy Python 2.x, this guide uses explicit version commands, like `python3` and `pip3`.
+====
 
 === Creating a Python virtual environment
 
@@ -142,10 +147,28 @@ When your virtual environment is active, your command prompt is prefixed with th
 In the present example, you should see '(python3-ai)' before your normal prompt.
 ====
 
+. Deactivate your active virtual environment.
++
+[source, bash]
+----
+deactivate
+----
++
+The `deactivate` script resets all the environment changes (including your prompt).
 
-=== Python Pip Command
 
-We will use the Python 'pip' command to install various Python tools.
+[WARNING]
+====
+Before proceeding to the next section, reactivate the virtual environment with `source $HOME/python3-ai/bin/activate` or just `source ./bin/activate` from within the 'python3-ai' directory.
+====
+
+
+=== Managing Python packages
+
+
+The Python `pip` command is the preferred installer for Python packages from the https://pypi.org/[Python Package Index (PyPI)].
+
+
 To learn more about 'pip' please see: https://pip.pypa.io/en/stable/
 
 Run the following commands as your user:
