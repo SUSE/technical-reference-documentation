@@ -185,9 +185,11 @@ While MinIO is hardware agnostic and can function on consumer-grade hardware, th
 CPU availability primarily affects performance related to hashing and encryption operations, including TLS connections.
 
 * 128 GB of available (unused) RAM:
-Memory primarily affects the number of simultaneous network connections per pod. 
+Memory primarily affects the number of concurrent network connections per pod. 
+
 * 25 GbE Network Interface Card (NIC):
 Network is a primary performance factor and is most likely to constrain performance if throughput cannot satisfy the total aggregated storage of the MinIO tenant.
+For NVMe drives, 100 GbE NICs are recommended.
 
 * Locally-attached storage drives:
 Ensure all drives intended for use by the MinIO tenant are the same type and capacity (e.g., 4 TB NVMe drives) for consistent performance.
@@ -301,28 +303,28 @@ kubectl directpv drives format --drives '/dev/sd{a...e}' --nodes 'kubeworker{1..
 ----
 kubectl directpv drives ls
 
- DRIVE  	CAPACITY        ALLOCATED  FILESYSTEM        VOLUMES  NODE                   ACCESS-TIER  STATUS 	 
- /dev/sda2  1  TiB        -      	LVM2_member       -    	kubecontroller.local  -        	Available    
- /dev/sda2  1  TiB	-      	LVM2_member       -    	kubeworker1.local 	    -        	Available   
- /dev/sdb   7.68 TiB	-      	xfs      	-    	kubeworker1.local 	    -        	Ready  	 
- /dev/sdc   7.68 TiB	-      	xfs      	-    	kubeworker1.local 	    -        	Ready  	 
- /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker1.local 	    -        	Ready  	 
- /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker1.local 	    -        	Ready  	 
- /dev/sda2  1 TiB	         -      	LVM2_member  -    	kubeworker2.local 	    -        	Available   
- /dev/sdb   7.68 TiB	-      	xfs      	-    	kubeworker2.local 	    -        	Ready  	 
- /dev/sdc   7.68 TiB	-      	xfs      	-    	kubeworker2.local 	    -        	Ready  	 
- /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker2.local 	    -        	Ready  	 
- /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker2.local 	    -        	Ready  	 
- /dev/sda2  1  TiB	-      	LVM2_member  -    	kubeworker3.local 	    -        	Available   
- /dev/sdb   7.68 TiB	-      	xfs      	-    	kubeworker3.local 	    -        	Ready  	 
- /dev/sdc   7.68 TiB	-      	xfs      	-    	kubeworker3.local 	    -        	Ready  	 
- /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker3.local 	    -        	Ready  	 
- /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker3.local 	    -        	Ready  	 
- /dev/sda2  1  TiB	-      	LVM2_member  -    	kubeworker4.local 	    -        	Available   
- /dev/sdb   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  	 
- /dev/sdc   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  	 
- /dev/sdd   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  	 
- /dev/sde   7.68 TiB	-      	xfs      	-    	kubeworker4.local 	    -        	Ready  
+ DRIVE    CAPACITY  ALLOCATED FILESYSTEM VOLUMES NODE                 ACCESS-TIER  STATUS 	 
+ /dev/sda2  1 TiB       -     LVM2_member   -    kubecontroller.local       -      Available
+ /dev/sda2  1 TiB       -     LVM2_member   -    kubeworker1.local          -      Available
+ /dev/sdb   7.68 TiB    -        xfs        -    kubeworker1.local          -      Ready
+ /dev/sdc   7.68 TiB    -        xfs        -    kubeworker1.local          -      Ready
+ /dev/sdd   7.68 TiB    -        xfs        -    kubeworker1.local          -      Ready
+ /dev/sde   7.68 TiB    -        xfs        -    kubeworker1.local          -      Ready
+ /dev/sda2  1 TiB       -     LVM2_member   -    kubeworker2.local          -      Available
+ /dev/sdb   7.68 TiB    -        xfs        -    kubeworker2.local          -      Ready
+ /dev/sdc   7.68 TiB    -        xfs        -    kubeworker2.local          -      Ready
+ /dev/sdd   7.68 TiB    -        xfs        -    kubeworker2.local          -      Ready
+ /dev/sde   7.68 TiB    -        xfs        -    kubeworker2.local          -      Ready
+ /dev/sda2  1 TiB       -     LVM2_member   -    kubeworker3.local          -      Available
+ /dev/sdb   7.68 TiB    -        xfs        -    kubeworker3.local          -      Ready
+ /dev/sdc   7.68 TiB    -        xfs        -    kubeworker3.local          -      Ready
+ /dev/sdd   7.68 TiB    -        xfs        -    kubeworker3.local          -      Ready
+ /dev/sde   7.68 TiB    -        xfs        -    kubeworker3.local          -      Ready
+ /dev/sda2  1 TiB       -     LVM2_member   -    kubeworker4.local          -      Available
+ /dev/sdb   7.68 TiB    -        xfs        -    kubeworker4.local          -      Ready
+ /dev/sdc   7.68 TiB    -        xfs        -    kubeworker4.local          -      Ready
+ /dev/sdd   7.68 TiB    -        xfs        -    kubeworker4.local          -      Ready
+ /dev/sde   7.68 TiB    -        xfs        -    kubeworker4.local          -      Ready
 ----
 +
 [NOTE]
@@ -334,9 +336,9 @@ Drives marked as 'Ready' are managed and DirectPV will respond to any persistent
 
 == Deploy the MinIO Operator
 
-MinIO is designed to simplify the installation process.  In a bare metal environment, you can deploy a large distributed MinIO cluster using just the MinIO binaries and a handful of environment variables.
+MinIO is designed for a streamlined installation process.  In a bare metal environment, you can deploy a large distributed MinIO cluster using just the MinIO binaries and a handful of environment variables.
 
-In a Kubernetes environment, provisioning large stateful services requires more care as the full lifecycle and behavior of pods, networking, and other transient resources come into play.
+In a Kubernetes environment, provisioning large stateful services requires care as the full lifecycle and behavior of pods, networking, and other transient resources come into play.
 The MinIO Kubernetes Operator extends the Kubernetes API to support deploying MinIO tenants via the MinIO Operator Console GUI or using the `kubectl minio` plugin.
 The MinIO Operator fully manages all underlying operations associated with deploying and managing Kubernetes resources, allowing DevOps teams to focus on deploying and using their object storage resource.
 
@@ -443,22 +445,22 @@ This should produce output like the following:
 +
 [source, bash]
 ----
-NAME                              	READY   STATUS	RESTARTS   AGE
-pod/minio-operator-54896fc474-r7pvw    1/1     Running     0          29s
-pod/console-5bb9b6d8d9-gs6fg           1/1     Running     0          23s
-pod/minio-operator-54896fc474-qvzbz    1/1     Running     0          29s
+NAME                                 READY   STATUS   RESTARTS    AGE
+pod/minio-operator-54896fc474-r7pvw    1/1   Running     0        29s
+pod/console-5bb9b6d8d9-gs6fg           1/1   Running     0        23s
+pod/minio-operator-54896fc474-qvzbz    1/1   Running     0        29s
 
-NAME           	TYPE    	CLUSTER-IP      EXTERNAL-IP    PORT(S)            AGE
-service/operator    ClusterIP       10.43.156.98    <none>         4222/TCP,4221/TCP  34s
-service/console     ClusterIP       10.43.141.45    <none>         9090/TCP,9443/TCP  26s
+NAME              TYPE       CLUSTER-IP    EXTERNAL-IP  PORT(S)            AGE
+service/operator  ClusterIP  10.43.156.98  <none>       4222/TCP,4221/TCP  34s
+service/console   ClusterIP  10.43.141.45  <none>       9090/TCP,9443/TCP  26s
 
-NAME                         	READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/minio-operator      2/2 	 2            2           30s
-deployment.apps/console      	1/1 	1        	1       	26s
+NAME                           READY    UP-TO-DATE    AVAILABLE    AGE
+deployment.apps/minio-operator  2/2          2            2        30s
+deployment.apps/console         1/1          1            1        26s
 
-NAME                                    	DESIRED   CURRENT   READY   AGE
-replicaset.apps/minio-operator-54896fc474  2     	   2         2       30s
-replicaset.apps/console-5bb9b6d8d9      	1     	   1         1       24s
+NAME                                      DESIRED   CURRENT   READY   AGE
+replicaset.apps/minio-operator-54896fc474    2         2        2     30s
+replicaset.apps/console-5bb9b6d8d9           1         1        1     24s
 ----
 
 . Verify that you see 'minio-operator' and 'console' pods in the 'Running' stateas well as the 'service/operator' and 'service/console' assigned to cluster IP addresses.
@@ -573,13 +575,15 @@ kubectl get all -n minio-tenant-1 -o wide
 Output would look something like:
 [source, bash]
 ----
-NAME                  	TYPE       	CLUSTER-IP 	EXTERNAL-IP     	PORT(S)      	AGE
-minio                 	LoadBalancer   10.43.16.164   <pending>       	443:31116/TCP	13m
-minio-hl              	ClusterIP  	None       	<none>          	9000/TCP     	13m
-minio-console         	LoadBalancer   10.43.86.196   192.168.1.198,...   9443:32153/TCP   13m
-minio-log-hl-svc      	ClusterIP  	None       	<none>          	5432/TCP     	13m
-minio-log-search-api  	ClusterIP  	10.43.33.82	<none>          	8080/TCP     	13m
-minio-prometheus-hl-svc   ClusterIP  	None       	<none>          	9090/TCP     	9m30s
+NAME             TYPE         CLUSTER-IP   EXTERNAL-IP       PORT(S)        AGE
+minio            LoadBalancer 10.43.16.164 <pending>         443:31116/TCP  13m
+minio-hl         ClusterIP    None         <none>            9000/TCP       13m
+minio-console    LoadBalancer 10.43.86.196 192.168.1.198,... 9443:32153/TCP 13m
+minio-log-hl-svc ClusterIP    None         <none>            5432/TCP       13m
+minio-log-search-api
+                 ClusterIP    10.43.33.82  <none>            8080/TCP       13m
+minio-prometheus-hl-svc
+                 ClusterIP    None         <none>            9090/TCP     9m30s
 ----
 
 The 'minio' service provides access to applications, like Spark, for performing operations against the MinIO tenant object store.
@@ -650,6 +654,13 @@ spec:
             port:
               number: 443
 ----
+
+
+[WARNING]
+====
+S3 signature protocols require preserving HTTP headers.
+The nginx configuration must keep any HTTP headers as-is to ensure successful connectivity.
+====
 
 
 == Enable Spark with MinIO
