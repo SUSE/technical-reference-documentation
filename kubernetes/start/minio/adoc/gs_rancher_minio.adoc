@@ -122,7 +122,7 @@ This document is intended for developers, DevOps and IT professionals, and appli
 
 MinIO makes it easy to deliver robust object storage for Kubernetes-native applications running in your SUSE Rancher environment.
 
-image::gs_rancher_minio_architecture.svg[scaledwidth="85%", align="center"]
+image::gs_rancher_minio_architecture.png[General Architecture, scaledwidth="95%", align="center"]
 
 
 === Components and tools
@@ -174,6 +174,9 @@ This guide assumes that you have access to an existing Kubernetes cluster manage
 Deploying or importing Kubernetes clusters is covered elsewhere.
 A good place to start is the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation].
 
+
+image::rancher_minio_architecture_distributed_001.png[Distributed architecture, scaledwidth="85%", align="center"]
+
 The cluster should have at least four worker nodes for scheduling MinIO pods and services.
 
 While MinIO is hardware agnostic and can function on consumer-grade hardware, the following recommendations for each worker node provide a baseline for high performance object storage:
@@ -190,12 +193,6 @@ Network is a primary performance factor and is most likely to constrain performa
 Ensure all drives intended for use by the MinIO tenant are the same type and capacity (e.g., 4 TB NVMe drives) for consistent performance.
 MinIO should have exclusive access to these drives for best results.
 
-[TIP]
-====
-Be sure drives are provisioned in JBOD (Just a Bunch of Disks) mode with no RAID, ZFS pooling, or other redundancy, resiliency, or tooling layers.
-MinIO implements https://docs.min.io/minio/baremetal/concepts/erasure-coding.html[erasure coding] to provide object-level healing and resiliency with less overhead than adjacent technologies, such as RAID or replication.
-====
-
 
 The MinIO Operator enforces the following requirements for each tenant:
 
@@ -208,6 +205,12 @@ The MinIO Operator enforces the following requirements for each tenant:
 
 The worker nodes must have sufficient local PVs and capacity to support the number of drives in the deployment plus two additional drives for the LogSearch and Prometheus pods.
 For example, deploying a tenant with 16 drives requires 18 persistent volumes.
+
+[TIP]
+====
+Be sure drives are provisioned in JBOD (Just a Bunch of Disks) mode with no RAID, ZFS pooling, or other redundancy, resiliency, or tooling layers.
+MinIO implements https://docs.min.io/minio/baremetal/concepts/erasure-coding.html[erasure coding] to provide object-level healing and resiliency with less overhead than adjacent technologies, such as RAID or replication.
+====
 
 
 
@@ -477,10 +480,10 @@ Starting port forward of the Console UI.
 
 To connect open a browser and go to http://localhost:9090
 
-Current JWT to login: TOKEN
+Current JWT to login: <TOKEN>
 ----
 +
-where 'TOKEN' will be your unique https://en.wikipedia.org/wiki/JSON_Web_Token[JSON Web Token (JWT)] that you must use to log into the MinIO Operator Console.
+where <TOKEN> is your unique https://en.wikipedia.org/wiki/JSON_Web_Token[JSON Web Token (JWT)] that you must use to log into the MinIO Operator Console.
 
 . With your web browser, open http://localhost:9090 and log in with your JWT.
 +
@@ -509,7 +512,7 @@ image::rancher_minio_ui-tenant-002.png[scaledwidth="85%", align="center"]
 
 The MinIO Kubernetes Plugin supports creating tenants directly or outputing a YAML file for further customization.
 
-For example, the following command creates a MinIO tenant, named minio-tenant-1, with four nodes with four drives each, a capacity of 16 TiB, and using the directpv-min-io storage class:
+For example, the following command creates a MinIO tenant, named 'minio-tenant-1', with four nodes with four drives each, a capacity of 16 TiB, and using the 'directpv-min-io' storage class:
 
 [source, bash]
 ----
@@ -524,25 +527,25 @@ kubectl minio tenant create minio-tenant-1   	\
 See the https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant-using-commandline.html[MinIO documentation] for more details.
 
 
+
 === Deploy a MinIO tenant with Kustomize
 
 https://github.com/kubernetes-sigs/kustomize[Kustomize] is a standalone tool to customize Kubernetes objects programmatically.
 
-Kustomize does this by referencing a https://kubectl.docs.kubernetes.io/references/kustomize/glossary/#kustomization[kustomization], which can be in the form of a single file (called 'kustomization.yaml'), a directory containing that file along with others, a tarball of the directory, a git archive, etc.
+Kustomize does this by referencing a https://kubectl.docs.kubernetes.io/references/kustomize/glossary/#kustomization[kustomization], which can be in the form of a single file ('kustomization.yaml'), a directory containing that file along with others, a tarball of the directory, a git archive, etc.
 
 MinIO publishes a https://github.com/minio/operator/tree/master/examples/kustomization/base[base kustomization] you can use as a template for programmatic deployment of object storage resources.
-The base kustomization template includes the requisite kustomization.yaml, tenant.yaml, and other files for customizing the deployment.
+The base kustomization template includes the requisite 'kustomization.yaml', 'tenant.yaml', and other files for customizing the deployment.
 
 MinIO also publishes https://github.com/minio/operator/tree/master/examples/kustomization[example kustomizations] with more advanced configurations, such as external identity management, encryption, and TLS certificate management using CertManager.
 
 To apply a kustomization, use:
-+
+
 [source, bash]
 ----
-kubectl apply --kustomize <kustomization>
+kubectl apply --kustomize <KUSTOMIZATION>
 ----
-+
-where <kustomization> is the path to the directory containing the 'kustomization.yaml' file.
+where <KUSTOMIZATION> is the path to the directory containing the 'kustomization.yaml' file.
 
 
 
@@ -608,10 +611,10 @@ It is recommended that you configure your cluster with an ingress.
 
 [NOTE]
 ====
-ngress and ingress controllers residing in RKE-launched clusters are powered by https://www.nginx.com/[NGINX].
+Ingress and ingress controllers residing in RKE-launched clusters are powered by https://www.nginx.com/[NGINX].
 ====
 
-Below is an ingress resource example:
+Below is a sample ingress resource for MinIO:
 [source, bash]
 ----
 apiVersion: networking.k8s.io/v1
@@ -699,20 +702,14 @@ You can find these and other examples in the https://github.com/minio/training[M
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-SUSE Rancher with MinIO object storage enables you to support your cloud native development goals and scale to production with ease.
+In this guide, you have explored the ease with which MinIO object storage can be deployed into your SUSE Rancher Kubernetes landscape for consumption by your cloud native applications through a consistent API across all infrastructure platforms.
 
 
+Below are a few resources to help you continue your exploration of SUSE Rancher and MinIO:
 
-== Additional resources
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide any additional resources that may help the reader
-//   continue to explore this topic.
-// Use an unordered list for references.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-The following articles may provide additional insights into how MinIO for SUSE Rancher can help you achieve your goals:
-
+* https://documentation.suse.com/trd/kubernetes/[SUSE Technical Reference Documentation: Kubernetes]
+* https://www.suse.com/community/[SUSE & Rancher Community]
+* https://www.suse.com/c/preparing-for-the-next-wave-of-transformation/[Preparing for the next wave of transformation]
 * https://blog.min.io/the-architects-guide-to-using-ai-ml-with-object-storage/[The architect's guide to using AI/ML with object storage]
 * https://blog.min.io/western-digital-openflex-data24-performance/[Western Digital OpenFlex Data24 performance testing]
 * https://blog.min.io/disaggregation-analytical-engines-and-starburst-trino/[Disaggregation, analytical engines and Starburst Trino]
