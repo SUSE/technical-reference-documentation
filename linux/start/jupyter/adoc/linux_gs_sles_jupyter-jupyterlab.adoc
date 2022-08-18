@@ -58,25 +58,6 @@ The deployment instructions in this document assume only an introductory underst
 
 == Prerequisites
 
-// TS: Let's scrap the technical overview for this guide.  It doesn't seem helpful.  Instead, let's jump into prerequisites.
-
-// Description
-// TS: Perhaps, describe JupyterLab here, talk about how it's accessed through the web browser, and include a screenshot.
-// TS: It probably wouldn't hurt to discuss that JupyterLab also supports other kernels besides Python, such as R and Julia, but I would recommend focusing only on iPython.
-
-// Architecture diagram - TS: This doesn't seem necessary in this doc.  Use a screenshot of the interface instead.
-
-// Minimum requirements (prerequisites) for this guide
-// * Requirement 1 https://url[url]
-// * Requirement 2 https://url[url]
-
-// BF: I'm not sure how to expand on this list yet. I think I will come back to this later.
-// Computer system - should we include any specs?
-// > TS: I would be very general.  Perhaps, we drop the computer system from thelist, as it is obvious.
-// Internet access - not much else to say, except maybe access to PyPI
-// SUSE Linux Enterprise Server 15 SP4 - we are specifically documenting SLES 15 SP4. SLED 15 SP4 and openSUSE Leap 15.4 or Tumbleweed would also work.
-
-
 For this guide, you need:
 
 * SUSE Linux Enterprise Server {productver} or the corresponding version of openSUSE Leap.
@@ -104,21 +85,37 @@ PyPI is a public repository of software for the Python programming language.
 
 ML toolkits are in fast development and often have strict version dependencies.
 Installing dependent packages to support one project may, thus, break another project.
-For this reason, developers need a way to create isolated environments where they can install the packages they need without impacting other projects or systems operations.
+Developers need a way to create isolated environments where they can install the packages they need without impacting other projects or systems operations.
+
+
+=== Multiple versions of Python
+
+Your application may have a hard dependency for a specific version of the Python interpeter itself.
+
+Installing a different version of Python on your system is possible.
+However, doing so incorrectly could break system tools, which have their own version dependencies.
+
+To mitigate this risk, SUSE names the Python binaries explicitly.
+For example, the default Python interpeter is the file, '/usr/bin/python3.6'.
+It is symbolically linked as 'python3' to simplify usage and offer consistency.
+So, when you issue the command `python3 --version`, this is actually executing, `python3.6 --version`.
+
+Using this naming convention, it is actually possible to install multiple versions of Python.
+Some additional versions may also be available in the standard operating system repositories.
+
 
 [WARNING]
 ====
-Your application may have a hard dependency for a specific version of the Python interpeter itself.
-
-Installing different versions of Python on your system could break system tools, which have their own dependencies.
-
-To mitigate this risk, SUSE names the Python binaries explicitly.
-
-For example, the default Python interpeter binary is actually the file, 'python3.6'.
-This is symbolically linked as 'python3' to simplify usage and offer consistency.
-
-Maintaining multiple versions with a tool like, https://github.com/pyenv/pyenv[pyenv], is out of scope for this guide.
+Be careful never to replace the system default Python or change any of the associated symbolic links, as this could break your system.
 ====
+
+
+Maintaining and managing multiple versions of Python can be difficult.
+This has led to the develppment of tools, like https://github.com/pyenv/pyenv[pyenv], which is out of scope for this guide.
+
+
+For this guide, the default Python 3.6 is sufficient.
+
 
 
 === Creating a Python virtual environment
@@ -188,17 +185,29 @@ If you no longer need a virtual environment and want to delete it, simply:
 
 Python is not the only language or even the best language for all ML software development.
 But Python is popular among ML developers for its simplicity, elegance, and its large open source community of active developers and users.
-ML developers also benefit greatly from a wealth of open source code, much of which has been packaged for easy use in other software.
+ML developers benefit greatly from a wealth of open source code, much of which has been packaged and licensed for easy use in other software.
 
 The {productname} repositories include many of these Python packages, tested against the included version of Python.
-These Python packages are perfect if the version matches what you need for your project and you are installing them system-wide.
+These Python packages are perfect if the version matches what you need for your project and you can install them system-wide.
 
 
 The https://pypi.org/[Python Package Index (PyPI)] is a public repository of open source licensed packages made available by a community of developers from around the world.
 There are many ways to install Python packages from PyPI, but the preferred method is with the `pip` command.
 
-In this guide, you will use the `pip` command to install packages from PyPI into your active virtual environment, isolating them from the rest of your system and other virtual environments.
-See the https://pip.pypa.io/en/stable/[pip documentation] for more details on this powerful tool.
+`pip` is a powerful tool for managing Python packages.
+By default, `pip` installs packages from PyPI, but it can also install from a git repository or local distribution files.
+Many Python packages are dependent on other packages.
+`pip` is capable of performing dependency resolution and installing the required packages.
+See the https://pip.pypa.io/en/stable/[pip documentation] for details on additional capabilities and options.
+
+In this guide, you will use the `pip` command to install packages from PyPI into your active virtual environment.
+
+
+[NOTE]
+====
+Your Python virtual environment has its own `pip`, installed in the 'bin' subdirectory of your working directory (e.g., '$HOME/python3-ai/bin').
+Use `pip --version` to see which `pip` will be used.
+====
 
 
 In the following commands, you will perform some basic operations with `pip`.
@@ -215,54 +224,43 @@ source ./bin/activate
 +
 [source, bash]
 ----
-pip3 install --upgrade pip
+pip install --upgrade pip
 ----
 
 . Install a specific version of the https://pypi.org/project/numpy/1.18.5/[numpy] package.
 +
 [source, bash]
 ----
-pip3 install numpy==1.18.5
+pip install numpy==1.18.5
 ----
++
+[TIP]
+====
+Be sure to use two equal signs ('==').
+====
 
 . Upgrade to the latest compatible version of numpy.
 +
 [source, bash]
 ----
-pip3 install --upgrade numpy
+pip install --upgrade numpy
 ----
++
+[NOTE]
+====
+You may not actually get the "latest" version of a package.
+Instead, you get the latest version that is compatible with your Python environment.
+====
 
 . Uninstall numpy.
 +
 [source, bash]
 ----
-pip3 uninstall numpy
+pip uninstall numpy
 ----
 
 
-[NOTE]
-====
-`pip` is capable of determining and installing the dependencies of packages and will attempt to resolve dependency conflicts.
-====
-
-
-==== Python Tool Versions and Dependencies
-// TS: Brian, move this section below the installation and verification of JupyterLab.  Focus on creating a repeatable, sharable environment by preserving the precise package requirements.
-
-.Advanced: Python Tool Versions and Dependencies:
-====
-Python tools have dependencies on other Python components.
-For that reason, you might also consider the advanced topic of managing the versions of your Python tools.
-The idea is to capture your tool dependencies and be able to redeploy those later.
-To do this, we would leverage one of two Python tools:  'pip freeze' or 'pipreqs'
-
-Information about the use of 'pip freeze' can be found here: https://pip.pypa.io/en/stable/cli/pip_freeze/
-Information about the use of 'pipreqs' can be found here: https://pypi.org/project/pipreqs/
-====
-
-TIP: You do not need to keep track of all your tool dependencies. You can always deploy a new virtual environment, if needed.
-
-=== Install and launch JupyterLab
+=== Install and use JupyterLab
 
 Jupyter notebooks are collaboration tools, typically used for science and computing domains.
 JupyterLab is the latest web-based interactive development environment for notebooks, code, and data.
@@ -278,40 +276,40 @@ To install JupyterLab, please make sure you have read and completed the steps ou
 pip3 install jupyterlab
 ----
 
-. Launch JupyterLab
+. Launch JupyterLab.
 +
 [source, bash]
 ----
 jupyter-lab
 ----
 
+. Access the JupyterLab environment.
+// TS (20220818): Brian, please flesh this out, incorporating the tip below.  Headless will be imprtant in the container world.
+Then find the browser window that was opened by the preceeding command.
 
-// TS: For installation, use https://jupyter.org/install as a guide.
-// TS: Create a Python virtual environment with the `venv` module and also include steps for saving the configuration with `pip freeze` for repeatable configurations.
-// TS: We could also discuss `pipenv`: https://pipenv.pypa.io/en/latest/.
-// TS: I would not introduce conda or mamba.
-// TS: Oh, focus on Python3, not Python2.
+[TIP]
+====
+If you are running SLES on a headless server, you can use SSH port forwarding to access the service on port 8888.
+====
+
+. Explore the JupyterLab interface.
+// TS (20220818): Brian, we may only need to do a screenshot and a link to the JupyterLab docs.
+Please do experiment with the Jupyter user interface, if you haven't used it before.
+Once you are ready, we will experiment with a pre-built Jupyter notebook.
+
+. Shut down the JupyterLab environment
+// TS (20220818): Brian, for this, we should show how to properly shut down the environment.  This may require mentioning the difference between "Log out" and "Shutdown" in the interface.
+
+
 
 
 == Use case and demonstration
 
+
+
 Next we will explore an example use case to show how you can use JupyterLab in your machine-learning project.
 We have choose a simple https://en.wikipedia.org/wiki/Logistic_regression[logistic regression,role=external,window=_blank]
    example from the https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
-
-First, we will run Jupyter, via the command:
-
-.JupyterLab execution
-[source,bash]
-----
-$ jupyter-lab
-----
-
-Then find the browser window that was opened by the preceeding command.
-TIP: If you are running SLES on a headless server, you won't be able to see the browser!
-
-Please do experiment with the Jupyter user interface, if you haven't used it before.
-Once you are ready, we will experiment with a pre-built Jupyter notebook.
 
 
 The example is a logistic regression that predicts which passengers survived the Titanic shipwreck.
@@ -338,23 +336,84 @@ Also, here's a more thorough introduction to Jupyter and JupyterLab:
 https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab,role=external,window=_blank]
 
 
-//Describe use case and demonstration.
-// URL/[Title,role=external,window=_blank]
-
-
-//[NOTE]
-//====
-// Use admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING) as needed.
-//====
-
-//Use sections to break up major actions, such as:
-//=== Prepare the demonstration environment (beyond installation)
-//=== Perform action (to illustrate capability)
-//=== Examine results (verifying capability)
-//Use ordered lists for steps.
-//Minimize/consolidate images whenever possible.
-
 // TS: Take a look at https://coderefinery.github.io/jupyter/examples/ for some examples.  Let's keep the example here simple.  We're really focused on just getting JupyterLab with SLE into the mind of the reader for this document.
+
+
+
+== Creating repeatable installations
+
+Replicabality is key to many disciplines, but particularly in the sciences.
+Ensuring that your Python environment can be recreated the same way with the same packages and the same versions of those packages could be a challenge.
+
+Fortunately, the `pip freeze` command can generate a package requirements file, containing a list of the packages and versions that should be installed.
+See https://pip.pypa.io/en/stable/cli/pip_freeze/ for more information.
+
+
+Create a requirements file for your Python virtual environment by following these steps:
+
+. Activate your virtual environment (if not already active).
++
+[source, bash]
+----
+cd $HOME/python3-ai
+source ./bin/activate
+----
+
+. Generate a requirements file with `pip freeze`.
++
+[source, bash]
+----
+pip freeze > python3-ai-req.txt
+----
+
+. Take a look at the file.
++
+[source, bash]
+----
+less python3-ai-req.text
+----
++
+[source, bash]
+----
+...
+idna==3.3
+immutables==0.18
+importlib-metadata==4.8.3
+ipykernel==5.5.6
+ipython==7.16.3
+ipython-genutils==0.2.0
+jedi==0.17.2
+Jinja2==3.0.3
+json5==0.9.10
+jsonschema==3.2.0
+jupyter-client==7.1.2
+jupyter-core==4.9.2
+jupyter-server==1.13.1
+jupyterlab==3.2.9
+jupyterlab-pygments==0.1.2
+jupyterlab-server==2.10.3
+MarkupSafe==2.0.1
+...
+----
++
+Notice that there are a lot more files than the ones you explicitly installed.
+This is because `pip freeze` captures all the packages and their versions in your environment.
+
+
+Next, test that you can recreate the environment.
+
+// TS (20220818): Brian, can you flesh this out?
+
+. Deactivate your current virtual environment.
+
+. Create a new virtual environment, named 'jup-test'.
+
+. Activate the 'jup-test' environment.
+
+. Update `pip`.
+
+. Install packages from the 'python3-ai-req.txt' requirements file.
+
 
 
 
