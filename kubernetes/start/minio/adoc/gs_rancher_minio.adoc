@@ -71,9 +71,8 @@ include::./common_docinfo_vars.adoc[]
 image::logo-lockup_suse-minio_hor_dark.svg[SUSE | MinIO logo lockup, scaledwidth="65%", align="center"]
 
 
-Kubernetes and object storage have fundamentally changed the modern application landscape, promising advantages of scale, agility, and efficiency that were impossible with monolithic application models and legacy architectures.
-Modern applications are cloud-native.
-They are containerized, data-rich, and designed to run everywhere at hyperscale.
+Kubernetes and object storage have fundamentally changed the modern application landscape, promising advantages of scale, agility, and efficiency that were impossible 
+with monolithic application models and legacy architectures. Modern applications are cloud native. They are containerized, data-rich, and designed to run everywhere at hyperscale.
 But to achieve cloud native goals, you need the right tools.
 
 
@@ -103,7 +102,7 @@ This guide introduces the basic concepts and steps to install, configure, and us
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for developers, DevOps and IT professionals, and application administrators who are responsible for building, managing, and using cloud-native object storage resources.
+This document is intended for developers, DevOps and IT professionals, and application administrators who are responsible for building, managing, and using cloud native object storage resources.
 
 
 
@@ -131,33 +130,33 @@ Key MinIO components discussed in this guide are:
 
 MinIO Operator:: This Kubernetes operator is deployed into your cluster and handles deployment and management of MinIO tenants.
 
-MinIO Tenant:: Tenants represent the object stores to which your applications connect.  MinIO tenants leverage storage locally attached to worker nodes, such as public cloud storage, spinning hard disks, and fast solid-state storage.  Tenants can be configured to enable data tiering to satisfy workload and business use cases.
+MinIO Tenant:: Tenants represent the object stores to which your applications connect. MinIO tenants leverage storage locally attached to worker nodes, such as public cloud storage, spinning hard disks, and fast solid-state storage. Tenants can be configured to enable data tiering to satisfy workload and business use cases.
 
-MinIO Operator Console:: This service provides a rich user interface to ease management of MinIO object storage.  The MinIO Operator Console is installed and configured automatically with the MinIO Operator.
+MinIO Operator Console:: This service provides a rich user interface to simplify management of MinIO object storage. The MinIO Operator Console is installed and configured automatically with the MinIO Operator.
 
 MinIO DirectPV:: This CSI driver manages locally attached storage and automatically provisions persistent volumes to match incoming persistent volume claims.
 
-MinIO Kubernetes Plugin:: This plugin for the `kubectl` command-line tool enables deployment of the MinIO Operator and creation of MinIO tenants.
+MinIO Kubernetes Plugin:: This plugin for the `kubectl` command line tool enables deployment of the MinIO Operator and creation of MinIO tenants.
 
 
 Some additional components and tools discussed in this guide include:
 
 * https://helm.sh/[Helm]: the package manager for Kubernetes.
 
-* https://kubernetes.io/docs/reference/kubectl/[kubectl]: the command-line tool for communicating with the Kubernetes cluster's control plane via the Kubernetes API.
+* https://kubernetes.io/docs/reference/kubectl/[kubectl]: the command line tool for communicating with the Kubernetes cluster's control plane via the Kubernetes API.
 
-* https://krew.sigs.k8s.io/[Krew]: a plugin manager for the `kubectl` command-line tool.
+* https://krew.sigs.k8s.io/[Krew]: a plugin manager for the `kubectl` command line tool.
 
 
-* https://github.com/kubernetes-sigs/kustomize[kustomize]: a standalone tool for programmatically customizing Kubernetes objects.
+* https://github.com/kubernetes-sigs/kustomize[kustomize]: a stand-alone tool for programmatically customizing Kubernetes objects.
 
 
 === Process overview
 
-Getting started with MinIO for SUSE Rancher is pretty easy.
+Getting started with MinIO for SUSE Rancher is fairly easy.
 In general, the process is as follows:
 
-. Log into your SUSE Rancher environment and select a managed cluster.
+. Log in to your SUSE Rancher environment and select a managed cluster.
 
 . Create persistent volumes.
 
@@ -172,7 +171,7 @@ In general, the process is as follows:
 
 This guide assumes that you have access to an existing Kubernetes cluster managed by https://rancher.com/docs/rancher/v2.6/en/overview/[SUSE Rancher].
 Deploying or importing Kubernetes clusters is covered elsewhere.
-A good place to start is the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation].
+A good place to start getting more details is the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation].
 
 
 image::rancher_minio_architecture_distributed_001.png[Distributed architecture, scaledwidth="75%", align="center"]
@@ -210,7 +209,7 @@ For example, deploying a tenant with 16 drives requires 18 persistent volumes.
 
 [TIP]
 ====
-Be sure drives are provisioned in JBOD (Just a Bunch of Disks) mode with no RAID, ZFS pooling, or other redundancy, resiliency, or tooling layers.
+Be sure drives are provisioned in JBOD (_Just a Bunch of Disks_) mode with no RAID, ZFS pooling, or other redundancy, resiliency, or tooling layers.
 MinIO implements https://docs.min.io/minio/baremetal/concepts/erasure-coding.html[erasure coding] to provide object-level healing and resiliency with less overhead than adjacent technologies, such as RAID or replication.
 ====
 
@@ -238,10 +237,10 @@ For those clusters where DirectPV cannot be used, local PVs can be https://docs.
 
 
 DirectPV is installed with https://krew.sigs.k8s.io/[Krew], the plugin manager for the `kubectl` command.
-If not already installed on your system, https://krew.sigs.k8s.io/docs/user-guide/setup/install/[install Krew] before proceeding.
+If not already installed on your system, install https://krew.sigs.k8s.io/docs/user-guide/setup/install/[Krew] before proceeding.
 
 
-Once you have Krew installed, you can install DirectPV with the following steps:
+When you have Krew installed, you can install DirectPV with the following steps:
 
 . Install the DirectPV `kubectl` plugin.
 +
@@ -336,7 +335,7 @@ Drives marked as 'Ready' are managed and DirectPV will respond to any persistent
 
 == Deploy the MinIO Operator
 
-MinIO is designed for a streamlined installation process.  In a bare metal environment, you can deploy a large distributed MinIO cluster using just the MinIO binaries and a handful of environment variables.
+MinIO is designed for a streamlined installation process. In a bare metal environment, you can deploy a large distributed MinIO cluster using the MinIO binaries and a handful of environment variables.
 
 In a Kubernetes environment, provisioning large stateful services requires care as the full lifecycle and behavior of pods, networking, and other transient resources come into play.
 The MinIO Kubernetes Operator extends the Kubernetes API to support deploying MinIO tenants via the MinIO Operator Console GUI or using the `kubectl minio` plugin.
@@ -349,7 +348,7 @@ You can use one of the three methods described below to deploy the MinIO Operato
 
 The MinIO Operator can be easily installed through the SUSE Rancher Apps & Marketplace.
 
-. Log into the SUSE Rancher UI and select the cluster where you intend to deploy and use MinIO object storage.
+. Log in to the SUSE Rancher UI and select the cluster where you intend to deploy and use MinIO object storage.
 
 . Navigate to _Apps & Marketplace > Charts_ in the Rancher UI and search for 'minio'.
 +
@@ -358,7 +357,7 @@ image::rancher_minio_ui-install-001.png[scaledwidth="85%", align="center"]
 . Select the "MinIO Operator" chart to proceed.
 
 . The MinIO Operator deploys to the "minio-operator" namespace by default.
-You can modify this during "Install: Step 1" or just click _Next_ to continue.
+You can modify this during "Install: Step 1" or click _Next_ to continue.
 +
 image::rancher_minio_ui-install-002.png[scaledwidth="85%", align="center"]
 
@@ -463,7 +462,7 @@ replicaset.apps/minio-operator-54896fc474    2         2        2     30s
 replicaset.apps/console-5bb9b6d8d9           1         1        1     24s
 ----
 
-. Verify that you see 'minio-operator' and 'console' pods in the 'Running' stateas well as the 'service/operator' and 'service/console' assigned to cluster IP addresses.
+. Verify that you see 'minio-operator' and 'console' pods in the 'Running' state and the 'service/operator' and 'service/console' assigned to cluster IP addresses.
 
 . Open the MinIO Operator Console.
 +
@@ -485,9 +484,9 @@ To connect open a browser and go to http://localhost:9090
 Current JWT to login: <TOKEN>
 ----
 +
-where <TOKEN> is your unique https://en.wikipedia.org/wiki/JSON_Web_Token[JSON Web Token (JWT)] that you must use to log into the MinIO Operator Console.
+where <TOKEN> is your unique https://en.wikipedia.org/wiki/JSON_Web_Token[JSON Web Token (JWT)] that you must use to log in to the MinIO Operator Console.
 
-. With your web browser, open http://localhost:9090 and log in with your JWT.
+. With your Web browser, open http://localhost:9090 and log in with your JWT.
 +
 image::rancher_minio_ui-tenant-001.png[scaledwidth="85%", align="center"]
 
@@ -521,7 +520,7 @@ For example, the following command creates a MinIO tenant, named 'minio-tenant-1
 kubectl minio tenant create minio-tenant-1   	\
   --servers             	4                	\
   --volumes             	16               	\
-  --capacity            	16Ti             	\
+  --capacity            	16TiB             	\
   --storage-class       	directpv-min-io	\
   --namespace           	minio-tenant-1
 ----
@@ -532,9 +531,9 @@ See the https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant-usin
 
 === Deploy a MinIO tenant with Kustomize
 
-https://github.com/kubernetes-sigs/kustomize[Kustomize] is a standalone tool to customize Kubernetes objects programmatically.
+https://github.com/kubernetes-sigs/kustomize[Kustomize] is a stand-alone tool to customize Kubernetes objects programmatically.
 
-Kustomize does this by referencing a https://kubectl.docs.kubernetes.io/references/kustomize/glossary/#kustomization[kustomization], which can be in the form of a single file ('kustomization.yaml'), a directory containing that file along with others, a tarball of the directory, a git archive, etc.
+Kustomize does this by referencing a https://kubectl.docs.kubernetes.io/references/kustomize/glossary/#kustomization[kustomization], which can be in the form of a single file ('kustomization.yaml'), a directory containing that file along with others, a TAR archive of the directory, a GIT archive, etc.
 
 MinIO publishes a https://github.com/minio/operator/tree/master/examples/kustomization/base[base kustomization] you can use as a template for programmatic deployment of object storage resources.
 The base kustomization template includes the requisite 'kustomization.yaml', 'tenant.yaml', and other files for customizing the deployment.
@@ -688,7 +687,7 @@ To connect Spark to a MinIO tenant, the S3A connector requires the following min
 ----
 
 The 'spark.hadoop.fs.s3a.endpoint' must correspond to the MinIO tenant 'minio' service.
-If Spark operates within the Kubernetes cluster, you can specify the Kubernetes hostname of the tenant 'service/minio'.
+If Spark operates within the Kubernetes cluster, you can specify the Kubernetes host name of the tenant 'service/minio'.
 If Spark operates external to the Kubernetes cluster, you must specify the ingress-backed URL for the service.
 
 If both the MinIO Tenant and ingress operate without TLS, set 'spark.hadoop.fs.s3a.ssl.enabled' to 'false'.
