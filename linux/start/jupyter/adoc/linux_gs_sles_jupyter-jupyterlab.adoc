@@ -255,7 +255,7 @@ pip uninstall numpy
 ----
 
 
-=== Install and use JupyterLab
+== Install and access JupyterLab
 
 Jupyter notebooks are collaboration tools, typically used for science and computing domains.
 JupyterLab is the latest web-based interactive development environment for notebooks, code, and data.
@@ -268,7 +268,7 @@ To install JupyterLab, please make sure you have read and completed the steps ou
 +
 [source, bash]
 ----
-pip3 install jupyterlab
+pip install jupyterlab
 ----
 
 . Launch JupyterLab.
@@ -279,9 +279,11 @@ jupyter-lab
 ----
 
 . Access the JupyterLab environment.
-// TS (20220818): Brian, please flesh this out, incorporating the tip below.  Headless will be imprtant in the container world.
-Then find the browser window that was opened by the preceeding command.
-
++
+JupyterLab is web-based and attempts to open the default web browser to reveal the user interface.
++
+image::jupyterlab_ui_001.png[JupyterLab user interface, scaledwidth="85%", align="center"]
++
 [TIP]
 ====
 If you are running SLES on a headless server, you can use SSH port forwarding to access the service on port 8888.
