@@ -255,15 +255,24 @@ pip uninstall numpy
 ----
 
 
-== Install and access JupyterLab
+== JupyterLab
 
 Jupyter notebooks are collaboration tools, typically used for science and computing domains.
 JupyterLab is the latest web-based interactive development environment for notebooks, code, and data.
 You can read more about JupyterLab here: https://jupyter.org/
 Through JupyterLab, you can define workflows in data science, scientific computing, computational journalism, and ML.
 
+
+=== Install JupyterLab
+
 To install JupyterLab, please make sure you have read and completed the steps outlined above before proceeding.
 
+. Activate your virtual environment (if not already active).
++
+[source, bash]
+----
+cd 
+----
 . Install JupyterLab.
 +
 [source, bash]
@@ -271,36 +280,87 @@ To install JupyterLab, please make sure you have read and completed the steps ou
 pip install jupyterlab
 ----
 
-. Launch JupyterLab.
+
+=== Launch JupyterLab
+
+To use JupyterLab 
 +
 [source, bash]
 ----
 jupyter-lab
 ----
++
+JupyterLab fills your terminal window with some helpful information, like the following:
++
+[source, bash]
+----
+[I 2022-08-22 13:14:26.394 ServerApp] Jupyter Server 1.13.1 is running at:
+[I 2022-08-22 13:14:26.394 ServerApp] http://localhost:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
+[I 2022-08-22 13:14:26.394 ServerApp]  or http://127.0.0.1:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
+[I 2022-08-22 13:14:26.394 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 2022-08-22 13:14:26.398 ServerApp] 
+    
+    To access the server, open this file in a browser:
+        file:///home/terry/.local/share/jupyter/runtime/jpserver-31811-open.html
+    Or copy and paste one of these URLs:
+        http://localhost:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
+     or http://127.0.0.1:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
+----
++
+[NOTE]
+====
+As you can see in the command output, JupyterLab uses an access token to authenticate you to the web UI.
+This token is unique to each instance of the environment.
+====
 
 . Access the JupyterLab environment.
-+
-JupyterLab is web-based and attempts to open the default web browser to reveal the user interface.
-+
-image::jupyterlab_ui_001.png[JupyterLab user interface, scaledwidth="85%", align="center"]
+JupyterLab is web-based and attempts to open the default web browser to the user interface.
+If no default web browser is configured or fails to open, you can find the use one of the helpful access suggestions shown in your command terminal.
 +
 [TIP]
 ====
-If you are running SLES on a headless server, you can use SSH port forwarding to access the service on port 8888.
+If your environment is on a remote, headless host, you can use SSH port forwarding to gain access.
+
+. Log into the remote host, creating a local port forward.
++
+[source, bash]
+----
+ssh -L8888:localhost:8888 USER@REMOTE-IP
+----
++
+where USER is your username on the remote host and REMOTE-IP is its IP address or domain name.
+
+. Activate your virtual environment.
+
+. Launch JupyterLab.
+
+. Open the web browser on your local system to the URL specified in your command terminal.
 ====
 
-. Explore the JupyterLab interface.
-// TS (20220818): Brian, we may only need to do a screenshot and a link to the JupyterLab docs.
+. Shut down JupyterLab.
++
+* You can shut down the JupyterLab environment directly from the UI by selecting __File > Shutdown__.
+* If you select __File > Logout__ in the UI or just close your browser, you can shut down the JupyterLab environment from the command terminal by issuing 'CTRL-C'.
+You will be prompted to confirm that you want to shut down the Jupyter server.
++
+[TIP]
+----
+You can bypass confirmation by issuing 'CTRL-C' twice.
+----
+
+
+=== Explore the JupyterLab interface
+
+image::jupyterlab_ui_001.png[JupyterLab user interface, scaledwidth="85%", align="center"]
+
+// TS (20220822): Brian, would you be able to write a quick overview of the parts of the JupyterLab UI?
+
 Please do experiment with the Jupyter user interface, if you haven't used it before.
 Once you are ready, we will experiment with a pre-built Jupyter notebook.
 
-. Shut down the JupyterLab environment
-// TS (20220818): Brian, for this, we should show how to properly shut down the environment.  This may require mentioning the difference between "Log out" and "Shutdown" in the interface.
 
 
-
-
-== Use case and demonstration
+== 
 
 
 
@@ -349,12 +409,6 @@ See https://pip.pypa.io/en/stable/cli/pip_freeze/ for more information.
 Create a requirements file for your Python virtual environment by following these steps:
 
 . Activate your virtual environment (if not already active).
-+
-[source, bash]
-----
-cd $HOME/python3-ai
-source ./bin/activate
-----
 
 . Generate a requirements file with `pip freeze`.
 +
