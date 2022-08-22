@@ -5,6 +5,8 @@ include::./common_docinfo_vars.adoc[]
 :title: JupyterLab with SUSE Linux Enterprise: Getting Started
 :productname: SLES 15 SP4
 :productver: 15 SP4
+:defaultpython: Python 3.6
+:defaultpythonbin: python3.6
 :partnerprod1: JupyterLab
 :partnerprod2: Jupyter Notebook
 :author1: Brian Fromme, Technical Alliance Manager, SUSE
@@ -67,13 +69,15 @@ For this guide, you need:
 ** Make sure your SLES installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python3
-Python 3.6 is included with {productname} and is used in this guide.
++
+//
+{defaultpython} is included with {productname} and is used in this guide.
 This is adequate to run JupyterLab and many ML toolkits.
 +
 [NOTE]
 ====
-Legacy Python 2.x can also be installed on your system.
-To avoid confusion and to avoid accidentally calling legacy Python 2.x, this guide uses version-explicit commands, like `python3` and `pip3`.
+Legacy Python 2.x and other versions of Python can also be installed on your system.
+To avoid accidentally executing the wrong version, this guide uses version-explicit commands, like `{defaultpythonbin}` or `python3` (leveraging a symbolic link to the appropriate binary).
 ====
 
 * Access to https://pypi.org/[The Python Package Index (PyPI)].
@@ -92,29 +96,20 @@ Developers need a way to create isolated environments where they can install the
 
 Your application may have a hard dependency for a specific version of the Python interpeter itself.
 
-Installing a different version of Python on your system is possible.
-However, doing so incorrectly could break system tools, which have their own version dependencies.
+You can install multiple versions of Python on your system.
+But care must be taken, as doing so incorrectly could break system tools.
 
 To mitigate this risk, SUSE names the Python binaries explicitly.
-For example, the default Python interpeter is the file, '/usr/bin/python3.6'.
-It is symbolically linked as 'python3' to simplify usage and offer consistency.
-So, when you issue the command `python3 --version`, this is actually executing, `python3.6 --version`.
+For example, {productname} includes {defaultpython} and the default Python interpeter is the file, '/usr/bin/{defaultpythonbin}'.
+This file is symbolically linked as 'python3' to simplify usage and offer consistency.
+So, when you issue the command `python3 --version`, this is actually executing, `{defaultpythonbin} --version`.
+If you install another version of Python from the SUSE repositories, say Python 3.10, the interpreter will be installed as '/usr/bin/python3.10'.
 
-Using this naming convention, it is actually possible to install multiple versions of Python.
-Some additional versions may also be available in the standard operating system repositories.
+With this naming convention, you can install and maintain multiple versions of Python on your system.
+However, managing these can be challenging.
+Tools, like https://github.com/pyenv/pyenv[pyenv], have been developed to help with this but are out of scope for this guide.
 
-
-[WARNING]
-====
-Be careful never to replace the system default Python or change any of the associated symbolic links, as this could break your system.
-====
-
-
-Maintaining and managing multiple versions of Python can be difficult.
-This has led to the develppment of tools, like https://github.com/pyenv/pyenv[pyenv], which is out of scope for this guide.
-
-
-For this guide, the default Python 3.6 is sufficient.
+For this guide, the default {defaultpython} is sufficient.
 
 
 
