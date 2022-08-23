@@ -121,20 +121,20 @@ See the https://peps.python.org/pep-0405/[Python Enhancement Proposal 405 - Pyth
 Creating a Python virtual environment is easy.
 Run the following commands as your user (root access is not required):
 
-. Create a virtual environment, named 'python3-ai'.
+. Create a virtual environment, named 'myproj'.
 +
 [source,bash]
 ----
-python3 -m venv $HOME/python3-ai
+python3 -m venv $HOME/myproj
 ----
 +
-This creates a new 'python3-ai' subdirectory in your home directory and populates it with files, subdirectories, and symbolic links to enable the virtual environment.
+This creates a new 'myproj' subdirectory in your home directory and populates it with files, subdirectories, and symbolic links to enable the virtual environment.
 
 . Change to the new directory.
 +
 [source, bash]
 ----
-cd $HOME/python3-ai
+cd $HOME/myproj
 ----
 
 . Activate the new virtual environment.
@@ -149,7 +149,7 @@ The 'activate' script cannot be run on its own and must be "sourced" in order to
 [TIP]
 ====
 When your virtual environment is active, your command prompt is prefixed with the environment name.
-In the present example, you should see '(python3-ai)' before your normal prompt.
+In the present example, you should see '(myproj)' before your normal prompt.
 ====
 
 . Deactivate your active virtual environment.
@@ -176,7 +176,7 @@ If you no longer need a virtual environment and want to delete it, simply:
 
 
 
-=== Managing Python packages
+== Managing Python packages
 
 Python is not the only language or even the best language for all ML software development.
 But Python is popular among ML developers for its simplicity, elegance, and its large open source community of active developers and users.
@@ -200,10 +200,12 @@ In this guide, you will use the `pip` command to install packages from PyPI into
 
 [NOTE]
 ====
-Your Python virtual environment has its own `pip`, installed in the 'bin' subdirectory of your working directory (e.g., '$HOME/python3-ai/bin').
+Your Python virtual environment has its own `pip`, installed in the 'bin' subdirectory of your working directory (e.g., '$HOME/myproj/bin').
 Use `pip --version` to see which `pip` will be used.
 ====
 
+
+=== Performing basic package management
 
 In the following commands, you will perform some basic operations with `pip`.
 
@@ -211,7 +213,7 @@ In the following commands, you will perform some basic operations with `pip`.
 +
 [source, bash]
 ----
-cd $HOME/python3-ai
+cd $HOME/myproj
 source ./bin/activate
 ----
 
@@ -231,7 +233,7 @@ pip install numpy==1.18.5
 +
 [TIP]
 ====
-Be sure to use two equal signs ('==').
+Be sure to use two equal signs ('==') between the package name and the desired version.
 ====
 
 . Upgrade to the latest compatible version of numpy.
@@ -253,6 +255,147 @@ Instead, you get the latest version that is compatible with your Python environm
 ----
 pip uninstall numpy
 ----
+
+. Install multiple packages together (numpy, pandas, and matplotlib).
++
+[source, bash]
+----
+pip install numpy pandas matplotlib
+----
++
+[source, bash]
+----
+Collecting numpy
+  Using cached numpy-1.19.5-cp36-cp36m-manylinux2010_x86_64.whl (14.8 MB)
+Collecting pandas
+  Using cached pandas-1.1.5-cp36-cp36m-manylinux1_x86_64.whl (9.5 MB)
+Collecting matplotlib
+  Using cached matplotlib-3.3.4-cp36-cp36m-manylinux1_x86_64.whl (11.5 MB)
+Collecting pytz>=2017.2
+  Using cached pytz-2022.2.1-py2.py3-none-any.whl (500 kB)
+Collecting python-dateutil>=2.7.3
+  Using cached python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+Collecting pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.3
+  Using cached pyparsing-3.0.9-py3-none-any.whl (98 kB)
+Collecting cycler>=0.10
+  Using cached cycler-0.11.0-py3-none-any.whl (6.4 kB)
+Collecting pillow>=6.2.0
+  Using cached Pillow-8.4.0-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.1 MB)
+Collecting kiwisolver>=1.0.1
+  Using cached kiwisolver-1.3.1-cp36-cp36m-manylinux1_x86_64.whl (1.1 MB)
+Collecting six>=1.5
+  Using cached six-1.16.0-py2.py3-none-any.whl (11 kB)
+Installing collected packages: six, pytz, python-dateutil, pyparsing, pillow, numpy, kiwisolver, cycler, pandas, matplotlib
+Successfully installed cycler-0.11.0 kiwisolver-1.3.1 matplotlib-3.3.4 numpy-1.19.5 pandas-1.1.5 pillow-8.4.0 pyparsing-3.0.9 python-dateutil-2.8.2 pytz-2022.2.1 six-1.16.0
+----
++
+[NOTE]
+====
+`pip` automatically downloaded and installed additional dependencies.
+====
+
+
+=== Creating repeatable experiments
+
+Replicabality is key to many disciplines, but particularly in the sciences.
+Ensuring that your Python environment can be recreated the same way with the same packages and the same versions of those packages can be a challenge.
+
+Fortunately, wth the `pip freeze` command, you can generate a package requirements file, containing a list of the packages and versions that should be installed.
+See https://pip.pypa.io/en/stable/cli/pip_freeze/ for more information.
+
+
+Create a requirements file for your Python virtual environment by following these steps:
+
+. Activate your virtual environment (if not already active).
+
+. Generate a requirements file with `pip freeze`.
++
+[source, bash]
+----
+pip freeze > myproj-reqs.txt
+----
+
+. Take a look at the requirements file.
++
+[source, bash]
+----
+less myproj-reqs.txt
+----
++
+[source, bash]
+----
+cycler==0.11.0
+kiwisolver==1.3.1
+matplotlib==3.3.4
+numpy==1.19.5
+pandas==1.1.5
+Pillow==8.4.0
+pyparsing==3.0.9
+python-dateutil==2.8.2
+pytz==2022.2.1
+six==1.16.0
+----
+
+
+Now, you can use this requirements file to ensure a new environment has all the same pacakges installed.
+
+. Make you are not in an active Python virtual environment.
+
+. Create a new Python virtual environment.
++
+[source, bash]
+----
+python3 -m venv myproj2
+----
+
+. Activate the new environment.
++
+[source, bash]
+----
+cd myproj2
+source ./bin/activate
+----
+
+. Upgrade `pip`.
++
+[source, bash]
+----
+pip install --upgrade pip
+----
+
+. Install packages with the requirements file.
++
+[source, bash]
+----
+pip install -r $HOME/myproj/myproj-req.txt
+----
+
+. Verify correct packages were installed.
++
+[source, bash]
+----
+pip list
+----
++
+[source, bash]
+----
+Package         Version
+--------------- --------
+cycler          0.11.0
+kiwisolver      1.3.1
+matplotlib      3.3.4
+numpy           1.19.5
+pandas          1.1.5
+Pillow          8.4.0
+pip             21.3.1
+pyparsing       3.0.9
+python-dateutil 2.8.2
+pytz            2022.2.1
+setuptools      44.1.1
+six             1.16.0
+----
+
+
 
 
 == JupyterLab
@@ -395,75 +538,6 @@ https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab,r
 
 // TS: Take a look at https://coderefinery.github.io/jupyter/examples/ for some examples.  Let's keep the example here simple.  We're really focused on just getting JupyterLab with SLE into the mind of the reader for this document.
 
-
-
-== Creating repeatable installations
-
-Replicabality is key to many disciplines, but particularly in the sciences.
-Ensuring that your Python environment can be recreated the same way with the same packages and the same versions of those packages could be a challenge.
-
-Fortunately, the `pip freeze` command can generate a package requirements file, containing a list of the packages and versions that should be installed.
-See https://pip.pypa.io/en/stable/cli/pip_freeze/ for more information.
-
-
-Create a requirements file for your Python virtual environment by following these steps:
-
-. Activate your virtual environment (if not already active).
-
-. Generate a requirements file with `pip freeze`.
-+
-[source, bash]
-----
-pip freeze > python3-ai-req.txt
-----
-
-. Take a look at the file.
-+
-[source, bash]
-----
-less python3-ai-req.text
-----
-+
-[source, bash]
-----
-...
-idna==3.3
-immutables==0.18
-importlib-metadata==4.8.3
-ipykernel==5.5.6
-ipython==7.16.3
-ipython-genutils==0.2.0
-jedi==0.17.2
-Jinja2==3.0.3
-json5==0.9.10
-jsonschema==3.2.0
-jupyter-client==7.1.2
-jupyter-core==4.9.2
-jupyter-server==1.13.1
-jupyterlab==3.2.9
-jupyterlab-pygments==0.1.2
-jupyterlab-server==2.10.3
-MarkupSafe==2.0.1
-...
-----
-+
-Notice that there are a lot more files than the ones you explicitly installed.
-This is because `pip freeze` captures all the packages and their versions in your environment.
-
-
-Next, test that you can recreate the environment.
-
-// TS (20220818): Brian, can you flesh this out?
-
-. Deactivate your current virtual environment.
-
-. Create a new virtual environment, named 'jup-test'.
-
-. Activate the 'jup-test' environment.
-
-. Update `pip`.
-
-. Install packages from the 'python3-ai-req.txt' requirements file.
 
 
 
