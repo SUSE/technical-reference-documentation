@@ -19,8 +19,8 @@ echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "- Before proceeding make sure you have:"
 echo "- 1. created a local branch: \`git branch myproject\`"
 echo "- 2. checked out your new branch: \`git checkout myproject\`"
-echo "- 3. changed to the 'kubernetes/start' or"
-echo "-    'linux/start' directory (as appropriate)"
+echo "- 3. changed to the kubernetes/start or"
+echo "-                   linux/start directory (as appropriate)"
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
 echo "Are you ready to proceed?"
@@ -28,25 +28,8 @@ read -p "Press ENTER to continue or CTRL-C to cancel."
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
-# Verify readiness
-##
-
-# check present working directory
-if [ $(basename $PWD) != "start" ]; then
-  echo
-  echo "Your current working directory is:"
-  echo "  '$PWD'"
-  echo "Make sure you change to 'kubernetes/start' or 'linux/start'"
-  echo "  then execute this script again."
-  echo
-  exit 1
-fi
-
-
-## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # Initialize variables
 ##
-templatesroot="../../../common/templates/start"
 category=""
 doctype=""
 suseprod=""
@@ -152,7 +135,7 @@ echo "-"
 echo "-   ${category}"
 echo "-   └── start"
 echo "-       └── ${partnername}"
-echo "-           ├── DC-${documentbase}"
+echo "-           ├── DC-${category}_${documentbase}"
 echo "-           ├── adoc"
 echo "-           │   ├── ${documentbase}.adoc"
 echo "-           │   ├── ${documentbase}-docinfo.xml"
@@ -183,48 +166,47 @@ read -p "Press ENTER to create document structure or CTRL-C to cancel."
 cd ${partnername}
 
 # create DC- file
-cp ${templatesroot}/_DC-file \
-  _DC-${documentbase}
+cp ../.templates/_DC-file \
+  ./_DC-${documentbase}
 # update adoc reference
-sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" _DC-${documentbase}
+sed -i "s/MAIN=\"kubernetes_gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ./_DC-${documentbase}
 
 # create adoc directory if it does not already exist
 [ -d adoc ] || mkdir -p adoc
-#cd adoc
+cd adoc
 
 # create symlinks to common files
 [ -L common_gfdl1.2_i.adoc ] || \
-  ln -s ../../../../common/adoc/common_gfdl1.2_i.adoc adoc/
+  ln -s ../../../../common/adoc/common_gfdl1.2_i.adoc .
 [ -L common_sbp_legal_notice.adoc ] || \
-  ln -s ../../../../common/adoc/common_sbp_legal_notice.adoc adoc/
+  ln -s ../../../../common/adoc/common_sbp_legal_notice.adoc .
 [ -L common_trd_legal_notice.adoc ] || \
-  ln -s ../../../../common/adoc/common_trd_legal_notice.adoc adoc/
+  ln -s ../../../../common/adoc/common_trd_legal_notice.adoc .
 [ -L common_docinfo_vars.adoc ] || \
-  ln -s ../../../../common/adoc/common_docinfo_vars.adoc adoc/
+  ln -s ../../../../common/adoc/common_docinfo_vars.adoc .
 
 # create .adoc file
-[ -f "adoc/${documentbase}.adoc" ] || \
-  cp ${templatesroot}/_adoc-file \
-    adoc/${documentbase}.adoc
+[ -f "${documentbase}.adoc" ] || \
+  cp ../../.templates/_adoc-file \
+    ./${documentbase}.adoc
 
 # create -docinfo.xml file
-[ -f "adoc/${documentbase}-docinfo.xml" ] || \
-  cp ${templatesroot}/_docinfo-file \
-    adoc/${documentbase}-docinfo.xml
+[ -f "${documentbase}-docinfo.xml" ] || \
+  cp ../../.templates/_docinfo-file \
+    ./${documentbase}-docinfo.xml
 
 # create media directory structure
-#cd ..
+cd ..
 [ -d media/src/png ] || mkdir -p media/src/png
 [ -d media/src/svg ] || mkdir -p media/src/svg
-#cd media/src/svg
+cd media/src/svg
 # create symlink to logo
-[ -L media/src/svg/suse-white-logo-green.svg ] || \
-  ln -s ../../../../../../common/images/src/svg/suse-white-logo-green.svg media/src/svg/
-#cd ../../..
+[ -L suse-white-logo-green.svg ] || \
+  ln -s ../../../../../../common/images/src/svg/suse-white-logo-green.svg .
+cd ../../..
 # create images symlink
 [ -L images ] || \
   ln -s media images
-
 # return to original directory
 cd ..
 
@@ -248,7 +230,6 @@ echo
 # - Terry Smith <terry.smith@suse.com>
 # - Bryan Gartner <bryan.gartner@suse.com>
 # Revisions:
-# - 20220824: Migrated to common/bin; implemented run location test"
 # - 20220729: Removed extraneous space; created action preview banner"
 # - 20220203: Use renamed template files to avoid GitHub Actions validation
 # - 20220127: Leverage template files
