@@ -32,24 +32,42 @@ include::./common_docinfo_vars.adoc[]
 // TS: There is some good text here (https://medium.com/@olivier.borderies/jupyter-python-in-the-corporate-lan-109e2ffde897) to explain why JupyterLab.  We would just want to integrate in SLE value.
 
 Introducing Machine Learning (ML) into a company strategy is exciting and has potential benefits to bring new information to customers.
-But there are many technical challenges to implementing a successful ML stragegy.
-Deploying and using software with SUSE Linux Enterprise shouldn't be one of those challenges.
-SUSE collaborates with project communities and partners to make leveraging these technologies together to be easier to understand, achievable, and repeatable.
+SUSE collaborates with project communities and partners to simplify leveraging the components and complex toolchains used in ML development.
+SUSE Linux Enterprise (SLE) is the operating system of choice for ML developers looking for a stable, performant, and secure platform that can easily scale to enterprise production.
 
+The https://www.python.org/[Python] programming language is popular among ML researchers and developers.
+Python is described as ideal for prototype development due to its ease-of-use, extensibility, cross-platform availability, open source license, and more.
+And a large ecosystem of ML-related tools and capabilities have built up around Python.
 
-You might be wondering why we don't just dive into an ML tookit in this document.
-In one way, we think that we have.
-Jupyter notebooks and JupyterLab are tools that help your company to share data, ideas, experiments, and code.
-Futhermore, Jupyter notebooks are self-documenting instructions that promote collaboration and automation of enterprise processes in a uniform way.
+ML research and development is highly collaborative.
+Individual researchers, teams, and organizations all need to be able to share ideas, experiments, and even code and data.
+This can be a challenge, as seemingly minor differences in development environments can lead to wildly different results.
+
+Open source communities are very good at overcoming such challenges.
+A plethora of features, capabilities, and tools have sprung up to facilitate sharing and replicability.
+These include package repositories, package management tools, isolated "virtual" environments, and computational notebooks.
+
 
 
 === Scope
 
-This guide illustrates how to install, configure, and access JupyterLab on SUSE Linux Enterprise (SLE).
-We believe that scientists and engineers working with machine learning tend to rely on leading-edge, open source tools.
-But enterprises taking projects to production need stability, security, and support.
-With this in mind, we target using {productname} in this guide.
+This guide provides a brief introduction to the following concepts, tools, and applications:
+
+* https://www.python.org/[Python] in the {productname} environment.
+
+* The https://pypi.org/[Python Package Index (PyPI)] repository.
+
+* The pip Python package management tool.
+
+* Lightweight virtual environments with https://docs.python.org/3/library/venv.html[venv].
+
+* Interactive, computational notebooks with https://jupyter.org/[Project Jupyter]
+
+
+[NOTE]
+====
 Many of the steps herein may be followed with little or no modification on the corresponding version of openSUSE Leap.
+====
 
 
 === Audience
@@ -62,13 +80,13 @@ The deployment instructions in this document assume only an introductory underst
 
 For this guide, you need:
 
-* SUSE Linux Enterprise Server {productver} or the corresponding version of openSUSE Leap.
+* https://www.suse.com/products/server/[SUSE Linux Enterprise Server] {productver} or the corresponding version of https://www.opensuse.org/[openSUSE] Leap.
 
-** If you do not already have SLES, installation instructions can be found here:  https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
+** If you do not already have SLES installed, instructions can be found here:  https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
 
 ** Make sure your SLES installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
-* Python3
+* Python 3
 +
 //
 {defaultpython} is included with {productname} and is used in this guide.
@@ -81,6 +99,8 @@ To avoid accidentally executing the wrong version, this guide uses version-expli
 ====
 
 * Access to https://pypi.org/[The Python Package Index (PyPI)].
++
+//
 PyPI is a public repository of software for the Python programming language.
 
 
@@ -398,12 +418,34 @@ six             1.16.0
 
 
 
-== JupyterLab
+== Project Jupyter
 
-Jupyter notebooks are collaboration tools, typically used for science and computing domains.
-JupyterLab is the latest web-based interactive development environment for notebooks, code, and data.
-You can read more about JupyterLab here: https://jupyter.org/
-Through JupyterLab, you can define workflows in data science, scientific computing, computational journalism, and ML.
+https://jupyter.org/[Project Jupyter] was born out of the https://ipython.org/[IPython Project] in 2014 to support interactive data science and scientific computing across all programming languages.
+Under this umbrella are:
+
+* Jupyter Notebook
++
+//
+The original web application allows data scientists to create and share computational documents, called notebooks.
+
+* JupyterLab
++
+//
+The latest generation of Jupyter Notebook is a modular design that wllows users to customize the interface to support workflows in data science, scientific computing, computational journalism, and machine learning.
+
+* JupyterHub
++
+//
+Provides a multi-user experience, enabling centralized deployment and user management.
+
+* Voilà
++
+//
+Transforms Jupyter notebooks into secure, stand-alone web applications.
+
+
+Next, you will learn how to install and access JupyterLab.
+
 
 
 === Install JupyterLab
