@@ -448,19 +448,11 @@ Next, you will learn how to install and access JupyterLab.
 
 
 
-=== Install JupyterLab
-
-To install JupyterLab, please make sure you have read and completed the steps outlined above before proceeding.
-
-. Activate your virtual environment (if not already active).
-+
-[source, bash]
-----
-cd $HOME/myproj
-source ./bin/activate
-----
-
 . Install JupyterLab.
++
+//
+JupyterLab is easy to install right from PyPI.
+In your active virtual environment, issue the following command:
 +
 [source, bash]
 ----
@@ -468,17 +460,21 @@ pip install jupyterlab
 ----
 
 
-=== Launch JupyterLab
+=== Access JupyterLab
 
-To use JupyterLab 
-+
+Jupyter Lab is a web application.
+Once it is started, you access it through your web browser.
+
+
+Start JupyterLab from the command-line with:
+
 [source, bash]
 ----
 jupyter-lab
 ----
-+
-JupyterLab fills your terminal window with some helpful information, like the following:
-+
+
+This fills your terminal window with some helpful information, like the following:
+
 [source, bash]
 ----
 [I 2022-08-22 13:14:26.394 ServerApp] Jupyter Server 1.13.1 is running at:
@@ -493,22 +489,22 @@ JupyterLab fills your terminal window with some helpful information, like the fo
         http://localhost:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
      or http://127.0.0.1:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
 ----
-+
+
 [NOTE]
 ====
-As you can see in the command output, JupyterLab uses an access token to authenticate you to the web UI.
+JupyterLab uses an access token to authenticate you to the web UI.
 This token is unique to each instance of the environment.
 ====
 
-. Access the JupyterLab environment.
-JupyterLab is web-based and attempts to open the default web browser to the user interface.
-If no default web browser is configured or fails to open, you can find the use one of the helpful access suggestions shown in your command terminal.
-+
+JupyterLab will attempt to open your default web browser with the proper URL to bring up the user interface.
+If no default web browser is configured or fails to open, you can use one of the suggested URLs shown in your command terminal.
+
+
 [TIP]
 ====
 If your environment is on a remote, headless host, you can use SSH port forwarding to gain access.
 
-. Log into the remote host, creating a local port forward.
+. Log into the remote host with a local port forward.
 +
 [source, bash]
 ----
@@ -521,7 +517,7 @@ where USER is your username on the remote host and REMOTE-IP is its IP address o
 
 . Launch JupyterLab.
 
-. Open the web browser on your local system to the URL specified in your command terminal.
+. Open your local web browser to the URL specified in your command terminal.
 ====
 
 . Shut down JupyterLab.
