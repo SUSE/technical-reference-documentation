@@ -29,33 +29,17 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
-// TS: There is some good text here (https://medium.com/@olivier.borderies/jupyter-python-in-the-corporate-lan-109e2ffde897) to explain why JupyterLab.  We would just want to integrate in SLE value.
-
 Introducing Machine Learning (ML) into a company strategy is exciting.
-ML can yield many benefits but implementation can sometimes be a challenge.
+ML can yield many benefits, but implementation can sometimes be a challenge.
 A successful ML strategy must be comprehensive, supporting the entire process, from development to production.
 
 ML research is highly collaborative and largely open source, resulting in a rapid state of continuous development.
 ML developers often need to leverage leading edge technologies (hardware and software) and to be able to share ideas, experiments, and even code and data to accelerate innovation.
-A successful ML strategy provides a support framework for researchers and developers.
+And scaling ML from a research project to enterprise production is no easy task, as IT and operations teams must securely manage implementation across a myriad of modern infrastructure options.
 
-Scaling ML from a research project to enterprise production is no easy task.
-IT teams are called upon to support leading edge development and to ensure stable, secure production at scale.
+This guide helps you take a first step to setting up a modern ML development environment with https://www.suse.com/products/server/[SUSE Linux Enterprise], an operating system that is adaptable to any environment - optimized for performance, security, and reliability - on-premises, in the cloud, and at the edge.
 
-
-
-SUSE collaborates with project communities and partners to simplify leveraging the components and complex toolchains used in ML development.
-SUSE Linux Enterprise (SLE) is the operating system of choice for ML developers looking for a stable, performant, and secure platform that can easily scale to enterprise production.
-
-The https://www.python.org/[Python] programming language is popular among ML researchers and developers.
-Python is described as ideal for prototype development due to its ease-of-use, extensibility, cross-platform availability, open source license, and more.
-And a large ecosystem of ML-related tools and capabilities have built up around Python.
-
-
-Open source communities are very good at overcoming such challenges.
-A plethora of features, capabilities, and tools have sprung up to facilitate sharing and replicability.
-These include package repositories, package management tools, isolated "virtual" environments, and computational notebooks.
-
+The focus of this guide is on the https://www.python.org/[Python] programming language ecosystem, which has become very popular among ML researchers and developers, and interactive, computational notebooks with JupyterLab by https://jupyter.org/[Project Jupyter].
 
 
 === Scope
@@ -64,9 +48,9 @@ This guide provides a brief introduction to the following concepts, tools, and a
 
 * https://www.python.org/[Python] in the {productname} environment.
 
-* The https://pypi.org/[Python Package Index (PyPI)] repository.
+* The https://pypi.org/[Python Package Index (PyPI)] software repository.
 
-* The pip Python package management tool.
+* Python package management with https://pip.pypa.io/en/stable/[pip].
 
 * Lightweight virtual environments with https://docs.python.org/3/library/venv.html[venv].
 
@@ -81,8 +65,8 @@ Many of the steps herein may be followed with little or no modification on the c
 
 === Audience
 
-This guide is intended for developers, data scientists, ML researchers, and others interested in leveraging the JupyterLab next generation, interactive, computational notebook environment.
-The deployment instructions in this document assume only an introductory understanding of Linux commands.
+This guide is intended for researchers, engineers, developers, operations teams, and others interested in implementing replicable, ML development environments, featuring Python and computational documents with JupyterLab.
+The reader should have basic Linux command-line skills.
 
 
 == Prerequisites
