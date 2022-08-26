@@ -105,7 +105,7 @@ Installing dependent packages to support one project may, thus, break another pr
 Developers need a way to create isolated environments where they can install the packages they need without impacting other projects or systems operations.
 
 
-=== Multiple versions of Python
+=== Addressing Python versions
 
 Your application may have a hard dependency for a specific version of the Python interpeter itself.
 
@@ -118,12 +118,13 @@ This file is symbolically linked as 'python3' to simplify usage and offer consis
 So, when you issue the command `python3 --version`, this is actually executing, `{defaultpythonbin} --version`.
 If you install another version of Python from the SUSE repositories, say Python 3.10, the interpreter will be installed as '/usr/bin/python3.10'.
 
-With this naming convention, you can install and maintain multiple versions of Python on your system.
-However, managing these can be challenging.
-Tools, like https://github.com/pyenv/pyenv[pyenv], have been developed to help with this but are out of scope for this guide.
+With this naming convention, you can install and maintain multiple versions of Python system-wide.
+You can also choose to install Python elsewhere on the system, including in your user home directory.
+In either case, you need to explictly call the version of Python.
+
+Tools, like https://github.com/pyenv/pyenv[pyenv], have been developed to help simplify the management of multiple Python versions, but this is out of scope for this document.
 
 For this guide, the default {defaultpython} is sufficient.
-
 
 
 === Creating a Python virtual environment
@@ -192,35 +193,38 @@ If you no longer need a virtual environment and want to delete it, simply:
 == Managing Python packages
 
 Python is not the only language or even the best language for all ML software development.
-But Python is popular among ML developers for its simplicity, elegance, and its large open source community of active developers and users.
-ML developers benefit greatly from a wealth of open source code, much of which has been packaged and licensed for easy use in other software.
+But Python is popular among ML developers for its simplicity, extensibility, cross-platform availability, and its large open source community of active developers and users.
+ML developers benefit from and contribute to the large and growing Python ecosystem of open source tools and libraries.
+
 
 The {productname} repositories include many of these Python packages, tested against the included version of Python.
 These Python packages are perfect if the version matches what you need for your project and you can install them system-wide.
 
 
 The https://pypi.org/[Python Package Index (PyPI)] is a public repository of open source licensed packages made available by a community of developers from around the world.
-There are many ways to install Python packages from PyPI, but the preferred method is with the `pip` command.
+There are many ways to install Python packages from PyPI, but the preferred method is with https://pypi.org/project/pip/[pip].
 
-`pip` is a powerful tool for managing Python packages.
-By default, `pip` installs packages from PyPI, but it can also install from a git repository or local distribution files.
+pip is a powerful tool for managing Python packages.
+By default, pip installs packages from PyPI, but it can also install from a git repository or from local distribution files.
+
 Many Python packages are dependent on other packages.
-`pip` is capable of performing dependency resolution and installing the required packages.
-See the https://pip.pypa.io/en/stable/[pip documentation] for details on additional capabilities and options.
+But manually identifying and installing all dependencies can be grueling, especially when each package may have additional dependencies of its own.
+Fortunately, pip automatically performs dependency resolution to ensure installation of all required packages and alerts you if resolution fails.
+See the https://pip.pypa.io/en/stable/[pip documentation] for details.
 
-In this guide, you will use the `pip` command to install packages from PyPI into your active virtual environment.
+In this guide, you will use pip to install packages from PyPI into your active virtual environment.
 
 
 [NOTE]
 ====
-Your Python virtual environment has its own `pip`, installed in the 'bin' subdirectory of your working directory (e.g., '$HOME/myproj/bin').
-Use `pip --version` to see which `pip` will be used.
+Your Python virtual environment has its own 'pip' executable, installed in the 'bin' subdirectory of your working directory (e.g., '$HOME/myproj/bin').
+Use `pip --version` to see which 'pip' executable will be used.
 ====
 
 
 === Performing basic package management
 
-In the following commands, you will perform some basic operations with `pip`.
+With the following commands, you will perform some basic operations with the pip package installer.
 
 . Activate your virtual environment.
 +
@@ -230,7 +234,7 @@ cd $HOME/myproj
 source ./bin/activate
 ----
 
-. Upgrade the `pip` command itself to the latest version.
+. Upgrade pip itself to the latest version.
 +
 [source, bash]
 ----
@@ -269,7 +273,7 @@ Instead, you get the latest version that is compatible with your Python environm
 pip uninstall numpy
 ----
 
-. Install multiple packages together (numpy, pandas, and matplotlib).
+. Install multiple packages (numpy, pandas, and matplotlib) together.
 +
 [source, bash]
 ----
@@ -304,16 +308,16 @@ Successfully installed cycler-0.11.0 kiwisolver-1.3.1 matplotlib-3.3.4 numpy-1.1
 +
 [NOTE]
 ====
-`pip` automatically downloaded and installed additional dependencies.
+Because some additional packages are required by those requested, pip automatically downloads and installs them.
 ====
 
 
-=== Creating repeatable experiments
+=== Creating replicable experiments
 
 Replicabality is key to many disciplines, but particularly in the sciences.
 Ensuring that your Python environment can be recreated the same way with the same packages and the same versions of those packages can be a challenge.
 
-Fortunately, wth the `pip freeze` command, you can generate a package requirements file, containing a list of the packages and versions that should be installed.
+Fortunately, with the `pip freeze` command, you can generate a package requirements file, containing a list of the packages and versions that should be installed.
 See https://pip.pypa.io/en/stable/cli/pip_freeze/ for more information.
 
 
@@ -332,7 +336,7 @@ pip freeze > myproj-reqs.txt
 +
 [source, bash]
 ----
-less myproj-reqs.txt
+cat myproj-reqs.txt
 ----
 +
 [source, bash]
@@ -350,9 +354,15 @@ six==1.16.0
 ----
 
 
-Now, you can use this requirements file to ensure a new environment has all the same pacakges installed.
+Once you have a requirements file, you can share it with another developer or use it yourself to make sure a new environment contains all the same pacakges.
 
-. Make you are not in an active Python virtual environment.
+. If you are in an active virtual environment, deactivate it and leave that working directory.
++
+[source, bash]
+----
+deactivate
+cd ..
+----
 
 . Create a new Python virtual environment.
 +
@@ -361,7 +371,7 @@ Now, you can use this requirements file to ensure a new environment has all the 
 python3 -m venv myproj2
 ----
 
-. Activate the new environment.
+. Enter the working directory and activate the new environment.
 +
 [source, bash]
 ----
@@ -369,7 +379,7 @@ cd myproj2
 source ./bin/activate
 ----
 
-. Upgrade `pip`.
+. Upgrade pip.
 +
 [source, bash]
 ----
@@ -380,38 +390,39 @@ pip install --upgrade pip
 +
 [source, bash]
 ----
-pip install -r $HOME/myproj/myproj-req.txt
+pip install -r ../myproj/myproj-req.txt
 ----
 
 . Verify correct packages were installed.
 +
 [source, bash]
 ----
-pip list
+pip freeze
 ----
 +
 [source, bash]
 ----
-Package         Version
---------------- --------
-cycler          0.11.0
-kiwisolver      1.3.1
-matplotlib      3.3.4
-numpy           1.19.5
-pandas          1.1.5
-Pillow          8.4.0
-pip             21.3.1
-pyparsing       3.0.9
-python-dateutil 2.8.2
-pytz            2022.2.1
-setuptools      44.1.1
-six             1.16.0
+cycler==0.11.0
+kiwisolver==1.3.1
+matplotlib==3.3.4
+numpy==1.19.5
+pandas==1.1.5
+Pillow==8.4.0
+pyparsing==3.0.9
+python-dateutil==2.8.2
+pytz==2022.2.1
+six==1.16.0
 ----
++
+[TIP]
+====
+`pip freeze` excludes pip and a few other packages.
+To see a complete list of packages, use `pip list`.
+====
 
 
 
-
-== Project Jupyter
+== Project Jupyter and JuypterLab
 
 https://jupyter.org/[Project Jupyter] was born out of the https://ipython.org/[IPython Project] in 2014 to support interactive data science and scientific computing across all programming languages.
 Under this umbrella are:
@@ -424,12 +435,12 @@ The original web application allows data scientists to create and share computat
 * JupyterLab
 +
 //
-The latest generation of Jupyter Notebook is a modular design that wllows users to customize the interface to support workflows in data science, scientific computing, computational journalism, and machine learning.
+The latest generation of Jupyter Notebook is a modular design that allows users to customize the interface to support workflows in data science, scientific computing, computational journalism, and machine learning.
 
 * JupyterHub
 +
 //
-Provides a multi-user experience, enabling centralized deployment and user management.
+The multi-user version of Jupyter Notebook enables companies, classrooms, and research labs to deliver computational environments and resources to users while managing them centrally.
 
 * Voilà
 +
@@ -441,33 +452,33 @@ Next, you will learn how to install and access JupyterLab.
 
 
 
+=== Getting JupyterLab up and running
+
+JupyterLab is a web application, so you will need a web browser to access it.
+
 . Install JupyterLab.
-+
 //
++
 JupyterLab is easy to install right from PyPI.
-In your active virtual environment, issue the following command:
+In your active virtual environment, issue the command:
 +
 [source, bash]
 ----
 pip install jupyterlab
 ----
 
-
-=== Access JupyterLab
-
-Jupyter Lab is a web application.
-Once it is started, you access it through your web browser.
-
-
-Start JupyterLab from the command-line with:
-
+. Launch JupyterLab.
+//
++
+Once JupyterLab is installed, launch it with the command:
++
 [source, bash]
 ----
 jupyter-lab
 ----
-
-This fills your terminal window with some helpful information, like the following:
-
++
+In your terminal window you should see something like the following:
++
 [source, bash]
 ----
 [I 2022-08-22 13:14:26.394 ServerApp] Jupyter Server 1.13.1 is running at:
@@ -483,16 +494,20 @@ This fills your terminal window with some helpful information, like the followin
      or http://127.0.0.1:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
 ----
 
+. Access the JupyterLab user interface (UI).
+//
++
+JupyterLab will attempt to open your default web browser to the UI.
+If this fails, you can manually open your browser to one of the URLs helpfully provided in your terminal window.
+//
++
 [NOTE]
 ====
 JupyterLab uses an access token to authenticate you to the web UI.
 This token is unique to each instance of the environment.
 ====
-
-JupyterLab will attempt to open your default web browser with the proper URL to bring up the user interface.
-If no default web browser is configured or fails to open, you can use one of the suggested URLs shown in your command terminal.
-
-
+//
++
 [TIP]
 ====
 If your environment is on a remote, headless host, you can use SSH port forwarding to gain access.
@@ -514,80 +529,65 @@ where USER is your username on the remote host and REMOTE-IP is its IP address o
 ====
 
 . Shut down JupyterLab.
+//
 +
-* You can shut down the JupyterLab environment directly from the UI by selecting __File > Shutdown__.
-* If you select __File > Logout__ in the UI or just close your browser, you can shut down the JupyterLab environment from the command terminal by issuing 'CTRL-C'.
+Shutting down JupyterLab means stopping running extensions, kernels (which are separate processes for running code), terminals, and the UI.
+Shut down JupyterLab directly from the UI by selecting __File > Shutdown__.
++
+[NOTE]
+====
+If you select __File > Logout__ in the UI or just close your browser, you can shut down the JupyterLab environment from the command terminal by issuing 'CTRL-C'.
 You will be prompted to confirm that you want to shut down the Jupyter server.
+====
 +
 [TIP]
-----
+====
 You can bypass confirmation by issuing 'CTRL-C' twice.
-----
+====
 
 
-=== Explore the JupyterLab interface
+=== Exploring the JupyterLab user interface
 
-==== User Interface Overview
+JupyterLab has many of the features of a traditional integrated development environment (IDE), but it focuses on interactive and exploratory computing.
 
-Here's a quick overview of the JupyterLab main user interface.
-At the top of the page is the menu bar, which currently contain the menus:
-*File Edit View Run Kernel Tabs Settings Help*
+The main JupyterLab interface consists of a main work area, a collapsible sidebar on the left, and a menu at the top.
 
-//image::jupyterlab_ui_001.png[JupyterLab user interface, scaledwidth="85%", align="center"]
-image::JupyterLab-first-Ui.png[JupyterLab main user interface, scaledwidth="85%", align="center"]
+image::jupyterlab_ui_001.png[JupyterLab UI Launcher, scaledwidth="85%", align="center"]
 
-Along the left-hand side are the browsing icons, which currently contain: +
-*File Browser* +
-*Running Terminals and Kernels* +
-*Table of Contents* +
-*Extension Manager* +
- +
+JupyterLab opens with the Launcher in a tab in the main work area.
+It is from the Launcher that you can launch a notebook, console, terminal window, and more.
 
-image::JupyterLab-File+Launcher-small.png[JupyterLab main user interface, scaledwidth="85%", align="center"]
-// JupyterLab-File+Launcher-Load-Name.png
-// JupyterLab-File+Launcher-Load.png
-// JupyterLab-File+Launcher-NewFolder.png
-// JupyterLab-File+Launcher-Open.png
-// JupyterLab-File+Launcher-small.png
-// JupyterLab-first-Ui.png
+From the sidebar, you access and manage files, managed running kernels, and so on.
 
-In the next section, you will explore an example notebook.
-
-==== Example Overview
-
-Next you will explore an example use case to show how you can use JupyterLab in your machine-learning project.
-We have choose a simple https://en.wikipedia.org/wiki/Logistic_regression[logistic regression,role=external,window=_blank]
-   example from the https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
-
-The example is a logistic regression that predicts which passengers survived the Titanic shipwreck.
-We hope you find this learning experiment useful.
-
-You can run this example on the Kaggle infrastructure, or on your own Jupyter installation.
-The goal here is to learn how to manipulate Jupyter notebooks and run experiments, preparing you to build your own.
-
-To load the example notebook, please enter this URL into your browser:
-https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning,role=external,window=_blank]
-
-Next, learn more about the notebook and the competition that inspired it here:
-https://www.kaggle.com/competitions/titanic[Titanic - Machine Learning from Disaster,role=external,window=_blank]
-
-Remember, you have explored this example notebook by using the
-https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
+Access additional functions through the top menu, such as managing running processes, kernels, and tabs.
 
 
-==== Next Steps with JupyterLab
+You can find more details about the JupyterLab UI in the https://jupyterlab.readthedocs.io/en/stable/user/interface.html#[documentation].
 
-At this point, you should have enough guidance to begin experiments with Jupyter.
-We encourage you to find other examples and play with those too.
-At some point, you may want to dive into the code and perhaps even enhance the model.
 
-When you are ready, you can find more examples at:
-https://coderefinery.github.io/jupyter/examples/[Examples of Jupyter features,role=external,window=_blank]
+//=== Explore JupyterLab with Kaggle
+//
+//Next you will explore an example use case to show how you can use JupyterLab in your machine-learning project.
+//We have choose a simple https://en.wikipedia.org/wiki/Logistic_regression[logistic regression,role=external,window=_blank]
+//   example from the https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
+//
+//The example is a logistic regression that predicts which passengers survived the Titanic shipwreck.
+//We hope you find this learning experiment useful.
+//
+//You can run this example on the Kaggle infrastructure, or on your own Jupyter installation.
+//The goal here is to learn how to manipulate Jupyter notebooks and run experiments, preparing you to build your own.
+//
+//To load the example notebook, please enter this URL into your browser:
+//https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning,role=external,window=_blank]
+//
+//Next, learn more about the notebook and the competition that inspired it here:
+//https://www.kaggle.com/competitions/titanic[Titanic - Machine Learning from Disaster,role=external,window=_blank]
+//
+//Remember, you have explored this example notebook by using the
+//https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
 
-Also, here's a more thorough introduction to Jupyter and JupyterLab:
-https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab,role=external,window=_blank]
 
-// TS: Take a look at https://coderefinery.github.io/jupyter/examples/ for some examples.  Let's keep the example here simple.  We're really focused on just getting JupyterLab with SLE into the mind of the reader for this document.
+
 
 
 == Summary
