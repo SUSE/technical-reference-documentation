@@ -12,7 +12,7 @@ include::./common_docinfo_vars.adoc[]
 :author1: Brian Fromme, Technical Alliance Manager, SUSE
 :author2: Terry Smith, Partner Solutions Director, SUSE
 // Deprecated variables & attributes - do not use
-//:subtitle: Fujitsu Machine Learning with SUSE Linux Enterprise and Rancher
+//:subtitle: Machine Learning with SUSE Linux Enterprise and Rancher
 //:revdate: August, 2022
 //:revnumber: 20220804
 //:toc2:
@@ -484,7 +484,7 @@ This fills your terminal window with some helpful information, like the followin
 [C 2022-08-22 13:14:26.398 ServerApp] 
     
     To access the server, open this file in a browser:
-        file:///home/terry/.local/share/jupyter/runtime/jpserver-31811-open.html
+        file:///home/suse/.local/share/jupyter/runtime/jpserver-31811-open.html
     Or copy and paste one of these URLs:
         http://localhost:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
      or http://127.0.0.1:8888/lab?token=4baab78a6959bbc8b9992572b8faf7d2416741c2d00768f7
@@ -534,36 +534,117 @@ You can bypass confirmation by issuing 'CTRL-C' twice.
 
 === Explore the JupyterLab interface
 
-image::jupyterlab_ui_001.png[JupyterLab user interface, scaledwidth="85%", align="center"]
+==== User Interface Overview
 
-// TS (20220822): Brian, would you be able to write a quick overview of the parts of the JupyterLab UI?
+Here's a quick overview of the JupyterLab main user interface.
+At the top of the page is the menu bar, which currently contain the menus:
+*File Edit View Run Kernel Tabs Settings Help*
 
-Please do experiment with the Jupyter user interface, if you haven't used it before.
-Once you are ready, we will experiment with a pre-built Jupyter notebook.
+//image::jupyterlab_ui_001.png[JupyterLab user interface, scaledwidth="85%", align="center"]
+image::JupyterLab-first-Ui.png[JupyterLab main user interface, scaledwidth="85%", align="center"]
+
+Along the left-hand side are the browsing icons, which currently contain: +
+*File Browser* +
+*Running Terminals and Kernels* +
+*Table of Contents* +
+*Extension Manager* +
+ +
+
+image::JupyterLab-File+Launcher-small.png[JupyterLab main user interface, scaledwidth="85%", align="center"]
+// JupyterLab-File+Launcher-Load-Name.png
+// JupyterLab-File+Launcher-Load.png
+// JupyterLab-File+Launcher-NewFolder.png
+// JupyterLab-File+Launcher-Open.png
+// JupyterLab-File+Launcher-small.png
+// JupyterLab-first-Ui.png
+
+In the next section, we will explore an example notebook and then load that notebook into your own environment.
+You will make use of the JupyterLab *File Browser* to load the example.
+
+. Create JupyterLab folder.
++
+* Click on the __File Browser__ icon in the JupyterLab main user interface.
+* Next, click on __New Folder__ icon, which is the second icon to the right.
+* A new folder item will appear in the list, with the text:  __Untitled Folder__
+* Change this text to:  __notebook__
++
+This __notebook__ folder is a convenient place to store your uploaded notebooks.
++
+[TIP]
+----
+Choose any folder name, or put notebooks elsewhere in your folder hierarchy.
+----
+
+image::JupyterLab-File+Launcher-NewFolder.png[JupyterLab main user interface, scaledwidth="85%", align="center"]
 
 
-
-== 
-
-
+==== Example Overview
 
 Next we will explore an example use case to show how you can use JupyterLab in your machine-learning project.
 We have choose a simple https://en.wikipedia.org/wiki/Logistic_regression[logistic regression,role=external,window=_blank]
    example from the https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
 
-
 The example is a logistic regression that predicts which passengers survived the Titanic shipwreck.
 We hope you find this learning experiment useful.
 
-Next we will run this example on the Kaggle infrastructure, not your own Jupyter installation.
-We choose to run this example from the Kaggle website to focus on learning over setup.
-The goal is to learn how to manipulate Jupyter notebooks and run experiments, preparing you to build your own.
+You can run this example on the Kaggle infrastructure, or on your own Jupyter installation.
+The goal here is to learn how to manipulate Jupyter notebooks and run experiments, preparing you to build your own.
 
 To load the example notebook, please enter this URL into your browser:
 https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning,role=external,window=_blank]
 
 Next, learn more about the notebook and the competition that inspired it here:
 https://www.kaggle.com/competitions/titanic[Titanic - Machine Learning from Disaster,role=external,window=_blank]
+
+So far, we have explored this example notebook by using the
+https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
+Now let's load this same example into your own environment.
+
+==== Load the Titanic Notebook into your JupyterLab interface
+
+We will use the __curl__ command to download the Titanic example directly to your *notebook* folder.
+
+. Download the Titanic Example
++
+[source, bash]
+----
+cd ~/myproj/notebooks
+curl URL-OF-TITANIC
+----
++
+
+. Open the Titanic Notebook in JupyterLab.
++
+* Click on the __File Browser__ icon in the JupyterLab main user interface.
+* Next, click on __notebook__ folder.  You should see the notebook named: __titanic-machine-learning.ipynb__
+* Double-click on this notebook to open it.
+
+image::JupyterLab-File+Launcher-Load.png[JupyterLab main user interface, scaledwidth="85%", align="center"]
+
+image::JupyterLab-File+Launcher-Open.png[JupyterLab main user interface, scaledwidth="85%", align="center"]
+
++
+[TIP]
+----
+You can also right-mouse on an item in JupyterLab to see possible operations.
+----
+
+Now that you have the notebook open, you would begin editing with any changes.
+You can also run the notebook, but this example depends on data.
+
+NOTE:  Ugh, loading the data is a drag. Let's discuss this.
+
+. Save your work
++
+* From the notebook view, click on the __Save__ icon.
++
+[TIP]
+----
+If you hoover on the Save icon, you will see: Save and create checkpoint (Ctrl+S)
+----
+
+
+==== Next Steps with JupyterLab
 
 At this point, you should have enough guidance to begin experiments with Jupyter.
 We encourage you to find other examples and play with those too.
@@ -575,11 +656,7 @@ https://coderefinery.github.io/jupyter/examples/[Examples of Jupyter features,ro
 Also, here's a more thorough introduction to Jupyter and JupyterLab:
 https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab,role=external,window=_blank]
 
-
 // TS: Take a look at https://coderefinery.github.io/jupyter/examples/ for some examples.  Let's keep the example here simple.  We're really focused on just getting JupyterLab with SLE into the mind of the reader for this document.
-
-
-
 
 
 == Summary
@@ -596,8 +673,8 @@ We will build up to an architecture and explanation for how to employ machine le
 
 This guide simply showed you how Jupyter notebooks can easily be deployed and we hope you find value in that tool.
 
-SUSE collaborates with Fujitsu to bring you reliable hardware and software infrastructure for the enterprise modernization.
-You can count on Fujitsu to deliver a complete solution based on SUSE Linux Enterprise and Rancher software.
+SUSE collaborates with hardware vendors to bring you reliable hardware and software infrastructure for the enterprise modernization.
+You can count on our partnerships to deliver a complete solution based on SUSE Linux Enterprise and Rancher software.
 
 
 
