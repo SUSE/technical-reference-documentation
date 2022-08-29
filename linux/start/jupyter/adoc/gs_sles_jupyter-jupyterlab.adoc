@@ -29,7 +29,7 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
-Introducing Machine Learning (ML) into a company strategy is exciting.
+Introducing Machine learning (ML) into a company strategy is exciting.
 ML can yield many benefits, but implementation can sometimes be a challenge.
 A successful ML strategy must be comprehensive, supporting the entire process, from development to production.
 
@@ -107,20 +107,20 @@ Developers need a way to create isolated environments where they can install the
 
 === Addressing Python versions
 
-Your application may have a hard dependency for a specific version of the Python interpeter itself.
+Your application may have a hard dependency for a specific version of the Python interpreter itself.
 
 You can install multiple versions of Python on your system.
 But care must be taken, as doing so incorrectly could break system tools.
 
 To mitigate this risk, SUSE names the Python binaries explicitly.
-For example, {productname} includes {defaultpython} and the default Python interpeter is the file, '/usr/bin/{defaultpythonbin}'.
+For example, {productname} includes {defaultpython} and the default Python interpreter is the file, '/usr/bin/{defaultpythonbin}'.
 This file is symbolically linked as 'python3' to simplify usage and offer consistency.
 So, when you issue the command `python3 --version`, this is actually executing, `{defaultpythonbin} --version`.
 If you install another version of Python from the SUSE repositories, say Python 3.10, the interpreter will be installed as '/usr/bin/python3.10'.
 
 With this naming convention, you can install and maintain multiple versions of Python system-wide.
 You can also choose to install Python elsewhere on the system, including in your user home directory.
-In either case, you need to explictly call the version of Python.
+In either case, you need to explicitly call the version of Python.
 
 Tools, like https://github.com/pyenv/pyenv[pyenv], have been developed to help simplify the management of multiple Python versions, but this is out of scope for this document.
 
@@ -175,7 +175,7 @@ deactivate
 +
 When you are done working in this virtual environment, you can use the `deactivate` command to reset all the environment changes (including your prompt).
 This does not delete the virtual environment.
-To reactivte it, simply source the activte script again.
+To reactivate it, simply source the activate script again.
 
 You can use the Python venv module to create as many virtual environments as you need, each in its own working directory.
 
@@ -314,7 +314,7 @@ Because some additional packages are required by those requested, pip automatica
 
 === Creating replicable experiments
 
-Replicabality is key to many disciplines, but particularly in the sciences.
+Repeatability is key to many disciplines, but particularly in the sciences.
 Ensuring that your Python environment can be recreated the same way with the same packages and the same versions of those packages can be a challenge.
 
 Fortunately, with the `pip freeze` command, you can generate a package requirements file, containing a list of the packages and versions that should be installed.
@@ -329,14 +329,14 @@ Create a requirements file for your Python virtual environment by following thes
 +
 [source, bash]
 ----
-pip freeze > myproj-reqs.txt
+pip freeze > requirements.txt
 ----
 
 . Take a look at the requirements file.
 +
 [source, bash]
 ----
-cat myproj-reqs.txt
+cat requirements.txt
 ----
 +
 [source, bash]
@@ -354,7 +354,7 @@ six==1.16.0
 ----
 
 
-Once you have a requirements file, you can share it with another developer or use it yourself to make sure a new environment contains all the same pacakges.
+Once you have a requirements file, you can share it with another developer or use it yourself to make sure a new environment contains all the same packages.
 
 . If you are in an active virtual environment, deactivate it and leave that working directory.
 +
@@ -390,7 +390,7 @@ pip install --upgrade pip
 +
 [source, bash]
 ----
-pip install -r ../myproj/myproj-req.txt
+pip install -r ../myproj/requirements.txt
 ----
 
 . Verify correct packages were installed.
@@ -458,6 +458,18 @@ In your active virtual environment, issue the command:
 ----
 pip install jupyterlab
 ----
+
+. Update your requirements file so JupyterLab will be included.
++
+[source, bash]
+----
+pip freeze > requirements.txt
+----
++
+[TIP]
+====
+Update your requirements file each time you install packages.
+====
 
 . Launch JupyterLab.
 //
@@ -533,11 +545,19 @@ Shut down JupyterLab directly from the UI by selecting __Shutdown__ under the __
 If you select __Logout__ from the __File__ menu or just close your browser, the JupyterLab environment continues to run.
 You can shut it down from the command terminal by issuing 'CTRL-C'.
 You will be prompted to confirm that you want to shut down the Jupyter server.
+Bypass confirmation by issuing 'CTRL-C' twice.
 ====
+
+. Update your requirements file.
++
+[source, bash]
+----
+pip freeze > requirements.txt
+----
 +
 [TIP]
 ====
-You can bypass confirmation by issuing 'CTRL-C' twice.
+You should update your project requirements file each time you install new packages.
 ====
 
 
@@ -577,12 +597,12 @@ image::jupyterlab-ui-notebook-001.png[Empty Jupyter notebook, scaledwidth="85%",
 from sys import version
 ----
 +
-Press CTRL-ENTER at the end of the line to execute it.
+Press 'CTRL-ENTER' at the end of the line to execute it.
 +
 [TIP]
 ====
-You can enter multiple lines by just pressing ENTER at the end of each line.
-The code will not execute until you press CTRL-ENTER.
+You can enter multiple lines by just pressing 'ENTER' at the end of each line.
+The code will not execute until you press 'CTRL-ENTER'.
 ====
 
 . In the second command cell, enter:
@@ -604,58 +624,49 @@ Enter a name when prompted, such as 'mypythonversion.ipynb'.
 . Reopen your notebook by double-clicking 'mypythonversion.ipynb' in the sidebar file browser.
 
 
-You can find more details about the JupyterLab UI in the https://jupyterlab.readthedocs.io/en/stable/user/interface.html#[documentation].
+=== Collaborating with JupyterLab
 
+The fast pace of ML development is largely due to collaboration between individuals, teams, and the wider community.
+JupyterLab provides a great environment for experimentation, and the notebook format provides an easy mechanism for sharing your code with others.
+But a Jupyter notebook by itself may not be sufficient, as your colleague's development environment may be different.
+
+When you are ready to share your work, you should include your:
+
+* notebook
+* data
+* requirements file
+
+With these three items, your colleague can recreate your development environment and run your code against your data.
+
+
+Take your next steps with JupyterLab with the following resources:
+
+* https://jupyterlab.readthedocs.io/en/stable/[JupyterLab documentation]
+
+* https://ipython.readthedocs.io/en/stable/interactive/index.html[IPython tutorial]
+
+* https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab]
+
+* https://github.com/jupyter/jupyter/wiki[Jupyter wiki] - a curated collection of Jupyter/IPython notebooks
+
+* https://www.kaggle.com/[Kaggle] - a data science community with notebooks, datasets, training, and competitions
+
+* https://coderefinery.github.io/jupyter/sharing/#different-ways-to-share-a-notebook[Different ways to share a notebook]
 
 
 
 == Summary
 
-Machine Learning is a fascinating and highly-successful technology that companies are putting into practice.
+Whether you are just getting started on your machine learning journey or already looking to scale to production, start from a capable, adaptable, and supported foundation with SUSE Linux Enterprise.
 
-The many advantages of SUSE Linux Enterprise operating systems and Rancher container management are a logical place to develop and deploy ML applications.
-This guide is meant to help you to begin your journey into machine learning on SUSE software.
-Other guides in this series will help you to utilize various ML toolkits and create containers that land on Rancher Kubernetes Engine.
-We will build up to an architecture and explanation for how to employ machine learning in your Edge and/or Digital Transformation projects.
+In this guide, you learned:
 
-This guide simply showed you how Jupyter notebooks can easily be deployed and we hope you find value in that tool.
-
-SUSE collaborates with hardware vendors to bring you reliable hardware and software infrastructure for the enterprise modernization.
-You can count on our partnerships to deliver a complete solution based on SUSE Linux Enterprise and Rancher software.
+* to isolate your Python projects in virtual environments.
+* to manage Python packages.
+* to simplify replicability and sharing.
+* to deploy JupyterLab for a self-documenting, interactive development environment.
 
 
-
-== Additional resources
-
-Learn more about the capabilities of Jupyter with these additional references.
-
-// an unordred lists for references
-* https://jupyter.org/[Project Jupyter | Home]
-* https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab]
-* https://coderefinery.github.io/jupyter/examples/[Examples of Jupyter features]
-* https://www.kaggle.com[Kaggle]
-* https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning]
-
-//=== Explore JupyterLab with Kaggle
-//
-//Next you will explore an example use case to show how you can use JupyterLab in your machine-learning project.
-//We have choose a simple https://en.wikipedia.org/wiki/Logistic_regression[logistic regression,role=external,window=_blank]
-//   example from the https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
-//
-//The example is a logistic regression that predicts which passengers survived the Titanic shipwreck.
-//We hope you find this learning experiment useful.
-//
-//You can run this example on the Kaggle infrastructure, or on your own Jupyter installation.
-//The goal here is to learn how to manipulate Jupyter notebooks and run experiments, preparing you to build your own.
-//
-//To load the example notebook, please enter this URL into your browser:
-//https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning,role=external,window=_blank]
-//
-//Next, learn more about the notebook and the competition that inspired it here:
-//https://www.kaggle.com/competitions/titanic[Titanic - Machine Learning from Disaster,role=external,window=_blank]
-//
-//Remember, you have explored this example notebook by using the
-//https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
 
 ++++
 <?pdfpagebreak?>
