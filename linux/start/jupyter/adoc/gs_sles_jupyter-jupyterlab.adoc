@@ -554,57 +554,71 @@ You can bypass confirmation by issuing 'CTRL-C' twice.
 ====
 
 
-=== Exploring the JupyterLab user interface
+=== Exploring JupyterLab
 
 JupyterLab has many of the features of a traditional integrated development environment (IDE), but it focuses on interactive and exploratory computing.
 
-The main JupyterLab interface consists of a main work area, a collapsible sidebar on the left, and a menu at the top.
+The main JupyterLab interface consists of a menu at the top, a collapsible sidebar on the left, and a main work area in the middle.
 
 image::jupyterlab_ui_001.png[JupyterLab UI Launcher, scaledwidth="85%", align="center"]
 
-JupyterLab opens with the Launcher in a tab in the main work area.
-It is from the Launcher that you can launch a notebook, console, terminal window, and more.
+The familiar menu bar provides access to a variety of functions, like loading and saving files, using edit functions, modify the interface view and other settings, and access help.
+The menu also includes functions specific to working in an interactive computing environment, such as running code and managing compute kernels.
 
-From the sidebar, you access and manage files, managed running kernels, and so on.
+The sidebar offers a file browser and some additional controls and features.
 
-Access additional functions through the top menu, such as managing running processes, kernels, and tabs.
+JupyterLab opens with the main work area filled with the __Launcher__ tab.
+From the Launcher that you can start a notebook, console, terminal window, and more.
+
+Try creating a notebook.
+
+. Start a notebook by clicking __Python 3__ in the __Notebook__ area of the __Launcher__.
++
+image::jupyterlab-ui-notebook-001.png[Empty Jupyter notebook, scaledwidth="85%", align="center"]
+
+. In the first command cell of your notebook, enter:
++
+[source, python]
+----
+from sys import version
+----
++
+Press CTRL-ENTER at the end of the line to execute it.
++
+[TIP]
+====
+You can enter multiple lines by just pressing ENTER at the end of each line.
+The code will not execute until you press CTRL-ENTER.
+====
+
+. In the second command cell, enter:
++
+[source, python]
+----
+print(version)
+----
++
+image::jupyterlab-ui-notebook-002.png[Jupyter notebook with two command examples, scaledwidth="85%", align="center"]
+
+. Save your notebook by selecting __File__, then __Save Notebook As...__.
+//
++
+Enter a name when prompted, such as 'mypythonversion.ipynb'.
+
+. At this point, you can close your notebook by clicking the 'X' in the notebook tab.
+
+. Reopen your notebook by finding it in the sidebar file browser and double-clicking it.
 
 
 You can find more details about the JupyterLab UI in the https://jupyterlab.readthedocs.io/en/stable/user/interface.html#[documentation].
-
-
-//=== Explore JupyterLab with Kaggle
-//
-//Next you will explore an example use case to show how you can use JupyterLab in your machine-learning project.
-//We have choose a simple https://en.wikipedia.org/wiki/Logistic_regression[logistic regression,role=external,window=_blank]
-//   example from the https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
-//
-//The example is a logistic regression that predicts which passengers survived the Titanic shipwreck.
-//We hope you find this learning experiment useful.
-//
-//You can run this example on the Kaggle infrastructure, or on your own Jupyter installation.
-//The goal here is to learn how to manipulate Jupyter notebooks and run experiments, preparing you to build your own.
-//
-//To load the example notebook, please enter this URL into your browser:
-//https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning,role=external,window=_blank]
-//
-//Next, learn more about the notebook and the competition that inspired it here:
-//https://www.kaggle.com/competitions/titanic[Titanic - Machine Learning from Disaster,role=external,window=_blank]
-//
-//Remember, you have explored this example notebook by using the
-//https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
-
 
 
 
 
 == Summary
 
-//Summarize the motivation
-//Summarize what was demonstrated
-//Hint at other capabilities.
-
 Machine Learning is a fascinating and highly-successful technology that companies are putting into practice.
+
 The many advantages of SUSE Linux Enterprise operating systems and Rancher container management are a logical place to develop and deploy ML applications.
 This guide is meant to help you to begin your journey into machine learning on SUSE software.
 Other guides in this series will help you to utilize various ML toolkits and create containers that land on Rancher Kubernetes Engine.
@@ -628,6 +642,26 @@ Learn more about the capabilities of Jupyter with these additional references.
 * https://www.kaggle.com[Kaggle]
 * https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning]
 
+//=== Explore JupyterLab with Kaggle
+//
+//Next you will explore an example use case to show how you can use JupyterLab in your machine-learning project.
+//We have choose a simple https://en.wikipedia.org/wiki/Logistic_regression[logistic regression,role=external,window=_blank]
+//   example from the https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
+//
+//The example is a logistic regression that predicts which passengers survived the Titanic shipwreck.
+//We hope you find this learning experiment useful.
+//
+//You can run this example on the Kaggle infrastructure, or on your own Jupyter installation.
+//The goal here is to learn how to manipulate Jupyter notebooks and run experiments, preparing you to build your own.
+//
+//To load the example notebook, please enter this URL into your browser:
+//https://www.kaggle.com/code/raman2000/titanic-machine-learning[Titanic - Machine Learning,role=external,window=_blank]
+//
+//Next, learn more about the notebook and the competition that inspired it here:
+//https://www.kaggle.com/competitions/titanic[Titanic - Machine Learning from Disaster,role=external,window=_blank]
+//
+//Remember, you have explored this example notebook by using the
+//https://www.kaggle.com[Kaggle,role=external,window=_blank] competition website.
 
 ++++
 <?pdfpagebreak?>
