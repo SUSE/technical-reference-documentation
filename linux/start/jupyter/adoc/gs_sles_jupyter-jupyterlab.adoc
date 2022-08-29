@@ -428,41 +428,25 @@ https://jupyter.org/[Project Jupyter] was born out of the https://ipython.org/[I
 
 Under the Jupyter umbrella are:
 
-* Jupyter Notebook
-+
-//
-The original web application allows data scientists to create and share computational documents, called notebooks.
+* Jupyter Notebook: the original web application that allows data scientists to create and share computational documents, called notebooks.
 
-* JupyterLab
-+
-//
-The latest generation of Jupyter Notebook is a modular design that allows users to customize the interface to support workflows in data science, scientific computing, computational journalism, and machine learning.
+* JupyterLab: the latest generation of Jupyter Notebook with a modular design to allow users to customize the interface to support workflows in data science, scientific computing, computational journalism, and machine learning.
 
-* JupyterHub
-+
-//
-The multi-user version of Jupyter Notebook enables companies, classrooms, and research labs to deliver computational environments and resources to users while managing them centrally.
+* JupyterHub: the multi-user version of Jupyter Notebook that enables companies, classrooms, and research labs to deliver computational environments and resources to users while managing them centrally.
 
-* Voilà
-+
-//
-Transforms Jupyter notebooks into secure, stand-alone web applications.
+* Voilà: a tool that transforms Jupyter notebooks into secure, stand-alone web applications.
 
 
 [NOTE]
 ====
-The Jupyter team maintains the IPython project, and includes the IPython kernel (IPyKernel) by default to enable interactive Python in JupyterLab.
-A variety of community maintained kernels are available to support other programming languages, such as https://irkernel.github.io/[R], https://github.com/JuliaLang/IJulia.jl[Julia], and https://github.com/jupyter/jupyter/wiki/Jupyter-kernels[many others].
+The Jupyter team maintains the IPython project and includes the IPython kernel (IPyKernel) by default to enable interactive Python in JupyterLab.
+A variety of community maintained kernels are available to enable use of other programming languages, such as https://irkernel.github.io/[R], https://github.com/JuliaLang/IJulia.jl[Julia], and https://github.com/jupyter/jupyter/wiki/Jupyter-kernels[many others].
 ====
-
-
-Next, you will learn how to install and access JupyterLab.
-
 
 
 === Getting JupyterLab up and running
 
-JupyterLab is a web application, so you will need a web browser to access it.
+JupyterLab is a web application, so you need a web browser to access it.
 
 . Install JupyterLab.
 //
@@ -533,18 +517,21 @@ where USER is your username on the remote host and REMOTE-IP is its IP address o
 
 . Launch JupyterLab.
 
-. Open your local web browser to the URL specified in your command terminal.
+. Open your local web browser to the URL (with your access token) specified in the command terminal.
 ====
 
 . Shut down JupyterLab.
 //
 +
-Shutting down JupyterLab means stopping running extensions, kernels (which are separate processes for running code), terminals, and the UI.
-Shut down JupyterLab directly from the UI by selecting __File > Shutdown__.
+Shutting down JupyterLab means stopping running extensions, kernels, terminals, and the UI.
+//
++
+Shut down JupyterLab directly from the UI by selecting __Shutdown__ under the __File__ menu.
 +
 [NOTE]
 ====
-If you select __File > Logout__ in the UI or just close your browser, you can shut down the JupyterLab environment from the command terminal by issuing 'CTRL-C'.
+If you select __Logout__ from the __File__ menu or just close your browser, the JupyterLab environment continues to run.
+You can shut it down from the command terminal by issuing 'CTRL-C'.
 You will be prompted to confirm that you want to shut down the Jupyter server.
 ====
 +
@@ -562,13 +549,20 @@ The main JupyterLab interface consists of a menu at the top, a collapsible sideb
 
 image::jupyterlab_ui_001.png[JupyterLab UI Launcher, scaledwidth="85%", align="center"]
 
-The familiar menu bar provides access to a variety of functions, like loading and saving files, using edit functions, modify the interface view and other settings, and access help.
-The menu also includes functions specific to working in an interactive computing environment, such as running code and managing compute kernels.
+The menu provides access to some familiar functions, like file management, editing functions, UI view and settings, and help.
+It also includes functions specific to working in an interactive computing environment, like running code and managing compute kernels.
 
-The sidebar offers a file browser and some additional controls and features.
+The sidebar offers a file browser, process controls, extension management, and more.
 
-JupyterLab opens with the main work area filled with the __Launcher__ tab.
+JupyterLab opens with the main work area displaying the __Launcher__ tab.
 From the Launcher that you can start a notebook, console, terminal window, and more.
+These appear as additional tab in the main work area.
+
+[TIP]
+====
+If you accidentally close the __Launcher__ tab, you can open a new one from the __File__ menu.
+====
+
 
 Try creating a notebook.
 
@@ -600,14 +594,14 @@ print(version)
 +
 image::jupyterlab-ui-notebook-002.png[Jupyter notebook with two command examples, scaledwidth="85%", align="center"]
 
-. Save your notebook by selecting __File__, then __Save Notebook As...__.
+. Save your notebook by selecting __Save Notebook As...__ from the __File__ menu.
 //
 +
 Enter a name when prompted, such as 'mypythonversion.ipynb'.
 
-. At this point, you can close your notebook by clicking the 'X' in the notebook tab.
+. Close your notebook by clicking the 'X' in the notebook tab.
 
-. Reopen your notebook by finding it in the sidebar file browser and double-clicking it.
+. Reopen your notebook by double-clicking 'mypythonversion.ipynb' in the sidebar file browser.
 
 
 You can find more details about the JupyterLab UI in the https://jupyterlab.readthedocs.io/en/stable/user/interface.html#[documentation].
