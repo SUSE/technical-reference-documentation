@@ -2,7 +2,7 @@
 include::./common_docinfo_vars.adoc[]
 
 // Variables & Attributes
-:title: JupyterLab with SUSE Linux Enterprise: Getting Started
+:title: Replicable Python Environments with JupyterLab and SUSE Linux Enterprise: Getting Started
 :productname: SLES 15 SP4
 :productver: 15 SP4
 :defaultpython: Python 3.6
@@ -12,7 +12,6 @@ include::./common_docinfo_vars.adoc[]
 :author1: Brian Fromme, Technical Alliance Manager, SUSE
 :author2: Terry Smith, Partner Solutions Director, SUSE
 // Deprecated variables & attributes - do not use
-//:subtitle: Machine Learning with SUSE Linux Enterprise and Rancher
 //:revdate: August, 2022
 //:revnumber: 20220804
 //:toc2:
@@ -29,30 +28,29 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
-Introducing Machine learning (ML) into a company strategy is exciting.
-ML can yield many benefits, but implementation can sometimes be a challenge.
-A successful ML strategy must be comprehensive, supporting the entire process, from development to production.
+The https://www.python.org/[Python] programming ecosystem is popular among many developers for its simplicity, extensibility, cross-platform availability, and its large open source community of active developers and users.
+Developers in many domains benefit from and contribute the large and growing Python ecosystem of open source tools and libraries.
+This has resulted in a rapid state of continuous development for the language as well as for the domains where Python is used.
 
-ML research is highly collaborative and largely open source, resulting in a rapid state of continuous development.
-ML developers often need to leverage leading edge technologies (hardware and software) and to be able to share ideas, experiments, and even code and data to accelerate innovation.
-And scaling ML from a research project to enterprise production is no easy task, as IT and operations teams must securely manage implementation across a myriad of modern infrastructure options.
+The modern developer leverages this wealth of libraries and frameworks.
+This can result in highly complex development environments that are difficult to replicate and share.
+Fortunately, the modern developer has many solutions to this problem.
 
-This guide helps you take a first step to setting up a modern ML development environment with https://www.suse.com/products/server/[SUSE Linux Enterprise], an operating system that is adaptable to any environment - optimized for performance, security, and reliability - on-premises, in the cloud, and at the edge.
-
-The focus of this guide is on the https://www.python.org/[Python] programming language ecosystem, which has become very popular among ML researchers and developers, and interactive, computational notebooks with JupyterLab by https://jupyter.org/[Project Jupyter].
 
 
 === Scope
 
-This guide provides a brief introduction to the following concepts, tools, and applications:
+This guide helps you take a first step to setting up replicable Python development environments with https://www.suse.com/products/server/[SUSE Linux Enterprise], an operating system that is adaptable to any environment - optimized for performance, security, and reliability.
+
+Specifically, you will get a brief introduction to the following concepts, tools, and applications:
 
 * https://www.python.org/[Python] in the {productname} environment.
 
 * The https://pypi.org/[Python Package Index (PyPI)] software repository.
 
-* Python package management with https://pip.pypa.io/en/stable/[pip].
-
 * Lightweight virtual environments with https://docs.python.org/3/library/venv.html[venv].
+
+* Python package management with https://pip.pypa.io/en/stable/[pip].
 
 * Interactive, computational notebooks with https://jupyter.org/[Project Jupyter]
 
@@ -100,7 +98,7 @@ PyPI is a public repository of software for the Python programming language.
 
 == Setting up your Python environment
 
-ML toolkits are in fast development and often have strict version dependencies.
+Some disciplines, like machine learning, are in fast development and often have strict version dependencies.
 Installing dependent packages to support one project may, thus, break another project.
 Developers need a way to create isolated environments where they can install the packages they need without impacting other projects or systems operations.
 
@@ -192,14 +190,9 @@ If you no longer need a virtual environment and want to delete it, simply:
 
 == Managing Python packages
 
-Python is not the only language or even the best language for all ML software development.
-But Python is popular among ML developers for its simplicity, extensibility, cross-platform availability, and its large open source community of active developers and users.
-ML developers benefit from and contribute to the large and growing Python ecosystem of open source tools and libraries.
-
-
-The {productname} repositories include many of these Python packages, tested against the included version of Python.
-These Python packages are perfect if the version matches what you need for your project and you can install them system-wide.
-
+The {productname} repositories include many of Python packages, tested against the included version of Python.
+These can be installed system-wide and are fine for many development projects.
+However, your project may require a different version of one of these packages or a package not included in the standard repositories.
 
 The https://pypi.org/[Python Package Index (PyPI)] is a public repository of open source licensed packages made available by a community of developers from around the world.
 There are many ways to install Python packages from PyPI, but the preferred method is with https://pypi.org/project/pip/[pip].
@@ -217,8 +210,8 @@ In this guide, you will use pip to install packages from PyPI into your active v
 
 [NOTE]
 ====
-Your Python virtual environment has its own 'pip' executable, installed in the 'bin' subdirectory of your working directory (e.g., '$HOME/myproj/bin').
-Use `pip --version` to see which 'pip' executable will be used.
+Your Python virtual environment has its own pip executable, installed in the 'bin' subdirectory of your working directory (e.g., '$HOME/myproj/bin').
+Use `pip --version` to see which pip executable will be used.
 ====
 
 
@@ -262,7 +255,7 @@ pip install --upgrade numpy
 +
 [NOTE]
 ====
-You may not actually get the "latest" version of a package.
+You may not actually get the _latest_ version of a package.
 Instead, you get the latest version that is compatible with your Python environment.
 ====
 
@@ -626,8 +619,7 @@ Enter a name when prompted, such as 'mypythonversion.ipynb'.
 
 === Collaborating with JupyterLab
 
-The fast pace of ML development is largely due to collaboration between individuals, teams, and the wider community.
-JupyterLab provides a great environment for experimentation, and the notebook format provides an easy mechanism for sharing your code with others.
+JupyterLab provides a great environment for interactive experimentation, and the notebook format provides an easy mechanism for sharing your code with others.
 But a Jupyter notebook by itself may not be sufficient, as your colleague's development environment may be different.
 
 When you are ready to share your work, you should include your:
@@ -657,14 +649,14 @@ Take your next steps with JupyterLab with the following resources:
 
 == Summary
 
-Whether you are just getting started on your machine learning journey or already looking to scale to production, start from a capable, adaptable, and supported foundation with SUSE Linux Enterprise.
+Whether you are just getting started on your Python development journey or already looking to scale to production, start from a capable, adaptable, and supported foundation with SUSE Linux Enterprise.
 
-In this guide, you learned:
+In this guide, you learned to:
 
-* to isolate your Python projects in virtual environments.
-* to manage Python packages.
-* to simplify replicability and sharing.
-* to deploy JupyterLab for a self-documenting, interactive development environment.
+* isolate your Python projects in virtual environments.
+* manage Python packages.
+* simplify replicability and sharing.
+* deploy JupyterLab for a self-documenting, interactive development environment.
 
 
 
