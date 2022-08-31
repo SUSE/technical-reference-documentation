@@ -2,7 +2,7 @@
 include::./common_docinfo_vars.adoc[]
 
 // Variables & Attributes
-:title: Replicable Python Environments with JupyterLab and SUSE Linux Enterprise: Getting Started
+:title: Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server: Getting Started
 :productname: SLES 15 SP4
 :productver: 15 SP4
 :defaultpython: Python 3.6
@@ -28,9 +28,10 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
-The https://www.python.org/[Python] programming ecosystem is popular among many developers for its simplicity, extensibility, cross-platform availability, and its large open source community of active developers and users.
-Developers in many domains benefit from and contribute the large and growing Python ecosystem of open source tools and libraries.
-This has resulted in a rapid state of continuous development for the language as well as for the domains where Python is used.
+The https://www.python.org/[Python] programming ecosystem is popular among many developers for its simplicity, extensibility, cross-platform availability, 
+and its large open source community of active developers and users.
+Developers in many domains benefit from and contribute to the large and growing Python ecosystem of open source tools and libraries.
+This has resulted in a rapid state of continuous development for the language and for the domains where Python is used.
 
 The modern developer leverages this wealth of libraries and frameworks.
 This can result in highly complex development environments that are difficult to replicate and share.
@@ -40,19 +41,20 @@ Fortunately, the modern developer has many solutions to this problem.
 
 === Scope
 
-This guide helps you take a first step to setting up replicable Python development environments with https://www.suse.com/products/server/[SUSE Linux Enterprise], an operating system that is adaptable to any environment - optimized for performance, security, and reliability.
+This guide helps you take a first step to setting up replicable Python development environments with https://www.suse.com/products/server/[SUSE Linux Enterprise], 
+an operating system that is adaptable to any environment - optimized for performance, security, and reliability.
 
 Specifically, you will get a brief introduction to the following concepts, tools, and applications:
 
 * https://www.python.org/[Python] in the {productname} environment.
 
-* The https://pypi.org/[Python Package Index (PyPI)] software repository.
+* The https://pypi.org/[Python Package Index (*PyPI*)] software repository.
 
-* Lightweight virtual environments with https://docs.python.org/3/library/venv.html[venv].
+* Lightweight virtual environments with https://docs.python.org/3/library/venv.html[*venv*].
 
-* Python package management with https://pip.pypa.io/en/stable/[pip].
+* Python package management with https://pip.pypa.io/en/stable/[*pip*].
 
-* Interactive, computational notebooks with https://jupyter.org/[Project Jupyter]
+* Interactive, computational notebooks with https://jupyter.org/[*Project Jupyter*]
 
 
 [NOTE]
@@ -63,8 +65,9 @@ Many of the steps herein may be followed with little or no modification on the c
 
 === Audience
 
-This guide is intended for researchers, engineers, developers, operations teams, and others interested in implementing replicable, ML development environments, featuring Python and computational documents with JupyterLab.
-The reader should have basic Linux command-line skills.
+This guide is intended for researchers, engineers, developers, operations teams, and others interested in implementing replicable, ML development environments, 
+featuring Python and computational documents with JupyterLab.
+The reader should have basic Linux command line skills.
 
 
 == Prerequisites
@@ -73,9 +76,9 @@ For this guide, you need:
 
 * https://www.suse.com/products/server/[SUSE Linux Enterprise Server] {productver} or the corresponding version of https://www.opensuse.org/[openSUSE] Leap.
 
-** If you do not already have SLES installed, instructions can be found here:  https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
+** If you do not already have SUSE Linux Enterprise Server installed, instructions can be found here: https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
 
-** Make sure your SLES installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
+** Make sure your SUSE Linux Enterprise Server installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python 3
 +
@@ -99,7 +102,7 @@ PyPI is a public repository of software for the Python programming language.
 == Setting up your Python environment
 
 Some disciplines, like machine learning, are in fast development and often have strict version dependencies.
-Installing dependent packages to support one project may, thus, break another project.
+Installing dependent packages to support one project may thus break another project.
 Developers need a way to create isolated environments where they can install the packages they need without impacting other projects or systems operations.
 
 
@@ -120,15 +123,15 @@ With this naming convention, you can install and maintain multiple versions of P
 You can also choose to install Python elsewhere on the system, including in your user home directory.
 In either case, you need to explicitly call the version of Python.
 
-Tools, like https://github.com/pyenv/pyenv[pyenv], have been developed to help simplify the management of multiple Python versions, but this is out of scope for this document.
+Tools like https://github.com/pyenv/pyenv[pyenv] have been developed to help simplify the management of multiple Python versions, but this is out of scope for this document.
 
 For this guide, the default {defaultpython} is sufficient.
 
 
 === Creating a Python virtual environment
 
-The https://docs.python.org/3/tutorial/venv.html[Python venv module] provides a mechanism for creating lightweight "virtual environments" and gives us a tool for isolating software dependencies.
-See the https://peps.python.org/pep-0405/[Python Enhancement Proposal 405 - Python Virtual Environments] for more details on the venv module.
+The https://docs.python.org/3/tutorial/venv.html[Python *venv* module] provides a mechanism for creating lightweight "virtual environments" and gives us a tool for isolating software dependencies.
+See the https://peps.python.org/pep-0405/[Python Enhancement Proposal 405 - Python Virtual Environments] for more details on the *venv* module.
 
 Creating a Python virtual environment is easy.
 Run the following commands as your user (root access is not required):
@@ -156,7 +159,7 @@ cd $HOME/myproj
 source ./bin/activate
 ----
 +
-The 'activate' script cannot be run on its own and must be "sourced" in order to update current environment variables in support of the isolated environment.
+The 'activate' script cannot be run on its own and must be "sourced" to update current environment variables in support of the isolated environment.
 +
 [TIP]
 ====
@@ -175,15 +178,15 @@ When you are done working in this virtual environment, you can use the `deactiva
 This does not delete the virtual environment.
 To reactivate it, simply source the activate script again.
 
-You can use the Python venv module to create as many virtual environments as you need, each in its own working directory.
+You can use the Python *venv* module to create as many virtual environments as you need, each in its own working directory.
 
 
 [NOTE]
 ====
 If you no longer need a virtual environment and want to delete it, simply:
 
-. Deactivate the environment.
-. Delete its working directory.
+. deactivate the environment.
+. delete its working directory.
 ====
 
 
@@ -195,29 +198,29 @@ These can be installed system-wide and are fine for many development projects.
 However, your project may require a different version of one of these packages or a package not included in the standard repositories.
 
 The https://pypi.org/[Python Package Index (PyPI)] is a public repository of open source licensed packages made available by a community of developers from around the world.
-There are many ways to install Python packages from PyPI, but the preferred method is with https://pypi.org/project/pip/[pip].
+There are many ways to install Python packages from PyPI, but the preferred method is with https://pypi.org/project/pip/[*pip*].
 
-pip is a powerful tool for managing Python packages.
-By default, pip installs packages from PyPI, but it can also install from a git repository or from local distribution files.
+*pip* is a powerful tool for managing Python packages.
+By default, *pip* installs packages from PyPI, but it can also install from a Git repository or from local distribution files.
 
 Many Python packages are dependent on other packages.
 But manually identifying and installing all dependencies can be grueling, especially when each package may have additional dependencies of its own.
-Fortunately, pip automatically performs dependency resolution to ensure installation of all required packages and alerts you if resolution fails.
-See the https://pip.pypa.io/en/stable/[pip documentation] for details.
+Fortunately, *pip* automatically performs dependency resolution to ensure installation of all required packages and alerts you if resolution fails.
+See the https://pip.pypa.io/en/stable/[*pip* documentation] for details.
 
-In this guide, you will use pip to install packages from PyPI into your active virtual environment.
+Following the instructions of this guide, you will use *pip* to install packages from PyPI into your active virtual environment.
 
 
 [NOTE]
 ====
-Your Python virtual environment has its own pip executable, installed in the 'bin' subdirectory of your working directory (e.g., '$HOME/myproj/bin').
-Use `pip --version` to see which pip executable will be used.
+Your Python virtual environment has its own *pip* executable, installed in the 'bin' subdirectory of your working directory (for example '$HOME/myproj/bin').
+Use `pip --version` to see which *pip* executable will be used.
 ====
 
 
 === Performing basic package management
 
-With the following commands, you will perform some basic operations with the pip package installer.
+With the following commands, you will perform some basic operations with the *pip* package installer.
 
 . Activate your virtual environment.
 +
@@ -227,14 +230,14 @@ cd $HOME/myproj
 source ./bin/activate
 ----
 
-. Upgrade pip itself to the latest version.
+. Upgrade *pip* itself to the latest version.
 +
 [source, bash]
 ----
 pip install --upgrade pip
 ----
 
-. Install a specific version of the https://pypi.org/project/numpy/1.18.5/[numpy] package.
+. Install a specific version of the https://pypi.org/project/numpy/1.18.5/[`numpy`] package.
 +
 [source, bash]
 ----
@@ -246,7 +249,7 @@ pip install numpy==1.18.5
 Be sure to use two equal signs ('==') between the package name and the desired version.
 ====
 
-. Upgrade to the latest compatible version of numpy.
+. Upgrade to the latest compatible version of `numpy`.
 +
 [source, bash]
 ----
@@ -259,14 +262,14 @@ You may not actually get the _latest_ version of a package.
 Instead, you get the latest version that is compatible with your Python environment.
 ====
 
-. Uninstall numpy.
+. Uninstall `numpy`.
 +
 [source, bash]
 ----
 pip uninstall numpy
 ----
 
-. Install multiple packages (numpy, pandas, and matplotlib) together.
+. Install multiple packages (`numpy`, `pandas`, and `matplotlib`) together.
 +
 [source, bash]
 ----
@@ -301,7 +304,7 @@ Successfully installed cycler-0.11.0 kiwisolver-1.3.1 matplotlib-3.3.4 numpy-1.1
 +
 [NOTE]
 ====
-Because some additional packages are required by those requested, pip automatically downloads and installs them.
+Because some additional packages are required by those requested, *pip* automatically downloads and installs them.
 ====
 
 
@@ -347,7 +350,7 @@ six==1.16.0
 ----
 
 
-Once you have a requirements file, you can share it with another developer or use it yourself to make sure a new environment contains all the same packages.
+When you have a requirements file, you can share it with another developer or use it yourself to make sure a new environment contains all the same packages.
 
 . If you are in an active virtual environment, deactivate it and leave that working directory.
 +
@@ -372,7 +375,7 @@ cd myproj2
 source ./bin/activate
 ----
 
-. Upgrade pip.
+. Upgrade *pip*.
 +
 [source, bash]
 ----
@@ -409,7 +412,7 @@ six==1.16.0
 +
 [TIP]
 ====
-`pip freeze` excludes pip and a few other packages.
+`pip freeze` excludes *pip* and a few other packages.
 To see a complete list of packages, use `pip list`.
 ====
 
@@ -421,13 +424,13 @@ https://jupyter.org/[Project Jupyter] was born out of the https://ipython.org/[I
 
 Under the Jupyter umbrella are:
 
-* Jupyter Notebook: the original web application that allows data scientists to create and share computational documents, called notebooks.
+* Jupyter Notebook: the original Web application that allows data scientists to create and share computational documents, called notebooks.
 
 * JupyterLab: the latest generation of Jupyter Notebook with a modular design to allow users to customize the interface to support workflows in data science, scientific computing, computational journalism, and machine learning.
 
-* JupyterHub: the multi-user version of Jupyter Notebook that enables companies, classrooms, and research labs to deliver computational environments and resources to users while managing them centrally.
+* JupyterHub: the multiuser version of Jupyter Notebook that enables companies, classrooms, and research labs to deliver computational environments and resources to users while managing them centrally.
 
-* Voilà: a tool that transforms Jupyter notebooks into secure, stand-alone web applications.
+* Voilà: a tool that transforms Jupyter notebooks into secure, stand-alone Web applications.
 
 
 [NOTE]
@@ -439,7 +442,7 @@ A variety of community maintained kernels are available to enable use of other p
 
 === Getting JupyterLab up and running
 
-JupyterLab is a web application, so you need a web browser to access it.
+JupyterLab is a Web application, so you need a Web browser to access it.
 
 . Install JupyterLab.
 //
@@ -474,7 +477,7 @@ Once JupyterLab is installed, launch it with the command:
 jupyter-lab
 ----
 +
-In your terminal window you should see something like the following:
+In your terminal window, you should see something like the following:
 +
 [source, bash]
 ----
@@ -494,13 +497,13 @@ In your terminal window you should see something like the following:
 . Access the JupyterLab user interface (UI).
 //
 +
-JupyterLab will attempt to open your default web browser to the UI.
-If this fails, you can manually open your browser to one of the URLs helpfully provided in your terminal window.
+JupyterLab will attempt to open your default Web browser to the UI.
+If this fails, you can manually open your browser to one of the URLs provided in your terminal window.
 //
 +
 [NOTE]
 ====
-JupyterLab uses an access token to authenticate you to the web UI.
+JupyterLab uses an access token to authenticate you to the Web UI.
 This token is unique to each instance of the environment.
 ====
 //
@@ -509,20 +512,20 @@ This token is unique to each instance of the environment.
 ====
 If your environment is on a remote, headless host, you can use SSH port forwarding to gain access.
 
-. Log into the remote host with a local port forward.
+. Log in to the remote host with a local port forward.
 +
 [source, bash]
 ----
 ssh -L8888:localhost:8888 USER@REMOTE-IP
 ----
 +
-where USER is your username on the remote host and REMOTE-IP is its IP address or domain name.
+where USER is your user name on the remote host and REMOTE-IP is its IP address or domain name.
 
 . Activate your virtual environment.
 
 . Launch JupyterLab.
 
-. Open your local web browser to the URL (with your access token) specified in the command terminal.
+. Open your local Web browser to the URL (with your access token) specified in the command terminal.
 ====
 
 . Shut down JupyterLab.
@@ -535,7 +538,7 @@ Shut down JupyterLab directly from the UI by selecting __Shutdown__ under the __
 +
 [NOTE]
 ====
-If you select __Logout__ from the __File__ menu or just close your browser, the JupyterLab environment continues to run.
+If you select __Logout__ from the __File__ menu or close your browser, the JupyterLab environment continues to run.
 You can shut it down from the command terminal by issuing 'CTRL-C'.
 You will be prompted to confirm that you want to shut down the Jupyter server.
 Bypass confirmation by issuing 'CTRL-C' twice.
@@ -568,7 +571,7 @@ It also includes functions specific to working in an interactive computing envir
 The sidebar offers a file browser, process controls, extension management, and more.
 
 JupyterLab opens with the main work area displaying the __Launcher__ tab.
-From the Launcher that you can start a notebook, console, terminal window, and more.
+From the Launcher tab, you can start a notebook, console, terminal window, and more.
 These appear as additional tab in the main work area.
 
 [TIP]
@@ -594,7 +597,7 @@ Press 'CTRL-ENTER' at the end of the line to execute it.
 +
 [TIP]
 ====
-You can enter multiple lines by just pressing 'ENTER' at the end of each line.
+You can enter multiple lines by pressing 'ENTER' at the end of each line.
 The code will not execute until you press 'CTRL-ENTER'.
 ====
 
@@ -619,7 +622,7 @@ Enter a name when prompted, such as 'mypythonversion.ipynb'.
 
 === Collaborating with JupyterLab
 
-JupyterLab provides a great environment for interactive experimentation, and the notebook format provides an easy mechanism for sharing your code with others.
+JupyterLab provides a great environment for interactive experimentation, and the notebook format offers an easy mechanism for sharing your code with others.
 But a Jupyter notebook by itself may not be sufficient, as your colleague's development environment may be different.
 
 When you are ready to share your work, you should include your:
@@ -649,7 +652,8 @@ Take your next steps with JupyterLab with the following resources:
 
 == Summary
 
-Whether you are just getting started on your Python development journey or already looking to scale to production, start from a capable, adaptable, and supported foundation with SUSE Linux Enterprise.
+Whether you are getting started on your Python development journey or already looking to scale to production, start from a capable, 
+adaptable, and supported foundation with SUSE Linux Enterprise Server.
 
 In this guide, you learned to:
 
