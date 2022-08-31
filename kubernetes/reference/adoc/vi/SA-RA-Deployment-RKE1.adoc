@@ -74,6 +74,7 @@ NOTE: See product documentation for https://rancher.com/docs/rke/latest/en/examp
 ** The option "Number of Hosts" refers to the number of hosts to configure at this time 
 *** Additional hosts can be added very easily after {pn_RKE1} cluster creation 
 *** For this implementation it is recommended to configure one or three hosts
+ifdef::IHV-Ampere[** For Arm64-based systems, like {an_Ampere} {familyAmpere-Altra}, select either the Flannel or Weave CNI]
 ** Give all hosts the roles of "Control Plane", "Worker", and "etcd"
 ** Answer "n" for the option "Enable PodSecurityPolicy"
 . Update the cluster.yml file before continuing with the step "Deploying Kubernetes with RKE"
