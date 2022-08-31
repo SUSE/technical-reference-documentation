@@ -20,6 +20,14 @@ ifndef::GS[]
 ifdef::layerSLEMicro[{pn_SLEMicro}]
 ifdef::layerSLES[{pn_SLES}]
 * Compute Platform
+ifdef::RC+iIHV[]
+ifdef::IHV-Ampere[** {an_Ampere} {familyAmpere-Altra} Family]
+ifdef::IHV-Cisco[** {vn_Cisco} {an_CiscoUCS}]
+ifdef::IHV-Dell[** {an_Dell} {familyDell-PE}]
+ifdef::IHV-HPE+IHV-HPE-ProLiant[** {vn_HPE} {familyHPE-DL}]
+ifdef::IHV-HPE+IHV-HPE-Synergy[** {vn_HPE} {familyHPE-S}]
+ifdef::IHV-SMCi[** {vn_SMCi} {SMCi-SuperServer}]
+endif::RC+iIHV[]
 endif::GS[]
 
 you can create the necessary infrastructure and services. Further details for these components are described in the following sections.
@@ -82,6 +90,7 @@ include::../SUSE/YES-Search.adoc[]
 
 ifdef::RC[]
 ifdef::iIHV[]
+ifdef::IHV-Ampere[include::../IHV/Ampere/SA-RA-CompMod.adoc[]]
 ifdef::IHV-Cisco[include::../IHV/Cisco/SA-RA-CompMod.adoc[]]
 ifdef::IHV-Dell[include::../IHV/Dell/SA-RA-CompMod.adoc[]]
 ifdef::IHV-HPE[include::../IHV/HPE/SA-RA-CompMod.adoc[]]

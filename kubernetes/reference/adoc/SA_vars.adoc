@@ -7,47 +7,19 @@
 include::./CSP/SA_vars.adoc[]
 include::./IHV/SA_vars.adoc[]
 include::./ISV/SA_vars.adoc[]
+
 include::./SUSE/SA_vars.adoc[]
+ifdef::iRMT[include::SUSE/RMT/SA_vars.adoc[]]
+ifdef::iSLEMicro[include::SUSE/SLE-Micro/SA_vars.adoc[]]
+ifdef::iSLES[include::SUSE/SLES/SA_vars.adoc[]]
+ifdef::iSUMa[include::SUSE/SUMa/SA_vars.adoc[]]
 
-ifdef::iHarvester[]
-include::SUSE/Harvester/SA_vars.adoc[]
-endif::iHarvester[]
-
-ifdef::iLonghorn[]
-include::SUSE/Longhorn/SA_vars.adoc[]
-endif::iLonghorn[]
-
-ifdef::iRancher[]
-include::SUSE/Rancher/SA_vars.adoc[]
-endif::iRancher[]
-
-ifdef::iRKE1[]
-include::SUSE/RKE1/SA_vars.adoc[]
-endif::iRKE1[]
-
-ifdef::iRKE2[]
-include::SUSE/RKE2/SA_vars.adoc[]
-endif::iRKE2[]
-
-ifdef::iK3s[]
-include::SUSE/K3s/SA_vars.adoc[]
-endif::iK3s[]
-
-ifdef::iRMT[]
-include::SUSE/RMT/SA_vars.adoc[]
-endif::iRMT[]
-
-ifdef::iSLEMicro[]
-include::SUSE/SLE-Micro/SA_vars.adoc[]
-endif::iSLEMicro[]
-
-ifdef::iSLES[]
-include::SUSE/SLES/SA_vars.adoc[]
-endif::iSLES[]
-
-ifdef::iSUMa[]
-include::SUSE/SUMa/SA_vars.adoc[]
-endif::iSUMa[]
+ifdef::iHarvester[include::SUSE/Harvester/SA_vars.adoc[]]
+ifdef::iLonghorn[include::SUSE/Longhorn/SA_vars.adoc[]]
+ifdef::iRancher[include::SUSE/Rancher/SA_vars.adoc[]]
+ifdef::iRKE1[include::SUSE/RKE1/SA_vars.adoc[]]
+ifdef::iRKE2[include::SUSE/RKE2/SA_vars.adoc[]]
+ifdef::iK3s[include::SUSE/K3s/SA_vars.adoc[]]
 
 ifdef::RA,RC,RI,GS[]
 
@@ -108,7 +80,7 @@ endif::RA,RC,RI,GS[]
 ifdef::RC[]
 :subtitle: Reference Configuration : Integrated with
 ifdef::iIHV[]
-ifdef::IHV-Ampere[:subtitle: {subtitle} {vn_Ampere} (R)]
+ifdef::IHV-Ampere[:subtitle: {subtitle} {an_Ampere} (R) {familyAmpere-Altra} (R)]
 ifdef::IHV-Cisco[:subtitle: {subtitle} {vn_Cisco} (R)]
 ifdef::IHV-Dell[:subtitle: {subtitle} {vn_Dell} (R)]
 ifdef::IHV-Fujitsu[:subtitle: {subtitle} {vn_Fujitsu} (R)]

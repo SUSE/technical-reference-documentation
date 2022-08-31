@@ -123,6 +123,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 
 		    case ${partner} in
 
+		      Ampere) PL="${trdIHVAmperePlatform}" ;;
 		      Cisco) PL="${trdIHVCiscoPlatform}" ;;
 		      Dell) PL="${trdIHVDellPlatform}" ;;
 		      Fujitsu) PL="${trdIHVFujitsuPlatform}" ;;
@@ -184,6 +185,7 @@ echo "Usage : $(basename $0) <output-format>" 2>&1
 			      echo ADOC_ATTRIBUTES+=\" --attribute FCTR=1\"
 			      echo ADOC_ATTRIBUTES+=\" --attribute Automation=1\"
 			      echo ADOC_ATTRIBUTES+=\" --attribute Availability=1\"
+			      echo ADOC_ATTRIBUTES+=\" --attribute Performance=1\"
 			      echo ADOC_ATTRIBUTES+=\" --attribute Security=1\"
 			      echo ADOC_ATTRIBUTES+=\" --attribute Integrity=1\"
 			      echo ADOC_ATTRIBUTES+=\" --attribute iIHV=1\"
