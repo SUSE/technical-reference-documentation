@@ -13,12 +13,12 @@ so that the system is ready to deploy the next layer (i.e. OS) effectively
 
 ////
 
-The base, starting configuration can reside all within a single {an_Ampere} {modelAmpere-Altra} platform. Based upon the relatively small resource requirements for a
+The base starting configuration can reside all within a single {an_Ampere} {modelAmpere-Altra} platform. Based upon the relatively small resource requirements for a
 ifdef::focusRancher[{pn_Rancher}]
 ifdef::focusK3s[{pn_K3s}]
 ifdef::focusRKE1[{pn_RKE1}]
 ifdef::focusRKE2[{pn_RKE2}]
-deployment, one viable approach is to deploy as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like Kernel-based Virtual Machine (KVM). Another option is to just use one or more {an_Ampere} {modelAmpere-Altra} or {an_Ampere} {modelAmpere-AltraMax} baremetal systems for the deployments. For the physical host, there are tools that can be used during the setup of the server, see below.
+deployment, one viable approach is to deploy as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like kernel-based Virtual Machine (KVM). Another option is to just use one or more {an_Ampere} {modelAmpere-Altra} or {an_Ampere} {modelAmpere-AltraMax} baremetal systems for the deployments. For the physical host, there are tools that can be used during the setup of the server (see below).
 
 Preparation(s)::
 If available, the integrated Baseboard Management Controller (BMC) provides remote access to multiple users at different locations for networking. It also allows a system administrator to monitor system health and manage computer events remotely, including media, either virtual or physical) redirection of software image files used for installing operating systems and a console interaction.
@@ -26,24 +26,20 @@ If available, the integrated Baseboard Management Controller (BMC) provides remo
 Deployment Process::
 On the respective compute module node
 
-. Given the simplicity of the deployment, the operating system can be installed 
-with
-** the respective {companyName} operating system media ISO media,
-** can be converted to a USB drive, or
-** leveraging Preboot Execution Environment (PXE) infrastructure.
-. For deployments targeting virtual machines, determine if a hypervisor is alrea
-dy available or provisioned
-** If this will be the first use of this node, an option is to deploy a KVM hype
-rvisor, based upon {pn_SLES} by following the link:{pn_SLES_VirtDocURL}[Virtuali
-zation Guide].
-** Then for the solution VM node, use the hypervisor user interface to allocate 
-the necessary CPU, memory, disk and networking as noted in the {pn_Rancher} link
-:{pn_Rancher_HWReqURL}[hardware requirements].
+. Given the simplicity of the deployment, the operating system can be
+** installed with the respective {companyName} operating system media ISO media,
+** converted to a USB drive, or
+** installed leveraging Preboot Execution Environment (PXE) infrastructure.
+. For deployments targeting virtual machines, determine if a hypervisor is already available or provisioned.
+** If this will be the first use of this node, an option is to deploy a KVM hypervisor, based upon {pn_SLES} by following the link:{pn_SLES_VirtDocURL}[Virtualization Guide].
+** Then, for the solution VM node, use the hypervisor user interface to allocate 
+the necessary CPU, memory, disk and networking as noted in the {pn_Rancher} link:{pn_Rancher_HWReqURL}[hardware requirements].
 
 Deployment Consideration(s)::
 To further optimize deployment factors, leverage the following practices:
 ifdef::FCTR+Scaling[]
 * <<g-scaling>>
-** While the initial deployment only requires a single VM, as noted in later deployment sections, having multiple VMs provides resiliency to accomplish high availability. To reduce single points of failure, it would be beneficial to have the multi-VM deployments spread across multiple hypervisor nodes. So consideration of consistent hypervisor and compute module configurations, with the needed resources for the deployed VMs will yield a robust, reliable production implementation.
+** While the initial deployment only requires a single VM, as noted in later deployment sections, having multiple VMs provides resiliency to accomplish high availability. To reduce single points of failure, it is beneficial to have the multi-VM deployments spread across multiple hypervisor nodes. 
+** The consideration of consistent hypervisor and compute module configurations, with the needed resources for the deployed VMs, will yield a robust and reliable production implementation.
 endif::FCTR+Scaling[]
 
