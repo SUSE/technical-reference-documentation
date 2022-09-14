@@ -140,7 +140,7 @@ A typical process involves the following steps:
 . Create and test an ML model.
 //
 +
-This can involve exploring different models in an interactive environment like, https://jupyter.org/[JupyterLab].
+This can involve exploring different models in an interactive environment, like https://jupyter.org/[JupyterLab].
 
 . Enable a means of interacting with the model.
 //
@@ -243,34 +243,34 @@ In addition to the ML analytics workload, {partnerproductname} also provides a W
 
 The front-end application features useful functionality for the user, including:
 
-* Automatic detection of the user's country to show predictions for the top five, country-specific stocks.
+* Automatic detection of the user's country to show predictions for the top five, country-specific stocks
 
-* Ability for users to select long- or short-term predictions and to specify the number of forecasted days.
+* Ability for users to select long- or short-term predictions and to specify the number of forecasted days
 
-* Ability for users to choose other stocks and other stock exchanges.
+* Ability for users to choose other stocks and other stock exchanges
 
-* For long term predictions, a comparison of the model's predicted price with the analyst's target price.
+* For long term predictions, a comparison of the model's predicted price with the analyst's target price
 
-* For short term predictions, a sentiment analysis of the stock news to enable visualization of its impact on stock price.
+* For short term predictions, a sentiment analysis of the stock news to enable visualization of its impact on stock price
 
-* Correlation of a stock with the index.
+* Correlation of a stock with the index
 
 
 === Components
 
 {partnerproductname} is composed of the following Python modules:
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/geo_location.py[geo_location.py] - Determines the country where the user is located to give country specific information.
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/geo_location.py[geo_location.py]: Determines the country where the user is located to give country specific information.
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/index_correlation.py[index_correlation.py] - Correlates the stock with its parent index.
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/index_correlation.py[index_correlation.py]: Correlates the stock with its parent index.
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/main.py[main.py] - Contains all the Streamlit configurations/page setup and uses the other files to create the application.
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/main.py[main.py]: Contains all the Streamlit configurations/page setup and uses the other files to create the application.
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/plot_charts.py[plot_charts.py] - Contains the modified and generalized form of the Jupyter Notebook code we created in the previous steps. Contains two python functions - one for long term and other for short term predictions.
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/plot_charts.py[plot_charts.py]: Contains the modified and generalized form of the Jupyter Notebook code we created in the previous steps. Contains two python functions - one for long term and other for short term predictions.
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/sentiment.py[sentiment.py] - Collects stock news from Google News and uses the *VADER sentiment analysis* tool to determine the stock's trend.
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/sentiment.py[sentiment.py]: Collects stock news from Google News and uses the *VADER sentiment analysis* tool to determine the stock's trend.
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/stock_recomendation.py[stock_recomendation.py] - Extracts the analyst's price target of a stock from Yahoo Finance.  
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/stock_recomendation.py[stock_recomendation.py]: Extracts the analyst's price target of a stock from Yahoo Finance.  
 
 
 == Build environment
@@ -298,7 +298,7 @@ You define the base container image and the contents of the layers in a plain te
 
 . Make sure you are in your 'stock_frontend' working directory.
 
-. Create the file, 'requirements.txt'.
+. Create the file 'requirements.txt'.
 //
 +
 You use this file to specify the Python packages required for the application.
@@ -316,7 +316,7 @@ nltk
 pandas
 ----
 
-. Create the file, 'Dockerfile'.
+. Create the file 'Dockerfile'.
 +
 [listing]
 ----
@@ -346,16 +346,16 @@ The Dockerfile tells the `docker build` command to:
 docker build -t fin_dashboard:latest .
 ----
 
-. Tag the image to your DockerHub account.
+. Tag the image to your Docker Hub account.
 +
 [source, bash]
 ----
 docker tag fin_dashboard:latest <USERNAME>/fin_dashboard:latest
 ----
 +
-Replace <USERNAME> with your DockerHub user name.
+Replace <USERNAME> with your Docker Hub user name.
 
-. Push the image to your https://hub.docker.com/[DockerHub] account.
+. Push the image to your https://hub.docker.com/[Docker Hub] account.
 //
 +
 This will make it easier to deploy to your Kubernetes cluster.
@@ -367,7 +367,7 @@ sudo docker push <USERNAME>/fin_dashboard:latest
 +
 [TIP]
 ====
-Be sure you log in to your https://hub.docker.com/[DockerHub] account before pushing the image.
+Be sure you log in to your https://hub.docker.com/[Docker Hub] account before pushing the image.
 Use `docker login` on the command line to do this.
 ====
 
@@ -387,7 +387,7 @@ docker run -p 7000:8501 fin_dashboard:latest
 == Deployment manifests
 
 A https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/[manifest] specifies the desired state of an object that Kubernetes will maintain.
-Manifest files are typically in YAML format for human-readability.
+Manifest files are typically in YAML format for human readability.
 For this application, you create three manifest files:
 
 * 'namespace.yaml': to create a namespace where the application will be deployed.
@@ -441,8 +441,8 @@ spec:
 +
 [NOTE]
 ====
-Here 'image: <USERNAME>/fin_dashboard:latest' refers to the Docker image that you created and pushed to Docker Hub.
-Replace '<USERNAME>' with your Docker Hub user name.
+Here `image: <USERNAME>/fin_dashboard:latest` refers to the Docker image that you created and pushed to Docker Hub.
+Replace `<USERNAME>` with your Docker Hub user name.
 ====
 
 . Create the 'service.yaml' file below to expose the application so it can be accessed through a static port on the node.
@@ -620,7 +620,7 @@ The scale and agility of cloud native architectures and tooling, like Kubernetes
 
 In this guide, you learned how to containerize an ML application and deploy it into a Kubernetes environment managed by SUSE Rancher.
 
-Below are a few resources to help you continue your exploration of SUSE Rancher and K3s for edge analytics:
+Below are listed a few resources to help you continue your exploration of SUSE Rancher and K3s for edge analytics:
 
 * https://github.com/navin772/GSOC_Stock_prediction[GitHub repository with the code]
 * https://documentation.suse.com/trd/kubernetes/[SUSE Technical Reference Documentation: Kubernetes]
