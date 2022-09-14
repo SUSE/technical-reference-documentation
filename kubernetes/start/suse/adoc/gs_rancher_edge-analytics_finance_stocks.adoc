@@ -1,7 +1,7 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
 
-:title: Edge Analytics with SUSE Rancher - Finance - Market Predictions : Getting Started
+:title: Edge Analytics with SUSE Rancher: Finance - Market Predictions : Getting Started
 :productname: SUSE Rancher 2.5
 :productversion: 2.5
 :productname2: K3s v1.20.14+k3s1
@@ -15,7 +15,7 @@ include::./common_docinfo_vars.adoc[]
 // - Ann Davis, andavis@suse.com
 // - Terry Smith, terry.smith@suse.com
 
-
+= {title}
 
 == Introduction
 
@@ -56,9 +56,9 @@ Contributors learn from experienced open source developers while writing code fo
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide illustrates the facility of Kubernetes to support edge analytics in the financial sector by using SUSE Rancher and K3s to deploy a machine learning model for stock price predictions and a web-based front-end for user interaction and visualization.
+This guide illustrates the facility of Kubernetes to support edge analytics in the financial sector by using SUSE Rancher and K3s to deploy a machine learning model for stock price predictions and a Web-based front-end for user interaction and visualization.
 
-* https://www.suse.com/products/suse-rancher/[SUSE Rancher] is an enterprise Kubernetes and container management platform that allows you to deploy workloads anywhere - at the data center core, in the clouds, and even at the edge - efficiently and with enterprise-grade security and support.
+* https://www.suse.com/products/suse-rancher/[SUSE Rancher] is an enterprise Kubernetes and container management platform that allows you to deploy workloads anywhere - at the data center core, in the cloud, and even at the edge - efficiently and with enterprise-grade security and support.
 
 * https://k3s.io/[K3s] is an open source, lightweight, certified Kubernetes distribution built for IoT and edge computing.
 
@@ -74,7 +74,7 @@ This guide illustrates the facility of Kubernetes to support edge analytics in t
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 This document is intended for DevOps, MLOps, developers and data scientists who want to containerize their ML workloads and deploy them at the edge.
-To get the most out of this guide, you should have basic familiarity with the Linux command-line, Python, Docker, and Kubernetes.
+To get the most out of this guide, you should have basic familiarity with the Linux command line, Python, Docker, and Kubernetes.
 
 
 == Prerequisites
@@ -127,8 +127,8 @@ With appropriate command substitutions, any container image repository may be us
 
 == Technical overview
 
-In this guide, you use Rancher to deploy {partnerproductname}, a stock prediction web application, which you can obtain from the project's https://github.com/navin772/GSOC_Stock_prediction/tree/master/fin_dashboard[code repository].
-{partnerproductname} is discussed in more detail later in this guide.
+Following this guide, you use Rancher to deploy {partnerproductname}, a stock prediction Web application, which you can obtain from the project's https://github.com/navin772/GSOC_Stock_prediction/tree/master/fin_dashboard[code repository].
+{partnerproductname} is discussed in more detail later on.
 
 //
 
@@ -145,7 +145,7 @@ This can involve exploring different models in an interactive environment like, 
 . Enable a means of interacting with the model.
 //
 +
-In this guide, you deploy a front-end web application to accept user input and view predictions.
+In this guide, you deploy a front-end Web application to accept user input and view predictions.
 
 . Containerize the application.
 +
@@ -173,13 +173,13 @@ Some additional components and tools used in this guide or by {partnerproductnam
 
 * https://facebook.github.io/prophet/[Fbprophet] - to create the ML model to predict the stock/index price.
 
-* https://streamlit.io/[Streamlit v1.11.0] - to build a web-based, interactive front-end for the ML model.
+* https://streamlit.io/[Streamlit v1.11.0] - to build a Web-based, interactive front-end for the ML model.
 
 * https://github.com/cjhutto/vaderSentiment[VADER] - to analyze market sentiment based on news content.
 
 * https://pypi.org/project/yfinance/[Yahoo Finance] - to fetch historical stock data.
 
-* https://kubernetes.io/docs/reference/kubectl/[Kubectl] - a command-line tool for controlling the Kubernetes cluster manager.
+* https://kubernetes.io/docs/reference/kubectl/[Kubectl] - a command line tool for controlling the Kubernetes cluster manager.
 
 * https://kustomize.io/[Kustomize] - a template-free way to customize application configuration that simplifies the use of off-the-shelf applications.
 
@@ -187,9 +187,9 @@ Some additional components and tools used in this guide or by {partnerproductnam
 
 == ML model
 
-In this section, you explore a subset of the {partnerproductname} code by creating a https://jupyterlab.readthedocs.io/en/stable/[Jupyter notebook] that illustrates how data is accumulated and processed, a model is created and used, and model predictions are visualized.
+In this section, you explore a subset of the {partnerproductname} code by creating a https://jupyterlab.readthedocs.io/en/stable/[Jupyter Notebook] that illustrates how data is accumulated and processed, a model is created and used, and model predictions are visualized.
 
-Open a new Jupyter notebook and enter the code below.
+Open a new Jupyter Notebook and enter the code below.
 
 
 . Fetch the stock/index data from Yahoo Finance and store it as a dataframe.
@@ -237,11 +237,11 @@ image::edge-analytics_finance_tsla_predicted.png[TSLA predicted price, scaledwid
 
 == Front-end
 
-In addition to the ML analytics workload, {partnerproductname} also provides a web-based front-end to support user interaction.
+In addition to the ML analytics workload, {partnerproductname} also provides a Web-based front-end to support user interaction.
 
 === Features
 
-The front-end application features useful functionality for the end-user, including:
+The front-end application features useful functionality for the user, including:
 
 * Automatic detection of the user's country to show predictions for the top five, country-specific stocks.
 
@@ -262,11 +262,11 @@ The front-end application features useful functionality for the end-user, includ
 
 * https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/geo_location.py[geo_location.py] - Determines the country where the user is located to give country specific information.
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/index_correlation.py[index_correlation.py] - Correlates the stock with it's parent index.
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/index_correlation.py[index_correlation.py] - Correlates the stock with its parent index.
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/main.py[main.py] - Contains all the Streamlit configurations/page setup and utilizes the other files to create the application.
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/main.py[main.py] - Contains all the Streamlit configurations/page setup and uses the other files to create the application.
 
-* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/plot_charts.py[plot_charts.py] - Contains the modified and generalized form of the jupyter notebook code we created in the previous steps. Contains two python functions - one for long term and other for short term predictions.
+* https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/plot_charts.py[plot_charts.py] - Contains the modified and generalized form of the Jupyter Notebook code we created in the previous steps. Contains two python functions - one for long term and other for short term predictions.
 
 * https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/sentiment.py[sentiment.py] - Collects stock news from Google News and uses the *VADER sentiment analysis* tool to determine the stock's trend.
 
@@ -293,7 +293,7 @@ git clone https://github.com/navin772/GSOC_Stock_prediction
 == Containerization
 
 Container images are created by adding the application and its dependencies in one or more layers on top of a base container image.
-You define the base container image and the contents of the layers in a plain text file, called a https://docs.docker.com/engine/reference/builder/[Dockerfile]. Once this is done, you simply call the `docker build` command to create the new container image.
+You define the base container image and the contents of the layers in a plain text file, called a https://docs.docker.com/engine/reference/builder/[Dockerfile]. When this is done, you simply call the `docker build` command to create the new container image.
 
 
 . Make sure you are in your 'stock_frontend' working directory.
@@ -353,7 +353,7 @@ docker build -t fin_dashboard:latest .
 docker tag fin_dashboard:latest <USERNAME>/fin_dashboard:latest
 ----
 +
-Replace <USERNAME> with your DockerHub username.
+Replace <USERNAME> with your DockerHub user name.
 
 . Push the image to your https://hub.docker.com/[DockerHub] account.
 //
@@ -367,8 +367,8 @@ sudo docker push <USERNAME>/fin_dashboard:latest
 +
 [TIP]
 ====
-Be sure you log into your https://hub.docker.com/[DockerHub] account before pushing the image.
-Use `docker login` on the command-line to do this.
+Be sure you log in to your https://hub.docker.com/[DockerHub] account before pushing the image.
+Use `docker login` on the command line to do this.
 ====
 
 . Test the docker container.
@@ -380,7 +380,7 @@ Use `docker login` on the command-line to do this.
 docker run -p 7000:8501 fin_dashboard:latest
 ----
 
-.. Open your web browser to 'http://localhost:7000/' and verify that you can access the application.
+.. Open your Web browser to 'http://localhost:7000/' and verify that you can access the application.
 
 
 
@@ -442,7 +442,7 @@ spec:
 [NOTE]
 ====
 Here 'image: <USERNAME>/fin_dashboard:latest' refers to the Docker image that you created and pushed to Docker Hub.
-Replace '<USERNAME>' with your Docker Hub username.
+Replace '<USERNAME>' with your Docker Hub user name.
 ====
 
 . Create the 'service.yaml' file below to expose the application so it can be accessed through a static port on the node.
@@ -490,8 +490,8 @@ resources:
 
 
 == Deployment
-
-With your manifest files defining the deployment, you just need to execute the deployment to your Kubernetes cluster.
+ 
+With your manifest files defining the deployment, you need to execute the deployment to your Kubernetes cluster.
 
 . Make sure you have Kubectl https://docs.ranchermanager.rancher.io/v2.5/reference-guides/cli-with-rancher/kubectl-utility[installed and configured] to manage your Kubernetes cluster.
 +
@@ -559,7 +559,7 @@ image::edge-analytics_finance_services.png[Services, scaledwidth="85%", align="c
 The deployment process might take some time depending on the resources of the cluster. Be patient!
 ====
 
-. Once the deployment is complete, note the 'CLUSTER-IP' and 'PORT(S)' associated with 'service/stock-analysis'.
+. When the deployment is complete, note the 'CLUSTER-IP' and 'PORT(S)' associated with 'service/stock-analysis'.
 //
 +
 In the example listing above, the service is available at 10.43.148.169 on port 32169.
@@ -570,9 +570,9 @@ In the example listing above, the service is available at 10.43.148.169 on port 
 
 Get started using {partnerproductname}:
 
-. Open your web browser to the IP and port of the service (e.g., http://10.43.148.169:32169).
+. Open your Web browser to the IP and port of the service (in our example, it would be http://10.43.148.169:32169).
 
-. The Dashboard automatically detects your country, but you can select another from the drop down.
+. The Dashboard automatically detects your country, but you can select another from the drop-down box.
 +
 image::edge-analytics_finance_dashboard.png[Dashboard, scaledwidth="95%", align="center"]
 
@@ -615,7 +615,7 @@ image::edge-analytics_finance_correlation.png[Correlation, scaledwidth="95%", al
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Analytics at the edge is of growing importance in the financial space.
-Organizations realize they can achieve faster insights, maintain better security practices, and lower costs by deploying certain, analytics workloads closer to or even at the edge.
+Organizations realize they can achieve faster insights, maintain better security practices, and lower costs by deploying certain analytics workloads closer to or even at the edge.
 The scale and agility of cloud native architectures and tooling, like Kubernetes, make this possible.
 
 In this guide, you learned how to containerize an ML application and deploy it into a Kubernetes environment managed by SUSE Rancher.
@@ -623,8 +623,8 @@ In this guide, you learned how to containerize an ML application and deploy it i
 Below are a few resources to help you continue your exploration of SUSE Rancher and K3s for edge analytics:
 
 * https://github.com/navin772/GSOC_Stock_prediction[GitHub repository with the code]
-* https://documentation.suse.com/trd/Kubernetes/[SUSE Technical Reference Documentation: Kubernetes]
-* https://documentation.suse.com/trd/Kubernetes/html/Kubernetes_ri_k3s-slemicro/index.html[Introductory Deployment of K3s]
+* https://documentation.suse.com/trd/kubernetes/[SUSE Technical Reference Documentation: Kubernetes]
+* https://documentation.suse.com/trd/kubernetes/html/kubernetes_ri_k3s-slemicro/index.html[Introductory Deployment of K3s]
 * https://www.suse.com/community/[SUSE & Rancher Community]
 
 
