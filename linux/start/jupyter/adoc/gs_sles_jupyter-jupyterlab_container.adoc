@@ -39,8 +39,8 @@ include::./common_docinfo_vars.adoc[]
 :partnerprod1: JupyterLab
 :author1: Brian Fromme, Alliance Solution Architect, SUSE
 :author2: Terry Smith, Partner Solutions Director, SUSE
-//:revdate: Month dd, YYYY
-//:revnumber: YYYYmmdd
+:revdate: Month dd, YYYY
+:revnumber: YYYYmmdd
 //:toc2:
 //:toc-title: {title}
 //:toclevels: 4
@@ -66,6 +66,24 @@ include::./common_docinfo_vars.adoc[]
 //    - specific benefits of this solution
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Modern software development is largely agile, open, and collaborative, resulting in:
+A wealth of open source, optimized libraries, toolkits, and frameworks that are leveraged to support complex applications.
+A rapid state of continuous development, delivering new value but also driving the need for CI/CD pipelines.
+
+An essential need to share code efficiently and consistently.
+Nowhere has this been more obvious than in the domain of machine learning (ML).
+An explosion of ML advancement has driven the creation of tools and capabilities to support this agile, open, and collaborative development technology.
+
+ML developers push hardware and software limits to achieve the performance and scale required to build and deploy models.
+ML applications leverage low-level mathematics libraries developed for high-performance computing, as well as many higher-level libraries, toolkits, and frameworks to create models that help solve seemingly intractable problems.
+
+Keras has become one of the most used deep learning frameworks among ML developers for its ease of use and performance.
+Keras is built on TensorFlow 2 and can scale from a single system to a cluster of TPUs (tensor processing units).
+TensorFlow 2 itself is an end-to-end, open source machine learning platform that supports multidimensional array (tensor) based numeric computation, GPU and distributed processing, model construction, training, and exporting.
+
+Keras and TensorFlow 2 are part of a tightly-connected ecosystem, covering every step of the machine learning workflow, from data management to hyperparameter training to deployment of solutions.
+
+
 
 === Scope
 
@@ -73,7 +91,8 @@ include::./common_docinfo_vars.adoc[]
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will help you take the first steps to 
+This guide will help you take the first steps to building containers using SUSE technologies.
+You will explore a machine learning example to get hands-on experience with containers.
 
 
 === Audience
@@ -85,7 +104,23 @@ This guide will help you take the first steps to
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for 
+This document is intended for people working with machine learning for digital transformation and more.
+Technology managers, system architects, software developers and data scientists will learn how to work with ML on SUSE technologies.
+
+
+=== Prerequisites
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify minimum requirements (prerequisites) the reader
+//   would need to have to follow the steps of this guide.
+// Link to existing resources whenever possible
+//   but don't be afraid to elaborate as needed.
+// * Requirement 1 https://url[linktext]
+// * Requirement 2 https://url[linktext]
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+NOTE: Define at a high level what is needed early, before the reader goes on
+
 
 
 == Technical overview
@@ -100,25 +135,51 @@ This document is intended for
 //   - workflow
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+=== Python ML with Keras and TensorFlow 2
+
+The goal of machine learning toolkits such as TensorFlow and Keras is to make simplify development by implementing and hiding complex low-level programming tasks.
+Combined with the Python programming language, machine learning in Keras and TensorFlow allows data scientists to focus on the model and data transformations.
+Data scientists and programmers must study Keras and TensorFlow libraries to understand how to implement these capabilities.
+
+Once coding begins, the tools should be transparent and easy to manage in development, test, and production.
+There are different approaches to managing these AI toolkits.
+One approach is to define the versions that are required and stick with those on all platforms.
+This approach requires error-prone effort across potentially many systems when new versions are chosen.
+Another approach is to put all the AI toolkit and other library dependencies into a container, along with the application and its model.
+
+=== Containers for Machine Learning Development
+
+Containers put application artifacts and dependencies into an image that can easily be deployed on runtime environments in the cloud, at the edge, in data centers, or in testing.
+By adding ML library dependencies to a container, we resolve challenges that occur when other machines don’t have the same libraries available.
+The container removes the need to reference specific library versions on other machines.
+Deploying library dependencies together with a machine-learning application simplifies the deployment workflow.
+This guide will show an example of building a container for an ML program.
+
+=== SLE Base Container Images
+
+SUSE Linux Enterprise (SLE) Base Container Images (BCI) are starting points for supported operating system code from SUSE.
+The SLE BCIs are freely available, re-distributable, and supported across many different environments.
+SLE BCIs are open, flexible, and secure container images and application development tools, that leverage SUSE Linux Enterprise.
+These images are designed to be a secure base for any containerized workload and are great for machine learning deployments.
+Together with SUSE Edge technologies, SLE BCIs are used to quickly deploy ML applications on edge devices.
+
+SLE BCI technology provides an enterprise better security and quality of their delivered applications and services.
+By using SUSE-tested and support code, you can rely on the enhanced security that SUSE has invested in.
+Your code will have higher-quality because you have based it on well-tested technologies, backed by a leading Linux vendor.
+
+NOTE:  Where do we want to take the sidebar to explain the Victor-provided container environment trick?
+
+=== Python ML with Keras and TensorFlow 2
+
+Now it’s time to work with a machine-learning example.
+We have chosen the MNIST example, which is something of a standard for getting started with machine-learning code and concepts.
+The MNIST example does analysis of hand-written digits between 0-9.
+The code is well defined and documented for this problem both online and via books such as, “Deep Learning with Python.” [cite: Manning].
+MNIST has a relatively small set of training images that can easily be downloaded and analyzed on a laptop or desktop computer.
+And, MNIST does not require expensive GPUs for hardware acceleration of the training process.
 
 
-
-
-== Prerequisites
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify minimum requirements (prerequisites) the reader
-//   would need to have to follow the steps of this guide.
-// Link to existing resources whenever possible
-//   but don't be afraid to elaborate as needed.
-// * Requirement 1 https://url[linktext]
-// * Requirement 2 https://url[linktext]
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-
-
-== Installation
+== AI Toolkits: Installation
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Detail the installation steps in an ordered list.
@@ -134,6 +195,31 @@ This document is intended for
 //       as well as link to or detail a command-line method.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+// . A command example
+// +
+// [source, bash]
+// ----
+// source ./bin/activate
+// ----
+// +
+// The 'activate' script cannot be run on its own.
+
+// TBD:  This is where Brian left off
+Here's what I think needs to happen next:
+
+* install AI toolkits
+
+* get MNIST example code
+
+* get MNIST data
+
+* run example
+
+* build a container
+
+* test container
+
+* Now we have decisions to make ;-)
 
 
 
