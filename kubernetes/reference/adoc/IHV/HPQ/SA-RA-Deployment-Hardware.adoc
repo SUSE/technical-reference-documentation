@@ -18,19 +18,21 @@ ifdef::focusRancher[{pn_Rancher}]
 ifdef::focusK3s[{pn_K3s}]
 ifdef::focusRKE1[{pn_RKE1}]
 ifdef::focusRKE2[{pn_RKE2}]
-deployment, a viable approach is to deploy as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like Kernel-bsed Virtual Machine (KVM). Another option is to just use one or more {vn_HPQ} {modelHPQ-ZCentral4R} baremetal systems for the deployments. For the physical host, there are tools that can be used during the setup of the server, see below.
+deployment, a viable approach is to deploy as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like Kernel-bsed Virtual Machine (KVM). 
+Another option is to use one or more {vn_HPQ} {modelHPQ-ZCentral4R} baremetal systems for the deployments. For the physical host, there are tools that can be used 
+during the setup of the server, as detailed below.
 
 Preparation(s)::
-Once the system is obtained, connect the network cables and a display monitor, keyboard and mouse to interact with the {vn_HPQ} {modelHPQ-ZCentral4R}.
+When the system is obtained, connect the network cables and a display monitor, keyboard and mouse to interact with the {vn_HPQ} {modelHPQ-ZCentral4R}.
 
 Deployment Process::
 On the respective compute module node
 
-. Given the simplicity of the deployment, the operating system can be installed with
-** the respective {companyName} operating system media ISO media,
-** can be converted to a USB drive, or
-** leveraging Preboot Execution Environment (PXE) infrastructure.
-. For deployments targeting virtual machines, determine if a hypervisor is already available or provisioned
+. Given the simplicity of the deployment, the operating system can 
+** be installed with the respective {companyName} operating system media ISO media,
+** be converted to a USB drive, or
+** leverage Preboot Execution Environment (PXE) infrastructure.
+. For deployments targeting virtual machines, determine if a hypervisor is already available or provisioned.
 ** If this will be the first use of this node, an option is to deploy a KVM hypervisor, based upon {pn_SLES} by following the link:{pn_SLES_VirtDocURL}[Virtualization Guide].
 ** Then for the solution VM node, use the hypervisor user interface to allocate the necessary CPU, memory, disk and networking as noted in the {pn_Rancher} link:{pn_Rancher_HWReqURL}[hardware requirements].
 
@@ -40,7 +42,8 @@ Deployment Consideration(s)::
 To further optimize system resources, leverage the following practice(s):
 ifdef::FCTR+Performance[]
 * <<g-performance>>
-** If a Graphics Processing Unit (GPU) is present in the {vn_HPQ} {modelHPQ-ZCentral4R}, include deployment of the respective device driver at the operating system level and potentially obtain any available, respective container runtime libraries for cloud-native workloads to access this resource.
+** If a Graphics Processing Unit (GPU) is present in the {vn_HPQ} {modelHPQ-ZCentral4R}, include deployment of the respective device driver at the operating system level and potentially 
+obtain any available respective container runtime libraries for cloud-native workloads to access this resource.
 endif::FCTR+Performance[]
 
 endif::BP[]

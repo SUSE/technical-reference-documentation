@@ -117,7 +117,7 @@ endif::layerSLEMicro[]
 . When ready, run `rke up` to create the RKE cluster 
 . After the `rke up` command completes, the RKE cluster will continue the Kubernetes installation process
 ** Monitor the progress of the installation:
-*** Export the variable KUBECONFIG to the absolute pathname of the kube_config_cluster.yml file. I.e. `export KUBECONFIG=~/rke-cluster/kube_config_cluster.yml`
+*** Export the variable KUBECONFIG to the absolute path name of the kube_config_cluster.yml file. I.e. `export KUBECONFIG=~/rke-cluster/kube_config_cluster.yml`
 *** Run the command: `watch -c "kubectl get deployments -A"`
 **** The cluster deployment is complete when elements of all the deployments show at least "1" as "AVAILABLE"
 **** Use Ctrl+c to exit the watch loop after all deployment pods are running

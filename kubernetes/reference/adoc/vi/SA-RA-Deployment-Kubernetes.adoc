@@ -82,7 +82,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${K3s_VERSION} K3S_URL=https:
 ----
 +
 ifdef::focusRancher[]
-By default, the {pn_K3s} server nodes are available to run non-control-plane workloads. In this case, the {pn_K3s} default behavior is perfect for the {pn_Rancher} server cluster as it doesn't require additional agent (aka worker) nodes to maintain a highly available {pn_Rancher} server application.
+By default, the {pn_K3s} server nodes are available to run non-control-plane workloads. In this case, the {pn_K3s} default behavior is perfect for the {pn_Rancher} server cluster as it does not require additional agent (aka worker) nodes to maintain a highly available {pn_Rancher} server application.
 +
 endif::focusRancher[]
 NOTE: This can be changed to the normal Kubernetes default by adding a taint to each server node. See the official Kubernetes documentation for more information on how to do that.

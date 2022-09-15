@@ -1,7 +1,7 @@
 
 {pn_RKE1} is a CNCF-certified Kubernetes distribution that runs entirely within Docker containers. It solves the common frustration of installation complexity with Kubernetes by removing most host dependencies and presenting a stable path for deployment, upgrades, and rollbacks.
 
-With {pn_RKE1} [{an_RKE1}], the operation of Kubernetes is easily automated and entirely independent of the operating system and platform you’re running. As long as you can run a supported version of Docker, you can deploy and run Kubernetes with {an_RKE1}. It builds a cluster from a single command in just a few minutes, and its declarative configuration makes Kubernetes upgrades atomic and safe.
+With {pn_RKE1} [{an_RKE1}], the operation of Kubernetes is easily automated and entirely independent of the operating system and platform you are running. As long as you can run a supported version of Docker, you can deploy and run Kubernetes with {an_RKE1}. It builds a cluster from a single command in a few minutes, and its declarative configuration makes Kubernetes upgrades atomic and safe.
 
 What is provided with {pn_RKE1}::
 * CNCF Certification
@@ -9,11 +9,11 @@ What is provided with {pn_RKE1}::
 * Simplified installation
 ** Installation is via a single binary and it uses a single YAML file, meaning that even non-experts can deploy Kubernetes with a single command. The command connects to remote hosts via SSH, so Rancher or any staff member with SSH access can deploy and manage {an_RKE1} instances anywhere in the world.
 * Automated Operation
-** When used with {pn_Rancher}, operators can perform automated installation and upgrades of {an_RKE1} clusters with just a few clicks.
+** When used with {pn_Rancher}, operators can perform automated installation and upgrades of {an_RKE1} clusters with a few clicks.
 * Vendor Independence
 ** {an_RKE1} is not locked into a specific vendor operating system, Kubernetes Management Platform or proprietary tooling.
 * Safe, Atomic Upgrades
-** Since {an_RKE1} is built using containers, it doesn’t have any touch points with the underlying operating system beyond the container engine. Containers make it easy to upgrade to a new version and to roll back to the previous version if necessary. 
+** Since {an_RKE1} is built using containers, it does not have any touch points with the underlying operating system beyond the container engine. Containers make it easy to upgrade to a new version and to roll back to the previous version if necessary. 
 * 24x7 Enterprise-level Support
 ** Ensures around-the-clock support from technical experts when you need it.
 
@@ -22,7 +22,7 @@ The fundamental roles for the nodes and core functionality of {pn_RKE1} are repr
 image::{an_RKE1}1_overview.png[title="Component Overview - {pn_RKE1}", scaledwidth=80%]
 
 * Kubernetes API Server,
-** interacts with kubelet on all the nodes, plus addresses authentication, user interface (UI), command-line interface (CLI) and API for external access and cluster management via {pn_Rancher} cluster controller to agent
+** interacts with kubelet on all the nodes, plus addresses authentication, user interface (UI), command line interface (CLI) and API for external access and cluster management via {pn_Rancher} cluster controller to agent
 
 ifdef::RC,RI[]
 While all {pn_RKE1} roles can be installed on a single system, for the best availability, performance and security, the recommended deployment of a {pn_RKE1} cluster is a pair of nodes for the control plane role, at least three etcd role-based nodes and three or more worker nodes.
