@@ -39,22 +39,25 @@ include::./common_docinfo_vars.adoc[]
 //    - specific benefits of this solution
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Modern software development is largely agile, open, and collaborative, resulting in:
-A wealth of open source, optimized libraries, toolkits, and frameworks that are leveraged to support complex applications.
-A rapid state of continuous development, delivering new value but also driving the need for CI/CD pipelines.
-
-An essential need to share code efficiently and consistently.
+Modern software development is largely agile, open, and collaborative.
 Nowhere has this been more obvious than in the domain of machine learning (ML).
-An explosion of ML advancement has driven the creation of tools and capabilities to support this agile, open, and collaborative development technology.
+The resulting explosion of ML advancement has driven:
 
-ML developers push hardware and software limits to achieve the performance and scale required to build and deploy models.
-ML applications leverage low-level mathematics libraries developed for high-performance computing, as well as many higher-level libraries, toolkits, and frameworks to create models that help solve seemingly intractable problems.
+* A wealth of open source, optimized libraries, toolkits, and frameworks that are leveraged to support complex applications.
 
-Keras has become one of the most used deep learning frameworks among ML developers for its ease of use and performance.
-Keras is built on TensorFlow 2 and can scale from a single system to a cluster of TPUs (tensor processing units).
-TensorFlow 2 itself is an end-to-end, open source machine learning platform that supports multidimensional array (tensor) based numeric computation, GPU and distributed processing, model construction, training, and exporting.
+* A rapid state of continuous development, delivering new value and highlighting the need for automation and CI/CD pipelines.
 
-Keras and TensorFlow 2 are part of a tightly-connected ecosystem, covering every step of the machine learning workflow, from data management to hyperparameter training to deployment of solutions.
+* An essential need to share code efficiently and consistently.
+
+
+ML developers create models that push the limits of hardware and software to achieve the performance and scale required to help solve seemingly intractable problems in record time.
+
+TensorFlow 2 and Keras are popular with ML developers for creating production-grade models.
+TensorFlow 2 is an end-to-end, open source ML platform that supports multidimensional array (tensor) based numeric computation, GPU and distributed processing, model construction, training, and exporting.
+Keras is a high-level neural network API that simplifies the creation of complex deep learning (DL) models.
+Keras is written in Python and is capable of running on top of TensorFlow 2 as well as other ML frameworks.
+Keras and TensorFlow 2 form a tightly-connected ecosystem, covering every step of the ML worklfow - from data management to hyperparameter training to deployment - and can scale from a single system to a cluster of TPUs (tensor processing units).
+This has made Keras and TensorFlow 2 among the most popular of ML frameworks.
 
 
 
@@ -64,8 +67,8 @@ Keras and TensorFlow 2 are part of a tightly-connected ecosystem, covering every
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will help you take the first steps to building containers using SUSE technologies.
-You will explore a machine learning example to get hands-on experience with containers.
+This document illustrates how to take the your first steps in building containers with SUSE technologies to support ML development and implementation.
+You get hands-on experience creating a container with an interactive, JupyterLab environment and a Keras and TensorFlow 2 ML model.
 
 
 === Audience
@@ -77,8 +80,9 @@ You will explore a machine learning example to get hands-on experience with cont
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for people working with machine learning for digital transformation and more.
-Technology managers, system architects, software developers and data scientists will learn how to work with ML on SUSE technologies.
+This document is intended for people working with ML and interested in getting started with container technologies.
+Data scientists, ML developers, operations teams, systems architects and others can gain an appreciation for modern, cloud native software development and how this supports advanced analytics and ML.
+To progress with this document, the reader should have general knowledge of container technologies and basic Linux command line skills.
 
 
 === Prerequisites
@@ -92,7 +96,7 @@ Technology managers, system architects, software developers and data scientists 
 // * Requirement 2 https://url[linktext]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-NOTE: Define at a high level what is needed early, before the reader goes on
+NOTE: Define at a high level what is needed early, before the reader goes on - this should focus on defining the minimum environment in which the reader can perform the tasks outlined in this guide.
 
 
 
@@ -108,9 +112,11 @@ NOTE: Define at a high level what is needed early, before the reader goes on
 //   - workflow
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+NOTE: See Abhinav's use of the Asciidoc definition style (Python::) to define/highlight components.
+
 === Python ML with Keras and TensorFlow 2
 
-The goal of machine learning toolkits such as TensorFlow and Keras is to make simplify development by implementing and hiding complex low-level programming tasks.
+The goal of ML frameworks and toolkits, such as TensorFlow 2 and Keras, is to simplify development by implementing a high-level, API approach that hides complex low-level programming tasks.
 Combined with the Python programming language, machine learning in Keras and TensorFlow allows data scientists to focus on the model and data transformations.
 Data scientists and programmers must study Keras and TensorFlow libraries to understand how to implement these capabilities.
 
@@ -165,6 +171,13 @@ And, MNIST does not require expensive GPUs for hardware acceleration of the trai
 //       with appropriate screenshots that show SUSE branding
 //       as well as link to or detail a command-line method.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+[NOTE]
+====
+In this guide, you focus on containerizing your Python-based ML development environment or application.
+See https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server] to learn more about working with Python directly on your Linux desktop, in a VM, or on a remote server. 
+====
+
 
 // python3 -m venv $HOME/py-keras
 // source $HOME/py-keras/bin/activate
