@@ -150,7 +150,7 @@ Another approach is to put all the AI toolkit and other library dependencies int
 === Containers for Machine Learning Development
 
 Containers put application artifacts and dependencies into an image that can easily be deployed on runtime environments in the cloud, at the edge, in data centers, or in testing.
-By adding ML library dependencies to a container, we resolve challenges that occur when other machines don’t have the same libraries available.
+By adding ML library dependencies to a container, you resolve challenges that occur when other machines don’t have the same libraries available.
 The container removes the need to reference specific library versions on other machines.
 Deploying library dependencies together with a machine-learning application simplifies the deployment workflow.
 This guide will show an example of building a container for an ML program.
@@ -167,12 +167,10 @@ SLE BCI technology provides an enterprise better security and quality of their d
 By using SUSE-tested and support code, you can rely on the enhanced security that SUSE has invested in.
 Your code will have higher-quality because you have based it on well-tested technologies, backed by a leading Linux vendor.
 
-NOTE:  Where do we want to take the sidebar to explain the Victor-provided container environment trick?
-
 === Python ML with Keras and TensorFlow 2
 
 Now it’s time to work with a machine-learning example.
-We have chosen the MNIST example, which is something of a standard for getting started with machine-learning code and concepts.
+This guide uses the MNIST example, which is something of a standard for getting started with machine-learning code and concepts.
 The MNIST example does analysis of hand-written digits between 0-9.
 The code is well defined and documented for this problem both online and via books such as, “Deep Learning with Python.” [cite: Manning].
 MNIST has a relatively small set of training images that can easily be downloaded and analyzed on a laptop or desktop computer.
@@ -195,31 +193,285 @@ And, MNIST does not require expensive GPUs for hardware acceleration of the trai
 //       as well as link to or detail a command-line method.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-// . A command example
-// +
-// [source, bash]
-// ----
-// source ./bin/activate
-// ----
-// +
-// The 'activate' script cannot be run on its own.
+// python3 -m venv $HOME/py-keras
+// source $HOME/py-keras/bin/activate
+// pip install --upgrade pip
+// echo "Now do: pip install tensorflow"
 
-// TBD:  This is where Brian left off
-Here's what I think needs to happen next:
+Now you are ready to build up your AI toolkit environment.
+This will lead you to building the MNIST example in a container.
+Let's get started!
 
-* install AI toolkits
+. Work in a Python virtual environment
++
+[source, bash]
+----
+python3 -m venv $HOME/py-keras
+source $HOME/py-keras/bin/activate
+pip install --upgrade pip
+----
++
+The 'activate' script cannot be run on its own, but runs in your current shell environment.
 
-* get MNIST example code
+Next you will load in the AI toolkits that are used from the MNIST example.
 
-* get MNIST data
+. Load TensorFlow and Keras Toolkits for MNIST example
++
+[source, bash]
+----
+pip install tensorflow
+----
++
 
-* run example
+TIP: TensorFlow already contains the Keras libraries used in the MNIST example model.
 
-* build a container
+If you are not familiar with Keras, here is an
+https://keras.io/getting_started/intro_to_keras_for_engineers/[introduction for engineers].
 
-* test container
+Now you can explore the MNIST example model and associated code.
+A nice overview of how this example works is provided
+https://keras.io/examples/vision/mnist_convnet/[here].
 
-* Now we have decisions to make ;-)
+The MNIST data is already transformed into NumPy tensors for you as part of the Keras toolkit examples.
+
+Now that you understand the model to be shown, the next step is to build this into a container.
+
+== MNIST Model in a SLE BCI Container
+
+There are two options to make a container with the code for the MNIST model.
+The production option would be to build a web-based API to this code and put that in a container.
+A development approach would be to work with this model in JupyterLab.
+This guide will take the development approach.
+
+SUSE created a getting started guide for JuptyerLab.
+You can find that document, which is named _JupyterLab with SUSE Linux Enterprise Server: Getting Started_.
+Please refer to that guide for more details on working with JupyterLab on SLES.
+
+Here you will install JupyterLab in the current Python virtual environment.
+Then you will load the MNIST code into a new notebook.
+
+TIP:  Remember to return to your activated Python env, which this guide called _py-keras_.
+
+. Install JupyterLab in your Python virtual environment
++
+[source, bash]
+----
+pip install jupyterlab
+----
++
+
+. Download MNIST code to a new directory in your Python virtual environment
++
+[source, bash]
+----
+cd ~/py-keras
+mkdir mnist
+cd mnist
+curl -o mnist_convnet.py https://raw.githubusercontent.com/keras-team/keras-io/master/examples/vision/mnist_convnet.py
+----
++
+
+Now you can examine the MNIST code in JupyterLab.
+Since you are current in the mnist directory, running JupyterLab there will make it easy to find the code.
+
+. Run JupyterLab to view MNIST code
++
+[source, bash]
+----
+jupyter-lab
+----
++
+
+TIP:  Grab the URL generated by the _jupyter-lab_ command and paste that into your browser.  Double-click _mnist_convnet.py_ to see the code.
+
+There is a lot you can do at this point to experiment with the MNIST code.
+Since the goal of this guide is to get this work into a container, that will be the next step.
+
+When you are done experimenting with MNIST code, quit _jupyter-lab_ by entering a _Ctrl-C_ in the shell running that command.
+
+=== Podman Overview
+
+To build a container, you create a set of instructions that are handled by a container engine.
+In SUSE Linux Enterprise, an excellent container engine choice is _Podman_.
+
+Podman is short for Pod Manager Tool.
+It is a daemonless container engine for developing, managing, and running Open Container Initiative (OCI) containers on a Linux system.
+Podman offers a drop-in alternative for Docker and is the default container runtime in openSUSE Kubic — a certified Kubernetes distribution built on top of openSUSE.
+
+You can read more about Podman from the 
+https://docs.podman.io/en/latest/[Podman online documentation].
+
+You can also learn more from the
+https://documentation.suse.com/sles/15-SP4/single-html/SLES-container/index.html[SUSE Container Guide].
+
+You will use Podman to create a container of the JupyterLab environment you have built.
+You can easily move that container to other machines to be run by a container runtime, or run the container locally.
+
+
+=== Installing Podman
+
+To use Podman for your container creation, you will need to install it.
+First, you need to enable the SUSE reposity for the Containers Module.
+
+. Enable repo for the SUSE Containers Module
++
+[source, bash]
+----
+sudo SUSEConnect -p sle-module-containers/15.4/x86_64
+----
++
+
+TIP: The Containers Module is a free add-on module for your SUSE Linux Enterprise Server system.
+
+With the Containers Module enabled, you can now install Podman.
+
+. Install Podman
++
+[source, bash]
+----
+sudo zypper in podman
+----
++
+TIP:  Sometimes you might also want to update your machine before installing new software.
+
+=== Create the Containerfile
+
+A _Containerfile_ is a set of instructions that tell the container engine how to build your container.
+If you are familiar with Docker, a Containerfile has the same format as a Dockerfile.
+You can read more about Containerfiles here:
+* https://docs.podman.io/en/latest/markdown/podman-build.1.html
+* https://github.com/containers/common/blob/main/docs/Containerfile.5.md
+
+Before you construct the Containerfile for the JupyterLab container, here's a useful tip about container user environments.
+
+==== Linux User Environments in Containers
+
+One reason that IT organizations prefer Podman is that it can run containers with requiring root access.
+As you can imagine, having root access on the machines that run containers is a huge security hole.
+In short, most IT organization will not allow root access on production environments.
+
+Podman can run containers without requiring root access.
+One way it does this is by using a Linux kernel feature called namespaces, which is widely used in container technologies.
+User environments inside a namespace can be grouped and segmented away from the defaul user IDs.
+This means your container will run as a different user ID on a target machine than your development user ID.
+This is a great feature, but something we may want to change in a development scenario.
+
+==== A Container Method to Map a User ID
+
+The following example shows you how to map your current user ID to that of the running container.
+This example uses the ENTRYPOINT feature of a Containerfile to leverage a script that passes your local user ID to the container.
+
+The entrypoint script creates a username inside the container and use an environment variable to set the container's UID to that of the user executing the *podman run* command.
+
+. Bash ENTRYPOINT script
++
+[source, bash]
+----
+#!/bin/bash
+
+# DEBUG: optional debug verbosity
+[[ $DEBUG -eq 1 ]] && set -x
+
+# add container user, passed LOCAL_USERID required
+CONT_UID=${LOCAL_USERID:?}
+CONT_UNAME=jupyterlab
+CONT_HOME=/home/${CONT_UNAME}
+VIRTENV=/home/virtenv
+
+echo "Starting with UID : $CONT_UID"
+groupadd mail
+useradd -s /bin/bash -u $CONT_UID -d $CONT_HOME -m $CONT_UNAME
+
+# useradd will not apply skel files if the container homedir is created
+# via a container engine's --mount flag, so force the copy of these files.
+cp -ar /etc/skel/. ${CONT_HOME}/
+chown -R $CONT_UID $CONT_HOME
+
+# DEBUG: allow user to edit virtenv
+[[ $DEBUG -eq 1 ]] && chown -R $CONT_UID $VIRTENV
+
+# place container engine CMD into a script to facilitate an exec
+echo "$@" > /usr/local/bin/cmd.sh
+chmod +x /usr/local/bin/cmd.sh
+
+# exec CMD as the local user
+exec su - $CONT_UNAME -c /usr/local/bin/cmd.sh
+----
++
+
+A quick summary of what is happening in this script is important.
+It is not important that you understand all the details of this script, unless it is interesting to you.
+
+NOTE:  TBD.  Describe how the LOCAL_USERID variable is extracted and used in the container.
+
+
+. Containerfile Using the ENTRYPOINT script
++
+[source, bash]
+----
+# https://registry.suse.com/
+FROM registry.suse.com/bci/bci-base:latest
+
+ENV ZYPPERCMD="zypper --non-interactive"
+
+RUN $ZYPPERCMD install python3 python3-pip
+RUN python3 -m venv /home/virtenv
+
+COPY requirements.txt .
+RUN . /home/virtenv/bin/activate && pip install --upgrade pip
+RUN . /home/virtenv/bin/activate && pip install -r requirements.txt
+
+# jupyter web port
+EXPOSE 8888/tcp
+
+# https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD [".", "/home/virtenv/bin/activate", "&&", "jupyter", "lab"]
+----
++
+
+Let's spend some time with the pieces of this Containerfile
+
+NOTE:  TBD.  Describe how this Containerfile works
+
+
+// Run
+// 
+// The entrypoint script will create the username jupyter inside the container
+// and use $LOCAL_USERID to align the container's jupyter UID with the UID of
+// the user executing the podman run command.
+// 
+// JupyterLab is then launched from the virtual environment in
+// /home/virtenv with the start directory of /home/jupyter.
+// 
+// Environment Variables
+// - LOCAL_USERID is required and should match the local UID
+// - DEBUG=1 is optional, enables verbosity and editing of virtenv
+// 
+// 
+// mkdir -p jupyterlab
+// sudo podman run \
+// --mount type=bind,source="$(pwd)/jupyterlab",target=/home/jupyterlab \
+// --network host \
+// --env LOCAL_USERID=$UID \
+// --env DEBUG=0 \
+// localhost/jupyterlab
+
+
+
+=== Build the Container
+
+TBD: tbd
+
+=== Run the Container
+
+TBD: tbd
+
+=== Test the Container
+
+TBD: tbd
 
 
 
