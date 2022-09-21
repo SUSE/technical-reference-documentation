@@ -338,7 +338,9 @@ TIP:  Sometimes you might also want to update your machine before installing new
 A _Containerfile_ is a set of instructions that tell the container engine how to build your container.
 If you are familiar with Docker, a Containerfile has the same format as a Dockerfile.
 You can read more about Containerfiles here:
+
 * https://docs.podman.io/en/latest/markdown/podman-build.1.html
+
 * https://github.com/containers/common/blob/main/docs/Containerfile.5.md
 
 Before you construct the Containerfile for the JupyterLab container, here's a useful tip about container user environments.
@@ -376,7 +378,9 @@ As you will see in the Containerfile shown below, you then run the entrypoint.sh
 You build a container through a description file, called the Containerfile.
 
 You can read more about Containerfiles here:
+
 * https://docs.podman.io/en/latest/markdown/podman-build.1.html
+
 * https://github.com/containers/common/blob/main/docs/Containerfile.5.md
 
 Your goal is to create a simple development tool to share your MNIST experiment in JupyterLab.
@@ -412,8 +416,27 @@ TIP:  For compatibility, Podman will also read files named Dockerfile.
 The first element of the Containerfile to note is the FROM clause.
 This instruction points to the SUSE Linux Enterprise Base Container Image (SLE BCI).
 
+The RUN clauses will install JupyterLab in the container and the EXPOSE clause will open a TCP/IP port for the service.
+
 You can learn more about containers in the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide].
 You might also want to read the section on https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[SLE BCI].
+
+Now you will build the container.
+You need to create the Contailerfile with the contents described above.
+The, use the podman command to build your container image.
+
+NOTE: Use your favorite editor or _vi_ to paste the contents of Containfile.
+
+. Build a container for your JupyerLab & MNIST example
++
+[source, bash]
+----
+cd ~/py-keras
+vi Containerfile
+podman build .
+----
++
+TIP: You may have to work through issues with your Containerfile to get your image built properly.
 
 // mkdir -p jupyterlab
 // sudo podman run \
