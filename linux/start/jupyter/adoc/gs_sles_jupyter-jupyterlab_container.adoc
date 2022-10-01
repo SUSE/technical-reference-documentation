@@ -175,7 +175,7 @@ MNIST has a relatively small set of training images that can easily be downloade
 And, MNIST does not require expensive GPUs for hardware acceleration of the training process.
 
 
-== AI Toolkits: Installation
+== AI Toolkits
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Detail the installation steps in an ordered list.
@@ -191,24 +191,17 @@ And, MNIST does not require expensive GPUs for hardware acceleration of the trai
 //       as well as link to or detail a command-line method.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Now you are ready to build up your AI toolkit environment.
+This will lead you to building the MNIST example in a container.
+Let's get started!
+
 [NOTE]
 ====
 In this guide, you focus on containerizing your Python-based ML development environment or application.
 See https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server] to learn more about working with Python directly on your Linux desktop, in a VM, or on a remote server. 
 ====
 
-
-// python3 -m venv $HOME/py-keras
-// source $HOME/py-keras/bin/activate
-// pip install --upgrade pip
-// echo "Now do: pip install tensorflow"
-
-Now you are ready to build up your AI toolkit environment.
-This will lead you to building the MNIST example in a container.
-Let's get started!
-
 First, you need to create a Python virtual environment with tensorflow.
-If you need help with these steps, see https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server].
 
 // Terry, I put this snippet back, as I have a download section later that relies on some local directory, so I felt I should name it first.
 To provide consistency across this document, below are steps that are typically used to create the virtual environment.
@@ -244,10 +237,6 @@ The production option would be to build a web-based API to this code and put tha
 A development approach would be to work with this model in JupyterLab.
 This guide will take the development approach.
 
-SUSE created a getting started guide for JuptyerLab.
-You can find that document, which is named _JupyterLab with SUSE Linux Enterprise Server: Getting Started_.
-Please refer to that guide for more details on working with JupyterLab on SLES.
-
 Here you will install JupyterLab in the current Python virtual environment.
 Then you will load the MNIST code into a new notebook.
 
@@ -273,7 +262,7 @@ curl -o mnist_convnet.py https://raw.githubusercontent.com/keras-team/keras-io/m
 +
 
 Now you can examine the MNIST code in JupyterLab.
-Since you are current in the mnist directory, running JupyterLab there will make it easy to find the code.
+Since you are currently in the mnist directory, running JupyterLab there will make it easy to find the code.
 
 . Run JupyterLab to view MNIST code
 +
@@ -331,7 +320,7 @@ With the Containers Module enabled, you can now install Podman.
 sudo zypper in podman
 ----
 +
-TIP:  Sometimes you might also want to update your machine before installing new software.
+TIP:  Often you also update your machine before installing new software.
 
 === Create the Containerfile
 
@@ -388,7 +377,6 @@ An example Containfile is shown below.
 
 . Containerfile for JupyterLab with MNIST
 +
-[source, bash]
 ----
 # https://registry.suse.com/
 FROM registry.suse.com/bci/bci-base:latest
