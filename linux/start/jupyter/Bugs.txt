@@ -1,0 +1,39 @@
+
+1. Commands in bash shell segments that extend beyong page width get cut with a newline, so copy/paste fails.
+
+2. Same formatting problems as #1 occur for Listing blocks, such as the Containerfile Listing.
+
+3. Podman default install isn't configured correctly for regular user
+   NEED:
+    - Install SLES with ext4 filesystem for /home
+    - Edit:  /etc/containers/storage.conf  --> driver="overlay"
+    - See below
+
+--storage-driver=value
+Storage driver. The default storage driver for UID 0 is configured in /etc/containers/storage.conf ($HOME/.config/containers/storage.conf in rootless mode), and is vfs for non-root users when fuse-overlayfs is not available. The STORAGE_DRIVER environment variable overrides the default. The --storage-driver specified driver overrides all.
+
+Overriding this option will cause the storage-opt settings in /etc/containers/storage.conf to be ignored. The user must specify additional options via the --storage-opt flag.
+
+4. SUSE Connect permissions not set correctly (see below)
+
+STEP 2/11: ENV ZYPPERCMD="zypper --non-interactive"
+--> 16daf55c0df
+STEP 3/11: RUN $ZYPPERCMD install python3 python3-pip
+WARN[0007] error mounting subscriptions, skipping entry in /etc/containers/mounts.conf: open /etc/zypp/credentials.d/SCCcredentials: permission denied
+Refreshing service 'container-suseconnect-zypp'.
+Warning: Skipping service 'container-suseconnect-zypp' because of the above error.
+Problem retrieving the repository index file for service 'container-suseconnect-zypp':
+[container-suseconnect-zypp|file:/usr/lib/zypp/plugins/services/container-suseconnect-zypp]
+
+STEP 4/11: RUN python3 -m venv /home/virtenv
+WARN[0023] error mounting subscriptions, skipping entry in /etc/containers/mounts.conf: open /etc/zypp/credentials.d/SCCcredentials: permission denied
+
+NOTE:  ^^^ one of these errors for every Containerfile RUN command!
+NOTE:  The error (warning) below occurs when the container image is run
+
+WARN[0000] error mounting subscriptions, skipping entry in /etc/containers/mounts.conf: open /etc/zypp/credentials.d/SCCcredentials: permission denied
+
+5. Container cannot be removed, even though it appears to have terminated. $ podman ps  # no images running
+   Error: Image used by 78c3e27471906fa363504ce37739dc251fd6bdf934cc95af72b4a5b82d03b83a: image is in use by a container
+   FIX:  Need to use:  podman rmi ID -f
+

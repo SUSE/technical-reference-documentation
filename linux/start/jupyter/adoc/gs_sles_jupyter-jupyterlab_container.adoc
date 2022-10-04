@@ -96,8 +96,29 @@ To progress with this document, the reader should have general knowledge of cont
 // * Requirement 2 https://url[linktext]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-NOTE: Define at a high level what is needed early, before the reader goes on - this should focus on defining the minimum environment in which the reader can perform the tasks outlined in this guide.
+To be successful with this guide, you will need to understand a few technical areas.
 
+* https://www.python.org/[Python]: Know a little about the language tools that are used here.
+
+* https://www.suse.com/products/server/[SLES]: Have access to a SUSE Linux Enterprise Server operating system.
+
+* https://jupyter.org/[JupyterLab]: Have access to a SUSE Linux Enterprise Server operating system.
+
+If you need to review how to work with JupyterLab, see
+https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server].
+
+
+== Technical overview
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a technical overview of the solution.
+// Identify components.
+// Describe how the components fit together.
+// Leverage diagrams as appropriate, including (but not limited to):
+//   - component architecture
+//   - data flow
+//   - workflow
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 === Components and tools
 
@@ -119,19 +140,6 @@ Some additional components and tools discussed in this guide include:
 
 * https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide]: how to use and build containers on SLE systems.
 
-== Technical overview
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a technical overview of the solution.
-// Identify components.
-// Describe how the components fit together.
-// Leverage diagrams as appropriate, including (but not limited to):
-//   - component architecture
-//   - data flow
-//   - workflow
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-NOTE: See Abhinav's use of the Asciidoc definition style (Python::) to define/highlight components.
 
 === Python ML with Keras and TensorFlow 2
 
@@ -158,7 +166,7 @@ This guide will show an example of building a container for an ML program.
 SUSE Linux Enterprise (SLE) Base Container Images (BCI) are starting points for supported operating system code from SUSE.
 The SLE BCIs are freely available, re-distributable, and supported across many different environments.
 SLE BCIs are open, flexible, and secure container images and application development tools, that leverage SUSE Linux Enterprise.
-These images are designed to be a secure base for any containerized workload and are great for machine learning deployments.
+These images are designed to be a secure base for any containerized workload and are great for machine-learning deployments.
 Together with SUSE Edge technologies, SLE BCIs are used to quickly deploy ML applications on edge devices.
 
 SLE BCI technology provides an enterprise better security and quality of their delivered applications and services.
@@ -415,52 +423,110 @@ The, use the podman command to build your container image.
 
 NOTE: Use your favorite editor or _vi_ to paste the contents of Containfile.
 
+// podman build
+// $ podman build -t=ImageName -
 . Build a container for your JupyerLab & MNIST example
 +
 [source, bash]
 ----
 cd ~/py-keras
 vi Containerfile
-podman build .
+podman build . -t mnist
 ----
 +
 TIP: You may have to work through issues with your Containerfile to get your image built properly.
 
-// mkdir -p jupyterlab
-// sudo podman run \
-// --mount type=bind,source="$(pwd)/jupyterlab",target=/home/jupyterlab \
-// --network host \
-// --env LOCAL_USERID=$UID \
-// --env DEBUG=0 \
-// localhost/jupyterlab
-
-
 
 === Run the Container
 
-TBD: tbd
+The container image you have built now lives in the localhost repository and is tagged with the name _mnist_.
+You can verify that your image has been created with the following podman command.
+
+. Show the container images on your localhost
++
+[source, bash]
+----
+podman images
+----
++
+TIP: Learn more about _podman_ commands at: https://docs.podman.io/en/latest/Commands.html
+
+It is only a little more complication to run the container you just created.
+That is because we want to add the MNIST code to the container and pass our User ID.
+
+// TARGET=jupyterlab
+// mkdir -p $TARGET
+// cp -f mnist_convnet.py $TARGET
+// 
+// podman run \
+//   --mount type=bind,source="$(pwd)/$TARGET",target=/home/$TARGET \
+//   --network host \
+//   --env LOCAL_USERID=$UID \
+// localhost/mnist
+
+. Run your container and pass it your User ID
++
+[source, bash]
+----
+TARGET=jupyterlab
+mkdir -p $TARGET
+cp -f mnist_convnet.py $TARGET
+
+podman run \
+  --mount type=bind,source="$(pwd)/$TARGET",target=/home/$TARGET \
+  --network host \
+  --env LOCAL_USERID=$UID \
+localhost/mnist
+----
++
+TIP: You could put these commands into a file, such as: _podmanrun.sh_
+
 
 === Test the Container
 
-TBD: tbd
+When _podman run_ command starts your container, you will see its output in your shell.
+It will look something like this:
+
+. Example output of the _podman run_ command
++
+----
+sles@sp4:~/Python/py-keras/mnist$ ./podmanrun.sh
+Starting with UID : 1000
+[I 2022-10-03 22:34:10.355 ServerApp] jupyterlab | extension was successfully linked.
+[I 2022-10-03 22:34:10.363 ServerApp] Writing Jupyter server cookie secret to /home/jupyterlab/.local/share/jupyter/runtime/jupyter_cookie_secret
+[I 2022-10-03 22:34:10.556 ServerApp] nbclassic | extension was successfully linked.
+[I 2022-10-03 22:34:10.579 ServerApp] nbclassic | extension was successfully loaded.
+[I 2022-10-03 22:34:10.580 LabApp] JupyterLab extension loaded from /home/virtenv/lib64/python3.6/site-packages/jupyterlab
+[I 2022-10-03 22:34:10.580 LabApp] JupyterLab application directory is /home/virtenv/share/jupyter/lab
+[I 2022-10-03 22:34:10.583 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2022-10-03 22:34:10.583 ServerApp] Serving notebooks from local directory: /home/jupyterlab
+[I 2022-10-03 22:34:10.583 ServerApp] Jupyter Server 1.13.1 is running at:
+[I 2022-10-03 22:34:10.583 ServerApp] http://localhost:8888/lab?token=d6f27830445721412980dbf43004fc855aee5eee058b3c67
+[I 2022-10-03 22:34:10.583 ServerApp]  or http://127.0.0.1:8888/lab?token=d6f27830445721412980dbf43004fc855aee5eee058b3c67
+[I 2022-10-03 22:34:10.584 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[W 2022-10-03 22:34:10.587 ServerApp] No web browser found: could not locate runnable browser.
+[C 2022-10-03 22:34:10.587 ServerApp]
+
+To access the server, open this file in a browser:
+file:///home/jupyterlab/.local/share/jupyter/runtime/jpserver-45-open.html
+Or copy and paste one of these URLs:
+http://localhost:8888/lab?token=d6f27830445721412980dbf43004fc855aee5eee058b3c67
+or http://127.0.0.1:8888/lab?token=d6f27830445721412980dbf43004fc855aee5eee058b3c67
+----
++
+TIP:  If you see warnings, you should understand that aspect of the _podman run_ process.
 
 
+At this point, you are ready to test your container.
+The output shown above has an HTTP URL that you can use from your browser to interact with JupyterLab.
+Copy the _localhost_ HTTP URL.
+Paste that URL into your favorite browser.
 
-== Demonstration
+You should see a JupyterLab web page, such as the one below.
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Describe use case / functionality to be demonstrated, followed by
-//   the demonstration itself.
-// Typical demonstration flow is:
-//   1. Prepare (environment for demonstration)
-//   2. Perform (actions of demonstration)
-//   3. Verify (demonstration worked)
-// Depending on the size and complexity of each step,
-//   the demonstration can be broken into subsections.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+image::Screenshot-JupyterLab-Container.png[JupyterLab,640,480,pdfwidth=80%,scaledwidth=80%]
 
-
-
+TIP:  When you are done with your container, Ctrl-C in the shell will terminate the _podman run_ command.
 
 == Summary
 
@@ -472,6 +538,20 @@ TBD: tbd
 // Include any hints about other capabilities.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Companies are transforming the way that software and services are being created.
+Modern software is developed by teams that are agile, open, and collaborative.
+Adding machine learning to the development process relies on collaborative tool and processes.
+
+This guide has shown you how to create containers that are based on SUSE Linux Enterprise (SLE) Base Container Images (BCI).
+BCI-based containers leverage proven, tested, and supported code from SUSE.
+As such, SLE BCIs allow open, flexible, and secure development and are excellent for containerized workload and machine-learning deployments.
+With SUSE Edge technologies, SLE BCIs help you to quickly deploy secure, high-quality ML applications on edge devices.
+
+This guide showed steps to create a container of JupyterLab and code for the MNIST image analysis model.
+There are other techniques to share code, that don't involve creating a container for JupyterLab.
+The steps shown here are for your education and provide an interest web-based container example.
+
+With the podman knowledge you've gained here, you are now ready to create your own BCI-based containers.
 
 
 
