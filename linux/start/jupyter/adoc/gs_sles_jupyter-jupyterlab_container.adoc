@@ -13,7 +13,8 @@ include::./common_docinfo_vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 :title: Python and JupyterLab with Podman and SUSE Linux Enterprise Base Container Images: Getting Started
-:productname: SLE BCI 15 SP4
+:productname: SUSE Linux Enterprise Server 15 SP4
+:opensuse: openSUSE Leap 15.4
 :defaultpython: Python 3.10
 :partnerprod1: JupyterLab
 :author1: Brian Fromme, Alliance Solution Architect, SUSE
@@ -27,37 +28,14 @@ include::./common_docinfo_vars.adoc[]
 
 === Motivation
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// In this section, provide motivation for the document.
-// Provide a brief statement (2-4 sentences) to identify
-//   - what products are being highlighted
-//   - what the document is about and why it may be of
-//     interest to the reader and beyond.
-// Include an approved SUSE | Partner logo lock-up
-// Include additional details if needed, like
-//    - the challenges that are or can be addressed
-//    - specific benefits of this solution
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 Modern software development is largely agile, open, and collaborative.
-Nowhere has this been more obvious than in the domain of machine learning (ML).
-The resulting explosion of ML advancement has driven:
 
-* A wealth of open source, optimized libraries, toolkits, and frameworks that are leveraged to support complex applications.
+Nowhere has this been more obvious and impactful than in the domain of machine learning (ML).
+ML is in a rapid state of continuous development, evolving a wealthy ecosystem of libraries, toolkits, and frameworks that enable developers to push the limits of hardware and software to solve previously intractable problems in record time.
 
-* A rapid state of continuous development, delivering new value and highlighting the need for automation and CI/CD pipelines.
-
-* An essential need to share code efficiently and consistently.
-
-
-ML developers create models that push the limits of hardware and software to achieve the performance and scale required to help solve seemingly intractable problems in record time.
-
-TensorFlow 2 and Keras are popular with ML developers for creating production-grade models.
-TensorFlow 2 is an end-to-end, open source ML platform that supports multidimensional array (tensor) based numeric computation, GPU and distributed processing, model construction, training, and exporting.
-Keras is a high-level neural network API that simplifies the creation of complex deep learning (DL) models.
-Keras is written in Python and is capable of running on top of TensorFlow 2 as well as other ML frameworks.
-Keras and TensorFlow 2 form a tightly-connected ecosystem, covering every step of the ML worklfow - from data management to hyperparameter training to deployment - and can scale from a single system to a cluster of TPUs (tensor processing units).
-This has made Keras and TensorFlow 2 among the most popular of ML frameworks.
+An essential technology enabling these feats is the container.
+For ML developers, containers provide a convenient way to package ML models and applications for sharing and deployment.
+For ML operations teams, containers enable deployment at massive scale everywhere - on-premises, in the cloud, and even at the edge.
 
 
 
@@ -67,8 +45,7 @@ This has made Keras and TensorFlow 2 among the most popular of ML frameworks.
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document illustrates how to take the your first steps in building containers with SUSE technologies to support ML development and implementation.
-You get hands-on experience creating a container with an interactive, JupyterLab environment and a Keras and TensorFlow 2 ML model.
+This document illustrates how to take the your first steps with containers, using {productname} and SUSE base container images to support ML development and implementation.
 
 
 === Audience
@@ -80,49 +57,32 @@ You get hands-on experience creating a container with an interactive, JupyterLab
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for people working with ML and interested in getting started with container technologies.
-Data scientists, ML developers, operations teams, systems architects and others can gain an appreciation for modern, cloud native software development and how this supports advanced analytics and ML.
-To progress with this document, the reader should have general knowledge of container technologies and basic Linux command line skills.
+This document is intended for data scientists, ML developers, operations teams, systems architects and others interested in learning more about container technologies in the context of ML.
+To progress with this document, the reader should have basic Linux command line skills.
 
 
 === Prerequisites
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify minimum requirements (prerequisites) the reader
-//   would need to have to follow the steps of this guide.
-// Link to existing resources whenever possible
-//   but don't be afraid to elaborate as needed.
-// * Requirement 1 https://url[linktext]
-// * Requirement 2 https://url[linktext]
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-To be successful with this guide, you will need to understand a few technical areas.
-
-* https://www.python.org/[Python]: Know a little about the language tools that are used here.
-
-* https://www.suse.com/products/server/[SLES]: Have access to a SUSE Linux Enterprise Server operating system.
-
-* https://jupyter.org/[JupyterLab]: Have access to a SUSE Linux Enterprise Server operating system.
-
-If you need to review how to work with JupyterLab, see
-https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server].
+For this guide, you will be most successful if you have access to a https://www.suse.com/products/server/[{productname}] computer system or virtual machine.
 
 
-== Technical overview
+[NOTE]
+====
+Most of the steps outlined in this guide are directly transferable to https://www.opensuse.org/#Leap[{opensuse}].
+====
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a technical overview of the solution.
-// Identify components.
-// Describe how the components fit together.
-// Leverage diagrams as appropriate, including (but not limited to):
-//   - component architecture
-//   - data flow
-//   - workflow
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-=== Components and tools
 
-Software components discussed in this guide are:
+== Software ecosystem
+
+
+In this guide, several software components and tools are discussed.
+
+
+https://www.tensorflow.org/[TensorFlow] and https://keras.io/[Keras] are popular with ML developers for creating production-grade models.
+TensorFlow is an end-to-end, open source ML platform that supports tensor (multidimensional array) based numeric computation, GPU and distributed processing, model construction, training, and exporting.
+Keras is a high-level neural network API that simplifies the creation of complex deep learning (DL) models and runs on top of TensorFlow.
+Keras and TensorFlow form a tightly-connected ecosystem, covering every step of the ML workflow - from data management to hyperparameter training to deployment - and can scale from a single system to a cluster of TPUs (tensor processing units).
 
 Keras:: Keras is an open-source software library that provides a Python interface for designing artificial neural networks. It acts as an interface for TensorFlow library. We are using keras to design https://www.tensorflow.org/tutorials/images/cnn[Convolutional Neural Nets (CNNs)] for our application.
 
@@ -350,7 +310,7 @@ In short, most IT organization will not allow root access on production environm
 
 Podman can run containers without requiring root access.
 One way it does this is by using a Linux kernel feature called namespaces, which is widely used in container technologies.
-User environments inside a namespace can be grouped and segmented away from the defaul user IDs.
+User environments inside a namespace can be grouped and segmented away from the default user IDs.
 This means your container will run as a different user ID on a target machine than your development user ID.
 This is a great feature, but something we may want to change in a development scenario.
 
