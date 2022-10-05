@@ -12,7 +12,7 @@ include::./common_docinfo_vars.adoc[]
 //       have been commented out below.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-:title: Python and JupyterLab with Podman and SUSE Linux Enterprise Base Container Images: Getting Started
+:title: JupyterLab with Podman and SUSE Linux Enterprise Base Container Images: Getting Started
 :productname: SUSE Linux Enterprise Server 15 SP4
 :opensuse: openSUSE Leap 15.4
 :defaultpython: Python 3.10
@@ -32,10 +32,11 @@ Modern software development is largely agile, open, and collaborative.
 
 Nowhere has this been more obvious and impactful than in the domain of machine learning (ML).
 ML is in a rapid state of continuous development, evolving a wealthy ecosystem of libraries, toolkits, and frameworks that enable developers to push the limits of hardware and software to solve previously intractable problems in record time.
+But rapid development can lead to dependency conflicts, where two applications or even two components of the same application rely on different versions of the same library.
 
-An essential technology enabling these feats is the container.
-For ML developers, containers provide a convenient way to package ML models and applications for sharing and deployment.
-For ML operations teams, containers enable deployment at massive scale everywhere - on-premises, in the cloud, and even at the edge.
+Today, developers have access to container technologies.
+Containers provide a convenient, lightweight way to package your application components with the dependencies they require to run correctly while isolating them from other components.
+Containers also enable massive scale, letting you run your applications everywhere they are needed - in the data center, in the cloud, and even at the edge.
 
 
 
@@ -45,7 +46,18 @@ For ML operations teams, containers enable deployment at massive scale everywher
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document illustrates how to take the your first steps with containers, using {productname} and SUSE base container images to support ML development and implementation.
+This document illustrates how to take the your first steps with containers to support ML development and implementation.
+
+Specifically, you will learn how to:
+
+* set up your set up {productname} to use Podman.
+
+* access SUSE Linux Enterprise Base Container Images (SLE BCI).
+
+* build a container for JupyterLab with some ML libraries and frameworks.
+
+* run your container with an example ML workload.
+
 
 
 === Audience
@@ -57,14 +69,13 @@ This document illustrates how to take the your first steps with containers, usin
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for data scientists, ML developers, operations teams, systems architects and others interested in learning more about container technologies in the context of ML.
-To progress with this document, the reader should have basic Linux command line skills.
+This document is intended for data scientists, ML developers, operations teams, systems architects and others interested in learning more about container technologies.
+To progress with this document, the reader should have basic Linux command line skills and some knowledge of containers.
 
 
 === Prerequisites
 
 For this guide, you will be most successful if you have access to a https://www.suse.com/products/server/[{productname}] computer system or virtual machine.
-
 
 [NOTE]
 ====
