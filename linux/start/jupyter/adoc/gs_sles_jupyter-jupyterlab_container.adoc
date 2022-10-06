@@ -34,8 +34,8 @@ Nowhere has this been more obvious and impactful than in the domain of machine l
 ML is in a rapid state of continuous development, evolving a wealthy ecosystem of libraries, toolkits, and frameworks that enable developers to push the limits of hardware and software to solve previously intractable problems in record time.
 But rapid development can lead to dependency conflicts, where two applications or even two components of the same application rely on different versions of the same library.
 
-Today, developers have access to container technologies.
-Containers provide a convenient, lightweight way to package your application components with the dependencies they require to run correctly while isolating them from other components.
+Today, developers have access to container technologies that help overcome this challenge.
+Containers provide a convenient, lightweight way to package your application components with their dependencies while isolating these from other components and their dependencies.
 Containers also enable massive scale, letting you run your applications everywhere they are needed - in the data center, in the cloud, and even at the edge.
 
 
@@ -50,7 +50,7 @@ This document illustrates how to take the your first steps with containers to su
 
 Specifically, you will learn how to:
 
-* set up your set up {productname} to use Podman.
+* set up {productname} to use Podman.
 
 * access SUSE Linux Enterprise Base Container Images (SLE BCI).
 
@@ -83,12 +83,12 @@ Most of the steps outlined in this guide are directly transferable to https://ww
 
 === Setting up Podman in SLES
 
-==== Podman Overview
+==== Podman overview
 
 To build a container, you create a set of instructions that are handled by a container engine.
 In SUSE Linux Enterprise, an excellent container engine choice is _Podman_.
 
-Podman is short for Pod Manager Tool.
+https://podman.io/[Podman] is short for Pod Manager Tool.
 It is a daemonless container engine for developing, managing, and running Open Container Initiative (OCI) containers on a Linux system.
 Podman offers a drop-in alternative for Docker and is the default container runtime in openSUSE Kubic — a certified Kubernetes distribution built on top of openSUSE.
 
@@ -98,16 +98,16 @@ https://docs.podman.io/en/latest/[Podman online documentation].
 You can also learn more from the
 https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide].
 
-You will use Podman to create a container of the JupyterLab environment you have built.
+In this guide, you use Podman to create a container of the JupyterLab interactive development environment.
 You can easily move that container to other machines to be run by a container runtime, or run the container locally.
 
 
 ==== Installing Podman
 
 To use Podman for your container creation, you will need to install it.
-First, you need to enable the SUSE reposity for the Containers Module.
+First, you need to enable the SUSE repository for the Containers Module.
 
-. Enable repo for the SUSE Containers Module
+. Enable SUSE Containers Module.
 +
 [source, bash]
 ----
@@ -118,7 +118,7 @@ TIP: The Containers Module is a free add-on module for your SUSE Linux Enterpris
 
 With the Containers Module enabled, you can now install Podman.
 
-. Install Podman
+. Install Podman.
 +
 [source, bash]
 ----
@@ -128,41 +128,46 @@ sudo zypper in podman
 TIP:  Often you also update your machine before installing new software.
 
 
-=== SLE BCIs
-
-==== SLE Base Container Images
+=== SUSE Linux Enterprise Base Container Images
 
 SUSE Linux Enterprise (SLE) Base Container Images (BCI) are starting points for supported operating system code from SUSE.
-The SLE BCIs are freely available, re-distributable, and supported across many different environments.
 SLE BCIs are open, flexible, and secure container images and application development tools, that leverage SUSE Linux Enterprise.
-These images are designed to be a secure base for any containerized workload and are great for machine-learning deployments.
-Together with SUSE Edge technologies, SLE BCIs are used to quickly deploy ML applications on edge devices.
+SLE BCIs are freely available, re-distributable, and supported across many different environments.
+These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and even on edge devices.
 
-SLE BCI technology provides an enterprise better security and quality of their delivered applications and services.
+SLE BCI technology provides an enterprise security and quality of their delivered applications and services.
 By using SUSE-tested and support code, you can rely on the enhanced security that SUSE has invested in.
 Your code will have higher-quality because you have based it on well-tested technologies, backed by a leading Linux vendor.
 
-==== Python and JupyterLab
+=== Python and JupyterLab
 
-In this guide, you will containerizing your Python-based ML development environment.
-This basic ML development environment was explained in the guide:
-https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server].
-The following instructions rely on work you did in that guide.
-Please make sure you have a JupyterLab setup as describe there.
+https://www.python.org/[Python] is incredibly popular among ML developers for its simplicity, elegance, and vast ecosystem of open source packages and modules.
+https://jupyter.org/[JupyterLab] is an interactive development environment in the fashion of notebooks.
 
-==== ML example - MNIST
+You can learn how to set up Python and JupyterLab on your laptop, desktop, VM, remote server, or virtual machine in https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server].
 
-This guide uses the MNIST example, which is something of a standard for getting started with machine-learning code and concepts.
-The MNIST example does analysis of hand-written digits between 0-9.
-The code is well defined and documented for this problem both online and via books such as, “Deep Learning with Python.” [cite: Manning].
-MNIST has a relatively small set of training images that can easily be downloaded and analyzed on a laptop or desktop computer.
-And, MNIST does not require expensive GPUs for hardware acceleration of the training process.
+In this guide, you take the next step toward portability by containerizing this Python and JupyterLab ML development environment.
 
 
-== Building a SLE BCI Container
+=== ML workload example
 
-Now it's time to create a container image from the JupyterLab install you did before.
-This section will explain how to create your container image based on the SLE BCI container.
+This guide uses MNIST as an example workload.
+MNIST is something of a standard for getting started with ML code and concepts as you develop a computer vision model that can classify (or identify) hand-written digits between 0 and 9.
+The code is well-defined and documented for this problem both online and in books, such as _Deep Learning with Python_. [cite: Manning].
+
+MNIST has a relatively small set of training images that can be easily downloaded and analyzed on a laptop or desktop computer - or in a container.
+And, MNIST does not require expensive GPUs for hardware acceleration of the training or inferencing processes.
+
+
+== Building a container
+
+In this section, you create a container image by adding an application layer on top of a SLE BCI foundation.
+The application layer must include all the Python components needed to run JupyterLab and the MNIST example.
+
+[TIP]
+====
+You may find it useful to reference a local installation of the environment, as detailed in https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server].
+====
 
 
 === MNIST Model in a SLE BCI Container
