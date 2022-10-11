@@ -30,8 +30,8 @@ include::./common_docinfo_vars.adoc[]
 
 Modern software development is largely agile, open, and collaborative.
 
-Nowhere has this been more obvious and impactful than in the domain of machine learning (ML).
-ML is in a rapid state of continuous development, evolving a wealthy ecosystem of libraries, toolkits, and frameworks that enable developers to push the limits of hardware and software to solve previously intractable problems in record time.
+Nowhere has this been more obvious and impactful than in the domain of machine learning (ML), where the development community comes from a broad spectrum of domains and backgrounds.
+This has resulted in a rapid state of continuous development, evolving a wealthy ecosystem of software that enable developers to make amazing advances and push the limits of hardware to solve previously intractable problems in record time.
 But rapid development can lead to dependency conflicts, where two applications or even two components of the same application rely on different versions of the same library.
 
 Today, developers have access to container technologies that help overcome this challenge.
@@ -39,73 +39,90 @@ Containers provide a convenient, lightweight way to package your application com
 Containers also enable massive scale, letting you run your applications everywhere they are needed - in the data center, in the cloud, and even at the edge.
 
 
-
 === Scope
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Specify what this guide covers in no more than 2 sentences.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 This document illustrates how to take the your first steps with containers to support ML development and implementation.
-
-Specifically, you will learn how to:
-
-* set up {productname} to use Podman.
-
-* access SUSE Linux Enterprise Base Container Images (SLE BCI).
-
-* build a container for JupyterLab with some ML libraries and frameworks.
-
-* run your container with an example ML workload.
-
 
 
 === Audience
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify for whom this document is intended, perhaps with:
-//   - Topics of interests
-//   - Potential job roles
-//   - Required skills <- This can be critically important
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 This document is intended for data scientists, ML developers, operations teams, systems architects and others interested in learning more about container technologies.
 To progress with this document, the reader should have basic Linux command line skills and some knowledge of containers.
 
-== Preparation
 
-For this guide, you will be most successful if you have access to a https://www.suse.com/products/server/[{productname}] computer system or virtual machine.
+== Overview
 
+In this guide, you learn how to:
+
+* set up https://podman.io[Podman] on https://www.suse.com/products/server/[{productname}].
+
+* specify and build a container for a https://jupyter.org/[JupyterLab] ML development environment.
+
+* run your container and access the ML development environment.
+
+
+=== Software ecosystem
+
+. https://www.suse.com/products/server/[{productname}]
+//
++
+This guide leverages {productname} (SLE) as a host operating system for building and running containers.
+SLE can be run on bare metal or in virtual machines to provide a stable, supportable Linux environment.
++
 [NOTE]
 ====
 Most of the steps outlined in this guide are directly transferable to https://www.opensuse.org/#Leap[{opensuse}].
 ====
 
-=== Setting up Podman in SLES
+. https://www.suse.com/products/base-container-images/[SUSE Linux Enterprise Base Container Images (SLE BCI)]
+//
++
+A base container image provides basic functionality, such as a stripped-down Linux operating system.
+It is onto a base container image that you layer your application components.
+SUSE base container images are freely available, re-distributable, supported across many different environments.
+These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and even on edge devices.
++
+[TIP]
+====
+SUSE maintains up-to-date, ready-to-use container images at https://registry.suse.com/[registry.suse.com].
+====
 
-==== Podman overview
-
-To build a container, you create a set of instructions that are handled by a container engine.
-In SUSE Linux Enterprise, an excellent container engine choice is _Podman_.
-
-https://podman.io/[Podman] is short for Pod Manager Tool.
-It is a daemonless container engine for developing, managing, and running Open Container Initiative (OCI) containers on a Linux system.
-Podman offers a drop-in alternative for Docker and is the default container runtime in openSUSE Kubic — a certified Kubernetes distribution built on top of openSUSE.
-
-You can read more about Podman from the 
-https://docs.podman.io/en/latest/[Podman online documentation].
-
-You can also learn more from the
-https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide].
-
-In this guide, you use Podman to create a container of the JupyterLab interactive development environment.
-You can easily move that container to other machines to be run by a container runtime, or run the container locally.
+. https://podman.io[Podman]
+//
++
+Podman, which is short for Pod Manager, is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
+Podman is similar to other container engines (such as Docker, CRI-O, and containerd) and relies on an OCI compliant container runtime (like runc, crun, runv, and so on) to interface with the operating system for creating the running containers.
+This means that running Podman containers is nearly indistinguishable from running those created by other common container engines.
+You can also run Podman containers as an ordinary, non-privileged user, making it easier and more secure.
+See the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide] for a deeper discussion on containers and Podman.
 
 
-==== Installing Podman
+. https://www.python.org/[Python]
+//
++
+Python has become a popular programming ecosystem for ML developers for its simplicity, elegance, extensibility, cross-platform availability, and active, open source community of developers and users.
+With Python, ML developers have access to a vast collection of libraries, frameworks, and toolkits with which to build solutions to complex problems.
 
-To use Podman for your container creation, you will need to install it.
-First, you need to enable the SUSE repository for the Containers Module.
+
+. https://jupyter.org/[JupyterLab]
+//
++
+JupyterLab is a modular, interactive development environment with a Web interface that enables data scientists and developers to create and share computational documents, called notebooks.
+
+
+[TIP]
+====
+See https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server] to learn more about working with Python and JupyterLab on bare metal or in virtual machines.
+====
+
+
+== Enable Podman
+
+Podman is not installed by default in {productname}.
+So, your first step is to install it.
+
+
+=== Install Podman
 
 . Enable SUSE Containers Module.
 +
@@ -114,9 +131,10 @@ First, you need to enable the SUSE repository for the Containers Module.
 sudo SUSEConnect -p sle-module-containers/15.4/x86_64
 ----
 +
-TIP: The Containers Module is a free add-on module for your SUSE Linux Enterprise Server system.
-
-With the Containers Module enabled, you can now install Podman.
+[NOTE]
+====
+The Containers Module is a free add-on module for your SUSE Linux Enterprise Server system.
+====
 
 . Install Podman.
 +
@@ -125,23 +143,54 @@ With the Containers Module enabled, you can now install Podman.
 sudo zypper in podman
 ----
 +
-TIP:  Often you also update your machine before installing new software.
+[TIP]
+====
+It is a good idea to make sure your system is up-to-date with security patches and updates prior to installing new software.
+You can do this by issuing the `sudo zypper up` command.
+====
 
 
-=== SUSE Linux Enterprise Base Container Images
+=== Configure Podman to run without root privileges
 
-SUSE Linux Enterprise (SLE) Base Container Images (BCI) are starting points for supported operating system code from SUSE.
-SLE BCIs are open, flexible, and secure container images and application development tools, that leverage SUSE Linux Enterprise.
-SLE BCIs are freely available, re-distributable, and supported across many different environments.
-These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and even on edge devices.
+Podman can be run as an ordinary user, but you may need to make a few configuration changes.
+To keep this simple, you will grant your current user, `$USER`, this access.
 
-SLE BCI technology provides an enterprise security and quality of their delivered applications and services.
-By using SUSE-tested and support code, you can rely on the enhanced security that SUSE has invested in.
-Your code will have higher-quality because you have based it on well-tested technologies, backed by a leading Linux vendor.
+. Define subUID and subGID ranges for your current user.
+//
++
+You need to define a range of UIDs and GIDs that will be allocated to users inside the container and mapped onto the host.
+You can check the '/etc/subuid' and '/etc/subgid' files to see if these ranges are already defined for your user.
+
+If they are not, issue the command:
+[source, bash]
+----
+sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 ${USER}
+----
++
+[WARNING]
+====
+The subUID and subGID ranges ('100000-165535' in the command example) must not overlap for different users and not reuse UIDs and GIDs of existing users on the host.
+====
+
+. Ensure your current user has permissions to access zypper credentials on the host.
+The container may need access to read the SUSE Customer Center credentials, located in '/etc/zypp/credentials.d'.
+Grant permission to the user with:
+[source, bash]
+----
+sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
+----
+
+
+=== Ensure Podman uses the correct storage driver
+
+{productname} defines the default storage driver in '/etc/containers/storage.conf'
+
+// continue here
+
+
 
 === Python and JupyterLab
 
-https://www.python.org/[Python] is incredibly popular among ML developers for its simplicity, elegance, and vast ecosystem of open source packages and modules.
 https://jupyter.org/[JupyterLab] is an interactive development environment in the fashion of notebooks.
 
 You can learn how to set up Python and JupyterLab on your laptop, desktop, VM, remote server, or virtual machine in https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server].
