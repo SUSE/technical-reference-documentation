@@ -148,7 +148,11 @@ sudo zypper in podman
 [TIP]
 ====
 It is a good idea to make sure your system is up-to-date with security patches and updates prior to installing new software.
-You can do this by issuing the `sudo zypper up` command.
+You can do this with the command:
+[source, bash]
+----
+sudo zypper up
+----
 ====
 
 
@@ -161,9 +165,11 @@ To keep this simple, you will grant your current user, `$USER`, this access.
 //
 +
 You need to define a range of UIDs and GIDs that will be allocated to users inside the container and mapped onto the host.
-You can check the '/etc/subuid' and '/etc/subgid' files to see if these ranges are already defined for your user.
-
+You can check the `/etc/subuid` and `/etc/subgid` files to see if these ranges are already defined for your user.
+//
++
 If they are not, issue the command:
++
 [source, bash]
 ----
 sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 ${USER}
@@ -175,19 +181,55 @@ The subUID and subGID ranges ('100000-165535' in the command example) must not o
 ====
 
 . Ensure your current user has permissions to access zypper credentials on the host.
-The container may need access to read the SUSE Customer Center credentials, located in '/etc/zypp/credentials.d'.
+The container may need access to read the SUSE Customer Center credentials, located in `/etc/zypp/credentials.d`.
+//
++
 Grant permission to the user with:
++
 [source, bash]
 ----
 sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
 ----
 
 
-=== Ensure Podman uses the correct storage driver
+=== Verify the container storage driver
 
-{productname} defines the default storage driver in '/etc/containers/storage.conf'
+It is important to consider where and how your containers and container images are stored.
+System container storage settings are defined in `/etc/containers/storage.conf`.
+These can be overridden for a particular user by options placed in `$HOME/.config/containers/storage.conf` or with appropriate environment variables.
 
-// continue here
+The default location Podman uses for container data is `/var/lib/containers/storage`.
+This is defined by the 'graphroot' option in `/etc/containers/storage.conf` and only applies to the root user.
+
+For ordinary users, Podman defaults to `$HOME/.local/share/containers/storage`.
+It can be useful to change this location, such as when user home directories are remotely mounted NFS shares.
+This behavior can be changed for all users by setting 'rootless_storage_path' in the '[storage]' section of `/etc/containers/storage.conf`.
+
+How container data are written is determined by the storage driver.
+This is defined by the 'driver' setting in the '[storage]' section of `/etc/containers/storage.conf`.
+For the root user, valid drivers include "overlay2", "vfs", "zfs", and "btrfs".
+
+[NOTE]
+====
+The "btrfs" driver is the default for {productname}, since https://en.wikipedia.org/wiki/Btrfs[Btrfs] is the default filesystem for system volumes.
+Btrfs offers many advantages over earlier filesystems, such as copy-on-write, pooling, snapshots, and checksums.
+====
+
+If your home directory is in a partition formatted with a different filesystem, Podman will default to the "overlay2" or "vfs" driver and warn you to set an appropriate storage driver.
+In most cases, this will be the "overlay2" driver.
+You can set this without administrator help by creating the file `$HOME/.config/container/storage.conf` with the following content:
+
+[listing]
+----
+[storage]
+driver = "overlay2"
+----
+
+[TIP]
+====
+See the manual page for containers-storage.conf for more on available storage settings:
+`man containers-storage.conf 5`
+====
 
 
 
