@@ -58,7 +58,7 @@ In this guide, you learn how to:
 
 * set up https://podman.io[Podman] on https://www.suse.com/products/server/[{productname}].
 
-* specify and build a container for a https://jupyter.org/[JupyterLab] ML development environment.
+* specify and build a container image for a https://jupyter.org/[JupyterLab] ML development environment.
 
 * run your container and access the ML development environment.
 
@@ -268,13 +268,22 @@ cd jupcontainer
 
 === Create the `requirements.txt` file
 
-Repeatability is critical in science and engineering.
+Replicability is critical in science and engineering.
 Complex applications, like an ML model, can produce wildly different results or not work at all due to minor code variations in a library dependency.
 So, it becomes important when building such applications to explicitly define all the software dependencies and their versions
-Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
 
-Create a `requirements.txt` file containing:
-+
+Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
+Key to this process are the `pip` Python package management tool and a file that lists the required packages and their versions, typically named `requirements.txt`.
+
+[NOTE]
+====
+Each package you specify may have several dependencies of its own.
+Depending on your needs, your `requirements.txt` file can become quite long.
+However, in practice, you only need to specify the main packages used for your application, and the `pip` dependency resolver will automatically install the right dependencies to enable your application.
+====
+
+Create a `requirements.txt` in your build directory with the contents shown below:
+
 [listing]
 ----
 matplotlib==3.3.4
@@ -286,21 +295,18 @@ tensorflow==2.6.2
 jupyterlab==3.2.9
 ----
 
-[NOTE]
-====
-Each of these packages may have several dependencies.
-In practice, a complete list of required packages can be quite long and may be explicitly included in the `requirements.txt` file for true replicability.
-====
 
 [TIP]
 ====
 You can automatically create a `requirements.txt` file from an installed environment by issuing `pip freeze > requirements.txt`.
 This will include all installed packages, except `pip` itself and its dependencies.
-You can install the packages specified in a requirements.txt file with the command: `pip install -r requirements.txt`.
+To install the specified packages, use `pip install -r requirements.txt`.
 ====
 
 
 === Create user ID mapping
+// Brian - Please pick up here
+// Briefly explain why user ID mapping is required (to ensure container user and host user have permissions to access the same files)
 
 Containers running in unprivileged (rootless) mode run in the user namespace.
 Earlier, you defined subUID and subGID ranges, which are assigned to files and processes inside a running container and which are offset from the UIDs and GIDs of the host.
