@@ -305,25 +305,23 @@ To install the specified packages, use `pip install -r requirements.txt`.
 
 
 === Create user ID mapping
-// Brian - Please pick up here
+
 // Briefly explain why user ID mapping is required (to ensure container user and host user have permissions to access the same files)
 
-Containers running in unprivileged (rootless) mode run in the user namespace.
-Earlier, you defined subUID and subGID ranges, which are assigned to files and processes inside a running container and which are offset from the UIDs and GIDs of the host.
-This means that if you mount a host filesystem to a container, any files created will be owned by one of these subUIDs and subGIDs.
-So, your re
-A
-Inside the running container, your 
-One reason an IT organization might prefer Podman is that it can run containers with requiring root level access.
-Podman does this is by using the Linux kernel feature called namespaces.
-User environments inside a namespace can be grouped and segmented away from the host's users.
-This means your container can run as a different user ID on a target machine than, for example, your regular user ID.
-This is a great feature, but it can be problematic in a development scenario, where you may wish to access files in your home directory.
+Podman allows a container to run in unprivileged (rootless) mode run in the user namespace.
+By default, containers run with a UID/GID that is chosen for you.
+That means that your user, plus its associated file access, and your container's user are going to be different.
+This can cause friction in your development and is something you may want to resolve.
 
-To get around this difficulty, you can run a script to create a user in the container with the desired user ID.
+The simplest way to resolve different user IDs is to create a method for user ID mapping.
+This method will pass the user ID you want your container to run as to the _podman run_ command.
+The user ID mapping is handled by a shell script, which will be listed below.
+
+The following script will be referred to as an _entrypoint_ script, because it uses the ENTRYPOINT Containerfile feature.
 
 Create an `entrypoint.sh` script.
-+
+//
+
 [listing]
 ----
 #!/bin/bash
@@ -357,19 +355,9 @@ chmod +x /usr/local/bin/cmd.sh
 exec su - $CONT_UNAME -c /usr/local/bin/cmd.sh
 ----
 
-The following example shows you how to map your current user ID to that of the running container.
-This example uses the ENTRYPOINT feature of a Containerfile to leverage a script that passes your local user ID to the container.
-
-The entrypoint script creates a username inside the container and use an environment variable to set the container's UID to that of the user executing the *podman run* command.
-
-To view an example of this script, see: 
-https://github.com/victorgregoriosuse/sle-bci-examples/blob/main/bci-jupyter/entrypoint.sh[entrypoint.sh].
-
-A quick summary of what is happening in this script is important.
 It is not important that you understand all the details of this script, unless it is interesting to you.
-
-The entrypoint.sh script uses an environment variable, LOCAL_USERID, to pass an user id number to the container.
-As you will see in the Containerfile shown below, you then run the entrypoint.sh script in your container.
+The _entrypoint.sh_ script uses an environment variable, LOCAL_USERID, to pass an user id number to the container.
+As you will see in the Containerfile shown below, you then run the _entrypoint.sh_ script in your container.
 
 === Create Containerfile
 
@@ -381,24 +369,13 @@ You can read more about Containerfiles here:
 
 * https://github.com/containers/common/blob/main/docs/Containerfile.5.md
 
-Before you construct the Containerfile for the JupyterLab container, here's a useful tip about container user environments.
-=== Build the Container
-
-You build a container through a description file, called the Containerfile.
-
-You can read more about Containerfiles here:
-
-* https://docs.podman.io/en/latest/markdown/podman-build.1.html
-
-* https://github.com/containers/common/blob/main/docs/Containerfile.5.md
-
-Your goal is to create a simple development tool to share your MNIST experiment in JupyterLab.
+Your goal here is to create a simple development tool to share your MNIST experiment in JupyterLab.
 An example Containfile is shown below.
 
 . Containerfile for JupyterLab with MNIST
 +
 ----
-# https://registry.suse.com/
+# See: https://registry.suse.com/
 FROM registry.suse.com/bci/bci-base:latest
 
 ENV ZYPPERCMD="zypper --non-interactive"
@@ -421,17 +398,19 @@ CMD [".", "/home/virtenv/bin/activate", "&&", "jupyter-lab"]
 +
 TIP:  For compatibility, Podman will also read files named Dockerfile.
 
-The first element of the Containerfile to note is the FROM clause.
-This instruction points to the SUSE Linux Enterprise Base Container Image (SLE BCI).
+The first element of the Containerfile is the FROM clause.
+This instruction points to a SUSE Linux Enterprise Base Container Image (SLE BCI).
 
 The RUN clauses will install JupyterLab in the container and the EXPOSE clause will open a TCP/IP port for the service.
 
 You can learn more about containers in the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide].
 You might also want to read the section on https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[SLE BCI].
 
+=== Build the Container
+
 Now you will build the container.
-You need to create the Contailerfile with the contents described above.
-The, use the podman command to build your container image.
+Make sure you have created the Contailerfile with the contents described above.
+Then, use the podman command to build your container image.
 
 NOTE: Use your favorite editor or _vi_ to paste the contents of Containfile.
 
