@@ -111,7 +111,7 @@ With Python, ML developers have access to a vast collection of libraries, framew
 +
 JupyterLab is a modular, interactive development environment with a Web interface that enables data scientists and developers to create and share computational documents, called notebooks.
 +
-image::jupyterlab_ui_001.png[JupyterLab UI, scaledwidth="50%", align="center"]
+image::jupyterlab_ui_001.png[JupyterLab UI, scaledwidth="75%", align="center"]
 +
 [TIP]
 ====
@@ -166,7 +166,7 @@ To keep this simple, you will grant your current user, `$USER`, this access.
 //
 +
 You need to define a range of UIDs and GIDs that will be allocated to users inside the container and mapped onto the host.
-You can check the `/etc/subuid` and `/etc/subgid` files to see if these ranges are already defined for your user.
+You can check the _/etc/subuid_ and _/etc/subgid_ files to see if these ranges are already defined for your user.
 //
 +
 If they are not, issue the command:
@@ -182,7 +182,7 @@ The subUID and subGID ranges ('100000-165535' in the command example) must not o
 ====
 
 . Ensure your current user has permissions to access zypper credentials on the host.
-The container may need access to read the SUSE Customer Center credentials, located in `/etc/zypp/credentials.d`.
+The container may need access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
 //
 +
 Grant permission to the user with:
@@ -196,18 +196,18 @@ sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
 === Verify the container storage driver
 
 It is important to consider where and how your containers and container images are stored.
-System container storage settings are defined in `/etc/containers/storage.conf`.
-Storage settings can be overridden for a particular user by options placed in `$HOME/.config/containers/storage.conf` or with appropriate environment variables.
+System container storage settings are defined in _/etc/containers/storage.conf_.
+Storage settings can be overridden for a particular user by options placed in _$HOME/.config/containers/storage.conf_ or with appropriate environment variables.
 
-The default location Podman uses for container data is `/var/lib/containers/storage`.
-This is defined by the 'graphroot' option in `/etc/containers/storage.conf` and only applies to the root user.
+The default location Podman uses for container data is _/var/lib/containers/storage_.
+This is defined by the 'graphroot' option in _/etc/containers/storage.conf_ and only applies to the root user.
 
-For ordinary users, Podman defaults to `$HOME/.local/share/containers/storage`.
+For ordinary users, Podman defaults to _$HOME/.local/share/containers/storage_.
 It can be useful to change this location, such as when user home directories are remotely mounted NFS shares.
-This behavior can be changed for all users by setting 'rootless_storage_path' in the '[storage]' section of `/etc/containers/storage.conf`.
+This behavior can be changed for all users by setting 'rootless_storage_path' in the '[storage]' section of _/etc/containers/storage.conf_.
 
 How container data are written is determined by the storage driver.
-This is defined by the 'driver' setting in the '[storage]' section of `/etc/containers/storage.conf`.
+This is defined by the 'driver' setting in the '[storage]' section of _/etc/containers/storage.conf_.
 For the root user, valid drivers include 'overlay2', 'vfs', 'zfs', and 'btrfs'.
 
 [NOTE]
@@ -218,7 +218,7 @@ Btrfs offers many advantages over earlier filesystems, such as copy-on-write, po
 
 If your home directory is in a partition formatted with a different filesystem, Podman will default to the 'overlay2' or 'vfs' driver and warn you to set an appropriate storage driver.
 In most cases, this will be the 'overlay2' driver.
-You can set this without administrator help by creating the file `$HOME/.config/container/storage.conf` with the following content:
+You can set this without administrator help by creating the file _$HOME/.config/container/storage.conf_ with the following content:
 
 [listing]
 ----
@@ -233,7 +233,7 @@ See the manual page for containers-storage.conf for more storage settings:
 ====
 
 
-== Build the container image
+== Build a container image
 
 // Add the following sections with better titles:
 // === Create a build directory
@@ -247,42 +247,36 @@ An application container image is built by adding the application with the libra
 In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages.
 
 
-=== Create a build directory
+=== Make a build directory
 
-You need a working directory to contain the files you need for building your container.
+You need a directory to contain the files you need for building your container image.
 
-. Make a build directory.
-+
+Create your build directory and change to it.
+
 [source, bash]
 ----
 mkdir jupcontainer
-----
-
-. Change to the build directory.
-+
-[source, bash]
-----
 cd jupcontainer
 ----
 
 
-=== Create the `requirements.txt` file
+=== Specify the Python packages you need in the container
 
 Replicability is critical in science and engineering.
 Complex applications, like an ML model, can produce wildly different results or not work at all due to minor code variations in a library dependency.
 So, it becomes important when building such applications to explicitly define all the software dependencies and their versions
 
 Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
-Key to this process are the `pip` Python package management tool and a file that lists the required packages and their versions, typically named `requirements.txt`.
+Key to this process are the `pip` Python package management tool and a file that lists the required packages and their versions, typically named _requirements.txt_.
 
 [NOTE]
 ====
 Each package you specify may have several dependencies of its own.
-Depending on your needs, your `requirements.txt` file can become quite long.
+Depending on your needs, your _requirements.txt_ file can become quite long.
 However, in practice, you only need to specify the main packages used for your application, and the `pip` dependency resolver will automatically install the right dependencies to enable your application.
 ====
 
-Create a `requirements.txt` in your build directory with the contents shown below:
+Create this _requirements.txt_ file in your build directory:
 
 [listing]
 ----
@@ -298,49 +292,42 @@ jupyterlab==3.2.9
 
 [TIP]
 ====
-You can automatically create a `requirements.txt` file from an installed environment by issuing `pip freeze > requirements.txt`.
+You can automatically create a _requirements.txt_ file from an installed environment by issuing `pip freeze > requirements.txt`.
 This will include all installed packages, except `pip` itself and its dependencies.
 To install the specified packages, use `pip install -r requirements.txt`.
 ====
 
 
-=== Create user ID mapping
-
-// Briefly explain why user ID mapping is required (to ensure container user and host user have permissions to access the same files)
+=== Address user mapping
 
 Podman allows a container to run in unprivileged (rootless) mode run in the user namespace.
-By default, containers run with a UID/GID that is chosen for you.
-That means that your user, plus its associated file access, and your container's user are going to be different.
-This can cause friction in your development and is something you may want to resolve.
+By default, the user inside the container is different to your regular user, with different UID and GID.
+When you mount storage to the container, files will be accessed as the container user.
+The resulting file access permissions problems can introduce friction to your development workflows.
 
-The simplest way to resolve different user IDs is to create a method for user ID mapping.
-This method will pass the user ID you want your container to run as to the _podman run_ command.
-The user ID mapping is handled by a shell script, which will be listed below.
+You can address this issue by running a script in the container that creates a user account with a matching UID and switches to this user to run your workload.
 
-The following script will be referred to as an _entrypoint_ script, because it uses the ENTRYPOINT Containerfile feature.
-
-Create an `entrypoint.sh` script.
-//
+Create this _entrypoint.sh_ script file in your build directory:
 
 [listing]
 ----
 #!/bin/bash
 
-# DEBUG: optional debug verbosity
+# DEBUG: set optional debug verbosity
 [[ $DEBUG -eq 1 ]] && set -x
 
-# add container user, passed LOCAL_USERID required
+# specify container user information
+#   using LOCAL_USERID passed with 'podman run'
 CONT_UID=${LOCAL_USERID:?}
 CONT_UNAME=jupyterlab
 CONT_HOME=/home/${CONT_UNAME}
 VIRTENV=/home/virtenv
 
-echo "Starting with UID : $CONT_UID"
-groupadd mail
+# create container user
 useradd -s /bin/bash -u $CONT_UID -d $CONT_HOME -m $CONT_UNAME
 
 # useradd will not apply skel files if the container homedir is created
-# via a container engine's --mount flag, so force the copy of these files.
+# via a container engine's --mount flag, so force the copy of these files
 cp -ar /etc/skel/. ${CONT_HOME}/
 chown -R $CONT_UID $CONT_HOME
 
@@ -355,19 +342,24 @@ chmod +x /usr/local/bin/cmd.sh
 exec su - $CONT_UNAME -c /usr/local/bin/cmd.sh
 ----
 
-It is not important that you understand all the details of this script, unless it is interesting to you.
-The _entrypoint.sh_ script uses an environment variable, LOCAL_USERID, to pass an user id number to the container.
-As you will see in the Containerfile shown below, you then run the _entrypoint.sh_ script in your container.
+For this script to do its job, you need to run it inside the container with the proper UID passed to it.
+This is accomplished with the `ENTRYPOINT` instruction in your _Containerfile_ and the `--env` option of the `podman run` command.
+
 
 === Create Containerfile
 
-A _Containerfile_ is a set of instructions that tell the container engine how to build your container.
-If you are familiar with Docker, a Containerfile has the same format as a Dockerfile.
-You can read more about Containerfiles here:
+The `podman build` can build a container image from a set of instructions provided in a file, called _Containerfile_.
+If you are familiar with Docker, a _Containerfile_ shares the same format and most of the same options as a  _Dockerfile_.
+
+[TIP]
+====
+Learn more about `podman build` and the _Containerfile_ format and options with:
 
 * https://docs.podman.io/en/latest/markdown/podman-build.1.html
 
 * https://github.com/containers/common/blob/main/docs/Containerfile.5.md
+====
+
 
 Your goal here is to create a simple development tool to share your MNIST experiment in JupyterLab.
 An example Containfile is shown below.
