@@ -301,7 +301,7 @@ To install the specified packages, use `pip install -r requirements.txt`.
 === Address user mapping
 
 Podman allows a container to run in unprivileged (rootless) mode run in the user namespace.
-By default, the user inside the container is different to your regular user, with different UID and GID.
+By default, the user inside the container is not your regular user, but has a different UID and GID.
 When you mount storage to the container, files will be accessed as the container user.
 The resulting file access permissions problems can introduce friction to your development workflows.
 
@@ -462,8 +462,7 @@ podman images
 +
 TIP: Learn more about _podman_ commands at: https://docs.podman.io/en/latest/Commands.html
 
-It is only a little more complication to run the container you just created.
-That is because we want to add the MNIST code to the container and pass our User ID.
+Before running your container, add a location for the MNIST code and pass your User ID.
 The commands listed below depend upon the Bash shell as your default.
 For more information on Bash, see https://www.gnu.org/software/bash/[GNU Bash].
 
@@ -497,7 +496,7 @@ TIP: You could put these commands into a file, such as: _podmanrun.sh_
 
 === Test the Container
 
-When _podman run_ command starts your container, you will see its output in your shell.
+When the _podman run_ command starts your container, you will see its output in your shell.
 It will look something like this:
 
 . Example output of the _podman run_ command
