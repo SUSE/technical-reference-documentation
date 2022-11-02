@@ -233,7 +233,7 @@ See the manual page for containers-storage.conf for more storage settings:
 ====
 
 
-== Build a container image
+== Create a container image
 
 // Add the following sections with better titles:
 // === Create a build directory
@@ -243,7 +243,7 @@ See the manual page for containers-storage.conf for more storage settings:
 // === Use podman to build the container image
 
 
-An application container image is built by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a base container image.
+An application container image is built by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
 In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages.
 
 
@@ -399,14 +399,30 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD [".", "/home/virtenv/bin/activate", "&&", "jupyter-lab"]
 ----
 
-All additions and changes specified with the instructions in your _Containerfile_ are layered on top of a base layer.
 The `FROM` instruction specifies which base layer to use.
-In this case, the 'latest' https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image] in the https://registry.suse.com/[SUSE container registry] is to be used.
+You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
+For this guide, you use the 'latest' https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
+
+
+Some important considerations when choosing a base container image include:
+
+Security::
+Is the image from a trusted source, verifiable, and up-to-date with vulnerability fixes?
+
+Stability::
+Has it undergone quality assurance testing?
+
+Tooling and integration::
+Are you able to use it with your preferred tooling and workflow?
+
+Redistribution::
+Are you legally able to redistribute your custom application container images built on it?
+
 
 [NOTE]
 ====
 JupyterLab is a Web application that uses TCP port 8888 for user connections.
-The `EXPOSE` instruction informs the container engine that the container listens on the specified network port.
+To allow access to your container's JupyterLab, you must `EXPOSE` the port.
 ====
 
 
@@ -416,7 +432,9 @@ Now you will build the container.
 Make sure you have created the Contailerfile with the contents described above.
 Then, use the podman command to build your container image.
 
-NOTE: Use your favorite editor or _vi_ to paste the contents of Containfile.
+. Make sure you are in your build directory.
+
+. Build your application container image.
 
 // podman build
 // $ podman build -t=ImageName -
@@ -424,9 +442,7 @@ NOTE: Use your favorite editor or _vi_ to paste the contents of Containfile.
 +
 [source, bash]
 ----
-cd ~/py-keras
-vi Containerfile
-podman build . -t mnist
+podman build . -t jupyter
 ----
 +
 TIP: You may have to work through issues with your Containerfile to get your image built properly.
