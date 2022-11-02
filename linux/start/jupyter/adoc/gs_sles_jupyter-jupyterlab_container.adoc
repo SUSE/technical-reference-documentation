@@ -342,14 +342,15 @@ chmod +x /usr/local/bin/cmd.sh
 exec su - $CONT_UNAME -c /usr/local/bin/cmd.sh
 ----
 
-For this script to do its job, you need to run it inside the container with the proper UID passed to it.
-This is accomplished with the `ENTRYPOINT` instruction in your _Containerfile_ and the `--env` option of the `podman run` command.
+For this script to do its job, you need to run it inside the container at the appropriate time and with the proper UID passed to it.
+This is done with the `ENTRYPOINT` instruction in a _Containerfile_ and with the `--env` option of the `podman run` command.
 
 
 === Create Containerfile
 
-The `podman build` can build a container image from a set of instructions provided in a file, called _Containerfile_.
-If you are familiar with Docker, a _Containerfile_ shares the same format and most of the same options as a  _Dockerfile_.
+The `podman build` command can build a container image from a set of instructions provided in a _Containerfile_.
+If you are familiar with the Docker container ecosystem, a _Containerfile_ shares the same format and most of the same options as a _Dockerfile_.
+
 
 [TIP]
 ====
@@ -361,42 +362,53 @@ Learn more about `podman build` and the _Containerfile_ format and options with:
 ====
 
 
-Your goal here is to create a simple development tool to share your MNIST experiment in JupyterLab.
-An example Containfile is shown below.
+Create this _Containerfile_ in your build directory:
 
-. Containerfile for JupyterLab with MNIST
-+
+[listing]
 ----
-# See: https://registry.suse.com/
+# specify a base container image
+# see: https://registry.suse.com/
 FROM registry.suse.com/bci/bci-base:latest
 
+# ensure zypper can run without user interaction
 ENV ZYPPERCMD="zypper --non-interactive"
 
+# install base Python components from the OS repositories
 RUN $ZYPPERCMD install python3 python3-pip
+
+# create a Python virtual environment in the /home/virtenv directory
 RUN python3 -m venv /home/virtenv
 
+# activate the Python virtual environment and upgrade pip
 RUN . /home/virtenv/bin/activate && pip install --upgrade pip
-RUN . /home/virtenv/bin/activate && pip install jupyterlab
 
-# Expose the JupyterLab web port
+# install required Python packages
+COPY requirements.txt .
+RUN . /home/virtualenv/bin/activate && pip install -r requirements.txt
+
+# expose the JupyterLab web port
 EXPOSE 8888/tcp
 
-# See: https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
+# run entrypoint.sh script to map user permissions
+# see: https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# launch JupyterLab
 CMD [".", "/home/virtenv/bin/activate", "&&", "jupyter-lab"]
 ----
-+
-TIP:  For compatibility, Podman will also read files named Dockerfile.
 
-The first element of the Containerfile is the FROM clause.
-This instruction points to a SUSE Linux Enterprise Base Container Image (SLE BCI).
+All additions and changes specified with the instructions in your _Containerfile_ are layered on top of a base layer.
+The `FROM` instruction specifies which base layer to use.
+In this case, the 'latest' https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image] in the https://registry.suse.com/[SUSE container registry] is to be used.
 
-The RUN clauses will install JupyterLab in the container and the EXPOSE clause will open a TCP/IP port for the service.
+[NOTE]
+====
+JupyterLab is a Web application that uses TCP port 8888 for user connections.
+The `EXPOSE` instruction informs the container engine that the container listens on the specified network port.
+====
 
-You can learn more about containers in the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide].
-You might also want to read the section on https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[SLE BCI].
 
 === Build the Container
 
