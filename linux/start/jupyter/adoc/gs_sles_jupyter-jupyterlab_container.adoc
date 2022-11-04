@@ -450,7 +450,7 @@ TIP: You may have to work through issues with your Containerfile to get your ima
 
 == Run the application container
 
-The container image you have built now lives in the localhost repository and is tagged with the name _mnist_.
+The container image you have built now lives in the localhost repository and is tagged with the name _jupyter_.
 You can verify that your image has been created with the following podman command.
 
 . Show the container images on your localhost
@@ -466,29 +466,19 @@ Before running your container, add a location for the MNIST code and pass your U
 The commands listed below depend upon the Bash shell as your default.
 For more information on Bash, see https://www.gnu.org/software/bash/[GNU Bash].
 
-// TARGET=jupyterlab
-// mkdir -p $TARGET
-// cp -f mnist_convnet.py $TARGET
-// 
 // podman run \
-//   --mount type=bind,source="$(pwd)/$TARGET",target=/home/$TARGET \
 //   --network host \
 //   --env LOCAL_USERID=$UID \
-// localhost/mnist
+// localhost/jupyter
 
 . Run your container and pass it your User ID
 +
 [source, bash]
 ----
-TARGET=jupyterlab
-mkdir -p $TARGET
-cp -f mnist_convnet.py $TARGET
-
 podman run \
-  --mount type=bind,source="$(pwd)/$TARGET",target=/home/$TARGET \
   --network host \
   --env LOCAL_USERID=$UID \
-localhost/mnist
+localhost/jupyter
 ----
 +
 TIP: You could put these commands into a file, such as: _podmanrun.sh_
@@ -502,7 +492,7 @@ It will look something like this:
 . Example output of the _podman run_ command
 +
 ----
-sles@sp4:~/Python/py-keras/mnist$ ./podmanrun.sh
+sles@sp4:~/jupcontainer$ podman run --network host --env LOCAL_USERID=$UID localhost/jupyter
 Starting with UID : 1000
 [I 2022-10-03 22:34:10.355 ServerApp] jupyterlab | extension was successfully linked.
 [I 2022-10-03 22:34:10.363 ServerApp] Writing Jupyter server cookie secret to /home/jupyterlab/.local/share/jupyter/runtime/jupyter_cookie_secret
@@ -552,7 +542,7 @@ BCI-based containers leverage proven, tested, and supported code from SUSE.
 As such, SLE BCIs allow open, flexible, and secure development and are excellent for containerized workload and machine-learning deployments.
 With SUSE Edge technologies, SLE BCIs help you to quickly deploy secure, high-quality ML applications on edge devices.
 
-This guide showed steps to create a container of JupyterLab and code for the MNIST image analysis model.
+This guide showed steps to create a container of JupyterLab that can be used for various ML projects.
 There are other techniques to share code, that don't involve creating a container for JupyterLab.
 The steps shown here are for your education and provide an interesting web-based container example.
 
