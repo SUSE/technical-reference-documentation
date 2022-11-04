@@ -235,32 +235,27 @@ See the manual page for containers-storage.conf for more storage settings:
 
 == Create a container image
 
-// Add the following sections with better titles:
-// === Create a build directory
-// === Create requirements.txt
-// === Create entrypoint.sh script
-// === Create Containerfile
-// === Use podman to build the container image
-
-
 An application container image is built by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
 In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages.
 
 
 === Make a build directory
 
-You need a directory to contain the files you need for building your container image.
+You need a place in your file system to contain the files you will use for building your container image.
+Your build directory can be located anywhere you have write access, such as a directory under your home directory.
 
 Create your build directory and change to it.
 
+For example,
+
 [source, bash]
 ----
-mkdir jupcontainer
-cd jupcontainer
+mkdir $HOME/jupcontainer
+cd $HOME/jupcontainer
 ----
 
 
-=== Specify the Python packages you need in the container
+=== Define the Python environment
 
 Replicability is critical in science and engineering.
 Complex applications, like an ML model, can produce wildly different results or not work at all due to minor code variations in a library dependency.
@@ -294,20 +289,20 @@ jupyterlab==3.2.9
 ====
 You can automatically create a _requirements.txt_ file from an installed environment by issuing `pip freeze > requirements.txt`.
 This will include all installed packages, except `pip` itself and its dependencies.
-To install the specified packages, use `pip install -r requirements.txt`.
+To install the packages specified in a _requirements.txt_ file, use `pip install -r requirements.txt`.
 ====
 
 
-=== Address user mapping
+=== Handle user mapping
 
 Podman allows a container to run in unprivileged (rootless) mode run in the user namespace.
 By default, the user inside the container is not your regular user, but has a different UID and GID.
 When you mount storage to the container, files will be accessed as the container user.
-The resulting file access permissions problems can introduce friction to your development workflows.
+The problems resulting from file access permissions can introduce friction to your development workflows.
 
-You can address this issue by running a script in the container that creates a user account with a matching UID and switches to this user to run your workload.
+You can address this problem by running a script in the container that creates a user account with a matching UID and switches to this user to run your workload.
 
-Create this _entrypoint.sh_ script file in your build directory:
+Create this script in your build directory and name it _entrypoint.sh_.
 
 [listing]
 ----
@@ -346,7 +341,7 @@ For this script to do its job, you need to run it inside the container at the ap
 This is done with the `ENTRYPOINT` instruction in a _Containerfile_ and with the `--env` option of the `podman run` command.
 
 
-=== Create Containerfile
+=== Define the container image
 
 The `podman build` command can build a container image from a set of instructions provided in a _Containerfile_.
 If you are familiar with the Docker container ecosystem, a _Containerfile_ shares the same format and most of the same options as a _Dockerfile_.
@@ -384,7 +379,7 @@ RUN . /home/virtenv/bin/activate && pip install --upgrade pip
 
 # install required Python packages
 COPY requirements.txt .
-RUN . /home/virtualenv/bin/activate && pip install -r requirements.txt
+RUN . /home/virtenv/bin/activate && pip install -r requirements.txt
 
 # expose the JupyterLab web port
 EXPOSE 8888/tcp
@@ -401,22 +396,22 @@ CMD [".", "/home/virtenv/bin/activate", "&&", "jupyter-lab"]
 
 The `FROM` instruction specifies which base layer to use.
 You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
-For this guide, you use the 'latest' https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
+For this guide, you use the 'latest' https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image], which, at the time of this writing, is built on {productname}.
+SUSE also provides the base container image with specific development languages already installed in the base layer, which could help your containers to start faster.
 
-
-Some important considerations when choosing a base container image include:
+When choosing a base container image, keep in mind the following considerations:
 
 Security::
 Is the image from a trusted source, verifiable, and up-to-date with vulnerability fixes?
 
 Stability::
-Has it undergone quality assurance testing?
+Is the image based on an operating system with a reputation for stability and has the image undergone quality assurance testing?
 
-Tooling and integration::
-Are you able to use it with your preferred tooling and workflow?
+Integration::
+Are you able to use the image with your preferred software, tooling, and workflows?
 
 Redistribution::
-Are you legally able to redistribute your custom application container images built on it?
+Are you legally able to redistribute the custom application container images you build on it?
 
 
 [NOTE]
@@ -426,26 +421,30 @@ To allow access to your container's JupyterLab, you must `EXPOSE` the port.
 ====
 
 
-=== Build the Container
+=== Build the container image
 
-Now you will build the container.
-Make sure you have created the Contailerfile with the contents described above.
-Then, use the podman command to build your container image.
+At this point, you have:
+
+* a _Containerfile_ to specify how to build the container
+* a _requirements.txt_ file to specify the Python packages you want
+* an _entrypoint.sh_ script to handle user mapping
+
+Now, you can build your container image with `podman build`.
+
 
 . Make sure you are in your build directory.
 
-. Build your application container image.
-
-// podman build
-// $ podman build -t=ImageName -
-. Build a container for your JupyerLab & MNIST example
+. Build the container image.
 +
 [source, bash]
 ----
-podman build . -t jupyter
+podman build . --tag jupyter
 ----
 +
-TIP: You may have to work through issues with your Containerfile to get your image built properly.
+[TIP]
+====
+By using the `--tag jupyter` or `-t jupyter` option, your container will be nameed _localhost/jupyter_.
+====
 
 
 == Run the application container
