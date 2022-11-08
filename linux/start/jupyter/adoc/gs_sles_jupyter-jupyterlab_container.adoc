@@ -449,17 +449,21 @@ By using the `--tag jupyter` or `-t jupyter` option, your container will be name
 
 == Run the application container
 
-The container image you have built now lives in the localhost repository and is tagged with the name _jupyter_.
+The container image you have built now lives in your localhost repository and is tagged with the name _jupyter_.
 You can verify that your image has been created with the following podman command.
 
-. Show the container images on your localhost
+. Show the container images on your localhost.
 +
 [source, bash]
 ----
 podman images
 ----
 +
-TIP: Learn more about _podman_ commands at: https://docs.podman.io/en/latest/Commands.html
+[TIP]
+====
+You can also list images with the command `podman image list`.
+Learn more about Podman commands at: https://docs.podman.io/en/latest/Commands.html
+====
 
 Before running your container, add a location for the MNIST code and pass your User ID.
 The commands listed below depend upon the Bash shell as your default.
