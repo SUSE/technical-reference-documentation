@@ -293,6 +293,11 @@ To install the packages specified in a _requirements.txt_ file, use `pip install
 ====
 
 
+[NOTE]
+====
+The following section should be removed.
+====
+
 === Handle user mapping
 
 Podman allows a container to run in unprivileged (rootless) mode run in the user namespace.
@@ -361,37 +366,39 @@ Create this _Containerfile_ in your build directory:
 
 [listing]
 ----
-# specify a base container image
-# see: https://registry.suse.com/
+# jupyterlab Containerfile
+
+# https://registry.suse.com/
 FROM registry.suse.com/bci/bci-base:latest
 
-# ensure zypper can run without user interaction
+# set notebook directory
+ENV JUPYTER="/home/jupyter"
+
+# make zypper run without user prompts
 ENV ZYPPERCMD="zypper --non-interactive"
 
-# install base Python components from the OS repositories
+# install developer tools
+RUN $ZYPPERCMD install gcc gcc-fortran
 RUN $ZYPPERCMD install python3 python3-pip
+RUN $ZYPPERCMD install python3-devel
 
-# create a Python virtual environment in the /home/virtenv directory
-RUN python3 -m venv /home/virtenv
+# create notebook directory and make it the working directory
+RUN mkdir -p $JUPYTER/notebooks
+WORKDIR $JUPYTER
+RUN cd $JUPYTER
+RUN pwd
 
-# activate the Python virtual environment and upgrade pip
-RUN . /home/virtenv/bin/activate && pip install --upgrade pip
-
-# install required Python packages
+# copy requirements file into working directory
 COPY requirements.txt .
-RUN . /home/virtenv/bin/activate && pip install -r requirements.txt
 
-# expose the JupyterLab web port
+# installed required Python components
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# expose jupyterlab web port
 EXPOSE 8888/tcp
 
-# run entrypoint.sh script to map user permissions
-# see: https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-# launch JupyterLab
-CMD [".", "/home/virtenv/bin/activate", "&&", "jupyter-lab"]
+CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=$JUPYTER/notebooks --allow-root
 ----
 
 The `FROM` instruction specifies which base layer to use.
@@ -427,7 +434,7 @@ At this point, you have:
 
 * a _Containerfile_ to specify how to build the container
 * a _requirements.txt_ file to specify the Python packages you want
-* an _entrypoint.sh_ script to handle user mapping
+//* an _entrypoint.sh_ script to handle user mapping
 
 Now, you can build your container image with `podman build`.
 
@@ -438,7 +445,7 @@ Now, you can build your container image with `podman build`.
 +
 [source, bash]
 ----
-podman build . --tag jupyter
+podman build --tag jupyter .
 ----
 +
 [TIP]
@@ -456,75 +463,73 @@ You can verify that your image has been created with the following podman comman
 +
 [source, bash]
 ----
-podman images
+podman image list
 ----
+The output of this command looks something like:
+[source, bash]
+----
+REPOSITORY                      TAG         IMAGE ID      CREATED         SIZE
+localhost/jupyter               latest      d8bbefc6be69  11 minutes ago  837 MB
+registry.suse.com/bci/bci-base  latest      35ebb6a7981e  4 days ago      125 MB
+----
+Note your container image is named, _localhost/jupyter_.
 +
 [TIP]
 ====
-You can also list images with the command `podman image list`.
-Learn more about Podman commands at: https://docs.podman.io/en/latest/Commands.html
+You can also list images with the command `podman images`.
+Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.html
 ====
 
-Before running your container, add a location for the MNIST code and pass your User ID.
-The commands listed below depend upon the Bash shell as your default.
-For more information on Bash, see https://www.gnu.org/software/bash/[GNU Bash].
-
-// podman run \
-//   --network host \
-//   --env LOCAL_USERID=$UID \
-// localhost/jupyter
-
-. Run your container and pass it your User ID
+. Run your container.
 +
 [source, bash]
 ----
-podman run \
-  --network host \
-  --env LOCAL_USERID=$UID \
-localhost/jupyter
+podman run --name jupyter \
+ -p 8888:8888 \
+ -e JUPYTER_ENABLE_LAB=yes \
+ -v $HOME/jupyter/jup2/data:/home/jupyter/data \
+ localhost/jup2
 ----
 +
-TIP: You could put these commands into a file, such as: _podmanrun.sh_
-
-
-=== Test the Container
-
-When the _podman run_ command starts your container, you will see its output in your shell.
-It will look something like this:
-
-. Example output of the _podman run_ command
+You can obtain the URL and access token for the containerized JupyterLab environment in the output of the above command.
 +
+[source, bash]
 ----
-sles@sp4:~/jupcontainer$ podman run --network host --env LOCAL_USERID=$UID localhost/jupyter
-Starting with UID : 1000
-[I 2022-10-03 22:34:10.355 ServerApp] jupyterlab | extension was successfully linked.
-[I 2022-10-03 22:34:10.363 ServerApp] Writing Jupyter server cookie secret to /home/jupyterlab/.local/share/jupyter/runtime/jupyter_cookie_secret
-...
-[I 2022-10-03 22:34:10.583 ServerApp]  or http://127.0.0.1:8888/lab?token=d6f27830445721412980dbf43004fc855aee5eee058b3c67
-[I 2022-10-03 22:34:10.584 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-[W 2022-10-03 22:34:10.587 ServerApp] No web browser found: could not locate runnable browser.
-[C 2022-10-03 22:34:10.587 ServerApp]
+    To access the server, open this file in a browser:
+        file:///root/.local/share/jupyter/runtime/jpserver-1-open.html
+    Or copy and paste one of these URLs:
+        http://95038cde3755:8888/lab?token=77810fba9aec755d0a289a38cf2152bc3e1bf9b927082f30
+     or http://127.0.0.1:8888/lab?token=77810fba9aec755d0a289a38cf2152bc3e1bf9b927082f30
+----
 
-To access the server, open this file in a browser:
-file:///home/jupyterlab/.local/share/jupyter/runtime/jpserver-45-open.html
-Or copy and paste one of these URLs:
-http://localhost:8888/lab?token=d6f27830445721412980dbf43004fc855aee5eee058b3c67
-or http://127.0.0.1:8888/lab?token=d6f27830445721412980dbf43004fc855aee5eee058b3c67
+. Access JupyterLab.
+//
++
+Copy and paste the last URL (i.e., the one that begins with 'http://127.0.0.1') to your Web browser on your host system.
++
+// put screenshot here
+
+. Verify file access.
+// Use screenshots to show creating a text file in JupyterLab, then show long directory listing with proper file ownership
++
+[source, bash]
+----
+ls -l
 ----
 +
-TIP:  If you see warnings, you should understand that aspect of the _podman run_ process.
+[source, bash]
+----
+terry@tsleh1:~/code/jup2/data> ls -l
+total 4
+-rw-r--r-- 1 sarah users 66 Nov  8 18:09 test-cont.txt
+-rw-r--r-- 1 sarah users  0 Nov  8 16:52 test-host
+----
 
+[TIP]
+====
+When you are done with your container, use __File__ > __Shutdown__ in the JupyterLab interface or issue Ctrl-C in the terminal where you started the container.A
+====
 
-At this point, you are ready to test your container.
-The output shown above has an HTTP URL that you can use from your browser to interact with JupyterLab.
-Copy the _localhost_ HTTP URL.
-Paste that URL into your favorite browser.
-
-You should see a JupyterLab web page, such as the one below.
-
-image::Screenshot-JupyterLab-Container.png[JupyterLab,640,480,pdfwidth=80%,scaledwidth=80%]
-
-TIP:  When you are done with your container, Ctrl-C in the shell will terminate the _podman run_ command.
 
 == Summary
 
