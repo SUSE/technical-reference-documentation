@@ -233,7 +233,7 @@ See the manual page for containers-storage.conf for more storage settings:
 ====
 
 
-== Create a container image
+== Create your container image
 
 An application container image is built by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
 In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages.
@@ -253,6 +253,8 @@ For example,
 mkdir $HOME/jupcontainer
 cd $HOME/jupcontainer
 ----
+
+
 
 
 === Define the Python environment
@@ -398,6 +400,7 @@ RUN pip install -r requirements.txt
 # expose jupyterlab web port
 EXPOSE 8888/tcp
 
+# launch JupyterLab with a few options
 CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=$JUPYTER/notebooks --allow-root
 ----
 
@@ -453,13 +456,7 @@ podman build --tag jupyter .
 By using the `--tag jupyter` or `-t jupyter` option, your container will be nameed _localhost/jupyter_.
 ====
 
-
-== Run the application container
-
-The container image you have built now lives in your localhost repository and is tagged with the name _jupyter_.
-You can verify that your image has been created with the following podman command.
-
-. Show the container images on your localhost.
+. Verify your container image exists.
 +
 [source, bash]
 ----
@@ -472,7 +469,7 @@ REPOSITORY                      TAG         IMAGE ID      CREATED         SIZE
 localhost/jupyter               latest      d8bbefc6be69  11 minutes ago  837 MB
 registry.suse.com/bci/bci-base  latest      35ebb6a7981e  4 days ago      125 MB
 ----
-Note your container image is named, _localhost/jupyter_.
+You should see your container image, _localhost/jupyter_.
 +
 [TIP]
 ====
@@ -480,15 +477,38 @@ You can also list images with the command `podman images`.
 Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.html
 ====
 
-. Run your container.
+
+== Run your application container
+
+You have most likely heard of containers as a technology to implement microservices architectures, where software applications are composed of small, independent services that communicate over well-defined application programming interfaces (APIs).
+JupyterLab is not a microservice, so it is an unusual application to put into a container.
+However, containerizing JupyterLab with required libraries to execute a particular Jupyter notebook, can be a useful way to share a fully replicable experiment.
+
+
+. Prepare a shared workspace.
+
+.. Create and enter your working directory.
++
+[source, bash]
+----
+mkdir $HOME/mynotebooks
+cd $HOME/mynotebooks
+----
+
+.. Add one or more files (such as Jupyter notebooks) to your working directory.
+//
++
+If you do not have your own Jupyter notebook to use for this demonstration, you can find a plethora to download from the Web, including Alexis Cook's excellent https://www.kaggle.com/code/alexisbcook/titanic-tutorial/notebook[Titanic Tutorial] for https://kaggle.com/[Kaggle].
+
+
+. Launch your JupyterLab container.
 +
 [source, bash]
 ----
 podman run --name jupyter \
  -p 8888:8888 \
- -e JUPYTER_ENABLE_LAB=yes \
- -v $HOME/jupyter/jup2/data:/home/jupyter/data \
- localhost/jup2
+ -v $(pwd):/home/jupyter/notebooks \
+ localhost/jupyter
 ----
 +
 You can obtain the URL and access token for the containerized JupyterLab environment in the output of the above command.
@@ -505,31 +525,96 @@ You can obtain the URL and access token for the containerized JupyterLab environ
 . Access JupyterLab.
 //
 +
-Copy and paste the last URL (i.e., the one that begins with 'http://127.0.0.1') to your Web browser on your host system.
+Open the Web browser on your host system to the last URL shown in your terminal (i.e., the one that begins with 'http://127.0.0.1').
+You should see the main JupyterLab user interface (UI).
 +
-// put screenshot here
+image::jupyterlab-podman-ui.png[JupyterLab UI, scaledwidth="85%", align="center"]
 
-. Verify file access.
-// Use screenshots to show creating a text file in JupyterLab, then show long directory listing with proper file ownership
+. Verify access to an existing file.
+//
++
+You should see your shared files in the left panel of the JupyterLab UI.
+Double-click a filename to open one of these in the main pane of the UI.
++
+image::jupyterlab-podman-titanic.png[JupyterLab Titanic notebook example, scaledwidth="85%", align="center"]
+
+. Verify ability to create a new notebook.
+
+.. In the JupyterLab UI __Launcher__ tab, click __Python 3__ under __Notebook__.
+
+.. Add content to the new notebook.
++
+image::jupyterlab-podman-notebook.png[JupyterLab notebook example, scaledwidth="85%", align="center"]
++
+[NOTE]
+====
+https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/What%20is%20the%20Jupyter%20Notebook.html[Jupyter notebooks] consist of a series of cells.
+Each cell may be of three types:
+Code:: Executable code associated with a running kernel, such as the https://ipython.readthedocs.io/en/stable/overview.html[IPython].
+Markdown:: Text that can be formatted with https://www.markdownguide.org/getting-started/[Markdown].
+Raw:: Content not evaluated by the running kernel that can be converted to another format with https://nbconvert.readthedocs.io/en/latest/[nbconvert].
+====
++
+[TIP]
+====
+Notebooks default to __untitled.ipynb__.
+You can rename your notebook with __File__ > __Rename Notebook__ or by right-clicking the file in the file listing and selecting __Rename__.
+====
+
+.. Verify file ownership.
+//
++
+On your host computer, open a terminal, change to your working directory, and list the contents.
 +
 [source, bash]
 ----
 ls -l
 ----
+This produces output similar to the following:
 +
 [source, bash]
 ----
-terry@tsleh1:~/code/jup2/data> ls -l
-total 4
--rw-r--r-- 1 sarah users 66 Nov  8 18:09 test-cont.txt
--rw-r--r-- 1 sarah users  0 Nov  8 16:52 test-host
+total 328
+-rw-r--r-- 1 jane users   1586 Nov  9 15:44 test1.ipynb
+-rw-r--r-- 1 jane users 328257 Nov  9 15:32 titanic-machine-learning.ipynb
 ----
++
+where you should see your user and group associated with the new Jupyter notebook.
+
+. Shut down JupyterLab.
+
+.. Save and close any open Jupyter notebooks.
+
+.. Select __File__ > __Shutdown__ in the JupyterLab UI.
+//
++
+Then, confirm that you want to shut down JupyterLab.
+//
++
+In the terminal you used to launch your container, you should see messages from JupyterLab that it is shutting down before you are returned to the command prompt.
++
+[TIP]
+====
+You can also quickly shut down JupyterLab and exist your container by issuing Ctrl-C in the terminal where you started started it.
+====
+
+
+== Managing your containers
+
+// After seeing that the container did not stop completely after exiting JupyterLab, it seems we need to at least mention something about managing containers.  This needs to be fleshed out a bit more ... but not too much!
+
+
+Managing your containers requires discipline.
+
+
+Even after you stop a running container, the container still exists.
 
 [TIP]
 ====
-When you are done with your container, use __File__ > __Shutdown__ in the JupyterLab interface or issue Ctrl-C in the terminal where you started the container.A
+See all containers on your system with `podman container list --all`.
 ====
 
+Podman Guide https://documentation.suse.com/sle-micro/5.3/html/SLE-Micro-all/article-podman.html#sec-working-containers[Working with containers].
 
 == Summary
 
