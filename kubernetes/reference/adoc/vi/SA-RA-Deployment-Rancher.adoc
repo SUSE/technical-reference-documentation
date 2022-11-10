@@ -31,7 +31,7 @@ ifdef::layerRKE2[, {pn_RKE2} - /etc/rancher/rke2/rke2.yaml,]
 to be leveraged by helm command.
 
 Deployment Process::
-While logged into the node, as root or with sudo privileges, install {pn_Rancher}:
+While logged in to the node, as root or with sudo privileges, install {pn_Rancher}:
 +
 ifdef::GS[]
 . Run the following installation command
@@ -146,10 +146,10 @@ kubectl -n cattle-system rollout status deploy/rancher
 
 ifdef::layerRKE1[]
 
-NOTE: Installing Rancher requires a client system (i.e. admin workstation) that has been configured with Helm version 3 and kubectl, as well as access to the kubeconfig file for the RKE cluster. 
+NOTE: Installing Rancher requires a client system (i.e. admin workstation) that has been configured with Helm version 3 and kubectl, and access to the kubeconfig file for the RKE cluster. 
 
 .Perform the following steps to install {pn_Rancher}:
-* Export the variable KUBECONFIG to the absolute pathname of the kube_config_cluster.yml file. I.e. `export KUBECONFIG=~/rke-cluster/kube_config_cluster.yml`
+* Export the variable KUBECONFIG to the absolute path name of the kube_config_cluster.yml file. I.e. `export KUBECONFIG=~/rke-cluster/kube_config_cluster.yml`
 
 NOTE: The easiest way of installing {pn_Rancher} is with self-signed certificates. See https://rancher.com/docs/rancher/v2.x/en/installation/install-rancher-on-k8s/#6-install-rancher-with-helm-and-your-chosen-certificate-option for other options.
 
@@ -219,13 +219,13 @@ NOTE: This optional step is useful in cases where NAT routers and/or firewalls p
 ssh -N -D 8080 user@Linux-host
 ----
 +
-* On the local workstation Web browser, change the SOCKS Host settings to "127.0.0.1" and port "8080"
+* On the local workstation Web browser, change the SOCKS Host settings to "127.0.0.1" and port "8080".
 +
-NOTE: This will route all traffic from this Web browser through the remote Linux host. Be sure to close the tunnel and revert the SOCKS Host settings when you're done.
+NOTE: This will route all traffic from this Web browser through the remote Linux host. Be sure to close the tunnel and revert the SOCKS Host settings when you are done.
 +
-. Connect to the {pn_Rancher} Web UI
-* On a client system, use a Web browser to connect to the {pn_Rancher} service, via https
-* Provide a new Admin password
+. Connect to the {pn_Rancher} Web UI:
+* On a client system, use a Web browser to connect to the {pn_Rancher} service, via HTTPs.
+* Provide a new Admin password.
 +
 IMPORTANT: On the second configuration page, ensure the "Rancher Server URL" is set to the host name specified when installing the {pn_Rancher} Helm Chart and the port is 443.
 
@@ -238,11 +238,11 @@ ifdef::FCTR+Availability[]
 endif::FCTR+Availability[]
 ifdef::FCTR+Security[]
 * <<g-security>>
-** The basic deployment steps described above are for deploying {pn_Rancher} with automatically generated, self-signed security certificates. Other options are to have {pn_Rancher} create public certificates via Let's Encrypt associated with with a publicly resolvable host name for the {pn_Rancher} server, or to provide preconfigured, private certificates.
+** The basic deployment steps described above are for deploying {pn_Rancher} with automatically generated, self-signed security certificates. Other options are to have {pn_Rancher} create public certificates via Let's Encrypt associated with a publicly resolvable host name for the {pn_Rancher} server, or to provide preconfigured, private certificates.
 endif::FCTR+Security[]
 ifdef::FCTR+Integrity[]
 * <<g-integrity>>
-** This deployment of {pn_Rancher} uses the {pn_K3s} etcd key/value store to persist its data and configuration, which offers several advantages. With a multi-node cluster and this resiliency through replication, having to provide highly-available storage isn't needed. In addition, backing up the {pn_K3s} etcd store protects the cluster as well as the installation of {pn_Rancher} and permits restoration of a given state.
+** This deployment of {pn_Rancher} uses the {pn_K3s} etcd key/value store to persist its data and configuration, which offers several advantages. With a multi-node cluster and this resiliency through replication, having to provide highly-available storage is not needed. In addition, backing up the {pn_K3s} etcd store protects the cluster and the installation of {pn_Rancher} and permits restoration of a given state.
 endif::FCTR+Integrity[]
 
 endif::RC,RI[]

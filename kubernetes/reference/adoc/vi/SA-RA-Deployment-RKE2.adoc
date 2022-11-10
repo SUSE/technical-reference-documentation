@@ -123,7 +123,7 @@ ifdef::FCTR+Availability[]
 ** A full high-availability {pn_RKE2} cluster is recommended for production workloads. The etcd key/value store (aka database) requires an odd number of servers (aka master nodes) be allocated to the {pn_RKE2} cluster. In this case, two additional control-plane servers should be added; for a total of three.
 +
 . Deploy the same operating system on the new compute platform nodes
-. Log into the first server node and create a new config.yaml file for the remaining two server nodes:
+. Log in to the first server node and create a new config.yaml file for the remaining two server nodes:
 +
 *** Set the following variables, as appropriate for this cluster
 +
@@ -152,7 +152,8 @@ echo "token: ${NODE_TOKEN}" >> config.yaml
 cat /etc/rancher/rke2/config.yaml >> config.yaml
 ----
 +
-TIP: The next steps require using scp and ssh. Setting up passwordless SSH, and/or using ssh-agent,from the first server node to the second and third nodes will make these steps quicker and easier.
+TIP: The next steps require using SCP and SSH. Setting up passwordless SSH, and/or using `ssh-agent`, from the first server node to the second and third nodes will make 
+these steps quicker and easier.
 +
 *** Copy the new config.yaml file to the remaining two server nodes:
 +
@@ -161,7 +162,7 @@ scp config.yaml ${SECOND_SERVER_IP}:~/
 scp config.yaml ${THIRD_SERVER_IP}:~/
 ----
 +
-*** Move the config.yaml file to the correct location in the filesystem:
+*** Move the config.yaml file to the correct location in the file system:
 +
 ----
 ssh ${SECOND_SERVER_IP} << EOF
@@ -201,7 +202,7 @@ EOF
 **** Use Ctrl+c to exit the watch loop after all deployment pods are running
 +
 ifdef::focusRancher[]
-By default, the {pn_RKE2} server nodes are available to run non-control-plane workloads. In this case, the {pn_RKE2} default behavior is perfect for the {pn_Rancher} server cluster as it doesn't require additional agent (aka worker) nodes to maintain a highly available {pn_Rancher} server application.
+By default, the {pn_RKE2} server nodes are available to run non-control-plane workloads. In this case, the {pn_RKE2} default behavior is perfect for the {pn_Rancher} server cluster as it does not require additional agent (aka worker) nodes to maintain a highly available {pn_Rancher} server application.
 +
 endif::focusRancher[]
 NOTE: This can be changed to the normal Kubernetes default by adding a taint to each server node. See the official Kubernetes documentation for more information on how to do that.

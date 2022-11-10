@@ -7,13 +7,13 @@ To meet these goals, {pn_RKE2} does the following:
 * enables FIPS 140-2 compliance
 * regularly scans components for CVEs using trivy in our build pipeline
 
-With {pn_RKE2} we take lessons learned from developing and maintaining our lightweight Kubernetes distribution, {pn_K3s}, and apply them to build an enterprise-ready distribution with K3s ease-of-use. What this means is that {pn_RKE2} is, at its simplest, a single binary to be installed and configured on all nodes expected to participate in the Kubernetes cluster. Once started, {pn_RKE2} is then able to bootstrap and supervise role-appropriate agents per node while sourcing needed content from the network.
+With {pn_RKE2} we take lessons learned from developing and maintaining our lightweight Kubernetes distribution, {pn_K3s}, and apply them to build an enterprise-ready distribution with K3s ease-of-use. What this means is that {pn_RKE2} is, at its simplest, a single binary to be installed and configured on all nodes expected to participate in the Kubernetes cluster. When started, {pn_RKE2} is then able to bootstrap and supervise role-appropriate agents per node while sourcing needed content from the network.
 
 The fundamental roles for the nodes and core functionality of {pn_RKE2} are represented in the following figure:
 
 image::{an_RKE2}_overview.png[title="Component Overview - {pn_RKE2}", scaledwidth=80%]
 
-{pn_RKE2} brings together a number of Open Source technologies to make this all work:
+{pn_RKE2} brings together several open source technologies to make this all work:
 
 * {pn_K3s} - link:{pn_K3s_HelmControllerURL}[Helm Controller]
 * Kubernetes
