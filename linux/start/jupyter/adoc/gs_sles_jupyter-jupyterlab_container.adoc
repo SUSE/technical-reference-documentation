@@ -295,59 +295,6 @@ To install the packages specified in a _requirements.txt_ file, use `pip install
 ====
 
 
-[NOTE]
-====
-The following section should be removed.
-====
-
-=== Handle user mapping
-
-Podman allows a container to run in unprivileged (rootless) mode run in the user namespace.
-By default, the user inside the container is not your regular user, but has a different UID and GID.
-When you mount storage to the container, files will be accessed as the container user.
-The problems resulting from file access permissions can introduce friction to your development workflows.
-
-You can address this problem by running a script in the container that creates a user account with a matching UID and switches to this user to run your workload.
-
-Create this script in your build directory and name it _entrypoint.sh_.
-
-[listing]
-----
-#!/bin/bash
-
-# DEBUG: set optional debug verbosity
-[[ $DEBUG -eq 1 ]] && set -x
-
-# specify container user information
-#   using LOCAL_USERID passed with 'podman run'
-CONT_UID=${LOCAL_USERID:?}
-CONT_UNAME=jupyterlab
-CONT_HOME=/home/${CONT_UNAME}
-VIRTENV=/home/virtenv
-
-# create container user
-useradd -s /bin/bash -u $CONT_UID -d $CONT_HOME -m $CONT_UNAME
-
-# useradd will not apply skel files if the container homedir is created
-# via a container engine's --mount flag, so force the copy of these files
-cp -ar /etc/skel/. ${CONT_HOME}/
-chown -R $CONT_UID $CONT_HOME
-
-# DEBUG: allow user to edit virtenv
-[[ $DEBUG -eq 1 ]] && chown -R $CONT_UID $VIRTENV
-
-# place container engine CMD into a script to facilitate an exec
-echo "$@" > /usr/local/bin/cmd.sh
-chmod +x /usr/local/bin/cmd.sh
-
-# exec CMD as the local user 
-exec su - $CONT_UNAME -c /usr/local/bin/cmd.sh
-----
-
-For this script to do its job, you need to run it inside the container at the appropriate time and with the proper UID passed to it.
-This is done with the `ENTRYPOINT` instruction in a _Containerfile_ and with the `--env` option of the `podman run` command.
-
-
 === Define the container image
 
 The `podman build` command can build a container image from a set of instructions provided in a _Containerfile_.
