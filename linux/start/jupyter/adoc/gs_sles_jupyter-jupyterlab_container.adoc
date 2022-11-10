@@ -261,7 +261,7 @@ cd $HOME/jupcontainer
 
 Replicability is critical in science and engineering.
 Complex applications, like an ML model, can produce wildly different results or not work at all due to minor code variations in a library dependency.
-So, it becomes important when building such applications to explicitly define all the software dependencies and their versions
+So, it becomes important when building such applications to explicitly define all the software dependencies and their versions.
 
 Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
 Key to this process are the `pip` Python package management tool and a file that lists the required packages and their versions, typically named _requirements.txt_.
@@ -277,38 +277,31 @@ Create this _requirements.txt_ file in your build directory:
 
 [listing]
 ----
-matplotlib==3.3.4
 numpy==1.19.5
 pandas==1.1.5
 scikit-learn==0.24.2
 scipy==1.5.4
-tensorflow==2.6.2
+seaborn==0.11.2
+matplotlib==3.3.4
 jupyterlab==3.2.9
 ----
 
+In this example, you specify the exact version of each package.
+If the specified version of a package is not available, your container image build will fail.
+One way to overcome this is to remove the version specification (for example, specify `seaborn` instead of `seaborn==0.11.2`).
+This frees the `pip` dependency resolver to substitute in an appropriate, available version of the package.
 
 [TIP]
 ====
 You can automatically create a _requirements.txt_ file from an installed environment by issuing `pip freeze > requirements.txt`.
 This will include all installed packages, except `pip` itself and its dependencies.
-To install the packages specified in a _requirements.txt_ file, use `pip install -r requirements.txt`.
 ====
 
 
 === Define the container image
 
-The `podman build` command can build a container image from a set of instructions provided in a _Containerfile_.
+The `podman build` command can build a container image from a set of instructions provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[_Containerfile_].
 If you are familiar with the Docker container ecosystem, a _Containerfile_ shares the same format and most of the same options as a _Dockerfile_.
-
-
-[TIP]
-====
-Learn more about `podman build` and the _Containerfile_ format and options with:
-
-* https://docs.podman.io/en/latest/markdown/podman-build.1.html
-
-* https://github.com/containers/common/blob/main/docs/Containerfile.5.md
-====
 
 
 Create this _Containerfile_ in your build directory:
@@ -340,7 +333,7 @@ RUN pwd
 # copy requirements file into working directory
 COPY requirements.txt .
 
-# installed required Python components
+# install required Python components
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
@@ -351,13 +344,25 @@ EXPOSE 8888/tcp
 CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=$JUPYTER/notebooks --allow-root
 ----
 
-The `FROM` instruction specifies which base layer to use.
+The _Containerfile_ consists of a sequence of instructions to automate the image build process.
+The instructions used here are:
+
+
+* `CMD` provides a default command to be executed when running the container.
+
+* `ENV` sets an environment variable.
+
+* `FROM` specifies which base layer to use.
+//
++
 You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
 For this guide, you use the 'latest' https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image], which, at the time of this writing, is built on {productname}.
 SUSE also provides the base container image with specific development languages already installed in the base layer, which could help your containers to start faster.
-
+//
++
 When choosing a base container image, keep in mind the following considerations:
-
+//
++
 Security::
 Is the image from a trusted source, verifiable, and up-to-date with vulnerability fixes?
 
@@ -370,11 +375,17 @@ Are you able to use the image with your preferred software, tooling, and workflo
 Redistribution::
 Are you legally able to redistribute the custom application container images you build on it?
 
+* `RUN` executes a command in a shell (`/bin/sh -c`).
 
+* `WORKDIR` sets the working directory for `RUN`, `CMD`, `COPY` and other instructions.
+
+* `COPY` copies files into the container.
+
+* `EXPOSE` informs the container engine that the container listens on the specified network ports.
++
 [NOTE]
 ====
 JupyterLab is a Web application that uses TCP port 8888 for user connections.
-To allow access to your container's JupyterLab, you must `EXPOSE` the port.
 ====
 
 
@@ -383,8 +394,8 @@ To allow access to your container's JupyterLab, you must `EXPOSE` the port.
 At this point, you have:
 
 * a _Containerfile_ to specify how to build the container
+
 * a _requirements.txt_ file to specify the Python packages you want
-//* an _entrypoint.sh_ script to handle user mapping
 
 Now, you can build your container image with `podman build`.
 
@@ -410,6 +421,7 @@ By using the `--tag jupyter` or `-t jupyter` option, your container will be name
 podman image list
 ----
 The output of this command looks something like:
++
 [source, bash]
 ----
 REPOSITORY                      TAG         IMAGE ID      CREATED         SIZE
@@ -421,7 +433,7 @@ You should see your container image, _localhost/jupyter_.
 [TIP]
 ====
 You can also list images with the command `podman images`.
-Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.html
+Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.html.
 ====
 
 
@@ -445,7 +457,7 @@ cd $HOME/mynotebooks
 .. Add one or more files (such as Jupyter notebooks) to your working directory.
 //
 +
-If you do not have your own Jupyter notebook to use for this demonstration, you can find a plethora to download from the Web, including Alexis Cook's excellent https://www.kaggle.com/code/alexisbcook/titanic-tutorial/notebook[Titanic Tutorial] for https://kaggle.com/[Kaggle].
+If you do not have your own Jupyter notebook to use, you can find a plethora to download from the Web, including Alexis Cook's excellent https://www.kaggle.com/code/alexisbcook/titanic-tutorial/notebook[Titanic Tutorial] for https://kaggle.com/[Kaggle].
 
 
 . Launch your JupyterLab container.
@@ -458,7 +470,7 @@ podman run --name jupyter \
  localhost/jupyter
 ----
 +
-You can obtain the URL and access token for the containerized JupyterLab environment in the output of the above command.
+Note the output in your terminal, where you will see the URL and access token for the containerized JupyterLab environment.
 +
 [source, bash]
 ----
@@ -472,33 +484,36 @@ You can obtain the URL and access token for the containerized JupyterLab environ
 . Access JupyterLab.
 //
 +
-Open the Web browser on your host system to the last URL shown in your terminal (i.e., the one that begins with 'http://127.0.0.1').
-You should see the main JupyterLab user interface (UI).
+Open the Web browser on your host system to the last URL shown in your terminal (the one that begins with 'http://127.0.0.1').
+If all went well, you are presented with the main JupyterLab user interface (UI).
 +
 image::jupyterlab-podman-ui.png[JupyterLab UI, scaledwidth="85%", align="center"]
 
-. Verify access to an existing file.
+. Verify you can access an existing file.
 //
 +
-You should see your shared files in the left panel of the JupyterLab UI.
-Double-click a filename to open one of these in the main pane of the UI.
+Your shared files are listed in the left pane of the UI.
+Double-click a filename to open the file in a tab in the main pane.
 +
 image::jupyterlab-podman-titanic.png[JupyterLab Titanic notebook example, scaledwidth="85%", align="center"]
 
-. Verify ability to create a new notebook.
+. Verify you can create a new notebook.
 
 .. In the JupyterLab UI __Launcher__ tab, click __Python 3__ under __Notebook__.
 
-.. Add content to the new notebook.
+.. Add some content to the new notebook.
 +
 image::jupyterlab-podman-notebook.png[JupyterLab notebook example, scaledwidth="85%", align="center"]
 +
 [NOTE]
 ====
 https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/What%20is%20the%20Jupyter%20Notebook.html[Jupyter notebooks] consist of a series of cells.
-Each cell may be of three types:
+Each cell may be one of three types:
+
 Code:: Executable code associated with a running kernel, such as the https://ipython.readthedocs.io/en/stable/overview.html[IPython].
+
 Markdown:: Text that can be formatted with https://www.markdownguide.org/getting-started/[Markdown].
+
 Raw:: Content not evaluated by the running kernel that can be converted to another format with https://nbconvert.readthedocs.io/en/latest/[nbconvert].
 ====
 +
@@ -538,65 +553,36 @@ where you should see your user and group associated with the new Jupyter noteboo
 Then, confirm that you want to shut down JupyterLab.
 //
 +
-In the terminal you used to launch your container, you should see messages from JupyterLab that it is shutting down before you are returned to the command prompt.
+In the terminal you used to launch your container, you will see messages from JupyterLab that it is shutting down before you are returned to the command prompt.
 +
 [TIP]
 ====
-You can also quickly shut down JupyterLab and exist your container by issuing Ctrl-C in the terminal where you started started it.
+You can also quickly shut down JupyterLab and exit your container by issuing CTRL-C in the terminal where you started it.
+====
+
+[NOTE]
+====
+Exiting a container does not delete the container.
+It still exists and can be stopped and restarted again and again.
+//
+To see all containers on your system (including the stopped ones), use `podman container list --all`.
 ====
 
 
 == Managing your containers
 
-// After seeing that the container did not stop completely after exiting JupyterLab, it seems we need to at least mention something about managing containers.  This needs to be fleshed out a bit more ... but not too much!
+Podman provides many https://docs.podman.io/en/latest/Commands.html[commands] to help you manage your containers and container images.
+Earlier in this guide, you used `podman build` to create a container image and `podman run` to instantiate the image as a container.
 
+Explore some Podman commands in https://documentation.suse.com/sle-micro/5.3/html/SLE-Micro-all/article-podman.html#sec-working-containers[Podman Guide: Working with containers].
 
-Managing your containers requires discipline.
-
-
-Even after you stop a running container, the container still exists.
-
-[TIP]
-====
-See all containers on your system with `podman container list --all`.
-====
-
-Podman Guide https://documentation.suse.com/sle-micro/5.3/html/SLE-Micro-all/article-podman.html#sec-working-containers[Working with containers].
 
 == Summary
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Summarize what was covered, including:
-//   - Motivation
-//   - Installation
-//   - Demonstration
-// Include any hints about other capabilities.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Enterprises of all sizes recognize the need to transform the way software and services are created, delivered, and used.
+Container technologies embody the modern, agile software development methodologies and enable operators to manage the full life-cycle of complex, application landscapes.
 
-Companies are transforming the way that software and services are being created.
-Modern software is developed by teams that are agile, open, and collaborative.
-Adding machine learning to the development process relies on collaborative tools and processes.
-
-This guide has shown you how to create containers that are based on SUSE Linux Enterprise (SLE) Base Container Images (BCI).
-BCI-based containers leverage proven, tested, and supported code from SUSE.
-As such, SLE BCIs allow open, flexible, and secure development and are excellent for containerized workload and machine-learning deployments.
-With SUSE Edge technologies, SLE BCIs help you to quickly deploy secure, high-quality ML applications on edge devices.
-
-This guide showed steps to create a container of JupyterLab that can be used for various ML projects.
-There are other techniques to share code, that don't involve creating a container for JupyterLab.
-The steps shown here are for your education and provide an interesting web-based container example.
-
-With the podman knowledge you've gained here, you are now ready to create your own BCI-based containers.
-
-
-
-== Additional resources
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide any additional resources that may help the reader
-//   continue to explore this topic.
-// Use an unordered list for references.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+In this guide, you learned how to containerize an application, deploy that container, and access the application.
 
 
 
