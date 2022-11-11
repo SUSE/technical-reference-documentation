@@ -233,7 +233,7 @@ See the manual page for containers-storage.conf for more storage settings:
 ====
 
 
-== Create your container image
+== Create your application container image
 
 An application container image is built by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
 In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages.
@@ -300,11 +300,11 @@ This will include all installed packages, except `pip` itself and its dependenci
 
 === Define the container image
 
-The `podman build` command can build a container image from a set of instructions provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[_Containerfile_].
-If you are familiar with the Docker container ecosystem, a _Containerfile_ shares the same format and most of the same options as a _Dockerfile_.
+The `podman build` command can build a container image from a sequence of instructions provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[Containerfile].
+If you are familiar with the Docker container ecosystem, a Containerfile shares the same format and most of the same options as a Dockerfile.
 
 
-Create this _Containerfile_ in your build directory:
+Create a file, named _Containerfile_, in your build directory with the following contents:
 
 [listing]
 ----
@@ -337,37 +337,43 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# expose jupyterlab web port
+# expose JupyterLab web port
 EXPOSE 8888/tcp
 
 # launch JupyterLab with a few options
 CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=$JUPYTER/notebooks --allow-root
 ----
 
-The _Containerfile_ consists of a sequence of instructions to automate the image build process.
-The instructions used here are:
-
+The instructions used in this _Containerfile_ to automate the build of your container are:
 
 * `CMD` provides a default command to be executed when running the container.
+
+* `COPY` copies files into the container.
+
+* `EXPOSE` informs the container engine that the container listens on the specified network ports.
 
 * `ENV` sets an environment variable.
 
 * `FROM` specifies which base layer to use.
-//
-+
-You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
-For this guide, you use the 'latest' https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image], which, at the time of this writing, is built on {productname}.
-SUSE also provides the base container image with specific development languages already installed in the base layer, which could help your containers to start faster.
-//
-+
-When choosing a base container image, keep in mind the following considerations:
-//
-+
-Security::
-Is the image from a trusted source, verifiable, and up-to-date with vulnerability fixes?
 
-Stability::
-Is the image based on an operating system with a reputation for stability and has the image undergone quality assurance testing?
+* `RUN` executes a command in a shell (`/bin/sh -c`).
+
+* `WORKDIR` sets the working directory for `RUN`, `CMD`, `COPY` and other instructions.
+
+
+An important consideration for your container build is the base layer.
+You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
+
+For this guide, you use the 'latest' SUSE Linux Enterprise base container image, which, at the time of this writing, is built on {productname}.
+SUSE also provides base container images with specific development languages already installed, which can speed up your build process.
+
+When choosing a base container image, keep in mind the following considerations:
+
+Security::
+Is the image from and signed by a trusted source, verifiable, and up-to-date with vulnerability fixes?
+
+Reliability::
+Is the image based on an operating system with a reputation for reliability and has the image undergone quality assurance testing?
 
 Integration::
 Are you able to use the image with your preferred software, tooling, and workflows?
@@ -375,18 +381,8 @@ Are you able to use the image with your preferred software, tooling, and workflo
 Redistribution::
 Are you legally able to redistribute the custom application container images you build on it?
 
-* `RUN` executes a command in a shell (`/bin/sh -c`).
+Learn more about https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
 
-* `WORKDIR` sets the working directory for `RUN`, `CMD`, `COPY` and other instructions.
-
-* `COPY` copies files into the container.
-
-* `EXPOSE` informs the container engine that the container listens on the specified network ports.
-+
-[NOTE]
-====
-JupyterLab is a Web application that uses TCP port 8888 for user connections.
-====
 
 
 === Build the container image
@@ -470,6 +466,17 @@ podman run --name jupyter \
  localhost/jupyter
 ----
 +
+====
+In this command, you specify the following options:
+
+* `--name` to set a name for the container.
+
+* `-p` or `--publish` to publish a container's network port or range of ports to the host.
+
+* `-v` or `--volume` to create a bind mount of a directory on your host to one in your container.
+====
+//
++
 Note the output in your terminal, where you will see the URL and access token for the containerized JupyterLab environment.
 +
 [source, bash]
@@ -505,21 +512,14 @@ image::jupyterlab-podman-titanic.png[JupyterLab Titanic notebook example, scaled
 +
 image::jupyterlab-podman-notebook.png[JupyterLab notebook example, scaledwidth="85%", align="center"]
 +
-[NOTE]
-====
-https://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/What%20is%20the%20Jupyter%20Notebook.html[Jupyter notebooks] consist of a series of cells.
-Each cell may be one of three types:
-
-Code:: Executable code associated with a running kernel, such as the https://ipython.readthedocs.io/en/stable/overview.html[IPython].
-
-Markdown:: Text that can be formatted with https://www.markdownguide.org/getting-started/[Markdown].
-
-Raw:: Content not evaluated by the running kernel that can be converted to another format with https://nbconvert.readthedocs.io/en/latest/[nbconvert].
-====
-+
 [TIP]
 ====
-Notebooks default to __untitled.ipynb__.
+See the  https://jupyter-notebook.readthedocs.io/en/latest/notebook.html[Jupyter notebooks user documentation] to learn about cell types, computational kernels, basic usage, and more.
+====
++
+[NOTE]
+====
+Notebooks default to _untitled.ipynb_.
 You can rename your notebook with __File__ > __Rename Notebook__ or by right-clicking the file in the file listing and selecting __Rename__.
 ====
 
@@ -569,21 +569,25 @@ To see all containers on your system (including the stopped ones), use `podman c
 ====
 
 
-== Managing your containers
+== Manage your containers
 
+In this guide, you used `podman build` to create a container image and `podman run` to instantiate the image as a container.
 Podman provides many https://docs.podman.io/en/latest/Commands.html[commands] to help you manage your containers and container images.
-Earlier in this guide, you used `podman build` to create a container image and `podman run` to instantiate the image as a container.
 
 Explore Podman commands in https://documentation.suse.com/sle-micro/5.3/html/SLE-Micro-all/article-podman.html#sec-working-containers[Podman Guide: Working with containers].
 
 
 == Summary
 
-Enterprises of all sizes recognize the need to transform the way software and services are created, delivered, and used.
-Container technologies embody the modern, agile software development methodologies and enable operators to manage the full life-cycle of complex, application landscapes.
+Modern application development eschews closed, monolithic structures in favor of open, interoperable, microservices architectures designed and implemented with containers.
+Container technologies support modern Agile software development and enable operations teams to manage the full life cycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
+Innovation across many domains, including machine learning, have been accelerated by the availability of container technologies that make it easier to collaborate, to test, and to deploy new capabilities.
 
-In this guide, you learned how to containerize an application, deploy that container, and access the application.
+//
 
+In this guide, you took first steps working with containers.
+You learned how to install Podman, then use it to build, deploy, and manage an application container.
+You also learned how to use SUSE Linux Enterprise base container images, which provide a reliable, secure, supportable, and freely redistributable base layer for your containers.
 
 
 
