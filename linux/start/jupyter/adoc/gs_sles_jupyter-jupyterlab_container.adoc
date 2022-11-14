@@ -1,0 +1,617 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Variables & Attributes
+// Follow indicated patterns.
+//   E.g., "Ondat data plane with SUSE Rancher"
+//         "Grace Hopper, Engineer, US Navy"
+//         "SUSE Linux Enterprise Server 15 SP4"
+//         "SUSE Rancher 2.6"
+// NOTE: Some variables & attributes have been deprecated and
+//       have been commented out below.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+:title: JupyterLab with Podman and SUSE Linux Enterprise Base Container Images: Getting Started
+:productname: SUSE Linux Enterprise Server 15 SP4
+:opensuse: openSUSE Leap 15.4
+:defaultpython: Python 3.10
+:partnerprod1: JupyterLab
+:author1: Brian Fromme, Alliance Solution Architect, SUSE
+:author2: Terry Smith, Partner Solutions Director, SUSE
+
+= {title}
+
+
+
+== Introduction
+
+=== Motivation
+
+Modern software development is largely agile, open, and collaborative.
+
+Nowhere has this been more obvious and impactful than in the domain of machine learning (ML), where the development community comes from a broad spectrum of domains and backgrounds.
+This has resulted in a rapid state of continuous development, evolving a wealthy ecosystem of software that enable developers to make amazing advances and push the limits of hardware to solve previously intractable problems in record time.
+But rapid development can lead to dependency conflicts, where two applications or even two components of the same application rely on different versions of the same library.
+
+Today, developers have access to container technologies that help overcome this challenge.
+Containers provide a convenient, lightweight way to package your application components with their dependencies while isolating these from other components and their dependencies.
+Containers also enable massive scale, letting you run your applications everywhere they are needed - in the data center, in the cloud, and even at the edge.
+
+
+=== Scope
+
+This document illustrates how to take the your first steps with containers to support ML development and implementation.
+
+
+=== Audience
+
+This document is intended for data scientists, ML developers, operations teams, systems architects and others interested in learning more about container technologies.
+To progress with this document, the reader should have basic Linux command line skills and some knowledge of containers.
+
+
+== Overview
+
+=== Goals
+
+In this guide, you learn how to:
+
+* set up https://podman.io[Podman] on https://www.suse.com/products/server/[{productname}].
+
+* specify and build a container image for a https://jupyter.org/[JupyterLab] ML development environment.
+
+* run your container and access the ML development environment.
+
+
+=== Software ecosystem
+
+. https://www.suse.com/products/server/[{productname}]
+//
++
+This guide leverages {productname} (SLE) as a host operating system for building and running containers.
+SLE can be run on bare metal or in virtual machines to provide a stable, supportable Linux environment.
++
+[NOTE]
+====
+Most of the steps outlined in this guide are directly transferable to https://www.opensuse.org/#Leap[{opensuse}].
+====
+
+. https://www.suse.com/products/base-container-images/[SUSE Linux Enterprise Base Container Images (SLE BCI)]
+//
++
+A base container image provides basic functionality, such as a stripped-down Linux operating system.
+It is onto a base container image that you layer your application components.
+SUSE base container images are freely available, re-distributable, supported across many different environments.
+These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and even on edge devices.
++
+[TIP]
+====
+SUSE maintains up-to-date, ready-to-use container images at https://registry.suse.com/[registry.suse.com].
+====
+
+. https://podman.io[Podman]
+//
++
+Podman, which is short for Pod Manager, is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
+Podman is similar to other container engines (such as Docker, CRI-O, and containerd) and relies on an OCI compliant container runtime (like runc, crun, runv, and so on) to interface with the operating system for creating the running containers.
+This means that running Podman containers is nearly indistinguishable from running those created by other common container engines.
+You can also run Podman containers as an ordinary, non-privileged user, making it easier and more secure.
+See the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide] for a deeper discussion on containers and Podman.
+
+
+. https://www.python.org/[Python]
+//
++
+Python has become a popular programming ecosystem for ML developers for its simplicity, elegance, extensibility, cross-platform availability, and active, open source community of developers and users.
+With Python, ML developers have access to a vast collection of libraries, frameworks, and toolkits with which to build solutions to complex problems.
+
+
+. https://jupyter.org/[JupyterLab]
+//
++
+JupyterLab is a modular, interactive development environment with a Web interface that enables data scientists and developers to create and share computational documents, called notebooks.
++
+image::jupyterlab_ui_001.png[JupyterLab UI, scaledwidth="75%", align="center"]
++
+[TIP]
+====
+See https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server] for more details about working with Python and JupyterLab on SUSE Linux Enterprise Server.
+====
+
+
+== Enable Podman
+
+Podman is not installed by default in {productname}.
+So, your first step is to install it.
+
+
+=== Install Podman
+
+. Enable SUSE Containers Module.
++
+[source, bash]
+----
+sudo SUSEConnect -p sle-module-containers/15.4/x86_64
+----
++
+[NOTE]
+====
+The Containers Module is a free add-on module for your SUSE Linux Enterprise Server system.
+====
+
+. Install Podman.
++
+[source, bash]
+----
+sudo zypper in podman
+----
++
+[TIP]
+====
+It is a good idea to make sure your system is up-to-date with security patches and updates prior to installing new software.
+You can do this with the command:
+[source, bash]
+----
+sudo zypper up
+----
+====
+
+
+=== Configure Podman to run without root privileges
+
+Podman can be run as an ordinary user, but you may need to make a few configuration changes.
+To keep this simple, you will grant your current user, `$USER`, this access.
+
+. Define subUID and subGID ranges for your current user.
+//
++
+You need to define a range of UIDs and GIDs that will be allocated to users inside the container and mapped onto the host.
+You can check the _/etc/subuid_ and _/etc/subgid_ files to see if these ranges are already defined for your user.
+//
++
+If they are not, issue the command:
++
+[source, bash]
+----
+sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 ${USER}
+----
++
+[WARNING]
+====
+The subUID and subGID ranges ('100000-165535' in the command example) must not overlap for different users and not reuse UIDs and GIDs of existing users on the host.
+====
+
+. Ensure your current user has permissions to access zypper credentials on the host.
+The container may need access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
+//
++
+Grant permission to the user with:
++
+[source, bash]
+----
+sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
+----
+
+
+=== Verify the container storage driver
+
+It is important to consider where and how your containers and container images are stored.
+System container storage settings are defined in _/etc/containers/storage.conf_.
+Storage settings can be overridden for a particular user by options placed in _$HOME/.config/containers/storage.conf_ or with appropriate environment variables.
+
+The default location Podman uses for container data is _/var/lib/containers/storage_.
+This is defined by the 'graphroot' option in _/etc/containers/storage.conf_ and only applies to the root user.
+
+For ordinary users, Podman defaults to _$HOME/.local/share/containers/storage_.
+It can be useful to change this location, such as when user home directories are remotely mounted NFS shares.
+This behavior can be changed for all users by setting 'rootless_storage_path' in the '[storage]' section of _/etc/containers/storage.conf_.
+
+How container data are written is determined by the storage driver.
+This is defined by the 'driver' setting in the '[storage]' section of _/etc/containers/storage.conf_.
+For the root user, valid drivers include 'overlay2', 'vfs', 'zfs', and 'btrfs'.
+
+[NOTE]
+====
+The 'btrfs' driver is the default for {productname}, since https://en.wikipedia.org/wiki/Btrfs[Btrfs] is the default filesystem for system volumes.
+Btrfs offers many advantages over earlier filesystems, such as copy-on-write, pooling, snapshots, and checksums.
+====
+
+If your home directory is in a partition formatted with a different filesystem, Podman will default to the 'overlay2' or 'vfs' driver and warn you to set an appropriate storage driver.
+In most cases, this will be the 'overlay2' driver.
+You can set this without administrator help by creating the file _$HOME/.config/containers/storage.conf_ with the following content:
+
+[listing]
+----
+[storage]
+driver = "overlay2"
+----
+
+[TIP]
+====
+See the manual page for containers-storage.conf for more storage settings:
+`man containers-storage.conf 5`
+====
+
+
+== Create your application container image
+
+An application container image is built by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
+In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages.
+
+
+=== Make a build directory
+
+You need a place in your file system to contain the files you will use for building your container image.
+Your build directory can be located anywhere you have write access, such as a directory under your home directory.
+
+Create your build directory and change to it.
+
+For example,
+
+[source, bash]
+----
+mkdir $HOME/jupcontainer
+cd $HOME/jupcontainer
+----
+
+
+
+
+=== Define the Python environment
+
+Replicability is critical in science and engineering.
+Complex applications, like an ML model, can produce wildly different results or not work at all due to minor code variations in a library dependency.
+So, it becomes important when building such applications to explicitly define all the software dependencies and their versions.
+
+Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
+Key to this process are the `pip` Python package management tool and a file that lists the required packages and their versions, typically named _requirements.txt_.
+
+[NOTE]
+====
+Each package you specify may have several dependencies of its own.
+Depending on your needs, your _requirements.txt_ file can become quite long.
+However, in practice, you only need to specify the main packages used for your application, and the `pip` dependency resolver will automatically install the right dependencies to enable your application.
+====
+
+Create this _requirements.txt_ file in your build directory:
+
+[listing]
+----
+numpy==1.19.5
+pandas==1.1.5
+scikit-learn==0.24.2
+scipy==1.5.4
+seaborn==0.11.2
+matplotlib==3.3.4
+jupyterlab==3.2.9
+----
+
+In this example, you specify the exact version of each package.
+If the specified version of a package is not available, your container image build will fail.
+One way to overcome this is to remove the version specification (for example, specify `seaborn` instead of `seaborn==0.11.2`).
+This frees the `pip` dependency resolver to substitute in an appropriate, available version of the package.
+
+[TIP]
+====
+You can automatically create a _requirements.txt_ file from an installed environment by issuing `pip freeze > requirements.txt`.
+This will include all installed packages, except `pip` itself and its dependencies.
+====
+
+
+=== Define the container image
+
+The `podman build` command can build a container image from a sequence of instructions provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[Containerfile].
+If you are familiar with the Docker container ecosystem, a Containerfile shares the same format and most of the same options as a Dockerfile.
+
+
+Create a file, named _Containerfile_, in your build directory with the following contents:
+
+[listing]
+----
+# jupyterlab Containerfile
+
+# https://registry.suse.com/
+FROM registry.suse.com/bci/bci-base:latest
+
+# set notebook directory
+ENV JUPYTER="/home/jupyter"
+
+# make zypper run without user prompts
+ENV ZYPPERCMD="zypper --non-interactive"
+
+# install developer tools
+RUN $ZYPPERCMD install gcc gcc-fortran
+RUN $ZYPPERCMD install python3 python3-pip
+RUN $ZYPPERCMD install python3-devel
+
+# create notebook directory and make it the working directory
+RUN mkdir -p $JUPYTER/notebooks
+WORKDIR $JUPYTER
+RUN cd $JUPYTER
+RUN pwd
+
+# copy requirements file into working directory
+COPY requirements.txt .
+
+# install required Python components
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# expose JupyterLab web port
+EXPOSE 8888/tcp
+
+# launch JupyterLab with a few options
+CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=$JUPYTER/notebooks --allow-root
+----
+
+The instructions used in this _Containerfile_ to automate the build of your container are:
+
+* `CMD` provides a default command to be executed when running the container.
+
+* `COPY` copies files into the container.
+
+* `EXPOSE` informs the container engine that the container listens on the specified network ports.
+
+* `ENV` sets an environment variable.
+
+* `FROM` specifies which base layer to use.
+
+* `RUN` executes a command in a shell (`/bin/sh -c`).
+
+* `WORKDIR` sets the working directory for `RUN`, `CMD`, `COPY` and other instructions.
+
+
+An important consideration for your container build is the base layer.
+You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
+
+For this guide, you use the 'latest' SUSE Linux Enterprise base container image, which, at the time of this writing, is built on {productname}.
+SUSE also provides base container images with specific development languages already installed, which can speed up your build process.
+
+When choosing a base container image, keep in mind the following considerations:
+
+Security::
+Is the image from and signed by a trusted source, verifiable, and up-to-date with vulnerability fixes?
+
+Reliability::
+Is the image based on an operating system with a reputation for reliability and has the image undergone quality assurance testing?
+
+Integration::
+Are you able to use the image with your preferred software, tooling, and workflows?
+
+Redistribution::
+Are you legally able to redistribute the custom application container images you build on it?
+
+Learn more about https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
+
+
+
+=== Build the container image
+
+At this point, you have:
+
+* a _Containerfile_ to specify how to build the container
+
+* a _requirements.txt_ file to specify the Python packages you want
+
+Now, you can build your container image with `podman build`.
+
+
+. Make sure you are in your build directory.
+
+. Build the container image.
++
+[source, bash]
+----
+podman build --tag jupyter .
+----
++
+[TIP]
+====
+By using the `--tag jupyter` or `-t jupyter` option, your container will be nameed _localhost/jupyter_.
+====
+
+. Verify your container image exists.
++
+[source, bash]
+----
+podman image list
+----
+The output of this command looks something like:
++
+[source, bash]
+----
+REPOSITORY                      TAG         IMAGE ID      CREATED         SIZE
+localhost/jupyter               latest      d8bbefc6be69  11 minutes ago  837 MB
+registry.suse.com/bci/bci-base  latest      35ebb6a7981e  4 days ago      125 MB
+----
+You should see your container image, _localhost/jupyter_.
++
+[TIP]
+====
+You can also list images with the command `podman images`.
+Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.html.
+====
+
+
+== Run your application container
+
+You have most likely heard of containers as a technology to implement microservices architectures, where software applications are composed of small, independent services that communicate over well-defined application programming interfaces (APIs).
+JupyterLab is not a microservice, so it is an unusual application to put into a container.
+However, containerizing JupyterLab with required libraries to execute a particular Jupyter notebook, can be a useful way to share a fully replicable experiment.
+
+
+. Prepare a shared workspace.
+
+.. Create and enter your working directory.
++
+[source, bash]
+----
+mkdir $HOME/mynotebooks
+cd $HOME/mynotebooks
+----
+
+.. Add one or more files (such as Jupyter notebooks) to your working directory.
+//
++
+If you do not have your own Jupyter notebook to use, you can find a plethora to download from the Web, including Alexis Cook's excellent https://www.kaggle.com/code/alexisbcook/titanic-tutorial/notebook[Titanic Tutorial] for https://kaggle.com/[Kaggle].
+
+
+. Launch your JupyterLab container.
++
+[source, bash]
+----
+podman run --name jupyter \
+ -p 8888:8888 \
+ -v $(pwd):/home/jupyter/notebooks \
+ localhost/jupyter
+----
++
+====
+In this command, you specify the following options:
+
+* `--name` to set a name for the container.
+
+* `-p` or `--publish` to publish a container's network port or range of ports to the host.
+
+* `-v` or `--volume` to create a bind mount of a directory on your host to one in your container.
+====
+//
++
+Note the output in your terminal, where you will see the URL and access token for the containerized JupyterLab environment.
++
+[source, bash]
+----
+    To access the server, open this file in a browser:
+        file:///root/.local/share/jupyter/runtime/jpserver-1-open.html
+    Or copy and paste one of these URLs:
+        http://95038cde3755:8888/lab?token=77810fba9aec755d0a289a38cf2152bc3e1bf9b927082f30
+     or http://127.0.0.1:8888/lab?token=77810fba9aec755d0a289a38cf2152bc3e1bf9b927082f30
+----
+
+. Access JupyterLab.
+//
++
+Open the Web browser on your host system to the last URL shown in your terminal (the one that begins with 'http://127.0.0.1').
+If all went well, you are presented with the main JupyterLab user interface (UI).
++
+image::jupyterlab-podman-ui.png[JupyterLab UI, scaledwidth="85%", align="center"]
+
+. Verify you can access an existing file.
+//
++
+Your shared files are listed in the left pane of the UI.
+Double-click a filename to open the file in a tab in the main pane.
++
+image::jupyterlab-podman-titanic.png[JupyterLab Titanic notebook example, scaledwidth="85%", align="center"]
+
+. Verify you can create a new notebook.
+
+.. In the JupyterLab UI __Launcher__ tab, click __Python 3__ under __Notebook__.
+
+.. Add some content to the new notebook.
++
+image::jupyterlab-podman-notebook.png[JupyterLab notebook example, scaledwidth="85%", align="center"]
++
+[TIP]
+====
+See the  https://jupyter-notebook.readthedocs.io/en/latest/notebook.html[Jupyter notebooks user documentation] to learn about cell types, computational kernels, basic usage, and more.
+====
++
+[NOTE]
+====
+Notebooks default to _untitled.ipynb_.
+You can rename your notebook with __File__ > __Rename Notebook__ or by right-clicking the file in the file listing and selecting __Rename__.
+====
+
+.. Verify file ownership.
+//
++
+On your host computer, open a terminal, change to your working directory, and list the contents.
++
+[source, bash]
+----
+ls -l
+----
+This produces output similar to the following:
++
+[source, bash]
+----
+total 328
+-rw-r--r-- 1 jane users   1586 Nov  9 15:44 test1.ipynb
+-rw-r--r-- 1 jane users 328257 Nov  9 15:32 titanic-machine-learning.ipynb
+----
++
+where you should see your user and group associated with the new Jupyter notebook.
+
+. Shut down JupyterLab.
+
+.. Save and close any open Jupyter notebooks.
+
+.. Select __File__ > __Shutdown__ in the JupyterLab UI.
+//
++
+Then, confirm that you want to shut down JupyterLab.
+//
++
+In the terminal you used to launch your container, you will see messages from JupyterLab that it is shutting down before you are returned to the command prompt.
++
+[TIP]
+====
+You can also quickly shut down JupyterLab and exit your container by issuing CTRL-C in the terminal where you started it.
+====
+
+[NOTE]
+====
+Exiting a container does not delete the container.
+It still exists and can be stopped and restarted again and again.
+//
+To see all containers on your system (including the stopped ones), use `podman container list --all`.
+====
+
+
+== Manage your containers
+
+In this guide, you used `podman build` to create a container image and `podman run` to instantiate the image as a container.
+Podman provides many https://docs.podman.io/en/latest/Commands.html[commands] to help you manage your containers and container images.
+
+Explore Podman commands in https://documentation.suse.com/sle-micro/5.3/html/SLE-Micro-all/article-podman.html#sec-working-containers[Podman Guide: Working with containers].
+
+
+== Summary
+
+Modern application development eschews closed, monolithic structures in favor of open, interoperable, microservices architectures designed and implemented with containers.
+Container technologies support modern Agile software development and enable operations teams to manage the full life cycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
+Innovation across many domains, including machine learning, have been accelerated by the availability of container technologies that make it easier to collaborate, to test, and to deploy new capabilities.
+
+//
+
+In this guide, you took first steps working with containers.
+You learned how to install Podman, then use it to build, deploy, and manage an application container.
+You also learned how to use SUSE Linux Enterprise base container images, which provide a reliable, secure, supportable, and freely redistributable base layer for your containers.
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
