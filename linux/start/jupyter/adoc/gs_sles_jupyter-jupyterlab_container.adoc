@@ -31,17 +31,17 @@ include::./common_docinfo_vars.adoc[]
 Modern software development is largely agile, open, and collaborative.
 
 Nowhere has this been more obvious and impactful than in the domain of machine learning (ML), where the development community comes from a broad spectrum of domains and backgrounds.
-This has resulted in a rapid state of continuous development, evolving a wealthy ecosystem of software that enable developers to make amazing advances and push the limits of hardware to solve previously intractable problems in record time.
-But rapid development can lead to dependency conflicts, where two applications or even two components of the same application rely on different versions of the same library.
+This has resulted in a rapid state of continuous development, evolving a wealthy ecosystem of software that enable developers to make huge advances and push the limits of hardware to solve previously intractable problems in record time.
+But rapid development can lead to dependency conflicts, where two applications or two components of the same application rely on different versions of the same library.
 
 Today, developers have access to container technologies that help overcome this challenge.
 Containers provide a convenient, lightweight way to package your application components with their dependencies while isolating these from other components and their dependencies.
-Containers also enable massive scale, letting you run your applications everywhere they are needed - in the data center, in the cloud, and even at the edge.
+Containers also enable massive scale, letting you run your applications everywhere they are needed - in the data center, in the cloud, and at the edge.
 
 
 === Scope
 
-This document illustrates how to take the your first steps with containers to support ML development and implementation.
+This document illustrates how to take the first steps with containers to support ML development and implementation.
 
 
 === Audience
@@ -81,8 +81,8 @@ Most of the steps outlined in this guide are directly transferable to https://ww
 +
 A base container image provides basic functionality, such as a stripped-down Linux operating system.
 It is onto a base container image that you layer your application components.
-SUSE base container images are freely available, re-distributable, supported across many different environments.
-These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and even on edge devices.
+SUSE base container images are freely available, re-distributable, supported across many environments.
+These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and on edge devices.
 +
 [TIP]
 ====
@@ -93,7 +93,7 @@ SUSE maintains up-to-date, ready-to-use container images at https://registry.sus
 //
 +
 Podman, which is short for Pod Manager, is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
-Podman is similar to other container engines (such as Docker, CRI-O, and containerd) and relies on an OCI compliant container runtime (like runc, crun, runv, and so on) to interface with the operating system for creating the running containers.
+Podman is similar to other container engines, such as *Docker*, *CRI-O*, and *containerd*. It relies on an OCI compliant container runtime (like _runc_, _crun_, _runv_, etc.) to interface with the operating system for creating the running containers.
 This means that running Podman containers is nearly indistinguishable from running those created by other common container engines.
 You can also run Podman containers as an ordinary, non-privileged user, making it easier and more secure.
 See the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide] for a deeper discussion on containers and Podman.
@@ -181,7 +181,7 @@ sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 ${USER}
 The subUID and subGID ranges ('100000-165535' in the command example) must not overlap for different users and not reuse UIDs and GIDs of existing users on the host.
 ====
 
-. Ensure your current user has permissions to access zypper credentials on the host.
+. Ensure your current user has permissions to access Zypper credentials on the host.
 The container may need access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
 //
 +
@@ -212,12 +212,12 @@ For the root user, valid drivers include 'overlay2', 'vfs', 'zfs', and 'btrfs'.
 
 [NOTE]
 ====
-The 'btrfs' driver is the default for {productname}, since https://en.wikipedia.org/wiki/Btrfs[Btrfs] is the default filesystem for system volumes.
-Btrfs offers many advantages over earlier filesystems, such as copy-on-write, pooling, snapshots, and checksums.
+The 'btrfs' driver is the default for {productname}, since https://en.wikipedia.org/wiki/Btrfs[Btrfs] is the default file system for system volumes.
+Btrfs offers many advantages over earlier file systems, such as copy-on-write, pooling, snapshots, and checksums.
 ====
 
-If your home directory is in a partition formatted with a different filesystem, Podman will default to the 'overlay2' or 'vfs' driver and warn you to set an appropriate storage driver.
-In most cases, this will be the 'overlay2' driver.
+If your home directory is in a partition formatted with a different file system, Podman will default to the 'overlay2' or 'vfs' driver and warn you to set an appropriate storage driver.
+Usually this will be the 'overlay2' driver.
 You can set this without administrator help by creating the file _$HOME/.config/containers/storage.conf_ with the following content:
 
 [listing]
@@ -260,7 +260,7 @@ cd $HOME/jupcontainer
 === Define the Python environment
 
 Replicability is critical in science and engineering.
-Complex applications, like an ML model, can produce wildly different results or not work at all due to minor code variations in a library dependency.
+Complex applications, like an ML model, can produce wildly different results or not work at all because of minor code variations in a library dependency.
 So, it becomes important when building such applications to explicitly define all the software dependencies and their versions.
 
 Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
@@ -316,7 +316,7 @@ FROM registry.suse.com/bci/bci-base:latest
 # set notebook directory
 ENV JUPYTER="/home/jupyter"
 
-# make zypper run without user prompts
+# make Zypper run without user prompts
 ENV ZYPPERCMD="zypper --non-interactive"
 
 # install developer tools
@@ -453,7 +453,8 @@ cd $HOME/mynotebooks
 .. Add one or more files (such as Jupyter notebooks) to your working directory.
 //
 +
-If you do not have your own Jupyter notebook to use, you can find a plethora to download from the Web, including Alexis Cook's excellent https://www.kaggle.com/code/alexisbcook/titanic-tutorial/notebook[Titanic Tutorial] for https://kaggle.com/[Kaggle].
+If you do not have your own Jupyter notebook to use, you can find a plethora to download from the Web, 
+including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial/notebook[Titanic Tutorial] for https://kaggle.com/[Kaggle].
 
 
 . Launch your JupyterLab container.
@@ -500,7 +501,7 @@ image::jupyterlab-podman-ui.png[JupyterLab UI, scaledwidth="85%", align="center"
 //
 +
 Your shared files are listed in the left pane of the UI.
-Double-click a filename to open the file in a tab in the main pane.
+Double-click a file name to open the file in a tab in the main pane.
 +
 image::jupyterlab-podman-titanic.png[JupyterLab Titanic notebook example, scaledwidth="85%", align="center"]
 
@@ -580,8 +581,8 @@ Explore Podman commands in https://documentation.suse.com/sle-micro/5.3/html/SLE
 == Summary
 
 Modern application development eschews closed, monolithic structures in favor of open, interoperable, microservices architectures designed and implemented with containers.
-Container technologies support modern Agile software development and enable operations teams to manage the full life cycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
-Innovation across many domains, including machine learning, have been accelerated by the availability of container technologies that make it easier to collaborate, to test, and to deploy new capabilities.
+Container technologies support Modern Agile software development. They enable operations teams to manage the full lifecycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
+Innovation across many domains, including machine learning, have been accelerated by the availability of container technologies that make it easier to collaborate, test, and deploy new capabilities.
 
 //
 
