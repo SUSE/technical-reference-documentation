@@ -7,6 +7,9 @@ include::./common_docinfo_vars.adoc[]
 :productver: 15 SP4
 :defaultpython: Python 3.6
 :defaultpythonbin: python3.6
+:newpython: Python 3.10
+:newpythonpkg: python310
+:newpythonbin: python3.10
 :partnerprod1: JupyterLab
 :partnerprod2: Jupyter Notebook
 :author1: Brian Fromme, Technical Alliance Manager, SUSE
@@ -81,16 +84,14 @@ For this guide, you need:
 ** Make sure your SUSE Linux Enterprise Server installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python 3
-+
 //
-{defaultpython} is included with {productname} and is used in this guide.
-This is adequate to run JupyterLab and many ML toolkits.
 +
-[NOTE]
-====
-Legacy Python 2.x and other versions of Python can also be installed on your system.
-To avoid accidentally executing the wrong version, this guide uses version-explicit commands, like `{defaultpythonbin}` or `python3` (leveraging a symbolic link to the appropriate binary).
-====
+{defaultpython} is included with {productname} by default.
+It is a stable version, tested against the libraries and tools that are part of the operating system.
+This version is usually adequate for many use cases, but may not be new enough to support some workloads.
+//
++
+This guide uses {newpython}, which you install in the next section.
 
 * Access to https://pypi.org/[The Python Package Index (PyPI)].
 +
@@ -109,23 +110,67 @@ Developers need a way to create isolated environments where they can install the
 === Addressing Python versions
 
 Your application may have a hard dependency for a specific version of the Python interpreter itself.
+You can install a newer version of Python on your system.
+In fact, you can have multiple versions of Python on your system.
+But care must be taken not to break dependencies for system tools.
 
-You can install multiple versions of Python on your system.
-But care must be taken, as doing so incorrectly could break system tools.
+To mitigate this risk, SUSE uses explicit naming.
+For example, the default Python interpreter is the file, `/usr/bin/{defaultpythonbin}`.
+To allow consistency between minor version changes, this executable is symbolically linked as `/usr/bin/python3`.
 
-To mitigate this risk, SUSE names the Python binaries explicitly.
-For example, {productname} includes {defaultpython} and the default Python interpreter is the file, '/usr/bin/{defaultpythonbin}'.
-This file is symbolically linked as 'python3' to simplify usage and offer consistency.
-So, when you issue the command `python3 --version`, this is actually executing, `{defaultpythonbin} --version`.
-If you install another version of Python from the SUSE repositories, say Python 3.10, the interpreter will be installed as '/usr/bin/python3.10'.
+So, you end up calling the default Python with the command:
 
-With this naming convention, you can install and maintain multiple versions of Python system-wide.
-You can also choose to install Python elsewhere on the system, including in your user home directory.
-In either case, you need to explicitly call the version of Python.
+[source, bash, subs="attributes"]
+----
+python3 --version
+----
 
-Tools like https://github.com/pyenv/pyenv[pyenv] have been developed to help simplify the management of multiple Python versions, but this is out of scope for this document.
 
-For this guide, the default {defaultpython} is sufficient.
+Included in the standard {productname} repositories is a newer version of Python.
+At the time of this writing, it is {newpython}.
+
+Install {newpython} with:
+
+[source, bash, subs="attributes"]
+----
+sudo zypper install {newpythonpkg}
+----
+
+[TIP]
+====
+You can list available Python 3 interpreters with `sudo zypper search -d "Python 3 Interpreter"` or `sudo zypper search python3`.
+====
+
+Once installed, you can use can use {newpython} by explicitly calling the correct executable.
+
+For example,
+
+[source, bash, subs="attributes"]
+----
+/usr/bin/{newpythonbin} --version
+----
+
+or
+
+[source, bash, subs="attributes"]
+----
+{newpythonbin} --version
+----
+
+[WARNING]
+====
+The default Python is still symbolically linked to `/usr/bin/python3`.
+Do not change this symbolic link, as this could break system tools that rely on the default version.
+====
+
+It is recommended that you use the Python packages in the official SUSE repositories when possible, as these have undergone extensive testing and are supported by SUSE.
+If you need another version of Python, you can build and install from source code or install an implementation from a trusted provider (such as https://www.anaconda.com/[Anaconda]).
+
+[TIP]
+====
+Tools like https://github.com/pyenv/pyenv[pyenv] are available to help simplify installation and management of multiple Python environments, but this is out of scope for this document.
+====
+
 
 
 === Creating a Python virtual environment
@@ -138,12 +183,12 @@ Run the following commands as your user (root access is not required):
 
 . Create a virtual environment, named 'myproj'.
 +
-[source,bash]
+[source, bash, subs="attributes"]
 ----
-python3 -m venv $HOME/myproj
+{newpythonbin} -m venv $HOME/myproj
 ----
 +
-This creates a new 'myproj' subdirectory in your home directory and populates it with files, subdirectories, and symbolic links to enable the virtual environment.
+This creates a new 'myproj' subdirectory in your home directory and populates it with files, subdirectories, and symbolic links to enable the virtual environment to use the Python interpreter you specified in this command.
 
 . Change to the new directory.
 +
@@ -213,8 +258,9 @@ Following the instructions of this guide, you will use *pip* to install packages
 
 [NOTE]
 ====
-Your Python virtual environment has its own *pip* executable, installed in the 'bin' subdirectory of your working directory (for example '$HOME/myproj/bin').
-Use `pip --version` to see which *pip* executable will be used.
+Your Python virtual environment has its own *pip* executable and symbolic links to the Python interpreter you used to create it.
+These are located in the 'bin' subdirectory of your working directory.
+Use `python --version` and `pip --version` to verify.
 ====
 
 
