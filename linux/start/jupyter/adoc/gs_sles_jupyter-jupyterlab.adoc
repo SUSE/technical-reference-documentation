@@ -3,7 +3,8 @@ include::./common_docinfo_vars.adoc[]
 
 // Variables & Attributes
 :title: Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server: Getting Started
-:productname: SLES 15 SP4
+:productname: SUSE Linux Enterprise Server 15 SP4
+:productnameshort: SLES 15 SP4
 :productver: 15 SP4
 :defaultpython: Python 3.6
 :defaultpythonbin: python3.6
@@ -31,27 +32,26 @@ include::./common_docinfo_vars.adoc[]
 // Challenges
 // Benefits
 
-The https://www.python.org/[Python] programming ecosystem is popular among many developers for its simplicity, extensibility, cross-platform availability, 
-and its large open source community of active developers and users.
+The https://www.python.org/[Python] programming ecosystem is popular for its simplicity, extensibility, cross-platform availability, and its large open source community of active developers and users.
 Developers in many domains benefit from and contribute to the large and growing Python ecosystem of open source tools and libraries.
 This has resulted in a rapid state of continuous development for the language and for the domains where Python is used.
 
-The modern developer leverages this wealth of libraries and frameworks.
-This can result in highly complex development environments that are difficult to replicate and share.
-Fortunately, the modern developer has many solutions to this problem.
-
+The modern Python developer's environment can be highly complex, leveraging a wealth of libraries, each with its own development life cycle and dependencies.
+Such complexity makes it difficult to faithfully replicate and share a development environment for collaboration, testing, and deployment.
+This is especially relevant in scientific computing, including the modern field of machine learning, where experimental replication is critical for validation but minor variations in the complex weave of library dependencies could invalidate test results or lead to unexpected behaviors in production.
 
 
 === Scope
 
-This guide helps you take a first step to setting up replicable Python development environments with https://www.suse.com/products/server/[SUSE Linux Enterprise], 
-an operating system that is adaptable to any environment - optimized for performance, security, and reliability.
+This guide helps you take a first step to overcoming the challenge of creating and sharing replicable Python development environments.
 
-Specifically, you will get a brief introduction to the following concepts, tools, and applications:
+Specifically, you get a brief introduction to the following concepts, systems, tools, and applications:
 
-* https://www.python.org/[Python] in the {productname} environment.
+* https://www.suse.com/products/server/[SUSE Linux Enterprise Server], the adaptable, reliable, and secure platform that enbles you to go from development to production with confidence.
 
-* The https://pypi.org/[Python Package Index (*PyPI*)] software repository.
+* https://www.python.org/[Python] programming ecosystem.
+
+* https://pypi.org/[Python Package Index (*PyPI*)], the Python software repository.
 
 * Lightweight virtual environments with https://docs.python.org/3/library/venv.html[*venv*].
 
@@ -68,8 +68,7 @@ Many of the steps herein may be followed with little or no modification on the c
 
 === Audience
 
-This guide is intended for researchers, engineers, developers, operations teams, and others interested in implementing replicable, ML development environments, 
-featuring Python and computational documents with JupyterLab.
+This guide is intended for researchers, engineers, developers, operations teams, and others interested in implementing replicable, ML development environments, featuring Python and computational documents with JupyterLab.
 The reader should have basic Linux command line skills.
 
 
@@ -77,26 +76,27 @@ The reader should have basic Linux command line skills.
 
 For this guide, you need:
 
-* https://www.suse.com/products/server/[SUSE Linux Enterprise Server] {productver} or the corresponding version of https://www.opensuse.org/[openSUSE] Leap.
+* {productname} ({productnameshort})
+//
++
+** If you do not already have {productnameshort} installed on your system (bare metal or virtual machine), instructions can be found here: https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
 
-** If you do not already have SUSE Linux Enterprise Server installed, instructions can be found here: https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
-
-** Make sure your SUSE Linux Enterprise Server installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
+** Make sure your {productnameshort} installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python 3
 //
 +
-{defaultpython} is included with {productname} by default.
+{defaultpython} is included with {productnameshort} by default.
 It is a stable version, tested against the libraries and tools that are part of the operating system.
 This version is usually adequate for many use cases, but may not be new enough to support some workloads.
 //
 +
 This guide uses {newpython}, which you install in the next section.
 
-* Access to https://pypi.org/[The Python Package Index (PyPI)].
+* Internet access
 +
 //
-PyPI is a public repository of software for the Python programming language.
+You need Internet access to download additional libraries and applications used in this guide.
 
 
 
@@ -104,58 +104,56 @@ PyPI is a public repository of software for the Python programming language.
 
 Some disciplines, like machine learning, are in fast development and often have strict version dependencies.
 Installing dependent packages to support one project may thus break another project.
-Developers need a way to create isolated environments where they can install the packages they need without impacting other projects or systems operations.
+Developers need a way to create isolated environments where they can install the packages they need without impacting other projects or system operations.
 
 
 === Addressing Python versions
 
 Your application may have a hard dependency for a specific version of the Python interpreter itself.
 You can install a newer version of Python on your system.
-In fact, you can have multiple versions of Python on your system.
-But care must be taken not to break dependencies for system tools.
+In fact, you can have multiple versions of Python.
+But care must be taken not to break dependencies for system tools or other applications.
 
-To mitigate this risk, SUSE uses explicit naming.
-For example, the default Python interpreter is the file, `/usr/bin/{defaultpythonbin}`.
-To allow consistency between minor version changes, this executable is symbolically linked as `/usr/bin/python3`.
+At the time of this writing, {defaultpython} is the default version installed with {productnameshort}.
+And {newpython} is included in the standard repositories.
 
-So, you end up calling the default Python with the command:
-
-[source, bash, subs="attributes"]
-----
-python3 --version
-----
+You should use the Python packages in the official SUSE repositories when possible.
+These packages have undergone extensive testing and are supported by SUSE.
+If you must use another version, you can build and install it from source code or use an implementation from a trusted provider (such as https://www.anaconda.com/[Anaconda]).
 
 
-Included in the standard {productname} repositories is a newer version of Python.
-At the time of this writing, it is {newpython}.
+[TIP]
+====
+SUSE mitigates the risk of Python version conflicts with explicit naming, ensuring that respective versions installed from the official repositories have unique file and directory names.
+For example, you will find the default Python interpreter is the executable file, _/usr/bin/{defaultpythonbin}_, but, if you have {newpython} installed, its interpreter is the file, _/usr/bin/{newpythonbin}_.
+====
 
-Install {newpython} with:
 
+. Install {newpython} or the latest version available in the official repositories.
++
 [source, bash, subs="attributes"]
 ----
 sudo zypper install {newpythonpkg}
 ----
-
++
 [TIP]
 ====
-You can list available Python 3 interpreters with `sudo zypper search -d "Python 3 Interpreter"` or `sudo zypper search python3`.
+You can list the available Python 3 packages with `sudo zypper search -d "Python 3 Interpreter"` or `sudo zypper search python3`.
 ====
 
-Once installed, you can use can use {newpython} by explicitly calling the correct executable.
-
-For example,
-
+. Verify installation.
++
 [source, bash, subs="attributes"]
 ----
 /usr/bin/{newpythonbin} --version
 ----
-
-or
-
+or, with _/usr/bin/_ in your path:
++
 [source, bash, subs="attributes"]
 ----
 {newpythonbin} --version
 ----
+
 
 [WARNING]
 ====
@@ -163,12 +161,10 @@ The default Python is still symbolically linked to `/usr/bin/python3`.
 Do not change this symbolic link, as this could break system tools that rely on the default version.
 ====
 
-It is recommended that you use the Python packages in the official SUSE repositories when possible, as these have undergone extensive testing and are supported by SUSE.
-If you need another version of Python, you can build and install from source code or install an implementation from a trusted provider (such as https://www.anaconda.com/[Anaconda]).
 
 [TIP]
 ====
-Tools like https://github.com/pyenv/pyenv[pyenv] are available to help simplify installation and management of multiple Python environments, but this is out of scope for this document.
+Tools like https://github.com/pyenv/pyenv[pyenv] can help simplify installation and management of multiple Python environments, but this is out of scope for this document.
 ====
 
 
@@ -188,7 +184,7 @@ Run the following commands as your user (root access is not required):
 {newpythonbin} -m venv $HOME/myproj
 ----
 +
-This creates a new 'myproj' subdirectory in your home directory and populates it with files, subdirectories, and symbolic links to enable the virtual environment to use the Python interpreter you specified in this command.
+This creates a new _myproj_ subdirectory in your home directory and populates it with files, subdirectories, and symbolic links to enable the virtual environment to use the Python interpreter you specify with this command.
 
 . Change to the new directory.
 +
@@ -204,7 +200,7 @@ cd $HOME/myproj
 source ./bin/activate
 ----
 +
-The 'activate' script cannot be run on its own and must be "sourced" to update current environment variables in support of the isolated environment.
+The `activate` script cannot be run on its own and must be "sourced" to update current environment variables in support of the isolated environment.
 +
 [TIP]
 ====
@@ -231,42 +227,39 @@ You can use the Python *venv* module to create as many virtual environments as y
 If you no longer need a virtual environment and want to delete it, simply:
 
 . deactivate the environment.
-. delete its working directory.
+
+. delete its directory.
 ====
 
 
 
 == Managing Python packages
 
-The {productname} repositories include many of Python packages, tested against the included version of Python.
+The SUSE Linux Enterprise Server repositories include many Python packages, tested against the included version of Python.
 These can be installed system-wide and are fine for many development projects.
-However, your project may require a different version of one of these packages or a package not included in the standard repositories.
+Sometimes your project may require a different version of one of these packages or a package not available in the standard repositories.
+In these cases, you may choose to use the https://pypi.org/[Python Package Index (PyPI)].
+This is a public repository of open source licensed packages made available by a community of developers from around the world.
 
-The https://pypi.org/[Python Package Index (PyPI)] is a public repository of open source licensed packages made available by a community of developers from around the world.
-There are many ways to install Python packages from PyPI, but the preferred method is with https://pypi.org/project/pip/[*pip*].
-
-*pip* is a powerful tool for managing Python packages.
-By default, *pip* installs packages from PyPI, but it can also install from a Git repository or from local distribution files.
+There are many ways to install Python packages from PyPI, but the preferred method is with https://pypi.org/project/pip/[`pip`].
+`pip` is a powerful tool for managing Python packages from PyPI, but it can also install from a Git repository or from local distribution files.
 
 Many Python packages are dependent on other packages.
 But manually identifying and installing all dependencies can be grueling, especially when each package may have additional dependencies of its own.
-Fortunately, *pip* automatically performs dependency resolution to ensure installation of all required packages and alerts you if resolution fails.
-See the https://pip.pypa.io/en/stable/[*pip* documentation] for details.
-
-Following the instructions of this guide, you will use *pip* to install packages from PyPI into your active virtual environment.
-
+Fortunately, `pip` automatically performs dependency resolution to ensure installation of all required packages and alerts you if resolution fails.
+See the https://pip.pypa.io/en/stable/[`pip` documentation] for details.
 
 [NOTE]
 ====
-Your Python virtual environment has its own *pip* executable and symbolic links to the Python interpreter you used to create it.
-These are located in the 'bin' subdirectory of your working directory.
-Use `python --version` and `pip --version` to verify.
+Your Python virtual environment has its own _pip_ executable and symbolic links to the Python interpreter you used to create it.
+These are located in the _bin/_ subdirectory of your working directory.
+After activating your virtual environment, use `python --version` and `pip --version` to verify the versions of these commands.
 ====
 
 
 === Performing basic package management
 
-With the following commands, you will perform some basic operations with the *pip* package installer.
+With the following commands, you will perform some basic operations with the `pip` package installer.
 
 . Activate your virtual environment.
 +
@@ -276,7 +269,7 @@ cd $HOME/myproj
 source ./bin/activate
 ----
 
-. Upgrade *pip* itself to the latest version.
+. Upgrade `pip` itself to the latest version.
 +
 [source, bash]
 ----
@@ -350,7 +343,7 @@ Successfully installed cycler-0.11.0 kiwisolver-1.3.1 matplotlib-3.3.4 numpy-1.1
 +
 [NOTE]
 ====
-Because some additional packages are required by those requested, *pip* automatically downloads and installs them.
+Because some additional packages are required by those requested, `pip` automatically downloads and installs them.
 ====
 
 
@@ -421,7 +414,7 @@ cd myproj2
 source ./bin/activate
 ----
 
-. Upgrade *pip*.
+. Upgrade `pip`.
 +
 [source, bash]
 ----
@@ -458,7 +451,7 @@ six==1.16.0
 +
 [TIP]
 ====
-`pip freeze` excludes *pip* and a few other packages.
+`pip freeze` excludes `pip` and a few other packages.
 To see a complete list of packages, use `pip list`.
 ====
 
@@ -523,7 +516,7 @@ Once JupyterLab is installed, launch it with the command:
 jupyter-lab
 ----
 +
-In your terminal window, you should see something like the following:
+In your terminal window, you see something like the following:
 +
 [source, bash]
 ----
@@ -590,17 +583,6 @@ You will be prompted to confirm that you want to shut down the Jupyter server.
 Bypass confirmation by issuing 'CTRL-C' twice.
 ====
 
-. Update your requirements file.
-+
-[source, bash]
-----
-pip freeze > requirements.txt
-----
-+
-[TIP]
-====
-You should update your project requirements file each time you install new packages.
-====
 
 
 === Exploring JupyterLab
@@ -617,12 +599,12 @@ It also includes functions specific to working in an interactive computing envir
 The sidebar offers a file browser, process controls, extension management, and more.
 
 JupyterLab opens with the main work area displaying the __Launcher__ tab.
-From the Launcher tab, you can start a notebook, console, terminal window, and more.
+From the __Launcher__, you can start a notebook, console, terminal window, and more.
 These appear as additional tab in the main work area.
 
 [TIP]
 ====
-If you accidentally close the __Launcher__ tab, you can open a new one from the __File__ menu.
+If you accidentally close the __Launcher__, you can open a new one from the __File__ menu.
 ====
 
 
@@ -659,11 +641,11 @@ image::jupyterlab-ui-notebook-002.png[Jupyter notebook with two command examples
 . Save your notebook by selecting __Save Notebook As...__ from the __File__ menu.
 //
 +
-Enter a name when prompted, such as 'mypythonversion.ipynb'.
+Enter a name when prompted, such as _mypythonversion.ipynb_.
 
 . Close your notebook by clicking the 'X' in the notebook tab.
 
-. Reopen your notebook by double-clicking 'mypythonversion.ipynb' in the sidebar file browser.
+. Reopen your notebook by double-clicking _mypythonversion.ipynb_ in the sidebar file browser.
 
 
 === Collaborating with JupyterLab
@@ -704,8 +686,11 @@ adaptable, and supported foundation with SUSE Linux Enterprise Server.
 In this guide, you learned to:
 
 * isolate your Python projects in virtual environments.
+
 * manage Python packages.
+
 * simplify replicability and sharing.
+
 * deploy JupyterLab for a self-documenting, interactive development environment.
 
 
