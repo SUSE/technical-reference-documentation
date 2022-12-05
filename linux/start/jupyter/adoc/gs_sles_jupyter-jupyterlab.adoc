@@ -125,7 +125,7 @@ If you must use another version, you can build and install it from source code o
 [TIP]
 ====
 SUSE mitigates the risk of Python version conflicts with explicit naming, ensuring that respective versions installed from the official repositories have unique file and directory names.
-For example, you will find the default Python interpreter is the executable file, _/usr/bin/{defaultpythonbin}_, but, if you have {newpython} installed, its interpreter is the file, _/usr/bin/{newpythonbin}_.
+For example, you will find the default Python interpreter is the executable file, `/usr/bin/{defaultpythonbin}`, but, if you have {newpython} installed, its interpreter is the file, `/usr/bin/{newpythonbin}`.
 ====
 
 
@@ -147,7 +147,7 @@ You can list the available Python 3 packages with `sudo zypper search -d "Python
 ----
 /usr/bin/{newpythonbin} --version
 ----
-or, with _/usr/bin/_ in your path:
+or, with `/usr/bin/` in your path:
 +
 [source, bash, subs="attributes"]
 ----
@@ -171,8 +171,8 @@ Tools like https://github.com/pyenv/pyenv[pyenv] can help simplify installation 
 
 === Creating a Python virtual environment
 
-The https://docs.python.org/3/tutorial/venv.html[Python *venv* module] provides a mechanism for creating lightweight "virtual environments" and gives us a tool for isolating software dependencies.
-See the https://peps.python.org/pep-0405/[Python Enhancement Proposal 405 - Python Virtual Environments] for more details on the *venv* module.
+The https://docs.python.org/3/tutorial/venv.html[Python `venv` module] provides a mechanism for creating lightweight "virtual environments" and gives us a tool for isolating software dependencies.
+See the https://peps.python.org/pep-0405/[Python Enhancement Proposal 405 - Python Virtual Environments] for more details on the `venv` module.
 
 Creating a Python virtual environment is easy.
 Run the following commands as your user (root access is not required):
@@ -184,7 +184,7 @@ Run the following commands as your user (root access is not required):
 {newpythonbin} -m venv $HOME/myproj
 ----
 +
-This creates a new _myproj_ subdirectory in your home directory and populates it with files, subdirectories, and symbolic links to enable the virtual environment to use the Python interpreter you specify with this command.
+This creates a new `myproj/` subdirectory in your home directory and populates it with files, subdirectories, and symbolic links to enable the virtual environment to use the Python interpreter you specify with this command.
 
 . Change to the new directory.
 +
@@ -219,7 +219,7 @@ When you are done working in this virtual environment, you can use the `deactiva
 This does not delete the virtual environment.
 To reactivate it, simply source the activate script again.
 
-You can use the Python *venv* module to create as many virtual environments as you need, each in its own working directory.
+You can use the Python `venv` module to create as many virtual environments as you need, each in its own working directory.
 
 
 [NOTE]
@@ -428,7 +428,7 @@ pip install --upgrade pip
 pip install -r ../myproj/requirements.txt
 ----
 
-. Verify correct packages were installed.
+. Verify correct packages are installed.
 +
 [source, bash]
 ----
@@ -662,20 +662,6 @@ When you are ready to share your work, you should include your:
 With these three items, your colleague can recreate your development environment and run your code against your data.
 
 
-Take your next steps with JupyterLab with the following resources:
-
-* https://jupyterlab.readthedocs.io/en/stable/[JupyterLab documentation]
-
-* https://ipython.readthedocs.io/en/stable/interactive/index.html[IPython tutorial]
-
-* https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab]
-
-* https://github.com/jupyter/jupyter/wiki[Jupyter wiki] - a curated collection of Jupyter/IPython notebooks
-
-* https://www.kaggle.com/[Kaggle] - a data science community with notebooks, datasets, training, and competitions
-
-* https://coderefinery.github.io/jupyter/sharing/#different-ways-to-share-a-notebook[Different ways to share a notebook]
-
 
 
 == Summary
@@ -692,6 +678,21 @@ In this guide, you learned to:
 * simplify replicability and sharing.
 
 * deploy JupyterLab for a self-documenting, interactive development environment.
+
+
+Take your next steps with JupyterLab and Python with the following resources:
+
+* https://jupyterlab.readthedocs.io/en/stable/[JupyterLab documentation]
+
+* https://ipython.readthedocs.io/en/stable/interactive/index.html[IPython tutorial]
+
+* https://coderefinery.github.io/jupyter/[Introduction to Jupyter and JupyterLab]
+
+* https://github.com/jupyter/jupyter/wiki[Jupyter wiki] - a curated collection of Jupyter/IPython notebooks
+
+* https://www.kaggle.com/[Kaggle] - a data science community with notebooks, datasets, training, and competitions
+
+* https://coderefinery.github.io/jupyter/sharing/#different-ways-to-share-a-notebook[Different ways to share a notebook]
 
 
 
