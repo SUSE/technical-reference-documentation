@@ -7,37 +7,52 @@
     </dm:bugtracker>
 </dm:docmanager>
 
-<!-- attributes defined in adoc
-     :title:
-       title: subtitle
-     :productname:
-       productname version
-     :author1:
-       first last, role, company
-     :author2:
-       first last, role, company
+<!-- Note to author/editor
+   Attributes used here (enclosed in curly braces) are defined as
+   variables in common_docinfo_vars.adoc and in the main adoc file
+   associated with this document.
 -->
 
 <!--<orgname>Technical Reference Documentation</orgname>-->
-<productname>{productname}</productname>
+<meta name="series">{trd}</meta
+<meta name="type">Getting Started</meta>
+<meta name="category"></meta>
 
-<author>
+<!-- platform and product metadata -->
+<productname>{productname}</productname>
+<meta name="platform">{platform1}</meta>
+<!-- for more platforms, update variables in adoc and add entries here as needed -->
+
+<!-- author metadata -->
+<authorgroup>
+  <author>
     <personname>
-	    <surname>{author1}</surname>
+      <firstname>{author1_firstname}</firstname>
+      <surname>{author1_surname}</surname>
+      <affiliation>
+        <jobtitle>{author1_jobtitle}</jobtitle>
+        <orgname>{author1_orgname}</orgname>
+      </affiliation>
     </personname>
-</author>
-<author>
+  </author>
+  <author>
     <personname>
-	    <surname>{author2}</surname>
+      <firstname>{author2_firstname}</firstname>
+      <surname>{author2_surname}</surname>
+      <affiliation>
+        <jobtitle>{author2_jobtitle}</jobtitle>
+        <orgname>{author2_orgname}</orgname>
+      </affiliation>
     </personname>
-</author>
+  </author>
+  <!-- for more authors/editors, update variables in adoc and add entries here as needed -->
+</authorgroup>
 
 <cover role="logos">
-    <mediaobject>
-        <imageobject>
-            <imagedata fileref="suse-white-logo-green.svg"/>
-        </imageobject>
-    </mediaobject>
+  <mediaobject>
+    <imagedata fileref="suse-white-logo-green.svg" width="4em"/>
+  </mediaobject>
+  <!-- for more logos, add images in appropriate subdirectory of media/src/ and add here in a new mediaobject -->
 </cover>
 
 <abstract>
