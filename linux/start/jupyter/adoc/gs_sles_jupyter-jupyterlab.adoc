@@ -1,11 +1,70 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+// 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Variables & Attributes
-:title: Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server: Getting Started
-:productname: SUSE Linux Enterprise Server 15 SP4
-:productnameshort: SLES 15 SP4
-:productver: 15 SP4
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+:trd: Technical Reference Documentation
+:category: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document and product
+:title: Replicable Python Environments with JupyterLab
+:productname: SLES 15 SP4
+:platform1: SUSE Linux Enterprise Server 15 SP4
+:otherproduct1: JupyterLab
+:otherproduct2: Jupyter Notebook
+:usecase: machine learning development
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// authors
+:author1_firstname: Brian
+:author1_surname: Fromme
+:author1_jobtitle: Technical Alliance Manager
+:author1_orgname: SUSE
+:author2_firstname: Terry
+:author2_surname: Smith
+:author2_jobtitle: Partner Solutions Director
+:author2_orgname: SUSE
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// define any additional variables here for use within the document
 :defaultpython: Python 3.6
 :defaultpythonbin: python3.6
 :newpython: Python 3.10
@@ -13,24 +72,15 @@ include::./common_docinfo_vars.adoc[]
 :newpythonbin: python3.10
 :partnerprod1: JupyterLab
 :partnerprod2: Jupyter Notebook
-:author1: Brian Fromme, Technical Alliance Manager, SUSE
-:author2: Terry Smith, Partner Solutions Director, SUSE
-// Deprecated variables & attributes - do not use
-//:revdate: August, 2022
-//:revnumber: 20220804
-//:toc2:
-//:toc-title: {title}
-//:toclevels: 4
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
 
 = {title}
 
 == Introduction
 
 === Motivation
-
-// Why this would be of interest
-// Challenges
-// Benefits
 
 The https://www.python.org/[Python] programming ecosystem is popular for its simplicity, extensibility, cross-platform availability, and its large open source community of active developers and users.
 Developers in many domains benefit from and contribute to the large and growing Python ecosystem of open source tools and libraries.
@@ -76,17 +126,17 @@ The reader should have basic Linux command line skills.
 
 For this guide, you need:
 
-* {productname} ({productnameshort})
+* {platform1} ({productname})
 //
 +
-** If you do not already have {productnameshort} installed on your system (bare metal or virtual machine), instructions can be found here: https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
+** If you do not already have {productname} installed on your system (bare metal or virtual machine), instructions can be found here: https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
 
-** Make sure your {productnameshort} installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
+** Make sure your {productname} installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python 3
 //
 +
-{defaultpython} is included with {productnameshort} by default.
+{defaultpython} is included with {productname} by default.
 It is a stable version, tested against the libraries and tools that are part of the operating system.
 This version is usually adequate for many use cases, but may not be new enough to support some workloads.
 //
@@ -114,7 +164,7 @@ You can install a newer version of Python on your system.
 In fact, you can have multiple versions of Python.
 But care must be taken not to break dependencies for system tools or other applications.
 
-At the time of this writing, {defaultpython} is the default version installed with {productnameshort}.
+At the time of this writing, {defaultpython} is the default version installed with {productname}.
 And {newpython} is included in the standard repositories.
 
 You should use the Python packages in the official SUSE repositories when possible.

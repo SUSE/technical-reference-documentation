@@ -1,4 +1,4 @@
-<!-- https://tdg.docbook.org/tdg/5.1/info -->
+<!-- https://tdg.docbook.org/tdg/5.2/info -->
 
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
     <dm:bugtracker>
@@ -7,42 +7,71 @@
     </dm:bugtracker>
 </dm:docmanager>
 
-<!-- attributes defined in adoc
-     :title:
-       title: subtitle
-     :productname:
-       productname version
-     :author1:
-       first last, role, company
-     :author2:
-       first last, role, company
+<!-- Note to author/editor
+   1. Attributes used here (enclosed in curly braces) are defined as
+      variables in common_docinfo_vars.adoc and in the main adoc file
+      associated with this document.
+
+   2. Edit the sections below.
 -->
 
+<!-- document organization metadata -->
+<!-- do NOT modify this section -->
 <!--<orgname>Technical Reference Documentation</orgname>-->
+<meta name="series">{trd}</meta>
+<meta name="category">{category}</meta>
+
+
+
+<!-- platform and product metadata -->
 <productname>{productname}</productname>
+<meta name="platform">{platform1}</meta>
+<!-- for more platforms, update variables in adoc and
+     add entries above as needed -->
 
-<author>
-    <personname>
-	    <surname>{author1}</surname>
-    </personname>
-</author>
-<author>
-    <personname>
-	    <surname>{author2}</surname>
-    </personname>
-</author>
 
+<!-- author metadata -->
+<authorgroup>
+  <author>
+    <personname>
+       <firstname>{author1_firstname}</firstname>
+       <surname>{author1_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author1_jobtitle}</jobtitle>
+      <orgname>{author1_orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+       <firstname>{author2_firstname}</firstname>
+       <surname>{author2_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author2_jobtitle}</jobtitle>
+      <orgname>{author2_orgname}</orgname>
+    </affiliation>
+  </author>
+</authorgroup>
+
+
+<!-- logo images -->
 <cover role="logos">
-    <mediaobject>
-        <imageobject>
-            <imagedata fileref="suse-white-logo-green.svg"/>
-        </imageobject>
-    </mediaobject>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="suse-white-logo-green.svg" width="4em"/>
+    </imageobject>
+  </mediaobject>
 </cover>
 
-<abstract>
-	<para>This document illustrates how to install and run JupyterLab, the web-based interactive development environment from Project Jupyter, on SUSE Linux Enterprise.</para>
-	<para></para>
-
-    	<para> <emphasis role="strong">Disclaimer:</emphasis>  {disclaimer} </para>
+<!-- brief abstract for document -->
+<abstract role="executivesummary">
+  <title>Summary</title>
+  <para>This document illustrates how to install and run JupyterLab, the web-based interactive development environment from Project Jupyter, on SUSE Linux Enterprise.</para>
 </abstract>
+
+<abstract>
+  <title>Disclaimer</title>
+  <para>{disclaimer}</para>
+</abstract>
+
