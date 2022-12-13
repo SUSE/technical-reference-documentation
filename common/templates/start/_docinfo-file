@@ -8,28 +8,41 @@
 </dm:docmanager>
 
 <!-- Note to author/editor
-   1. Attributes used here (enclosed in curly braces) are defined as
-      variables in common_docinfo_vars.adoc and in the main adoc file
-      associated with this document.
-
-   2. Edit the sections below 
+     Attributes used here (enclosed in curly braces).
+     General variables are defined in common_docinfo_vars.adoc.
+     Variable specific to this document (such as the title) are
+     defined with the main content in the adoc file.
+     See comments below for additional options.
 -->
 
-<!-- document organization metadata -->
-<!-- do NOT modify this section -->
-<!--<orgname>Technical Reference Documentation</orgname>-->
+
+<!-- document organization metadata
+     Do NOT modify this section
+     <orgname>Technical Reference Documentation</orgname>
+-->
 <meta name="series">{trd}</meta>
-<meta name="category">{category}</meta>
+<meta name="type">{type}</meta>
 
 
-<!-- platform and product metadata -->
+<!-- document title and subtitle -->
+<title>{title}</title>
+<subtitle>{subtitle}</subtitle>
+
+
+<!-- platform and product metadata
+     Replicate for additional platforms.
+     Define platform2, etc. in adoc file.
+-->
 <productname>{productname}</productname>
 <meta name="platform">{platform1}</meta>
-<!-- for more platforms, update variables in adoc and
-     add entries above as needed -->
 
 
-<!-- author metadata -->
+<!-- author metadata
+     Replicate author tag structure inside this authorgroup
+     for additional authors.
+     Use editor and othercredit tag groups for additional contributors.
+     Update variables in adoc file.
+-->
 <authorgroup>
   <author>
     <personname>
@@ -41,35 +54,33 @@
       <orgname>{author1_orgname}</orgname>
     </affiliation>
   </author>
-  <author>
-    <personname>
-      <firstname>{author2_firstname}</firstname>
-      <surname>{author2_surname}</surname>
-    </personname>
-    <affiliation>
-      <jobtitle>{author2_jobtitle}</jobtitle>
-      <orgname>{author2_orgname}</orgname>
-    </affiliation>
-  </author>
-  <!-- for more authors/editors, update variables in adoc and add entries here as needed -->
 </authorgroup>
 
-<!-- logo images -->
+<!-- logo images
+     Duplicate mediaobject tag group and
+     reference additional logos as needed.
+     Place logo files under media directory tree.
+-->
 <cover role="logos">
   <mediaobject>
     <imageobject>
       <imagedata fileref="suse-white-logo-green.svg" width="4em"/>
     </imageobject>
   </mediaobject>
-  <!-- for more logos, add images in appropriate subdirectory of media/src/ and add here as imagedata -->
 </cover>
 
-<!-- brief abstract for document -->
+<!-- brief abstract for document
+     Update with an enticing summary.
+-->
 <abstract role="executivesummary">
   <title>Summary</title>
   <para>This document provides a brief introduction to {otherproduct1} with {productname} for {usecase}.</para>
 </abstract>
 
+
+<!-- disclaimer
+     Do NOT edit
+-->
 <abstract>
   <title>Disclaimer</title>
   <para>{disclaimer}</para>

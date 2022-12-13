@@ -184,9 +184,9 @@ cd ${partnername}
 
 # create DC- file
 cp ${templatesroot}/_DC-file \
-  _DC-${documentbase}
+   DC-${documentbase}
 # update adoc reference
-sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" _DC-${documentbase}
+sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" DC-${documentbase}
 
 # create adoc directory if it does not already exist
 [ -d adoc ] || mkdir -p adoc
@@ -248,8 +248,8 @@ echo
 # - Terry Smith <terry.smith@suse.com>
 # - Bryan Gartner <bryan.gartner@suse.com>
 # Revisions:
-# - 20220824: Migrated to common/bin; implemented run location test"
-# - 20220729: Removed extraneous space; created action preview banner"
+# - 20221213: Removed underscore prefix from generated DC file
+# - 20220824: Migrated to common/bin; implemented run location test
+# - 20220729: Removed extraneous space; created action preview banner
 # - 20220203: Use renamed template files to avoid GitHub Actions validation
 # - 20220127: Leverage template files
-
