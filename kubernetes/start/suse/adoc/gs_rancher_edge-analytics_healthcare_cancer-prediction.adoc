@@ -83,11 +83,11 @@ include::./common_docinfo_vars.adoc[]
 //image::gsoc_intro_banner.png[Analytics Edge Ecosystem Workloads - Google Summer of Code, align="center"]
 
 Cancer is the world's second leading cause of death in the world.
-It results in development of abnormal cells that divide uncontrollably and have the ability to infiltrate and destroy normal body tissue.
+It results in development of abnormal cells that divide uncontrollably and can infiltrate and destroy normal body tissue.
 Survival rates are improved through better screening, treatment, and prevention.
 
 Advanced analytics and machine learning (ML) continue to have a growing influence on modern medicine, accelerating diagnosis, developing treatments, and improving results.
-Analytics in healthcare is not just taking place in data centers.
+Analytics in healthcare is not only taking place in data centers.
 Increasingly, analytics and ML are deployed at the edge - in clinics, in https://en.wikipedia.org/wiki/CT_scan[CT] imaging systems and other devices, and even in mobile computing devices, like your doctor's tablet.
 This is made possible with modern container technologies, like https://kubernetes.io/[Kubernetes], which is a portable, extensible, open source platform for managing containerized workloads and services.
 
@@ -99,7 +99,7 @@ This is where they save lives.
 
 
 This project, resulting in the {otherproduct1}, is part of the 2022 https://summerofcode.withgoogle.com/[Google Summer of Code], a global mentoring program focused on introducing new contributors to open source software development.
-Google Summer of Code contributors are paired with mentors from open source organizations (such as https://suse.com/[SUSE]) to learn from experienced open source developers, gain exposure to real-world software development techniques, and write code for real-world challenges.
+Google Summer of Code contributors are paired with mentors from open source organizations, such as https://suse.com/[SUSE]. They learn from these experienced open source developers, gain exposure to real-world software development techniques, and write code for real-world challenges.
 This project was developed under mentorship of Bryan Gartner, Ann Davis, and Brian Fromme of https://suse.com/[SUSE].
 
 This document reviews the approach, implementation, and deployment of this ML-based, Cancer Predicition System, designed to assist medical professionals in early screening.
@@ -125,7 +125,7 @@ This guide introduces the basic concepts and steps to install, configure, and us
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide is intended for data scientists, data engineers, and data analysts as well as radiologists, doctors, and hospital administrators who are interested in learning more about the technologies that enable analytics and ML at the edge, particularly for medical use cases.
+This guide is intended for data scientists, data engineers, and data analysts. It also addresses radiologists, doctors, and hospital administrators who are interested in learning more about the technologies that enable analytics and ML at the edge, particularly for medical use cases.
 To get the most out of this guide, you should have basic familiarity with the Linux command line and Kubernetes concepts and tooling.
 
 
@@ -196,14 +196,14 @@ Some highlights include:
 Docker:: https://www.docker.com/[Docker] is a platform that enables developers to build, deploy, run, and manage application containers.
 This guide uses Docker 20.10.7.
 
-Flask:: https://flask.palletsprojects.com/en/2.2.x/[Flask] is a lightweight web framework written in Python to easily create web applications.
-Flask is used to serve the backend and ML models as https://en.wikipedia.org/wiki/API[APIs].
+Flask:: https://flask.palletsprojects.com/en/2.2.x/[Flask] is a lightweight Web framework written in Python to easily create Web applications.
+Flask is used to serve the back-end and ML models as https://en.wikipedia.org/wiki/API[APIs].
 
 Helm:: https://helm.sh/[Helm] is a package manager for Kubernetes that helps you define, install, upgrade, and share Kubernetes applications.
 
 K3s:: https://k3s.io/[K3s] is a lightweight, CNCF-certified Kubernetes distribution built for IoT and edge computing.
 
-Keras:: https://keras.io/[Keras] is an open-source software library that provides a high-level, Python API for designing artificial neural networks.
+Keras:: https://keras.io/[Keras] is an open source software library that provides a high-level, Python API for designing artificial neural networks.
 It acts as an interface to the https://www.tensorflow.org/[TensorFlow 2] framework.
 Keras is used to implement the https://www.tensorflow.org/tutorials/images/cnn[Convolutional Neural Nets (CNNs)] in the {otherproduct1}.
 // Add version here
@@ -241,7 +241,7 @@ git clone https://github.com/abhi-bhatra/ct_image_scanning.git
 
 . Log in to your SUSE Rancher environment and select the Kubernetes cluster that will host the application.
 
-. Apply Kubernetes manifests to setup the environment (namespaces and storage).
+. Apply Kubernetes manifests to set up the environment (namespaces and storage).
 
 . Apply Kubernetes manifests to deploy the application.
 
@@ -265,7 +265,7 @@ If you need to set up your cluster environment, these references may help:
 * https://medium.com/@abhinavsharma332/deploy-single-node-cluster-using-k3s-or-rke-6fc9e6a38b66[Deploying single node cluster using K3s or RKE].
 
 
-When you are ready, log in to the Rancher UI with your web browser.
+When you are ready, log in to the Rancher UI with your Web browser.
 
 
 image::edge-analytics_healthcare_rancher_portal.png[Rancher Portal, align="center", scaledwidth="80%"]
@@ -402,7 +402,7 @@ The https://www.kubeflow.org/docs/started/[Kubeflow documentation] provides deta
 
 Typically, Kubeflow is installed into a large production environment, where it can rely on shared services, like https://istio.io/[Istio] service mesh.
 For this guide, you can use https://www.kubeflow.org/docs/components/pipelines/v1/installation/standalone-deployment/[Kubeflow Pipelines].
-This standalone implementation of Kubeflow does not dependend on other services, providing a simpler installation process.
+This stand-alone implementation of Kubeflow does not dependend on other services, providing a simpler installation process.
 
 [NOTE]
 ====
@@ -459,7 +459,7 @@ pod/cache-server-6cddbbc849-bnd6n                      1/1     Running          
 kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
 ----
 
-.. Log into the Rancher UI with your Web browser.
+.. Log in to the Rancher UI with your Web browser.
 
 .. Select your cluster, then click __Services__.
 
@@ -538,7 +538,7 @@ This is further processed for use in the machine learning model.
 Only chest DICOM images are used for this model, so non-chest images must be filtered out.
 
 * dataset-prediciton: Contains all the images separated into train, test, and validation subsets.
-Each image is labeled as as 'cancer' or 'non-cancer'.
+Each image is labeled as 'cancer' or 'non-cancer'.
 
 . Now apply the dataset deployment manifests to download and extract the dataset into the data volume on your cluster.
 +
@@ -638,7 +638,7 @@ The {otherproduct1} allows for retraining and automates the process with Kubeflo
 
 == Deploy the applications
 
-{otherproduct1} is built on top of https://flask.palletsprojects.com/[Flask], a lightweight web application framework.
+{otherproduct1} is built on top of https://flask.palletsprojects.com/[Flask], a lightweight Web application framework.
 You can find the code under `application` inside your project directory, which you created earlier by cloning the project repository.
 The solution contains two separate applications: one for the doctor (under `doctor_app`) and one the radiologist (under `lab_tech`).
 
@@ -824,7 +824,7 @@ You must have properly configured DNS resolution to use a domain name (such as '
 
 == Operational overview
 
-The {otherproduct1} has to primary interfaces, the Lab Technician Interface and the Doctor's Dashboard.
+The {otherproduct1} has two primary interfaces, the Lab Technician Interface and the Doctor's Dashboard.
 
 
 === Lab Technician Interface
