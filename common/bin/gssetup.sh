@@ -218,8 +218,8 @@ sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.a
 [ -d media/src/svg ] || mkdir -p media/src/svg
 #cd media/src/svg
 # create symlink to logo
-[ -L media/src/svg/suse-white-logo-green.svg ] || \
-  ln -s ../../../../../../common/images/src/svg/suse-white-logo-green.svg media/src/svg/
+[ -L media/src/svg/suse.svg ] || \
+  ln -s ../../../../../../common/images/src/svg/suse.svg media/src/svg/
 #cd ../../..
 # create images symlink
 [ -L images ] || \
