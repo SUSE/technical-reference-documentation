@@ -157,42 +157,6 @@ sudo zypper up
 ====
 
 
-=== Configure Podman to run without root privileges
-
-Podman can be run as an ordinary user, but you may need to make a few configuration changes.
-To keep this simple, you will grant your current user, `$USER`, this access.
-
-. Define subUID and subGID ranges for your current user.
-//
-+
-You need to define a range of UIDs and GIDs that will be allocated to users inside the container and mapped onto the host.
-You can check the _/etc/subuid_ and _/etc/subgid_ files to see if these ranges are already defined for your user.
-//
-+
-If they are not, issue the command:
-+
-[source, bash]
-----
-sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 ${USER}
-----
-+
-[WARNING]
-====
-The subUID and subGID ranges ('100000-165535' in the command example) must not overlap for different users and not reuse UIDs and GIDs of existing users on the host.
-====
-
-. Ensure your current user has permissions to access Zypper credentials on the host.
-The container may need access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
-//
-+
-Grant permission to the user with:
-+
-[source, bash]
-----
-sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
-----
-
-
 === Verify the container storage driver
 
 It is important to consider where and how your containers and container images are stored.
