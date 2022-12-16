@@ -1,21 +1,85 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
 
-:title: Edge Analytics with SUSE Rancher: Finance - Market Predictions : Getting Started
-:productname: SUSE Rancher 2.5
-:productversion: 2.5
-:productname2: K3s v1.20.14+k3s1
-:productversion2: v1.20.14+k3s1
-:partnerproductname: Fin-Dashboard
-:pythonname: Python 3.10
-:author1: Navin Chandra, Google Summer of Code Contributor, openSUSE Project
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Variables & Attributes
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document and product
+:title: Edge Analytics in Finance
+:subtitle: Market Predictions
+:productname: Rancher 2.6
+:platform1: Rancher 2.6 by SUSE
+:platform2: SUSE Linux Enterprise Server 15 SP3
+:otherproduct1: Fin-Dashboard
+:usecase: edge analytics in finance
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// authors
+:author1_firstname: Navin
+:author1_surname: Chandra
+:author1_jobtitle: Google Summer of Code 2022 Contributor
+:author1_orgname: openSUSE
+// :author1_email: abhinavsharma332@gmail.com
 // additional contributors:
 // - Bryan Gartner, bryan.gartner@suse.com
 // - Brian Fromme, brian.fromme@suse.com
 // - Ann Davis, andavis@suse.com
 // - Terry Smith, terry.smith@suse.com
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-= {title}
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// define any additional variables here for use within the document
+:pythonver: Python 3.10
+:k8s: K3s 1.21.3+k3s1
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
+= {title}: {subtitle}
+
 
 == Introduction
 
@@ -56,9 +120,9 @@ Contributors learn from experienced open source developers while writing code fo
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide illustrates the facility of Kubernetes to support edge analytics in the financial sector by using SUSE Rancher and K3s to deploy a machine learning model for stock price predictions and a Web-based front-end for user interaction and visualization.
+This guide illustrates the facility of Kubernetes to support edge analytics in the financial sector by using Rancher by SUSE and K3s to deploy a machine learning model for stock price predictions and a Web-based front-end for user interaction and visualization.
 
-* https://www.suse.com/products/suse-rancher/[SUSE Rancher] is an enterprise Kubernetes and container management platform that allows you to deploy workloads anywhere - at the data center core, in the cloud, and even at the edge - efficiently and with enterprise-grade security and support.
+* https://www.suse.com/solutions/enterprise-container-management/#rancher-product[Rancher by SUSE] is an enterprise Kubernetes and container management platform that allows you to deploy workloads anywhere - at the data center core, in the cloud, and even at the edge - efficiently and with enterprise-grade security and support.
 
 * https://k3s.io/[K3s] is an open source, lightweight, certified Kubernetes distribution built for IoT and edge computing.
 
@@ -90,27 +154,27 @@ To get the most out of this guide, you should have basic familiarity with the Li
 
 For this guide, you need:
 
-* A https://rancher.com/docs/rancher/v2.5/en/[Rancher] environment.
+* A https://ranchermanager.docs.rancher.com/v2.6[Rancher] environment.
 //
 +
-This guide uses {productname}.
+This guide uses {platform1}.
 Subsequent minor releases should work with little to no modification.
 
 * A Kubernetes cluster managed by Rancher.
 //
 +
-This guide leverages {productname2}.
+This guide leverages {k8s}.
 +
 [NOTE]
 ====
-K3s is an ideal Kubernetes distribution for edge deployments, but, with SUSE Rancher, you can manage any https://www.cncf.io/certification/software-conformance/#logos[CNCF-certified Kubernetes distribution].
+K3s is an ideal Kubernetes distribution for edge deployments, but, with Rancher, you can manage any https://www.cncf.io/certification/software-conformance/#logos[CNCF-certified Kubernetes distribution].
 ====
 
 * The ability to install and execute https://www.python.org/[Python] programs.
 //
 +
 Machine learning software is in rapid development, which can result in version incompatibilities.
-This guide uses {pythonname}.
+This guide uses {pythonver}.
 +
 [TIP]
 ====
@@ -127,8 +191,18 @@ With appropriate command substitutions, any container image repository may be us
 
 == Technical overview
 
-Following this guide, you use Rancher to deploy {partnerproductname}, a stock prediction Web application, which you can obtain from the project's https://github.com/navin772/GSOC_Stock_prediction/tree/master/fin_dashboard[code repository].
-{partnerproductname} is discussed in more detail later on.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a technical overview of the solution.
+// Identify components.
+// Describe how the components fit together.
+// Leverage diagrams as appropriate, including (but not limited to):
+//   - component architecture
+//   - data flow
+//   - workflow
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Following this guide, you use Rancher to deploy {otherproduct1}, a stock prediction Web application, which you can obtain from the project's https://github.com/navin772/GSOC_Stock_prediction/tree/master/fin_dashboard[code repository].
+{otherproduct1} is discussed in more detail later on.
 
 //
 
@@ -165,7 +239,7 @@ In this guide, you use https://kubectl.docs.kubernetes.io/references/kustomize/[
 
 //
 
-Some additional components and tools used in this guide or by {partnerproductname} include:
+Some additional components and tools used in this guide or by {otherproduct1} include:
 
 * Python packages, including https://pandas.pydata.org/[pandas] and https://plotly.com/python/[plotly] - for managing and visualizing numerical data.
 
@@ -187,7 +261,7 @@ Some additional components and tools used in this guide or by {partnerproductnam
 
 == ML model
 
-In this section, you explore a subset of the {partnerproductname} code by creating a https://jupyterlab.readthedocs.io/en/stable/[Jupyter Notebook] that illustrates how data is accumulated and processed, a model is created and used, and model predictions are visualized.
+In this section, you explore a subset of the {otherproduct1} code by creating a https://jupyterlab.readthedocs.io/en/stable/[Jupyter Notebook] that illustrates how data is accumulated and processed, a model is created and used, and model predictions are visualized.
 
 Open a new Jupyter Notebook and enter the code below.
 
@@ -237,7 +311,7 @@ image::edge-analytics_finance_tsla_predicted.png[TSLA predicted price, scaledwid
 
 == Front-end
 
-In addition to the ML analytics workload, {partnerproductname} also provides a Web-based front-end to support user interaction.
+In addition to the ML analytics workload, {otherproduct1} also provides a Web-based front-end to support user interaction.
 
 === Features
 
@@ -258,7 +332,7 @@ The front-end application features useful functionality for the user, including:
 
 === Components
 
-{partnerproductname} is composed of the following Python modules:
+{otherproduct1} is composed of the following Python modules:
 
 * https://github.com/navin772/GSOC_Stock_prediction/blob/master/fin_dashboard/geo_location.py[geo_location.py]: Determines the country where the user is located to give country specific information.
 
@@ -277,7 +351,7 @@ The front-end application features useful functionality for the user, including:
 
 Create your build environment as follows:
 
-. Clone the {partnerproductname} code from GitHub into an empty directory.
+. Clone the {otherproduct1} code from GitHub into an empty directory.
 +
 [source, bash]
 ----
@@ -568,7 +642,7 @@ In the example listing above, the service is available at 10.43.148.169 on port 
 
 == Demonstration
 
-Get started using {partnerproductname}:
+Get started using {otherproduct1}:
 
 . Open your Web browser to the IP and port of the service (in our example, it would be http://10.43.148.169:32169).
 
@@ -618,9 +692,9 @@ Analytics at the edge is of growing importance in the financial space.
 Organizations realize they can achieve faster insights, maintain better security practices, and lower costs by deploying certain analytics workloads closer to or even at the edge.
 The scale and agility of cloud native architectures and tooling, like Kubernetes, make this possible.
 
-In this guide, you learned how to containerize an ML application and deploy it into a Kubernetes environment managed by SUSE Rancher.
+In this guide, you learned how to containerize an ML application and deploy it into a Kubernetes environment managed by Rancher by SUSE.
 
-Below are listed a few resources to help you continue your exploration of SUSE Rancher and K3s for edge analytics:
+Below are listed a few resources to help you continue your exploration of Rancher and K3s for edge analytics:
 
 * https://github.com/navin772/GSOC_Stock_prediction[GitHub repository with the code]
 * https://documentation.suse.com/trd/kubernetes/[SUSE Technical Reference Documentation: Kubernetes]
