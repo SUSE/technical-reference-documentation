@@ -264,7 +264,7 @@ This will include all installed packages, except `pip` itself and its dependenci
 
 === Define the container image
 
-The `podman build` command can build a container image from a sequence of instructions provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[Containerfile].
+The `podman build` or `buildah bud` command can build a container image from a sequence of instructions provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[Containerfile].
 If you are familiar with the Docker container ecosystem, a Containerfile shares the same format and most of the same options as a Dockerfile.
 
 
@@ -358,11 +358,17 @@ Now, you can build your container image with `podman build`.
 
 . Make sure you are in your build directory.
 
-. Build the container image.
+. Build the container image with podman or buildah.
 +
 [source, bash]
 ----
 podman build --tag jupyter .
+----
++
++
+[source, bash]
+----
+buildah bud --layers --tag jupyter .
 ----
 +
 [TIP]
