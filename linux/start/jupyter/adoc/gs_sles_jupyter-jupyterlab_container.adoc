@@ -427,7 +427,7 @@ including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial
 ----
 podman run --name jupyter \
  -p 8888:8888 \
- -v $(pwd):/home/jupyter/notebooks \
+ -v $(pwd):/home/jupyter/notebooks:Z \
  localhost/jupyter
 ----
 +
