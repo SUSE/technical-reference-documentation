@@ -241,13 +241,13 @@ Create this _requirements.txt_ file in your build directory:
 
 [listing]
 ----
-numpy==1.19.5
-pandas==1.1.5
-scikit-learn==0.24.2
-scipy==1.5.4
-seaborn==0.11.2
-matplotlib==3.3.4
-jupyterlab==3.2.9
+numpy==1.23.5
+pandas==1.5.2
+scikit-learn==1.2.0
+scipy==1.9.3
+seaborn==0.12.1
+matplotlib==3.6.2
+jupyterlab==3.5.1
 ----
 
 In this example, you specify the exact version of each package.
@@ -270,42 +270,39 @@ If you are familiar with the Docker container ecosystem, a Containerfile shares 
 
 Create a file, named _Containerfile_, in your build directory with the following contents:
 
-[listing]
+[source,Dockerfile]
 ----
 # jupyterlab Containerfile
 
-# https://registry.suse.com/
-FROM registry.suse.com/bci/bci-base:latest
+FROM registry.suse.com/bci/python:latest
 
 # set notebook directory
 ENV JUPYTER="/home/jupyter"
 
-# make Zypper run without user prompts
-ENV ZYPPERCMD="zypper --non-interactive"
+# create an unprivileged user
+RUN useradd -m jupyter
+USER jupyter
 
-# install developer tools
-RUN $ZYPPERCMD install gcc gcc-fortran
-RUN $ZYPPERCMD install python3 python3-pip
-RUN $ZYPPERCMD install python3-devel
+# add the unprivileged user's ~/.local/bin to PATH
+ENV PATH="$JUPYTER/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 # create notebook directory and make it the working directory
-RUN mkdir -p $JUPYTER/notebooks
 WORKDIR $JUPYTER
-RUN cd $JUPYTER
-RUN pwd
 
 # copy requirements file into working directory
 COPY requirements.txt .
 
-# install required Python components
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# install jupyter
+RUN set -eux pipefail; \
+    pip install --upgrade pip; \
+    pip install -r requirements.txt; \
+    pip cache purge;
 
 # expose JupyterLab web port
 EXPOSE 8888/tcp
 
 # launch JupyterLab with a few options
-CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=$JUPYTER/notebooks --allow-root
+CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=$JUPYTER/notebooks
 ----
 
 The instructions used in this _Containerfile_ to automate the build of your container are:
@@ -328,8 +325,7 @@ The instructions used in this _Containerfile_ to automate the build of your cont
 An important consideration for your container build is the base layer.
 You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
 
-For this guide, you use the 'latest' SUSE Linux Enterprise base container image, which, at the time of this writing, is built on {productname}.
-SUSE also provides base container images with specific development languages already installed, which can speed up your build process.
+For this guide, you use the 'latest' SUSE Linux Enterprise Python container image, which, at the time of this writing, is built on {productname}.
 
 When choosing a base container image, keep in mind the following considerations:
 
@@ -384,9 +380,9 @@ The output of this command looks something like:
 +
 [source, bash]
 ----
-REPOSITORY                      TAG         IMAGE ID      CREATED         SIZE
-localhost/jupyter               latest      d8bbefc6be69  11 minutes ago  837 MB
-registry.suse.com/bci/bci-base  latest      35ebb6a7981e  4 days ago      125 MB
+REPOSITORY                    TAG         IMAGE ID      CREATED         SIZE
+localhost/jupyter             latest      d8bbefc6be69  11 minutes ago  837 MB
+registry.suse.com/bci/python  latest      35ebb6a7981e  4 days ago      125 MB
 ----
 You should see your container image, _localhost/jupyter_.
 +
