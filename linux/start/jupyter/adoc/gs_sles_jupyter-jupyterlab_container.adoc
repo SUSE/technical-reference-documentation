@@ -315,15 +315,15 @@ The instructions used in this _Containerfile_ to automate the build of your cont
 
 * `ENV` sets an environment variable.
 
-* `FROM` specifies which base layer to use.
+* `FROM` specifies which base image to use.
 
 * `RUN` executes a command in a shell (`/bin/sh -c`).
 
 * `WORKDIR` sets the working directory for `RUN`, `CMD`, `COPY` and other instructions.
 
 
-An important consideration for your container build is the base layer.
-You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
+An important consideration for your container build is the base image.
+You can obtain container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
 
 For this guide, you use the 'latest' SUSE Linux Enterprise Python container image, which, at the time of this writing, is built on {productname}.
 
