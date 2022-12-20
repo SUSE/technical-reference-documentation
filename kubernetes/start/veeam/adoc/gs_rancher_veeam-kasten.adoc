@@ -114,7 +114,7 @@ The {otherproduct1}}® data management platform provides enterprise operations t
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide provides an overview of the steps to install and set up {otherproduct1} in your {platform1} Kubernetes environment and to perform a simple backup and restore of an application.
+This guide provides the steps to install and set up {otherproduct1} in your {platform1} Kubernetes environment and an overview of application backup and restoration.
 
 
 === Audience
@@ -477,18 +477,17 @@ This is accomplished with location profiles.
 image::rancher_veeam-kasten_k10_location-profiles1.png[Kasten UI - Location Profiles 1, scaledwidth="65%", align="center"]
 
 
-Profile creation can be accessed from the __Settings__ icon in the top-right corner of the dashboard or via the https://docs.kasten.io/latest/api/profiles.html#api-profile[CRD-based Profiles API].
-Location profiles are used to create backups from snapshots, move applications and their data across clusters and potentially across different clouds, and to subsequently import these backups or exports into another cluster.
+Access profile creation from the __Settings__ icon in the top-right corner of the dashboard or via the https://docs.kasten.io/latest/api/profiles.html#api-profile[CRD-based Profiles API].
+Location profiles are used to create backups from snapshots, move applications and their data across clusters and potentially across different clouds, and to subsequently import these backups into another cluster.
 
 To create a location profile, click __New Profile__ on the profiles page.
 
 image::rancher_veeam-kasten_k10_location-profiles2.png[Kasten UI - Location Profiles 2, scaledwidth="40%", align="center"]
 
-When exporting to or importing from an object storage location, you are required to pick an object storage provider, a region for the bucket if being used in a public cloud, and the bucket name.
+When exporting to or importing from an object storage location, you must pick an object storage provider, a region for the bucket if being used in a public cloud, and the bucket name.
 If a bucket with the given name does not exist, it will be created.
 
-If an S3-compatible object storage system is used that is not hosted by one of the supported cloud providers, an S3 endpoint URL will need to be specified and optionally, SSL verification might need to be disabled.
-Disabling SSL verification is only recommended for test setups.
+If you use an S3-compatible object storage system that is not hosted by one of the supported cloud providers, an S3 endpoint URL must be specified.
 
 [NOTE]
 ====
@@ -496,7 +495,7 @@ When certain cloud providers (like AWS or Microsoft Azure) are selected, provide
 ====
 
 
-When you click __Validate and Save__, the configuration profile will be created and a profile similar to the following will appear:
+When you click __Validate and Save__, the configuration profile is created and a profile similar to the following appears:
 
 image::rancher_veeam-kasten_k10_location-profiles3.png[Kasten UI - Location Profiles 3, scaledwidth="85%", align="center"]
 
@@ -504,15 +503,8 @@ image::rancher_veeam-kasten_k10_location-profiles3.png[Kasten UI - Location Prof
 == Creating a policy
 
 Protecting an application with {otherproduct1short}, is usually accomplished by creating a policy.
-Understanding these three concepts is essential:
 
-Snapshots and Backups:: You may require just one or both of these data capture mechanisms, depending on your environment and requirements.
-
-Scheduling:: You specify the application capture frequency and snapshot/backup retention to meet your objectives.
-
-Selection:: You identify the applications protected by a policy.  You can also filter resources to restrict what is captured on a per-application basis.
-
-This section demonstrates how to use these concepts in the context of a {otherproduct1short} policy to protect applications.
+In this section, you learn about snapshots and backups, scheduling, and selection in the context of application protection policies.
 
 {otherproduct1short} defines an application as a collection of namespaced Kubernetes resources associated with
 
@@ -540,7 +532,7 @@ image::rancher_veeam-kasten_k10_policies_create1.png[Kasten UI - New Policy, sca
 
 === Snapshots and backups
 
-With {otherproduct1short}, all policies center around the execution of actions.
+All {otherproduct1short} policies center around the execution of actions.
 You start by selecting the snapshot action with an optional backup (called an *export*).
 
 See https://docs.kasten.io/latest/usage/protect.html#snapshots-and-backups[Snapshots and Backups] in the Kasten documentation for more details.
@@ -556,7 +548,8 @@ image::rancher_veeam-kasten_k10_policies_create2.png[Kasten UI - Snapshot, scale
 [NOTE]
 ====
 Several public cloud providers (including AWS, Azure, and Google Cloud) actually store snapshots in object storage, and they are retained independent of the lifecycle of the primary volume.
-However, this is not true of all public clouds, and an independent backup would provide essential safety.
+However, this is not true of all public clouds.
+An independent backup would provide essential safety.
 Check with your cloud provider's documentation for more information.
 ====
 
@@ -630,7 +623,7 @@ image::rancher_veeam-kasten_k10_export-frequency.png[Kasten UI - Export Frequenc
 
 A powerful scheduling feature in {otherproduct1short} is the ability to use a https://en.wikipedia.org/wiki/Backup_rotation_scheme#Grandfather-father-son [GFS retention scheme] for cost savings and compliance.
 With this backup rotation scheme, hourly snapshots and backups are rotated each hour with one graduating to daily every day, daily snapshots and backups are rotated each day with one graduating to weekly, and so on.
-It is possible to set the number of hourly, daily, weekly, monthly, and yearly copies that need to be retained, and {otherproduct1short} will take care of cleanup.
+You can set the number of hourly, daily, weekly, monthly, and yearly copies that need to be retained, and {otherproduct1short} will take care of cleanup.
 
 image::rancher_veeam-kasten_k10_snapshot-retention-schedule.png[Kasten UI - Snapshot Retention, scaledwidth="65%", align="center"]
 
@@ -639,7 +632,7 @@ image::rancher_veeam-kasten_k10_snapshot-retention-schedule.png[Kasten UI - Snap
 It is not possible to set a retention schedule for on-demand policies.
 ====
 
-By default, the backup retention schedule is the same as the snapshot retention schedule.
+The default backup retention schedule is the same as the snapshot retention schedule.
 You can make these independent schedules, if needed.
 This allows you to create policies where a limited number of snapshots are retained for fast recovery from accidental outages while a larger number of backups are stored for long-term recovery.
 This separate retention schedule is also valuable when a limited number of snapshots are supported on the volume but a larger backup retention count is needed for compliance.
@@ -658,7 +651,8 @@ And you will need to clean up any artifacts created by manual policy runs.
 
 ==== Timing
 
-By default, actions set to hourly execute at the top of the hour and other action frequencies execute at midnight UTC.
+By default, actions set to hourly execute at the top of the hour.
+Other action frequencies execute at midnight UTC.
 
 Unhide __Advanced Options__ to select how many times actions are executed within the frequency interval. 
 For example, if the action frequency is daily, you can specify the hour of the day and the minutes after the hour when the action is to start.
@@ -678,7 +672,7 @@ You can toggle whether to display and enter times in local time or UTC, but all 
 
 === Selection
 
-In {otherproduct1short}, you can specify which applications are bound to a policy by name or label.
+You can specify which applications are bound to a policy by name or label.
 
 
 ==== Application name
