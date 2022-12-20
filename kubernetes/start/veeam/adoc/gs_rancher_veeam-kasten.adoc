@@ -404,11 +404,11 @@ kubectl get secret $sa_secret --namespace kasten-io -ojsonpath="{.data.token}{'\
 kubectl create serviceaccount my-kasten-sa --namespace kasten-io
 ----
 +
-In this case, you need to create a role binding or cluster role binding for the account to ensure that it has the appropriate permissions for {otherproduct1short}.
+You can create a role binding or cluster role binding for the account to ensure that it has the appropriate permissions for {otherproduct1short}.
 To learn more about permissions, see https://docs.kasten.io/latest/access/authorization.html#authz[Authorization].
 
 
-=== Kasten {otherproduct1short} dashboard overview
+=== {otherproduct1short} dashboard overview
 
 The {otherproduct1short} dashboard is divided into several different sections, described below.
 
@@ -416,7 +416,7 @@ image::rancher_veeam-kasten_k10_dashboard-welcome.png[Kasten UI - Quick Tour, sc
 
 [TIP]
 ====
-A guided tour of the dashboard is available when the {otherproduct1short} dashboard is accessed for the first time or via the dashboard option on the https://docs.kasten.io/latest/usage/overview.html#k10-settings[Settings] page.
+A guided tour is available when the {otherproduct1short} dashboard is accessed for the first time or via the option on the https://docs.kasten.io/latest/usage/overview.html#k10-settings[Settings] page.
 ====
 
 
@@ -438,8 +438,9 @@ You can filter the view by clicking the __Compliant__, __Non-Compliant__, or __U
 ====
 
 
-The {otherproduct1short} platform equates namespaces to applications for ease of use and consistency with Kubernetes best practices, use of role-based authentication controls (RBAC), and to mirror the most common application deployment patterns.
-However, as shown later, policies can be defined to operate on more than one namespace or only operate on a subset of an application residing in a single namespace.
+The {otherproduct1short} platform equates namespaces to applications for ease of use and consistency with Kubernetes best practices.
+This also allows use of role-based authentication controls (RBAC) and mirrors the most common application deployment patterns.
+As shown later, policies can be defined to operate on more than one namespace or only operate on a subset of an application residing in a single namespace.
 
 If you already have installed applications, clicking the __Applications__ card on the dashboard will provide you with details.
 
@@ -457,7 +458,8 @@ Policies combine actions you want to take (such as making a snapshot), frequency
 image::rancher_veeam-kasten_k10_dashboard_overview-top.png[Kasten UI - Dashboard, scaledwidth="85%", align="center"]
 
 
-When you click the __Policies__ card in the main dashboard, you notice that no default policies are created at install time, but a policy can be either created from this page or from the application page shown earlier.
+On the __Policies__ card, you notice that no default policies are created at install time.
+A policy can be either created from this page or from the application page shown earlier.
 
 image::rancher_veeam-kasten_k10_dashboard-policies.png[Kasten UI - Policies, scaledwidth="85%", align="center"]
 
@@ -465,7 +467,8 @@ image::rancher_veeam-kasten_k10_dashboard-policies.png[Kasten UI - Policies, sca
 
 == Creating a location profile 
 
-{otherproduct1short} can invoke protection operations, such as snapshots, within a cluster without requiring additional credentials, and this may be sufficient if {otherproduct1short} is running in the major public clouds and actions are limited to a single cluster.
+{otherproduct1short} can invoke protection operations, such as snapshots, within a cluster without requiring additional credentials.
+This may be sufficient if {otherproduct1short} is running in the major public clouds and actions are limited to a single cluster.
 It is not sufficient for most production situations, where performing real backups, enabling cross-cluster and cross-cloud application migration, and enabling disaster recovery are essential.
 
 To enable these actions that span the lifetime of any one cluster, {otherproduct1short} needs to be configured with access to external object storage or external NFS file storage.
@@ -684,7 +687,7 @@ The most straightforward way to apply a policy to an application in {otherproduc
 You can even select multiple application names for the same policy.
 
 If you need a policy to span similar applications, use the asterisk ('\*') wild card.
-For example, if you specify 'mysql-*', {otherpoduct1short} will match all applications whose names start with 'mysql-'.
+For example, if you specify 'mysql-*', {otherproduct1short} will match all applications whose names start with 'mysql-'.
 
 image::rancher_veeam-kasten_k10_selection-by-name-wildcard.png[Kasten UI - Select Applications, scaledwidth="75%", align="center"]
 
