@@ -548,7 +548,6 @@ including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial
 podman run --name jupyter \
  -p 8888:8888 \
  -v $(pwd):/home/jupyter/notebooks \
- --userns=keep-id \
  localhost/jupyter
 ----
 +
@@ -560,8 +559,6 @@ In this command, you specify the following options:
 * `-p` or `--publish` to publish a container's network port or range of ports to the host.
 
 * `-v` or `--volume` to create a bind mount of a directory on your host to one in your container.
-
-* `--userns=keep-id` to map the container user to the same UID as your user on the host.
 ====
 //
 +
