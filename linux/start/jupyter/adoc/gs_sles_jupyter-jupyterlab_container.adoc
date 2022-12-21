@@ -2,21 +2,95 @@
 include::./common_docinfo_vars.adoc[]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Variables & Attributes
-// Follow indicated patterns.
-//   E.g., "Ondat data plane with SUSE Rancher"
-//         "Grace Hopper, Engineer, US Navy"
-//         "SUSE Linux Enterprise Server 15 SP4"
-//         "SUSE Rancher 2.6"
-// NOTE: Some variables & attributes have been deprecated and
-//       have been commented out below.
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+// 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-:title: JupyterLab with Podman and SUSE Linux Enterprise Base Container Images: Getting Started
-:productname: SUSE Linux Enterprise Server 15 SP4
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Variables & Attributes
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document and product
+// -
+:title: Replicable Python Environments with JupyterLab and Podman
+:subtitle: Software Development with SUSE
+:productname: SLES 15 SP4
+:platform1: SUSE Linux Enterprise Server 15 SP4
+:platform2: SUSE Linux Enterprise Base Container Image
+:otherproduct1: JupyterLab
+:otherorg1: Project Jupyter
+:otherproduct2: Python 3.10
+:otherproduct3: Podman
+:usecase: Data analytics and machine learning development
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributors
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: Brian
+:author1_surname: Fromme
+:author1_jobtitle: Alliance Solutions Architect
+:author1_orgname: SUSE
+:author2_firstname: Terry
+:author2_surname: Smith
+:author2_jobtitle: Global Partner Solutions Director
+:author2_orgname: SUSE
+:other1_firstname: Dan
+:other1_surname: Čermák
+:other1_jobtitle: Software Engineer
+:other1_orgname: SUSE
+:other2_firstname: Darragh
+:other2_surname: O'Reilly
+:other2_jobtitle: Senior Cloud Engineer
+:other2_orgname: SUSE
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// define any additional variables here for use within the document
+// -
 :opensuse: openSUSE Leap 15.4
-:defaultpython: Python 3.10
-:partnerprod1: JupyterLab
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+= {title}: {subtitle}
+
 :author1: Brian Fromme, Alliance Solution Architect, SUSE
 :author2: Terry Smith, Partner Solutions Director, SUSE
 
