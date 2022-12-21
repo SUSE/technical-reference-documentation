@@ -2,96 +2,25 @@
 include::./common_docinfo_vars.adoc[]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// General comments
-// Keep in mind that this is a "getting started" guide and the
-//   audience that you are trying to reach.
-// Leverage ASCIIDoc features to make this document readable and usable:
-//   - Text highlights (follow SUSE style guides)
-//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
-//   - Code blocks
-//   - Lists (ordered and unordered, as appropriate)
-//   - Links (to other resources)
-//   - Images
-//     - Place image files under the ./media directory tree
-//       (e.g., ./media/src/svg, ./media/src/png)
-//     - Format preference: svg > png > jpg
-//     - Consolidate images wherever possible
-//       (i.e., don't use two images when one conveys the message)
-//   - Use sections and subsections to organize and group related
-//     steps.
-// 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Variables & Attributes
-//
-// NOTES:
-// 1. Update variables below and adjust docbook file accordingly.
-// 2. Comment out any variables/attributes not used.
-// 3. Follow the pattern to include additional variables.
-//
+// Follow indicated patterns.
+//   E.g., "Ondat data plane with SUSE Rancher"
+//         "Grace Hopper, Engineer, US Navy"
+//         "SUSE Linux Enterprise Server 15 SP4"
+//         "SUSE Rancher 2.6"
+// NOTE: Some variables & attributes have been deprecated and
+//       have been commented out below.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// organization - do NOT modify
-// -
-:trd: Technical Reference Documentation
-:type: Getting Started
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// document and product
-// -
-:title: Replicable Python Development Environments with JupyterLab
-:subtitle: Using Podman SUSE Linux Enterprise Base Container Images
-:productname: SLES 15 SP4
-:platform1: SUSE Linux Enterprise Server 15 SP4
-:platform2: SUSE Linux Enterprise Base Container Images
-:otherproduct1: JupyterLab
-:otherorg1: Project Jupyter
-:otherproduct2: Python 3.10
-:otherproduct3: Podman
-:usecase: replicable Python development environments with containers
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 :title: JupyterLab with Podman and SUSE Linux Enterprise Base Container Images: Getting Started
 :productname: SUSE Linux Enterprise Server 15 SP4
+:opensuse: openSUSE Leap 15.4
+:defaultpython: Python 3.10
 :partnerprod1: JupyterLab
-
-
 :author1: Brian Fromme, Alliance Solution Architect, SUSE
 :author2: Terry Smith, Partner Solutions Director, SUSE
 
 = {title}
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// contributors
-// specify information about authors, editors, and others here,
-// then update docinfo file as appropriate
-// -
-:author1_firstname: Brian
-:author1_surname: Fromme
-:author1_jobtitle: Alliance Solutions Architect
-:author1_orgname: SUSE
-:author2_firstname: Terry
-:author2_surname: Smith
-:author2_jobtitle: Global Partner Solutions Director
-:author2_orgname: SUSE
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// define any additional variables here for use within the document
-// -
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-= {title}: {subtitle}
 
 
 
@@ -230,7 +159,7 @@ sudo zypper up
 
 === Configure Podman to run without root privileges
 
-Podman can be run as an ordinary, unprivileged user, but you may need to make a few configuration changes.
+Podman can be run as an ordinary user, but you may need to make a few configuration changes.
 To keep this simple, you will grant your current user, `$USER`, this access.
 
 . Define subUID and subGID ranges for your current user.
@@ -238,9 +167,9 @@ To keep this simple, you will grant your current user, `$USER`, this access.
 +
 You need to define a range of UIDs and GIDs that will be allocated to users inside the container and mapped onto the host.
 You can check the _/etc/subuid_ and _/etc/subgid_ files to see if these ranges are already defined for your user.
-If they are not defined, you can do so with the following steps:
-
-.. Update your user account with the required ranges.
+//
++
+If they are not, issue the command:
 +
 [source, bash]
 ----
@@ -249,21 +178,8 @@ sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 ${USER}
 +
 [WARNING]
 ====
-The subUID and subGID ranges ('100000-165535' in the command example) must not reuse UIDs and GIDs of existing users or overlap for different users.
+The subUID and subGID ranges ('100000-165535' in the command example) must not overlap for different users and not reuse UIDs and GIDs of existing users on the host.
 ====
-
-.. Activate the changes by rebooting.
-+
-[NOTE]
-====
-Podman uses a pause process to keep the unprivileged namespaces alive.
-To propogate subUID and subGID changes, you may also need to issue:
-[source, bash]
-----
-podman system migrate
-----
-====
-
 
 . Ensure your current user has permissions to access Zypper credentials on the host.
 The container may need access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
