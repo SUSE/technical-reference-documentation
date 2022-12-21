@@ -1,4 +1,4 @@
-<!-- https://tdg.docbook.org/tdg/5.1/info -->
+<!-- https://tdg.docbook.org/tdg/5.2/info -->
 
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
     <dm:bugtracker>
@@ -7,45 +7,97 @@
     </dm:bugtracker>
 </dm:docmanager>
 
-<!-- attributes defined in adoc
-     :title:
-       title: subtitle
-     :productname:
-       productname version
-     :author1:
-       first last, role, company
-     :author2:
-       first last, role, company
+<!-- Note to author/editor
+     Attributes used here (enclosed in curly braces).
+     General variables are defined in common_docinfo_vars.adoc.
+     Variable specific to this document (such as the title) are
+     defined with the main content in the adoc file.
+     See comments below for additional options.
 -->
 
-<!--<orgname>Technical Reference Documentation</orgname>-->
+
+<!-- document organization metadata
+     Do NOT modify this section
+     <orgname>Technical Reference Documentation</orgname>
+-->
+<meta name="series">{trd}</meta>
+<meta name="type">{type}</meta>
+
+
+<!-- document title and subtitle -->
+<title>{title}</title>
+<subtitle>{subtitle}</subtitle>
+
+
+
+<!-- platform and product metadata
+     Replicate for additional platforms.
+     Define platform2, etc. in adoc file.
+-->
 <productname>{productname}</productname>
+<meta name="platform">{platform1}</meta>
 
-<author>
-    <personname>
-	    <surname>{author1}</surname>
-    </personname>
-</author>
-<author>
-    <personname>
-	    <surname>{author2}</surname>
-    </personname>
-</author>
 
+<!-- author metadata
+     Replicate author tag structure inside this authorgroup
+     for additional authors.
+     Use editor and othercredit tag groups for additional contributors.
+     Update variables in adoc file.
+-->
+<authorgroup>
+  <author>
+    <personname>
+      <firstname>{author1_firstname}</firstname>
+      <surname>{author1_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author1_jobtitle}</jobtitle>
+      <orgname>{author1_orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author2_firstname}</firstname>
+      <surname>{author2_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author2_jobtitle}</jobtitle>
+      <orgname>{author2_orgname}</orgname>
+    </affiliation>
+  </author>
+</authorgroup>
+
+
+<!-- logo images
+     Duplicate mediaobject tag group and
+     reference additional logos as needed.
+     Place logo files under media directory tree.
+-->
 <cover role="logos">
-    <mediaobject>
-        <imageobject>
-            <imagedata fileref="suse-white-logo-green.svg"/>
-        </imageobject>
-    </mediaobject>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="suse.svg" width="4em"/>
+    </imageobject>
+  </mediaobject>
 </cover>
 
-<abstract>
-    <para>JupyterLab is a Web-based interactive development environment from Project Jupyter used by data scientists and machine learning researchers around the world. 
-        This document illustrates how to use Podman and SUSE Linux Enterprise Base Container Images to containerize and deploy JupyterLab. 
-	    </para>
-	<para></para>
 
+<!-- brief abstract for document
+     Update with an enticing summary.
+-->
+<abstract role="executivesummary">
+  <title>Summary</title>
+    <para>{otherproduct1} is a Web-based interactive development environment from {otherorg1} used by data scientists and machine learning researchers around the world.</para>
+    <para>This document illustrates how to use {otherproduct2} and SUSE Linux Enterprise Base Container Images to containerize and deploy JupyterLab.</para>
 
-    	<para> <emphasis role="strong">Disclaimer:</emphasis>  {disclaimer} </para>
 </abstract>
+
+
+<!-- disclaimer
+     Do NOT edit
+-->
+<abstract>
+  <title>Disclaimer</title>
+  <para>{disclaimer}</para>
+</abstract>
+
