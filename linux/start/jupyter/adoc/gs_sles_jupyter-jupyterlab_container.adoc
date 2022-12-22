@@ -161,11 +161,7 @@ SUSE maintains up-to-date, ready-to-use container images at https://registry.sus
 . https://podman.io[Podman]
 //
 +
-Podman, which is short for Pod Manager, is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
-Podman is similar to other container engines, such as *Docker*, *CRI-O*, and *containerd*. It relies on an OCI compliant container runtime (like _runc_, _crun_, _runv_, etc.) to interface with the operating system for creating the running containers.
-This means that running Podman containers is nearly indistinguishable from running those created by other common container engines.
-You can also run Podman containers as an ordinary, non-privileged user, making it easier and more secure.
-See the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide] for a deeper discussion on containers and Podman.
+Podman is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
 
 
 . https://www.python.org/[Python]
@@ -188,13 +184,23 @@ See https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyter
 ====
 
 
-== Enable Podman
+== Enabling Podman
 
-Podman is not installed by default in {productname}.
-So, your first step is to install it.
+Podman, which is short for Pod Manager, is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
+Podman is similar to other container engines, such as *Docker*, *CRI-O*, and *containerd*.
+It relies on an OCI compliant container runtime (like _runc_, _crun_, _runv_, etc.) to interface with the operating system for creating the running containers.
+This means that running Podman containers is nearly indistinguishable from running those created by other common container engines.
+You can also run Podman containers as an ordinary, non-privileged user, making it easier and more secure.
+
+[TIP]
+====
+See the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide] for a deeper discussion on containers and Podman.
+====
 
 
 === Install Podman
+
+Podman is not installed by default in {productname}, but you can install it with these steps.
 
 . Enable SUSE Containers Module.
 +
@@ -226,23 +232,35 @@ sudo zypper up
 ====
 
 
-=== Configure Podman to run without root privileges
+=== Enable rootless Podman
 
-Podman can be run as an ordinary, unprivileged user.
-To enable this, you need to make a few changes to your host system.
+By default, only the root user can run Podman containers.
+Running rootless Podman can improve security and enable multiple, unprivileged users to run containers on the same system.
+To enable rootless Podman, you must configure subordinate UIDs and GIDs.
 
-. Define subUID and subGID ranges for your current user.
+Subordinate UIDs and GIDs are assigned in ranges to each user, and are used to map users running inside a container to users on your host system.
+These subordinate UID and GID ranges are specified for each user in _/etc/subuid_ and _/etc/subgid_, respectively.
+
+
+. Verify that a range is not already defined for your user.
 //
 +
-You can map the users running inside your container with users on your host system by specifying subordinate UIDs and GIDs.
-These subUIDs and subGIDs are specified in _/etc/subuid_ and _/etc/subgid_, respectively.
-
-.. Check the _/etc/subuid_ and _/etc/subgid_ files to see if these ranges are already defined for your user.
-//
+Check the _/etc/subuid_ and _/etc/subgid_ files with:
 +
-If they are, you can move on to grant your user access to Zypper credentials.
+[source, bash]
+----
+grep "${USER}" /etc/subuid /etc/subgid
+----
++
+If output like the following is returned, ranges are already specified and you can proceed to the next section.
++
+[source, bash]
+----
+/etc/subuid:tux:100000:65536
+/etc/subgid:tux:100000:65536
+----
 
-.. Add subUID and subGID ranges to your user.
+. You can add subUID and subGID ranges with `usermod`.
 +
 [source, bash]
 ----
@@ -251,10 +269,10 @@ sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 ${USER}
 +
 [WARNING]
 ====
-The subUID and subGID ranges ('100000-165535' in the command example) may not overlap and must be different for each user on the host.
+The subUID and subGID ranges ('100000-165535' in the command example) must be unique and non-overlapping for each user on the host.
 ====
 
-.. Activate the subUID and subGID ranges by restarting the host system.
+. Activate the subUID and subGID ranges by restarting the host system.
 +
 [NOTE]
 ====
@@ -266,46 +284,43 @@ podman system migrate
 ----
 ====
 
-. Grant your user access to Zypper credentials.
-//
-+
+
+=== Grant read access to Zypper credentials.
+
 Your user needs access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
-//
-+
+
 Grant read permission with:
-+
 [source, bash]
 ----
 sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
 ----
 
 
-=== Verify the container storage driver
+=== Configure the container storage driver
 
 It is important to consider where and how your containers and container images are stored.
-System container storage settings are defined in _/etc/containers/storage.conf_.
-Storage settings can be overridden for a particular user by options placed in _$HOME/.config/containers/storage.conf_ or with appropriate environment variables.
-
-The default location Podman uses for container data is _/var/lib/containers/storage_.
+By default, Podman stores container data in _/var/lib/containers/storage_.
 This is defined by the 'graphroot' option in _/etc/containers/storage.conf_ and only applies to the root user.
 
-For ordinary users, Podman defaults to _$HOME/.local/share/containers/storage_.
-It can be useful to change this location, such as when user home directories are remotely mounted NFS shares.
-This behavior can be changed for all users by setting 'rootless_storage_path' in the '[storage]' section of _/etc/containers/storage.conf_.
+For unprivileged users, Podman defaults to _$HOME/.local/share/containers/storage_.
+You can change this default location, say to another volume dedicated to container data.
+This is done system-wide by specifying the location with the 'rootless_storage_path' setting in  the '[storage]' section of _/etc/containters/storage.conf_.
+This can be overridden for a particular user by setting 'rootless_storage_path' in _$HOME/.config/containers/storage.conf_.
 
-How container data are written is determined by the storage driver.
-This is defined by the 'driver' setting in the '[storage]' section of _/etc/containers/storage.conf_.
+
+Another important storage container setting determines how data are written.
+This is determined by the storage driver and is defined with the 'driver' setting in the '[storage]' section of _/etc/containers/storage.conf_.
 For the root user, valid drivers include 'overlay2', 'vfs', 'zfs', and 'btrfs'.
 
 [NOTE]
 ====
-The 'btrfs' driver is the default for {productname}, since https://en.wikipedia.org/wiki/Btrfs[Btrfs] is the default file system for system volumes.
+The 'btrfs' driver is the default for {productname}, as https://en.wikipedia.org/wiki/Btrfs[Btrfs] is the default file system for system volumes.
 Btrfs offers many advantages over earlier file systems, such as copy-on-write, pooling, snapshots, and checksums.
 ====
 
 If your home directory is in a partition formatted with a different file system, Podman will default to the 'overlay2' or 'vfs' driver and warn you to set an appropriate storage driver.
 Usually this will be the 'overlay2' driver.
-You can set this without administrator help by creating the file _$HOME/.config/containers/storage.conf_ with the following content:
+You can set this without administrator help by creating or editing the file _$HOME/.config/containers/storage.conf_ with the following contents:
 
 [listing]
 ----
