@@ -47,7 +47,7 @@ include::./common_docinfo_vars.adoc[]
 :subtitle: Software Development with SUSE
 :productname: SLES 15 SP4
 :platform1: SUSE Linux Enterprise Server 15 SP4
-:platform2: SUSE Linux Enterprise Base Container Image
+:platform2: SUSE Linux Enterprise Base Container Images
 :otherproduct1: JupyterLab
 :otherorg1: Project Jupyter
 :otherproduct2: Python 3.10
@@ -110,7 +110,7 @@ Containers also enable massive scale, letting you run your applications everywhe
 
 === Scope
 
-This document illustrates how to take the first steps with containers to support ML development and implementation.
+This document illustrates how to containerize the popular Python development platform for data analytics and machine learning, JupyterLab, with Podman and {platform2}.
 
 
 === Audience
@@ -125,7 +125,7 @@ To progress with this document, the reader should have basic Linux command line 
 
 In this guide, you learn how to:
 
-* set up https://podman.io[Podman] on https://www.suse.com/products/server/[{productname}].
+* set up https://podman.io[Podman] on https://www.suse.com/products/server/[{platform1}] ({productname}).
 
 * specify and build a container image for a https://jupyter.org/[JupyterLab] ML development environment.
 
@@ -134,23 +134,23 @@ In this guide, you learn how to:
 
 === Software ecosystem
 
-. https://www.suse.com/products/server/[{productname}]
+. https://www.suse.com/products/server/[{platform1}]
 //
 +
-This guide leverages {productname} (SLE) as a host operating system for building and running containers.
-SLE can be run on bare metal or in virtual machines to provide a stable, supportable Linux environment.
+This guide leverages {productname} as a host operating system for building and running containers.
+{productname} can be run on bare metal or in virtual machines to provide a stable, supportable Linux environment.
 +
 [NOTE]
 ====
 Most of the steps outlined in this guide are directly transferable to https://www.opensuse.org/#Leap[{opensuse}].
 ====
 
-. https://www.suse.com/products/base-container-images/[SUSE Linux Enterprise Base Container Images (SLE BCI)]
+. https://www.suse.com/products/base-container-images/[{platform2} (SLE BCI)]
 //
 +
 A base container image provides basic functionality, such as a stripped-down Linux operating system.
 It is onto a base container image that you layer your application components.
-SUSE base container images are freely available, re-distributable, supported across many environments.
+{platform2} are freely available, re-distributable, supported across many environments.
 These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and on edge devices.
 +
 [TIP]
@@ -175,7 +175,7 @@ Python has become a popular programming ecosystem for ML developers for its simp
 With Python, ML developers have access to a vast collection of libraries, frameworks, and toolkits with which to build solutions to complex problems.
 
 
-. https://jupyter.org/[JupyterLab]
+. https://jupyter.org/[JupyterLab] from Project Jupyter
 //
 +
 JupyterLab is a modular, interactive development environment with a Web interface that enables data scientists and developers to create and share computational documents, called notebooks.
@@ -228,17 +228,21 @@ sudo zypper up
 
 === Configure Podman to run without root privileges
 
-Podman can be run as an ordinary user, but you may need to make a few configuration changes.
-To keep this simple, you will grant your current user, `$USER`, this access.
+Podman can be run as an ordinary, unprivileged user.
+To enable this, you need to make a few changes to your host system.
 
 . Define subUID and subGID ranges for your current user.
 //
 +
-You need to define a range of UIDs and GIDs that will be allocated to users inside the container and mapped onto the host.
-You can check the _/etc/subuid_ and _/etc/subgid_ files to see if these ranges are already defined for your user.
+You can map the users running inside your container with users on your host system by specifying subordinate UIDs and GIDs.
+These subUIDs and subGIDs are specified in _/etc/subuid_ and _/etc/subgid_, respectively.
+
+.. Check the _/etc/subuid_ and _/etc/subgid_ files to see if these ranges are already defined for your user.
 //
 +
-If they are not, issue the command:
+If they are, you can move on to grant your user access to Zypper credentials.
+
+.. Add subUID and subGID ranges to your user.
 +
 [source, bash]
 ----
@@ -247,14 +251,28 @@ sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 ${USER}
 +
 [WARNING]
 ====
-The subUID and subGID ranges ('100000-165535' in the command example) must not overlap for different users and not reuse UIDs and GIDs of existing users on the host.
+The subUID and subGID ranges ('100000-165535' in the command example) may not overlap and must be different for each user on the host.
 ====
 
-. Ensure your current user has permissions to access Zypper credentials on the host.
-The container may need access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
+.. Activate the subUID and subGID ranges by restarting the host system.
++
+[NOTE]
+====
+If you modify either _/etc/subuid_ or _/etc/subgid_, you must stop all running containers owned by the user and kill the pause process running for that user.
+You can do this automatically with the command:
+[source, bash]
+----
+podman system migrate
+----
+====
+
+. Grant your user access to Zypper credentials.
 //
 +
-Grant permission to the user with:
+Your user needs access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
+//
++
+Grant read permission with:
 +
 [source, bash]
 ----
