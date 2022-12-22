@@ -337,8 +337,8 @@ See the manual page for containers-storage.conf for more storage settings:
 
 == Create your application container image
 
-An application container image is built by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
-In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages.
+You build an application container image by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
+In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages for machine learning and data analysis.
 
 
 === Make a build directory
@@ -358,7 +358,6 @@ cd $HOME/jupcontainer
 
 
 
-
 === Define the Python environment
 
 Replicability is critical in science and engineering.
@@ -366,32 +365,33 @@ Complex applications, like an ML model, can produce wildly different results or 
 So, it becomes important when building such applications to explicitly define all the software dependencies and their versions.
 
 Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
-Key to this process are the `pip` Python package management tool and a file that lists the required packages and their versions, typically named _requirements.txt_.
+Keys to this process are the `pip` Python package management tool and a file that specifies the required packages and their versions, typically named _requirements.txt_.
 
 [NOTE]
 ====
 Each package you specify may have several dependencies of its own.
 Depending on your needs, your _requirements.txt_ file can become quite long.
-However, in practice, you only need to specify the main packages used for your application, and the `pip` dependency resolver will automatically install the right dependencies to enable your application.
+If you do not specify a package version, the `pip` dependency resolver will automatically attempt install the latest version that is compatible with the other dependencies.
 ====
 
 Create this _requirements.txt_ file in your build directory:
 
 [listing]
 ----
-numpy==1.19.5
-pandas==1.1.5
-scikit-learn==0.24.2
-scipy==1.5.4
-seaborn==0.11.2
-matplotlib==3.3.4
-jupyterlab==3.2.9
+jupyterlab==3.5.1
+matplotlib==3.6.2
+numpy==1.23.5
+pandas==1.5.2
+scikit-learn==1.2.0
+scipy==1.9.3
+seaborn==0.12.1
 ----
 
 In this example, you specify the exact version of each package.
-If the specified version of a package is not available, your container image build will fail.
-One way to overcome this is to remove the version specification (for example, specify `seaborn` instead of `seaborn==0.11.2`).
+If the specified version of a package is no longer available, your container image build will fail.
+You can overcome this is by removing the version specification (for example, just specify `seaborn` instead of `seaborn==0.11.2`).
 This frees the `pip` dependency resolver to substitute in an appropriate, available version of the package.
+After you verify functionality, you can update your _requirements.txt_ file with the new version.
 
 [TIP]
 ====
@@ -408,43 +408,44 @@ If you are familiar with the Docker container ecosystem, a Containerfile shares 
 
 Create a file, named _Containerfile_, in your build directory with the following contents:
 
-[listing]
+[source, Dockerfile]
 ----
-# jupyterlab Containerfile
+# JupyterLab Containerfile
 
 # https://registry.suse.com/
-FROM registry.suse.com/bci/bci-base:latest
+# build faster using SLE container image with Python already installed
+FROM registry.suse.com/bci/python:latest
 
-# set notebook directory
-ENV JUPYTER="/home/jupyter"
+# create unprivileged user to run JupyterLab
+RUN useradd -m jupyter
+USER jupyter
 
-# make Zypper run without user prompts
-ENV ZYPPERCMD="zypper --non-interactive"
+# define and create notebook directory
+ENV NOTEBOOKS="/home/jupyter/notebooks"
+RUN mkdir -p $NOTEBOOKS
 
-# install developer tools
-RUN $ZYPPERCMD install gcc gcc-fortran
-RUN $ZYPPERCMD install python3 python3-pip
-RUN $ZYPPERCMD install python3-devel
+# update unprivileged user's PATH
+ENV PATH="/home/jupyter/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-# create notebook directory and make it the working directory
-RUN mkdir -p $JUPYTER/notebooks
-WORKDIR $JUPYTER
-RUN cd $JUPYTER
-RUN pwd
+# set working directory for subsequent commands
+WORKDIR /home/jupyter
 
 # copy requirements file into working directory
 COPY requirements.txt .
 
-# install required Python components
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# install JuypterLab
+RUN set -eux pipefail; \
+    pip install --upgrade pip; \
+    pip install -r requirements.txt; \
+    pip cache purge;
 
 # expose JupyterLab web port
-EXPOSE 8888/tcp
+EXPOSE 8888/tcp 
 
-# launch JupyterLab with a few options
-CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=$JUPYTER/notebooks --allow-root
+# launch JupyterLab
+CMD jupyter-lab --ip=* --port=8888 --no-browser --notebook-dir=$NOTEBOOKS
 ----
+
 
 The instructions used in this _Containerfile_ to automate the build of your container are:
 
@@ -456,18 +457,18 @@ The instructions used in this _Containerfile_ to automate the build of your cont
 
 * `ENV` sets an environment variable.
 
-* `FROM` specifies which base layer to use.
+* `FROM` specifies which base image to use.
 
 * `RUN` executes a command in a shell (`/bin/sh -c`).
 
-* `WORKDIR` sets the working directory for `RUN`, `CMD`, `COPY` and other instructions.
+* `WORKDIR` sets the working directory for subsequent `RUN`, `CMD`, `COPY` and other instructions.
 
 
-An important consideration for your container build is the base layer.
-You can obtain base layer container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
+An important consideration for your container build is the base image.
+You can obtain container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
 
-For this guide, you use the 'latest' SUSE Linux Enterprise base container image, which, at the time of this writing, is built on {productname}.
-SUSE also provides base container images with specific development languages already installed, which can speed up your build process.
+SUSE Linux Enterprise base container images are tested, certified, and enterprise-ready with up-to-date security patches.
+For this guide, you use the 'latest' SLE BCI Python container image, which, at the time of this writing, is built on {productname} and features {otherproduct2}.
 
 When choosing a base container image, keep in mind the following considerations:
 
