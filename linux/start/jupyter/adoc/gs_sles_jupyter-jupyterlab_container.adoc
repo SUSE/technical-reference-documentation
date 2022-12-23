@@ -310,7 +310,7 @@ This can be overridden for a particular user by setting 'rootless_storage_path' 
 
 Another important storage container setting determines how data are written.
 This is determined by the storage driver and is defined with the 'driver' setting in the '[storage]' section of _/etc/containers/storage.conf_.
-For the root user, valid drivers include 'overlay2', 'vfs', 'zfs', and 'btrfs'.
+For the root user, valid drivers include 'overlay', 'vfs', 'zfs', and 'btrfs'.
 
 [NOTE]
 ====
@@ -318,14 +318,14 @@ The 'btrfs' driver is the default for {productname}, as https://en.wikipedia.org
 Btrfs offers many advantages over earlier file systems, such as copy-on-write, pooling, snapshots, and checksums.
 ====
 
-If your home directory is in a partition formatted with a different file system, Podman will default to the 'overlay2' or 'vfs' driver and warn you to set an appropriate storage driver.
-Usually this will be the 'overlay2' driver.
+If your home directory is in a partition formatted with a different file system, Podman will default to the 'overlay' or 'vfs' driver and warn you to set an appropriate storage driver.
+Usually this will be the 'overlay' driver.
 You can set this without administrator help by creating or editing the file _$HOME/.config/containers/storage.conf_ with the following contents:
 
 [listing]
 ----
 [storage]
-driver = "overlay2"
+driver = "overlay"
 ----
 
 [TIP]
@@ -402,8 +402,10 @@ This will include all installed packages, except `pip` itself and its dependenci
 
 === Define the container image
 
-The `podman build` command can build a container image from a sequence of instructions provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[Containerfile].
+You define your application container image by providing the instructions to add the components of your application onto a base image.
+These build instructions are provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[Containerfile].
 If you are familiar with the Docker container ecosystem, a Containerfile shares the same format and most of the same options as a Dockerfile.
+After defining your application container in a Containerfile, you use another tool to execute the instructions and build the image.
 
 
 Create a file, named _Containerfile_, in your build directory with the following contents:
@@ -496,7 +498,13 @@ At this point, you have:
 
 * a _requirements.txt_ file to specify the Python packages you want
 
-Now, you can build your container image with `podman build`.
+Now, you need to build your container image.
+In this guide, you will use the `podman build` command to build your application container image.
+
+[NOTE]
+====
+Another popular tool that facilitates the building of OCI compliant container images is https://buildah.io/[Buildah].
+====
 
 
 . Make sure you are in your build directory.
@@ -510,7 +518,7 @@ podman build --tag jupyter .
 +
 [TIP]
 ====
-By using the `--tag jupyter` or `-t jupyter` option, your container will be nameed _localhost/jupyter_.
+By using the `--tag jupyter` or `-t jupyter` option, your container image will be named _localhost/jupyter_.
 ====
 
 . Verify your container image exists.
@@ -538,9 +546,12 @@ Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.ht
 
 == Run your application container
 
-You have most likely heard of containers as a technology to implement microservices architectures, where software applications are composed of small, independent services that communicate over well-defined application programming interfaces (APIs).
-JupyterLab is not a microservice, so it is an unusual application to put into a container.
-However, containerizing JupyterLab with required libraries to execute a particular Jupyter notebook, can be a useful way to share a fully replicable experiment.
+Containers are a key technology for modern software development, featuring microservices architectures.
+This involves software applications that are composed of many small, independent services that communicate over well-defined application programming interfaces (APIs).
+JupyterLab is not a microservice, so it may seem to be an unusual application to put into a container.
+However, containerizing JupyterLab with required libraries to execute a particular Jupyter notebook can be a useful way to share a fully replicable experiment.
+
+In this section, you see how to run and access your container.
 
 
 . Prepare a shared workspace.
@@ -564,24 +575,32 @@ including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial
 +
 [source, bash]
 ----
-podman run --name jupyter \
- -p 8888:8888 \
- -v $(pwd):/home/jupyter/notebooks \
+podman run \
+ --userns=keep-id
+ --name jupyter \
+ --publish 8888:8888 \
+ --volume $(pwd):/home/jupyter/notebooks \
  localhost/jupyter
 ----
 +
 ====
-In this command, you specify the following options:
+With this command, you specify the following options:
 
+* `--userns=keep-id` to map the user account to the same UID within the container.
 * `--name` to set a name for the container.
 
-* `-p` or `--publish` to publish a container's network port or range of ports to the host.
+* `--publish` or `-p` to publish a container's network port or range of ports to the host.
 
-* `-v` or `--volume` to create a bind mount of a directory on your host to one in your container.
+* `--volume` or `-v` to create a bind mount of a directory on your host to one in your container.
 ====
-//
 +
-Note the output in your terminal, where you will see the URL and access token for the containerized JupyterLab environment.
+[NOTE]
+====
+If SELinux is enabled on your host system, Podman can help you properly label the mounted volume by adding either of two suffixes (`:z` or `:Z`) to the volume.
+See the https://docs.podman.io/en/latest/markdown/podman-run.1.html[podman-run documentation].
+====
+
+. Note the output in your terminal, where you will see the URL and access token for the containerized JupyterLab environment.
 +
 [source, bash]
 ----
