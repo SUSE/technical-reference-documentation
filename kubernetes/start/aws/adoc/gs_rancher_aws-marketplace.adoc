@@ -45,10 +45,11 @@ include::./common_docinfo_vars.adoc[]
 // -
 :title: Rancher by SUSE and Priority Support on AWS Marketplace
 :subtitle: Deploy Rancher by SUSE on Elastic Kubernetes Service (EKS)
-:productname: Official SUSE product/platform abbreviation with version (e.g., SLES 15 SP5, Rancher 2.7)
-:platform1: Rancher by SUSE 2.7 ?? 
-:otherproduct1: AWS Marketplace
-:otherproduct2: Amazon Elastic Kubernetes Service
+:productname: Rancher 
+:platform1: Rancher by SUSE
+:otherproduct1: Rancher Setup
+:otherproduct2: AWS Marketplace
+:otherproduct3: Amazon Elastic Kubernetes Service
 :usecase: Quickly deploy Rancher by SUSE on Amazon EKS
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -87,6 +88,7 @@ include::./common_docinfo_vars.adoc[]
 
 == Introduction
 
+
 === Motivation
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -98,6 +100,9 @@ include::./common_docinfo_vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Rancher addresses the needs of DevOps teams deploying applications with Kubernetes and IT operations delivering enterprise-critical services.
+In this document, you learn how to launch Rancher by SUSE from the AWS Marketplace listing.
+This single automation node will, in turn, launch a 3-node EKS cluster in a GEO of your choosing, and install Rancher as pods across this cluster.
 
 
 === Scope
@@ -106,7 +111,7 @@ include::./common_docinfo_vars.adoc[]
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will help you take the first steps to ...
+At the end of the process, you have a functional Rancher UI, and can deploy or import downstream EKS or other clusters, and deploy and maintain applications via the built-in partner charts, and manage your whole Kubernetes landscape from core to cloud to edge.
 
 
 === Audience
@@ -118,7 +123,8 @@ This guide will help you take the first steps to ...
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for ...
+This document is intended for customers wanting to manage Kubernetes at scale across multiple geographies and accounts within AWS or hybrid landscapes.
+Administrators and cloud architects should have a basic understanding of Kubernetes and AWS concepts and services. 
 
 
 == Prerequisites
@@ -130,7 +136,12 @@ This document is intended for ...
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+* A standard IAM user account with the attached permissions of 'AdministratorAccess' (or equivalent permissions for creating and assigning IAM policies and roles to an EC2 instance) is sufficient for initial deployment.
+Additional permissions will be given to the deployment host for creating clusters, networking components, and Route53 DNS zone entries. 
 
+* VPC, subnet, routing and security group configuration sufficient to allow https access to the deployment host web UI, as well as open access between the deployed instance and the subnets where the EKS cluster will be configured.
+
+* Route53 registered domain. 
 
 
 == Technical overview
@@ -145,9 +156,9 @@ This document is intended for ...
 //   - workflow diagram
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+The {otherproduct1} marketplace listing will deploy an automation node, which in turn, allows the administrator to deploy {platform1} within a new {otherproduct3} cluster.
 
-
-
+//Architectural Diagram TBD
 
 == Installation
 
@@ -179,11 +190,61 @@ This document is intended for ...
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+. Open https://console.aws.amazon.com/[AWS Console] and login with your IAM user account.
++ 
+//image here
+
+.	After verifying your region, ensure that you have a VPC, Subnet and Security Group created which will allow public access to your deployment automation host, and Rancher management EKS cluster. Your deployment automation host will be created within this subnet. For detailed instructions on VPC networking or rules for Public and Private Subnets, reference https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html[How VPC Works].
++ 
+//image here
+
+. Navigate to IAM. Create a new Policy named 'RancherSetupEC2policy' and paste the JSON contents for the policy from GitHub https://tinyurl.com/iam-json
++ 
+//image here
+
+. Create a new Role named 'RancherSetupEC2role' of 'Use Case' 'EC2' and attach the policy 'RancherSetupEC2policy' to it. This role will be attached to the deployment automation EC2 instance once it is created. 
++ 
+//image here
+
+. Open an additional browser tab and navigate to the Rancher Setup AWS Marketplace offering  https://tinyurl.com/rancher-setup 
++ 
+//image here
+
+. Select __Continue to Subscribe__ to the solution. Infrastructure costs apply. 
++ 
+image::aws-mp-rancher_01.png[marketplace offering select to subscribe, scaledwidth="85%", align="center"]
+
+.	Select 'Continue to Configuration'
++ 
+//image here
+
+.	Select the 'Region' and 'Subnet' you created previously and then 'Continue to Launch'
++ 
+//image here
+
+.	On the 'Congratulations' page, take note of the EC2 AMI ID. 
+.	In the first tab for the AWS Console, navigate to EC2 > Instances and select the radio button for the instance created which corresponds to the AMI ID. 
+.	Navigate to 'Actions' > 'Security' > 'Modify IAM Role' to select the role 'RancherSetupEC2role' and 'Update IAM role'. The instance now has permissions to deploy EKS and install SUSE Rancher using HELM. 
+.	After your instance is running, use your browser to connect to the public IP address of the instance using the https The instance IP address is found in the instance overview of the AWS web console. The server certificate is self-signed and you need to accept the security exception in your browser. The username for the authentication is the instance ID and the password is the account ID without dashes. Instance ID and account ID can be obtained from the AWS console.
+.	Before clicking Next on the SUSE Rancher Setup screen, Navigate to the EC2 Console again to apply the new IAM Role to this instance. Select your newly created instance in the EC2 Dashboard > Instances view. Then choose Actions > Security > Modify IAM Role. Choose RancherSetupEC2role from the drop-down list and then Update IAM Role. 
+.	Return to the SUSE Rancher Setup UI tab and click Next. 
+.	Policy Simulator verifies all permissions. Click Next. 
+.	Choose the region for deploying your EKS Management Cluster and click Next. 
+.	Choose your management cluster size. Small will work for most scenarios. Click Next. 
+.	Choose a hostname for the Rancher UI, which will be installed onto your new EKS cluster. Enter the FQDN including the R53 domain name you created. Example: rancher.exampledomain.com. SUSE Rancher Setup will go build the EKS cluster and install Rancher into it using HELM.
+.	Take note of the URL which SUSE Rancher will be served at and click next. Deployment occurs. 
+20.	Deployment should take about 20 minutes. Take note of the resources created for this new cluster environment and store the Cleanup commands in a safe place by generating the commands then scrolling down to download the zip file. You can also leave this tab open to use the Clean Resources button at your leisure. 
+21.	Follow the instructions at the top of the page to access your new SUSE Rancher UI and reset your administrative password. Happy Ranching. 
+22.	You should now promptly Terminate the Instance created for deployment automation, to improve security and save cost. 
+23.	Your SUSE Rancher UI will let you know that Priority Support has not been activated. To purchase Priority Support for your SUSE Rancher Implementation, you can contact SUSE directly at aws@suse.com or purchase it via the AWS Marketplace offerings for your Geography via the suse-rancher link below. 
 
 
 
 
-== Demonstration
+
+== Validation
+
+// actually validation - include screenshot 
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Illustrate functionality with a demonstration.
@@ -220,7 +281,9 @@ This document is intended for ...
 In this guide, you learned ...
 
 
+// mention video here
 
+To learn more about {platform1} 
 
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
