@@ -1,17 +1,79 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Variables & Attributes
-:title: Ondat with SUSE Rancher: Getting Started
-:productname: SUSE Rancher 2.6
-:author1: Rodney Karemba, Solutions Architect, Ondat
-:author2: Andy King, Alliances Solutions Architect, SUSE
-:author3: Terry Smith, Partner Solutions Director, SUSE
-// :revdate: April 13, 2022
-// :revnumber: 20220413
-//:toc2:
-//:toc-title: {title}
-//:toclevels: 4
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document and product
+// -
+:title: Ondat with Rancher by SUSE
+:subtitle: A Kubernetes-native data plane for critical workloads
+:productname: Rancher 2.6
+:platform1: Rancher by SUSE
+:otherproduct1: Ondat
+:usecase: Kubernetes solution ideal for critical data workloads, like Database-as-a-Service
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributors
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: Rodney
+:author1_surname: Karemba
+:author1_jobtitle: Solutions Architect
+:author1_orgname: Ondat
+:author2_firstname: Andy
+:author2_surname: King
+:author2_jobtitle: Alliances Solutions Architect
+:author2_orgname: SUSE
+:author3_firstname: Terry
+:author3_surname: Smith
+:author3_jobtitle: Global Partner Solutions Director
+:author3_orgname: SUSE
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// define any additional variables here for use within the document
+// -
 
 
 = {title}
@@ -29,15 +91,15 @@ include::./common_docinfo_vars.adoc[]
 The design of your cloud native Kubernetes environment requires several critical selections to meet operational, performance, flexibility, resilience, and security needs.
 
 
-https://www.suse.com/products/suse-rancher/[SUSE Rancher] is often the multi-cluster Kubernetes management platform of choice, unifying your cloud native application landscape to ensure consistent, streamlined operations and enterprise-grade security from core to cloud to edge.
+https://www.suse.com/solutions/enterprise-container-management/#rancher-product[{platform1}] is often the multi-cluster Kubernetes management platform of choice, unifying your cloud native application landscape to ensure consistent, streamlined operations and enterprise-grade security from core to cloud to edge.
 
 
 Another serious consideration is the selection of a persistent storage solution for your cloud native application data.
-https://www.ondat.io/[Ondat] is a Kubernetes native, persistent storage platform, designed to deliver high performance, guaranteed high availability, and security for all your critical workloads.
-Like SUSE Rancher, Ondat is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.
+https://www.ondat.io/[{otherproduct1}] is a Kubernetes-native, persistent storage platform, designed to deliver high performance, guaranteed high availability, and security for all your critical workloads.
+Like {platform1}, Ondat is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.
 
 
-SUSE Rancher and Ondat provide you with a complete cloud and Kubernetes native technical stack that does not compromise on the key features modern developers and businesses expect in today's data driven environment.
+{platform1} and {otherproduct1} provide you with a complete cloud and Kubernetes native technical stack that does not compromise on the key features modern developers and businesses expect in today's data driven environment.
 
 
 Key features include:
@@ -66,7 +128,7 @@ Escape infrastructure lock-in with support for all CNCF-certified Kubernetes dis
 === Scope
 
 // This guide will help you take the first steps to 
-This guide walks through the basic steps for deploying Ondat with SUSE Rancher and demonstrates the high availability use case with a stateful application.
+This guide walks through the basic steps for deploying {otherproduct1} with {platform1} and demonstrates the high availability use case with a stateful application.
 
 
 === Audience
@@ -84,7 +146,8 @@ image::rancher_ondat_arch-diagram-high-level.png[scaledwidth="75%", align="cente
 
 
 // Description
-Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users: storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with __storageos.com/__.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
+{otherproduct1} uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.
+{otherproduct1} is designed to feel familiar to Kubernetes users: storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels and selectors, prefixed with _storageos.com/_.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
 
 
 image::rancher_ondat_arch-diagram-components.png[scaledwidth="75%", align="center"]
