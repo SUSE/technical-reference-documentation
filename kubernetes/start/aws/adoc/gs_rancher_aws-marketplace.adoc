@@ -87,7 +87,7 @@ include::./common_docinfo_vars.adoc[]
 
 
 == Introduction
-
+In this getting started guide we will walk through the install of {platform1} on {otherproduct3} for managing downstream clusters wherever a routable API address exists. 
 
 === Motivation
 
@@ -193,99 +193,99 @@ The {otherproduct1} marketplace listing will deploy an automation node, which in
 
 . Open https://console.aws.amazon.com/[AWS Console] and login with your IAM user account.
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME1.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . After verifying your region, ensure that you have a VPC, Subnet and Security Group created which will allow public access to your deployment automation host, and Rancher management EKS cluster. Your deployment automation host will be created within this subnet. For detailed instructions on VPC networking or rules for Public and Private Subnets, reference https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html[How VPC Works].
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME2.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Navigate to IAM. Create a new Policy named 'RancherSetupEC2policy' and paste the JSON contents for the policy from GitHub https://tinyurl.com/iam-json
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME3.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Create a new Role named 'RancherSetupEC2role' of 'Use Case' 'EC2' and attach the policy 'RancherSetupEC2policy' to it. This role will be attached to the deployment automation EC2 instance once it is created. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME4.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Open an additional browser tab and navigate to the Rancher Setup AWS Marketplace offering https://tinyurl.com/rancher-setup 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME5.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Select __Continue to Subscribe__ to the solution. Infrastructure costs apply. 
 + 
-image::aws-mp-rancher_01.png[marketplace offering select to subscribe, scaledwidth="85%", align="center"]
+image::aws-mp-rancher_06.png[marketplace offering select to subscribe, scaledwidth="85%", align="center"]
 
 . Select 'Continue to Configuration'
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME7.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Select the 'Region' and 'Subnet' you created previously and then 'Continue to Launch'
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME8.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . On the 'Congratulations' page, take note of the EC2 AMI ID. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME9.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . In the first tab for the AWS Console, navigate to EC2 > Instances and select the radio button for the instance created which corresponds to the AMI ID. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME10.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . We recommending naming this Instance so you can find it later. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME11.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Navigate to 'Actions' > 'Security' > 'Modify IAM Role' to select the role 'RancherSetupEC2role' and 'Update IAM role'. The instance now has permissions to deploy EKS and install SUSE Rancher using HELM. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME12.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . After your instance is running, use your browser to connect to the public IP address of the instance using the https The instance IP address is found in the instance overview of the AWS web console. The server certificate is self-signed and you need to accept the security exception in your browser. The username for the authentication is the instance ID and the password is the account ID without dashes. Instance ID and account ID can be obtained from the AWS console.
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME13.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Before clicking Next on the SUSE Rancher Setup screen, Navigate to the EC2 Console again to apply the new IAM Role to this instance. Select your newly created instance in the EC2 Dashboard > Instances view. Then choose Actions > Security > Modify IAM Role. Choose RancherSetupEC2role from the drop-down list and then Update IAM Role. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME14.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Return to the SUSE Rancher Setup UI tab and click Next. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME15.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Policy Simulator verifies all permissions. Click Next. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME16.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose the region for deploying your EKS Management Cluster and click Next. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME17.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose your management cluster size. Small will work for most scenarios. Click Next. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME18.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose a hostname for the Rancher UI, which will be installed onto your new EKS cluster. Enter the FQDN including the R53 domain name you created. Example: rancher.exampledomain.com. SUSE Rancher Setup will go build the EKS cluster and install Rancher into it using HELM.
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME19.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Take note of the URL which SUSE Rancher will be served at and click next. Deployment occurs. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME20.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Deployment should take about 20 minutes. Take note of the resources created for this new cluster environment and store the Cleanup commands in a safe place by generating the commands then scrolling down to download the zip file. You can also leave this tab open to use the Clean Resources button at your leisure. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME21.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Follow the instructions at the top of the page to access your new SUSE Rancher UI and reset your administrative password. Happy Ranching. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME22.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . You should now promptly Terminate the Instance created for deployment automation, to improve security and save cost. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME23.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Your SUSE Rancher UI will let you know that Priority Support has not been activated. To purchase Priority Support for your SUSE Rancher Implementation, you can contact SUSE directly at aws@suse.com or purchase it via the AWS Marketplace offerings for your Geography via the suse-rancher link below. 
 + 
-image::NAME.png[DEFINITION, scaledwidth="85%", align="center"]
+image::NAME24.png[DEFINITION, scaledwidth="85%", align="center"]
 
 
 == Validation
