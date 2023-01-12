@@ -489,7 +489,6 @@ Are you legally able to redistribute the custom application container images you
 Learn more about https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
 
 
-
 === Build the container image
 
 At this point, you have:
@@ -576,7 +575,7 @@ including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial
 [source, bash]
 ----
 podman run \
- --userns=keep-id
+ --userns=keep-id \
  --name jupyter \
  --publish 8888:8888 \
  --volume $(pwd):/home/jupyter/notebooks \
@@ -598,6 +597,11 @@ With this command, you specify the following options:
 ====
 If SELinux is enabled on your host system, Podman can help you properly label the mounted volume by adding either of two suffixes (`:z` or `:Z`) to the volume.
 See the https://docs.podman.io/en/latest/markdown/podman-run.1.html[podman-run documentation].
+====
++
+[TIP]
+====
+Consider creating a shell script to simplify launching your container with this command.
 ====
 
 . Note the output in your terminal, where you will see the URL and access token for the containerized JupyterLab environment.
