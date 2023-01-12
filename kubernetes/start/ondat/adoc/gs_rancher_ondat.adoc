@@ -101,7 +101,7 @@ https://www.ondat.io/[{otherproduct1}] is a Kubernetes-native, persistent storag
 Like {platform1}, Ondat is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.
 
 
-SUSE and {otherproduct1} provide you with a complete cloud and Kubernetes native technical stack that does not compromise on the key features modern developers and businesses expect in today's data driven environment.
+SUSE and {otherproduct1} provide you with a complete cloud and Kubernetes-native technical stack that does not compromise on the key features modern developers and businesses expect in today's data-driven environment.
 
 
 Key features include:
@@ -237,10 +237,10 @@ The two recommended methods are:
 
 . Through https://rancher.com/docs/rancher/v2.6/en/helm-charts/[Rancher Apps catalog] using the https://github.com/rancher/partner-charts/tree/main/charts/ondat-operator/ondat-operator[Ondat Helm Chart].
 
-. With the https://docs.ondat.io/docs/reference/kubectl-plugin/[Ondat kubectl plugin].
+. With the https://docs.ondat.io/docs/reference/kubectl-plugin/[Ondat kubectl plug-in].
 
 
-In this guide, you use the {otherproduct1} `kubectl` plugin to install {otherproduct1} and deploy an etcd cluster operator in your Kubernetes cluster with {productname}.
+In this guide, you use the {otherproduct1} `kubectl` plug-in to install {otherproduct1} and deploy an etcd cluster operator in your Kubernetes cluster with {productname}.
 
 
 . Install local path provisioner.
@@ -267,7 +267,7 @@ kubectl get storageclass
 
 . Conduct preflight checks.
 +
-Run the following `kubectl-storageos` plugin command to conduct preflight checks against the Kubernetes cluster to validate that key {otherproduct1} prerequisites have been met before proceeding.
+Run the following `kubectl-storageos` plug-in command to conduct preflight checks against the Kubernetes cluster to validate that key {otherproduct1} prerequisites have been met before proceeding.
 +
 [source, bash]
 ----
@@ -289,7 +289,7 @@ export STORAGEOS_PASSWORD="password"
 
 . Install {otherproduct1}.
 +
-Run the following `kubectl-storageos` plugin command to install {otherproduct1}.
+Run the following `kubectl-storageos` plug-in command to install {otherproduct1}.
 +
 [source, bash]
 ----
@@ -467,14 +467,14 @@ Next, you explore how {otherproduct1} with {platform1} helps ensure that statefu
 
 . deploying a stateful application that leverages the __ondat-replication__ StorageClass created earlier.
 
-. simulating a node failure scenario to demonstrate how {otherproduct1}'s replication feature can to quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
+. simulating a node failure scenario to demonstrate how {otherproduct1}'s replication feature can quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
 
 
 === Deploy a stateful application
 
 For this demonstration, you will deploy MongoDB as the stateful application, using the https://github.com/percona/percona-server-mongodb-operator[MongoDB operator] developed and maintained by Percona.
 
-. Deploy the  operator with `kubectl`.
+. Deploy the operator with `kubectl`.
 +
 [source, bash]
 ----
@@ -709,7 +709,7 @@ In this guide, you:
 * created a custom StorageClass, which enabled replication and Topology-Aware Placement (TAP) to guarantee two replica volumes distributed on nodes in different availability zones.
 * demonstrated how Ondat can automatically detect an offline master volume, elect a replica volume to become master, and create a new replica on a different node to maintain the defined configuration.
 
-With Ondat and {platform1}, you can create a Kubernetes-native stack that ensures your critical, stateful workloads are highly available and durable.
+With {otherproduct1} and {platform1}, you can create a Kubernetes-native stack that ensures your critical, stateful workloads are highly available and durable.
 
 
 
