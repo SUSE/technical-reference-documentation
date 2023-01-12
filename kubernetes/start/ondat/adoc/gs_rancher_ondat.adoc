@@ -1,17 +1,80 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Variables & Attributes
-:title: Ondat with SUSE Rancher: Getting Started
-:productname: SUSE Rancher 2.6
-:author1: Rodney Karemba, Solutions Architect, Ondat
-:author2: Andy King, Alliances Solutions Architect, SUSE
-:author3: Terry Smith, Partner Solutions Director, SUSE
-// :revdate: April 13, 2022
-// :revnumber: 20220413
-//:toc2:
-//:toc-title: {title}
-//:toclevels: 4
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document and product
+// -
+:title: Ondat with Rancher by SUSE
+:subtitle: A Kubernetes-native data plane for critical workloads
+:productname: Rancher 2.6
+:platform1: Rancher by SUSE
+:otherproduct1: Ondat
+:otherproduct2: RKE v1.20.15
+:usecase: Kubernetes-native storage for critical workloads, such as Database-as-a-Service
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributors
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: Rodney
+:author1_surname: Karemba
+:author1_jobtitle: Solutions Architect
+:author1_orgname: Ondat
+:author2_firstname: Andy
+:author2_surname: King
+:author2_jobtitle: Alliances Solutions Architect
+:author2_orgname: SUSE
+:author3_firstname: Terry
+:author3_surname: Smith
+:author3_jobtitle: Global Partner Solutions Director
+:author3_orgname: SUSE
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// define any additional variables here for use within the document
+// -
 
 
 = {title}
@@ -28,16 +91,17 @@ include::./common_docinfo_vars.adoc[]
 
 The design of your cloud native Kubernetes environment requires several critical selections to meet operational, performance, flexibility, resilience, and security needs.
 
+image::logo-lockup_rancher-by-suse-ondat_hor_dark.svg[Rancher by SUSE and Ondat, scaledwidth="75%", align="center"]
 
-https://www.suse.com/products/suse-rancher/[SUSE Rancher] is often the multi-cluster Kubernetes management platform of choice, unifying your cloud native application landscape to ensure consistent, streamlined operations and enterprise-grade security from core to cloud to edge.
+https://www.suse.com/solutions/enterprise-container-management/#rancher-product[{platform1}] is often the multi-cluster Kubernetes management platform of choice, unifying your cloud native application landscape to ensure consistent, streamlined operations and enterprise-grade security from core to cloud to edge.
 
 
 Another serious consideration is the selection of a persistent storage solution for your cloud native application data.
-https://www.ondat.io/[Ondat] is a Kubernetes native, persistent storage platform, designed to deliver high performance, guaranteed high availability, and security for all your critical workloads.
-Like SUSE Rancher, Ondat is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.
+https://www.ondat.io/[{otherproduct1}] is a Kubernetes-native, persistent storage platform, designed to deliver high performance, guaranteed high availability, and security for all your critical workloads.
+Like {platform1}, Ondat is cloud platform agnostic, allowing you to free your data whilst significantly reducing your cloud storage operational costs for stateful applications.
 
 
-SUSE Rancher and Ondat provide you with a complete cloud and Kubernetes native technical stack that does not compromise on the key features modern developers and businesses expect in today's data driven environment.
+SUSE and {otherproduct1} provide you with a complete cloud and Kubernetes-native technical stack that does not compromise on the key features modern developers and businesses expect in today's data-driven environment.
 
 
 Key features include:
@@ -66,7 +130,7 @@ Escape infrastructure lock-in with support for all CNCF-certified Kubernetes dis
 === Scope
 
 // This guide will help you take the first steps to 
-This guide walks through the basic steps for deploying Ondat with SUSE Rancher and demonstrates the high availability use case with a stateful application.
+This guide walks through the basic steps for deploying {otherproduct1} with {productname} and demonstrates the high availability use case with a stateful application.
 
 
 === Audience
@@ -80,41 +144,44 @@ This document is intended for DevOps engineers, site reliability engineers (SREs
 
 // Architecture diagrams
 
-image::rancher_ondat_arch-diagram-high-level.png[scaledwidth="75%", align="center"]
+image::arch_overview_rancher-by-suse_ondat.png[High-level Architecture, scaledwidth="75%", align="center"]
+//image::rancher_ondat_arch-diagram-high-level.png[scaledwidth="75%", align="center"]
 
 
 // Description
-Ondat uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.  Ondat is designed to feel familiar to Kubernetes users: storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels  and selectors, prefixed with __storageos.com/__.  Caching is enabled by default to improve read performance and compressed to reduced network traffic.
+{otherproduct1} uses storage attached to the Kubernetes cluster nodes to create and present persistent, virtual volumes into containers.
+{otherproduct1} is designed to feel familiar to Kubernetes users: storage is managed through standard StorageClasses and PersistentVolumeClaims, and features are controlled by native Kubernetes Labels and selectors, prefixed with __storageos.com/__.
+Caching is enabled by default to improve read performance and compressed to reduced network traffic.
 
 
 image::rancher_ondat_arch-diagram-components.png[scaledwidth="75%", align="center"]
 
 
-Core Ondat components are:
+Core {otherproduct1} components are:
 
-* *Ondat Cluster Operator*
+* *{otherproduct1} Cluster Operator*
 +
 Creates and maintains the Ondat storage cluster by ensuring all relevant components are running. 
 
-* *Ondat Controlplane*
+* *{otherproduct1} Controlplane*
 +
 Monitors and maintains the state of volumes and nodes, working with etcd to maintain state consensus. 
 
-* *Ondat Dataplane*
+* *{otherproduct1} Dataplane*
 +
 Handles all I/O path related tasks, including reading, writing, compression, and caching. 
 
-* *Ondat Scheduler*
+* *{otherproduct1} Scheduler*
 +
 Helps ensure applications are scheduled on the same node as their volumes. 
 
 * *CSI Helper*
 +
-Registers Ondat with Kubernetes as a CSI driver, creating and deleting volumes in response to PersistentVolumeClaims. 
+Registers {otherproduct1} with Kubernetes as a CSI driver, creating and deleting volumes in response to PersistentVolumeClaims.
 
-* *Ondat API Manager*
+* *{otherproduct1} API Manager*
 +
-Facilitates communication between various APIs and the Ondat Controlplane API.  It continually monitors the state of the cluster and moves it toward the desired state as necessary.
+Facilitates communication between various APIs and the {otherproduct1} Controlplane API.  It continually monitors the state of the cluster and moves it toward the desired state as necessary.
 
 
 
@@ -130,22 +197,23 @@ Ensure that you have checked that the following prerequisites have been met befo
 +
 Review https://docs.ondat.io/docs/prerequisites/[Ondat prerequisites] for more on minimal and recommended resource requirements. 
 +
-NOTE: This guide uses a SUSE Rancher v2.6.3 environment with an RKE v1.20.15 cluster consisting of 3 master nodes and 5 worker nodes.
+NOTE: This guide uses a {productname} environment with an {otherproduct2} cluster consisting of 3 master nodes and 5 worker nodes.
 
 * Sufficient https://rancher.com/docs/rancher/v2.6/en/admin-settings/rbac/[Role-Based Access Control (RBAC)] permissions to deploy and manage applications in the cluster.
 +
 For more guidance, see the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation]. 
 
-* Block storage available on each worker node.  Ondat will use these to create a single storage pool for storing persistent data. 
+* Block storage available on each worker node.
+Ondat will use these to create a single storage pool for storing persistent data.
 
-* The following LinuxIO https://documentation.suse.com/sles/15-SP3/html/SLES-all/cha-mod.html[kernel modules] loaded on the worker nodes: 
+* The following LinuxIO https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-mod.html[kernel modules] loaded on the worker nodes:
 +
 ** target_core_mod
-** tcm_loop 
-** target_core_file 
-** configfs 
-** target_core_user 
-** uio 
+** tcm_loop
+** target_core_file
+** configfs
+** target_core_user
+** uio
 
 * Essential CLI utilities 
 +
@@ -164,23 +232,27 @@ Ensure these CLI utilities are installed on your local machine and are available
 //echo "Use code blocks for command-line steps."
 //---
 
-Installing Ondat into your SUSE Rancher Kubernetes cluster is easy.  Two recommended methods are:
+Installing {otherproduct1} into your Kubernetes cluster with {productname} is easy.
+The two recommended methods are:
 
-. Through https://rancher.com/docs/rancher/v2.6/en/helm-charts/[SUSE Rancher Apps & Marketplace] using the https://github.com/rancher/partner-charts/tree/main/charts/ondat-operator/ondat-operator[Ondat Helm Chart].
+. Through https://rancher.com/docs/rancher/v2.6/en/helm-charts/[Rancher Apps catalog] using the https://github.com/rancher/partner-charts/tree/main/charts/ondat-operator/ondat-operator[Ondat Helm Chart].
 
-. With the https://docs.ondat.io/docs/reference/kubectl-plugin/[Ondat kubectl plugin].
+. With the https://docs.ondat.io/docs/reference/kubectl-plugin/[Ondat kubectl plug-in].
 
 
-In this guide, you will use the Ondat `kubectl` plugin to install Ondat and deploy an etcd cluster operator in your SUSE Rancher Kubernetes cluster.
+In this guide, you use the {otherproduct1} `kubectl` plug-in to install {otherproduct1} and deploy an etcd cluster operator in your Kubernetes cluster with {productname}.
 
 
 . Install local path provisioner.
 +
-By default, a newly provisioned SUSE Rancher Kubernetes cluster does not have a deployed CSI driver.
+By default, a newly provisioned Kubernetes cluster does not have a deployed CSI driver.
 +
 Run the following commands against the cluster to deploy a https://github.com/rancher/local-path-provisioner[Local Path Provisioner] to provide local storage for an etcd cluster.
 +
-NOTE: The Local Path Provisioner stores all data locally on the individual nodes and is not recommended for production installations. 
+[NOTE]
+====
+The Local Path Provisioner stores all data locally on the individual nodes and is not recommended for production installations.
+====
 +
 [source, bash]
 ----
@@ -195,7 +267,7 @@ kubectl get storageclass
 
 . Conduct preflight checks.
 +
-Run the following `kubectl-storageos` plugin command to conduct preflight checks against the SUSE Rancher Kubernetes cluster to validate that key Ondat prerequisites have been met before proceeding.
+Run the following `kubectl-storageos` plug-in command to conduct preflight checks against the Kubernetes cluster to validate that key {otherproduct1} prerequisites have been met before proceeding.
 +
 [source, bash]
 ----
@@ -204,9 +276,9 @@ kubectl storageos preflight
 ----
 
 
-. Create your Ondat credentials.
+. Create your {otherproduct1} credentials.
 +
-Define and export the STORAGEOS_USERNAME and STORAGEOS_PASSWORD environment variables that will be used as your credentials to access and manage your Ondat instance.
+Define and export the STORAGEOS_USERNAME and STORAGEOS_PASSWORD environment variables that will be used as your credentials to access and manage your {otherproduct1} instance.
 +
 [source, bash]
 ----
@@ -215,9 +287,9 @@ export STORAGEOS_PASSWORD="password"
 ----
 
 
-. Install Ondat.
+. Install {otherproduct1}.
 +
-Run the following `kubectl-storageos` plugin command to install Ondat.
+Run the following `kubectl-storageos` plug-in command to install {otherproduct1}.
 +
 [source, bash]
 ----
@@ -230,12 +302,16 @@ kubectl storageos install \
   --admin-password="$STORAGEOS_PASSWORD"
 ----
 +
-NOTE: The installation process may take a few minutes.
+[NOTE]
+====
+The installation process may take a few minutes.
+====
 
 
-. Verify the Ondat installation.
+. Verify the {otherproduct1} installation.
 +
-When the installation is complete, inspect Ondat’s resources.  The core components should all show a status of __RUNNING__.
+When the installation is complete, inspect {otherproduct1}’s resources.
+The core components should all show a status of __RUNNING__.
 +
 [source, bash]
 ----
@@ -245,29 +321,29 @@ kubectl get all --namespace=storageos-etcd
 kubectl get storageclasses | grep "storageos"
 ----
 +
-You can also review the status of the components in the Rancher Server UI.
+You can also review the status of the components in the {productname} Management Server UI.
 +
 image::rancher_ondat_server-ui-components-status.png[scaledwidth="75%", align="center"]
 
 . Apply a licence to the cluster.
 +
-Newly installed Ondat clusters will run unlicensed for 24 hours without any limitations.
-Thereafter, the Ondat cluster must be licensed to ensure that new operations, such as volume provisioning or adding nodes, continue to work.
+Newly installed {otherproduct1} clusters will run unlicensed for 24 hours without any limitations.
+Thereafter, the {otherproduct1} cluster must be licensed to ensure that new operations, such as volume provisioning or adding nodes, continue to work.
 +
-Review the https://docs.ondat.io/docs/operations/licensing[licensing overview] to learn about Ondat licensing, including free options.
+Review the https://docs.ondat.io/docs/operations/licensing[licensing overview] to learn about {otherproduct1} licensing, including free options.
 
 
 
 == Configuration
 
-After Ondat is installed and running, you need to create a custom Ondat StorageClass and configure it as the default for your cluster to enable these key features:
+After {otherproduct1} is installed and running, you need to create a custom {otherproduct1} StorageClass and configure it as the default for your cluster to enable these key features:
 
 * [Replication](https://docs.ondat.io/docs/concepts/replication/)
 * [Topology-Aware Placement (TAP)](https://docs.ondat.io/docs/operations/tap/)
 * [Encryption](https://docs.ondat.io/docs/reference/encryption/)
 
 
-Follow the steps below to configure your Ondat cluster.
+Follow the steps below to configure your {otherproduct1} cluster.
 
 
 . Define custom region https://docs.ondat.io/docs/reference/labels/[feature labels] for the nodes in the cluster.
@@ -320,14 +396,14 @@ kubectl patch storageclass ondat-replication -p '{"metadata": {"annotations":{"s
 kubectl get storageclasses | grep "ondat-replication"
 ----
 +
-You can also review the custom Ondat StorageClass through the Rancher Server UI.
+You can also review the custom {otherproduct1} StorageClass through the {productname} Management Server UI.
 +
 image::rancher_ondat_server-ui-custom-ondat-storageclass.png[scaledwidth="75%", align="center"]
 
-Your Ondat cluster is now configured.
+Your {otherproduct1} cluster is now configured.
 
 
-Before proceeding to the demonstration, follow the steps below to deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[Ondat CLI utility as a deployment] so that you can interact and manage Ondat through `kubectl`.
+Before proceeding to the demonstration, follow the steps below to deploy and run the https://docs.ondat.io/docs/reference/cli/#run-the-cli-as-a-deployment-in-your-cluster[{otherproduct1} CLI utility as a deployment] so that you can interact and manage {otherproduct1} through `kubectl`.
 
 . Deploy the CLI utility in the __storageos__ namespace.
 +
@@ -387,18 +463,18 @@ storageos-cli-77748d9c84-dtbg7
 
 //Describe use case and demonstration.
 
-Next, you will explore how Ondat with SUSE Rancher helps ensure that stateful workload data are always highly available by:
+Next, you explore how {otherproduct1} with {platform1} helps ensure that stateful workload data are always highly available by:
 
 . deploying a stateful application that leverages the __ondat-replication__ StorageClass created earlier.
 
-. simulating a node failure scenario to demonstrate how Ondat's replication feature can to quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
+. simulating a node failure scenario to demonstrate how {otherproduct1}'s replication feature can quickly fail over to a new replica volume when a master volume suddenly goes permanently offline.
 
 
 === Deploy a stateful application
 
 For this demonstration, you will deploy MongoDB as the stateful application, using the https://github.com/percona/percona-server-mongodb-operator[MongoDB operator] developed and maintained by Percona.
 
-. Deploy the  operator with `kubctl`.
+. Deploy the operator with `kubectl`.
 +
 [source, bash]
 ----
@@ -425,7 +501,8 @@ kubectl get pods --namespace=mongodb
 ----
 
 
-. When the database is running, you will notice that Ondat automatically created two replica volumes for each master volume.  Verify this with the following command:
+. When the database is running, you should see that {otherproduct1} automatically created two replica volumes for each master volume.
+Verify this with the following command:
 +
 [source, bash]
 ----
@@ -500,7 +577,8 @@ This is the TAP feature in action, which is leveraging the custom regions node l
 
 === Simulate a node failure
 
-Ondat automatically fails over to a replica volume on a different node in the event of a sudden node outage.  To see this, you will purposefully delete the node hosting the stateful application's master volume.
+{otherproduct1} automatically fails over to a replica volume on a different node in the event of a sudden node outage.
+To see this, you will purposefully delete the node hosting the stateful application's master volume.
 
 From the output of the previous command, you know that the master volume resides on __demo-worker-node-2__ and the related replica volumes reside on __demo-worker-node-1__ and __demo-worker-node-3__.
 
@@ -508,7 +586,11 @@ When __demo-worker-node-2__ goes offline, Ondat automatically detects that the m
 Then it elects one of the replicas to become a master and creates a new replica on a different node to maintain the defined replica volume count.
 
 
-NOTE: The nodes where the volumes reside may be different for your cluster.  Ensure that you substitute the correct node names in the commands below.
+[NOTE]
+====
+The nodes where the volumes reside may be different for your cluster.
+Ensure that you substitute the correct node names in the commands below.
+====
 
 
 . Delete __demo-worker-node-2__ (containing the master volume).
@@ -610,7 +692,7 @@ minimal-cluster-rs0-0                              1/1     Running   0          
 percona-server-mongodb-operator-5dd88ff7f7-ncqcn   1/1     Running   0          51m
 ----
 
-In this example output, notice that Ondat elected the replica volume on __demo-worker-node-3__ to host the master volume since __demo-worker-node-2__ no longer exists.
+In this example output, notice that {otherproduct1} elected the replica volume on __demo-worker-node-3__ to host the master volume since __demo-worker-node-2__ no longer exists.
 Also notice that a new replica volume was automatically created on __demo-worker-node-5__ to ensure that the replica count remains at two, as defined.
 
 
@@ -623,11 +705,11 @@ Also notice that a new replica volume was automatically created on __demo-worker
 
 In this guide, you:
 
-* deployed Ondat into a Kubernetes cluster in your SUSE Rancher cloud native landscape.
+* deployed {otherproduct1} into a Kubernetes cluster in your {productname} landscape.
 * created a custom StorageClass, which enabled replication and Topology-Aware Placement (TAP) to guarantee two replica volumes distributed on nodes in different availability zones.
 * demonstrated how Ondat can automatically detect an offline master volume, elect a replica volume to become master, and create a new replica on a different node to maintain the defined configuration.
 
-With Ondat and SUSE Rancher, you can create a Kubernetes native stack that ensures your critical, stateful workloads are highly available and durable.
+With {otherproduct1} and {platform1}, you can create a Kubernetes-native stack that ensures your critical, stateful workloads are highly available and durable.
 
 
 
@@ -641,7 +723,7 @@ With Ondat and SUSE Rancher, you can create a Kubernetes native stack that ensur
 * https://www.ondat.io/[Ondat.io]
 * https://www.suse.com/[SUSE.com]
 * https://docs.ondat.io/[Ondat documentation]
-* https://rancher.com/docs/[SUSE Rancher documentation]
+* https://rancher.com/docs/[Rancher documentation]
 * https://www.suse.com/community/[SUSE & Rancher Community]
 * https://www.percona.com/doc/kubernetes-operator-for-psmongodb/index.html[Percona distribution for MongoDB operator]
 
