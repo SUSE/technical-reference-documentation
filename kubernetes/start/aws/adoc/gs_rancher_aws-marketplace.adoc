@@ -232,7 +232,7 @@ image::aws-mp-rancher-08.png[DEFINITION, scaledwidth="85%", align="center"]
 + 
 image::aws-mp-rancher-09.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. In the AWS Console, navigate to EC2 > Instances and select the radio button for the newly creatde instance created which corresponds to the AMI ID and name this Instance so you can find it later.
+. In the AWS Console, navigate to EC2 > Instances and select the radio button for the newly created instance  which corresponds to the AMI ID, and name this instance, so you can find it later.
 + 
 image::aws-mp-rancher-10.png[DEFINITION, scaledwidth="85%", align="center"]
 
@@ -243,52 +243,52 @@ image::aws-mp-rancher-12.png[DEFINITION, scaledwidth="85%", align="center"]
 . After your instance is in the _running_ state, use your browser to connect to the public IP address of the instance using the https The instance IP address is found in the instance overview of the AWS web console. The server certificate is self-signed and you need to accept the security exception in your browser. 
 + 
 image::aws-mp-rancher-13.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-14.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . The username for the authentication is the EC2 instance ID and the password is the AWS account ID without dashes. Instance ID and account ID can be obtained from the AWS console.
-
-. Before clicking Next on the SUSE Rancher Setup screen, Navigate to the EC2 Console again to apply the new IAM Role to this instance. Select your newly created instance in the EC2 Dashboard > Instances view. Then choose Actions > Security > Modify IAM Role. Choose RancherSetupEC2role from the drop-down list and then Update IAM Role. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Return to the SUSE Rancher Setup UI tab and click Next. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Policy Simulator verifies all permissions. Click Next. 
+. Policy Simulator verifies all permissions. If an error occurs at this sage, then the Role was not correctly applied to the instance.
+Click Next. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose the region for deploying your EKS Management Cluster and click Next. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose your management cluster size. Small will work for most scenarios. Click Next. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose a hostname for the Rancher UI, which will be installed onto your new EKS cluster. Enter the FQDN including the R53 domain name you created. Example: rancher.exampledomain.com. SUSE Rancher Setup will go build the EKS cluster and install Rancher into it using HELM.
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Take note of the URL which SUSE Rancher will be served at and click next. Deployment occurs. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Deployment should take about 20 minutes. Take note of the resources created for this new cluster environment and store the Cleanup commands in a safe place by generating the commands then scrolling down to download the zip file. You can also leave this tab open to use the Clean Resources button at your leisure. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Follow the instructions at the top of the page to access your new SUSE Rancher UI and reset your administrative password. Happy Ranching. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . You should now promptly Terminate the Instance created for deployment automation, to improve security and save cost. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-30.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Your SUSE Rancher UI will let you know that Priority Support has not been activated. To purchase Priority Support for your SUSE Rancher Implementation, you can contact SUSE directly at aws@suse.com or purchase it via the AWS Marketplace offerings for your Geography via the suse-rancher link below. 
 + 
-image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
 
 
 == Validation
