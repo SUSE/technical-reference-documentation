@@ -49,10 +49,8 @@ include::./common_docinfo_vars.adoc[]
 :platform1: SUSE Linux Enterprise Server 15 SP4
 :platform2: SUSE Linux Enterprise Base Container Images
 :productname2: SLE BCI
-:otherproduct1: JupyterLab
-:otherorg1: Project Jupyter
-:otherproduct2: Python 3.10
-:otherproduct3: Podman 3.4.7
+:python_ver: 3.10
+:podman_ver: 3.4.7
 :usecase: Data analytics and machine learning development
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -122,15 +120,26 @@ To progress with this document, the reader should have basic Linux command line 
 
 == Overview
 
+
+Modern software development agile, featuring microservices architectures.
+Software applications are no longer monolithic executables.
+Instead, they are composed of many small, independent services that communicate over well-defined application programming interfaces (APIs).
+And containers are a key technology for implementing microservices architectures.
+
+https://jupyter.org/[JupyterLab] is an interactive development environment that is popular among machine learning, data science, and other researchers and developers.
+It is not built on a microservices architecture, so it may seem to be an unusual application to put into a container.
+However, containerizing JupyterLab with all required libraries can be a useful way to share a fully replicable experiment with other researchers.
+
+
 === Goals
 
 In this guide, you learn how to:
 
-* set up https://podman.io[Podman] on https://www.suse.com/products/server/[{platform1}] ({productname}).
+* set up https://podman.io[Podman] on https://www.suse.com/products/server/[{platform1}] ({productname}) to run containers as a non-privileged user.
 
-* specify and build a container image for a https://jupyter.org/[JupyterLab] ML development environment.
+* define and build a container image for a https://jupyter.org/[JupyterLab] ML development environment.
 
-* run your container and access the ML development environment.
+* run your JupyterLab container with access to files on your host system.
 
 
 === Software ecosystem
@@ -165,7 +174,7 @@ SUSE maintains up-to-date, ready-to-use container images at https://registry.sus
 Podman is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
 //
 +
-This guide uses {otherproduct3}.
+This guide uses Podman {podman_ver}.
 
 
 . https://www.python.org/[Python]
@@ -173,6 +182,9 @@ This guide uses {otherproduct3}.
 +
 Python has become a popular programming ecosystem for ML developers for its simplicity, elegance, extensibility, cross-platform availability, and active, open source community of developers and users.
 With Python, ML developers have access to a vast collection of libraries, frameworks, and toolkits with which to build solutions to complex problems.
+//
++
+This guide uses Python {python_ver}.
 
 
 . https://jupyter.org/[JupyterLab] from Project Jupyter
@@ -198,7 +210,7 @@ You can also run Podman containers as an ordinary, non-privileged user, making i
 
 [TIP]
 ====
-See the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide] for a deeper discussion on containers and Podman.
+See the https://documentation.suse.com/container/all/single-html/SLES-container/[SUSE Container Guide] for a deeper discussion on containers and Podman with {productname}.
 ====
 
 
@@ -290,7 +302,6 @@ podman system migrate
 ====
 
 
-
 === Configure the container storage driver
 
 It is important to consider where and how your containers and container images are stored.
@@ -330,16 +341,30 @@ See the manual page for containers-storage.conf for more storage settings:
 ====
 
 
-=== Grant read access to Zypper credentials
+=== Grant access to your SUSE Customer Center credentials
 
-This step is optional, but it is covered here for completeness.
+[NOTE]
+====
+This section is optional.
+====
 
-To install RPM packages from the {productname} repositories, your user account needs read access to your SUSE Customer Center credentials.
-These are located in _/etc/zypp/credentials.d_.
+An application container image starts with a base image.
+Onto this, you layer additional contents, such as libraries and applications.
+One way to do this is by installing software RPM packages from the {productname} repositories.
+This requires your user account to have read access to your SUSE Customer Center (SCC) credentials.
 
-For this guide, you use the {productname2} Python container image.
-This container image already includes the development and runtime components for {otherproduct2}, saving you from needing to install them from the {productname} repositories.
-If you choose to use a different {productname2} or wish to install other official RPM packages, you can grant read permission to your current user with:
+For this guide, you use the latest {productname2} Python container image as your base.
+This container image already includes the development and runtime components for Python {python_ver}, saving you from having to install them.
+All other required software and libraries can be installed from the https://pypi.org/[Python Package Index].
+Thus, you do not need to grant your user access to your SCC credentials.
+
+[NOTE]
+====
+When building your container, you may see a warning of an "error mounting subscriptions."
+This is because _/etc/SUSEConnect_ and _/etc/zypp/credentials.d/SCCcredentials_ are specified as default mounts in _/etc/containers/mounts.conf_.
+====
+
+If you do wish to be able to install official RPM packages from the {productname} repositories, you can grant read permission to your current user with:
 
 [source, bash]
 ----
@@ -370,22 +395,22 @@ cd $HOME/jupcontainer
 ----
 
 
-
 === Define the Python environment
 
 Replicability is critical in science and engineering.
 Complex applications, like an ML model, can produce wildly different results or not work at all because of minor code variations in a library dependency.
-So, it becomes important when building such applications to explicitly define all the software dependencies and their versions.
+Thus, it can be critical when building such applications to explicitly define all the software dependencies and their versions.
 
 Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
-Keys to this process are the `pip` Python package management tool and a file that specifies the required packages and their versions, typically named _requirements.txt_.
+Keys to this process are the `pip` Python package management tool, the https://pypi.org/[Python Package Index], and a list of required Python packages, usually in a file named _requirements.txt_.
 
-[NOTE]
-====
+Your _requirements.txt_ file is a simple list of the required package names and versions.
 Each package you specify may have several dependencies of its own.
-Depending on your needs, your _requirements.txt_ file can become quite long.
-If you do not specify a package version, the `pip` dependency resolver will automatically attempt install the latest version that is compatible with the other dependencies.
-====
+Depending on your requirements, you may need to explicitly list all of these and their versions.
+As a result, your _requirements.txt_ file can become quite long and detailed.
+In many cases, however, you can limit your _requirements.txt_ file to just the major packages and their desired versions.
+The `pip` dependency resolver will automatically attempt install the latest compatible versions of dependencies.
+
 
 Create this _requirements.txt_ file in your build directory:
 
@@ -400,15 +425,21 @@ scipy==1.9.3
 seaborn==0.12.1
 ----
 
-In this example, you specify the exact version of each package.
+In this example, you specify only the major packages and their preferred versions.
 If the specified version of a package is no longer available, your container image build will fail.
-You can overcome this is by removing the version specification (for example, just specify `seaborn` instead of `seaborn==0.11.2`).
+You can overcome this is by removing the version specification (for example, just specify `seaborn` instead of `seaborn==0.12.1`).
 This frees the `pip` dependency resolver to substitute in an appropriate, available version of the package.
-After you verify functionality, you can update your _requirements.txt_ file with the new version.
+
+[WARNING]
+====
+Unexpected behaviors can arise due to code changes in major packages or any of their dependencies.
+====
+
 
 [TIP]
 ====
-You can automatically create a _requirements.txt_ file from an installed environment by issuing `pip freeze > requirements.txt`.
+Once you have verified a functioning configuration, you can automatically generate an updated _requirements.txt_ file.
+Within the environment, issue `pip freeze > requirements.txt`.
 This will include all installed packages, except `pip` itself and its dependencies.
 ====
 
@@ -483,7 +514,7 @@ An important consideration for your container build is the base image.
 You can obtain container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
 
 SUSE Linux Enterprise base container images are tested, certified, and enterprise-ready with up-to-date security patches.
-For this guide, you use the 'latest' SLE BCI Python container image, which, at the time of this writing, is built on {productname} and features {otherproduct2}.
+For this guide, you use the 'latest' {productname2} Python container image, which, at the time of this writing, is built on {productname} and features Python {python_ver}.
 
 When choosing a base container image, keep in mind the following considerations:
 
@@ -502,28 +533,6 @@ Are you legally able to redistribute the custom application container images you
 Learn more about https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
 
 
-=== Create a run script
-
-
-
-[source, bash]
-----
-#!/bin/bash
-
-container_user=1000
-container_group=1000
-
-podman run \
-  --uidmap $container_user:0:1 \
-  --uidmap 0:1:$container_user \
-  --gidmap $container_group:0:1 \
-  --gidmap 0:1:$container_group \
-  --name jupyter \
-  --publish 8888:8888 \
-  --volume $(pwd):/home/jupyter/notebooks \
-  localhost/jupyter
-----
-
 === Build the container image
 
 At this point, you have:
@@ -532,16 +541,21 @@ At this point, you have:
 
 * a _requirements.txt_ file to specify the Python packages you want
 
-Now, you need to build your container image.
-In this guide, you will use the `podman build` command to build your application container image.
+You can now build your application container image.
+To do this you use the `podman build` command.
 
 [NOTE]
 ====
-Another popular tool that facilitates the building of OCI compliant container images is https://buildah.io/[Buildah].
+Another popular tool that facilitates building OCI compliant container images is https://buildah.io/[Buildah].
 ====
 
 
 . Make sure you are in your build directory.
++
+[source, bash]
+----
+cd $HOME/jupcontainer
+----
 
 . Build the container image.
 +
@@ -578,12 +592,7 @@ Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.ht
 ====
 
 
-== Run your application container
-
-Containers are a key technology for modern software development, featuring microservices architectures.
-This involves software applications that are composed of many small, independent services that communicate over well-defined application programming interfaces (APIs).
-JupyterLab is not a microservice, so it may seem to be an unusual application to put into a container.
-However, containerizing JupyterLab with required libraries to execute a particular Jupyter notebook can be a useful way to share a fully replicable experiment.
+== Launch your application container
 
 In this section, you see how to run and access your container.
 
@@ -610,36 +619,91 @@ including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial
 [source, bash]
 ----
 podman run \
- --userns=keep-id \
- --name jupyter \
- --publish 8888:8888 \
- --volume $(pwd):/home/jupyter/notebooks \
- localhost/jupyter
+  --uidmap 1000:0:1 \
+  --uidmap 0:1:1000 \
+  --gidmap 1000:0:1 \
+  --gidmap 0:1:1000 \
+  --name jupyter \
+  --publish 8888:8888 \
+  --volume $(pwd):/home/jupyter/notebooks \
+  localhost/jupyter
 ----
 +
 ====
 With this command, you specify the following options:
 
-* `--userns=keep-id` to map the user account to the same UID within the container.
+* `uidmap` and `gidmap` specify user and group mappings, respectively.
+//
++
+Recall that you specified the UID and GID of the jupyter user in your _Containerfile_.
+
 * `--name` to set a name for the container.
 
-* `--publish` or `-p` to publish a container's network port or range of ports to the host.
+* `--publish` or `-p` to map a container's network port or range of ports to the host.
 
 * `--volume` or `-v` to create a bind mount of a directory on your host to one in your container.
 ====
 +
 [NOTE]
 ====
-If SELinux is enabled on your host system, Podman can help you properly label the mounted volume by adding either of two suffixes (`:z` or `:Z`) to the volume.
+If SELinux is enabled on your host system, Podman can help you properly label the mounted volume.
+Do this by appending `:z` or `:Z` to the volume option.
+That is,
+
+* `--volume $(pwd):/home/jupyter/notebooks:z` if one or more containers will share the volume contents.
+
+* `--volume $(pwd):/home/jupyter/notebooks:Z` if you only want the current container to use the volume.
+
 See the https://docs.podman.io/en/latest/markdown/podman-run.1.html[podman-run documentation].
 ====
 +
 [TIP]
 ====
-Consider creating a shell script to simplify launching your container with this command.
+Rather than typing this command every time you want to launch your container, create a shell script to do it.
+ 
+. Create the text file _runjup_ with this content.
++
+[source, bash]
+----
+#!/bin/bash
+
+container_name=jupyter
+container_user=1000
+container_group=1000
+container_port=8888
+host_port=8888
+container_volume=/home/jupyter/notebooks
+host_volume=$(pwd)
+
+podman run \
+  --uidmap $container_user:0:1 \
+  --uidmap 0:1:$container_user \
+  --gidmap $container_group:0:1 \
+  --gidmap 0:1:$container_group \
+  --name jupyter \
+  --publish $host_port:$container_port \
+  --volume $host_volume:$container_volume:z \
+  localhost/jupyter
+----
+
+. Grant your user execute permissions for this script.
++
+[source, bash]
+----
+chmod u+x runjup
+----
+
+. Launch your application container.
++
+[source, bash]
+----
+./runjup
+----
+
 ====
 
-. Note the output in your terminal, where you will see the URL and access token for the containerized JupyterLab environment.
+. Once you have launched your container, note the output in your terminal.
+There you can find the URL and access token for the containerized JupyterLab environment.
 +
 [source, bash]
 ----
