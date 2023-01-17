@@ -48,10 +48,11 @@ include::./common_docinfo_vars.adoc[]
 :productname: SLES 15 SP4
 :platform1: SUSE Linux Enterprise Server 15 SP4
 :platform2: SUSE Linux Enterprise Base Container Images
+:productname2: SLE BCI
 :otherproduct1: JupyterLab
 :otherorg1: Project Jupyter
 :otherproduct2: Python 3.10
-:otherproduct3: Podman
+:otherproduct3: Podman 3.4.7
 :usecase: Data analytics and machine learning development
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -162,6 +163,9 @@ SUSE maintains up-to-date, ready-to-use container images at https://registry.sus
 //
 +
 Podman is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
+//
++
+This guide uses {otherproduct3}.
 
 
 . https://www.python.org/[Python]
@@ -232,7 +236,8 @@ sudo zypper up
 ====
 
 
-=== Enable rootless Podman
+
+=== Define subordinate UIDs and GIDs
 
 By default, only the root user can run Podman containers.
 Running rootless Podman can improve security and enable multiple, unprivileged users to run containers on the same system.
@@ -285,16 +290,6 @@ podman system migrate
 ====
 
 
-=== Grant read access to Zypper credentials.
-
-Your user needs access to read the SUSE Customer Center credentials, located in _/etc/zypp/credentials.d_.
-
-Grant read permission with:
-[source, bash]
-----
-sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
-----
-
 
 === Configure the container storage driver
 
@@ -333,6 +328,24 @@ driver = "overlay"
 See the manual page for containers-storage.conf for more storage settings:
 `man containers-storage.conf 5`
 ====
+
+
+=== Grant read access to Zypper credentials
+
+This step is optional, but it is covered here for completeness.
+
+To install RPM packages from the {productname} repositories, your user account needs read access to your SUSE Customer Center credentials.
+These are located in _/etc/zypp/credentials.d_.
+
+For this guide, you use the {productname2} Python container image.
+This container image already includes the development and runtime components for {otherproduct2}, saving you from needing to install them from the {productname} repositories.
+If you choose to use a different {productname2} or wish to install other official RPM packages, you can grant read permission to your current user with:
+
+[source, bash]
+----
+sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
+----
+
 
 
 == Create your application container image
@@ -419,7 +432,7 @@ Create a file, named _Containerfile_, in your build directory with the following
 FROM registry.suse.com/bci/python:latest
 
 # create unprivileged user to run JupyterLab
-RUN useradd -m jupyter
+RUN useradd --uid 1000 --user-group --create-home jupyter
 USER jupyter
 
 # define and create notebook directory
@@ -488,6 +501,28 @@ Are you legally able to redistribute the custom application container images you
 
 Learn more about https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
 
+
+=== Create a run script
+
+
+
+[source, bash]
+----
+#!/bin/bash
+
+container_user=1000
+container_group=1000
+
+podman run \
+  --uidmap $container_user:0:1 \
+  --uidmap 0:1:$container_user \
+  --gidmap $container_group:0:1 \
+  --gidmap 0:1:$container_group \
+  --name jupyter \
+  --publish 8888:8888 \
+  --volume $(pwd):/home/jupyter/notebooks \
+  localhost/jupyter
+----
 
 === Build the container image
 
