@@ -258,57 +258,82 @@ image::aws-mp-rancher-14.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Return to the {otherproduct1} UI and click __Login__ with the username and password just acquired. 
 + 
-#image::aws-mp-rancher-15.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-15.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . On the SUSE Rancher Setup page, click __Next__.
 + 
-#image::aws-mp-rancher-16.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-16.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Policy Simulator verifies all permissions.
 If an error occurs at this stage, then the role was not correctly applied to the instance.
 Click __Next__.
 + 
-#image::aws-mp-rancher-17.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-17.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose the region for deploying your {otherproduct3} management cluster and click __Next__. 
 + 
-#image::aws-mp-rancher-18.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-18.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose your management cluster size and click __Next__.
 'Small' will work for most initial deployments.
 + 
-#image::aws-mp-rancher-19.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-19.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose a hostname for the Rancher UI, which will be installed onto your new EKS cluster.
 Enter the fully qualified domain name, including the R53 domain name you created.
 Example: rancher.exampledomain.com.
 {otherproduct1} will build the EKS cluster and install {productname} using HELM.
 + 
-#image::aws-mp-rancher-20.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-20.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Take note of the URL which SUSE Rancher will be served at and click __Next__.
 On the 'Deploy Rancher on AWS EKS' screen, click __Next__.
 + 
-#image::aws-mp-rancher-21.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-21.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Deployment should take about 20 minutes. Take note of the resources created for this new cluster environment and store the Cleanup commands in a safe place by generating the commands then scrolling down to download the zip file. You can also leave this tab open to use the Clean Resources button at your leisure. 
+. Deployment should take about 20 minutes. Take note of the resources created for this new cluster environment and store the 'Clean resources' commands in a safe place by generating the commands then scrolling down to download the zip file. You can also leave this tab open to use the Clean Resources button at your leisure. 
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-22.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Follow the instructions at the top of the page to access your new SUSE Rancher UI and reset your administrative password. Happy Ranching. 
+. Follow the instructions at the top of the page to access your new SUSE Rancher UI and reset your administrative password.
+Log into the 'Welcome to Rancher' page with the bootstrap password generated fpr first use by clicking __Log in with Local User__.
++
+image::aws-mp-rancher-23.png[DEFINITION, scaledwidth="85%", align="center"]
+
+. You will be prompted to change the password for the 'admin' account by selecting 'I agree to the terms and conditions for using Rancher' then clicking __Continue__.
+12 character minimum.
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-24.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. You should now promptly Terminate the Instance created for deployment automation, to improve security and save cost. 
+. You can now use HTTPS in your browser to naviate to the FQDN provider during setup.
+Example: rancher.sampledomain.com
++
+image::aws-mp-rancher-25.png[DEFINITION, scaledwidth="85%", align="center"]
+
+. You should now promptly Terminate the Instance created for deployment automation to improve security and save cost. 
 + 
 image::aws-mp-rancher-30.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Your SUSE Rancher UI will let you know that Priority Support has not been activated. To purchase Priority Support for your SUSE Rancher Implementation, you can contact SUSE directly at aws@suse.com or purchase it via the AWS Marketplace offerings for your Geography via the suse-rancher link below. 
+. The initial 3-node management cluster does not count against your {productname} 'Priority Support' node count which you may purchase through the {otherproduct2}. 
+You can now create a 'Cloud Credential' 
++
+image::aws-mp-rancher-31.png[DEFINITION, scaledwidth="85%", align="center"]
+Deploy or import downstream clusters and node-groups for workloads.    
++
+image::aws-mp-rancher-32.png[DEFINITION, scaledwidth="85%", align="center"]
+
+Your SUSE Rancher UI will let you know that Priority Support has not been activated. 
++image::aws-mp-rancher-33.png[DEFINITION, scaledwidth="85%", align="center"]
+
+To purchase 'Priority Support' for your {productname} implementation, you can contact SUSE directly at aws@suse.com or purchase it via the {otherproduct2} offerings for your Geography.
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-34.png[DEFINITION, scaledwidth="85%", align="center"]
+
+. You can also purchase 'Priority Support' via your normal AWS or SUSE sales channel or by contacting aws@suse.com to leverage a 'Private Offer'.
+Happy Ranching.
 
 
-== Validation
+// == Validation
 
 // actually validation - include screenshot 
 
@@ -332,7 +357,8 @@ image::aws-mp-rancher-30.png[DEFINITION, scaledwidth="85%", align="center"]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-
+==  Demo
+View this https://youtu.be/9dznJ7Ons0M[video walk-through] for a quick overview of the deployment process. 
 
 
 == Summary
@@ -344,16 +370,14 @@ image::aws-mp-rancher-30.png[DEFINITION, scaledwidth="85%", align="center"]
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you learned ...
-
+In this guide, you learned to quickly deploy a {platform1} implementation and management cluster using {otherproduct3} by way of the {otherproduct2}.
 
 Please reference the https://www.youtube.com/watch?v=9dznJ7Ons0M[step-by-step walk-through video].
 
 === References
-https://tinyurl.com/rancher-setup 
-https://tinyurl.com/suse-rancher 
-https://tinyurl.com/rancher-setup-video-demo 
-https://www.suse.com/c/deploy-rancher-on-an-eks-cluster-the-easy-way/ 
+https://aws.amazon.com/marketplace/search?searchTerms=SUSE+Rancher&CREATOR=1595dc13-315b-4349-8640-bf36795ae787%2Cd8e49cc8-b2f8-448d-8531-fc8e873121b0&filters=CREATOR[SUSE Rancher products including 'Priority Support'].
+https://youtu.be/9dznJ7Ons0M[video walk-through].
+https://www.suse.com/c/deploy-rancher-on-an-eks-cluster-the-easy-way/[Blog post covering this solution].
 
 
 To learn more about {platform1} 
