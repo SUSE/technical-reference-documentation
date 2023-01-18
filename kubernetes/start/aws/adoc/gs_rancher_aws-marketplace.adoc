@@ -58,19 +58,18 @@ include::./common_docinfo_vars.adoc[]
 // specify information about authors, editors, and others here,
 // then update docinfo file as appropriate
 // -
-:author1_firstname: first (given) name
-:author1_surname: surname
-:author1_jobtitle: job title
-:author1_orgname: organization affiliation
-//:author2_firstname: first (given) name
-//:author2_surname: surname
-//:author2_jobtitle: job title
-//:author2_orgname: organization affiliation
-
-//:author2_firstname: first (given) name
-//:author2_surname: surname
-//:author2_jobtitle: job title
-//:author2_orgname: organization affiliation
+:author1_firstname: Kevin
+:author1_surname: Ayres
+:author1_jobtitle: Solutions Architect
+:author1_orgname: SUSE
+:author2_firstname: Kieth
+:author2_surname: Pettit
+:author2_jobtitle: Sales Engineer
+:author2_orgname: SUSE
+:editor_firstname: Terry
+:editor_surname: Smith
+:editor_jobtitle: Solutions Architect
+:editor_orgname: SUSE
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -101,9 +100,9 @@ In this getting started guide we will walk through the install of {platform1} on
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Rancher addresses the needs of DevOps teams deploying applications with Kubernetes and IT operations delivering enterprise-critical services.
-In this document, you learn how to launch Rancher by SUSE from the AWS Marketplace listing.
-This single automation node will, in turn, launch a 3-node EKS cluster in a GEO of your choosing, and install Rancher as pods across this cluster.
+Rancher addresses the needs of DevOps teams deploying applications with Kubernetes, and IT operations delivering enterprise-critical services.
+In this document, you learn how to launch {platform1} from the {otherproduct2} listing.
+This single automation node will, in turn, launch a 3-node EKS cluster in a geography of your choosing, and install Rancher as pods across this cluster. This will represent the management plane for managing your downstream clusters.
 
 
 === Scope
@@ -227,7 +226,6 @@ image::aws-mp-rancher-06.png[marketplace offering select to subscribe, scaledwid
 + 
 image::aws-mp-rancher-07.png[DEFINITION, scaledwidth="85%", align="center"]
 
-
 . Select the VPC, Subnet, Security Group, and Key Pair you created previously and then _Launch_.
 + 
 image::aws-mp-rancher-08.png[DEFINITION, scaledwidth="85%", align="center"]
@@ -252,44 +250,46 @@ Use the HTTPS URL for a secure connection.
 The server certificate is self-signed and you need to accept the security exception in your browser. 
 + 
 image::aws-mp-rancher-13.png[DEFINITION, scaledwidth="85%", align="center"]
-//image::aws-mp-rancher-14.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . The username for the authentication is the EC2 instance ID and the password is the AWS account ID without dashes.
 Instance ID and account ID can be obtained from the AWS console.
 + 
-//image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-14.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Return to the {otherproduct1} UI and click __Next__. 
+. Return to the {otherproduct1} UI and click __Login__ with the username and password just acquired. 
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
-+
-Policy Simulator verifies all permissions.
-If an error occurs at this stage, then the Role was not correctly applied to the instance.
+#image::aws-mp-rancher-15.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Click __Next__. 
+. On the SUSE Rancher Setup page, click __Next__.
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-16.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Choose the region for deploying your EKS management cluster and click __Next__. 
+. Policy Simulator verifies all permissions.
+If an error occurs at this stage, then the role was not correctly applied to the instance.
+Click __Next__.
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-17.png[DEFINITION, scaledwidth="85%", align="center"]
+
+. Choose the region for deploying your {otherproduct3} management cluster and click __Next__. 
++ 
+#image::aws-mp-rancher-18.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose your management cluster size and click __Next__.
-'Small' will work for most scenarios.
+'Small' will work for most initial deployments.
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-19.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Choose a hostname for the Rancher UI, which will be installed onto your new EKS cluster.
-Enter the FQDN including the R53 domain name you created.
+Enter the fully qualified domain name, including the R53 domain name you created.
 Example: rancher.exampledomain.com.
-{otherproduct1} will go build the EKS cluster and install {productname} into it using HELM.
+{otherproduct1} will build the EKS cluster and install {productname} using HELM.
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-20.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Take note of the URL which SUSE Rancher will be served at and click next.
-Deployment occurs. 
+. Take note of the URL which SUSE Rancher will be served at and click __Next__.
+On the 'Deploy Rancher on AWS EKS' screen, click __Next__.
 + 
-#image::aws-mp-rancher-.png[DEFINITION, scaledwidth="85%", align="center"]
+#image::aws-mp-rancher-21.png[DEFINITION, scaledwidth="85%", align="center"]
 
 . Deployment should take about 20 minutes. Take note of the resources created for this new cluster environment and store the Cleanup commands in a safe place by generating the commands then scrolling down to download the zip file. You can also leave this tab open to use the Clean Resources button at your leisure. 
 + 
