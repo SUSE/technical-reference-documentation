@@ -144,9 +144,14 @@ For this guide, you should have a basic understanding of Kubernetes and AWS conc
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-* A standard IAM user account with the attached permissions of 'AdministratorAccess' (or equivalent permissions for creating and assigning IAM policies and roles to an EC2 instance) is sufficient for initial deployment.
+Before getting started, you should have:
+
+* A standard IAM user account with the attached permission of 'AdministratorAccess' (or equivalent permissions for creating and assigning IAM policies and roles to an EC2 instance).
+//
++
 Additional permissions will be given to the deployment host for creating clusters, networking components, and Route53 DNS zone entries. 
-* VPC, subnet, routing and security group configuration sufficient to allow https access to the deployment host web UI, as well as open access between the deployed instance and the subnets where the EKS cluster will be configured.
+
+* VPC, subnet, routing and security group configurations sufficient to allow HTTPS access to the deployment host interface, as well as open access between the deployed instance and the subnets where your EKS cluster will be configured.
 
 * Route53 registered domain. 
 
