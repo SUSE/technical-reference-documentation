@@ -151,7 +151,7 @@ Before getting started, you should have:
 +
 Additional permissions will be given to the deployment host for creating clusters, networking components, and Route53 DNS zone entries. 
 
-* VPC, subnet, routing and security group configurations sufficient to allow HTTPS access to the deployment host interface, as well as open access between the deployed instance and the subnets where your EKS cluster will be configured.
+* VPC, subnet, routing, and security group configurations sufficient to allow HTTPS access to the deployment host interface, as well as open access between the deployed instance and the subnets where your EKS cluster will be configured.
 
 * Route53 registered domain. 
 
@@ -206,45 +206,81 @@ With {offering} you instantiate a management node from which you deploy {product
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-. Open https://console.aws.amazon.com/[AWS Console] and login with your IAM user account.
+In this section, you use the {offering} listing in the {market} to install {platform1}.
+
+// Kevin: I would suggest breaking Installation into subsections, such as 'Configure management instance' and 'Deploy Rancher'.
+
+. Open https://console.aws.amazon.com/[AWS Console] and log in with your IAM user account.
 + 
 image::aws-mp-rancher-01.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. After verifying your region, ensure that you have a VPC, Subnet and Security Group created which will allow public access to your deployment automation host, and Rancher management EKS cluster. 
-Your deployment automation host will be created within this subnet.
-You can use the 'Create VPC' wizard to construct the required resources.
+. Verify your region, VPC, Subnet, and Security Group settings to allow public access to your deployment automation host and your Rancher management EKS cluster. 
++
+[NOTE]
+====
+You can use the __Create VPC__ wizard to construct the required resources.
 For detailed instructions on VPC networking or rules for Public and Private Subnets, reference https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html[How VPC Works].
-Take note of the public subnet name you have chosen for your initial automation node deployment.
+//
++
+Be sure to take note of the public subnet name you have chosen for your initial automation node deployment.
 + 
 image::aws-mp-rancher-02.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Navigate to IAM. Create a new Policy named 'RancherSetupEC2policy' and copy in the JSON file contents for the policy from GitHub https://raw.githubusercontent.com/SUSE-Enceladus/suse-rancher-setup/main/aws-iam/iam_role.json[iam-role].
+. Define an access policy.
+
+.. Navigate to __Identity and Access Management__ (__IAM__) in the AWS Console at https://console.aws.amazon.com/iam/.
+
+.. Select __Policies__ in the navigation pane on the left.
+
+.. Click __Create policy__.
+
+.. Select the __JSON__ tab.
+
+.. Paste the contents of the JSON policy file at https://raw.githubusercontent.com/SUSE-Enceladus/suse-rancher-setup/main/aws-iam/iam_role.json[iam-role] into the text box.
 + 
 image::aws-mp-rancher-03.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Create a new Role named 'RancherSetupEC2role' of 'Use Case' type 'EC2', and attach the policy 'RancherSetupEC2policy' to it.
+.. Click __Review policy__.
+
+.. Enter 'RancherSetupEC2policy' for the __Name__ and, optionally, enter a __Description__.
+
+.. Review the policy summary, then click __Create policy__.
+
+
+// Kevin this next step needs to be fleshed out like the one above.
+. Create a service role.
+
+.. In __IAM__, select __Roles__.
+
+.. create a new Role named 'RancherSetupEC2role' of 'Use Case' type 'EC2', and attach the policy 'RancherSetupEC2policy' to it.
 This role will be attached to the deployment automation EC2 instance once it is created. 
 + 
 image::aws-mp-rancher-04.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Open an additional browser tab and navigate to the Rancher Setup AWS Marketplace offering https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[Rancher Setup] and select __Continue to Subscribe__ to the solution.
-Infrastructure costs apply. 
+. Open an additional browser tab and navigate to the {offering} in the {market} at https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[{offering}] and select __Continue to Subscribe__ to the solution.
++
+[WARNING]
+====
+Infrastructure costs apply.
+====
 + 
 image::aws-mp-rancher-05.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Select _Continue to Configuration_ and proceed to walk through the configuration wizard by selecting your _Deployment Region_ and _Continue to Launch_.
+
+// Kevin: Flesh out the step below. One screenshot should be sufficient, but use substeps to make it clearer what the reader is supposed to do.
+. Select __Continue to Configuration__ and proceed to walk through the configuration wizard by selecting your __Deployment Region__ and __Continue to Launch__.
 + 
 image::aws-mp-rancher-06.png[marketplace offering select to subscribe, scaledwidth="85%", align="center"]
 
-. Select the Regionmatching your newly created VPC and then _Continut To Launch_.
+. Select the Region matching your newly created VPC and then __Continut To Launch__.
 + 
 image::aws-mp-rancher-07.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. Select the VPC, Subnet, Security Group, and Key Pair you created previously and then _Launch_.
+. Select the VPC, Subnet, Security Group, and Key Pair you created previously and then __Launch__.
 + 
 image::aws-mp-rancher-08.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. On the 'Congratulations' page, take note of the EC2 AMI ID. 
+. On the __Congratulations__ page, take note of the EC2 AMI ID. 
 + 
 image::aws-mp-rancher-09.png[DEFINITION, scaledwidth="85%", align="center"]
 
@@ -274,7 +310,7 @@ image::aws-mp-rancher-14.png[DEFINITION, scaledwidth="85%", align="center"]
 + 
 image::aws-mp-rancher-15.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. On the SUSE Rancher Setup page, click __Next__.
+. On the {offering} page, click __Next__.
 + 
 image::aws-mp-rancher-16.png[DEFINITION, scaledwidth="85%", align="center"]
 
