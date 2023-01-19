@@ -47,7 +47,7 @@ include::./common_docinfo_vars.adoc[]
 :subtitle: Deploy Rancher on Elastic Kubernetes Service (EKS)
 :productname: Rancher
 :platform1: Rancher by SUSE
-:usecase: Quickly deploy Rancher on Amazon EKS
+:usecase: quickly deploy Rancher by SUSE on AWS to manage your entire Kubernetes landscape
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -208,11 +208,12 @@ With {offering} you instantiate a management node from which you deploy {product
 
 In this section, you use the {offering} listing in the {market} to install {platform1}.
 
-// Kevin: I would suggest breaking Installation into subsections, such as 'Configure management instance' and 'Deploy Rancher'.
+
+=== Prepare your environment
 
 . Open https://console.aws.amazon.com/[AWS Console] and log in with your IAM user account.
 + 
-image::aws-mp-rancher-01.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-01.png[AWS login, scaledwidth="65%", align="center"]
 
 . Verify your region, VPC, Subnet, and Security Group settings to allow public access to your deployment automation host and your Rancher management EKS cluster. 
 +
@@ -220,11 +221,11 @@ image::aws-mp-rancher-01.png[DEFINITION, scaledwidth="85%", align="center"]
 ====
 You can use the __Create VPC__ wizard to construct the required resources.
 For detailed instructions on VPC networking or rules for Public and Private Subnets, reference https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html[How VPC Works].
-//
-+
+
 Be sure to take note of the public subnet name you have chosen for your initial automation node deployment.
-+ 
+
 image::aws-mp-rancher-02.png[DEFINITION, scaledwidth="85%", align="center"]
+====
 
 . Define an access policy.
 
@@ -238,7 +239,7 @@ image::aws-mp-rancher-02.png[DEFINITION, scaledwidth="85%", align="center"]
 
 .. Paste the contents of the JSON policy file at https://raw.githubusercontent.com/SUSE-Enceladus/suse-rancher-setup/main/aws-iam/iam_role.json[iam-role] into the text box.
 + 
-image::aws-mp-rancher-03.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-03.png[Policy configuration, scaledwidth="85%", align="center"]
 
 .. Click __Review policy__.
 
@@ -247,116 +248,164 @@ image::aws-mp-rancher-03.png[DEFINITION, scaledwidth="85%", align="center"]
 .. Review the policy summary, then click __Create policy__.
 
 
-// Kevin this next step needs to be fleshed out like the one above.
 . Create a service role.
-
+// Kevin this step needs to be fleshed out like the one above.
 .. In __IAM__, select __Roles__.
 
-.. create a new Role named 'RancherSetupEC2role' of 'Use Case' type 'EC2', and attach the policy 'RancherSetupEC2policy' to it.
+.. Create a new Role named 'RancherSetupEC2role' of 'Use Case' type 'EC2', and attach the policy 'RancherSetupEC2policy' to it.
 This role will be attached to the deployment automation EC2 instance once it is created. 
 + 
-image::aws-mp-rancher-04.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-04.png[Role configuration, scaledwidth="85%", align="center"]
 
-. Open an additional browser tab and navigate to the {offering} in the {market} at https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[{offering}] and select __Continue to Subscribe__ to the solution.
+
+=== Subscribe to {offering}
+
+. Open an additional browser window or tab and navigate to the {offering} in the {market} at https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[{offering}], then click __Continue to Subscribe__.
++ 
+image::aws-mp-rancher-05.png[Marketplace listing, scaledwidth="85%", align="center"]
 +
 [WARNING]
 ====
 Infrastructure costs apply.
 ====
+
+. Click __Continue to Configuration__.
+
+. Select the Region matching your newly created VPC, then click __Continue To Launch__.
 + 
-image::aws-mp-rancher-05.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-07.png[Select VPC, scaledwidth="75%", align="center"]
 
-
-// Kevin: Flesh out the step below. One screenshot should be sufficient, but use substeps to make it clearer what the reader is supposed to do.
-. Select __Continue to Configuration__ and proceed to walk through the configuration wizard by selecting your __Deployment Region__ and __Continue to Launch__.
+. Select the VPC, Subnet, Security Group, and Key Pair you created previously, then __Launch__.
 + 
-image::aws-mp-rancher-06.png[marketplace offering select to subscribe, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-08.png[Select VPC, scaledwidth="75%", align="center"]
 
-. Select the Region matching your newly created VPC and then __Continut To Launch__.
+. On the __Congratulations__ page, take note of the EC2 *AMI ID*. 
 + 
-image::aws-mp-rancher-07.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-09.png[Congratulations page, scaledwidth="85%", align="center"]
 
-. Select the VPC, Subnet, Security Group, and Key Pair you created previously and then __Launch__.
+
+=== Assign the role to the instance
+
+. In the AWS Console, navigate to __EC2__ > __Instances__ and select the newly created instance (corresponding to the AMI ID noted earlier), then edit the name of the instance to make it easier to find.
 + 
-image::aws-mp-rancher-08.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-10.png[Select and name instance, scaledwidth="85%", align="center"]
 
-. On the __Congratulations__ page, take note of the EC2 AMI ID. 
+. Grant the instance permissions to deploy EKS and install {productname} using Helm.
+
+.. With the instance selected, navigate to __Actions__ > __Security__ > __Modify IAM Role__.
+
+.. Select the 'RancherSetupEC2role' role.
+
+.. Click __Update IAM role__.
 + 
-image::aws-mp-rancher-09.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-12.png[Update IAM role for instance, scaledwidth="85%", align="center"]
 
-. In the AWS Console, navigate to __EC2__ > __Instances__ and select the radio button for the newly created instance  which corresponds to the AMI ID, and name this instance, so you can find it later.
-+ 
-image::aws-mp-rancher-10.png[DEFINITION, scaledwidth="85%", align="center"]
 
-. With the instance selected, navigate to __Actions__ > __Security__ > __Modify IAM Role__.
-Select the role 'RancherSetupEC2role', then click __Update IAM role__.
-The instance now has permissions to deploy EKS and install {productname} using HELM. 
-+ 
-image::aws-mp-rancher-12.png[DEFINITION, scaledwidth="85%", align="center"]
+=== Deploy Rancher
 
-. After your instance is in the _running_ state, use your browser to connect to the public IP address of the instance.
-The instance IP address is found in the instance overview of the AWS console.
-Use the HTTPS URL for a secure connection.
-The server certificate is self-signed and you need to accept the security exception in your browser. 
-+ 
-image::aws-mp-rancher-13.png[DEFINITION, scaledwidth="85%", align="center"]
+. Wait for your instance to be in the _running_ state.
 
-. The username for the authentication is the EC2 instance ID and the password is the AWS account ID without dashes.
-Instance ID and account ID can be obtained from the AWS console.
-+ 
-image::aws-mp-rancher-14.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. Return to the {offering} UI and click __Login__ with the username and password just acquired. 
-+ 
-image::aws-mp-rancher-15.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. On the {offering} page, click __Next__.
-+ 
-image::aws-mp-rancher-16.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. Policy Simulator verifies all permissions.
-If an error occurs at this stage, then the role was not correctly applied to the instance.
-Click __Next__.
-+ 
-image::aws-mp-rancher-17.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. Choose the region for deploying your {eks_long} management cluster and click __Next__. 
-+ 
-image::aws-mp-rancher-18.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. Choose your management cluster size and click __Next__.
-'Small' will work for most initial deployments.
-+ 
-image::aws-mp-rancher-19.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. Choose a hostname for the Rancher UI, which will be installed onto your new EKS cluster.
-Enter the fully qualified domain name, including the R53 domain name you created.
-Example: rancher.exampledomain.com.
-{offering} will build the EKS cluster and install {productname} using HELM.
-+ 
-image::aws-mp-rancher-20.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. Take note of the URL which SUSE Rancher will be served at and click __Next__.
-On the 'Deploy Rancher on AWS EKS' screen, click __Next__.
-+ 
-image::aws-mp-rancher-21.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. Deployment should take about 20 minutes. Take note of the resources created for this new cluster environment and store the 'clean resources' commands in a safe place by using the __Generate clean resources commands__, and then scrolling down to download the zip file. You can also leave this tab open to use the __Clean Resources__ button at your leisure. 
-+ 
-image::aws-mp-rancher-22.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. Follow the instructions at the top of the page to access your new SUSE Rancher UI, and reset your administrative password.
-Log into the 'Welcome to Rancher' page with the bootstrap password generated fpr first use by clicking __Log in with Local User__.
+. Obtain the IP of the instance from the Instance Overview in the AWS Console.
 +
-image::aws-mp-rancher-23.png[DEFINITION, scaledwidth="85%", align="center"]
+[TIP]
+====
+Be sure to use the HTTPS URL for a secure connection.
+The server certificate is self-signed, so you need to accept the security exception in your browser. 
 
-. You are prompted to change the password for the 'admin' account by selecting 'I agree to the terms and conditions for using Rancher' then clicking __Continue__.
-Your password must be at least 12 characters in length.
+image::aws-mp-rancher-13.png[Instance public IP address, scaledwidth="75%", align="center"]
+====
+
+. Obtain the username and password for the instance.
++
+[TIP]
+====
+The username is the EC2 Instance ID and the initial password is the AWS account ID without dashes.
+
+You can obtain the Instance ID from the AWS console.
+
+image::aws-mp-rancher-14.png[Instance ID, scaledwidth="75%", align="center"]
+====
+
+. Return to the {offering} UI and click __Login__.
+// Kevin: It is not clear to me how to get back to the {offering} UI.
+
+. Use the username and password you just obtained to log in.
 + 
-image::aws-mp-rancher-24.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-15.png[Rancher Setup login, scaledwidth="75%", align="center"]
+
+. Read the information provided, then click __Next__.
++ 
+image::aws-mp-rancher-16.png[Rancher Setup information, scaledwidth="85%", align="center"]
+
+. Wait for AWS Policy Simulator to check IAM permissions, then click __Next__.
+//
++
+If an error occurs at this stage, then the role was not correctly applied to the instance.
++ 
+image::aws-mp-rancher-17.png[AWS Policy Simulator, scaledwidth="85%", align="center"]
+
+. Choose a region for deploying your {eks_long} management cluster, the click __Next__. 
++ 
+image::aws-mp-rancher-18.png[AWS Region for EKS cluster, scaledwidth="85%", align="center"]
+
+. Choose the size of your {productname} management cluster, then click __Next__.
++ 
+image::aws-mp-rancher-19.png[Size of management cluster, scaledwidth="85%", align="center"]
++
+[TIP]
+====
+'SMALL' works for most initial deployments.
+====
+
+. Enter the fully qualified domain name (FQDN) for your Rancher management server, then click __Next__.
+//
++
+[NOTE]
+====
+The subdomain containing the FQDN must be preconfigured as an AWS Route53 hosted zone.
+====
+image::aws-mp-rancher-20.png[Rancher URL, scaledwidth="85%", align="center"]
+
+. Take note of the URL at which {productname} will be served, then click __Next__ to begin deployment of Rancher.
++ 
+image::aws-mp-rancher-21.png[Deploy Rancher on AWS EKS, scaledwidth="85%", align="center"]
+
+. Deployment should take about 20 minutes.
+//
++
+When complete, review the provided information.
+In particular, be sure to copy the initial password for the {productname} UI.
++ 
+image::aws-mp-rancher-22.png[Congratulations - Rancher is ready, scaledwidth="85%", align="center"]
++
+[NOTE]
+====
+The __Clean resources__ function gives you a mechanism for restoring your Rancher environment.
+
+. Click __Clean resources__.
+
+. Click __Generate clean resources commands__.
+
+. Scroll to the bottom of the page and download the linked zip file.
+
+. Store this file in a safe place.
+====
+
+
+== Access {productname}
+
+. Open a Web browser to the URL of your {productname} service.
+
+. Enter the initial password, which you noted earlier, and click __Log in with Local User__.
++
+image::aws-mp-rancher-23.png[Rancher first login, scaledwidth="85%", align="center"]
+
+. When prompted, enter and confirm a new password for the 'admin' user, accept the terms and conditions, then click __Continue__.
++ 
+image::aws-mp-rancher-24.png[Rancher new password, scaledwidth="85%", align="center"]
 
 . You can now use HTTPS in your browser to naviate to the FQDN provided during setup.
-Example: rancher.sampledomain.com
+Example: https://rancher.example.com
 +
 image::aws-mp-rancher-25.png[DEFINITION, scaledwidth="85%", align="center"]
 
