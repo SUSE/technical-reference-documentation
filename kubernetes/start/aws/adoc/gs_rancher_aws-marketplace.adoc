@@ -158,23 +158,6 @@ Additional permissions will be given to the deployment host for creating cluster
 * EC2 SSH keypair.
 
 
-== Technical overview
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a technical overview of the solution.
-// - Identify components.
-// - Describe how the components fit together.
-// Leverage diagrams as appropriate, including (but not limited to):
-// - component architecture
-// - data flow diagram
-// - workflow diagram
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-{platform1} is available in the {market} as the {offering} listing.
-With {offering} you instantiate a management node from which you deploy {productname} into a new {eks_long} cluster.
-
-//Architectural Diagram TBD
-
 
 == Installation
 
@@ -205,6 +188,9 @@ With {offering} you instantiate a management node from which you deploy {product
 // These may be subsections of Installation or separate sections at
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+{platform1} is available in the {market} as the {offering} listing.
+With {offering} you instantiate a management node from which you deploy {productname} into a new {eks_long} cluster.
 
 In this section, you use the {offering} listing in the {market} to install {platform1}.
 
@@ -284,7 +270,7 @@ image::aws-mp-rancher-08.png[Select VPC, scaledwidth="75%", align="center"]
 image::aws-mp-rancher-09.png[Congratulations page, scaledwidth="85%", align="center"]
 
 
-=== Assign the role to the instance
+=== Assign the role
 
 . In the AWS Console, navigate to __EC2__ > __Instances__ and select the newly created instance (corresponding to the AMI ID noted earlier), then edit the name of the instance to make it easier to find.
 + 
@@ -327,7 +313,6 @@ image::aws-mp-rancher-14.png[Instance ID, scaledwidth="75%", align="center"]
 ====
 
 . Return to the {offering} UI and click __Login__.
-// Kevin: It is not clear to me how to get back to the {offering} UI.
 
 . Use the username and password you just obtained to log in.
 + 
@@ -392,7 +377,7 @@ The __Clean resources__ function gives you a mechanism for restoring your Ranche
 ====
 
 
-== Access {productname}
+== Accessing {productname}
 
 . Open a Web browser to the URL of your {productname} service.
 
@@ -407,57 +392,33 @@ image::aws-mp-rancher-24.png[Rancher new password, scaledwidth="85%", align="cen
 . You can now use HTTPS in your browser to naviate to the FQDN provided during setup.
 Example: https://rancher.example.com
 +
-image::aws-mp-rancher-25.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-25.png[Rancher UI - Welcome, scaledwidth="85%", align="center"]
 
 . You should now promptly 'Terminate' the instance created for deployment automation to improve security and save cost. 
 + 
-image::aws-mp-rancher-30.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-30.png[AWS Terminate Instance, scaledwidth="85%", align="center"]
 
 . The initial 3-node management cluster does not count against your {productname} 'Priority Support' node count which you may purchase through the {market}. 
 You can now create a 'Cloud Credential'. 
 +
-image::aws-mp-rancher-31.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-31.png[Rancher - Create Cloud Credential, scaledwidth="85%", align="center"]
 Deploy or import downstream clusters and node-groups for workloads.    
 +
-image::aws-mp-rancher-32.png[DEFINITION, scaledwidth="85%", align="center"]
-
-// Your SUSE Rancher UI will let you know that Priority Support has not been activated. 
-// +image::aws-mp-rancher-33.png[DEFINITION, scaledwidth="85%", align="center"]
-
-To purchase 'Priority Support' for your {productname} implementation, you can contact SUSE directly at aws@suse.com or purchase it via the {market} offerings for your Geography.
-+ 
-image::aws-mp-rancher-34.png[DEFINITION, scaledwidth="85%", align="center"]
-
-. You can also purchase 'Priority Support' via your normal AWS or SUSE sales channel or by contacting aws@suse.com to leverage a 'Private Offer'.
-Happy Ranching.
+image::aws-mp-rancher-32.png[Rancher - Create EKS Cluster, scaledwidth="85%", align="center"]
 
 
-// == Validation
+== Priority Support
 
-// actually validation - include screenshot 
+// Create a correct description of the support offering.
+This offer turns an instance of Rancher (Rancher Manager) running in AWS into a supported offering by installing a billing and metering container. The container will validate the support entitlement purchased through the AWS Marketplace against the quantity of nodes running in the environment. This container will provide the ability to generate supportconfigs which enable the user to open support tickets in the SUSE Customer Center. The downstream nodes can be located anywhere.
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Illustrate functionality with a demonstration.
-// Begin with a description or outline of the demonstration.
-// Provide clear steps (in ordered lists) for the reader to follow.
-// Typical demonstration flow is:
-// 1. Prepare the environment for the demonstration.
-// This should be minimal, such as downloading some data to use.
-// If this requires more than a couple steps, consider putting it
-// in a subsection.
-// 2. Perform the demonstration.
-// Be careful not to overuse screenshots.
-// 3. Verify.
-// This may be interwoven into performing the demonstration.
-//
-// As with Installation, leverage ordered lists, code blocks,
-// admonitions, and screenshots.
-//
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+To purchase 'Priority Support' for your {platform1} implementation, you can contact SUSE directly at aws@suse.com or purchase it via the {market} offerings for your Geography.
+
+image::aws-mp-rancher-34.png[Rancher Priority Support offerings, scaledwidth="85%", align="center"]
+
+You can also purchase 'Priority Support' via your normal AWS or SUSE sales channel or by contacting aws@suse.com to leverage a 'Private Offer'.
 
 
-==  Demo
-View this https://youtu.be/9dznJ7Ons0M[video walk-through] for a quick overview of the deployment process. 
 
 
 == Summary
@@ -471,15 +432,19 @@ View this https://youtu.be/9dznJ7Ons0M[video walk-through] for a quick overview 
 
 In this guide, you learned to quickly deploy a {platform1} implementation and management cluster using {eks_long} by way of the {market}.
 
-Please reference the https://www.youtube.com/watch?v=9dznJ7Ons0M[step-by-step walk-through video].
-
-=== References
-https://aws.amazon.com/marketplace/search?searchTerms=SUSE+Rancher&CREATOR=1595dc13-315b-4349-8640-bf36795ae787%2Cd8e49cc8-b2f8-448d-8531-fc8e873121b0&filters=CREATOR[SUSE Rancher products including 'Priority Support'].
-https://youtu.be/9dznJ7Ons0M[video walk-through].
-https://www.suse.com/c/deploy-rancher-on-an-eks-cluster-the-easy-way/[Blog post covering this solution].
+You can also reference this https://www.youtube.com/watch?v=9dznJ7Ons0M[step-by-step walk-through video].
 
 
-To learn more about {platform1} 
+Happy Ranching!
+
+
+== References
+
+* https://aws.amazon.com/marketplace/search?searchTerms=SUSE+Rancher&CREATOR=1595dc13-315b-4349-8640-bf36795ae787%2Cd8e49cc8-b2f8-448d-8531-fc8e873121b0&filters=CREATOR[{platform1} products including 'Priority Support'].
+
+* https://www.suse.com/c/deploy-rancher-on-an-eks-cluster-the-easy-way/[Deploy Rancher on an EKS cluster, the easy way] by Jesús Bermúdez Velázquez.
+
+
 
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
