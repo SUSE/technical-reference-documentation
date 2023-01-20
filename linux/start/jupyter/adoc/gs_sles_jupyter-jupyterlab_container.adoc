@@ -451,65 +451,6 @@ These build instructions are provided in a https://github.com/containers/common/
 If you are familiar with the Docker container ecosystem, a Containerfile shares the same format and most of the same options as a Dockerfile.
 After defining your application container in a Containerfile, you use another tool to execute the instructions and build the image.
 
-
-Create a file, named _Containerfile_, in your build directory with the following contents:
-
-[source, Dockerfile]
-----
-# JupyterLab Containerfile
-
-# https://registry.suse.com/
-# build faster using SLE container image with Python already installed
-FROM registry.suse.com/bci/python:latest
-
-# create unprivileged user to run JupyterLab
-RUN useradd --uid 1000 --user-group --create-home jupyter
-USER jupyter
-
-# define and create notebook directory
-ENV NOTEBOOKS="/home/jupyter/notebooks"
-RUN mkdir -p $NOTEBOOKS
-
-# update unprivileged user's PATH
-ENV PATH="/home/jupyter/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-
-# set working directory for subsequent commands
-WORKDIR /home/jupyter
-
-# copy requirements file into working directory
-COPY requirements.txt .
-
-# install JuypterLab
-RUN set -eux pipefail; \
-    pip install --upgrade pip; \
-    pip install -r requirements.txt; \
-    pip cache purge;
-
-# expose JupyterLab web port
-EXPOSE 8888/tcp 
-
-# launch JupyterLab
-CMD jupyter-lab --ip=* --port=8888 --no-browser --notebook-dir=$NOTEBOOKS
-----
-
-
-The instructions used in this _Containerfile_ to automate the build of your container are:
-
-* `CMD` provides a default command to be executed when running the container.
-
-* `COPY` copies files into the container.
-
-* `EXPOSE` informs the container engine that the container listens on the specified network ports.
-
-* `ENV` sets an environment variable.
-
-* `FROM` specifies which base image to use.
-
-* `RUN` executes a command in a shell (`/bin/sh -c`).
-
-* `WORKDIR` sets the working directory for subsequent `RUN`, `CMD`, `COPY` and other instructions.
-
-
 An important consideration for your container build is the base image.
 You can obtain container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
 
@@ -531,6 +472,70 @@ Redistribution::
 Are you legally able to redistribute the custom application container images you build on it?
 
 Learn more about https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
+
+
+. Change to your build directory.
++
+[source, bash]
+----
+cd $HOME/jupcontainer
+----
+
+. Create your file, named _Containerfile_, with the following contents:
++
+[source, Dockerfile]
+----
+# jupyterlab Containerfile
+
+# https://registry.suse.com/
+FROM registry.suse.com/bci/python:latest
+
+# create unprivileged user
+RUN useradd --uid 1000 --user-group --create-home jupyter
+USER jupyter
+
+# set notebooks directory
+ENV NOTEBOOKS="/home/jupyter/notebooks"
+RUN mkdir -p $NOTEBOOKS
+
+# update the user's path to find the jupyter-lab executable
+ENV PATH="/home/jupyter/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# set working directory for subsequent commands
+WORKDIR /home/jupyter
+
+# copy requirements file into working directory
+COPY requirements.txt .
+
+# install JuypterLab
+RUN set -eux pipefail; \
+    pip install --upgrade pip; \
+    pip install -r requirements.txt; \
+    pip cache purge;
+
+# expose JupyterLab Web port
+EXPOSE 8888/tcp 
+
+# change to notebooks directory and launch JupyterLab
+CMD cd $NOTEBOOKS; jupyter-lab --ip=* --port=8888 --no-browser --notebook-dir=$NOTEBOOKS
+----
+
+The instructions used in this _Containerfile_ to automate the build of your container include:
+
+* `FROM`: specifies which base image to use.
+
+* `RUN`: executes a shell (`/bin/sh -c`) command.
+
+* `ENV`: sets an environment variable.
+
+* `WORKDIR` sets the working directory for subsequent `RUN`, `CMD`, `COPY` and other instructions.
+
+* `COPY`: copies files into the container.
+
+* `EXPOSE`: informs the container engine that the container listens on the specified network ports.
+
+* `CMD` provides a default command to be executed when the container is run.
+
 
 
 === Build the container image
@@ -592,14 +597,101 @@ Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.ht
 ====
 
 
+== Create a launch script
+
+Now that you have a container, you can run it with the `podman run` command.
+But, for your application container to be useful, you need to enable access.
+That is, you need to be able to access the JupyterLab Web interface (listening on TCP network port 8888) from your local host as well as to read and write files outside the container (such as on your local file system).
+You do this with a few `podman run` options.
+
+In this section, you create a shell script to simplify calling `podman run` with all required options.
+
+. Change to your preferred directory for personal shell scripts (such as _$HOME/bin_) or temporarily use your build directory (_$HOME/jupcontainer_).
++
+[source, bash]
+----
+cd $HOME/jupcontainer
+----
+
+. Create the text file _juplaunch_ with this content.
++
+[source, bash]
+----
+#!/bin/bash
+
+# define some variables
+container_name=jupyter
+container_user=1000
+container_group=1000
+container_port=8888
+host_port=8888
+container_volume=/home/jupyter/notebooks
+host_volume=$(pwd)
+
+# launch container with options
+podman run \
+  --uidmap $container_user:0:1 \
+  --uidmap 0:1:$container_user \
+  --gidmap $container_group:0:1 \
+  --gidmap 0:1:$container_group \
+  --name $container_name \
+  --publish $host_port:$container_port \
+  --volume $host_volume:$container_volume:z \
+  localhost/$container_name
+----
+
+. Grant yourself execute permissions on the script.
++
+[source, bash]
+----
+chmod u+x juplaunch
+----
+
+Illustrated in the _juplaunch_ script are the following options:
+
+`--name`:: Assigns a name to the container.
+
+`--publish`:: Publishes the container's exposed network port or range of ports to the host, making it accessible.
+
+`--volume`:: Creates a bind mount, mounting the specified volume from the host into to container.
++
+[NOTE]
+====
+The `:z` or `:Z` option is required when using a host system with SELinux to ensure proper labels are placed on volume content.
+
+Use `:z` to tell Podman to relabel file objects so two or more containers are able to share the content.
+
+Use `:Z` to tell Podman to relabel file objects so that only the current container can use the volume.
+====
+
+`--uidmap` and `--gidmap`:: Map the UID and GID, respectively, from the user namespace inside the container to your user namespace outside the container.
+This allows you to avoid permission and ownership issues when accessing files in the mounted volume.
+You do this with the `podman run` command options `--uidmap` and `--gidmap` (see the https://docs.podman.io/en/v3.4.4/markdown/podman-run.1.html[Podman run documentation] for a more detailed discussion).
+
+[NOTE]
+====
+User namespace mappings can be complex, as rootless (unpriviledged) user UIDs and GIDs are mapped through intermediary (subordinate) UIDs and GIDs.
+
+With the release of https://docs.podman.io/en/v4.3/markdown/podman-run.1.html[version 4.3.0], `podman run` simplifies user namespace mappings with the `--userns` option.
+====
+
+
+
 == Launch your application container
 
 In this section, you see how to run and access your container.
 
 
-. Prepare a shared workspace.
+. Prepare your workspace.
+//
++
+Your workspace is where you will save your Jupyter notebooks.
+This is just a directory on your local system that you will access with JupyterLab from within the application container.
+//
++
+For example,
 
-.. Create and enter your working directory.
+.. Create and enter a directory to hold your notebooks.
 +
 [source, bash]
 ----
@@ -618,89 +710,8 @@ including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial
 +
 [source, bash]
 ----
-podman run \
-  --uidmap 1000:0:1 \
-  --uidmap 0:1:1000 \
-  --gidmap 1000:0:1 \
-  --gidmap 0:1:1000 \
-  --name jupyter \
-  --publish 8888:8888 \
-  --volume $(pwd):/home/jupyter/notebooks \
-  localhost/jupyter
+$HOME/jupcontainer/juplaunch
 ----
-+
-====
-With this command, you specify the following options:
-
-* `uidmap` and `gidmap` specify user and group mappings, respectively.
-//
-+
-Recall that you specified the UID and GID of the jupyter user in your _Containerfile_.
-
-* `--name` to set a name for the container.
-
-* `--publish` or `-p` to map a container's network port or range of ports to the host.
-
-* `--volume` or `-v` to create a bind mount of a directory on your host to one in your container.
-====
-+
-[NOTE]
-====
-If SELinux is enabled on your host system, Podman can help you properly label the mounted volume.
-Do this by appending `:z` or `:Z` to the volume option.
-That is,
-
-* `--volume $(pwd):/home/jupyter/notebooks:z` if one or more containers will share the volume contents.
-
-* `--volume $(pwd):/home/jupyter/notebooks:Z` if you only want the current container to use the volume.
-
-See the https://docs.podman.io/en/latest/markdown/podman-run.1.html[podman-run documentation].
-====
-+
-[TIP]
-====
-Rather than typing this command every time you want to launch your container, create a shell script to do it.
- 
-. Create the text file _runjup_ with this content.
-+
-[source, bash]
-----
-#!/bin/bash
-
-container_name=jupyter
-container_user=1000
-container_group=1000
-container_port=8888
-host_port=8888
-container_volume=/home/jupyter/notebooks
-host_volume=$(pwd)
-
-podman run \
-  --uidmap $container_user:0:1 \
-  --uidmap 0:1:$container_user \
-  --gidmap $container_group:0:1 \
-  --gidmap 0:1:$container_group \
-  --name jupyter \
-  --publish $host_port:$container_port \
-  --volume $host_volume:$container_volume:z \
-  localhost/jupyter
-----
-
-. Grant your user execute permissions for this script.
-+
-[source, bash]
-----
-chmod u+x runjup
-----
-
-. Launch your application container.
-+
-[source, bash]
-----
-./runjup
-----
-
-====
 
 . Once you have launched your container, note the output in your terminal.
 There you can find the URL and access token for the containerized JupyterLab environment.
