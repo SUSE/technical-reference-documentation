@@ -47,6 +47,7 @@ include::./common_docinfo_vars.adoc[]
 :subtitle: Deploy Rancher on Elastic Kubernetes Service (EKS)
 :productname: Rancher
 :platform1: Rancher by SUSE
+:productname2: Rancher Prime
 :usecase: quickly deploy Rancher by SUSE on AWS to manage your entire Kubernetes landscape
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -74,7 +75,10 @@ include::./common_docinfo_vars.adoc[]
 // define any additional variables here for use within the document
 // -
 
-:offering: Rancher Setup
+:offering1: Rancher Setup
+:offering2: SUSE Rancher Priority Support
+:offering2_region1: EU and UK
+:offering2_region2: non-EU and non-UK
 :market: AWS Marketplace
 :eks_long: Amazon Elastic Kubernetes Service
 
@@ -105,7 +109,7 @@ include::./common_docinfo_vars.adoc[]
 
 You can install {productname} from the {market}, enabling you to manage all your downstream clusters wherever a routable API address exists.
 
-In this guide, you learn how to install {productname} on {eks_long} using the _{offering}_ listing in the {market}.
+In this guide, you learn how to install {productname} on {eks_long} using the _{offering1}_ listing in the {market}.
 This enables you to manage all of your downstream clusters wherever a routable API address exists.
 
 
@@ -115,7 +119,7 @@ This enables you to manage all of your downstream clusters wherever a routable A
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you learn how to install {productname} with the {offering} listing in the {market} listing.
+In this guide, you learn how to install {productname} with the {offering1} listing in the {market} listing.
 
 From a single management node, you launch a three-node EKS cluster in a geography of your choosing and install {productname} in this cluster.
 From this management plane, you can begin deploy or import downstream EKS or other Kubernetes clusters.
@@ -189,10 +193,10 @@ Additional permissions will be given to the deployment host for creating cluster
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-{platform1} is available in the {market} as the {offering} listing.
-With {offering} you instantiate a management node from which you deploy {productname} into a new {eks_long} cluster.
+{platform1} is available in the {market} as the {offering1} listing.
+With {offering1} you instantiate a management node from which you deploy {productname} into a new {eks_long} cluster.
 
-In this section, you use the {offering} listing in the {market} to install {platform1}.
+In this section, you use the {offering1} listing in the {market} to install {platform1}.
 
 
 === Prepare your environment
@@ -244,9 +248,9 @@ This role will be attached to the deployment automation EC2 instance once it is 
 image::aws-mp-rancher-04.png[Role configuration, scaledwidth="85%", align="center"]
 
 
-=== Subscribe to {offering}
+=== Subscribe to {offering1}
 
-. Open an additional browser window or tab and navigate to the {offering} in the {market} at https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[{offering}], then click __Continue to Subscribe__.
+. Open an additional browser window or tab and navigate to the {offering1} in the {market} at https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[{offering1}], then click __Continue to Subscribe__.
 + 
 image::aws-mp-rancher-05.png[Marketplace listing, scaledwidth="85%", align="center"]
 +
@@ -312,7 +316,7 @@ You can obtain the Instance ID from the AWS console.
 image::aws-mp-rancher-14.png[Instance ID, scaledwidth="75%", align="center"]
 ====
 
-. Return to the {offering} UI and click __Login__.
+. Return to the {offering1} UI and click __Login__.
 
 . Use the username and password you just obtained to log in.
 + 
@@ -407,20 +411,28 @@ Deploy or import downstream clusters and node-groups for workloads.
 image::aws-mp-rancher-32.png[Rancher - Create EKS Cluster, scaledwidth="85%", align="center"]
 
 
-== Priority Support
+== Priority support
 
 // Create a correct description of the support offering.
-This offer turns an instance of Rancher (Rancher Manager) running in AWS into 'Rancher Prime', which is a SUSE supported product, by installing a billing and metering container.The container will validate the support entitlement purchased through the AWS Marketplace against the quantity of downstream cluster nodes running in the environment.
-This billing and metering container will provide the ability to generate supportconfigs which enable the user to open support tickets in the SUSE Customer Center(SCC).
-The supported node count (example 20, 40, or 60 nodes) does not include the 3-node EKS cluster deployed during 'Rancher Setyp', which is supported for free.
-The downstream cluster nodes can be located anywhere, and multiple clusters, geographies, datcenters, edge devices, and clouds are supported.
 
-You can also purchase 'Priority Support' for your {platform1} implementation, by contacting SUSE directly at aws@suse.com or purchasing it via the {market} offerings for your Geography.
+Elevate your Rancher landscape to _{productname2}_ with _{offering2}_ in the {market}.
+https://ranchermanager.docs.rancher.com/getting-started/quick-start-guides/deploy-rancher-manager/prime[{productname2}] enables you with priority support, security assurances, extended lifecycles, access to focused architectures and Kubernetes advisories, and more.
+
+Purchase {productname2} via the {market} with the {offering2} for your geography.
 
 image::aws-mp-rancher-34.png[Rancher Priority Support offerings, scaledwidth="85%", align="center"]
 
-You can also purchase 'Priority Support' as a 'Private Offer' via your normal AWS or SUSE sales channel or by contacting aws@suse.com.
-A 'Private Offer' allows you to purchase support for nodes in any increment.
+You can also purchase {productname2} via your normal AWS or SUSE sales channel or by contacting aws@suse.com directly.
+
+When activated, a billing and metering container runs in your environment that validates the support entitlement purchased through the {market} with the quantity of managed, downstream cluster nodes.
+You can then generate _supportconfigs_ and open support tickets in the SUSE Customer Center (SCC).
+
+[NOTE]
+====
+The three-node EKS cluster deployed with {offering1} is supported at no additional cost and does not count against the purchased supported node count.
+
+Also, your supported downstream cluster nodes can be located anywhere - in multiple clusters, geographies, data centers, edge devices, and clouds.
+====
 
 
 
@@ -433,9 +445,11 @@ A 'Private Offer' allows you to purchase support for nodes in any increment.
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you learned to quickly deploy a {platform1} implementation and management cluster using {eks_long} by way of the {market}.
+In this guide, you learned to quickly deploy {platform1} into an {eks_long} via the {market}.
+You also learned about elevating your enterprise experience with {productname2} priority support.
 
-You can also reference this https://www.youtube.com/watch?v=9dznJ7Ons0M[step-by-step walk-through video].
+//
+
 
 
 Happy Ranching!
@@ -443,11 +457,16 @@ Happy Ranching!
 
 == References
 
-* https://aws.amazon.com/marketplace/search?searchTerms=SUSE+Rancher&CREATOR=1595dc13-315b-4349-8640-bf36795ae787%2Cd8e49cc8-b2f8-448d-8531-fc8e873121b0&filters=CREATOR[{platform1} products including 'Priority Support'].
+Continue your explorations with the following resources:
 
-* https://www.suse.com/c/deploy-rancher-on-an-eks-cluster-the-easy-way/[Deploy Rancher on an EKS cluster, the easy way] by Jesús Bermúdez Velázquez.
+* https://www.youtube.com/watch?v=9dznJ7Ons0M[Step-by-step video] walk-through of the process detailed in this guide
 
-* https://www.rancher.com/products/rancher[Rancher editions].
+* https://aws.amazon.com/marketplace/search?searchTerms=SUSE+Rancher&CREATOR=1595dc13-315b-4349-8640-bf36795ae787%2Cd8e49cc8-b2f8-448d-8531-fc8e873121b0&filters=CREATOR[{platform1} listings] in the {market}
+
+* https://www.suse.com/c/deploy-rancher-on-an-eks-cluster-the-easy-way/[Deploy Rancher on an EKS cluster, the easy way] by Jesús Bermúdez Velázquez
+
+* https://www.rancher.com/products/rancher[Rancher editions]
+
 
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
