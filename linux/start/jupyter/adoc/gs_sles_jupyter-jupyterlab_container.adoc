@@ -809,13 +809,13 @@ In the terminal you used to launch your container, you will see messages from Ju
 
 
 
-== Restarting your container
+== Restart your container
  
-When you shut down JupyterLab, you also shut down the container.
+In the previous section, you shut down the JupyterLab server, which caused the container to also shut down.
 This did not delete the container.
-It still exists and you can restart and stop it again and again.
+It still exists, and you can start and stop it again and again.
 
-. List all containers, including those that are stopped.
+. Identify your stopped container.
 +
 [source, bash]
 ----
@@ -827,12 +827,13 @@ podman container list --all
 CONTAINER ID  IMAGE                     COMMAND               CREATED         STATUS                    PORTS                   NAMES
 95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  19 minutes ago  Exited (0) 8 minutes ago  0.0.0.0:8888->8888/tcp  jupyter
 ----
+Notice the 'Exited' status.
 
-. Restart your container.
+. Start your container.
 +
 [source, bash]
 ----
-podman restart 95038cde3755
+podman start 95038cde3755
 ----
 +
 [TIP]
@@ -840,6 +841,9 @@ podman restart 95038cde3755
 You do not need to specify the full container ID here.
 Instead, you could specify the container name ('jupyter') or the first few unique digits of the container ID.
 ====
++
+At this point, your container is started, but you do not have the proper URL of the JupyterLab server to access it.
+You can obtain the URL from the command line inside the container.
 
 . Enter a bash shell inside your container.
 +
@@ -848,7 +852,7 @@ Instead, you could specify the container name ('jupyter') or the first few uniqu
 podman exec -it 95038cde3755 /bin/bash
 ----
 
-. List running JupyterLab servers.
+. Display any running JupyterLab servers.
 +
 [source, bash]
 ----
@@ -860,35 +864,115 @@ jupyter-server list
 [JupyterServerListApp] Currently running servers:
 [JupyterServerListApp] http://localhost:8888/?token=889b9af1f0c76fb9cda24c3327b3d723a928a8298af1dd22 :: /home/jupyter/notebooks
 ----
+Once you have this URL, you can exit the container shell and return to your local command line.
 
 . Access JupyterLab by opening the displayed URL in your Web browser.
 
-. Select __File__ > __Log Out__ and close your Web browser.
+. Log out of the JupyterLab session by selecting __File__ > __Log Out__.
 //
 +
-By using the __Log Out__ option, the JupyterLab server continues to run.
+[NOTE]
+====
+By using the __Log Out__ option, the JupyterLab server and your container continue to run.
+You can relaunch your Web browser and open the same URL to access JupyterLab.
+====
+
+. Shut down JupyterLab by selecting __File__ > __Shutdown__.
++
+[TIP]
+====
+You can also shut down the JupyterLab server from the shell inside your container by issuing the `jupyter-server stop` command.
+Once JupyterLab shuts down, you are returned to your local command line and the container is stopped.
+
+You can also unceremoniously shut down the container with `podman stop CONTAINER-ID`.
+====
 
 
+== Clean your container environment
+
+As you work with containers, you may find that you no longer need some of them.
+Podman provides commands to help you clean up your container space.
+In this section, you delete a stopped container and then delete the image from which it was instantiated.
 
 
-== Manage your images and containers
+. Delete a container.
 
-Podman provides many https://docs.podman.io/en/latest/Commands.html[commands] to help you manage your containers and container images.
-Understanding how 
+.. Identify the container you wish to delete.
++
+[source, bash]
+----
+podman container list --all
+----
++
+[source, bash]
+----
+CONTAINER ID  IMAGE                     COMMAND               CREATED      STATUS                     PORTS                   NAMES
+95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  4 hours ago  Exited (0) 23 minutes ago  0.0.0.0:8888->8888/tcp  jupyter
+----
 
-. List your images.
+.. Remove the selected container.
++
+[source, bash]
+----
+podman container rm 95038cde3755
+----
+
+. Delete an application container image.
+//
++
+You may wish to do this if, for example, you want to rebuild your application container image with newer packages.
+
+.. Identify the container image you want to delete.
 +
 [source, bash]
 ----
 podman image list
 ----
 +
-You have already used `podman image list` to list your existing images.  Synonyms for this command are `podman image ls` and `podman images`.
-//
-+
-This command has options for formatting, filtering, and sorting image information.
+[source, bash]
+----
+REPOSITORY                      TAG         IMAGE ID      CREATED         SIZE
+localhost/jupyter               latest      d8bbefc6be69  2 minutes ago   837 MB
+registry.suse.com/bci/python    latest      35ebb6a7981e  11 minutes ago  125 MB
+----
 
-. 
+.. Remove the selected container image.
++
+[source, bash]
+----
+podman image rm d8bbefc6be69
+----
++
+[source, bash]
+----
+Deleted: d8bbefc6be69e61120bad0449e227dda02097a41cfce3cd019dca5f427a7cd9d
+Deleted: ce0883c81e5160373abf23e7ebb3c760130981cd587a52dd7cddda1af5a097bb
+Deleted: c7de32119cd1a574bb5ad8172bcd94295322875a1a1cefc1e4ea3cb112fe5082
+Deleted: fe38a6f6a6f22899da836dabdd4e590176ce9a8f7fa218bafec8cc5d6ed2615f
+Deleted: 93aa38c86937ff21f60d36464cd7a19cadd3e6a3929a7d774b3654cf9340cbdd
+Deleted: 4e55ce66ad92c43e5f790021f65b29dfa14dbb230b5838d7b83bc86b26bbe8c0
+Deleted: ccce1f01ac19afae8d46cdac27fe734ef39ffd736b8d03e92524912d93c5e0c1
+Deleted: 13850ddeaac18d17b52569d6f65b9c0bcd585f1259f037e7a1e090c512bfb67a
+Deleted: 9c808de46ef1ff01a2e7cb90fbdc2a60157748f8052379fd896c0cdbdf57da00
+Deleted: 9837e4f38101da542ed17059a09c666ee07245a7831aeb34f79dbfa774acc4d5
+Deleted: a00eadade3fe2bfd4f6f42905691c143b2826fb120913d7b6cd087b773550a77
+----
++
+[NOTE]
+====
+Recall that container images are built of layers.
+The additional deletions represent "parent" images not used by another image.
+
+The base container image, 'registry.suse.com/bci/python' is not deleted.
+
+If you would like to list all images, use `podman image list --all`.
+====
+
+
+Podman provides many https://docs.podman.io/en/latest/Commands.html[commands] to help you manage your containers and container images.
+Many Podman commands also have synonyms that can save you a few keystrokes (for example, `podman rmi IMAGE-ID` is the same as `podman image rm IMAGE-ID`).
+
+
 
 == Summary
 
