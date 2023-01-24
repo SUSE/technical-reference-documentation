@@ -733,6 +733,23 @@ If all went well, you are presented with the main JupyterLab user interface (UI)
 +
 image::jupyterlab-podman-ui.png[JupyterLab UI, scaledwidth="85%", align="center"]
 
+. List your running containers.
+//
++
+Open another terminal and enter the command:
++
+[source, bash]
+----
+podman container list
+----
+This produces output like:
++
+[source, bash]
+----
+CONTAINER ID  IMAGE                     COMMAND               CREATED         STATUS             PORTS                   NAMES
+95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  10 seconds ago  Up 10 seconds ago  0.0.0.0:8888->8888/tcp  jupyter
+----
+
 . Verify you can access an existing file.
 //
 +
@@ -746,15 +763,13 @@ image::jupyterlab-podman-titanic.png[JupyterLab Titanic notebook example, scaled
 .. In the JupyterLab UI __Launcher__ tab, click __Python 3__ under __Notebook__.
 
 .. Add some content to the new notebook.
+//
++
+See the  https://jupyter-notebook.readthedocs.io/en/latest/notebook.html[Jupyter notebooks user documentation] to learn about cell types, computational kernels, basic usage, and more.
 +
 image::jupyterlab-podman-notebook.png[JupyterLab notebook example, scaledwidth="85%", align="center"]
 +
 [TIP]
-====
-See the  https://jupyter-notebook.readthedocs.io/en/latest/notebook.html[Jupyter notebooks user documentation] to learn about cell types, computational kernels, basic usage, and more.
-====
-+
-[NOTE]
 ====
 Notebooks default to _untitled.ipynb_.
 You can rename your notebook with __File__ > __Rename Notebook__ or by right-clicking the file in the file listing and selecting __Rename__.
@@ -790,29 +805,90 @@ where you should see your user and group associated with the new Jupyter noteboo
 Then, confirm that you want to shut down JupyterLab.
 //
 +
-In the terminal you used to launch your container, you will see messages from JupyterLab that it is shutting down before you are returned to the command prompt.
+In the terminal you used to launch your container, you will see messages from JupyterLab that it is shutting down before you are returned to the command prompt of your local system.
+
+
+
+== Restarting your container
+ 
+When you shut down JupyterLab, you also shut down the container.
+This did not delete the container.
+It still exists and you can restart and stop it again and again.
+
+. List all containers, including those that are stopped.
++
+[source, bash]
+----
+podman container list --all
+----
++
+[source, bash]
+----
+CONTAINER ID  IMAGE                     COMMAND               CREATED         STATUS                    PORTS                   NAMES
+95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  19 minutes ago  Exited (0) 8 minutes ago  0.0.0.0:8888->8888/tcp  jupyter
+----
+
+. Restart your container.
++
+[source, bash]
+----
+podman restart 95038cde3755
+----
 +
 [TIP]
 ====
-You can also quickly shut down JupyterLab and exit your container by issuing CTRL-C in the terminal where you started it.
+You do not need to specify the full container ID here.
+Instead, you could specify the container name ('jupyter') or the first few unique digits of the container ID.
 ====
 
-[NOTE]
-====
-Exiting a container does not delete the container.
-It still exists and can be stopped and restarted again and again.
+. Enter a bash shell inside your container.
++
+[source, bash]
+----
+podman exec -it 95038cde3755 /bin/bash
+----
+
+. List running JupyterLab servers.
++
+[source, bash]
+----
+jupyter-server list
+----
++
+[source, bash]
+----
+[JupyterServerListApp] Currently running servers:
+[JupyterServerListApp] http://localhost:8888/?token=889b9af1f0c76fb9cda24c3327b3d723a928a8298af1dd22 :: /home/jupyter/notebooks
+----
+
+. Access JupyterLab by opening the displayed URL in your Web browser.
+
+. Select __File__ > __Log Out__ and close your Web browser.
 //
-To see all containers on your system (including the stopped ones), use `podman container list --all`.
-====
++
+By using the __Log Out__ option, the JupyterLab server continues to run.
 
 
-== Manage your containers
 
-In this guide, you used `podman build` to create a container image and `podman run` to instantiate the image as a container.
+
+== Manage your images and containers
+
 Podman provides many https://docs.podman.io/en/latest/Commands.html[commands] to help you manage your containers and container images.
+Understanding how 
 
-Explore Podman commands in https://documentation.suse.com/sle-micro/5.3/html/SLE-Micro-all/article-podman.html#sec-working-containers[Podman Guide: Working with containers].
+. List your images.
++
+[source, bash]
+----
+podman image list
+----
++
+You have already used `podman image list` to list your existing images.  Synonyms for this command are `podman image ls` and `podman images`.
+//
++
+This command has options for formatting, filtering, and sorting image information.
 
+. 
 
 == Summary
 
