@@ -77,6 +77,7 @@ include::./common_docinfo_vars.adoc[]
 
 :offering1: Rancher Setup
 :offering2: SUSE Rancher Priority Support
+:offering3: Rancher Prime
 :offering2_region1: EU and UK
 :offering2_region2: non-EU and non-UK
 :market: AWS Marketplace
@@ -110,10 +111,9 @@ image::logo-lockup_suse-aws_vert_dark.svg[SUSE | Amazon Web Services, scaledwidt
 {productname} addresses the needs of DevOps teams, who are deploying applications with Kubernetes, and IT operations, who are responsible for delivering enterprise-critical services.
 {productname} provides simple, consistent operations and unifies security, policy, and user management, whether you are running one Kubernetes cluster or thousands.
 
-You can install {productname} from the {market}, enabling you to manage all your downstream clusters wherever a routable API address exists.
+You can install {productname} from the {market}, enabling you to manage all of your downstream clusters wherever a routable API address exists.
 
 In this guide, you learn how to install {productname} on {eks_long} using the _{offering1}_ listing in the {market}.
-This enables you to manage all of your downstream clusters wherever a routable API address exists.
 
 
 === Scope
@@ -122,11 +122,10 @@ This enables you to manage all of your downstream clusters wherever a routable A
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you learn how to install {productname} with the {offering1} listing in the {market} listing.
+In this guide, you learn how to install {productname} with the {offering1} listing in the {market}.
 
-From a single management node, you launch a three-node EKS cluster in a geography of your choosing and install {productname} in this cluster.
-From this management plane, you can begin deploy or import downstream EKS or other Kubernetes clusters.
-
+From a single ephemeral appliance, you launch a three-node EKS cluster in a geography of your choosing, and install {productname} in this cluster using the current rancher-stable release. 
+From this management plane, you can begin to deploy or import downstream EKS or other Kubernetes clusters.
 
 === Audience
 
@@ -153,12 +152,7 @@ For this guide, you should have a basic understanding of Kubernetes and AWS conc
 
 Before getting started, you should have:
 
-* A standard IAM user account with the attached permission of 'AdministratorAccess' (or equivalent permissions for creating and assigning IAM policies and roles to an EC2 instance).
-//
-+
-Additional permissions will be given to the deployment host for creating clusters, networking components, and Route53 DNS zone entries. 
-
-* VPC, subnet, routing, and security group configurations sufficient to allow HTTPS access to the deployment host interface, as well as open access between the deployed instance and the subnets where your EKS cluster will be configured.
+* VPC, subnet, routing, and security group configurations sufficient to allow HTTPS access to the deployment host interface, as well as open access between the ephemeral appliance and the subnets where your EKS cluster will be configured.
 
 * Route53 registered domain. 
 
@@ -197,7 +191,7 @@ Additional permissions will be given to the deployment host for creating cluster
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 {platform1} is available in the {market} as the {offering1} listing.
-With {offering1} you instantiate a management node from which you deploy {productname} into a new {eks_long} cluster.
+With {offering1} you instantiate an ephemeral appliance from which you deploy {productname} into a new {eks_long} cluster.
 
 In this section, you use the {offering1} listing in the {market} to install {platform1}.
 
@@ -264,7 +258,7 @@ Infrastructure costs apply.
 
 . Click __Continue to Configuration__.
 
-. Select the Region matching your newly created VPC, then click __Continue To Launch__.
+. Select the Region matching the VPC you created as a prerequisite step, then click __Continue To Launch__.
 + 
 image::aws-mp-rancher-07.png[Select VPC, scaledwidth="75%", align="center"]
 
@@ -280,6 +274,7 @@ image::aws-mp-rancher-09.png[Congratulations page, scaledwidth="85%", align="cen
 === Assign the role
 
 . In the AWS Console, navigate to __EC2__ > __Instances__ and select the newly created instance (corresponding to the AMI ID noted earlier), then edit the name of the instance to make it easier to find.
+This is the ephemeral appliance used to deploy your environment. 
 + 
 image::aws-mp-rancher-10.png[Select and name instance, scaledwidth="85%", align="center"]
 
@@ -290,8 +285,12 @@ image::aws-mp-rancher-10.png[Select and name instance, scaledwidth="85%", align=
 .. Select the 'RancherSetupEC2role' role.
 
 .. Click __Update IAM role__.
+
+... Your ephemeral appliance now has the permissions required to deploy the environment.
 + 
 image::aws-mp-rancher-12.png[Update IAM role for instance, scaledwidth="85%", align="center"]
+
+
 
 
 === Deploy Rancher
@@ -347,6 +346,7 @@ image::aws-mp-rancher-19.png[Size of management cluster, scaledwidth="85%", alig
 [TIP]
 ====
 'SMALL' works for most initial deployments.
+the instance that run the Rancher cluster can be resized when needed.
 ====
 
 . Enter the fully qualified domain name (FQDN) for your Rancher management server, then click __Next__.
@@ -372,7 +372,7 @@ image::aws-mp-rancher-22.png[Congratulations - Rancher is ready, scaledwidth="85
 +
 [NOTE]
 ====
-The __Clean resources__ function gives you a mechanism for restoring your Rancher environment.
+The __Clean resources__ function gives you a mechanism for removing your Rancher environment.
 
 . Click __Clean resources__.
 
@@ -425,10 +425,14 @@ Purchase {productname2} via the {market} with the {offering2} for your geography
 
 image::aws-mp-rancher-34.png[Rancher Priority Support offerings, scaledwidth="85%", align="center"]
 
-You can also purchase {productname2} via your normal AWS or SUSE sales channel or by contacting aws@suse.com directly.
-
 When activated, a billing and metering container runs in your environment that validates the support entitlement purchased through the {market} with the quantity of managed, downstream cluster nodes.
-You can then generate _supportconfigs_ and open support tickets in the SUSE Customer Center (SCC).
+This instantiates the {offering3} status for your deployment.
+{offering3} is outlined here https://www.rancher.com/products/rancher[Rancher Prime].
+
+If you procured {offering2}} via the AWS Marketplace you can get support by generating a 'supportconfig' and uploading it via the SUSE Customer Center (SCC) at scc.suse.com.
+If you procured {offering2} directly from SUSE, then you can create support tickets via SCC using the credentials you received as part of the transaction.
+
+You can also purchase {productname2} via your normal AWS or SUSE sales channel or by contacting aws@suse.com directly to request a Private Offer.
 
 [NOTE]
 ====
