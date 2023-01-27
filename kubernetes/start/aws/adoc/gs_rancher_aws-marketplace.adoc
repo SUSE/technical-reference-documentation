@@ -209,7 +209,7 @@ For detailed instructions on VPC networking or rules for Public and Private Subn
 
 Be sure to take note of the public subnet name you have chosen for your initial automation node deployment.
 
-image::aws-mp-rancher-02.png[DEFINITION, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-02.png[VPC creation, scaledwidth="85%", align="center"]
 ====
 
 . Define an access policy.
@@ -237,7 +237,7 @@ image::aws-mp-rancher-03.png[Policy configuration, scaledwidth="85%", align="cen
 // Kevin this step needs to be fleshed out like the one above.
 .. In __IAM__, select __Roles__.
 
-.. Create a new Role named 'RancherSetupEC2role' of 'Use Case' type 'EC2', and attach the policy 'RancherSetupEC2policy' to it.
+.. Create a new Role named 'RancherSetupEC2role' with use case type 'EC2', and attach the policy 'RancherSetupEC2policy' to it.
 This role will be attached to the deployment automation EC2 instance once it is created. 
 + 
 image::aws-mp-rancher-04.png[Role configuration, scaledwidth="85%", align="center"]
@@ -245,7 +245,7 @@ image::aws-mp-rancher-04.png[Role configuration, scaledwidth="85%", align="cente
 
 === Subscribe to {offering1}
 
-. Open an additional browser window or tab and navigate to the {offering1} in the {market} at https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[{offering1}], then click __Continue to Subscribe__.
+. Open an additional browser window or tab and navigate to the https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[{offering1}] {market} offering, then click __Continue to Subscribe__.
 + 
 image::aws-mp-rancher-05.png[Marketplace listing, scaledwidth="85%", align="center"]
 +
@@ -260,7 +260,7 @@ Infrastructure costs apply.
 + 
 image::aws-mp-rancher-07.png[Select VPC, scaledwidth="75%", align="center"]
 
-. Select the VPC, Subnet, Security Group, and Key Pair you created previously, then __Launch__.
+. Select the VPC, Subnet, Security Group, and Key Pair you created previously, then click __Launch__.
 + 
 image::aws-mp-rancher-08.png[Select VPC, scaledwidth="75%", align="center"]
 
