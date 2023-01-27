@@ -77,7 +77,6 @@ include::./common_docinfo_vars.adoc[]
 
 :offering1: Rancher Setup
 :offering2: SUSE Rancher Priority Support
-:offering3: Rancher Prime
 :offering2_region1: EU and UK
 :offering2_region2: non-EU and non-UK
 :market: AWS Marketplace
@@ -394,43 +393,49 @@ image::aws-mp-rancher-23.png[Rancher first login, scaledwidth="85%", align="cent
 + 
 image::aws-mp-rancher-24.png[Rancher new password, scaledwidth="85%", align="center"]
 
-. You can now use HTTPS in your browser to naviate to the FQDN provided during setup.
-Example: https://rancher.example.com
+. You can now open your browser to the Rancher UI with the FQDN you provided during setup.
+For example, https://rancher.example.com.
 +
 image::aws-mp-rancher-25.png[Rancher UI - Welcome, scaledwidth="85%", align="center"]
 
-. You should now promptly 'Terminate' the instance created for deployment automation to improve security and save cost. 
+. Terminate the temporary instance you created for the deployment automation to improve security and save cost. 
 + 
 image::aws-mp-rancher-30.png[AWS Terminate Instance, scaledwidth="85%", align="center"]
 
-. The initial 3-node management cluster does not count against your {productname} 'Priority Support' node count which you may purchase through the {market}. 
-You can now create a 'Cloud Credential'. 
+. You can now create a 'Cloud Credential'  
 +
-image::aws-mp-rancher-31.png[Rancher - Create Cloud Credential, scaledwidth="85%", align="center"]
-Deploy or import downstream clusters and node-groups for workloads.    
+image::aws-mp-rancher-31.png[Rancher - Create Cloud Credential, scaledwidth="75%", align="center"]
+and deploy or import downstream clusters and node-groups for workloads. 
 +
-image::aws-mp-rancher-32.png[Rancher - Create EKS Cluster, scaledwidth="85%", align="center"]
+image::aws-mp-rancher-32.png[Rancher - Create EKS Cluster, scaledwidth="75%", align="center"]
 
+[NOTE]
+====
+The initial 3-node management cluster does not count against your {productname} node count for _Priority Support_, which you may purchase through the {market}.
+====
+ 
 
 == Priority support
 
-// Create a correct description of the support offering.
+image::rancher-prime-logo-color.svg[Rancher Prime, scaledwidth="25%", align="center"]
 
-Elevate your Rancher landscape to _{productname2}_ with _{offering2}_ in the {market}.
-https://ranchermanager.docs.rancher.com/getting-started/quick-start-guides/deploy-rancher-manager/prime[{productname2}] enables you with priority support, security assurances, extended lifecycles, access to focused architectures and Kubernetes advisories, and more.
+Elevate your Rancher landscape to https://ranchermanager.docs.rancher.com/getting-started/quick-start-guides/deploy-rancher-manager/prime[{productname2}].
+{productname2} enables you with priority support, security assurances, extended lifecycles, access to focused architectures and Kubernetes advisories, and more.
 
-Purchase {productname2} via the {market} with the {offering2} for your geography.
+Purchase {productname2} via the {market} with the _{offering2}_ listing for your geography.
 
 image::aws-mp-rancher-34.png[Rancher Priority Support offerings, scaledwidth="85%", align="center"]
 
-When activated, a billing and metering container runs in your environment that validates the support entitlement purchased through the {market} with the quantity of managed, downstream cluster nodes.
-This instantiates the {offering3} status for your deployment.
-{offering3} is outlined here https://www.rancher.com/products/rancher[Rancher Prime].
+You can also purchase {productname2} via your normal AWS or SUSE sales channel or by contacting aws@suse.com directly to request a private offer.
 
-If you procured {offering2}} via the AWS Marketplace you can get support by generating a 'supportconfig' and uploading it via the SUSE Customer Center (SCC) at scc.suse.com.
+
+Once activated, a billing and metering container runs in your environment that validates the support entitlement you purchased through the {market} with the quantity of managed, downstream cluster nodes.
+This instantiates _{productname2}_ status for your deployment.
+
+
+If you procured {offering2} via the {market} you can get support by generating a 'supportconfig' and uploading it via the https://scc.suse.com/[SUSE Customer Center (SCC)].
 If you procured {offering2} directly from SUSE, then you can create support tickets via SCC using the credentials you received as part of the transaction.
 
-You can also purchase {productname2} via your normal AWS or SUSE sales channel or by contacting aws@suse.com directly to request a Private Offer.
 
 [NOTE]
 ====
