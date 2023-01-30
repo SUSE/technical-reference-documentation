@@ -373,7 +373,7 @@ sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
 
 
 
-== Create your application container image
+== Creating the application container image
 
 You build an application container image by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
 In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages for machine learning and data analysis.
@@ -471,7 +471,9 @@ Are you able to use the image with your preferred software, tooling, and workflo
 Redistribution::
 Are you legally able to redistribute the custom application container images you build on it?
 
-Learn more about https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
+Learn https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
+
+//
 
 
 . Change to your build directory.
@@ -513,28 +515,32 @@ RUN set -eux pipefail; \
     pip install -r requirements.txt; \
     pip cache purge;
 
-# expose JupyterLab Web port
+# expose JupyterLab web port
 EXPOSE 8888/tcp 
+
+# change to notebooks directory
+RUN cd $NOTEBOOKS
 
 # change to notebooks directory and launch JupyterLab
 CMD cd $NOTEBOOKS; jupyter-lab --ip=* --port=8888 --no-browser --notebook-dir=$NOTEBOOKS
+
 ----
 
-The instructions used in this _Containerfile_ to automate the build of your container include:
+Instructions used in this _Containerfile_ to automate the build of your container include:
 
-* `FROM`: specifies which base image to use.
+FROM:: Specify the base image to use.
 
-* `RUN`: executes a shell (`/bin/sh -c`) command.
+RUN:: Run a command.
 
-* `ENV`: sets an environment variable.
+ENV:: Set an environment variable, whose value is passed to subsequent commands, like `RUN` and `CMD`.
 
-* `WORKDIR` sets the working directory for subsequent `RUN`, `CMD`, `COPY` and other instructions.
+WORKDIR:: Set the working directory for subsequent `RUN`, `CMD`, `COPY` and other instructions.
 
-* `COPY`: copies files into the container.
+COPY:: Copy files into the container.
 
-* `EXPOSE`: informs the container engine that the container listens on the specified network ports.
+EXPOSE:: Inform the container engine that the container listens on the specified network ports at runtime.
 
-* `CMD` provides a default command to be executed when the container is run.
+CMD:: Provide a default command to be executed when the container is run.
 
 
 
@@ -597,21 +603,31 @@ Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.ht
 ====
 
 
-== Create a launch script
+== Running the container
+
+=== Create a launch script
 
 Now that you have a container, you can run it with the `podman run` command.
-But, for your application container to be useful, you need to enable access.
-That is, you need to be able to access the JupyterLab Web interface (listening on TCP network port 8888) from your local host as well as to read and write files outside the container (such as on your local file system).
-You do this with a few `podman run` options.
+You must also pass a few options so Podman can enable:
 
-In this section, you create a shell script to simplify calling `podman run` with all required options.
+* access to the JupyterLab Web interface (listening on TCP network port 8888) from your local system.
 
-. Change to your preferred directory for personal shell scripts (such as _$HOME/bin_) or temporarily use your build directory (_$HOME/jupcontainer_).
+* read and write files on your local file system.
+
+Entering a long command each time you want to launch your container can be tedious and error-prone.
+In this section, you simplify this with a shell script.
+
+. Change to your build directory to create your launch script.
 +
 [source, bash]
 ----
 cd $HOME/jupcontainer
 ----
++
+[TIP]
+====
+After you get things working, you may find it convenient to move your launch script into a directory in your PATH, such as _$HOME/bin_.
+====
 
 . Create the text file _juplaunch_ with this content.
 +
@@ -621,8 +637,8 @@ cd $HOME/jupcontainer
 
 # define some variables
 container_name=jupyter
-container_user=1000
-container_group=1000
+container_uid=1000
+container_gid=1000
 container_port=8888
 host_port=8888
 container_volume=/home/jupyter/notebooks
@@ -630,30 +646,30 @@ host_volume=$(pwd)
 
 # launch container with options
 podman run \
-  --uidmap $container_user:0:1 \
-  --uidmap 0:1:$container_user \
-  --gidmap $container_group:0:1 \
-  --gidmap 0:1:$container_group \
+  --uidmap $container_uid:0:1 \
+  --uidmap 0:1:$container_uid \
+  --gidmap $container_gid:0:1 \
+  --gidmap 0:1:$container_gid \
   --name $container_name \
   --publish $host_port:$container_port \
   --volume $host_volume:$container_volume:z \
   localhost/$container_name
 ----
 
-. Grant yourself execute permissions on the script.
+. Grant yourself execute permissions for the script.
 +
 [source, bash]
 ----
 chmod u+x juplaunch
 ----
 
-Illustrated in the _juplaunch_ script are the following options:
+In the _juplaunch_ script you pass the following options to `podman run`:
 
-`--name`:: Assigns a name to the container.
+--name:: Assign a name to the container.
 
-`--publish`:: Publishes the container's exposed network port or range of ports to the host, making it accessible.
+--publish:: Publish the container's exposed network port or range of ports to the host, making it accessible.
 
-`--volume`:: Creates a bind mount, mounting the specified volume from the host into to container.
+--volume:: Create a binding to mount the specified volume from the host into to container.
 +
 [NOTE]
 ====
@@ -664,22 +680,18 @@ Use `:z` to tell Podman to relabel file objects so two or more containers are ab
 Use `:Z` to tell Podman to relabel file objects so that only the current container can use the volume.
 ====
 
-`--uidmap` and `--gidmap`:: Map the UID and GID, respectively, from the user namespace inside the container to your user namespace outside the container.
-This allows you to avoid permission and ownership issues when accessing files in the mounted volume.
-You do this with the `podman run` command options `--uidmap` and `--gidmap` (see the https://docs.podman.io/en/v3.4.4/markdown/podman-run.1.html[Podman run documentation] for a more detailed discussion).
-
+--uidmap / --gidmap:: Map the UID and GID, respectively, from the user namespace inside the container to your user namespace outside the container.
+This allows you to avoid permission and ownership issues when accessing files in mounted volumes.
+User namespace mappings can be complex, as rootless (unprivileged) UIDs and GIDs are mapped through intermediary subUIDs and subGIDs.
+See the https://docs.podman.io/en/v3.4.4/markdown/podman-run.1.html[Podman run documentation] for a more detailed discussion.
++
 [NOTE]
 ====
-User namespace mappings can be complex, as rootless (unpriviledged) user UIDs and GIDs are mapped through intermediary (subordinate) UIDs and GIDs.
-
-With the release of https://docs.podman.io/en/v4.3/markdown/podman-run.1.html[version 4.3.0], `podman run` simplifies user namespace mappings with the `--userns` option.
+With the release of https://docs.podman.io/en/v4.3/markdown/podman-run.1.html[Podman 4.3.0], user namespace mapping is simplified with the `--userns=keep-id` option.
 ====
 
 
-
-== Launch your application container
-
-In this section, you see how to run and access your container.
+=== Launch the container
 
 
 . Prepare your workspace.
@@ -714,7 +726,7 @@ $HOME/jupcontainer/juplaunch
 ----
 
 . Once you have launched your container, note the output in your terminal.
-There you can find the URL and access token for the containerized JupyterLab environment.
+There you can find the URL with embedded access token for the containerized JupyterLab environment.
 +
 [source, bash]
 ----
@@ -729,7 +741,7 @@ There you can find the URL and access token for the containerized JupyterLab env
 //
 +
 Open the Web browser on your host system to the last URL shown in your terminal (the one that begins with 'http://127.0.0.1').
-If all went well, you are presented with the main JupyterLab user interface (UI).
+If all goes well, you are presented with the main JupyterLab user interface (UI).
 +
 image::jupyterlab-podman-ui.png[JupyterLab UI, scaledwidth="85%", align="center"]
 
@@ -842,31 +854,46 @@ You do not need to specify the full container ID here.
 Instead, you could specify the container name ('jupyter') or the first few unique digits of the container ID.
 ====
 +
-At this point, your container is started, but you do not have the proper URL of the JupyterLab server to access it.
-You can obtain the URL from the command line inside the container.
+At this point, your container is started, but you may not have the URL with the token to access the JupyterLab server.
 
-. Enter a bash shell inside your container.
+. Obtain the URL with access token for JupyterLab running in your container.
+
+.. Enter a bash shell inside your container.
 +
 [source, bash]
 ----
 podman exec -it 95038cde3755 /bin/bash
 ----
 
-. Display any running JupyterLab servers.
+.. Display any running JupyterLab servers.
 +
 [source, bash]
 ----
 jupyter-server list
 ----
+Resulting in output like the following:
 +
 [source, bash]
 ----
 [JupyterServerListApp] Currently running servers:
 [JupyterServerListApp] http://localhost:8888/?token=889b9af1f0c76fb9cda24c3327b3d723a928a8298af1dd22 :: /home/jupyter/notebooks
 ----
-Once you have this URL, you can exit the container shell and return to your local command line.
++
+[NOTE]
+====
+In starting the container, you only launched a single instance of JupyterLab.
+However, it is possible to have multiple, simultaneous JupyterLab instances running on a system.
+Each would be listed here with its access URL and notebook directory.
+====
 
-. Access JupyterLab by opening the displayed URL in your Web browser.
+.. Once you have the URL, you can return to your local command line.
++
+[source, bash]
+----
+exit
+----
+
+. Access JupyterLab by opening your Web browser to the URL you obtained.
 
 . Log out of the JupyterLab session by selecting __File__ > __Log Out__.
 //
@@ -874,28 +901,29 @@ Once you have this URL, you can exit the container shell and return to your loca
 [NOTE]
 ====
 By using the __Log Out__ option, the JupyterLab server and your container continue to run.
-You can relaunch your Web browser and open the same URL to access JupyterLab.
 ====
 
-. Shut down JupyterLab by selecting __File__ > __Shutdown__.
-+
-[TIP]
-====
-You can also shut down the JupyterLab server from the shell inside your container by issuing the `jupyter-server stop` command.
-Once JupyterLab shuts down, you are returned to your local command line and the container is stopped.
+. Access JupyterLab by opening your Web browser to the same URL you used in the previous step.
 
-You can also unceremoniously shut down the container with `podman stop CONTAINER-ID`.
-====
+. This time, shut down JupyterLab by selecting __File__ > __Shutdown__.
 
 
-== Clean your container environment
 
-As you work with containers, you may find that you no longer need some of them.
-Podman provides commands to help you clean up your container space.
+
+== Clean up the container environment
+
+You may find that you no longer need some of your containers or container images.
+Podman provides commands to help you clean up your container environment.
+
 In this section, you delete a stopped container and then delete the image from which it was instantiated.
 
+[TIP]
+====
+You can unceremoniously stop a running container with `podman stop CONTAINER-ID`.
+====
 
-. Delete a container.
+
+. Delete your container.
 
 .. Identify the container you wish to delete.
 +
@@ -918,9 +946,6 @@ podman container rm 95038cde3755
 ----
 
 . Delete an application container image.
-//
-+
-You may wish to do this if, for example, you want to rebuild your application container image with newer packages.
 
 .. Identify the container image you want to delete.
 +
@@ -970,17 +995,17 @@ If you would like to list all images, use `podman image list --all`.
 
 
 Podman provides many https://docs.podman.io/en/latest/Commands.html[commands] to help you manage your containers and container images.
-Many Podman commands also have synonyms that can save you a few keystrokes (for example, `podman rmi IMAGE-ID` is the same as `podman image rm IMAGE-ID`).
+Some Podman commands also have synonyms that can save you a few keystrokes (for example, `podman rmi IMAGE-ID` is the same as `podman image rm IMAGE-ID`).
 
 
 
 == Summary
 
 Modern application development eschews closed, monolithic structures in favor of open, interoperable, microservices architectures designed and implemented with containers.
-Container technologies support Modern Agile software development. They enable operations teams to manage the full lifecycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
+Podman and other container technologies, like https://www.suse.com/c/rancher_blog/what-is-kubernetes/[Kubernetes], support modern Agile software development.
+They enable operations teams to manage the full lifecycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
 Innovation across many domains, including machine learning, have been accelerated by the availability of container technologies that make it easier to collaborate, test, and deploy new capabilities.
 
-//
 
 In this guide, you took first steps working with containers.
 You learned how to install Podman, then use it to build, deploy, and manage an application container.
