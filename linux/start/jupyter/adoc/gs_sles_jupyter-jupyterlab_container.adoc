@@ -72,10 +72,14 @@ include::./common_docinfo_vars.adoc[]
 :other1_surname: Čermák
 :other1_jobtitle: Software Engineer
 :other1_orgname: SUSE
-:other2_firstname: Darragh
-:other2_surname: O'Reilly
-:other2_jobtitle: Senior Cloud Engineer
+:other2_firstname: Victor
+:other2_surname: Gregorio
+:other2_jobtitle: Senior Manager, Solution Architects
 :other2_orgname: SUSE
+:other3_firstname: Darragh
+:other3_surname: O'Reilly
+:other3_jobtitle: Senior Cloud Engineer
+:other3_orgname: SUSE
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -116,6 +120,16 @@ This document illustrates how to containerize the popular Python development pla
 
 This document is intended for data scientists, ML developers, operations teams, systems architects and others interested in learning more about container technologies.
 To progress with this document, the reader should have basic Linux command line skills and some knowledge of containers.
+
+
+=== Acknowledgements
+
+The authors wish to thank the following individuals for their contributions to this guide:
+
+* {other1_firstname} {other1_surname}, {other1_jobtitle}, {other1_orgname}
+* {other2_firstname} {other2_surname}, {other2_jobtitle}, {other2_orgname}
+* {other3_firstname} {other3_surname}, {other3_jobtitle}, {other3_orgname}
+
 
 
 == Overview
@@ -373,7 +387,7 @@ sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
 
 
 
-== Creating the application container image
+== Creating container images
 
 You build an application container image by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a https://documentation.suse.com/container/all/single-html/SLES-container/#cha-bci[base container image].
 In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages for machine learning and data analysis.
@@ -603,11 +617,11 @@ Learn more about Podman commands at https://docs.podman.io/en/latest/Commands.ht
 ====
 
 
-== Running the container
+== Running containers
 
 === Create a launch script
 
-Now that you have a container, you can run it with the `podman run` command.
+Now that you have a container image, you can use the `podman run` command to instantiate it as a container.
 You must also pass a few options so Podman can enable:
 
 * access to the JupyterLab Web interface (listening on TCP network port 8888) from your local system.
@@ -718,7 +732,7 @@ If you do not have your own Jupyter notebook to use, you can find a plethora to 
 including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial/notebook[Titanic Tutorial] for https://kaggle.com/[Kaggle].
 
 
-. Launch your JupyterLab container.
+. Call your launch script.
 +
 [source, bash]
 ----
@@ -820,8 +834,7 @@ Then, confirm that you want to shut down JupyterLab.
 In the terminal you used to launch your container, you will see messages from JupyterLab that it is shutting down before you are returned to the command prompt of your local system.
 
 
-
-== Restart your container
+=== Restart the container
  
 In the previous section, you shut down the JupyterLab server, which caused the container to also shut down.
 This did not delete the container.
@@ -909,8 +922,7 @@ By using the __Log Out__ option, the JupyterLab server and your container contin
 
 
 
-
-== Clean up the container environment
+=== Clean up
 
 You may find that you no longer need some of your containers or container images.
 Podman provides commands to help you clean up your container environment.
