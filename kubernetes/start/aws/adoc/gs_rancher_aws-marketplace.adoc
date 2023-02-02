@@ -1,0 +1,516 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+// audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+// - Text highlights (follow SUSE style guides)
+// - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+// - Code blocks
+// - Lists (ordered and unordered, as appropriate)
+// - Links (to other resources)
+// - Images
+// - Place image files under the ./media directory tree
+// (e.g., ./media/src/svg, ./media/src/png)
+// - Format preference: svg > png > jpg
+// - Consolidate images wherever possible
+// (i.e., don't use two images when one conveys the message)
+// - Use sections and subsections to organize and group related
+// steps.
+// 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Variables & Attributes
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document and product
+// -
+:title: Rancher by SUSE and Priority Support on AWS Marketplace
+:subtitle: Deploy Rancher on Elastic Kubernetes Service (EKS)
+:productname: Rancher
+:productversion: 2.6.10
+:platform1: Rancher by SUSE
+:productname2: Rancher Prime
+:usecase: quickly deploy Rancher by SUSE on AWS to manage your entire Kubernetes landscape
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributors
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: Kevin
+:author1_surname: Ayres
+:author1_jobtitle: Solutions Architect
+:author1_orgname: SUSE
+:other1_firstname: Stephen
+:other1_surname: Mogg
+:other1_jobtitle: Solutions Architect
+:other1_orgname: SUSE
+:other2_firstname: Keith
+:other2_surname: Pettit
+:other2_jobtitle: Sales Engineer
+:other2_orgname: SUSE
+:editor1_firstname: Terry
+:editor1_surname: Smith
+:editor1_jobtitle: Global Partner Solutions Director
+:editor1_orgname: SUSE
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// define any additional variables here for use within the document
+// -
+
+:offering1: Rancher Setup
+:offering2: SUSE Rancher Priority Support
+:offering2_region1: EU and UK
+:offering2_region2: non-EU and non-UK
+:market: AWS Marketplace
+:eks_long: Amazon Elastic Kubernetes Service
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+= {title}: {subtitle}
+
+
+
+== Introduction
+
+
+image::logo-lockup_suse-aws_positive.svg[SUSE | Amazon Web Services, scaledwidth="50%", align="center"]
+
+
+=== Motivation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a motivation for the document in 2-4 sentences to identify:
+// - what the document is about
+// - why it may be of interest to the reader (e.g., a use case)
+// - what products are being highlighted
+// Include an approved SUSE | Partner logo lock-up if possible
+// Include any additional, relevant details
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+{platform1} is a complete software stack for managing your entire Kubernetes landscape.
+{productname} addresses the needs of DevOps teams, who are deploying applications with Kubernetes, and IT operations, who are responsible for delivering enterprise-critical services.
+{productname} provides simple, consistent operations and unifies security, policy, and user management, whether you are running one Kubernetes cluster or thousands.
+
+With _{offering1}_ in the {market}, you can easily install {productname}, enabling you to manage all your downstream clusters wherever a routable API address exists.
+
+
+=== Scope
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Specify what this guide covers in no more than 2 sentences.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+In this guide, you learn how to install {productname} on {eks_long} using the _{offering1}_ listing in the {market}.
+
+From a single ephemeral appliance, you launch a three-node EKS cluster in a geography of your choosing and install {productname} in this cluster using the current _rancher-stable_ release. 
+From this management plane, you can begin to deploy or import downstream EKS or other Kubernetes clusters.
+
+[NOTE]
+====
+_{offering1}_ is designed to deliver the current stable version of {productname}.
+At the time of this writing, {productname} {productversion} is deployed.
+====
+
+
+=== Audience
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify for whom this document is intended, perhaps with:
+// - topics of interests (e.g., machine learning, security, etc.)
+// - job roles (e.g., developer, administrator, platform architect, etc.)
+// - required skills
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This document is intended for administrators, cloud architects, and others who are looking to manage Kubernetes at scale across multiple geographies and accounts within AWS or hybrid landscapes.
+For this guide, you should have a basic understanding of Kubernetes and AWS concepts and services. 
+
+
+
+== Prerequisites
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify minimum requirements (prerequisites) the reader
+// would need in order to follow the steps of this guide.
+// - Link to existing resources whenever possible.
+// - Keep this section brief but elaborate as needed.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Before getting started, you should have:
+
+* VPC, subnet, routing, and security group configurations sufficient to allow HTTPS access to the deployment host interface, as well as open access between the ephemeral appliance and the subnets where your EKS cluster will be configured
+
+* Route53 registered domain
+
+* EC2 SSH key pair
+
+
+
+== Installation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Detail the steps of the installation procedure.
+// The reader should be able to copy and paste commands to
+// a local environment or follow along locally with screenshots.
+// Include one or more verification steps to validate installation.
+//
+// Leverage:
+// - Ordered lists
+// - Code blocks
+// - Screenshots
+// - Admonitions
+//
+// If multiple installation methods are to be detailed, then
+// - Create a summary list here
+// - Detail each method in its own subsection.
+//
+// NOTE: For solutions involving SUSE Rancher, it is preferred
+// to detail two installation methods:
+// - Through the Rancher Apps Catalog with appropriate
+// screenshots and SUSE branding.
+// - A more manual approach (e.g., on the command-line).
+//
+// Complex configuration procedures may be broken out into one or more
+// Configuration sections.
+// These may be subsections of Installation or separate sections at
+// the same level as Installation.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+{platform1} is available in the {market} as the _{offering1}_ listing.
+
+In this section, you use _{offering1}_ to instantiate an ephemeral appliance from which you deploy {productname} into a new {eks_long} cluster.
+
+
+
+=== Prepare your environment
+
+. Open https://console.aws.amazon.com/[AWS Console] and log in with your IAM user account.
++ 
+image::aws-mp-rancher-01.png[AWS login, scaledwidth="50%", align="center"]
+
+. Verify your region, VPC, Subnet, and Security Group settings to allow public access to your deployment automation host and your Rancher management EKS cluster. 
++
+[NOTE]
+====
+You can use the __Create VPC__ wizard to construct the required resources.
+For detailed instructions on VPC networking or rules for Public and Private Subnets, reference https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html[How VPC Works].
+
+Be sure to take note of the public subnet name you have chosen for your initial automation node deployment.
+
+image::aws-mp-rancher-02.png[VPC creation, scaledwidth="85%", align="center"]
+====
+
+. Define an access policy.
+
+.. Navigate to __Identity and Access Management__ (__IAM__) in the AWS Console at https://console.aws.amazon.com/iam/.
+
+.. Select __Policies__ in the navigation pane on the left.
+
+.. Click __Create policy__.
+
+.. Select the __JSON__ tab.
+
+.. Paste the contents of the JSON policy file at https://raw.githubusercontent.com/SUSE-Enceladus/suse-rancher-setup/main/aws-iam/iam_role.json[iam-role] into the text box.
++ 
+image::aws-mp-rancher-03.png[Policy configuration, scaledwidth="85%", align="center"]
+
+.. Click __Review policy__.
+
+.. Enter 'RancherSetupEC2policy' for the __Name__ and, optionally, enter a __Description__.
+
+.. Review the policy summary, then click __Create policy__.
+
+
+. Create a service role.
+// Kevin this step needs to be fleshed out like the one above.
+.. In __IAM__, select __Roles__.
+
+.. Create a new Role named 'RancherSetupEC2role' with use case type 'EC2' and attach the policy 'RancherSetupEC2policy' to it.
+This role will be attached to the deployment automation EC2 instance once it is created. 
++ 
+image::aws-mp-rancher-04.png[Role configuration, scaledwidth="85%", align="center"]
+
+
+=== Subscribe to {offering1}
+
+. Open an additional browser window or tab and navigate to the https://aws.amazon.com/marketplace/pp/prodview-go7ent7goo5ae[{offering1}] {market} offering, then click __Continue to Subscribe__.
++ 
+image::aws-mp-rancher-05.png[Marketplace listing, scaledwidth="85%", align="center"]
++
+[WARNING]
+====
+Infrastructure costs apply.
+====
+
+. Click __Continue to Configuration__.
+
+. Select the Region matching the VPC you created as a prerequisite step, then click __Continue To Launch__.
++ 
+image::aws-mp-rancher-07.png[Select VPC, scaledwidth="75%", align="center"]
+
+. Select the VPC, Subnet, Security Group, and Key Pair you created previously, then click __Launch__.
++ 
+image::aws-mp-rancher-08.png[Select VPC, scaledwidth="75%", align="center"]
+
+. On the __Congratulations__ page, take note of the EC2 *AMI ID*. 
++ 
+image::aws-mp-rancher-09.png[Congratulations page, scaledwidth="85%", align="center"]
+
+
+=== Assign the role
+
+. In the AWS Console, navigate to __EC2__ > __Instances__ and select the newly created instance (corresponding to the AMI ID noted earlier), then edit the name of the instance to make it easier to find.
+This is the ephemeral appliance used to deploy your environment. 
++ 
+image::aws-mp-rancher-10.png[Select and name instance, scaledwidth="85%", align="center"]
+
+. Grant the instance permissions to deploy EKS and install {productname} using Helm.
+
+.. With the instance selected, navigate to __Actions__ > __Security__ > __Modify IAM Role__.
+
+.. Select the 'RancherSetupEC2role' role.
+
+.. Click __Update IAM role__.
+
+... Your ephemeral appliance now has the permissions required to deploy the environment.
++ 
+image::aws-mp-rancher-12.png[Update IAM role for instance, scaledwidth="85%", align="center"]
+
+
+
+
+=== Deploy Rancher
+
+. Wait for your instance to be in the _running_ state.
+
+. Obtain the IP of the instance from the Instance Overview in the AWS Console.
++
+[TIP]
+====
+Be sure to use the HTTPS URL for a secure connection.
+The server certificate is self-signed, so you need to accept the security exception in your browser. 
+
+image::aws-mp-rancher-13.png[Instance public IP address, scaledwidth="75%", align="center"]
+====
+
+. Obtain the user name and password for the instance.
++
+[TIP]
+====
+The user name is the EC2 Instance ID, and the initial password is the AWS account ID without dashes.
+
+You can obtain the Instance ID from the AWS console.
+
+image::aws-mp-rancher-14.png[Instance ID, scaledwidth="75%", align="center"]
+====
+
+. Return to the {offering1} UI and click __Login__.
+
+. Use the user name and password you just obtained to log in.
++ 
+image::aws-mp-rancher-15.png[Rancher Setup login, scaledwidth="75%", align="center"]
+
+. Read the information provided, then click __Next__.
++ 
+image::aws-mp-rancher-16.png[Rancher Setup information, scaledwidth="85%", align="center"]
+
+. Wait for AWS Policy Simulator to check IAM permissions, then click __Next__.
+//
++
+If an error occurs at this stage, then the role was not correctly applied to the instance.
++ 
+image::aws-mp-rancher-17.png[AWS Policy Simulator, scaledwidth="85%", align="center"]
+
+. Choose a region for deploying your {eks_long} management cluster, then click __Next__. 
++ 
+image::aws-mp-rancher-18.png[AWS Region for EKS cluster, scaledwidth="85%", align="center"]
+
+. Choose the size of your {productname} management cluster, then click __Next__.
++ 
+image::aws-mp-rancher-19.png[Size of management cluster, scaledwidth="85%", align="center"]
++
+[TIP]
+====
+'SMALL' works for most initial deployments.
+The instance that runs the {productname} cluster can be resized when needed.
+====
+
+. Enter the fully qualified domain name (FQDN) for your {productname} management server, then click __Next__.
+//
++
+[NOTE]
+====
+The subdomain containing the FQDN must be preconfigured as an AWS Route53 hosted zone.
+====
+image::aws-mp-rancher-20.png[Rancher URL, scaledwidth="85%", align="center"]
+
+. Take note of the URL at which {productname} will be served, then click __Next__ to begin deployment of {productname}.
++ 
+image::aws-mp-rancher-21.png[Deploy Rancher on AWS EKS, scaledwidth="85%", align="center"]
+
+. Deployment should take about 20 minutes.
+//
++
+When complete, review the provided information.
+In particular, be sure to copy the initial password for the {productname} UI.
++ 
+image::aws-mp-rancher-22.png[Congratulations - Rancher is ready, scaledwidth="85%", align="center"]
++
+[NOTE]
+====
+The __Clean resources__ function gives you a mechanism for removing your {productname} environment.
+
+. Click __Clean resources__.
+
+. Click __Generate clean resources commands__.
+
+. Scroll to the bottom of the page and download the linked zip file.
+
+. Store this file in a safe place.
+====
+
+
+== Accessing {productname}
+
+. Open a Web browser to the URL of your {productname} service.
+
+. Enter the initial password, which you noted earlier, and click __Log in with Local User__.
++
+image::aws-mp-rancher-23.png[Rancher first login, scaledwidth="85%", align="center"]
+
+. When prompted, enter and confirm a new password for the 'admin' user, accept the terms and conditions, then click __Continue__.
++ 
+image::aws-mp-rancher-24.png[Rancher new password, scaledwidth="85%", align="center"]
+
+. You can now open your browser to the Rancher UI with the FQDN you provided during setup.
+For example, https://rancher.example.com.
++
+image::aws-mp-rancher-25.png[Rancher UI - Welcome, scaledwidth="85%", align="center"]
+
+. Terminate the temporary instance you created for the deployment automation to improve security and save costs. 
++ 
+image::aws-mp-rancher-30.png[AWS Terminate Instance, scaledwidth="85%", align="center"]
+
+. You can now create a 'Cloud Credential'  
++
+image::aws-mp-rancher-31.png[Rancher - Create Cloud Credential, scaledwidth="75%", align="center"]
+and deploy or import downstream clusters and node groups for workloads. 
++
+image::aws-mp-rancher-32.png[Rancher - Create EKS Cluster, scaledwidth="75%", align="center"]
+
+[NOTE]
+====
+The initial 3-node management cluster does not count against your {productname} node count for _Priority Support_, which you may purchase through the {market}.
+====
+ 
+
+== Priority support
+
+image::rancher-prime-logo-color.svg[Rancher Prime, scaledwidth="25%", align="center"]
+
+Elevate your Rancher landscape to https://ranchermanager.docs.rancher.com/getting-started/quick-start-guides/deploy-rancher-manager/prime[{productname2}].
+{productname2} enables you with priority support, security assurances, extended lifecycles, access to focused architectures and Kubernetes advisories, and more.
+
+Purchase {productname2} via the {market} with the _{offering2}_ listing for your geography.
+
+image::aws-mp-rancher-34.png[Rancher Priority Support offerings, scaledwidth="85%", align="center"]
+
+You can also purchase {productname2} via your normal AWS or SUSE sales channel or by contacting aws@suse.com directly to request a private offer.
+
+
+Once activated, a billing and metering container runs in your environment that validates the support entitlement you purchased through the {market} with the quantity of managed, downstream cluster nodes.
+This instantiates _{productname2}_ status for your deployment.
+
+
+If you procured {offering2} via the {market}, you can get support by generating a 'supportconfig' and uploading it via the https://scc.suse.com/[SUSE Customer Center (SCC)].
+If you procured {offering2} directly from SUSE, then you can create support tickets via SCC using the credentials you received as part of the transaction.
+
+
+[NOTE]
+====
+The three-node EKS cluster deployed with {offering1} is supported at no additional cost and does not count against the purchased supported node count.
+
+Also, your supported downstream cluster nodes can be located anywhere - in multiple clusters, geographies, data centers, edge devices, and clouds.
+====
+
+
+
+== Summary
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize:
+// - Motivation (1 sentence)
+// - What was covered (1-2 sentences)
+// - Next steps (unordered list of 2-4 further learning resources)
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+In this guide, you learned to quickly deploy {platform1} into an {eks_long} via the {market}.
+You also learned about elevating your enterprise experience with {productname2} priority support.
+
+//
+
+
+
+Happy Ranching!
+
+
+== References
+
+Continue your explorations with the following resources:
+
+* https://www.youtube.com/watch?v=9dznJ7Ons0M[Step-by-step video] walk-through of the process detailed in this guide
+
+* https://aws.amazon.com/marketplace/search?searchTerms=SUSE+Rancher&CREATOR=1595dc13-315b-4349-8640-bf36795ae787%2Cd8e49cc8-b2f8-448d-8531-fc8e873121b0&filters=CREATOR[{platform1} listings] in the {market}
+
+* https://www.suse.com/c/deploy-rancher-on-an-eks-cluster-the-easy-way/[Deploy Rancher on an EKS cluster, the easy way] by Jesús Bermúdez Velázquez
+
+* https://www.rancher.com/products/rancher[Rancher editions]
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end

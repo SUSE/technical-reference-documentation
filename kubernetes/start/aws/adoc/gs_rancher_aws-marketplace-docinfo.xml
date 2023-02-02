@@ -1,0 +1,118 @@
+<!-- https://tdg.docbook.org/tdg/5.2/info -->
+
+<dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+    <dm:bugtracker>
+        <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
+	<!--  <dm:product>{title}</dm:product> -->
+    </dm:bugtracker>
+</dm:docmanager>
+
+<!-- Note to author/editor
+     Attributes used here (enclosed in curly braces).
+     General variables are defined in common_docinfo_vars.adoc.
+     Variable specific to this document (such as the title) are
+     defined with the main content in the adoc file.
+     See comments below for additional options.
+-->
+
+
+<!-- document organization metadata
+     Do NOT modify this section
+     <orgname>Technical Reference Documentation</orgname>
+-->
+<meta name="series">{trd}</meta>
+<meta name="type">{type}</meta>
+
+
+<!-- document title and subtitle -->
+<title>{title}</title>
+<subtitle>{subtitle}</subtitle>
+
+
+<!-- platform and product metadata
+     Replicate for additional platforms.
+     Define platform2, etc. in adoc file.
+-->
+<productname>{productname}</productname>
+<meta name="platform">{platform1}</meta>
+
+
+<!-- author metadata
+     Replicate author tag structure inside this authorgroup
+     for additional authors.
+     Use editor and othercredit tag groups for additional contributors.
+     Update variables in adoc file.
+-->
+<authorgroup>
+  <author>
+    <personname>
+      <firstname>{author1_firstname}</firstname>
+      <surname>{author1_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author1_jobtitle}</jobtitle>
+      <orgname>{author1_orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{other1_firstname}</firstname>
+      <surname>{other1_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{other1_jobtitle}</jobtitle>
+      <orgname>{other1_orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{other2_firstname}</firstname>
+      <surname>{other2_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{other2_jobtitle}</jobtitle>
+      <orgname>{other2_orgname}</orgname>
+    </affiliation>
+  </author>
+  <editor>
+    <personname>
+      <firstname>{editor1_firstname}</firstname>
+      <surname>{editor1_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{editor1_jobtitle}</jobtitle>
+      <orgname>{editor1_orgname}</orgname>
+    </affiliation>
+  </editor>
+</authorgroup>
+
+<!-- logo images
+     Duplicate mediaobject tag group and
+     reference additional logos as needed.
+     Place logo files under media directory tree.
+-->
+<cover role="logos">
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="logo-lockup_suse-aws_positive.svg" width="10em"/>
+    </imageobject>
+  </mediaobject>
+</cover>
+
+<!-- brief abstract for document
+     Update with an enticing summary.
+-->
+<abstract role="executivesummary">
+  <title>Summary</title>
+  <para>This document outlines basic steps for using the {market} to {usecase}.</para>
+</abstract>
+
+
+<!-- disclaimer
+     Do NOT edit
+-->
+<abstract>
+  <title>Disclaimer</title>
+  <para>{disclaimer}</para>
+</abstract>
+
