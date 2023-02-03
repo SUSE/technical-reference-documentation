@@ -1010,6 +1010,82 @@ Podman provides many https://docs.podman.io/en/latest/Commands.html[commands] to
 Some Podman commands also have synonyms that can save you a few keystrokes (for example, `podman rmi IMAGE-ID` is the same as `podman image rm IMAGE-ID`).
 
 
+== Sharing
+
+Now that you have an application container image and you have verified that it works, you may want to share it with your team, fellow researchers, or others for whom it may be of value.
+A few of the options available to you are outlined here.
+
+. Share the source.
+//
++
+An easy method is to simply share the files you used to create your container image.
+These are small text files that you could share via email, file share service, Git repository, and so on.
+Once the files are received, the recipient can follow the same steps you used to create the contaner image and run the container.
+
+. Use `podman image save` and `podman image load`.
+//
++
+https://docs.podman.io/en/latest/markdown/podman-save.1.html[podman image save] allows you to save your container image and its parent layers to a tar archive that you can share.
+The recipient of the tar archive can load the image with https://docs.podman.io/en/latest/markdown/podman-load.1.html[podman image load] and create containers from it.
+
+.. Export your container image to a tar archive.
++
+[source, bash]
+----
+podman image save --output jupyter.tar localhost/jupyter:latest
+----
++
+[source, bash]
+----
+Copying blob d555e1b0b42f done  
+Copying blob fee5cefcf4f2 done  
+Copying blob c20cfe968665 done  
+Copying blob 9fe0f3109612 done  
+Copying blob 85cf7f4629b6 done  
+Copying blob e66fef9acae6 done  
+Copying blob 5f70bf18a086 done  
+Copying config 9952705ff5 done  
+Writing manifest to image destination
+Storing signatures
+----
+
+.. Send the archive to the recipient.
++
+[TIP]
+====
+You can compress the archive file.
+====
+
+.. The recipient can load the image and launch a container with it.
++
+[source, bash]
+----
+podman image load --input jupyter.tar
+----
++
+[source, bash]
+----
+Getting image source signatures
+Copying blob e66fef9acae6 done  
+Copying blob 85cf7f4629b6 done  
+Copying blob fee5cefcf4f2 done  
+Copying blob 9fe0f3109612 done  
+Copying blob c20cfe968665 done  
+Copying blob d555e1b0b42f done  
+Copying blob 5f70bf18a086 done  
+Copying config 9952705ff5 done  
+Writing manifest to image destination
+Storing signatures
+Loaded image: localhost/jupyter:latest
+----
++
+[TIP]
+====
+It is a good idea to share your launch script or, at least, some guidance on the options the recipient will need to pass to `podman run`.
+====
+
+
+
 
 == Summary
 
