@@ -357,11 +357,6 @@ See the manual page for containers-storage.conf for more storage settings:
 
 === Grant access to your SUSE Customer Center credentials
 
-[NOTE]
-====
-This section is optional.
-====
-
 An application container image starts with a base image.
 Onto this, you layer additional contents, such as libraries and applications.
 One way to do this is by installing software RPM packages from the {productname} repositories.
@@ -370,12 +365,13 @@ This requires your user account to have read access to your SUSE Customer Center
 For this guide, you use the latest {productname2} Python container image as your base.
 This container image already includes the development and runtime components for Python {python_ver}, saving you from having to install them.
 All other required software and libraries can be installed from the https://pypi.org/[Python Package Index].
-Thus, you do not need to grant your user access to your SCC credentials.
+Thus, you do not need to grant your user access to your SCC credentials for this guide.
 
 [NOTE]
 ====
-When building your container, you may see a warning of an "error mounting subscriptions."
+If you do not grant access to your SCC credentials, you may see a warning of an "error mounting subscriptions" when building your container.
 This is because _/etc/SUSEConnect_ and _/etc/zypp/credentials.d/SCCcredentials_ are specified as default mounts in _/etc/containers/mounts.conf_.
+This does not impact your ability to build containers unless you need to install official RPM packages.
 ====
 
 If you do wish to be able to install official RPM packages from the {productname} repositories, you can grant read permission to your current user with:
@@ -707,6 +703,7 @@ To use this option, replace the `--uidmap` and `--gidmap` options in your launch
 
 [source, bash]
 ----
+# launch container with options
 podman run \
   --userns=keep-id:uid=$container_uid,gid=$container_gid \
   --name $container_name \
@@ -1026,22 +1023,27 @@ Some Podman commands also have synonyms that can save you a few keystrokes (for 
 == Sharing
 
 Now that you have an application container image and you have verified that it works, you may want to share it with your team, fellow researchers, or others for whom it may be of value.
-A few of the options available to you are outlined here.
+A couple options are outlined here.
 
-. Share the source.
+. Use the source.
 //
 +
-An easy method is to simply share the files you used to create your container image.
+An easy method is to simply share the source files you used to create your container image.
 These are small text files that you could share via email, file share service, Git repository, and so on.
 Once the files are received, the recipient can follow the same steps you used to create the contaner image and run the container.
 
-. Use `podman image save` and `podman image load`.
+. Use an image archive.
 //
 +
 https://docs.podman.io/en/latest/markdown/podman-save.1.html[podman image save] allows you to save your container image and its parent layers to a tar archive that you can share.
 The recipient of the tar archive can load the image with https://docs.podman.io/en/latest/markdown/podman-load.1.html[podman image load] and create containers from it.
++
+[TIP]
+====
+You can also use the aliases, `podman save` and `podman load`.
+====
 
-.. Export your container image to a tar archive.
+.. Save your container image to a tar archive.
 +
 [source, bash]
 ----
@@ -1066,7 +1068,9 @@ Storing signatures
 +
 [TIP]
 ====
-You can compress the archive file.
+Image archive files can be large.
+Even compressed, they may be too large to send via email.
+Make sure to choose a sharing method that both you and your intended recipient can use.
 ====
 
 .. The recipient can load the image and launch a container with it.
@@ -1097,6 +1101,19 @@ Loaded image: localhost/jupyter:latest
 It is a good idea to share your launch script or, at least, some guidance on the options the recipient will need to pass to `podman run`.
 ====
 
+. Use a container registry.
+//
++
+A container registry hosts respositories for storing and accessing container images.
+With https://docs.podman.io/en/v4.3/markdown/podman-push.1.html[podman push] you can publish your image to a registry and with https://docs.podman.io/en/v4.3/markdown/podman-pull.1.html[podman pull] you can retrieve an image from a registry (this is what the 'FROM' instruction in your _Containerfile_ does).
+//
++
+Registries can be public or private.
+Private registries are often used by organizations for internal or restricted sharing of container images.
+Public registries typically offer open access to "pull" images, though registration and other requirements may exist for "pushing" images to the registry.
+
+
+These are just a few of the options you can use to share your application container with others.
 
 
 
@@ -1109,7 +1126,7 @@ Innovation across many domains, including machine learning, have been accelerate
 
 
 In this guide, you took first steps working with containers.
-You learned how to install Podman, then use it to build, deploy, and manage an application container.
+You learned how to install Podman, then use it to build, run, manage, and share an application container.
 You also learned how to use SUSE Linux Enterprise base container images, which provide a reliable, secure, supportable, and freely redistributable base layer for your containers.
 
 
