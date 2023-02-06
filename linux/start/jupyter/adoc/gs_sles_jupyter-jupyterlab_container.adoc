@@ -50,7 +50,7 @@ include::./common_docinfo_vars.adoc[]
 :platform2: SUSE Linux Enterprise Base Container Images
 :productname2: SLE BCI
 :python_ver: 3.10
-:podman_ver: 3.4.7
+:podman_ver: 4.3.1
 :usecase: Data analytics and machine learning development
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -697,11 +697,24 @@ Use `:Z` to tell Podman to relabel file objects so that only the current contain
 --uidmap / --gidmap:: Map the UID and GID, respectively, from the user namespace inside the container to your user namespace outside the container.
 This allows you to avoid permission and ownership issues when accessing files in mounted volumes.
 User namespace mappings can be complex, as rootless (unprivileged) UIDs and GIDs are mapped through intermediary subUIDs and subGIDs.
-See the https://docs.podman.io/en/v3.4.4/markdown/podman-run.1.html[Podman run documentation] for a more detailed discussion.
+See the https://docs.podman.io/en/v4.3/markdown/podman-run.1.html[Podman run documentation] for a more detailed discussion.
 +
 [NOTE]
 ====
 With the release of https://docs.podman.io/en/v4.3/markdown/podman-run.1.html[Podman 4.3.0], user namespace mapping is simplified with the `--userns=keep-id` option.
+
+To use this option, replace the `--uidmap` and `--gidmap` options in your launch script as follows:
+
+[source, bash]
+----
+podman run \
+  --userns=keep-id:uid=$container_uid,gid=$container_gid \
+  --name $container_name \
+  --publish $host_port:$container_port \
+  --volume $host_volume:$container_volume:z \
+  localhost/$container_name
+----
+
 ====
 
 
