@@ -8,9 +8,9 @@
 </dm:docmanager>
 
 <!-- Note to author/editor
-     Attributes used here are enclosed in curly braces.
+     Attributes used here (enclosed in curly braces).
      General variables are defined in common_docinfo_vars.adoc.
-     Variables specific to this document (such as the title) are
+     Variable specific to this document (such as the title) are
      defined with the main content in the adoc file.
      See comments below for additional options.
 -->
@@ -56,26 +56,35 @@
   </author>
   <author>
     <personname>
-      <firstname>{author2_firstname}</firstname>
-      <surname>{author2_surname}</surname>
+      <firstname>{editor1_firstname}</firstname>
+      <surname>{editor1_surname}</surname>
     </personname>
     <affiliation>
-      <jobtitle>{author2_jobtitle}</jobtitle>
-      <orgname>{author2_orgname}</orgname>
+      <jobtitle>{editor1_jobtitle}</jobtitle>
+      <orgname>{editor1_orgname}</orgname>
     </affiliation>
   </author>
-  <author>
+  <othercredit>
     <personname>
-      <firstname>{author3_firstname}</firstname>
-      <surname>{author3_surname}</surname>
+      <firstname>{other1_firstname}</firstname>
+      <surname>{other1_surname}</surname>
     </personname>
     <affiliation>
-      <jobtitle>{author3_jobtitle}</jobtitle>
-      <orgname>{author3_orgname}</orgname>
+      <jobtitle>{other1_jobtitle}</jobtitle>
+      <orgname>{other1_orgname}</orgname>
     </affiliation>
-  </author>
+  </othercredit>
+  <othercredit>
+    <personname>
+      <firstname>{other2_firstname}</firstname>
+      <surname>{other2_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{other2_jobtitle}</jobtitle>
+      <orgname>{other2_orgname}</orgname>
+    </affiliation>
+  </othercredit>
 </authorgroup>
-
 
 <!-- logo images
      Duplicate mediaobject tag group and
@@ -85,19 +94,17 @@
 <cover role="logos">
   <mediaobject>
     <imageobject>
-      <imagedata fileref="logo-lockup_rancher-by-suse-ondat_hor_dark.svg" width="20em"/>
+      <imagedata fileref="logo-lockup_suse-aws_positive.svg" width="30em"/>
     </imageobject>
   </mediaobject>
 </cover>
-
 
 <!-- brief abstract for document
      Update with an enticing summary.
 -->
 <abstract role="executivesummary">
   <title>Summary</title>
-  <para>This document provides a brief introduction to {otherproduct1} with {platform1} for {usecase}.</para>
-  <para> <emphasis role="strong">SUSE One Partner Solution Stacks</emphasis> are featured, SUSE-confirmed solutions, collaboratively developed with SUSE and partner components and designed to arm organizations with the capabilities and agility they need to achieve success.</para>
+  <para>This document outlines basic steps for using the {market} to {usecase}.</para>
 </abstract>
 
 
@@ -108,3 +115,4 @@
   <title>Disclaimer</title>
   <para>{disclaimer}</para>
 </abstract>
+
