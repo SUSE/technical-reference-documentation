@@ -1102,18 +1102,26 @@ It is a good idea to share your launch script or, at least, some guidance on the
 ====
 
 . Use a container registry.
-//
 +
+====
 A container registry hosts respositories for storing and accessing container images.
-With https://docs.podman.io/en/v4.3/markdown/podman-push.1.html[podman push] you can publish your image to a registry and with https://docs.podman.io/en/v4.3/markdown/podman-pull.1.html[podman pull] you can retrieve an image from a registry (this is what the 'FROM' instruction in your _Containerfile_ does).
-//
-+
-Registries can be public or private.
-Private registries are often used by organizations for internal or restricted sharing of container images.
-Public registries typically offer open access to "pull" images, though registration and other requirements may exist for "pushing" images to the registry.
 
+Podman provides the https://docs.podman.io/en/v4.3/markdown/podman-push.1.html[podman push] command for publishing your container images to a registry and the https://docs.podman.io/en/v4.3/markdown/podman-pull.1.html[podman pull] command for retrieving an image from a registry (this is what the 'FROM' instruction in your _Containerfile_ does).
 
-These are just a few of the options you can use to share your application container with others.
+A container registry is often an essential component of cloud-native DevOps, enabling automation in continuous integration and continuous delivery/deployment (CI/CD).
+You can host your own container registry or use a commercial container registry.
+Factors to consider when choosing a registry solution include (but are not limited to):
+
+* Pricing: Are you able to budget operating costs for your needs today and for tomorrow?
+* Content types: Do you need to store more artifacts than just a container image?
+* Availability: Does the registry offer uptime and regional availability to meet your needs?
+* Authentication and authorization: What identity and access management features and integrations are offered?
+* Security: Are security features and controls sufficient to meet your policy and regulatory requirements?
+* Rate limits: Are the allowed number of pushes and pulls per unit of time sufficient?
+* Ease of migration: How difficult would it be if you need to migrate to a different registry?
+
+====
+
 
 
 
