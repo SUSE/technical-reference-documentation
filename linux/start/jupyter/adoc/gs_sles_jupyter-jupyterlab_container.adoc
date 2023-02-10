@@ -135,7 +135,7 @@ The authors wish to thank the following individuals for their contributions to t
 == Overview
 
 
-Modern software development agile, featuring microservices architectures.
+Modern software development is agile, featuring microservices architectures.
 Software applications are no longer monolithic executables.
 Instead, they are composed of many small, independent services that communicate over well-defined application programming interfaces (APIs).
 And containers are a key technology for implementing microservices architectures.
@@ -1030,17 +1030,17 @@ A couple options are outlined here.
 +
 An easy method is to simply share the source files you used to create your container image.
 These are small text files that you could share via email, file share service, Git repository, and so on.
-Once the files are received, the recipient can follow the same steps you used to create the contaner image and run the container.
+Once the files are received, the recipient can follow the same steps you used to create the container image and run the container.
 
 . Use an image archive.
 //
 +
-https://docs.podman.io/en/latest/markdown/podman-save.1.html[podman image save] allows you to save your container image and its parent layers to a tar archive that you can share.
-The recipient of the tar archive can load the image with https://docs.podman.io/en/latest/markdown/podman-load.1.html[podman image load] and create containers from it.
+Use https://docs.podman.io/en/latest/markdown/podman-save.1.html[podman image save] to save your container image and its parent layers to a tar archive that you can share.
+The recipient of the tar archive can load the image with https://docs.podman.io/en/latest/markdown/podman-load.1.html[podman image load] and run it with `podman run`.
 +
 [TIP]
 ====
-You can also use the aliases, `podman save` and `podman load`.
+Your recipient would likely appreciate receiving a copy of your launch script or, at least, some guidance on the options to pass with `podman run`.
 ====
 
 .. Save your container image to a tar archive.
@@ -1102,14 +1102,14 @@ It is a good idea to share your launch script or, at least, some guidance on the
 ====
 
 . Use a container registry.
+//
++
+Podman provides the https://docs.podman.io/en/v4.3/markdown/podman-push.1.html[podman push] command for publishing your container images to a registry and the https://docs.podman.io/en/v4.3/markdown/podman-pull.1.html[podman pull] command for retrieving images from a registry.
 +
 ====
-A container registry hosts respositories for storing and accessing container images.
-
-Podman provides the https://docs.podman.io/en/v4.3/markdown/podman-push.1.html[podman push] command for publishing your container images to a registry and the https://docs.podman.io/en/v4.3/markdown/podman-pull.1.html[podman pull] command for retrieving an image from a registry (this is what the 'FROM' instruction in your _Containerfile_ does).
-
+A container registry hosts repositories for storing and accessing container images.
 A container registry is often an essential component of cloud-native DevOps, enabling automation in continuous integration and continuous delivery/deployment (CI/CD).
-You can host your own container registry or use a commercial container registry.
+You can host your own container registry or use a container registry service.
 Factors to consider when choosing a registry solution include (but are not limited to):
 
 * Pricing: Are you able to budget operating costs for your needs today and for tomorrow?
@@ -1118,7 +1118,7 @@ Factors to consider when choosing a registry solution include (but are not limit
 * Authentication and authorization: What identity and access management features and integrations are offered?
 * Security: Are security features and controls sufficient to meet your policy and regulatory requirements?
 * Rate limits: Are the allowed number of pushes and pulls per unit of time sufficient?
-* Ease of migration: How difficult would it be if you need to migrate to a different registry?
+* Ease of migration: How difficult would it be to migrate to a different registry?
 
 ====
 
@@ -1129,13 +1129,13 @@ Factors to consider when choosing a registry solution include (but are not limit
 
 Modern application development eschews closed, monolithic structures in favor of open, interoperable, microservices architectures designed and implemented with containers.
 Podman and other container technologies, like https://www.suse.com/c/rancher_blog/what-is-kubernetes/[Kubernetes], support modern Agile software development.
-They enable operations teams to manage the full lifecycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
+They enable operations teams to manage the full life cycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
 Innovation across many domains, including machine learning, have been accelerated by the availability of container technologies that make it easier to collaborate, test, and deploy new capabilities.
 
 
 In this guide, you took first steps working with containers.
 You learned how to install Podman, then use it to build, run, manage, and share an application container.
-You also learned how to use SUSE Linux Enterprise base container images, which provide a reliable, secure, supportable, and freely redistributable base layer for your containers.
+You also learned how to use {platform2} as a reliable, secure, supportable, and freely redistributable base layer for your containers.
 
 
 
