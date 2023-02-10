@@ -45,10 +45,11 @@ include::./common_docinfo_vars.adoc[]
 // -
 :title: Replicable Python Environments with JupyterLab and Podman
 :subtitle: Software Development with SUSE
-:productname: SLES 15 SP4
-:platform1: SUSE Linux Enterprise Server 15 SP4
+:productname: SLES 15
+:platform1: SUSE Linux Enterprise Server 15
 :platform2: SUSE Linux Enterprise Base Container Images
 :productname2: SLE BCI
+:servicepack: 4
 :python_ver: 3.10
 :podman_ver: 4.3.1
 :usecase: Data analytics and machine learning development
@@ -86,7 +87,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // define any additional variables here for use within the document
 // -
-:opensuse: openSUSE Leap 15.4
+:opensuse: openSUSE Leap 15
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -163,7 +164,7 @@ In this guide, you learn how to:
 . https://www.suse.com/products/server/[{platform1}]
 //
 +
-This guide leverages {productname} as a host operating system for building and running containers.
+This guide leverages {productname} SP{servicepack} as a host operating system for building and running containers.
 {productname} can be run on bare metal or in virtual machines to provide a stable, supportable Linux environment.
 +
 [NOTE]
@@ -467,7 +468,7 @@ An important consideration for your container build is the base image.
 You can obtain container images from a variety of sources, including the https://registry.suse.com/[SUSE container registry].
 
 SUSE Linux Enterprise base container images are tested, certified, and enterprise-ready with up-to-date security patches.
-For this guide, you use the 'latest' {productname2} Python container image, which, at the time of this writing, is built on {productname} and features Python {python_ver}.
+For this guide, you use the 'latest' {productname2} Python container image, which, at the time of this writing, is built on {productname} SP{servicepack} and features Python {python_ver}.
 
 When choosing a base container image, keep in mind the following considerations:
 
