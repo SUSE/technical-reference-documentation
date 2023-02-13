@@ -377,7 +377,7 @@ This is because _/etc/SUSEConnect_ and _/etc/zypp/credentials.d/SCCcredentials_ 
 This does not impact your ability to build containers unless you need to install official RPM packages.
 ====
 
-If you do wish to be able to install official RPM packages from the {productname} repositories, you can grant read permission to your current user with:
+To install official RPM packages from the {productname} repositories, you need to grant read permission for your current user with:
 
 [source, bash]
 ----
@@ -411,18 +411,15 @@ cd $HOME/jupcontainer
 === Define the Python environment
 
 Replicability is critical in science and engineering.
-Complex applications, like an ML model, can produce wildly different results or not work at all because of minor code variations in a library dependency.
+Complex applications, like an ML model, can produce wildly different results or not run because of minor code variations in a library dependency.
 Thus, it can be critical when building such applications to explicitly define all the software dependencies and their versions.
 
 Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
 Keys to this process are the `pip` Python package management tool, the https://pypi.org/[Python Package Index], and a list of required Python packages, usually in a file named _requirements.txt_.
 
-Your _requirements.txt_ file is a simple list of the required package names and versions.
-Each package you specify may have several dependencies of its own.
-Depending on your requirements, you may need to explicitly list all of these and their versions.
-As a result, your _requirements.txt_ file can become quite long and detailed.
-In many cases, however, you can limit your _requirements.txt_ file to just the major packages and their desired versions.
-The `pip` dependency resolver will automatically attempt install the latest compatible versions of dependencies.
+Your _requirements.txt_ file is a simple list of the names and versions of required packages.
+Each package you specify may have several dependencies of its own, and you can explicitly list every package and its version in your _requirements.txt_ file.
+Often, though, you only need to list the major packages you want to install, and the `pip` resolver will attempt to identify and install compatible versions of the dependencies.
 
 
 Create this _requirements.txt_ file in your build directory:
@@ -440,18 +437,18 @@ seaborn==0.12.1
 
 In this example, you specify only the major packages and their preferred versions.
 If the specified version of a package is no longer available, your container image build will fail.
-You can overcome this is by removing the version specification (for example, just specify `seaborn` instead of `seaborn==0.12.1`).
+You can overcome this is by removing the version specification (for example, specify `seaborn` instead of `seaborn==0.12.1`).
 This frees the `pip` dependency resolver to substitute in an appropriate, available version of the package.
 
 [WARNING]
 ====
-Unexpected behaviors can arise due to code changes in major packages or any of their dependencies.
+Unexpected behaviors can arise because of code changes in major packages or any of their dependencies.
 ====
 
 
 [TIP]
 ====
-Once you have verified a functioning configuration, you can automatically generate an updated _requirements.txt_ file.
+When you have verified a functioning configuration, you can automatically generate an updated _requirements.txt_ file.
 Within the environment, issue `pip freeze > requirements.txt`.
 This will include all installed packages, except `pip` itself and its dependencies.
 ====
@@ -570,7 +567,7 @@ To do this you use the `podman build` command.
 
 [NOTE]
 ====
-Another popular tool that facilitates building OCI compliant container images is https://buildah.io/[Buildah].
+Another popular tool that simplifies building OCI compliant container images is https://buildah.io/[Buildah].
 ====
 
 
@@ -688,7 +685,7 @@ In the _juplaunch_ script you pass the following options to `podman run`:
 ====
 The `:z` or `:Z` option is required when using a host system with SELinux to ensure proper labels are placed on volume content.
 
-Use `:z` to tell Podman to relabel file objects so two or more containers are able to share the content.
+Use `:z` to tell Podman to relabel file objects so two or more containers can share access to the volume and its contents.
 
 Use `:Z` to tell Podman to relabel file objects so that only the current container can use the volume.
 ====
@@ -725,7 +722,7 @@ podman run \
 //
 +
 Your workspace is where you will save your Jupyter notebooks.
-This is just a directory on your local system that you will access with JupyterLab from within the application container.
+This is a directory on your local system that you will access with JupyterLab from within the application container.
 //
 +
 For example,
@@ -752,7 +749,7 @@ including Alexis Cook's https://www.kaggle.com/code/alexisbcook/titanic-tutorial
 $HOME/jupcontainer/juplaunch
 ----
 
-. Once you have launched your container, note the output in your terminal.
+. After launching your container, note the output in your terminal.
 There you can find the URL with embedded access token for the containerized JupyterLab environment.
 +
 [source, bash]
@@ -884,7 +881,7 @@ At this point, your container is started, but you may not have the URL with the 
 
 . Obtain the URL with access token for JupyterLab running in your container.
 
-.. Enter a bash shell inside your container.
+.. Enter a Bash shell inside your container.
 +
 [source, bash]
 ----
@@ -912,7 +909,7 @@ However, it is possible to have multiple, simultaneous JupyterLab instances runn
 Each would be listed here with its access URL and notebook directory.
 ====
 
-.. Once you have the URL, you can return to your local command line.
+.. When you have copied the URL, you can return to your local command line.
 +
 [source, bash]
 ----
@@ -950,7 +947,7 @@ You can unceremoniously stop a running container with `podman stop CONTAINER-ID`
 
 . Delete your container.
 
-.. Identify the container you wish to delete.
+.. Identify the container you want to delete.
 +
 [source, bash]
 ----
@@ -1015,7 +1012,7 @@ The additional deletions represent "parent" images not used by another image.
 
 The base container image, 'registry.suse.com/bci/python' is not deleted.
 
-If you would like to list all images, use `podman image list --all`.
+To list all images, use `podman image list --all`.
 ====
 
 
@@ -1025,7 +1022,7 @@ Some Podman commands also have synonyms that can save you a few keystrokes (for 
 
 == Sharing
 
-Now that you have an application container image and you have verified that it works, you may want to share it with your team, fellow researchers, or others for whom it may be of value.
+Now that you have an application container image and you have verified that it works, you can share it with your team, fellow researchers, or others for whom it may be of value.
 A couple options are outlined here.
 
 . Use the source.
@@ -1033,20 +1030,20 @@ A couple options are outlined here.
 +
 An easy method is to simply share the source files you used to create your container image.
 These are small text files that you could share via email, file share service, Git repository, and so on.
-Once the files are received, the recipient can follow the same steps you used to create the container image and run the container.
+The recipient can use the received files and follow the same steps you used to create the container image and run the container.
 
 . Use an image archive.
 //
 +
-Use https://docs.podman.io/en/latest/markdown/podman-save.1.html[podman image save] to save your container image and its parent layers to a tar archive that you can share.
-The recipient of the tar archive can load the image with https://docs.podman.io/en/latest/markdown/podman-load.1.html[podman image load] and run it with `podman run`.
+Use https://docs.podman.io/en/latest/markdown/podman-save.1.html[podman image save] to save your container image and its parent layers to a TAR archive that you can share.
+The recipient of the TAR archive can load the image with https://docs.podman.io/en/latest/markdown/podman-load.1.html[podman image load] and run it with `podman run`.
 +
 [TIP]
 ====
 Your recipient would likely appreciate receiving a copy of your launch script or, at least, some guidance on the options to pass with `podman run`.
 ====
 
-.. Save your container image to a tar archive.
+.. Save your container image to a TAR archive.
 +
 [source, bash]
 ----
@@ -1116,7 +1113,7 @@ You can host your own container registry or use a container registry service.
 Factors to consider when choosing a registry solution include (but are not limited to):
 
 * Pricing: Are you able to budget operating costs for your needs today and for tomorrow?
-* Content types: Do you need to store more artifacts than just a container image?
+* Content types: Do you need to store more artifacts than only a container image?
 * Availability: Does the registry offer uptime and regional availability to meet your needs?
 * Authentication and authorization: What identity and access management features and integrations are offered?
 * Security: Are security features and controls sufficient to meet your policy and regulatory requirements?
