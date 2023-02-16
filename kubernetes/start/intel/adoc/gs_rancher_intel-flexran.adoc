@@ -43,7 +43,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document and product
 // -
-:title: Intel FlexRAN™ Reference Solution Setup for Suse
+:title: Intel® FlexRAN™ Reference Solution Setup for SUSE
 :subtitle: FlexRAN™ Deployment Guide for Rancher Kubernetes Cluster
 :productname: SLES 15 SP3 RT, SLE Micro 5.2 RT, RANCHER 2.6, RKE2
 :platform1: Suse Linux Enterprise Server 15.3 Real Time
@@ -51,8 +51,8 @@ include::./common_docinfo_vars.adoc[]
 :platform2: Suse Linux Enterprise Micro 5.2 Real Time
 :platform2short: SLE Micro 5.2 RT
 :platform3: Rancher 2.6 by Suse
-:otherproduct1: Intel FlexRAN 22.07
-:usecase: Suse/Intel Solution for Telco
+:otherproduct1: Intel®  FlexRAN 22.07
+:usecase: SUSE/Intel Solution for Telco
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -83,14 +83,13 @@ include::./common_docinfo_vars.adoc[]
 
 
 == Introduction
-This document is providing detailed steps to setup a cloud-native stack for Intel FlexRAN on Suse/Rancher kubernetes cluster.
+This document is providing detailed steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher kubernetes cluster.
 This demo is showing required steps to install and configure Intel FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s kubernetes cluster with SUSE Rancher Server to manage this deployment.
  
-The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design which uses Xeon series processors and consists of a L1 library for SkyLake/CascadeLake platforms to demonstrate the capabilities of the software running 5GNR L1 features. See  https://www.intel.com/content/www/us/en/developer/topic-technology/edge-5g/tools/flexran.html [FlexRAN™ Reference Architecture] for more information.
+The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design utilizing Xeon series processors and consists of a L1 library for SkyLake/CascadeLake platforms to demonstrate the capabilities of the software running 5GNR L1 features. See  https://www.intel.com/content/www/us/en/developer/topic-technology/edge-5g/tools/flexran.html [FlexRAN™ Reference Architecture] for more information.
 
-"needs some cool graph here to show architecture"...I copied one from Dell doc, just as an example
-
-image::rancher-architecture1.png[Suse and FlexRAN architecture, scaledwidth="65%", align="center"]
+.Test Setup Diagram
+image::setup-diagram.png["Setup diagram", scaledwidth="75%", align="center"]
 
 === Motivation
 
@@ -102,7 +101,7 @@ image::rancher-architecture1.png[Suse and FlexRAN architecture, scaledwidth="65%
 // Include an approved SUSE | Partner logo lock-up if possible
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-I need something similar like Dell put in their doc....Some fancy marketing words like Suse/Rancher will help you to provide a low cost kubernetes solution, easy to deploy and manage at scale to simplify Telco solution, blah.. blah...
+The goal is to empower Telco developers and/or engineers to put together an Intel® FlexRAN™ test and/or proof-of-concept (PoC) environment leveraging the benefits of the complete SUSE stack from the real-time OS to Kubernetes orchestration and management.
 
 
 === Scope
@@ -111,9 +110,8 @@ I need something similar like Dell put in their doc....Some fancy marketing word
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will help you to configure and deploy a test kubernetes cluster using Suse Products such as Rancher Server, SUSE Linux Enterprise Server Real Time and Suse Linux Enterprise Micro Real Time to create and manage RKE2 cluster with Intel FlexRAN containers.
+This guide will help you to configure and deploy a test kubernetes cluster using SUSE Products such as Rancher Server, SUSE Linux Enterprise Server Real Time and Suse Linux Enterprise Micro Real Time to create and manage RKE2 cluster with Intel® FlexRAN™ containers.
 
-Need to add something here...
 
 
 // === Audience
@@ -136,7 +134,7 @@ Need to add something here...
 // - Link to existing resources whenever possible.
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-* Hardware configuration
+=== Hardware configuration
 
 The following hardware components were used during the development of this guide:
 
@@ -188,7 +186,7 @@ image::bios4.png[bios4,scaledwidth="75%", align="center"]
 
 For more details, please review section 2.4.2 of FlexRAN Software Reference Solution Cloud-Native Setup. (Doc. No. 575834-15.0) and BIOS Settings for FlexRAN Platforms Based on Intel® Xeon® Processors. (Doc. No.: 675g685, Rev.: 1.3)
 
-* OS prerequisites
+=== OS prerequisites
 
 FlexRan requires to run on the Real-Time platform, as listed in Intel FlexRan Installation Guide (Doc. No.: 575834-15.0)
 For more details about SLES RT please review https://www.suse.com/products/realtime/
@@ -284,7 +282,7 @@ cat /proc/cmdline
 ----
 image::grub3.png[scaledwidth="75%", align="center"]
 
-* Set CPU Frequency
+=== Set CPU Frequency
 
 AVX512 CPU frequency of your specific CPU should be adjusted according to Figure 4 of Intel’s doc Reference Number: 637779, Revision: 1.2 3rd Gen Intel® Xeon® Scalable Processors, Codename Ice Lake NDA Specification Update June 2021
  or #613537 for Skylake processor family
@@ -414,7 +412,7 @@ zypper addrepo -r https://repositories.intel.com/graphics/sles/15sp3/intel-graph
 zypper install   intel-opencl   intel-media-driver libmfx1   intel-level-zero-gpu level-zero
 ----
 
-* Install Intell oneAPI
+=== Install Intel oneAPI
 
 [source, bash]
 ----
@@ -456,7 +454,7 @@ image::gcc.png[scaledwidth="60%", align="center"]
 
 
 
-== FlexRAN Installation
+== Intel® FlexRAN™ Installation
 
 Review Compilation tools section of FlexRAN 5GNR Reference Solution 22.07 PHY Software Documentation - Document #603577
 Make sure that your instance has installed cmake, meson and ninja.
@@ -503,8 +501,8 @@ patch -p1 < dpdk_patch_21.11.patch
 
 === Download and install FlexRAN
 
-Download FlexRAN release as per Intel document 645964
-Ectract file and source the environment.
+Download FlexRAN release as per Intel document 645964.
+Extract file and source the environment.
 [source, bash]
 ----
 tar -zxvf FlexRan-22.07.tar.gz
@@ -529,7 +527,7 @@ Export PKG_CONFIG_PATH
 export PKG_CONFIG_PATH=$DIR_WIRELESS_SDK/pkgcfg:$PKG_CONFIG_PATH
 ----
 
-Source oneAPI
+Source Intel oneAPI
 [source, bash]
 ----
 source /opt/intel/oneapi/setvars.sh --force
@@ -691,11 +689,12 @@ Test that the VF is functional on the device using bbdev-test:
 ----
 /var/dpdk/dpdk-21.11/app/test-bbdev # /var/dpdk/dpdk-21.11/build/app/dpdk-test-bbdev -c F0 -a 52:00.0 -- -c validation -v ./ldpc_dec_default.data
 ----
+
 image::bbdev-test.png[scaledwidth="65%", align="center"]
 
-== Test
+== Host Testing
 
-=== TestMac simple test
+=== FlexRAN L1 and Testmac test
 
 Follow steps from the TestMac section of FlexRAN 5GNR Reference Solution 22.07 PHY Software Documentation - Document #603577
 
@@ -919,9 +918,9 @@ docker save flexran.docker.registry/flexran_vdu:22.07|gzip > flexranimage.tar.gz
 ----
 
 
-* Creating RKE2 cluster
+=== Creating RKE2 cluster
 
-- Install a Rancher server
+* Install a Rancher server
 
 In this test deployment, Sle Micro 5.2 was used as a Rancher server host.
 
@@ -937,9 +936,13 @@ systemctl enable --now cockpit.socket
 and open console in the browser as https://your-ip:9090/
 
 image::rancher-console.png[scaledwidth="75%", align="center"]
+//
 
-For more details review: https://links.imagerelay.com/cdn/375g4/ql/c90a9c7f472e4a908936e385cd330a5b/suse-linux-enterprise-micro-5.1-solution-sheet.pdf
-and https://documentation.suse.com/sle-micro/5.2/
+For more details review:
+
+https://links.imagerelay.com/cdn/375g4/ql/c90a9c7f472e4a908936e385cd330a5b/suse-linux-enterprise-micro-5.1-solution-sheet.pdf
+and
+https://documentation.suse.com/sle-micro/5.2/
 
 - Rancher installation steps
 
@@ -1004,14 +1007,14 @@ xr12-c   Ready    control-plane,etcd,master,worker   7d20h   v1.23.10+rke2r1
 
 In this test case we used 2 Dell XR12 nodes with Sle Micro 5.2 RT installed as part of the RKE cluster. Both target nodes should have dpdk with a patch and Intel oneAPI installed.
 
- For core isolation on Sle Micro RT, install tuned package with additional prereq. 
+For core isolation on Sle Micro RT, install tuned package with additional prereq. 
 [source, bash]
 ----
 transactional-update pkg install tuned.rpm python3-configobj.rpm python3-linux-procfs.rpm python3-pyudev.rpm virt-what.rpm
 ----
 [NOTE]
 ====
-For this test, SLES 15 repo was used with curl commands to download packages locally. For a large scale deployment a local repository can be made with required RPMs.
+For this test, SLES 15 repositories were used with curl commands to download packages locally. For a large scale deployment a local repository can be made with required RPMs.
 ====
 
 Modify /etc/default/grub to the required tuned parameters with isolcpu and run transactional-update grub.cfg to save changes and reboot. 
@@ -1161,10 +1164,11 @@ image::pods-test.png[scaledwidth="60%", align="center"]
 
 
 
-== Testing
+=== Testing FlexRAN Timer Mode in Containers
+
+To demonstrate a simple functionality:
 
 In the 1st terminal run
-
 [source, bash]
 ----
 kubectl exec –it flexran-binary-release –c flexran-l1app – bash
@@ -1180,7 +1184,7 @@ kubectl exec –it flexran-binary-release –c flexran-testmac -- bash
 [NOTE]
 ====
 Make sure that your dpdk directory mapped in the yaml file.
-As an ideal solution, pre-configured Intel FlexRan helm chart as well as all required cni plugins, can be posted on Rancher Marketplace to simplify deployment at a large scale.
+As a simplified solution, a pre-configured Intel® FlexRAN™ helm chart as well as all required cni plugins, can be posted on Rancher Marketplace to simplify deployment at a large scale.
 ====
 
 
