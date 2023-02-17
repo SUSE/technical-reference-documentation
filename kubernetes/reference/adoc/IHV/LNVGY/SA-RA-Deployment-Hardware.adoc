@@ -4,7 +4,7 @@ ifdef::focusRancher[{pn_Rancher}]
 ifdef::focusK3s[{pn_K3s}]
 ifdef::focusRKE1[{pn_RKE1}]
 ifdef::focusRKE2[{pn_RKE2}]
-deployment, a viable approach is to deploy as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like KVM. For a physical host, there are tools that can be used during the setup of the server either to provision virtual machines or similar steps can be used to deploy the software stack on the baremetal system, as noted below.
+deployment, a viable approach is to deploy as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like KVM. For a physical host, there are tools that can be used during the setup of the server to provision virtual machines, or similar steps can be used to deploy the software stack on the baremetal system.
 
 //-
 Preparation(s)::
@@ -19,7 +19,7 @@ On the respective compute module node, determine if a hypervisor is already avai
 
 . If this will be the first use of this node, an option is to deploy a KVM hypervisor, based upon {pn_SLES} by following the link:{pn_SLES_VirtDocURL}[Virtualization Guide].
 ** Given the simplicity of the deployment, the operating system and hypervisor can be installed with the {pn_SLES} ISO media and the {vn_LNVGY} {vn_LNVGY_BMC} virtual media and virtual console methodology.
-. Then for the solution VM, use the hypervisor user interface to allocate the necessary CPU, memory, disk and networking as noted in the link:{pn_Rancher} {pn_Rancher_HWReqURL}[hardware requirements].
+. Then for the solution VM, use the hypervisor user interface to allocate the necessary CPU, memory, disk and networking as noted in the {pn_Rancher} link:{pn_Rancher_HWReqURL}[hardware requirements].
 
 //-
 Deployment Consideration(s)::
