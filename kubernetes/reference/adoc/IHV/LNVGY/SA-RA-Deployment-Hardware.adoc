@@ -1,0 +1,35 @@
+
+The base, starting configuration can reside all within a single {vn_LNVGY} Edge Server. Based upon the relatively small resource requirements for a
+ifdef::focusRancher[{pn_Rancher}]
+ifdef::focusK3s[{pn_K3s}]
+ifdef::focusRKE1[{pn_RKE1}]
+ifdef::focusRKE2[{pn_RKE2}]
+deployment, a viable approach is to deploy as a virtual machine (VM) on the target nodes, on top of an existing hypervisor, like KVM. For a physical host, there are tools that can be used during the setup of the server to provision virtual machines, or similar steps can be used to deploy the software stack on the bare-metal system.
+
+//-
+Preparation(s)::
+ifdef::IHV-LNVGY-SE350,IHV-LNVGY-SE450[]
+The {an_LNVGY} link:{vn_LNVGY_BMCURL}[{vn_LNVGY_BMC}] is designed for secure local and remote server management and helps IT administrators deploy, update and monitor {an_LNVGY} servers anywhere, anytime.
+. Upgrade your basic {an_LNVGY_BMC} Standard license to Enterprise Upgrade for additional functionality, such as graphical remote console and virtual media access to allow the remote usage of software image files (ISO files), which can be used for installing operating systems or updating servers.
+endif::IHV-LNVGY-SE350,IHV-LNVGY-SE450[]
+
+//-
+Deployment Process::
+On the respective compute module node, determine if a hypervisor is already available for the solution's virtual machines.
+
+. If this will be the first use of this node, an option is to deploy a KVM hypervisor, based upon {pn_SLES} by following the link:{pn_SLES_VirtDocURL}[Virtualization Guide].
+** Given the simplicity of the deployment, the operating system and hypervisor can be installed with the {pn_SLES} ISO media and the {vn_LNVGY} {vn_LNVGY_BMC} virtual media and virtual console methodology.
+. Then for the solution VM, use the hypervisor user interface to allocate the necessary CPU, memory, disk and networking as noted in the {pn_Rancher} link:{pn_Rancher_HWReqURL}[hardware requirements].
+
+//-
+Deployment Consideration(s)::
+To further optimize deployment factors, leverage the following practices:
+
+ifdef::FCTR+Automation[]
+* <<g-automation>>
+** For nodes running KVM, you can leverage either link:{pn_SLES_VirtDocURL}[virt-install] or link:{pn_SLES_LibvirtTerraformURL}[Terraform Libvirt Provider] to quickly and efficiently automate the deployment of multiple virtual machines.
+endif::FCTR+Automation[]
+ifdef::FCTR+Availability[]
+* <<g-availability>>
+** While the initial deployment only requires a single VM, as noted in later deployment sections, having multiple VMs provides resiliency to accomplish high availability. To reduce single points of failure, it would be beneficial to have the multi-VM deployments spread across multiple hypervisor nodes. So, consideration of consistent hypervisor and compute module configurations with the needed resources for the VMs will yield a robust, reliable production implementation.
+endif::FCTR+Availability[]
