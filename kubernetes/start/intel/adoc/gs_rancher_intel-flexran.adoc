@@ -45,13 +45,14 @@ include::./common_docinfo_vars.adoc[]
 // -
 :title: Intel® FlexRAN™ Reference Solution Setup for SUSE
 :subtitle: FlexRAN™ Deployment Guide for Rancher Kubernetes Cluster
-:productname: SLES 15 SP3 RT, SLE Micro 5.2 RT, RANCHER 2.6, RKE2
+:productname:
+//  SLES 15 SP3 RT, SLE Micro 5.2 RT, RANCHER 2.6, RKE2
 :platform1: Suse Linux Enterprise Server 15.3 Real Time
 :platform1short: SLES 15 RT
 :platform2: Suse Linux Enterprise Micro 5.2 Real Time
 :platform2short: SLE Micro 5.2 RT
 :platform3: Rancher 2.6 by Suse
-:otherproduct1: Intel®  FlexRAN 22.07
+:otherproduct1: Intel® FlexRAN™ 22.07
 :usecase: SUSE/Intel Solution for Telco
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -84,11 +85,9 @@ include::./common_docinfo_vars.adoc[]
 
 == Introduction
 This document is providing detailed steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher kubernetes cluster.
-This demo is showing required steps to install and configure Intel FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s kubernetes cluster with SUSE Rancher Server to manage this deployment.
+This demonstration shows required steps to install and configure Intel's FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s kubernetes cluster with SUSE Rancher Server to manage this deployment.
  
 The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design utilizing Xeon series processors and consists of a L1 library for SkyLake/CascadeLake platforms to demonstrate the capabilities of the software running 5GNR L1 features. See  https://www.intel.com/content/www/us/en/developer/topic-technology/edge-5g/tools/flexran.html [FlexRAN™ Reference Architecture] for more information.
-
-=== Motivation
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a motivation for the document in 2-4 sentences to identify:
@@ -100,13 +99,9 @@ The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design utilizin
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 The goal is to empower Telco developers and/or engineers to put together an Intel® FlexRAN™ test and/or proof-of-concept (PoC) environment leveraging the benefits of the complete SUSE stack from the real-time OS to Kubernetes orchestration and management.
 
-
-=== Scope
-
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 This guide will help you to configure and deploy a test kubernetes cluster using SUSE Products such as Rancher Server, SUSE Linux Enterprise Server Real Time and Suse Linux Enterprise Micro Real Time to create and manage RKE2 cluster with Intel® FlexRAN™ containers.
 
 
@@ -122,9 +117,7 @@ This guide will help you to configure and deploy a test kubernetes cluster using
 
 
 
-
 == Prerequisites
-
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Identify minimum requirements (prerequisites) the reader
 // would need in order to follow the steps of this guide.
@@ -171,24 +164,22 @@ BIOS configuration may be different for each server, but most modern servers sho
 Among the most important are CPU C state and P state.
 
 For example:
-
 image::bios1.png[bios1,scaledwidth="75%", align="center"]
 
 For CPU power management in the bios settings use OS DBPM (or similar) setting to control setting from OS to manipulate processor frequencies.
-
 image::bios2.png[bios2,scaledwidth="75%", align="center"]
 
 image::bios3.png[bios3,scaledwidth="75%", align="center"]
 
 image::bios4.png[bios4,scaledwidth="75%", align="center"]
 
-For more details, please review section 2.4.2 of FlexRAN Software Reference Solution Cloud-Native Setup. (Doc. No. 575834-15.0) and BIOS Settings for FlexRAN Platforms Based on Intel® Xeon® Processors. (Doc. No.: 675g685, Rev.: 1.3)
+ For more details, please review section 2.4.2 of FlexRAN Software Reference Solution Cloud-Native Setup. (Intel® Doc. No. 575834-15.0) and BIOS Settings for FlexRAN Platforms Based on Intel® Xeon® Processors. (Doc. No.: 675g685, Rev.: 1.3)
 
 === OS prerequisites
 
-Intel® FlexRAN™ requires to run on the Real-Time platform, as listed in Intel FlexRAN Installation Guide (Doc. No.: 575834-15.0)
+Intel® FlexRAN™ stipulates a real-time kernel, as listed in Intel FlexRAN Installation Guide (Doc. No.: 575834-15.0)
 
-For this particular test we used a baremetal node as a development host running SUSE Linux Enterprise 15 SP3 Real-Time to preconfigure and test FlexRAN functionality and build container image before exporting it to Rancher kubernetes cluster.
+For this particular test we used a baremetal node as a development host running SUSE Linux Enterprise 15 SP3 Real-Time to preconfigure and test FlexRAN functionality and build container image before exporting it to a Rancher kubernetes cluster.
 
 .Test Setup Diagram
 image::setup-diagram.png["Setup diagram", scaledwidth="75%", align="center"]
@@ -260,8 +251,8 @@ image::grub1.png[grub1,scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
-Settings depends on the number of CPU and isolated cores.
-Please review section 2.4.3 of Intel’s document 575834-15.0
+ Settings depends on the number of CPU and isolated cores.
+ Please review section 2.4.3 of Intel’s document 575834-15.0
 ====
 //
 - Save changes
@@ -342,7 +333,7 @@ cpupower --cpu all frequency-set --freq 2600MHz
 
 [NOTE]
 ====
-It’s important to set C-state and P-state on the Bios settings as well as on the kernel side. If you don't do this, you won't be able to change governors from the cpupower command and set the cpu frequency. Also, make sure that the BIOS can be changed from the OS by proper setting.
+ It’s important to set C-state and P-state on the Bios settings as well as on the kernel side. If you don't do this, you won't be able to change governors from the cpupower command and set the cpu frequency. Also, make sure that the BIOS can be changed from the OS by proper setting.
 ====
 
 Verify that settings applied by running:
@@ -398,7 +389,7 @@ done
 
 [NOTE]
 ====
-Values in the script are taking from Intel document #637779 (for ice lake family)  specific to your CPU avx512 numbers. (2.6 GHz in the above example)
+ Values in the script are taking from Intel document #637779 (for ice lake family)  specific to your CPU avx512 numbers. (2.6 GHz in the above example)
 ====
 
 image::avx2.png[scaledwidth="75%", align="center"]
@@ -423,7 +414,7 @@ zypper addrepo -r https://repositories.intel.com/graphics/sles/15sp3/intel-graph
 zypper install   intel-opencl   intel-media-driver libmfx1   intel-level-zero-gpu level-zero
 ----
 
-=== Install Intel oneAPI
+=== Install Intel® oneAPI
 
 [source, bash]
 ----
@@ -434,7 +425,7 @@ bash l_BaseKit_p_2021.4.0.3422_offline.sh
 
 [NOTE]
 ====
-Make sure that the installation directory has enough space. Intel oneAPI is using about 40Gb of space.
+ Make sure that the installation directory has enough space. Intel oneAPI is using about 40Gb of space.
 ====
 image::oneapi1.png[scaledwidth="60%", align="center"]
 
@@ -496,7 +487,7 @@ image::pkgconf.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
-Don’t use /root directory for the installation.
+ Don’t use /root directory for the installation.
 You need to get the dpdk patch from Intel which is required.
 ====
 [source, bash]
@@ -560,7 +551,7 @@ Compile SDK
 
 [NOTE]
 ====
-The FlexRAN SDK libraries must be built first to the provided path before starting the DPDK build process so that software FEC libraries are present.
+ The FlexRAN SDK libraries must be built first to the provided path before starting the DPDK build process so that software FEC libraries are present.
 ====
 === Patch and Compile DPDK
 
@@ -601,7 +592,7 @@ insmod $RTE_SDK_KMOD/linux/igb_uio/igb_uio.ko
 export RTE_SDK_KMOD=/var/dpdk/dpdk-kmods
 ----
 
-=== Building the L1 Application, L1 Standalone Test Application, and Test MAC in Linux:
+=== Build the L1 Application, L1 Standalone Test Application, and Test MAC in Linux:
 
 Verify that you have numa*, libhuge* and libnuma-dev* installed
 
@@ -860,13 +851,13 @@ from terminal 2 run
 ----
 
 
-== Deploying FlexRan on Container through Kubernetes
+== Deploy FlexRAN™ on Container through Kubernetes
 
-=== Generating LTE/5G Docker Images with pre-build FlexRAN
+=== Generae LTE/5G Docker Images with pre-build FlexRAN™
 
-All prereq and FlexRAN should be installed.
+All prerequisite components and FlexRAN™ should be installed as descrtibe in the previous sections.
 
-The main doc to follow -> FlexRAN Reference Solution Cloud-Native Setup (Document Number: 575834-15.0)
+The main doc to follow -> FlexRAN Reference Solution Cloud-Native Setup (Intel Document Number: 575834-15.0)
 
 Use existing FlexRAN directory or create a FlexRAN pre-configured directory which will be used for the container image.
 
@@ -889,9 +880,7 @@ image::docker4.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
-Modify according to your local setup.
-
-If RMT server is used, you need to post rmt-server.crt file on your RMT server in the location which can be reachable from url. So, on the local RMT server copy /etc/rmt/ssl/rmt-server.crt file to the /usr/share/rmt/public/repo directory, which creates symb link to ./var/lib/rmt/public/repo which is a public repo of RMT server. 
+ Modify according to your local setup. If RMT server is used, you need to post rmt-server.crt file on your RMT server in the location which can be reachable from url. So, on the local RMT server copy /etc/rmt/ssl/rmt-server.crt file to the /usr/share/rmt/public/repo directory, which creates symb link to ./var/lib/rmt/public/repo which is a public repo of RMT server. 
 Setup a proper permission to /usr/share/rmt/public/repo directory. 
 Sync rmt server.
 ====
@@ -929,15 +918,15 @@ docker save flexran.docker.registry/flexran_vdu:22.07|gzip > flexranimage.tar.gz
 ----
 
 
-=== Creating RKE2 cluster
+=== Create an RKE2 cluster
 
-* Install a Rancher server
+Install a Rancher server
 
-In this test deployment, Sle Micro 5.2 was used as a Rancher server host.
+In this test deployment, SUSE Linux Enterprise Micro 5.2 (SLE Micro) was used as a server host for the Rancher server test deployment.
 
 SUSE Linux Enterprise Micro is a lightweight and secure OS platform purpose built for containerized and virtualized workloads.
 
-For more details on installation review > https://documentation.suse.com/sle-micro/5.1/pdf/book-deployment-slemicro_color_en.pdf
+For more details on installation of SLE Micro, review > https://documentation.suse.com/sle-micro/5.2/pdf/book-deployment-slemicro_color_en.pdf
 
 
 You can enable a cockpit console after a SLE Micro installation for easy management
@@ -952,8 +941,6 @@ image::rancher-console.png[scaledwidth="75%", align="center"]
 
 For more details review:
 
-https://links.imagerelay.com/cdn/375g4/ql/c90a9c7f472e4a908936e385cd330a5b/suse-linux-enterprise-micro-5.1-solution-sheet.pdf
-and
 https://documentation.suse.com/sle-micro/5.2/
 
 - Rancher installation steps
@@ -964,7 +951,7 @@ Install k3s
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.23.9+k3s1" INSTALL_K3S_SKIP_SELINUX_RPM=true INSTALL_K3S_EXEC='server --cluster-init --write-kubeconfig-mode=644' sh -s -
 ----
 
-Install certs
+Install certificates
 [source, bash]
 ----
 kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml 
@@ -1018,16 +1005,15 @@ xr12-c   Ready    control-plane,etcd,master,worker   7d20h   v1.23.10+rke2r1
 ----
 
 In this test case we used 2 Dell XR12 nodes with Sle Micro 5.2 RT installed as part of the RKE2 cluster. Both target nodes should have dpdk with a patch and Intel oneAPI installed.
-
-+
-For core isolation on Sle Micro RT, install tuned package with additional prereq. 
+ 
+For core isolation on Sle Micro RT, install 'tuned' package with additional dependencies. 
 [source, bash]
 ----
 transactional-update pkg install tuned.rpm python3-configobj.rpm python3-linux-procfs.rpm python3-pyudev.rpm virt-what.rpm
 ----
 [NOTE]
 ====
-For this test, SLES 15 repositories were used with curl commands to download packages locally. For a large scale deployment a local repository can be made with required RPMs.
+For this test, SLES 15 repositories were used with 'curl' commands to download packages locally. For a large scale deployment a local repository can be made with required RPMs.
 ====
 
 Modify /etc/default/grub to the required tuned parameters with isolcpu and run transactional-update grub.cfg to save changes and reboot. 
@@ -1040,12 +1026,14 @@ Make sure that all required plugins for Kubernetes for your test are installed o
 
 [NOTE]
 ====
-It's not recommended to add a FlexRAN development node to the RKE2 cluster. Instead, move image to the FlexRAN RKE2 cluster, either manually or with a repo.
+It's not recommended to add a FlexRAN™ development node to the RKE2 cluster. Instead, move image to the FlexRAN™ RKE2 cluster, either manually or with a repo.
 ====
 
 During our RKE2 cluster deployment, Rancher provides an option to select Multus and Calico as default plugins, so no needs to install them manually.
 
-- Build SRIOV Network Device Plugin
+=== Build SR-IOV Network Device Plugin
+The setup details for virtual or physical functions of the SR-IOV Network Device Plugins can be found at > https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin
+
 [source, bash]
 ----
 cd /root/go/src/github.com/intel/
@@ -1073,7 +1061,7 @@ docker save nfvpe/sriov-device-plugin:v3.5|gzip > sriov-device-plugin.tar.gz
 ----
 
 
-* Creating FlexRAN Pods
+=== Creating FlexRAN™ Pods
 [source, bash]
 ----
 kubectl label nodes xr12-b testnode=worker1
@@ -1081,7 +1069,7 @@ kubectl label nodes xr12-b testnode=worker1
 
 image::show-labels.png[scaledwidth="75%", align="center"]
 
-- Configure FEC and FVL SRIOV
+* Configure FEC and FVL SRIOV
 
 To reconfigure pf_bb_config run
 [source, bash]
@@ -1177,7 +1165,7 @@ image::pods-test.png[scaledwidth="60%", align="center"]
 
 
 
-=== Testing FlexRAN Timer Mode in Containers
+=== Testing FlexRAN™ Timer Mode in Containers
 
 To demonstrate a simple functionality:
 
@@ -1193,13 +1181,12 @@ In the 2nd terminal run
 ----
 kubectl exec –it flexran-binary-release –c flexran-testmac -- bash
 ----
-
 [NOTE]
 ====
-Make sure that your dpdk directory mapped in the yaml file.
+ Make sure that your dpdk directory mapped in the yaml file.
 ====
 
-Other tests such as xRAN Mode and a Helm Chart test can be run as well as described in
+ Other tests such as xRAN Mode and a Helm Chart test can be run as well as described in
 section 5.2 and 5.3 of Intel document 575834-15.0 [Installation Guide Software Release v22.07]
 
 As a simplified solution, a pre-configured Intel® FlexRAN™ helm chart as well as all required cni plugins, can be posted on Rancher Marketplace to simplify deployment at a large scale.
@@ -1238,7 +1225,7 @@ As a simplified solution, a pre-configured Intel® FlexRAN™ helm chart as well
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This deployment guide demonstated a working example of how to preconfigure and create Intel FlexRAN container images and deploy it on a Rancher RKE2 kubernetes cluster.
+This deployment guide demonstated a working example of how to preconfigure and create Intel® FlexRAN™ container images and deploy it on a Rancher RKE2 kubernetes cluster.
 
 I don't like it..Probably need to add something else here...
 
@@ -1253,15 +1240,12 @@ I don't like it..Probably need to add something else here...
     • https://www.intel.com/content/www/us/en/communications/5g-get-your-infrastructure-ready-guide.html
     • https://docs.rke2.io/install/quickstart/
     • https://documentation.suse.com/trd/kubernetes/pdf/kubernetes_ri_rancher-k3s-slemicro_color_en.pdf
-    • https://infohub.delltechnologies.com/static/media/client/7phukh/DAM_d7aa83cb-f6bc-4b96-8baa-8ce78598cc9b.pdf
-
     • https://documentation.suse.com/sle-rt/15-SP3/
 
     • https://documentation.suse.com/sles/15-SP3/pdf/book-container_color_en.pdf
 
-    • https://documentation.suse.com/sle-micro/5.1/
+    • https://documentation.suse.com/sle-micro/5.3/
 
-    • https://documentation.suse.com/sles/15-SP3/pdf/book-container_color_en.pdf
 
 
 
