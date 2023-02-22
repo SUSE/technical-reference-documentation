@@ -63,12 +63,12 @@ include::./common_docinfo_vars.adoc[]
 // -
 :author1_firstname: Alex
 :author1_surname: Zacharow
-:author1_jobtitle:
-:author1_orgname: Suse
-//:author2_firstname: first (given) name
-//:author2_surname: surname
-//:author2_jobtitle: job title
-//:author2_orgname: organization affiliation
+:author1_jobtitle: ISV Certification Engineer
+:author1_orgname: SUSE
+:author2_firstname: Jose
+:author2_surname: Betancourt
+:author2_jobtitle: Director, Solution Partners & Alliances
+:author2_orgname: SUSE
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -177,7 +177,7 @@ image::bios4.png[bios4,scaledwidth="75%", align="center"]
 
 === OS prerequisites
 
-Intel® FlexRAN™ stipulates a real-time kernel, as listed in Intel FlexRAN Installation Guide (Doc. No.: 575834-15.0)
+Intel® FlexRAN™ stipulates a real-time kernel, as listed in Intel® FlexRAN™  Installation Guide (Doc. No.: 575834-15.0)
 
 For this particular test we used a baremetal node as a development host running SUSE Linux Enterprise 15 SP3 Real-Time to preconfigure and test FlexRAN functionality and build container image before exporting it to a Rancher kubernetes cluster.
 
@@ -1225,9 +1225,13 @@ As a simplified solution, a pre-configured Intel® FlexRAN™ helm chart as well
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This deployment guide demonstated a working example of how to preconfigure and create Intel® FlexRAN™ container images and deploy it on a Rancher RKE2 kubernetes cluster.
+“FlexRAN is Intel 4G and 5G baseband PHY Reference Design, which uses Xeon® series Processor with Intel Architecture. This 5GNR Reference PHY consists of a L1 binary which are validated on an Intel® Xeon® SkyLake / CascadeLake platforms and demonstrates the capabilities of the software running different 5GNR L1 features”. - https://github.com/intel/FlexRAN 
 
-I don't like it..Probably need to add something else here...
+SUSE provides all the elements for an open-source, enterprise-grade, software-defined stack for cloud-native orchestration and management.  Ranging from our SUSE Linux Enterprise OS family to Kubernetes distribution and consistent cluster operations, security/authentication/policy management/governance and development platform services via our Rancher Management Platform.
+
+This Intel® FlexRAN™ Solution Setup provides detailed steps to build, test, and deploy a cloud-native implementation of FlexRAN™ 22.07 with a complete SUSE software-defined, OS and Kubernetes stack.
+
+SUSE Linux Enterprise 15 SP3 Real-Time (SLES 15 SP3 RT) as the OS platform to build the FlexRAN™ containers. Deployment and management of the containers leverages SUSE Linux Enterprise Micro 5.2 Real Time (SLE Micro RT) , Rancher Kubernetes Engine v2 (RKE2), and Rancher Management.
 
 == Reference
 
