@@ -157,16 +157,18 @@ image::eth1.png[networking components, scaledwidth="75%", align="center"]
 
 image::lscpu.png[CPU, scaledwidth="65%", align="center"]
 
-* BIOS Setup
+==== BIOS Setup
 
 BIOS configuration may be different for each server, but most modern servers should have similar settings.
 
 Among the most important are CPU C state and P state.
 
 For example:
+
 image::bios1.png[bios1,scaledwidth="75%", align="center"]
 
 For CPU power management in the bios settings use OS DBPM (or similar) setting to control setting from OS to manipulate processor frequencies.
+
 image::bios2.png[bios2,scaledwidth="75%", align="center"]
 
 image::bios3.png[bios3,scaledwidth="75%", align="center"]
@@ -189,15 +191,16 @@ SUSE Linux Enterprise Real Time is a real time operating system designed to redu
 
 For more details about SLES RT please review https://www.suse.com/products/realtime/
 
-* Install SUSE Linux Enterprise Server 15 Real Time. 
+==== Install SUSE Linux Enterprise Server 15 Real Time
 
-Please refer to https://documentation.suse.com/sle-rt/15-SP3/
-//
-When installing SLE 15 RT, during the installation make sure to unmark kernel-default.
+
+Please refer to the SLES Setup Guide: https://documentation.suse.com/sle-rt/15-SP3/ 
+
+When installing SLES 15 RT, during the installation make sure to unmark kernel-default.
 
 image::slesRT-install1.png[sle RT installation, scaledwidth="75%", align="center"]
 
-Verify that kernel-rt is selected
+Verify _kernel-rt_ is selected:
 
 image::slesRT-install2.png[sle RT installation 2, scaledwidth="75%", align="center"]
 
@@ -207,11 +210,13 @@ image::slesRT-install2.png[sle RT installation 2, scaledwidth="75%", align="cent
  During the installation, add a sufficient space to the /opt or /var directory which will be used for most Intel components and containers. We would recommend 200 Gb of storage for these directories. Don’t install FlexRAN under root directory.
 ====
 
-* Real Time configuration
-//
-- Isolate cores
-//
-Verify that tuned installed.
+==== Real Time configuration
+
+
+`Isolate cores`
+
+
+Verify that _tuned_ installed:
 [source, bash]
 ----
 zypper in tuned*
@@ -222,7 +227,7 @@ image::tuned1.png[tuned1,scaledwidth="65%", align="center"]
 In our case we have 1 socket and 40 cores.
 
 
-Add isolated cores to the configuration.
+- Add isolated cores to the configuration
 
 [source, bash]
 ----
@@ -260,7 +265,7 @@ image::grub1.png[grub1,scaledwidth="75%", align="center"]
 ----
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ----
-or for UEFI
+or for UEFI:
 [source, bash]
 ----
 grub2-mkconfig -o /boot/efi/EFI/sle_rt/grub.cfg
@@ -282,19 +287,18 @@ image::grub3.png[scaledwidth="75%", align="center"]
 
 === Set CPU Frequency
 
-AVX512 CPU frequency of your specific CPU should be adjusted according to Figure 4 of Intel’s doc Reference Number: 637779, Revision: 1.2 3rd Gen Intel® Xeon® Scalable Processors, Codename Ice Lake NDA Specification Update June 2021
+ AVX512 CPU frequency of your specific CPU should be adjusted according to Figure 4 of Intel’s doc Reference Number: 637779, Revision: 1.2 3rd Gen Intel® Xeon® Scalable Processors, Codename Ice Lake NDA Specification Update June 2021
  or #613537 for Skylake processor family
 
 image::cpu-avx.png[scaledwidth="75%", align="center"]
 
 In this test Xeon 4316 was used with 2.6 GHz.
 
+There are two options to setup your CPU frequency: :::
 
-* There are two options to setup your CPU frequency.
+* **Use cpupower tool**
 
-- Use cpupower tool
-
-For example, by running
+By running
 [source, bash]
 ----
  cpupower frequency-info
@@ -306,26 +310,26 @@ image::frequency1.png[scaledwidth="65%", align="center"]
 In this example intel_cpufreq was used.
 The userspace governor is available with the older acpi-cpufreq driver (which will be automatically used if you disable intel_pstate at boot time; you then set the governor/frequency with cpupower)
 
-Set intel_pstate driver to passive in grub (intel_pstate=passive).
+Set intel_pstate driver to passive in grub (intel_pstate=passive):
 
 [source, bash]
 ----
 echo passive | sudo tee /sys/devices/system/cpu/intel_pstate/status
 ----
 
-or add intel_pstate=passive to the grub
+or add intel_pstate=passive to the grub:
 
 [source, bash]
 ----
 modprobe cpufreq_userspace
 ----
 
-Set cpu governor to userspace
+Set cpu governor to userspace:
 [source, bash]
 ----
 cpupower frequency-set --governor userspace
 ----
-Set frequency according to the AVX-512 table (2600MHz in this case)
+Set frequency according to the AVX-512 table (2600MHz in this case):
 [source, bash]
 ----
 cpupower --cpu all frequency-set --freq 2600MHz
@@ -344,15 +348,13 @@ turbostat -i 1
 
 image::turbostat1.png[scaledwidth="75%", align="center"]
 
-You can also check with other available tools
+You can also check with other available tools:
 
 image::mperf.png[scaledwidth="50%", align="center"]
 
 image::cpuinfo.png[scaledwidth="50%", align="center"]
 
-
-- The 2nd method to change AVX512 frequency is to install Intel msr-tools with the following commands:
-//
+* **The 2nd method to change AVX512 frequency is to install Intel msr-tools with the following commands:**
 
 [source, bash]
 ----
@@ -362,6 +364,7 @@ git checkout msr-tools-1.3
 make
 modprobe msr
 ----
+
 
 Create bash script setFreq.sh with the following context:
 [source, bash]
@@ -396,14 +399,19 @@ image::avx2.png[scaledwidth="75%", align="center"]
 
 Run the above bash script with your specific numbers which should be changed to the required frequency and verify that required frequency was applied.
 
-Review performance with a Cyclictest.
+Review performance with a Cyclictest:
 
 image::cyclic1.png[scaledwidth="75%", align="center"]
 
 For more details review [SLE RT Hardware Testing] https://documentation.suse.com/sle-rt/15-SP3/pdf/article-hardware-testing_color_en.pdf
 
 
+
+=== Install Intel® oneAPI
+
 * Install Intel GPU drivers
+
+That step will eliminate any prerequisites failures for oneAPI.
 
 Review https://dgpu-docs.intel.com/installation-guides/suse/suse-15sp3.html for more details.
 
@@ -414,7 +422,7 @@ zypper addrepo -r https://repositories.intel.com/graphics/sles/15sp3/intel-graph
 zypper install   intel-opencl   intel-media-driver libmfx1   intel-level-zero-gpu level-zero
 ----
 
-=== Install Intel® oneAPI
+* Download and install Intel® oneAPI
 
 [source, bash]
 ----
@@ -431,11 +439,11 @@ image::oneapi1.png[scaledwidth="60%", align="center"]
 
 image::oneapi2.png[scaledwidth="60%", align="center"]
 
-Source the env and verify installed version.
+Source the environment and verify installed version:
 
 image::oneapi3.png[scaledwidth="60%", align="center"]
 
-Make sure that GCC is installed to work with ICX compiler.
+Make sure that GCC is installed to work with ICX compiler:
 
 image::gcc.png[scaledwidth="60%", align="center"]
 
@@ -483,7 +491,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 image::pkgconf.png[scaledwidth="75%", align="center"]
 
 
-=== Install DPDK
+=== Download and Install DPDK
 
 [NOTE]
 ====
@@ -497,16 +505,17 @@ tar xf dpdk-21.11.tar.xz
 export RTE_SDK=/var/dpdk/dpdk-21.11
 ----
 
-Copy patch to RTE_SDK directory and apply dpdk patch
+Copy patch to RTE_SDK directory and apply dpdk patch:
 [source, bash]
 ----
 patch -p1 < dpdk_patch_21.11.patch
 ----
 
-=== Download and install FlexRAN
+=== Download and install FlexRAN™
 
-Download FlexRAN release as per Intel document 645964.
-Extract file and source the environment.
+Download FlexRAN™ release as per Intel document 645964.
+
+Extract file and source the environment:
 [source, bash]
 ----
 tar -zxvf FlexRan-22.07.tar.gz
@@ -519,19 +528,19 @@ image::source-flexran.png[scaledwidth="60%", align="center"]
 
 === Compile SDK
 
-Get gcc11-c++
+Get _gcc11-c++_:
 [source, bash]
 ----
 zypper in gcc11-c++
 ----
 
-Export PKG_CONFIG_PATH
+Export PKG_CONFIG_PATH:
 [source,bash]
 ----
 export PKG_CONFIG_PATH=$DIR_WIRELESS_SDK/pkgcfg:$PKG_CONFIG_PATH
 ----
 
-Source Intel oneAPI
+Source oneAPI:
 [source, bash]
 ----
 source /opt/intel/oneapi/setvars.sh --force
@@ -539,11 +548,12 @@ source /opt/intel/oneapi/setvars.sh --force
 export PATH=/opt/intel/oneapi/compiler/2022.0.2/linux/bin-llvm/:$PATH
 ----
 
-Review possible compilation options from ./flexran_build.sh -h command
+
+Review possible compilation options from _./flexran_build.sh -h_ command:
 
 image::flexran-options.png[scaledwidth="65%", align="center"]
 
-Compile SDK
+Compile SDK:
 [source, bash]
 ----
 ./flexran_build.sh -x icx -e -r 5gnr -i avx512 -m sdk
@@ -560,7 +570,7 @@ Compile SDK
 zypper in python3-pyelftools.rpm
 ----
 
-Create dpdk script
+Create dpdk script:
 [source, bash]
 ----
 vi dpdk-dep.sh
@@ -575,13 +585,13 @@ echo "------------build base dpdk -------------------"
 cd $RTE_SDK; meson build; cd build; meson configure -Dflexran_sdk=$sdk_path/build-avx512-icx/install; ninja
 ----
 
-Run dpdk script
+Run dpdk script:
 [source, bash]
 ----
 ./dpdk-dep.sh
 ----
 
-Create dpdk-kmods
+Create dpdk-kmods:
 [source, bash]
 ----
 git clone http://dpdk.org/git/dpdk-kmods
@@ -594,21 +604,21 @@ export RTE_SDK_KMOD=/var/dpdk/dpdk-kmods
 
 === Build the L1 Application, L1 Standalone Test Application, and Test MAC in Linux:
 
-Verify that you have numa*, libhuge* and libnuma-dev* installed
+Verify that you have numa*, libhuge* and libnuma-dev* installed.
 
-Mount hugepages
+Mount hugepages:
 [source, bash]
 ----
 mount -t hugetlbfs nodev /mnt/huge
 ----
 
-Compile 5gnr
+Compile 5gnr:
 [source, bash]
 ----
 ./flexran_build.sh -x icx -e -r 5gnr
 ----
 
-Compile lte
+Compile lte:
 [source, bash]
 ----
 ./flexran_build.sh -x icx -e -r lte -i avx512
@@ -619,7 +629,7 @@ L1 standalone Test Application will be created in <install_dir>/tests/nr5g/nr5g_
 
 * For ACC100 acceleration
 
-Verify acc card.
+Verify acc card:
 
 [source, bash]
 ----
@@ -638,15 +648,15 @@ cd pf-bb-config/
 make  
 ----
 //
-- For PF option:
-//
+`For PF option:`
+
 Bind the PF with the igb_uio module (or alternatively with pci-pf-stub):
 [source, bash]
 ----
 /var/dpdk/dpdk-21.11/usertools/dpdk-devbind.py --bind=igb_uio 51:00.0
 ----
 
-Configure the devices using the pf_bb_config application
+Configure the devices using the pf_bb_config application:
 [source, bash]
 ----
 /var/dpdk/dpdk-21.11/usertools/dpdk-devbind.py --bind=igb_uio 52:00.0 52:00.1
@@ -654,9 +664,9 @@ Configure the devices using the pf_bb_config application
 
 image::pf-bb1.png[scaledwidth="75%", align="center"]
 //
-- For VF option:
+`For VF option:`
 
-Create 2 VFs from the PF
+Create 2 VFs from the PF:
 
 image::max-vf.png[scaledwidth="65%", align="center"]
 
@@ -668,22 +678,22 @@ Check available interfaces:
 
 image::dev-bind2.png[scaledwidth="75%", align="center"]
 
-In the above example there are 2 VFs created:
+In the above example there are 2 VFs created.
 
-Bind with VF
+Bind with VF:
 [source, bash]
 ----
 /var/dpdk/dpdk-21.11/usertools/dpdk-devbind.py --bind=igb_uio 52:00.0 52:00.1
 ----
 
-Configure the devices using the pf_bb_config application for VF usage with both 5G and 4G enabled:
+Configure the devices using the pf_bb_config application for VF usage with both 5G and 4G enabled.
 
-Select the proper config file for your test for VF.
+Select the proper config file for your test for VF:
 [source, bash]
 ----
 ./pf_bb_config ACC100 -c acc100/acc100_config_2vf_4g5g.cfg
 ----
-Check available interfaces and verify number of acc
+Check available interfaces and verify number of acc:
 
 image::acc2.png[scaledwidth="75%", align="center"]
 
@@ -700,7 +710,7 @@ image::bbdev-test.png[scaledwidth="65%", align="center"]
 
 === FlexRAN L1 and Testmac test
 
-Follow steps from the TestMac section of FlexRAN 5GNR Reference Solution 22.07 PHY Software Documentation - Document #603577
+Follow steps from the TestMac section of FlexRAN 5GNR Reference Solution 22.07 PHY Software Documentation - Intel's Document #603577
 
 image::testmac1.png[scaledwidth="75%", align="center"]
 
@@ -710,13 +720,13 @@ Always source FlexRAN env and the oneAPI in each tab and make sure that all path
 For simplicity create a script to source all paths every time when running tests in each terminal.
 ====
 
-Change dpdkBasebandDevice values from phycfg_timer.xml to either physical or virtual acc.
+Change dpdkBasebandDevice values from phycfg_timer.xml to either physical or virtual acc:
 
 [source, bash]
 ----
 /opt/FlexRan/bin/nr5g/gnb/l1 # vi phycfg_timer.xml
 ----
-For example
+For example:
 
 image::timer1.png[scaledwidth="75%", align="center"]
 
@@ -730,7 +740,7 @@ From terminal 1 run:
 ./FlexRAN-<version>/bin/nr5g/gnb/l1/l1.sh -e
 ----
 
-You should be able to see the following console
+You should be able to see the following console:
 
 image::console1.png[scaledwidth="75%", align="center"]
 
@@ -744,19 +754,19 @@ run 1 1 3 100 1005
 
 image::console2.png[scaledwidth="65%", align="center"]
 
-See examples from Document #603577 TestMac section
+See examples from Document #603577 TestMac section:
 
 image::testmac-2.png[scaledwidth="65%", align="center"]
 
-The connection should be established in the 1st terminal once you’ll run l2.sh from the 2nd terminal
+The connection should be established in the 1st terminal once you’ll run l2.sh from the 2nd terminal:
 
 image::console2-2.png[scaledwidth="60%", align="center"]
 
-In the 2nd terminal you should be able to see test result
+In the 2nd terminal you should be able to see test result:
 
 image::console2-3.png[scaledwidth="60%", align="center"]
 
-Another example is to use a preconfigured test file.
+Another test case is to use a preconfigured test file.
 
 For example from the 2nd terminal run:
 [source, bash]
@@ -769,7 +779,7 @@ image::console2-6.png[scaledwidth="60%", align="center"]
 
 [NOTE]
 ====
-Number of failed tests listed above related to a different number of cores defined in the test file.
+Number of failed tests listed above related to a different number of CPU cores defined in the test file.
 ====
 
 === CPU set shielding
@@ -780,20 +790,20 @@ You can also review CPU manipulation commands from  -> https://documentation.sus
 
 Some examples of using shielding on CPU with integrated tools like cset.
 
-- Creating a cset called flexran_set
+`Create a cset called flexran_set`
 
 image::cset1.png[scaledwidth="60%", align="center"]
 
-Example of moving <top> command from root set to flexran_set
+Example of moving _top_ command from root set to flexran_set:
 
 image::cset2.png[scaledwidth="60%", align="center"]
 
-When starting a testmac you can move pid to a dedicated cset
+When starting a testmac you can move pid to a dedicated cset:
 
 image::cset3.png[scaledwidth="60%", align="center"]
 image::cset4.png[scaledwidth="60%", align="center"]
 
- To move all siblings from pid use -–threads   
+ To move all siblings from pid use _-–threads_ option:   
 [source, bash]
 ----
 cset proc -m -p 16165 --threads -t two
@@ -809,16 +819,17 @@ For all features of cpu manipulations please review shielding tasks documents fo
     • https://documentation.suse.com/sle-rt/15-SP3/pdf/article-virtualization_color_en.pdf#%5B%7B%22num%22%3A30%2C%22gen%22%3A0%7D%2C%7B%22name%22%3A%22XYZ%22%7D%2C63.779%2C788.031%2Cnull%5D
 
 
-To run Testmac with VF set, change setting to proper VF value and config
+To run Testmac with VF set, change setting to proper VF value and configuration
 
 image::vf1.png[scaledwidth="65%", align="center"]
 
+and from the 1st terminal run:
 [source, bash]
 ----
 ./l1.sh -e
 ----
 
-From the 2nd terminal run
+From the 2nd terminal run:
 [source, bash]
 ----
 run 1 1 3 100 1005
@@ -830,21 +841,19 @@ image::cset5.png[scaledwidth="65%", align="center"]
 
 image::cset6.png[scaledwidth="65%", align="center"]
 
-If using a config file from the 2nd terminal run
+If using a config file, from the 2nd terminal run:
 [source, bash]
 ----
 ./l2.sh --testfile=/var/FlexRan22.07/bin/nr5g/gnb/testmac/icelake-sp/icxsp_mu1_100mhz_mmimo_32x32_hton.cfg
 ----
 
-If using a taskset
-
-from terminal 1 run
+If using a _taskset_, from terminal 1 run:
 [source, bash]
 ----
 ~/gnb/l1 # taskset -c 12-19 ./l1.sh -e
 ----
 
-from terminal 2 run
+and from terminal 2 run:
 [source, bash]
 ----
 ~/gnb/testmac # taskset -c 12-19 ./l2.sh
@@ -857,11 +866,11 @@ from terminal 2 run
 
 All prerequisite components and FlexRAN™ should be installed as descrtibe in the previous sections.
 
-The main doc to follow -> FlexRAN Reference Solution Cloud-Native Setup (Intel Document Number: 575834-15.0)
+The main document to follow: FlexRAN Reference Solution Cloud-Native Setup (Intel Document Number: 575834-15.0)
 
 Use existing FlexRAN directory or create a FlexRAN pre-configured directory which will be used for the container image.
 
-Source all env. variables
+Source all environment variables:
 [source, bash]
 ----
 export RTE_SDK=/var/dpdk/dpdk-21.11 
@@ -874,18 +883,19 @@ source set_env_var.sh
 
 If you want to deploy a SUSE Linux Enterprise-based container to deploy to the cluster in the future, follow the steps below.
 
-Modify flexran_build_dockerfile.sh from flexran directory
+Modify _flexran_build_dockerfile.sh_ from the flexran directory:
 
 image::docker4.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
- Modify according to your local setup. If RMT server is used, you need to post rmt-server.crt file on your RMT server in the location which can be reachable from url. So, on the local RMT server copy /etc/rmt/ssl/rmt-server.crt file to the /usr/share/rmt/public/repo directory, which creates symb link to ./var/lib/rmt/public/repo which is a public repo of RMT server. 
+Modify according to your local setup. If local RMT server is used, you need to post rmt-server.crt file on your RMT server in the location which can be reachable from url. So, on the local RMT server copy /etc/rmt/ssl/rmt-server.crt file to the /usr/share/rmt/public/repo directory, which creates symb link to ./var/lib/rmt/public/repo which is a public repo of RMT server. 
 Setup a proper permission to /usr/share/rmt/public/repo directory. 
 Sync rmt server.
 ====
 
-- Build a docker image
+`Build a docker image`
+
 [source, bash]
 ----
 ./flexran_build_dockerfile_suse.sh -v -e avx512 -r 5gnr -m all –x icx
@@ -893,7 +903,7 @@ Sync rmt server.
 
 image::docker-built.png[scaledwidth="65%", align="center"]
 
-- Tag docker image
+`Tag a docker image`
 [source, bash]
 ----
 docker tag flexran.docker.registry/flexran_vdu:latest flexran.docker.registry/flexran_vdu:22.07
@@ -904,14 +914,14 @@ image::docker-image.png[scaledwidth="65%", align="center"]
 [NOTE]
 ====
 Another alternative and recommended tool to use is podman since it’s daemonless and has integration with cockpit web console on Sle Micro.
-For that you need to replace ‘docker build’ command with podman in flexran_build_dockerfile.sh file with
+For that you need to replace _docker build_ command with _podman_ in flexran_build_dockerfile.sh file and run:
 [source, bash]
 ----
 podman build -t
 ----
-For more details review the Podman guide > https://documentation.suse.com/sle-micro/5.1/pdf/article-podman_color_en.pdf
+For more details review the Podman guide: https://documentation.suse.com/sle-micro/5.1/pdf/article-podman_color_en.pdf
 ====
-Prepare file to export to the target node and save docker as 
+Prepare file to export to the target node and save docker as: 
 [source, bash]
 ----
 docker save flexran.docker.registry/flexran_vdu:22.07|gzip > flexranimage.tar.gz
@@ -920,21 +930,21 @@ docker save flexran.docker.registry/flexran_vdu:22.07|gzip > flexranimage.tar.gz
 
 === Create an RKE2 cluster
 
-Install a Rancher server
+==== Install SUSE Linux Enterprise Micro
 
 In this test deployment, SUSE Linux Enterprise Micro 5.2 (SLE Micro) was used as a server host for the Rancher server test deployment.
 
 SUSE Linux Enterprise Micro is a lightweight and secure OS platform purpose built for containerized and virtualized workloads.
 
-For more details on installation of SLE Micro, review > https://documentation.suse.com/sle-micro/5.2/pdf/book-deployment-slemicro_color_en.pdf
+For more details on installation of SLE Micro, review: https://documentation.suse.com/sle-micro/5.2/pdf/book-deployment-slemicro_color_en.pdf
 
 
-You can enable a cockpit console after a SLE Micro installation for easy management
+After installing a SLE Micro you can enable a cockpit console for easy management:
 [source, bash]
 ----
 systemctl enable --now cockpit.socket
 ----
-and open console in the browser as https://your-ip:9090/
+and open console in the browser as 'https://your-ip:9090/'
 
 image::rancher-console.png[scaledwidth="75%", align="center"]
 //
@@ -943,15 +953,15 @@ For more details review:
 
 https://documentation.suse.com/sle-micro/5.2/
 
-- Rancher installation steps
+==== Install a Rancher server
 
-Install k3s
+`Install k3s:`
 [source, bash]
 ----
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.23.9+k3s1" INSTALL_K3S_SKIP_SELINUX_RPM=true INSTALL_K3S_EXEC='server --cluster-init --write-kubeconfig-mode=644' sh -s -
 ----
 
-Install certificates
+`Install certificates:`
 [source, bash]
 ----
 kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml 
@@ -960,7 +970,7 @@ kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/r
  export KUBECONFIG=/etc/rancher/k3s/k3s.yaml 
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1 
 ----
-Verify
+Verify:
 [source, bash]
 ----
 kubectl get pods --namespace cert-manager
@@ -968,7 +978,7 @@ kubectl get pods --namespace cert-manager
 
 image::get-pods.png[scaledwidth="60%", align="center"]
 
-Install Rancher
+`Install Rancher:`
 [source, bash]
 ----
 helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
@@ -978,21 +988,21 @@ export RANCHER_VERSION="2.6.5"
 helm install rancher rancher-stable/rancher --namespace cattle-system --set hostname=rancher-server2.isv.suse --set version=2.6.5 --set replicas=1
 ----
 
-Go to Rancher url and login
+Go to Rancher url and login.
 
 For more details on Rancher installation, review > https://documentation.suse.com/trd/kubernetes/pdf/kubernetes_ri_rancher-k3s-slemicro_color_en.pdf
 
-- Create a custom rke2 cluster
+`Create a custom RKE2 cluster`
 
 From the Rancher server create a custom cluster > switch to rke2
 
 image::cluster-1.png[scaledwidth="75%", align="center"]
 
-Copy registration script to a new node to add it to the cluster
+Copy registration script to a new node to add it to the cluster:
 
 image::cluster-2.png[scaledwidth="75%", align="center"]
 
-Verify if machines got provisioned
+Verify if machines got provisioned:
 
 image::cluster-2.png[scaledwidth="75%", align="center"]
 
@@ -1004,16 +1014,16 @@ xr12-a   Ready    control-plane,etcd,master,worker   7d21h   v1.23.10+rke2r1
 xr12-c   Ready    control-plane,etcd,master,worker   7d20h   v1.23.10+rke2r1
 ----
 
-In this test case we used 2 Dell XR12 nodes with Sle Micro 5.2 RT installed as part of the RKE2 cluster. Both target nodes should have dpdk with a patch and Intel oneAPI installed.
+In this test case 2 Dell XR12 nodes were used with Sle Micro 5.2 RT installed as part of the RKE2 cluster. Both target nodes should have dpdk with a patch and Intel oneAPI installed.
  
-For core isolation on Sle Micro RT, install 'tuned' package with additional dependencies. 
+For core isolation on Sle Micro RT, install _tuned_ package with additional dependencies. 
 [source, bash]
 ----
 transactional-update pkg install tuned.rpm python3-configobj.rpm python3-linux-procfs.rpm python3-pyudev.rpm virt-what.rpm
 ----
 [NOTE]
 ====
-For this test, SLES 15 repositories were used with 'curl' commands to download packages locally. For a large scale deployment a local repository can be made with required RPMs.
+For this test, SLES 15 repositories were used with _curl_ commands to download packages locally. For a large scale deployment a local repository can be made with required RPMs.
 ====
 
 Modify /etc/default/grub to the required tuned parameters with isolcpu and run transactional-update grub.cfg to save changes and reboot. 
@@ -1032,7 +1042,7 @@ It's not recommended to add a FlexRAN™ development node to the RKE2 cluster. I
 During our RKE2 cluster deployment, Rancher provides an option to select Multus and Calico as default plugins, so no needs to install them manually.
 
 === Build SR-IOV Network Device Plugin
-The setup details for virtual or physical functions of the SR-IOV Network Device Plugins can be found at > https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin
+The setup details for virtual or physical functions of the SR-IOV Network Device Plugins can be found at: https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin
 
 [source, bash]
 ----
@@ -1046,7 +1056,7 @@ cp ~/go/bin/golint bin/
 make image
 ----
 
-Tag with
+Tag with:
 [source, bash]
 ----
 docker tag ghcr.io/k8snetworkplumbingwg/sriov-network-device-plugin:latest nfvpe/sriov-device-plugin:v3.5
@@ -1054,14 +1064,16 @@ docker tag ghcr.io/k8snetworkplumbingwg/sriov-network-device-plugin:latest nfvpe
 
 image::docker-tag.png[scaledwidth="75%", align="center"]
 
-Save with
+Save with:
 [source, bash]
 ----
 docker save nfvpe/sriov-device-plugin:v3.5|gzip > sriov-device-plugin.tar.gz
 ----
 
 
-=== Creating FlexRAN™ Pods
+=== Create FlexRAN™ Pods
+
+Label nodes as:
 [source, bash]
 ----
 kubectl label nodes xr12-b testnode=worker1
@@ -1071,7 +1083,7 @@ image::show-labels.png[scaledwidth="75%", align="center"]
 
 * Configure FEC and FVL SRIOV
 
-To reconfigure pf_bb_config run
+To reconfigure pf_bb_config run:
 [source, bash]
 ----
 pkill pf_bb_config
@@ -1082,22 +1094,22 @@ insmod /var/dpdk/dpdk-kmods/linux/igb_uio/igb_uio.ko
 where 18:00.0 is acc pf address
 
 
-Check available accelerator cards
+Check available accelerator cards:
 [source, bash]
 ----
 lspci|grep acc  
 18:00.0 Processing accelerators: Intel Corporation Device 0d5c
 ----
-Add 4 VFs to acc
+Add 4 VFs to acc:
 [source, bash]
 ----
 echo 4 > /sys/bus/pci/devices/0000:18:00.0/max_vfs
 ----
 
-Verify
+Verify:
 
 image::dev-bind4.png[scaledwidth="75%", align="center"]
-4 new created
+In the below example 4 new were created:
 [source, bash]
 ----
 lspci|grep acc  
@@ -1112,7 +1124,7 @@ image::dev-bind5.png[scaledwidth="65%", align="center"]
 
 image::dev-bind6.png[scaledwidth="65%", align="center"]
 
-Modify configMap as following
+Modify configMap as following:
 [source, bash]
 ----
 vi ~/go/src/github.com/intel/sriov-network-device-plugin/deployments
@@ -1125,7 +1137,7 @@ image::configmap1.png[scaledwidth="55%", align="center"]
 kubectl create -f configMap.yaml
 ----
 
-Modify /var/flexran/build/docker/flexran_testmac_mode.yaml according to your specs
+Modify /var/flexran/build/docker/flexran_testmac_mode.yaml according to your specs:
 
 [source, bash]
 ----
@@ -1169,14 +1181,14 @@ image::pods-test.png[scaledwidth="60%", align="center"]
 
 To demonstrate a simple functionality:
 
-In the 1st terminal run
+In the 1st terminal run:
 [source, bash]
 ----
 kubectl exec –it flexran-binary-release –c flexran-l1app – bash
 Start l1.sh -e 
 ----
 
-In the 2nd terminal run
+In the 2nd terminal run:
 [source, bash]
 ----
 kubectl exec –it flexran-binary-release –c flexran-testmac -- bash
@@ -1189,7 +1201,7 @@ kubectl exec –it flexran-binary-release –c flexran-testmac -- bash
  Other tests such as xRAN Mode and a Helm Chart test can be run as well as described in
 section 5.2 and 5.3 of Intel document 575834-15.0 [Installation Guide Software Release v22.07]
 
-As a simplified solution, a pre-configured Intel® FlexRAN™ helm chart as well as all required cni plugins, can be posted on Rancher Marketplace to simplify deployment at a large scale.
+As a simplified solution, a pre-configured Intel® FlexRAN™ helm chart as well as all required CNI plugins, can be posted on Rancher Marketplace to simplify deployment at a large scale.
 
 
 
