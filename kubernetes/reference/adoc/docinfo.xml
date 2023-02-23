@@ -1,27 +1,74 @@
-<!-- https://tdg.docbook.org/tdg/5.1/info -->
+<!-- https://tdg.docbook.org/tdg/5.2/info -->
 
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
-    <dm:bugtracker>
-	<dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
-        <dm:product>Kubernetes</dm:product>
-    </dm:bugtracker>
-    <dm:editurl>https://github.com/SUSE/technical-reference-documentation/edit/master/adoc/</dm:editurl>
+  <dm:bugtracker>
+    <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
+    <!--  <dm:product>{title}</dm:product> -->
+  </dm:bugtracker>
 </dm:docmanager>
 
-<!--<title>{title}</title>-->
+<!-- Note to author/editor
+     Attributes used here (enclosed in curly braces).
+     General variables are defined in common_docinfo_vars.adoc.
+     Variable specific to this document (such as the title) are
+     defined with the main content in the adoc or SA_vars.adoc file(s).
+     See comments below for additional options.
+-->
+
+<!-- document organization metadata
+     Do NOT modify this section
+     <orgname>Technical Reference Documentation</orgname>
+-->
+<meta name="series">{trd}</meta>
+<meta name="type">{type}</meta>
+
+<!-- document title and subtitle -->
+<!-- <title>{title}</title> -->
 <subtitle>{subtitle}</subtitle>
-<!--<orgname>Best Practices / Technical Reference Documentation</orgname>-->
+
+<!-- platform and product metadata
+     Replicate for additional platforms.
+     Define platform2, etc. in adoc file.
+-->
 <productname>{productname}</productname>
 
+<!-- author metadata (mostly skipped in kubernetes/reference)
+     Replicate author tag structure inside this authorgroup
+     for additional authors.
+     Use editor and othercredit tag groups for additional contributors.
+     Update variables in adoc file.
+-->
+<!-- <authorgroup> -->
+  <!-- <author> -->
+    <!-- <personname> -->
+      <!-- <firstname></firstname> -->
+      <!-- <surname></surname> -->
+    <!-- </personname> -->
+    <!-- <affiliation> -->
+      <!-- <jobtitle></jobtitle> -->
+      <!-- <orgname></orgname> -->
+    <!-- </affiliation> -->
+  <!-- </author> -->
+<!-- </authorgroup> -->
+
+<!-- logo images
+     Duplicate mediaobject tag group and
+     reference additional logos as needed.
+     Place logo files under media directory tree.
+-->
 <cover role="logos">
-    <mediaobject>
-        <imageobject>
-            <imagedata fileref="suse.svg"/>
-        </imageobject>
-    </mediaobject>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="suse.svg" width="4em"/>
+    </imageobject>
+  </mediaobject>
 </cover>
 
+<!-- brief abstract/disclaimer for document
+     Update with an enticing summary.
+-->
 <abstract>
-    <para>{preface}</para>
-    <para> <emphasis role="strong">Disclaimer:</emphasis>  {disclaimer} </para>
+  <para>{preface}</para>
+  <para> <emphasis role="strong">Disclaimer:</emphasis> {disclaimer} </para>
 </abstract>
+
