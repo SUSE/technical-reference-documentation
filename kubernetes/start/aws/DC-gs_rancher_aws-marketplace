@@ -1,7 +1,7 @@
 # Comment out to deactivate draft mode when completed
-#DRAFT=yes
-ROLE="sbp"
-PROFROLE="sbp"
+# DRAFT=yes
+ROLE="trd"
+#PROFROLE="trd"
 
 ## -------------------------------
 ## Doc Config File for DAPS
@@ -13,23 +13,21 @@ PROFROLE="sbp"
 ##
 
 # Main Document 
-MAIN="gs_rancher_veeam-kasten.adoc"
+MAIN="gs_rancher_aws-marketplace.adoc"
 
 # Format Type
 ADOC_TYPE="article"
 #ADOC_TYPE="book"
 
 # Stylesheet Root
-STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2021-ns"
-#STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2013-sbp-ns"
-#STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2013-ns"
+STYLEROOT="/usr/share/xml/docbook/stylesheet/trd"
 
 # Turn on postprocessing
 ADOC_POST="yes"
 
 # Leverage SUSE Best Practices
-XSLTPARAM="--stringparam publishing.series=sbp"
-DOCBOOK5_RNG_URI="http://docbook.org/xml/5.1/rng/docbookxi.rnc"
+#XSLTPARAM="--stringparam publishing.series=sbp"
+DOCBOOK5_RNG_URI="http://docbook.org/xml/5.2/rng/docbookxi.rnc"
 
 # Enable attributes
 ADOC_ATTRIBUTES="--attribute env-daps=1"
@@ -41,13 +39,9 @@ ADOC_ATTRIBUTES="--attribute env-daps=1"
 # BP = suggestions/considerations above default settings
 ADOC_ATTRIBUTES+=" --attribute BP=1"
 
-# Document Type
-# GS = Getting Started guide: simplified approach for PoC to demonstrate functionality
-ADOC_ATTRIBUTES+=" --attribute GS=1"
-
 # Uncomment line below for SUSE One Partner Solution Stack
 #ADOC_ATTRIBUTES+=" --attribute PSS=1"
 
 # Set document date (yyyy-mm-dd)
-ADOC_ATTRIBUTES+=" --attribute docdate=2022-07-27"
+ADOC_ATTRIBUTES+=" --attribute docdate=2023-02-15"
 

@@ -1,7 +1,7 @@
 # Comment out to deactivate draft mode when completed
 #DRAFT=yes
-ROLE="sbp"
-PROFROLE="sbp"
+ROLE="trd"
+#PROFROLE="trd"
 
 ## -------------------------------
 ## Doc Config File for DAPS
@@ -20,16 +20,13 @@ ADOC_TYPE="article"
 #ADOC_TYPE="book"
 
 # Stylesheet Root
-STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2021-ns"
-#STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2013-sbp-ns"
-#STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2013-ns"
+STYLEROOT="/usr/share/xml/docbook/stylesheet/trd"
 
 # Turn on postprocessing
 ADOC_POST="yes"
 
-# Leverage SUSE Best Practices
-XSLTPARAM="--stringparam publishing.series=sbp"
-DOCBOOK5_RNG_URI="http://docbook.org/xml/5.1/rng/docbookxi.rnc"
+# Leverage DocBook RELAX NG
+DOCBOOK5_RNG_URI="http://docbook.org/xml/5.2/rng/docbookxi.rnc"
 
 # Enable attributes
 ADOC_ATTRIBUTES="--attribute env-daps=1"
@@ -49,5 +46,5 @@ ADOC_ATTRIBUTES+=" --attribute GS=1"
 #ADOC_ATTRIBUTES+=" --attribute PSS=1"
 
 # Set document date (yyyy-mm-dd)
-ADOC_ATTRIBUTES+=" --attribute docdate=2022-11-17"
+ADOC_ATTRIBUTES+=" --attribute docdate=2023-02-10"
 
