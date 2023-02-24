@@ -84,8 +84,8 @@ include::./common_docinfo_vars.adoc[]
 
 
 == Introduction
-This document is providing detailed steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher kubernetes cluster.
-This demonstration shows required steps to install and configure Intel's FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s kubernetes cluster with SUSE Rancher Server to manage this deployment.
+This document is providing detailed steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher Kubernetes cluster.
+This demonstration shows required steps to install and configure Intel's FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s Kubernetes cluster with SUSE Rancher Server to manage this deployment.
  
 The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design utilizing Xeon series processors and consists of a L1 library for SkyLake/CascadeLake platforms to demonstrate the capabilities of the software running 5GNR L1 features. See  https://www.intel.com/content/www/us/en/developer/topic-technology/edge-5g/tools/flexran.html [FlexRAN™ Reference Architecture] for more information.
 
@@ -102,7 +102,7 @@ The goal is to empower Telco developers and/or engineers to put together an Inte
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-This guide will help you to configure and deploy a test kubernetes cluster using SUSE Products such as Rancher Server, SUSE Linux Enterprise Server Real Time and Suse Linux Enterprise Micro Real Time to create and manage RKE2 cluster with Intel® FlexRAN™ containers.
+This guide will help you to configure and deploy a test Kubernetes cluster using SUSE Products such as Rancher Server, SUSE Linux Enterprise Server Real Time and Suse Linux Enterprise Micro Real Time to create and manage RKE2 cluster with Intel® FlexRAN™ containers.
 
 
 
@@ -181,7 +181,7 @@ image::bios4.png[bios4,scaledwidth="75%", align="center"]
 
 Intel® FlexRAN™ stipulates a real-time kernel, as listed in Intel® FlexRAN™  Installation Guide (Doc. No.: 575834-15.0)
 
-For this particular test we used a baremetal node as a development host running SUSE Linux Enterprise 15 SP3 Real-Time to preconfigure and test FlexRAN functionality and build container image before exporting it to a Rancher kubernetes cluster.
+For this particular test we used a baremetal node as a development host running SUSE Linux Enterprise 15 SP3 Real-Time to preconfigure and test FlexRAN functionality and build container image before exporting it to a Rancher Kubernetes cluster.
 
 .Test Setup Diagram
 image::setup-diagram.png["Setup diagram", scaledwidth="75%", align="center"]
@@ -196,7 +196,7 @@ For more details about SLES RT please review https://www.suse.com/products/realt
 
 Please refer to the SLES Setup Guide: https://documentation.suse.com/sle-rt/15-SP3/ 
 
-When installing SLES 15 RT, during the installation make sure to unmark kernel-default.
+When installing SLES 15 RT, during the installation make sure to unmark _kernel-default_.
 
 image::slesRT-install1.png[sle RT installation, scaledwidth="75%", align="center"]
 
@@ -213,10 +213,10 @@ image::slesRT-install2.png[sle RT installation 2, scaledwidth="75%", align="cent
 ==== Real Time configuration
 
 
-`Isolate cores`
+Isolate CPU cores with the following steps:
 
 
-Verify that _tuned_ installed:
+- Verify that _tuned_ installed:
 [source, bash]
 ----
 zypper in tuned*
@@ -287,7 +287,7 @@ image::grub3.png[scaledwidth="75%", align="center"]
 
 === Set CPU Frequency
 
- AVX512 CPU frequency of your specific CPU should be adjusted according to Figure 4 of Intel’s doc Reference Number: 637779, Revision: 1.2 3rd Gen Intel® Xeon® Scalable Processors, Codename Ice Lake NDA Specification Update June 2021
+AVX512 CPU frequency of your specific CPU should be adjusted according to Figure 4 of Intel’s doc Reference Number: 637779, Revision: 1.2 3rd Gen Intel® Xeon® Scalable Processors, Codename Ice Lake NDA Specification Update June 2021
  or #613537 for Skylake processor family
 
 image::cpu-avx.png[scaledwidth="75%", align="center"]
@@ -433,7 +433,7 @@ bash l_BaseKit_p_2021.4.0.3422_offline.sh
 
 [NOTE]
 ====
- Make sure that the installation directory has enough space. Intel oneAPI is using about 40Gb of space.
+ Make sure that the installation directory has enough space. Intel® oneAPI is using about 40Gb of space.
 ====
 image::oneapi1.png[scaledwidth="60%", align="center"]
 
@@ -716,7 +716,7 @@ image::testmac1.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
-Always source FlexRAN env and the oneAPI in each tab and make sure that all paths are exported.
+Always source FlexRAN environment and the oneAPI in each tab and make sure that all paths are exported.
 For simplicity create a script to source all paths every time when running tests in each terminal.
 ====
 
@@ -790,7 +790,7 @@ You can also review CPU manipulation commands from  -> https://documentation.sus
 
 Some examples of using shielding on CPU with integrated tools like cset.
 
-`Create a cset called flexran_set`
+* Create a cset called flexran_set
 
 image::cset1.png[scaledwidth="60%", align="center"]
 
@@ -810,7 +810,7 @@ cset proc -m -p 16165 --threads -t two
 ----
 
 
-For all features of cpu manipulations please review shielding tasks documents for cpu isolations:
+For all features of CPU manipulations please review shielding tasks documents for CPU isolations:
 
     • https://www.suse.com/c/cpu-isolation-introduction-part-1/
 
@@ -862,7 +862,7 @@ and from terminal 2 run:
 
 == Deploy FlexRAN™ on Container through Kubernetes
 
-=== Generae LTE/5G Docker Images with pre-build FlexRAN™
+=== Generate LTE/5G Docker Images with pre-build FlexRAN™
 
 All prerequisite components and FlexRAN™ should be installed as descrtibe in the previous sections.
 
@@ -879,22 +879,22 @@ export PKG_CONFIG_PATH=$DIR_WIRELESS_SDK/pkgcfg:$PKG_CONFIG_PATH
 source set_env_var.sh
 ----
 
-* Create a Dockerfile
+==== Create a Dockerfile
 
 If you want to deploy a SUSE Linux Enterprise-based container to deploy to the cluster in the future, follow the steps below.
 
-Modify _flexran_build_dockerfile.sh_ from the flexran directory:
+- Modify _flexran_build_dockerfile.sh_ from the flexran directory:
 
 image::docker4.png[scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
-Modify according to your local setup. If local RMT server is used, you need to post rmt-server.crt file on your RMT server in the location which can be reachable from url. So, on the local RMT server copy /etc/rmt/ssl/rmt-server.crt file to the /usr/share/rmt/public/repo directory, which creates symb link to ./var/lib/rmt/public/repo which is a public repo of RMT server. 
-Setup a proper permission to /usr/share/rmt/public/repo directory. 
+Modify according to your local setup. If local RMT server is used, you need to post rmt-server.crt file on your RMT server in the location which can be reachable from url. So, on the local RMT server copy _/etc/rmt/ssl/rmt-server.crt_ file to the _/usr/share/rmt/public/repo_ directory, which creates symb link to _./var/lib/rmt/public/repo_ which is a public repo of RMT server. 
+Setup a proper permission to _/usr/share/rmt/public/repo_ directory. 
 Sync rmt server.
 ====
 
-`Build a docker image`
+- Build a docker image:
 
 [source, bash]
 ----
@@ -903,7 +903,7 @@ Sync rmt server.
 
 image::docker-built.png[scaledwidth="65%", align="center"]
 
-`Tag a docker image`
+- Tag a docker image:
 [source, bash]
 ----
 docker tag flexran.docker.registry/flexran_vdu:latest flexran.docker.registry/flexran_vdu:22.07
@@ -921,7 +921,7 @@ podman build -t
 ----
 For more details review the Podman guide: https://documentation.suse.com/sle-micro/5.1/pdf/article-podman_color_en.pdf
 ====
-Prepare file to export to the target node and save docker as: 
+- Prepare file to export to the target node and save docker as: 
 [source, bash]
 ----
 docker save flexran.docker.registry/flexran_vdu:22.07|gzip > flexranimage.tar.gz
@@ -955,13 +955,13 @@ https://documentation.suse.com/sle-micro/5.2/
 
 ==== Install a Rancher server
 
-`Install k3s:`
+`Install K3s:`
 [source, bash]
 ----
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.23.9+k3s1" INSTALL_K3S_SKIP_SELINUX_RPM=true INSTALL_K3S_EXEC='server --cluster-init --write-kubeconfig-mode=644' sh -s -
 ----
 
-`Install certificates:`
+`Install certificates and verify:`
 [source, bash]
 ----
 kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml 
@@ -970,7 +970,7 @@ kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/r
  export KUBECONFIG=/etc/rancher/k3s/k3s.yaml 
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1 
 ----
-Verify:
+
 [source, bash]
 ----
 kubectl get pods --namespace cert-manager
@@ -992,17 +992,17 @@ Go to Rancher url and login.
 
 For more details on Rancher installation, review > https://documentation.suse.com/trd/kubernetes/pdf/kubernetes_ri_rancher-k3s-slemicro_color_en.pdf
 
-`Create a custom RKE2 cluster`
+==== Create a custom RKE2 cluster
 
-From the Rancher server create a custom cluster > switch to rke2
+- From the Rancher server create a custom cluster > switch to rke2
 
 image::cluster-1.png[scaledwidth="75%", align="center"]
 
-Copy registration script to a new node to add it to the cluster:
+- Copy registration script to a new node to add it to the cluster:
 
 image::cluster-2.png[scaledwidth="75%", align="center"]
 
-Verify if machines got provisioned:
+- Verify if machines got provisioned:
 
 image::cluster-2.png[scaledwidth="75%", align="center"]
 
@@ -1013,6 +1013,7 @@ NAME     STATUS   ROLES                              AGE     VERSION
 xr12-a   Ready    control-plane,etcd,master,worker   7d21h   v1.23.10+rke2r1  
 xr12-c   Ready    control-plane,etcd,master,worker   7d20h   v1.23.10+rke2r1
 ----
+
 
 In this test case 2 Dell XR12 nodes were used with Sle Micro 5.2 RT installed as part of the RKE2 cluster. Both target nodes should have dpdk with a patch and Intel oneAPI installed.
  
@@ -1026,7 +1027,7 @@ transactional-update pkg install tuned.rpm python3-configobj.rpm python3-linux-p
 For this test, SLES 15 repositories were used with _curl_ commands to download packages locally. For a large scale deployment a local repository can be made with required RPMs.
 ====
 
-Modify /etc/default/grub to the required tuned parameters with isolcpu and run transactional-update grub.cfg to save changes and reboot. 
+Modify _/etc/default/grub_ to the required tuned parameters with isolcpu and run transactional-update grub.cfg to save changes and reboot. 
 
 [NOTE]
 ====
