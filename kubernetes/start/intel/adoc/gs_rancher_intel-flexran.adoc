@@ -43,16 +43,20 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document and product
 // -
-:title: Intel® FlexRAN™ Reference Solution Setup for SUSE
-:subtitle: FlexRAN™ Deployment Guide for Rancher Kubernetes Cluster
+:title: Intel® FlexRAN™ - SUSE Reference Solution Cloud-Native Setup
+:subtitle: FlexRAN™ Deployment Guide on SUSE platform
 :productname:
 //  SLES 15 SP3 RT, SLE Micro 5.2 RT, RANCHER 2.6, RKE2
 :platform1: Suse Linux Enterprise Server 15.3 Real Time
 :platform1short: SLES 15 RT
 :platform2: Suse Linux Enterprise Micro 5.2 Real Time
 :platform2short: SLE Micro 5.2 RT
-:platform3: Rancher 2.6 by Suse
+:platform3: Rancher 2.6 by SUSE
 :otherproduct1: Intel® FlexRAN™ 22.07
+:otherproduct1short: Intel® FlexRAN™
+:k8s1: Rancher Kubernetes Engine 2
+:k8s1short: RKE2
+:k8s2short: K3s
 :usecase: SUSE/Intel Solution for Telco
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -84,9 +88,9 @@ include::./common_docinfo_vars.adoc[]
 
 
 == Introduction
-This document is providing detailed steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher Kubernetes cluster.
-This demonstration shows required steps to install and configure Intel's FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s Kubernetes cluster with SUSE Rancher Server to manage this deployment.
- 
+
+
+=== Motivation 
 The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design utilizing Xeon series processors and consists of a L1 library for SkyLake/CascadeLake platforms to demonstrate the capabilities of the software running 5GNR L1 features. See  https://www.intel.com/content/www/us/en/developer/topic-technology/edge-5g/tools/flexran.html [FlexRAN™ Reference Architecture] for more information.
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -97,16 +101,17 @@ The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design utilizin
 // Include an approved SUSE | Partner logo lock-up if possible
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-The goal is to empower Telco developers and/or engineers to put together an Intel® FlexRAN™ test and/or proof-of-concept (PoC) environment leveraging the benefits of the complete SUSE stack from the real-time OS to Kubernetes orchestration and management.
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 This guide will help you to configure and deploy a test Kubernetes cluster using SUSE Products such as Rancher Server, SUSE Linux Enterprise Server Real Time and Suse Linux Enterprise Micro Real Time to create and manage RKE2 cluster with Intel® FlexRAN™ containers.
 
+=== Scope
+This document is providing detailed steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher Kubernetes cluster.
+This demonstration shows required steps to install and configure Intel's FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s Kubernetes cluster with SUSE Rancher Server to manage this deployment.
 
-
-// === Audience
+=== Audience
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Identify for whom this document is intended, perhaps with:
@@ -115,7 +120,7 @@ This guide will help you to configure and deploy a test Kubernetes cluster using
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+The goal is to empower Telco developers and/or engineers to put together an Intel® FlexRAN™ test and/or proof-of-concept (PoC) environment leveraging the benefits of the complete SUSE stack from the real-time OS to Kubernetes orchestration and management.
 
 == Prerequisites
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -124,9 +129,12 @@ This guide will help you to configure and deploy a test Kubernetes cluster using
 // - Link to existing resources whenever possible.
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-=== Hardware configuration
 
-The following hardware components were used during the development of this guide:
+This section presents some guidance for the environment into which you deploy {otherproduct1short}.
+
+=== Hardware
+
+For the FlexRAN™ configuration on the physical development node the following hardware components were used:
 
 [cols="1,1"]
 |===
@@ -148,38 +156,50 @@ Intel® E810 100Gb Ethernet controller
 960GB Data Center NVMe
 |===
 
-image::eth1.png[networking components, scaledwidth="75%", align="center"]
+// image::eth1.png[networking components, scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
- For more details on required components check Intel FlexRAN reference documentation: Installation Guide Software Release v22.07 (Doc. No.: 575834-15.0) and FlexRAN™ 5GNR Reference Solution 22.07 - PHY Software Documentation (Doc. No.:603577)
+For more details on server components, see Intel® FlexRAN™ reference documentation: _Installation Guide Software Release v22.07 (Doc. No.: 575834-15.0)_ and _FlexRAN™ 5GNR Reference Solution 22.07 - PHY Software Documentation (Doc. No.:603577)_.
 ====
 
-image::lscpu.png[CPU, scaledwidth="65%", align="center"]
+//image::lscpu.png[CPU, scaledwidth="65%", align="center"]
 
-==== BIOS Setup
+=== BIOS Configuration
+
+A server's system BIOS provides runtime services for operating systems and performs hardware initialization during the booting process.
+
+BIOS settings can influence how hardware behaves under different workloads.
+
+Among the most important BIOS settings for implementing {otherproduct1short} are the CPU p-states (optimization of the voltage and CPU fequency during operation) and c-states (optimization of the power consumption if a core does not have to execute any instructions).
 
 BIOS configuration may be different for each server, but most modern servers should have similar settings.
 
-Among the most important are CPU C state and P state.
 
-For example:
+//For example:
 
 image::bios1.png[bios1,scaledwidth="75%", align="center"]
 
-For CPU power management in the bios settings use OS DBPM (or similar) setting to control setting from OS to manipulate processor frequencies.
+For CPU power management, use _OS DBPM_ or a similar control setting to allow the operating system to manipulate processor frequencies.
 
-image::bios2.png[bios2,scaledwidth="75%", align="center"]
+Depends on the BIOS version, it's also recommended to use a _Custom_ profile with a _Telco Optimized_ or _Maximum Performance_ profile BIOS settings.
 
-image::bios3.png[bios3,scaledwidth="75%", align="center"]
+// Other BIOS settings used for the development of this guide are illustrated here.
 
-image::bios4.png[bios4,scaledwidth="75%", align="center"]
+// image::bios2.png[bios2,scaledwidth="75%", align="center"]
 
- For more details, please review section 2.4.2 of FlexRAN Software Reference Solution Cloud-Native Setup. (Intel® Doc. No. 575834-15.0) and BIOS Settings for FlexRAN Platforms Based on Intel® Xeon® Processors. (Doc. No.: 675g685, Rev.: 1.3)
+// image::bios3.png[bios3,scaledwidth="75%", align="center"]
 
-=== OS prerequisites
+// image::bios4.png[bios4,scaledwidth="75%", align="center"]
 
-Intel® FlexRAN™ stipulates a real-time kernel, as listed in Intel® FlexRAN™  Installation Guide (Doc. No.: 575834-15.0)
+[NOTE]
+====
+For more details, please review section 2.4.2 of _FlexRAN Software Reference Solution Cloud-Native Setup. (Intel® Doc. No. 575834-15.0)_ and _BIOS Settings for FlexRAN Platforms Based on Intel® Xeon® Processors. (Doc. No.: 640685)_.
+====
+
+=== OS requirements
+
+Intel® FlexRAN™ stipulates a real-time kernel, as listed in _Intel® FlexRAN™  Installation Guide (Doc. No.: 575834-15.0)_.
 
 For this particular test we used a baremetal node as a development host running SUSE Linux Enterprise 15 SP3 Real-Time to preconfigure and test FlexRAN functionality and build container image before exporting it to a Rancher Kubernetes cluster.
 
