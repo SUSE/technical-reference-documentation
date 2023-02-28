@@ -47,9 +47,9 @@ include::./common_docinfo_vars.adoc[]
 :subtitle: FlexRAN™ Deployment Guide on SUSE platform
 :productname:
 //  SLES 15 SP3 RT, SLE Micro 5.2 RT, RANCHER 2.6, RKE2
-:platform1: Suse Linux Enterprise Server 15.3 Real Time
+:platform1: SUSE Linux Enterprise Server 15.3 Real Time
 :platform1short: SLES 15 RT
-:platform2: Suse Linux Enterprise Micro 5.2 Real Time
+:platform2: SUSE Linux Enterprise Micro 5.2 Real Time
 :platform2short: SLE Micro 5.2 RT
 :platform3: Rancher 2.6 by SUSE
 :otherproduct1: Intel® FlexRAN™ 22.07
@@ -90,8 +90,14 @@ include::./common_docinfo_vars.adoc[]
 == Introduction
 
 
-=== Motivation 
-The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design utilizing Xeon series processors and consists of a L1 library for SkyLake/CascadeLake platforms to demonstrate the capabilities of the software running 5GNR L1 features. See  https://www.intel.com/content/www/us/en/developer/topic-technology/edge-5g/tools/flexran.html [FlexRAN™ Reference Architecture] for more information.
+=== Motivation
+
+Intel® FlexRAN™ is a reference implementation for cloud enabled wireless access VNFs.  It shows how to efficiently implement wireless access loads through flexible software architecture, Intel® Xeon® Scalable processors using Intel® Advanced Vector Extensions 512 (Intel® AVX 512) instruction set, and optimized NFVi with DPDK.
+
+Executing said implementation is a multi-step process, starting with the Operating System and extensions running on the right hardware, installing Intel® tools, and finally, containerizing and deploying FlexRANTM in a cloud-native, software-defined infrastructure.
+
+This guide will help you configure and deploy an Intel® FlexRANTM implementation using SUSE products such as Rancher Server, SUSE Linux Enterprise Server (with Real Time extensions) and SUSE Linux Linux Enterprise Micro Real Time to create and manage Rancher Kubernetes Engine v2 (RKE2) clusters for the containerized implementation.
+ 
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a motivation for the document in 2-4 sentences to identify:
@@ -105,7 +111,6 @@ The {otherproduct1}&#8482; is a 4G and 5G baseband PHY Reference design utilizin
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-This guide will help you to configure and deploy a test Kubernetes cluster using SUSE Products such as Rancher Server, SUSE Linux Enterprise Server Real Time and Suse Linux Enterprise Micro Real Time to create and manage RKE2 cluster with Intel® FlexRAN™ containers.
 
 === Scope
 This document is providing detailed steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher Kubernetes cluster.
@@ -1258,13 +1263,10 @@ As a simplified solution, a pre-configured Intel® FlexRAN™ helm chart as well
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-// that goes to the Intro/Motivation section  “FlexRAN is Intel 4G and 5G baseband PHY Reference Design, which uses Xeon® series Processor with Intel Architecture. This 5GNR Reference PHY consists of a L1 binary which are validated on an Intel® Xeon® SkyLake / CascadeLake platforms and demonstrates the capabilities of the software running different 5GNR L1 features”. - https://github.com/intel/FlexRAN 
+Building, testing, and deploying a properly configured Intel® FlexRAN™  implementation can show the benefits of VNFs and vRAN with Intel® Xeon® Scalable Processors and Intel® Advanced Vector Extensions.
 
-SUSE provides all the elements for an open-source, enterprise-grade, software-defined stack for cloud-native orchestration and management.  Ranging from our SUSE Linux Enterprise OS family to Kubernetes distribution and consistent cluster operations, security/authentication/policy management/governance and development platform services via our Rancher Management Platform.
+SUSE provides all the elements for an open-source, enterprise-grade, software-defined stack for cloud-native orchestration and management.  SUSE Linux Enterprise (with Real Time extensions), SUSE Linux Enterprise Micro Real Time, Rancher Kubernetes Engine v2 (RKE2) and Rancher Management were used and illustrated as key ingredients to simplify the deployment of Intel® FlexRAN™.
 
-This Intel® FlexRAN™ Solution Setup provides detailed steps to build, test, and deploy a cloud-native implementation of FlexRAN™ 22.07 with a complete SUSE software-defined, OS and Kubernetes stack.
-
-SUSE Linux Enterprise 15 SP3 Real-Time (SLES 15 SP3 RT) as the OS platform to build the FlexRAN™ containers. Deployment and management of the containers leverages SUSE Linux Enterprise Micro 5.2 Real Time (SLE Micro RT) , Rancher Kubernetes Engine v2 (RKE2), and Rancher Management.
 
 == Reference
 
