@@ -113,8 +113,8 @@ This guide will help you configure and deploy an Intel® FlexRAN™ implementati
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 === Scope
-This document is providing detailed steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher Kubernetes cluster.
-This demonstration shows required steps to install and configure Intel's FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s Kubernetes cluster with SUSE Rancher Server to manage this deployment.
+This document provides the necessary steps to setup a cloud-native stack for Intel® FlexRAN™ on SUSE Rancher Kubernetes cluster.
+This demonstration shows the required steps to install and configure Intel's FlexRAN PHY Reference Design using SUSE Linux Enterprise Server Real Time as the base Operating System and SUSE Linux Enterprise Micro Real Time as target hosts for Rancher RKE2 or K3s Kubernetes cluster with SUSE Rancher Server to manage this deployment.
 
 === Audience
 
@@ -125,7 +125,7 @@ This demonstration shows required steps to install and configure Intel's FlexRAN
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The goal is to empower Telco developers and/or engineers to put together an Intel® FlexRAN™ test and/or proof-of-concept (PoC) environment leveraging the benefits of the complete SUSE stack from the real-time OS to Kubernetes orchestration and management.
+The goal is to empower Telco developers and/or engineers putting together an Intel® FlexRAN™ test and/or proof-of-concept (PoC) environment leveraging the benefits of the complete SUSE stack from the real-time OS to Kubernetes orchestration and management.
 
 == Prerequisites
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -232,7 +232,7 @@ image::slesRT-install2.png[sle RT installation 2, scaledwidth="75%", align="cent
 
 [NOTE]
 ====
- During the installation, add a sufficient space to the /opt or /var directory which will be used for most Intel components and containers. We would recommend 200 Gb of storage for these directories. Don’t install FlexRAN under root directory.
+ During the installation, add sufficient space to the /opt or /var directories which will be used for most Intel components and containers. We would recommend 200 Gb of storage for these directories. Don’t install FlexRAN under root directory.
 ====
 
 ==== Real Time configuration
@@ -281,7 +281,7 @@ image::grub1.png[grub1,scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
- Settings depends on the number of CPU and isolated cores.
+ Settings depend on the number of CPU and isolated cores.
  Please review section 2.4.3 of Intel’s document 575834-15.0
 ====
 //
@@ -317,7 +317,7 @@ AVX512 CPU frequency of your specific CPU should be adjusted according to Figure
 
 image::cpu-avx.png[scaledwidth="75%", align="center"]
 
-In this test Xeon 4316 was used with 2.6 GHz.
+In this deployment Intel® Xeon® 4316 was used with 2.6 GHz.
 
 There are two options to setup your CPU frequency: :::
 
@@ -379,7 +379,7 @@ image::mperf.png[scaledwidth="50%", align="center"]
 
 image::cpuinfo.png[scaledwidth="50%", align="center"]
 
-* **The 2nd method to change AVX512 frequency is to install Intel msr-tools with the following commands:**
+* **The second option to change AVX512 frequency is to install Intel® msr-tools with the following commands:**
 
 [source, bash]
 ----
@@ -417,7 +417,7 @@ done
 
 [NOTE]
 ====
- Values in the script are taking from Intel document #637779 (for ice lake family)  specific to your CPU avx512 numbers. (2.6 GHz in the above example)
+ Values in the script were taking from Intel document #637779 (for Ice Lake family)  specific to your CPU avx512 numbers. (2.6 GHz in the above example)
 ====
 
 image::avx2.png[scaledwidth="75%", align="center"]
@@ -458,7 +458,7 @@ bash l_BaseKit_p_2021.4.0.3422_offline.sh
 
 [NOTE]
 ====
- Make sure that the installation directory has enough space. Intel® oneAPI is using about 40Gb of space.
+ Make sure that the installation directory has enough space. Intel® oneAPI utilizes approximately 40Gb of space.
 ====
 image::oneapi1.png[scaledwidth="60%", align="center"]
 
@@ -673,7 +673,7 @@ cd pf-bb-config/
 make  
 ----
 //
-`For PF option:`
+`For Physical Function (PF) option:`
 
 Bind the PF with the igb_uio module (or alternatively with pci-pf-stub):
 [source, bash]
@@ -689,7 +689,7 @@ Configure the devices using the pf_bb_config application:
 
 image::pf-bb1.png[scaledwidth="75%", align="center"]
 //
-`For VF option:`
+`For Virtual Function (VF) option:`
 
 Create 2 VFs from the PF:
 
@@ -1205,7 +1205,7 @@ image::pods-test.png[scaledwidth="60%", align="center"]
 
 === Testing FlexRAN™ Timer Mode in Containers
 
-To demonstrate a simple functionality:
+To demonstrate simple functionality:
 
 In the 1st terminal run:
 [source, bash]
