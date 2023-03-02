@@ -46,7 +46,7 @@ include::./common_docinfo_vars.adoc[]
 :title: Intel® FlexRAN™ - SUSE Reference Solution Cloud-Native Setup
 :subtitle: FlexRAN™ Deployment Guide on SUSE platform
 :productname:
-//  SLES 15 SP3 RT, SLE Micro 5.2 RT, RANCHER 2.6, RKE2
+// It's not about a specific product but rather a platform with multiple SUSE productsinlcuging SLES 15 SP3 RT, SLE Micro 5.2 RT, RANCHER 2.6, RKE2
 :platform1: SUSE Linux Enterprise Server 15.3 Real Time
 :platform1short: SLES 15 RT
 :platform2: SUSE Linux Enterprise Micro 5.2 Real Time
@@ -161,14 +161,12 @@ Intel® E810 100Gb Ethernet controller
 960GB Data Center NVMe
 |===
 
-// image::eth1.png[networking components, scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
 For more details on server components, see Intel® FlexRAN™ reference documentation: _Installation Guide Software Release v22.07 (Doc. No.: 575834-15.0)_ and _FlexRAN™ 5GNR Reference Solution 22.07 - PHY Software Documentation (Doc. No.: 603577)_.
 ====
 
-//image::lscpu.png[CPU, scaledwidth="65%", align="center"]
 
 === BIOS Configuration
 
@@ -181,21 +179,12 @@ Among the most important BIOS settings for implementing {otherproduct1short} are
 BIOS configuration may be different for each server, but most modern servers should have similar settings.
 
 
-//For example:
-
 image::bios1.png[bios1,scaledwidth="75%", align="center"]
 
 For CPU power management, use _OS DBPM_ or a similar control setting to allow the operating system to manipulate processor frequencies.
 
 Depends on the BIOS version, it's also recommended to use a _Custom_ profile with a _Telco Optimized_ or _Maximum Performance_ profile BIOS settings.
 
-// Other BIOS settings used for the development of this guide are illustrated here.
-
-// image::bios2.png[bios2,scaledwidth="75%", align="center"]
-
-// image::bios3.png[bios3,scaledwidth="75%", align="center"]
-
-// image::bios4.png[bios4,scaledwidth="75%", align="center"]
 
 [NOTE]
 ====
