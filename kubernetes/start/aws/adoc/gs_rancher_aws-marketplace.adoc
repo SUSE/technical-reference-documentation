@@ -163,7 +163,8 @@ Before getting started, you should have:
 
 * VPC, subnet, routing, and security group configurations sufficient to allow HTTPS access to the deployment host interface, as well as open access between the ephemeral appliance and the subnets where your EKS cluster will be configured
 
-* Route53 registered domain
+* Route53 registered domain under the currently logged in AWS account.
+If you need to leverage a Route53 domain from a different AWS account, please refer to https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html[Delegate access across AWS accounts].
 
 * EC2 SSH key pair
 
@@ -393,6 +394,10 @@ The __Clean resources__ function gives you a mechanism for removing your {produc
 ====
 
 
+== Upgrade to latest version 
+
+The automated deployment of {productname} may vary from the latest release version. You can upgrade to the latest version with Helm by following this https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster/upgrades[guidance].
+
 == Accessing {productname}
 
 . Open a Web browser to the URL of your {productname} service.
@@ -425,7 +430,7 @@ image::aws-mp-rancher-32.png[Rancher - Create EKS Cluster, scaledwidth="75%", al
 ====
 The initial 3-node management cluster does not count against your {productname} node count for _Priority Support_, which you may purchase through the {market}.
 ====
- 
+
 
 == Priority support
 
