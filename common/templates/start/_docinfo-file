@@ -33,8 +33,8 @@
      Replicate for additional platforms.
      Define platform2, etc. in adoc file.
 -->
-<productname>{productname}</productname>
-<meta name="platform">{platform1}</meta>
+<productname>{product1}</productname>
+<meta name="platform">{product1_full}</meta>
 
 
 <!-- author metadata
@@ -57,17 +57,22 @@
 </authorgroup>
 
 <!-- logo images
-     Duplicate mediaobject tag group and
-     reference additional logos as needed.
-     Place logo files under media directory tree.
+     The default logo is the official SUSE chameleon (positive for light background).
+     To display multiple logos:
+       1. Create a logo lock-up as a single SVG file (follow SUSE brand guidelines and obtain permission from owner of any additional logos).
+       2. Place the logo file in the _media/src/svg_ directory.
+       3. Update `fileref` below with the new file name.
+     NOTE: Scaling can be tricky.
+           Adjust `width` in the "fo" role for non-HTML renderings.
+           Adjust `width` in the "html" role for HTML renderings.
 -->
 <cover role="logos">
   <mediaobject>
     <imageobject role="fo">
-      <imagedata fileref="logo-lockup_suse-aws_positive.svg" width="10em"/>
+      <imagedata fileref="suse.svg" width="10em"/>
     </imageobject>
     <imageobject role="html">
-      <imagedata fileref="logo-lockup_suse-aws_positive.svg" width="30em"/>
+      <imagedata fileref="suse.svg" width="30em"/>
     </imageobject>
   </mediaobject>
 </cover>
