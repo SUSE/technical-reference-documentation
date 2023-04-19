@@ -58,21 +58,27 @@
 
 <!-- logo images
      The default logo is the official SUSE chameleon (positive for light background).
+     NOTE:
+     * HTML and PDF need different width's, hence the differentiation between html and fo
+     * always use 5em for for (PDF) and 152px for html
+     
      To display multiple logos:
-       1. Create a logo lock-up as a single SVG file (follow SUSE brand guidelines and obtain permission from owner of any additional logos).
-       2. Place the logo file in the _media/src/svg_ directory.
-       3. Update `fileref` below with the new file name.
-     NOTE: Scaling can be tricky.
-           Adjust `width` in the "fo" role for non-HTML renderings.
-           Adjust `width` in the "html" role for HTML renderings.
+       1. Obtain a logo (preferrably an SVG file) and remove whitespace from top, bottom, and sides.
+          1.1. Very slim or very high logos may need some whitespace padding so the fit in line with
+	       the other logos. If in doubt, contact Jana Jaeger <jana.jaeger@suse.com> for help
+       2. Place the file in common/images/src/svg
+       3. Create a link to the logo file location from step 2 in the _media/src/svg_ directory.
+       4. Copy the existing mediaobject section and place it before the closing </cover> tag
+       5. Replace the image filename in the new mediaobject section
+
 -->
 <cover role="logos">
   <mediaobject>
     <imageobject role="fo">
-      <imagedata fileref="suse.svg" width="10em"/>
+      <imagedata fileref="suse.svg" width="5em"/>
     </imageobject>
     <imageobject role="html">
-      <imagedata fileref="suse.svg" width="30em"/>
+      <imagedata fileref="suse.svg" width="152px"/>
     </imageobject>
   </mediaobject>
 </cover>
