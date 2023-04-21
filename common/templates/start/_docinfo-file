@@ -56,20 +56,50 @@
   </author>
 </authorgroup>
 
-<!-- logo images
-     The default logo is the official SUSE chameleon (positive for light background).
-     NOTE:
-     * HTML and PDF need different width's, hence the differentiation between html and fo
-     * always use 5em for for (PDF) and 152px for html
+<!-- cover logo images
+     Specify the image or images to use on the document cover.
+
+     The default logo (`common/images/src/svg/suse.svg`) is the
+     official SUSE chameleon with 'SUSE' printed to its right.
+     The logo is designed for light backgrounds.
+     When you run the setup script, a symbolic link to this image
+     file is created in your project's `media/src/svg` directory.
+
+     NOTE: Two image objects are used to accommodate different
+           width requirements for HTML ('role="html"') and for
+           PDF ('role="fo"').
+           Always use '5em' for for PDF and '152px' for HTML.
      
-     To display multiple logos:
-       1. Obtain a logo (preferrably an SVG file) and remove whitespace from top, bottom, and sides.
-          1.1. Very slim or very high logos may need some whitespace padding so the fit in line with
-	       the other logos. If in doubt, contact Jana Jaeger <jana.jaeger@suse.com> for help
-       2. Place the file in common/images/src/svg
-       3. Create a link to the logo file location from step 2 in the _media/src/svg_ directory.
-       4. Copy the existing mediaobject section and place it before the closing </cover> tag
-       5. Replace the image filename in the new mediaobject section
+     To display multiple logos on the document cover:
+
+     1. (preferred) Use an existing, approved logo lock-up SVG image.
+        a. Find the existing image file in `common/images/src/svg`.
+        b. Create a symbolic link to the image file in your project's
+           `media/src/svg` directory.
+        c. Update the 'fileref' attributes with the link target.
+
+     2. Create a single SVG image file with required logos.
+        a. Create a single logo lock-up image complying with brand
+           guidelines and approved by all parties.
+           Be sure to trim whitespace from all sides.
+        b. Place the file in the `common/images/src/svg` directory.
+        c. Create a symbolic link to the image file in your project's
+           `media/src/svg` directory.
+        d. Update the 'fileref' attributes with the new file name.
+
+     3. Use multiple, separate SVG logo image files.
+        a. Obtain an additional, approved logo (preferrably as an SVG file).
+        b. Trim extraneous whitespace from the top, bottom, and sides.
+           Very slim or very high logos may need some whitespace padding to
+           the fit in line with other logos.
+           If you need help, contact Jana Jaeger <jana.jaeger@suse.com>.
+        c. Place the file in the `common/images/src/svg` directory.
+        d. Create a symbolic link to the image file in your project's
+           `media/src/svg` directory.
+        e. Create a copy of the existing mediaobject section just before
+           the closing </cover> tag.
+        f. Update the 'fileref' attributes in the new mediaobject with
+           the new file name.
 
 -->
 <cover role="logos">
