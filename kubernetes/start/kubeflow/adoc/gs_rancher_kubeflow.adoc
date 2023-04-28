@@ -1,0 +1,605 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+// 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Document attributes and variables
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document
+// -
+:title: Kubeflow on Rancher
+:subtitle: Deploying Kubeflow with SUSE Rancher
+
+:product1: Rancher
+:product1_full: Rancher by SUSE
+:product1_version: 2.7
+:product1_url: Primary SUSE product/platform URL (without the protocol)
+:product2: Secondary product short name
+:product2_full: Secondary product full name
+:product2_url: Secondary product URL
+
+:usecase: A few words to identify high level use case (e.g., Database-as-a-Service, edge analytics in healthcare, Kubernetes-native object storage)
+
+:executive_summary: A brief statement of what this document provides (e.g., This document provides a brief introduction to implementing {usecase} with {product2_full} and {product1_full}.)
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributor
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: Alex
+:author1_surname: Arnoldy
+:author1_jobtitle: job title
+:author1_orgname: organization affiliation
+:author2_firstname: Mark
+:author2_surname: Gonnelly
+:author2_jobtitle: job title
+:author2_orgname: organization affiliation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// miscellaneous
+// define any additional variables here for use within the document
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+= {title}: {subtitle}
+
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a brief statement (1-4 sentences) of the purpose of the guide.
+// This is could be the same as the executive summary.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This document provides a procedure for installing Kubeflow on SUSE Rancher. The Kubeflow project provides a straightforward way to deploy open-source machine learning (ML)  tools to Kubernetes clusters, regardless of the underlying infrastructures. SUSE Rancher enables efficient management of these clusters.
+
+=== Motivation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a motivation for the document in 2-4 sentences to identify:
+//   - what the document is about
+//   - why it may be of interest to the reader (e.g., a use case)
+//   - what products are being highlighted
+// Include an approved SUSE | Partner logo lock-up if possible
+// Include any additional, relevant details
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Deploying Kubeflow on Kubernetes clusters managed by SUSE Rancher requires a number of manual steps. 
+
+=== Scope
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Specify what this guide covers in no more than 2 sentences.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This guide will help you take the first steps to deploy Kubeflow on Kubernetes clusters managed by SUSE Rancher.
+
+
+=== Audience
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify for whom this document is intended, perhaps with:
+//   - topics of interests (e.g., machine learning, security, etc.)
+//   - job roles (e.g., developer, administrator, platform architect, etc.)
+//   - required skills
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This document is intended for developers and system administrators who are responsible for facilitating machine learning (ML) workflows on Kubernetes clusters.
+
+
+== Prerequisites
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify minimum requirements (prerequisites) the reader
+// would need in order to follow the steps of this guide.
+// - Link to existing resources whenever possible.
+// - Keep this section brief but elaborate as needed.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+For this guide, we use Harvester, managed through Rancher, to create a five node RKE2 cluster. However, the same steps should work on any other RKE2 cluster. You will also need a workstation with kubectl and helm installed.
+
+== Technical overview
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a technical overview of the solution.
+// - Identify components.
+// - Describe how the components fit together.
+//   Leverage diagrams as appropriate, including (but not limited to):
+//   - component architecture
+//   - data flow diagram
+//   - workflow diagram
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+In addition to Kubeflow itself, there are a number of supporting components that are required for this solution. We will walk through the process of installing each of them.
+
+IMPORTANT: This guide assumes Rancher Management Server is installed and configured with Harvester under Rancher management.
+
+. Deploy an RKE2 cluster on Harvester
+. Deploy the NFS server
+. Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster
+. Deploy the MetalLB load balancer
+. Deploy Istio
+. Prepare the Kubeflow deployment files
+. Deploy Kubeflow
+. Connect to the Kubeflow UI
+
+== Deploy an RKE2 cluster on Harvester
+
+We begin by using the Rancher UI to create a project in Harvester named kubeflow-on-harvester that contains a namespace named kubeflow-cluster. The cluster name should be set to: 
+[source, console]
+----
+kubeflow-on-harvester
+----
+
+We define five nodes - three of them for the control plane and two for the workload plane.
+
+* All nodes should be in the same Harvester namespace
+* The operating systems for all nodes is the SUSE Linux Enterprise 15 SP4 minimal QCOW2 image with cloud-init enabled (previously known as the OpenStack image)
+* All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Internet
+* The three VMs with the roles of control-plane and etcd pool are configured with resources of 4 vCPU, 8GB RAM, 40GB boot drive
+* The two VMs that make up the workload-plane pool are configured with 8 vCPU, 16GB RAM, 40GB boot drive
+* The SSH user for the O/S image is 
+[source, console]
+----
+sles
+----
+NOTE: The node sizings used here were for basic testing purposes only. It is likely that more CPU and RAM would be required for the workload-plane VMs in particular to support a useful Kubeflow workload.
+
+The following User Data cloud-config (under __Show Advanced__) should be applied to all nodes during RKE2 cluster creation:
+[source, console]
+----
+### cloud-init
+#cloud-config
+chpasswd:
+  list: |
+    root:SUSE
+    sles:SUSE
+  expire: false
+ssh_authorized_keys:
+  - >-
+    <REPLACE WITH SSH PUBLIC KEY OF THE WORKSTATION>
+runcmd:
+  - SUSEConnect --url <REPLACE WITH RMT SERVER ADDRESS>
+  - zypper -n in -t pattern apparmor
+  - zypper -n up
+  - zypper in --force-resolution --no-confirm --force kernel-default
+  - zypper rm kernel-default-base
+----
+
+The Kubernetes `Cluster Configuration` should be configured as follows:
+
+* On the __Basic__ tab:
+** Select Kubernetes version v1.24.9+rke2r2 
++
+NOTE: This version is currently deprecated but is needed for Harvester Cloud Provider support. If you are not using Harvester, you can select a newer version.
+
+** Enable the Harvester Cloud Provider CSI driver.
+
+** Set __Container Network__ Interface to `Calico`.
+
+** Set the __Default Security Pod Policy__ to `unrestricted`.
+
+** Disable the Nginx Ingress controller under __System Services__.
+
+* On the __Labels and Annotations__ tab
+
+** Apply a cluster label where they key is `app` and the value is `kubeflow`. 
+
+* Click __Create__
+
+After the cluster has been created, you should verify and reboot the RKE2 nodes
+
+. SSH to each node as the user `sles`
+
+. Verify that the `kernel-default` kernel has been installed and `kernel-default-base` kernel has been removed: 
++
+[source, console]
+----
+sudo zypper se kernel-default
+----
+
+. If needed, remove the `kernel-default-base` kernel with: 
++
+[source, console]
+----
+sudo zypper rm kernel-default-base
+----
+
+. Verify that all operating system software has been patched to the latest update: 
++
+[source, console]
+----
+sudo zypper up
+----
+
+. Reboot each node, in turn to enable the kernel-default kernel
+
+After the RKE2 cluster has been created, gather the KUBECONFIG data from the Rancher Management server and provide it to a workstation with kubectl and helm installed.
+
+== Deploy the NFS server
+== Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster
+
+== Deploy the MetalLB load balancer
+
+NOTE: The instructions described below include a section for `Testing MetalLB` after deployment. This can be omitted as both MetalLB and the Harvester CSI will be tested in a later step.
+
+* Use these instructions to deploy MetalLB on the RKE2 cluster: https://gist.github.com/alexarnoldy/24dd06d8c4291d04c5d7065b520bcb15
+
+## Test MetalLB and the Longhorn CSI
+
+. Set this variable with the target namespace:
++
+[source, console]
+----
+NAMESPACE="kubeflow"
+----
+
+. Create the namespace: 
++
+[source, console]
+----
+kubectl create namespace ${NAMESPACE}
+----
+
+. Create the manifest for an nginx pod, PVC, and load balancer service:
++
+[source, console]
+----
+cat <<EOF> nginx-metallb-test.yaml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: ${NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1
+        ports:
+        - name: http
+          containerPort: 80
+        volumeMounts:
+        - mountPath: /mnt/test-vol
+          name: test-vol
+      volumes:
+      - name: test-vol
+        persistentVolumeClaim:
+          claimName: nginx-pvc
+
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nginx-pvc
+  namespace: ${NAMESPACE}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: ${NAMESPACE}
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  type: LoadBalancer
+EOF
+----
+
+. Create the pod, service, and the PVC: 
++
+[source, console]
+----
+kubectl apply -f nginx-metallb-test.yaml
+----
+
+. Verify the pod is "Running", the `harvester` StorageClass is the `(default)`, the persistentvolumeclaim is "Bound", and the service has an "EXTERNAL-IP".
++ 
+[source, console]
+----
+kubectl get pod,sc,pvc,svc -n ${NAMESPACE}
+----
+
+. Verify that the service is reachable through the load balancer IP address from outside the cluster:
++
+[source, console]
+----
+IPAddr=$(kubectl get svc -n ${NAMESPACE} | grep -w nginx | awk '{print$4":"$5}' | awk -F: '{print$1":"$2}')
+curl http://${IPAddr} | grep "Thank you"
+----
+An HTML encoded output should display the phrase "Thank you for using nginx."
+
+. Verify that the volume is mounted in the test pod. 
++
+[source, console]
+----
+TEST_POD=$(kubectl get pods -n ${NAMESPACE} | awk '/nginx/ {print$1}')
+kubectl exec -it ${TEST_POD} -n ${NAMESPACE} -- mount | grep test-vol
+----
+The output should show that the volume is mounted at the location `/mnt/test-vol` 
+
+. When finished with testing, delete the pod and service. 
++
+[source, console]
+----
+kubectl delete -f nginx-metallb-test.yaml
+----
+
+== Deploy Istio
+
+IMPORTANT: Does this need to be added?
+
+== Install Kubeflow
+
+NOTE: The instructions for installing Kubeflow can be found at: `https://github.com/kubeflow/manifests#installation`
+
+.Install kustomize on the Linux workstation:
+
+IMPORTANT: At the time of writing, Kubeflow requires kustomize version 5.0.0 or higher
+
+* Find the lastest release of kustomize at https://github.com/kubernetes-sigs/kustomize/releases/
+* Adjust this variable for the appropriate release: `VERSION="v5.0.0"`
+*** Use the following commands to download and install kustomize for a Linux AMD/Intel workstation:
++
+[source, console]
+----
+wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${VERSION}/kustomize_${VERSION}_linux_amd64.tar.gz
+tar xvfz kustomize_${VERSION}_linux_amd64.tar.gz
+sudo mv kustomize /usr/bin
+----
+
+## Install Kubeflow
+NOTE: The remainder of the procedure will require installing Kubeflow according to the instructions on the Kubeflow GitHub site, then returning to this document to enable TLS for HTTPS connections to the Kubeflow Dashboard.
+
+* Follow the instructions at `https://github.com/kubeflow/manifests#installation` to either install all of the Kubeflow components with a single command, or install individual components
+
+## Enable TLS (HTTPS) on Kubeflow
+
+* Follow the instructions at `https://gist.github.com/alexarnoldy/e84216fa969f849e79ffbcf766e92ffc` to create an applicatoin TLS certificate and private key
+** Be sure to use these variables, while following this procudure:
++
+[source, console]
+----
+export APP="kubeflow"
+export APP_K8S_NAMESPACE="istio-system"
+export APP_SERVICE_NAME="istio-ingressgateway"
+export SECRET_NAME="kubeflow-tls"
+----
+.After the TLS secret has been created, add the required TLS information to Istio:
+
+* Edit the `istio-ingressgateway` gateway: 
++
+[source, console]
+----
+kubectl edit gateway -n istio-system istio-ingressgateway 
+----
+
+* Add this information at the bottom of the manifest, after the "host" HTTP information:
++
+[source, console]
+----
+    tls:
+      httpsRedirect: true
+  - hosts:
+    - '*'
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: kubeflow-lb-tls
+      mode: SIMPLE
+----
+* The `spec` section of the manifest should resemble:
+
+----
+spec:
+  selector:
+    app: istio-ingressgateway
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+  - hosts:
+    - '*'
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: kubeflow-lb-tls
+      mode: SIMPLE
+----
+
+NOTE: The `credentialName` must match the TLS secret created earlier.
+
+.Patch the `istio-ingressgateway` service to change the service type to LoadBalancer:
+
+* Verify the current service type:
++
+[source, console]
+----
+kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' ; echo ""
+----
+
+* Patch the service to change the type to LoadBalancer:
++
+[source, console]
+----
+kubectl -n istio-system patch svc istio-ingressgateway -p '{"spec": {"type": "LoadBalancer"}}'
+----
+
+* Verify the service is a type of `LoadBalancer`:
++
+[source, console]
+----
+kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' ; echo ""
+----
+
+
+
+//== Installation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Detail the steps of the installation procedure.
+// The reader should be able to copy and paste commands to
+// a local environment or follow along locally with screenshots.
+// Include one or more verification steps to validate installation.
+//
+// Leverage:
+// - Ordered lists
+// - Code blocks
+// - Screenshots
+// - Admonitions
+//
+// If multiple installation methods are to be detailed, then
+// - Create a summary list here
+// - Detail each method in its own subsection.
+//
+// NOTE: For solutions involving SUSE Rancher, it is preferred
+//       to detail two installation methods:
+//       - Through the Rancher Apps Catalog with appropriate
+//         screenshots and SUSE branding.
+//       - A more manual approach (e.g., on the command-line).
+//
+// Complex configuration procedures may be broken out into one or more
+// Configuration sections.
+// These may be subsections of Installation or separate sections at
+// the same level as Installation.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+//== Demonstration
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Illustrate functionality with a demonstration.
+// Begin with a description or outline of the demonstration.
+// Provide clear steps (in ordered lists) for the reader to follow.
+// Typical demonstration flow is:
+// 1. Prepare the environment for the demonstration.
+//    This should be minimal, such as downloading some data to use.
+//    If this requires more than a couple steps, consider putting it
+//    in a subsection.
+// 2. Perform the demonstration.
+//    Be careful not to overuse screenshots.
+// 3. Verify.
+//    This may be interwoven into performing the demonstration.
+//
+// As with Installation, leverage ordered lists, code blocks,
+// admonitions, and screenshots.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+== Summary
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize:
+// - Motivation (1 sentence)
+// - What was covered (1-2 sentences)
+// - Next steps (unordered list of 2-4 further learning resources)
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+In this guide, you learned how to deploy Kubeflow on Kubernetes clusters managed by SUSE Rancher.
+
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
