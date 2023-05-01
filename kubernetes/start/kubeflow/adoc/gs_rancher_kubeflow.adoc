@@ -91,27 +91,23 @@ include::./common_docinfo_vars.adoc[]
 
 
 
-== Introduction
+== Motivation
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a brief statement (1-4 sentences) of the purpose of the guide.
 // This is could be the same as the executive summary.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document provides a procedure for installing Kubeflow on SUSE Rancher. The Kubeflow project provides a straightforward way to deploy open-source machine learning (ML)  tools to Kubernetes clusters, regardless of the underlying infrastructures. SUSE Rancher enables efficient management of these clusters.
+Machine learning (ML) is driving innovation across many domains.
+The importance of ML is reflected by its adoption by the enterprise.
+Businesses use ML to achieve deeper insights, grow capabilities, improve efficiencies, and accelerate results.
 
-=== Motivation
+ML workflows can be complex, and managing them can be difficult.
+This is particularly true at production scale.
+https://www.kubeflow.org/[Kubeflow] is an open source project that aims to make deploying and scaling ML models as simple as possible.
+By deploying Kubeflow into a https://www.rancher.com/products/rancher[Rancher by SUSE] Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a motivation for the document in 2-4 sentences to identify:
-//   - what the document is about
-//   - why it may be of interest to the reader (e.g., a use case)
-//   - what products are being highlighted
-// Include an approved SUSE | Partner logo lock-up if possible
-// Include any additional, relevant details
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Deploying Kubeflow on Kubernetes clusters managed by SUSE Rancher requires a number of manual steps. 
+NOTE: Mark, some wordsmithing could be used here.
 
 === Scope
 
@@ -119,7 +115,8 @@ Deploying Kubeflow on Kubernetes clusters managed by SUSE Rancher requires a num
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will help you take the first steps to deploy Kubeflow on Kubernetes clusters managed by SUSE Rancher.
+This guide details the steps to deploy Kubeflow into an RKE2 Kubernetes cluster managed by Rancher.
+After completing these steps, you will be able to access the Kubeflow user interface.
 
 
 === Audience
@@ -131,7 +128,11 @@ This guide will help you take the first steps to deploy Kubeflow on Kubernetes c
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for developers and system administrators who are responsible for facilitating machine learning (ML) workflows on Kubernetes clusters.
+Data scientists, ML researchers, developers, and operational teams face responsibilities for ensuring ML success.
+
+To be successful with this guide, you should have basic knowledge of Kubernetes operations in a Rancher environment.
+
+NOTE: Mark, does this need additional details?
 
 
 == Prerequisites
@@ -145,6 +146,10 @@ This document is intended for developers and system administrators who are respo
 
 For this guide, we use Harvester, managed through Rancher, to create a five node RKE2 cluster. However, the same steps should work on any other RKE2 cluster. You will also need a workstation with kubectl and helm installed.
 
+
+NOTE: Mark, this needs to include more details about the cluster, its nodes, etc.
+
+
 == Technical overview
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -157,7 +162,11 @@ For this guide, we use Harvester, managed through Rancher, to create a five node
 //   - workflow diagram
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In addition to Kubeflow itself, there are a number of supporting components that are required for this solution. We will walk through the process of installing each of them.
+NOTE: Mark, this needs to be more descriptive.
+Include an architectural diagram if possible.
+
+In addition to Kubeflow itself, there are a number of supporting components that are required for this solution.
+We will walk through the process of installing each of them.
 
 IMPORTANT: This guide assumes Rancher Management Server is installed and configured with Harvester under Rancher management.
 
@@ -170,9 +179,11 @@ IMPORTANT: This guide assumes Rancher Management Server is installed and configu
 . Deploy Kubeflow
 . Connect to the Kubeflow UI
 
+
 == Deploy an RKE2 cluster on Harvester
 
-We begin by using the Rancher UI to create a project in Harvester named kubeflow-on-harvester that contains a namespace named kubeflow-cluster. The cluster name should be set to: 
+We begin by using the Rancher UI to create a project in Harvester named _kubeflow-on-harvester_ that contains a namespace named _kubeflow-cluster_.
+The cluster name should be set to: 
 [source, console]
 ----
 kubeflow-on-harvester
