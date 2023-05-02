@@ -83,6 +83,7 @@ include::./common_docinfo_vars.adoc[]
 // define any additional variables here for use within the document
 // -
 :k8s_ver: v1.24.9+rke2r2
+:kustomize_ver: 5.0.0
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -107,7 +108,11 @@ This is particularly true at production scale.
 https://www.kubeflow.org/[Kubeflow] is an open source project that aims to make deploying and scaling ML models as simple as possible.
 By deploying Kubeflow into a https://www.rancher.com/products/rancher[Rancher by SUSE] Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
 
-NOTE: Mark, some wordsmithing could be used here.
+[NOTE]
+====
+*Mark*: Some wordsmithing could be used here.
+====
+
 
 === Scope
 
@@ -132,49 +137,10 @@ Data scientists, ML researchers, developers, and operational teams face responsi
 
 To be successful with this guide, you should have basic knowledge of Kubernetes operations in a Rancher environment.
 
-NOTE: Mark, does this need additional details?
-
-
-== Prerequisites
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify minimum requirements (prerequisites) the reader
-// would need in order to follow the steps of this guide.
-// - Link to existing resources whenever possible.
-// - Keep this section brief but elaborate as needed.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-NOTE: Mark, expand this section to provide details about the prerequisites.
-Leverage links to existing documents wherever possible.
-If necessary, include a subsection to outline installation of a prerequesite.
-For example, is Kustomize (see below) something we need to document?
-
-For this guide, we use Harvester, managed through Rancher, to create a five node RKE2 cluster. However, the same steps should work on any other RKE2 cluster. You will also need a workstation with kubectl and helm installed.
-
-. Install Kustomize on the Linux workstation:
-
-IMPORTANT: At the time of writing, Kubeflow requires kustomize version 5.0.0 or higher
-
-. Find the lastest release of Kustomize at https://github.com/kubernetes-sigs/kustomize/releases/.
-+
 [NOTE]
 ====
-This guide uses Kustomize version v5.0.0 is used.
-You can try a different version by adjusting the `VERSION` variable.
-For example, `VERSION="v5.0.1"`.
+*Mark*: Can we be more descriptive of the required skills to use this guide?
 ====
-
-*** Use the following commands to download and install kustomize for a Linux AMD/Intel workstation:
-+
-[source, console]
-----
-wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${VERSION}/kustomize_${VERSION}_linux_amd64.tar.gz
-tar xvfz kustomize_${VERSION}_linux_amd64.tar.gz
-sudo mv kustomize /usr/bin
-----
-
-
-NOTE: Mark, this needs to include more details about the cluster, its nodes, etc.
 
 
 == Technical overview
@@ -189,28 +155,84 @@ NOTE: Mark, this needs to include more details about the cluster, its nodes, etc
 //   - workflow diagram
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-NOTE: Mark, this needs to be more descriptive.
+[NOTE]
+====
+*Mark*:
+We should describe the cluster here.
 Include an architectural diagram if possible.
-
-
-For this guide, you deploy
-
-[IMPORTANT]
-====
-This guide assumes Rancher Management Server is installed and configured with Harvester under Rancher management.
 ====
 
-. Deploy an RKE2 cluster on Harvester
-. Deploy the NFS server
-. Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster
-. Deploy the MetalLB load balancer
-. Deploy Istio
-. Prepare the Kubeflow deployment files
-. Deploy Kubeflow
-. Connect to the Kubeflow UI
+
+In this guide, you:
+
+. Verify prerequisites for your environment.
+. Deploy an RKE2 cluster on Harvester.
+. Deploy the NFS server.
+. Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster.
+. Deploy the MetalLB load balancer.
+. Deploy Istio.
+. Deploy Kubeflow.
+. Verify access to the Kubeflow user interface.
+
+
+== Prerequisites
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify minimum requirements (prerequisites) the reader
+// would need in order to follow the steps of this guide.
+// - Link to existing resources whenever possible.
+// - Keep this section brief but elaborate as needed.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+[NOTE]
+====
+*Mark*:
+Could we eliminate Harvester from this guide?
+Perhaps we could just start with Rancher and deploy an RKE2 cluster on existing nodes?
+Also, we should make installing Kustomize a prerequisite, state the version used for the guide, and link to appropriate documentation elsewhere.
+====
+
+For this guide, we use Harvester, managed through Rancher, to create a five node RKE2 cluster. However, the same steps should work on any other RKE2 cluster. You will also need a workstation with kubectl and helm installed.
+
+
+
+. Install Kustomize on your Linux workstation.
+
+.. Find the lastest release of Kustomize at https://github.com/kubernetes-sigs/kustomize/releases/.
++
+[NOTE]
+====
+This guide leverages Kustomize release {kustomize_ver}.
+A newer release should work without issues.
+You can try a different release by adjusting the `KUSTOMIZE_RELEASE` variable in the next step.
+For example, `KUSTOMIZE_RELEASE="v5.0.1"`.
+====
+
+.. Use the following commands to download and install Kustomize for a Linux system with an AMD or Intel processor:
++
+[source, console, subs="attributes"]
+----
+export KUSTOMIZE_RELEASE="{kustomize_ver}"
+
+wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64.tar.gz
+
+tar -xvfz kustomize_${KUSTOMIZE_VER}_linux_amd64.tar.gz
+
+sudo mv kustomize /usr/bin/
+----
+
+
 
 
 == Deploy an RKE2 cluster on Harvester
+
+[NOTE]
+====
+*Mark:* Can/Should we remove references to Harvester?
+What does Harvester add here for a getting started with Kubeflow guide?
+The node characteristics are buried in the text below, move this to the technical overview or prerequisites section.
+====
+
 
 We begin by using the Rancher UI to create a project in Harvester named _kubeflow-on-harvester_ that contains a namespace named _kubeflow-cluster_.
 The cluster name should be set to: 
@@ -227,13 +249,16 @@ We define five nodes - three of them for the control plane and two for the workl
 * The three VMs with the roles of control-plane and etcd pool are configured with resources of 4 vCPU, 8GB RAM, 40GB boot drive
 * The two VMs that make up the workload-plane pool are configured with 8 vCPU, 16GB RAM, 40GB boot drive
 * The SSH user for the O/S image is 
++
 [source, console]
 ----
 sles
 ----
+
 NOTE: The node sizings used here were for basic testing purposes only. It is likely that more CPU and RAM would be required for the workload-plane VMs in particular to support a useful Kubeflow workload.
 
 The following User Data cloud-config (under __Show Advanced__) should be applied to all nodes during RKE2 cluster creation:
+
 [listing]
 ----
 ### cloud-init
@@ -314,12 +339,18 @@ After the RKE2 cluster has been created, gather the KUBECONFIG data from the Ran
 
 == Deploy the NFS server
 
-NOTE: Mark, let's add this to a separate file and link it here.
+[NOTE]
+====
+*Mark*: Let's add this to a separate file and link it here.
+====
 
 
 == Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster
 
-NOTE: Mark, let's add this to a separate file and link it here.
+[NOTE]
+====
+*Mark*: Let's add this to a separate file and link it here.
+====
 
 
 == Deploy the MetalLB load balancer
@@ -332,7 +363,11 @@ This allows you to create Kubernetes services of the type `LoadBalancer` to prov
 * _external announcement_: MetalLB uses standard network or routing protocols to announce that the IP address is in use by a service.
 
 
-NOTE: Mark, let's re-create Alex's instructions for this in a separate document and include here. https://gist.github.com/alexarnoldy/24dd06d8c4291d04c5d7065b520bcb15
+[NOTE]
+====
+*Mark*: This is another section that should be placed in a separate file and linked here.
+It would be based on Alex's instructions: https://gist.github.com/alexarnoldy/24dd06d8c4291d04c5d7065b520bcb15.
+====
 
 
 ## Test MetalLB and the Longhorn CSI
@@ -447,6 +482,7 @@ An HTML encoded output should display the phrase "Thank you for using nginx."
 TEST_POD=$(kubectl get pods -n ${NAMESPACE} | awk '/nginx/ {print$1}')
 kubectl exec -it ${TEST_POD} -n ${NAMESPACE} -- mount | grep test-vol
 ----
++
 The output should show that the volume is mounted at the location `/mnt/test-vol` 
 
 . When finished with testing, delete the pod and service. 
@@ -459,47 +495,71 @@ kubectl delete -f nginx-metallb-test.yaml
 
 == Deploy Istio
 
-NOTE: Mark, Kubeflow relies on Istio in production.  We need to address this.
+[NOTE]
+====
+*Mark*: Kubeflow relies on Istio in production.
+We need to address this.
+I would recommend creating this section in a separate file and linking it here.
+====
 
 
 == Install Kubeflow
 
+[NOTE]
+====
+*Mark*: This seems like too much of a shortcut in our documentation.
+We should render the installation steps here.
+====
+
 NOTE: The remainder of the procedure will require installing Kubeflow according to the instructions on the Kubeflow GitHub site, then returning to this document to enable TLS for HTTPS connections to the Kubeflow Dashboard.
 
-NOTE: Mark, this seems like too much of a shortcut in our documentation.
-Do we want to include some additional details/guidance?
 
 Follow the instructions at `https://github.com/kubeflow/manifests#installation` to either install all of the Kubeflow components with a single command, or install individual components.
 
 
 == Enable TLS (HTTPS) on Kubeflow
 
-NOTE: Mark, let's create a separate document with Alex's instructions, then link it here.
-Given there are some major steps involved here, perhaps, create them as subsections (e.g., "=== Create a TLS certificate and private key", "=== Add TLS certificate to Istio", etc.).
+[NOTE]
+====
+*Mark*: I've moved these instructions into another file (kubernetes-tls-cert.adoc) and include them here (see below everything I commented out) to illustrate what we can do with other sections.
+====
 
-Follow the instructions at `https://gist.github.com/alexarnoldy/e84216fa969f849e79ffbcf766e92ffc` to create an applicatoin TLS certificate and private key.
-Be sure to use these variables, while following this procudure:
-+
-[source, console]
-----
-export APP="kubeflow"                            # app name
-export APP_K8S_NAMESPACE="istio-system"          # app namespace
-export APP_SERVICE_NAME="istio-ingressgateway"   # app service name
-export SECRET_NAME="kubeflow-tls"                # app name for secrets
-----
+//Follow the instructions at `https://gist.github.com/alexarnoldy/e84216fa969f849e79ffbcf766e92ffc` to create an applicatoin TLS certificate and private key.
+//Be sure to use these variables, while following this procudure:
+//+
+//[source, console]
+//----
+//export APP="kubeflow"                            # app name
+//export APP_K8S_NAMESPACE="istio-system"          # app namespace
+//export APP_SERVICE_NAME="istio-ingressgateway"   # app service name
+//export SECRET_NAME="kubeflow-tls"                # app name for secrets
+//----
 
-After the TLS secret has been created, add the required TLS information to Istio:
+=== Create a TLS secret
 
-* Edit the `istio-ingressgateway` gateway: 
+include::kubernetes-tls-cert.adoc[]
+
+
+=== Add the TLS secret to Istio
+
+[NOTE]
+====
+*Mark*: We should move this into another file and include it here, as above.
+Also could we clarify where some of the manifest content should go.
+====
+
+After the TLS secret has been created, add the required TLS information to Istio.
+
+. Edit the `istio-ingressgateway` gateway: 
 +
 [source, console]
 ----
 kubectl edit gateway -n istio-system istio-ingressgateway 
 ----
 
-* Add this information at the bottom of the manifest, after the "host" HTTP information:
+. Add this information at the bottom of the manifest, after the "host" HTTP information.
 +
-[source, console]
+[listing]
 ----
     tls:
       httpsRedirect: true
@@ -513,8 +573,10 @@ kubectl edit gateway -n istio-system istio-ingressgateway
       credentialName: kubeflow-lb-tls
       mode: SIMPLE
 ----
-* The `spec` section of the manifest should resemble:
 
+. The `spec` section of the manifest should resemble:
++
+[listing]
 ----
 spec:
   selector:
@@ -538,28 +600,28 @@ spec:
       mode: SIMPLE
 ----
 
-[NOTE]
+[IMPORTANT]
 ====
 The `credentialName` must match the TLS secret created earlier.
 ====
 
-. Patch the `istio-ingressgateway` service to change the service type to `LoadBalancer`.
+. Change the `istio-ingressgateway` service type to `LoadBalancer`.
 
-.. Verify the current service type:
+.. Verify the current service type.
 +
 [source, console]
 ----
 kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' ; echo ""
 ----
 
-.. Patch the service to change the type to LoadBalancer.
+.. Patch the service to make the change.
 +
 [source, console]
 ----
 kubectl -n istio-system patch svc istio-ingressgateway -p '{"spec": {"type": "LoadBalancer"}}'
 ----
 
-.. Verify the service is a type of `LoadBalancer`.
+.. Verify the service type is changed.
 +
 [source, console]
 ----
@@ -590,8 +652,11 @@ kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-NOTE: Mark, we need to walk the reader through accessing the Kubeflow UI.
+[NOTE]
+====
+*Mark*: We need to walk the reader through accessing the Kubeflow UI.
 This should include at least one screenshot.
+====
 
 
 
