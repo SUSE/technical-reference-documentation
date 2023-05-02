@@ -482,10 +482,10 @@ Be sure to use these variables, while following this procudure:
 +
 [source, console]
 ----
-export APP="kubeflow"
-export APP_K8S_NAMESPACE="istio-system"
-export APP_SERVICE_NAME="istio-ingressgateway"
-export SECRET_NAME="kubeflow-tls"
+export APP="kubeflow"                            # app name
+export APP_K8S_NAMESPACE="istio-system"          # app namespace
+export APP_SERVICE_NAME="istio-ingressgateway"   # app service name
+export SECRET_NAME="kubeflow-tls"                # app name for secrets
 ----
 
 After the TLS secret has been created, add the required TLS information to Istio:
