@@ -92,7 +92,7 @@ include::./common_docinfo_vars.adoc[]
 
 
 
-== Motivation
+== Introduction
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a brief statement (1-4 sentences) of the purpose of the guide.
@@ -106,6 +106,16 @@ Businesses use ML to achieve deeper insights, grow capabilities, improve efficie
 ML workflows can be complex, and managing them can be difficult.
 This is particularly true at production scale.
 https://www.kubeflow.org/[Kubeflow] is an open source project that aims to make deploying and scaling ML models as simple as possible.
+To achieve this, Kubeflow takes a cloud-native approach, deploying workloads in containers on https://kubernetes.io[Kubernetes] clusters.
+
+The modern, enterprise Kubernetes landscape leverages computing, storage, and networking resources in a variety of environments.
+
+Enterprises continue to expand their Kubernetes resources.
+Rancher Prime by SUSE empowers organizations to unify their Kubernetes landscape with secure, streamlined management.
+
+
+https://www.suse.com/products/harvester/[Harvester by SUSE] is the open source, hyperconverged infrastructure solution that enables enterprises to unify their infrastructure workloads.
+
 By deploying Kubeflow into a https://www.rancher.com/products/rancher[Rancher by SUSE] Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
 
 [NOTE]
@@ -166,12 +176,19 @@ Include an architectural diagram if possible.
 In this guide, you:
 
 . Verify prerequisites for your environment.
+
 . Deploy an RKE2 cluster on Harvester.
-. Deploy the NFS server.
-. Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster.
-. Deploy the MetalLB load balancer.
+
+//. Deploy the NFS server.
+
+//. Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster.
+
+. Deploy the MetalLB load-balancer.
+
 . Deploy Istio.
+
 . Deploy Kubeflow.
+
 . Verify access to the Kubeflow user interface.
 
 
@@ -222,9 +239,7 @@ sudo mv kustomize /usr/bin/
 ----
 
 
-
-
-== Deploy an RKE2 cluster on Harvester
+== Deploy an RKE2 cluster with Harvester
 
 [NOTE]
 ====
@@ -337,21 +352,6 @@ sudo zypper up
 
 After the RKE2 cluster has been created, gather the KUBECONFIG data from the Rancher Management server and provide it to a workstation with Kubectl and Helm installed.
 
-== Deploy the NFS server
-
-[NOTE]
-====
-*Mark*: Let's add this to a separate file and link it here.
-====
-
-
-== Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster
-
-[NOTE]
-====
-*Mark*: Let's add this to a separate file and link it here.
-====
-
 
 == Deploy the MetalLB load balancer
 
@@ -366,11 +366,11 @@ This allows you to create Kubernetes services of the type `LoadBalancer` to prov
 [NOTE]
 ====
 *Mark*: This is another section that should be placed in a separate file and linked here.
-It would be based on Alex's instructions: https://gist.github.com/alexarnoldy/24dd06d8c4291d04c5d7065b520bcb15.
+It would be based on Alex's instructions: https://gist.github.com/alexarnoldy/24dd06d8c4291d04c5d7065b520bcb15[Deploy MetalLB].
 ====
 
 
-## Test MetalLB and the Longhorn CSI
+== Validate MetalLB with Longhorn
 
 . Set this variable with the target namespace.
 +
@@ -379,7 +379,7 @@ It would be based on Alex's instructions: https://gist.github.com/alexarnoldy/24
 NAMESPACE="kubeflow"
 ----
 
-. Create the namespace: 
+. Create the namespace. 
 +
 [source, console]
 ----
@@ -483,7 +483,7 @@ TEST_POD=$(kubectl get pods -n ${NAMESPACE} | awk '/nginx/ {print$1}')
 kubectl exec -it ${TEST_POD} -n ${NAMESPACE} -- mount | grep test-vol
 ----
 +
-The output should show that the volume is mounted at the location `/mnt/test-vol` 
+The output should show that the volume is mounted at the location `/mnt/test-vol`.
 
 . When finished with testing, delete the pod and service. 
 +
@@ -497,9 +497,8 @@ kubectl delete -f nginx-metallb-test.yaml
 
 [NOTE]
 ====
-*Mark*: Kubeflow relies on Istio in production.
-We need to address this.
-I would recommend creating this section in a separate file and linking it here.
+*Mark*: The single-command Kubeflow installation used in the next section deploys its own Istio.
+Therefore, we should remove this section.
 ====
 
 
@@ -508,10 +507,10 @@ I would recommend creating this section in a separate file and linking it here.
 [NOTE]
 ====
 *Mark*: This seems like too much of a shortcut in our documentation.
-We should render the installation steps here.
+Alex recommended following the https://github.com/kubeflow/manifests#install-with-a-single-command[single command Kubeflow installation].
+Let's include that command here, then reference the https://github.com/kubeflow/manifests#installation[Kubeflow Installation] documentation for more details.
 ====
 
-NOTE: The remainder of the procedure will require installing Kubeflow according to the instructions on the Kubeflow GitHub site, then returning to this document to enable TLS for HTTPS connections to the Kubeflow Dashboard.
 
 
 Follow the instructions at `https://github.com/kubeflow/manifests#installation` to either install all of the Kubeflow components with a single command, or install individual components.
@@ -521,7 +520,8 @@ Follow the instructions at `https://github.com/kubeflow/manifests#installation` 
 
 [NOTE]
 ====
-*Mark*: I've moved these instructions into another file (kubernetes-tls-cert.adoc) and include them here (see below everything I commented out) to illustrate what we can do with other sections.
+*Mark*: I've moved content for this section into two separate files (`kubernetes-tls-cert-create.adoc` and `kubernetes-tls-cert-istio.adoc`).
+However, I think we decided to delete this section and note that some customers may need TLS ... even though we will not be documenting it here.
 ====
 
 //Follow the instructions at `https://gist.github.com/alexarnoldy/e84216fa969f849e79ffbcf766e92ffc` to create an applicatoin TLS certificate and private key.
@@ -535,99 +535,14 @@ Follow the instructions at `https://github.com/kubeflow/manifests#installation` 
 //export SECRET_NAME="kubeflow-tls"                # app name for secrets
 //----
 
-=== Create a TLS secret
+=== Create the TLS certificate
 
-include::kubernetes-tls-cert.adoc[]
+include::kubernetes-tls-cert-create.adoc[]
 
 
-=== Add the TLS secret to Istio
+=== Install the TLS certificate
 
-[NOTE]
-====
-*Mark*: We should move this into another file and include it here, as above.
-Also could we clarify where some of the manifest content should go.
-====
-
-After the TLS secret has been created, add the required TLS information to Istio.
-
-. Edit the `istio-ingressgateway` gateway: 
-+
-[source, console]
-----
-kubectl edit gateway -n istio-system istio-ingressgateway 
-----
-
-. Add this information at the bottom of the manifest, after the "host" HTTP information.
-+
-[listing]
-----
-    tls:
-      httpsRedirect: true
-  - hosts:
-    - '*'
-    port:
-      name: https
-      number: 443
-      protocol: HTTPS
-    tls:
-      credentialName: kubeflow-lb-tls
-      mode: SIMPLE
-----
-
-. The `spec` section of the manifest should resemble:
-+
-[listing]
-----
-spec:
-  selector:
-    app: istio-ingressgateway
-    istio: ingressgateway
-  servers:
-  - hosts:
-    - '*'
-    port:
-      name: http
-      number: 80
-      protocol: HTTP
-  - hosts:
-    - '*'
-    port:
-      name: https
-      number: 443
-      protocol: HTTPS
-    tls:
-      credentialName: kubeflow-lb-tls
-      mode: SIMPLE
-----
-
-[IMPORTANT]
-====
-The `credentialName` must match the TLS secret created earlier.
-====
-
-. Change the `istio-ingressgateway` service type to `LoadBalancer`.
-
-.. Verify the current service type.
-+
-[source, console]
-----
-kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' ; echo ""
-----
-
-.. Patch the service to make the change.
-+
-[source, console]
-----
-kubectl -n istio-system patch svc istio-ingressgateway -p '{"spec": {"type": "LoadBalancer"}}'
-----
-
-.. Verify the service type is changed.
-+
-[source, console]
-----
-kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' ; echo ""
-----
-
+include::kubernetes-tls-cert-istio.adoc[]
 
 
 == Validation
