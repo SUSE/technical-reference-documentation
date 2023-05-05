@@ -108,20 +108,9 @@ This is particularly true at production scale.
 https://www.kubeflow.org/[Kubeflow] is an open source project that aims to make deploying and scaling ML models as simple as possible.
 To achieve this, Kubeflow takes a cloud-native approach, deploying workloads in containers on https://kubernetes.io[Kubernetes] clusters.
 
-The modern, enterprise Kubernetes landscape leverages computing, storage, and networking resources in a variety of environments.
+Rancher Prime by SUSE empowers organizations to unify their Kubernetes landscape with secure, streamlined management. By deploying Kubeflow into a https://www.rancher.com/products/rancher[Rancher by SUSE] Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
 
-Enterprises continue to expand their Kubernetes resources.
-Rancher Prime by SUSE empowers organizations to unify their Kubernetes landscape with secure, streamlined management.
-
-
-https://www.suse.com/products/harvester/[Harvester by SUSE] is the open source, hyperconverged infrastructure solution that enables enterprises to unify their infrastructure workloads.
-
-By deploying Kubeflow into a https://www.rancher.com/products/rancher[Rancher by SUSE] Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
-
-[NOTE]
-====
-*Mark*: Some wordsmithing could be used here.
-====
+The modern, enterprise Kubernetes landscape leverages computing, storage, and networking resources in a variety of environments. https://www.suse.com/products/harvester/[Harvester by SUSE] is a next generation open-source hyperconverged infrastructure (HCI) solution designed for modern cloud-native environments. Harvester provides operators with a cohesive platform to manage virtual machine and container workloads such as Kubeflow.
 
 
 === Scope
@@ -143,14 +132,9 @@ After completing these steps, you will be able to access the Kubeflow user inter
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Data scientists, ML researchers, developers, and operational teams face responsibilities for ensuring ML success.
+Data scientists, ML researchers, developers, and operational teams with responsibility for ensuring the success of ML projects.
 
-To be successful with this guide, you should have basic knowledge of Kubernetes operations in a Rancher environment.
-
-[NOTE]
-====
-*Mark*: Can we be more descriptive of the required skills to use this guide?
-====
+To be successful with this guide, you should have basic knowledge of Kubernetes operations in a Rancher environment. You should also be familiar with standard Linux container management tools such as kubectl, Helm and Kustomize. Basic Linux commandline skills would also be helpful.
 
 
 == Technical overview
@@ -165,29 +149,22 @@ To be successful with this guide, you should have basic knowledge of Kubernetes 
 //   - workflow diagram
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+In this guide, we will walk through the creation of a RKE2 cluster on virtual machines provisioned by Harvester. Within this RKE2 cluster, we will then deploy Kubeflow as a Rancher managed workload. 
+
 [NOTE]
 ====
-*Mark*:
-We should describe the cluster here.
-Include an architectural diagram if possible.
+Add diagram and say a few more words about the various pieces
 ====
 
-
-In this guide, you:
+By following this guide, you will:
 
 . Verify prerequisites for your environment.
 
 . Deploy an RKE2 cluster on Harvester.
 
-//. Deploy the NFS server.
-
-//. Create the NFS client Container Storage Interface (CSI) on the RKE2 cluster.
-
 . Deploy the MetalLB load-balancer.
 
-. Deploy Istio.
-
-. Deploy Kubeflow.
+. Deploy the Kubeflow application.
 
 . Verify access to the Kubeflow user interface.
 
@@ -201,62 +178,7 @@ In this guide, you:
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-[NOTE]
-====
-*Mark*:
-Could we eliminate Harvester from this guide?
-Perhaps we could just start with Rancher and deploy an RKE2 cluster on existing nodes?
-Also, we should make installing Kustomize a prerequisite, state the version used for the guide, and link to appropriate documentation elsewhere.
-====
-
-For this guide, we use Harvester, managed through Rancher, to create a five node RKE2 cluster. However, the same steps should work on any other RKE2 cluster. You will also need a workstation with kubectl and helm installed.
-
-
-
-. Install Kustomize on your Linux workstation.
-
-.. Find the lastest release of Kustomize at https://github.com/kubernetes-sigs/kustomize/releases/.
-+
-[NOTE]
-====
-This guide leverages Kustomize release {kustomize_ver}.
-A newer release should work without issues.
-You can try a different release by adjusting the `KUSTOMIZE_RELEASE` variable in the next step.
-For example, `KUSTOMIZE_RELEASE="v5.0.1"`.
-====
-
-.. Use the following commands to download and install Kustomize for a Linux system with an AMD or Intel processor:
-+
-[source, console, subs="attributes"]
-----
-export KUSTOMIZE_RELEASE="{kustomize_ver}"
-
-wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64.tar.gz
-
-tar -xvfz kustomize_${KUSTOMIZE_VER}_linux_amd64.tar.gz
-
-sudo mv kustomize /usr/bin/
-----
-
-
-== Deploy an RKE2 cluster with Harvester
-
-[NOTE]
-====
-*Mark:* Can/Should we remove references to Harvester?
-What does Harvester add here for a getting started with Kubeflow guide?
-The node characteristics are buried in the text below, move this to the technical overview or prerequisites section.
-====
-
-
-We begin by using the Rancher UI to create a project in Harvester named _kubeflow-on-harvester_ that contains a namespace named _kubeflow-cluster_.
-The cluster name should be set to: 
-[source, console]
-----
-kubeflow-on-harvester
-----
-
-We define five nodes - three of them for the control plane and two for the workload plane.
+For this guide, we use Harvester, managed through Rancher, to create a five node RKE2 cluster. However, the same steps should work on any other RKE2 cluster that has a default Storage Class. You will need at least five nodes - three of them for the control plane and two for the workload plane.
 
 * All nodes should be in the same Harvester namespace
 * The operating systems for all nodes is the SUSE Linux Enterprise 15 SP4 minimal QCOW2 image with cloud-init enabled (previously known as the OpenStack image)
@@ -270,7 +192,32 @@ We define five nodes - three of them for the control plane and two for the workl
 sles
 ----
 
-NOTE: The node sizings used here were for basic testing purposes only. It is likely that more CPU and RAM would be required for the workload-plane VMs in particular to support a useful Kubeflow workload.
+[NOTE]
+====
+The node sizings used here were for basic testing purposes only. It is likely that more CPU and RAM would be required for the workload-plane VMs in particular to support a useful Kubeflow workload.
+====
+
+You will also need a workstation with the following software installed. Please see the respective links for installation instructions:
+
+* Kubectl https://kubectl.docs.kubernetes.io/installation/kubectl/[Installation]
+
+* Helm https://helm.sh/docs/intro/install/[Installation]
+
+* Kustomize https://kubectl.docs.kubernetes.io/installation/kustomize/[Installation] 
+
+
+
+
+== Deploy an RKE2 cluster with Harvester
+
+We begin by using the Rancher UI to create a project in Harvester named _kubeflow-on-harvester_ that contains a namespace named _kubeflow-cluster_.
+The cluster name should be set to: 
+[source, console]
+----
+kubeflow-on-harvester
+----
+
+We now need to define our five nodes as described above in the prerequisites.
 
 The following User Data cloud-config (under __Show Advanced__) should be applied to all nodes during RKE2 cluster creation:
 
@@ -355,22 +302,93 @@ After the RKE2 cluster has been created, gather the KUBECONFIG data from the Ran
 
 == Deploy the MetalLB load balancer
 
-MetalLB is a network load-balancer impelementation for Kubernetes clusters on bare metal.
+[NOTE]
+====
+*Terry*: 
+I have combined the deployment and testing of MetalLB into one section. Three things...
+I think we want to remove this to a separate doc. 
+I changed the formatting of the part about IP addressing. I hope I retained the correct sense.
+The test procedure mentions nginx. Is this appropriate to our case?
+====
+
+MetalLB is a network load-balancer implementation for Kubernetes clusters on bare metal.
 This allows you to create Kubernetes services of the type `LoadBalancer` to provide two important features:
 
 * _address allocation_: MetalLB will take care of assigning individual IP addresses from configured address pools as services are launched and reclaiming those addresses when the services end.
 
 * _external announcement_: MetalLB uses standard network or routing protocols to announce that the IP address is in use by a service.
 
+=== Deploy MetalLB from the kubectl server
 
-[NOTE]
-====
-*Mark*: This is another section that should be placed in a separate file and linked here.
-It would be based on Alex's instructions: https://gist.github.com/alexarnoldy/24dd06d8c4291d04c5d7065b520bcb15[Deploy MetalLB].
-====
+. Pull and apply the MetalLB manifests
++
+[source, console]
+----
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/metallb.yaml
+# On first install only
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+----
+
+. Set the address ranges below:
+** Use CIDR notation (e.g.10.0.0.10/32) if only assigning a single IP address
+** Otherwise, set at least two IP addresses in the default IP range and optionally, at least two IP addresses in the reserved IP range, which will not be auto-assigned
+** IP ranges can also be defined by CIDR notation. Adjust these variables and the configmap file as needed. For example, put a CIDR block in the START variable (e.g. export DEFAULT_IP_RANGE_START="10.0.0.10/32") and leave the END variable empty. When creating the metallb-config.yaml, make sure you do not include any variables (or the dashes between variables) that have not been defined.
++
+[source, console]
+----
+export DEFAULT_IP_RANGE_START=
+export DEFAULT_IP_RANGE_END=
+export RESERVED_IP_RANGE_START=
+export RESERVED_IP_RANGE_END=
+----
+
+. Create the MetalLB configuration file for layer 2 routing. See https://metallb.universe.tf/configuration/ for other routing options and https://raw.githubusercontent.com/google/metallb/v0.9.3/manifests/example-config.yaml for lots of configuration options
++
+[source, console]
+----
+cat <<EOF> metallb-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - ${DEFAULT_IP_RANGE_START}-${DEFAULT_IP_RANGE_END}
+    - name: rsvd
+      protocol: layer2
+      auto-assign: false
+      addresses:
+      - ${RESERVED_IP_RANGE_START}-${RESERVED_IP_RANGE_END}
+EOF
+----
+
+. Create the configmap: 
++
+[source, console]
+----
+kubectl apply -f metallb-config.yaml
+----
+. Verify the configuration was applied correctly (especially review the IP address pool): 
++
+[source, console]
+----
+kubectl get configmap config -n metallb-system -o yaml
+----
+. Verify the MetalLB load balancer is running: 
++
+[source, console]
+----
+kubectl get all -n metallb-system
+----
 
 
-== Validate MetalLB with Longhorn
+=== Validate MetalLB
 
 . Set this variable with the target namespace.
 +
@@ -493,57 +511,35 @@ kubectl delete -f nginx-metallb-test.yaml
 ----
 
 
-== Deploy Istio
-
-[NOTE]
-====
-*Mark*: The single-command Kubeflow installation used in the next section deploys its own Istio.
-Therefore, we should remove this section.
-====
-
-
 == Install Kubeflow
 
-[NOTE]
-====
-*Mark*: This seems like too much of a shortcut in our documentation.
-Alex recommended following the https://github.com/kubeflow/manifests#install-with-a-single-command[single command Kubeflow installation].
-Let's include that command here, then reference the https://github.com/kubeflow/manifests#installation[Kubeflow Installation] documentation for more details.
-====
+The Kubeflow Manifests Working Groups provides two options for installing Kubeflow:
 
+* A single command that installs all components and targets ease of deployment for end users. 
 
+* A multi-command approach that allows individual components to be included or excluded. 
 
-Follow the instructions at `https://github.com/kubeflow/manifests#installation` to either install all of the Kubeflow components with a single command, or install individual components.
+In this guide, we will take the simpler approach and install everything. Please refer to the https://github.com/kubeflow/manifests#install-individual-components[Kubeflow Installation] documentation for more details of the alternative approach.
 
+Assuming your workstation meets the prerequisites described above, then the following command will download and install Kubeflow:
+[source, console]
+----
+while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+----
 
-== Enable TLS (HTTPS) on Kubeflow
+Note that the `kubectl apply` command may fail on the first try. Hence the use of the while loop to retry until success is achieved. 
 
-[NOTE]
-====
-*Mark*: I've moved content for this section into two separate files (`kubernetes-tls-cert-create.adoc` and `kubernetes-tls-cert-istio.adoc`).
-However, I think we decided to delete this section and note that some customers may need TLS ... even though we will not be documenting it here.
-====
-
-//Follow the instructions at `https://gist.github.com/alexarnoldy/e84216fa969f849e79ffbcf766e92ffc` to create an applicatoin TLS certificate and private key.
-//Be sure to use these variables, while following this procudure:
-//+
-//[source, console]
-//----
-//export APP="kubeflow"                            # app name
-//export APP_K8S_NAMESPACE="istio-system"          # app namespace
-//export APP_SERVICE_NAME="istio-ingressgateway"   # app service name
-//export SECRET_NAME="kubeflow-tls"                # app name for secrets
-//----
-
-=== Create the TLS certificate
-
-include::kubernetes-tls-cert-create.adoc[]
-
-
-=== Install the TLS certificate
-
-include::kubernetes-tls-cert-istio.adoc[]
-
+After installation completes, it can take some time for all of the components to deploy their pods. To check that all Kubeflow-related pods are ready, use the following commands:
+[source, console]
+----
+kubectl get pods -n cert-manager
+kubectl get pods -n istio-system
+kubectl get pods -n auth
+kubectl get pods -n knative-eventing
+kubectl get pods -n knative-serving
+kubectl get pods -n kubeflow
+kubectl get pods -n kubeflow-user-example-com
+----
 
 == Validation
 
@@ -567,10 +563,12 @@ include::kubernetes-tls-cert-istio.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+
+
 [NOTE]
+
 ====
-*Mark*: We need to walk the reader through accessing the Kubeflow UI.
-This should include at least one screenshot.
+Need screenshot from Alex. Also, how exactly do we do this? The Kubeflow docs give two approaches: using port-forwarding and using NodePort/LoadBalancer/Ingress. Which is relevant to our case?
 ====
 
 
@@ -585,7 +583,11 @@ This should include at least one screenshot.
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Kubeflow is an important ...
+Kubeflow is an important tool for deploying and scaling ML workloads in containers on Kubernetes clusters. SUSE Rancher faciliates deploying and managing Kubeflow at production scale. In this guide, we used Harvester to provision nodes for an RKE2 cluster and installed Kubeflow into that so it could be managed by Rancher.
+
+To learn more about Rancher, see
+
+To get started working with Kubeflow, refer to https://www.kubeflow.org/docs/[Kubeflow Docuemtation] for more details.
 
 
 
