@@ -46,17 +46,22 @@ include::./common_docinfo_vars.adoc[]
 :title: Kubeflow on Rancher
 :subtitle: Deploying Kubeflow with SUSE Rancher
 
-:product1: Rancher
-:product1_full: Rancher by SUSE
-:product1_version: 2.7
-:product1_url: Primary SUSE product/platform URL (without the protocol)
-:product2: Secondary product short name
-:product2_full: Secondary product full name
-:product2_url: Secondary product URL
+:product1: Harvester
+:product1_full: Harvester by SUSE
+:product1_url: www.suse.com/products/harvester/
+:product2: Rancher
+:product2_full: Rancher Prime by SUSE
+:product2_version: 2.7
+:product2_url: www.suse.com/solutions/enterprise-container-management/#rancher-product
+:product3: RKE2
+:product3_full: Rancher Kubernetes Engine 2
+:product3_url: docs.rke2.io/
+:product4: Kubeflow
 
-:usecase: A few words to identify high level use case (e.g., Database-as-a-Service, edge analytics in healthcare, Kubernetes-native object storage)
+:usecase: Simplify deployment of machine learning (ML) workflows on Kubernetes
 
-:executive_summary: A brief statement of what this document provides (e.g., This document provides a brief introduction to implementing {usecase} with {product2_full} and {product1_full}.)
+:executive_summary: Kubeflow simplifies deployment of machine learning (ML) workflows on Kubernetes clusters.  This document provides step-by-step guidance for deploying Kubeflow on an {product3} cluster with {product2_full}.
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -82,6 +87,9 @@ include::./common_docinfo_vars.adoc[]
 // miscellaneous
 // define any additional variables here for use within the document
 // -
+:kubeflow_url: www.kubeflow.org/
+:kubeflow_url_docs: www.kubeflow.org/docs/
+:kubeflow_url_repo: github.com/kubeflow/
 :k8s_ver: v1.24.9+rke2r2
 :kustomize_ver: 5.0.0
 
@@ -105,12 +113,15 @@ Businesses use ML to achieve deeper insights, grow capabilities, improve efficie
 
 ML workflows can be complex, and managing them can be difficult.
 This is particularly true at production scale.
-https://www.kubeflow.org/[Kubeflow] is an open source project that aims to make deploying and scaling ML models as simple as possible.
+https://{kubeflow_url}[Kubeflow] is an open source project that aims to make deploying and scaling ML models as simple as possible.
 To achieve this, Kubeflow takes a cloud-native approach, deploying workloads in containers on https://kubernetes.io[Kubernetes] clusters.
 
-Rancher Prime by SUSE empowers organizations to unify their Kubernetes landscape with secure, streamlined management. By deploying Kubeflow into a https://www.rancher.com/products/rancher[Rancher by SUSE] Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
+Rancher Prime by SUSE empowers organizations to unify their Kubernetes landscape with secure, streamlined management.
+By deploying Kubeflow into a https://www.rancher.com/products/rancher[Rancher by SUSE] Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
 
-The modern, enterprise Kubernetes landscape leverages computing, storage, and networking resources in a variety of environments. https://www.suse.com/products/harvester/[Harvester by SUSE] is a next generation open-source hyperconverged infrastructure (HCI) solution designed for modern cloud-native environments. Harvester provides operators with a cohesive platform to manage virtual machine and container workloads such as Kubeflow.
+The modern, enterprise Kubernetes landscape leverages computing, storage, and networking resources in a variety of environments.
+https://www.suse.com/products/harvester/[Harvester by SUSE] is a next generation open source, hyperconverged infrastructure (HCI) solution designed for modern cloud-native environments.
+Harvester provides operators with a cohesive platform to manage virtual machine and container workloads such as Kubeflow.
 
 
 === Scope
@@ -119,8 +130,10 @@ The modern, enterprise Kubernetes landscape leverages computing, storage, and ne
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide details the steps to deploy Kubeflow into an RKE2 Kubernetes cluster managed by Rancher.
-After completing these steps, you will be able to access the Kubeflow user interface.
+In this guide, you deploy Kubeflow onto a {product3} Kubernetes cluster managed by {product2_full}.
+This guide also illustrates provisioning virtual machines with {product1_full} to host the {product3} cluster.
+
+After completing these steps, you are able to access the Kubeflow user interface.
 
 
 === Audience
@@ -134,7 +147,7 @@ After completing these steps, you will be able to access the Kubeflow user inter
 
 Data scientists, ML researchers, developers, and operational teams with responsibility for ensuring the success of ML projects.
 
-To be successful with this guide, you should have basic knowledge of Kubernetes operations in a Rancher environment. You should also be familiar with standard Linux container management tools such as kubectl, Helm and Kustomize. Basic Linux commandline skills would also be helpful.
+To be successful with this guide, you should have basic knowledge of Kubernetes operations in a Rancher environment as well as standard Linux command line container management with Kubectl, Helm, and Kustomize.
 
 
 == Technical overview
@@ -149,24 +162,31 @@ To be successful with this guide, you should have basic knowledge of Kubernetes 
 //   - workflow diagram
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, we will walk through the creation of a RKE2 cluster on virtual machines provisioned by Harvester. Within this RKE2 cluster, we will then deploy Kubeflow as a Rancher managed workload. 
+In this guide, you:
+
+. use {product1} to provision virtual machines for your Kubernetes cluster.
+
+. instantiate and configure your {product3} Kubernetes cluster with {product2}.
+
+. deploy Kubeflow onto your {product3} cluster.
+
+. access the Kubeflow user interface (UI).
+
 
 [NOTE]
 ====
 Add diagram and say a few more words about the various pieces
+
+. Why RKE2?
+
+. Why Rancher?
+
+. Why Harvester?
+
+. Why MetalLB load-balancer?
+
 ====
 
-By following this guide, you will:
-
-. Verify prerequisites for your environment.
-
-. Deploy an RKE2 cluster on Harvester.
-
-. Deploy the MetalLB load-balancer.
-
-. Deploy the Kubeflow application.
-
-. Verify access to the Kubeflow user interface.
 
 
 == Prerequisites
@@ -178,6 +198,11 @@ By following this guide, you will:
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+
+For this guide, you will use {product1} to create a five-node, {product3} Kubernetes cluster managed by {product2}.
+
+
+
 For this guide, we use Harvester, managed through Rancher, to create a five node RKE2 cluster. However, the same steps should work on any other RKE2 cluster that has a default Storage Class. You will need at least five nodes - three of them for the control plane and two for the workload plane.
 
 * All nodes should be in the same Harvester namespace
@@ -185,7 +210,7 @@ For this guide, we use Harvester, managed through Rancher, to create a five node
 * All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Internet
 * The three VMs with the roles of control-plane and etcd pool are configured with resources of 4 vCPU, 8GB RAM, 40GB boot drive
 * The two VMs that make up the workload-plane pool are configured with 8 vCPU, 16GB RAM, 40GB boot drive
-* The SSH user for the O/S image is 
+* The SSH user for the operating system image is 
 +
 [source, console]
 ----
