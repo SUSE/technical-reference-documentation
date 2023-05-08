@@ -56,7 +56,10 @@ include::./common_docinfo_vars.adoc[]
 :product3: RKE2
 :product3_full: Rancher Kubernetes Engine 2
 :product3_url: docs.rke2.io/
-:product4: Kubeflow
+:product4: SLES
+:product4_full: SUSE Linux Enterprise
+:product4_version: 15 SP4
+:product4_url: www.suse.com/products/server/
 
 :usecase: Simplify deployment of machine learning (ML) workflows on Kubernetes
 
@@ -177,6 +180,9 @@ In this guide, you:
 ====
 Add diagram and say a few more words about the various pieces
 
+All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Internet
+
+
 . Why RKE2?
 
 . Why Rancher?
@@ -198,44 +204,85 @@ Add diagram and say a few more words about the various pieces
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
 For this guide, you will use {product1} to create a five-node, {product3} Kubernetes cluster managed by {product2}.
 
+For this guide, you need:
 
-
-For this guide, we use Harvester, managed through Rancher, to create a five node RKE2 cluster. However, the same steps should work on any other RKE2 cluster that has a default Storage Class. You will need at least five nodes - three of them for the control plane and two for the workload plane.
-
-* All nodes should be in the same Harvester namespace
-* The operating systems for all nodes is the SUSE Linux Enterprise 15 SP4 minimal QCOW2 image with cloud-init enabled (previously known as the OpenStack image)
-* All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Internet
-* The three VMs with the roles of control-plane and etcd pool are configured with resources of 4 vCPU, 8GB RAM, 40GB boot drive
-* The two VMs that make up the workload-plane pool are configured with 8 vCPU, 16GB RAM, 40GB boot drive
-* The SSH user for the operating system image is 
+* Linux workstation
+//
 +
-[source, console]
-----
-sles
-----
+This system is used to access the cluster.
+//
++
+{product4_full} ({product4}) is recommended.
++
+[NOTE]
+====
+{product4} {product4_version} is used for this guide.
+====
++
+Be sure to have the following software tools installed:
+
+** https://kubectl.docs.kubernetes.io/installation/kubectl/[Kubectl]
+
+** https://helm.sh/docs/intro/install/[Helm]
+
+** https://kubectl.docs.kubernetes.io/installation/kustomize/[Kustomize]
+
+
+* {product1} environment
+//
++
+{product1} is used to deploy the five virtual machines for Kubernetes nodes.
+
+** {product1} namespace
+//
++
+All nodes will be in the same {product1} namespace.
+
+** Networking
+//
++
+All nodes will be connected to a single VLAN with DHCP, DNS, and routing to the Internet.
+
+** Control plane and etcd pool nodes
+//
++
+Each node will be configured with 4 vCPUs, 8 GB of RAM, and a 40 GB storage volume.
+
+** Workload nodes
+//
++
+Each workload node will be configured with 8 vCPUs, 16 GB of RAM, and a 40 GB storage volume.
+
+** Operating system
+//
++
+All nodes will be configured with {product4} {product4_version} minimal, using the QCOW2 image with cloud-init enabled (previously known as the OpenStack image).
++
+[IMPORTANT]
+====
+The SSH user for the operating system image is `sles`.
+====
+
 
 [NOTE]
 ====
-The node sizings used here were for basic testing purposes only. It is likely that more CPU and RAM would be required for the workload-plane VMs in particular to support a useful Kubeflow workload.
+The node sizings used here are for basic testing purposes only.
+To support a useful Kubeflow workload, you will likely need more vCPU cores and RAM, particularly on the workload nodes.
 ====
 
-You will also need a workstation with the following software installed. Please see the respective links for installation instructions:
 
-* Kubectl https://kubectl.docs.kubernetes.io/installation/kubectl/[Installation]
+== Preparing the cluster
 
-* Helm https://helm.sh/docs/intro/install/[Installation]
+=== Deploy an RKE2 cluster with Harvester
 
-* Kustomize https://kubectl.docs.kubernetes.io/installation/kustomize/[Installation] 
+[NOTE]
+====
+Authors: Organize the following into ordered steps.
+====
 
-
-
-
-== Deploy an RKE2 cluster with Harvester
-
-We begin by using the Rancher UI to create a project in Harvester named _kubeflow-on-harvester_ that contains a namespace named _kubeflow-cluster_.
+Begin by using the Rancher UI to create a project in Harvester named _kubeflow-on-harvester_ that contains the _kubeflow-cluster_ namespace.
 The cluster name should be set to: 
 [source, console]
 ----
