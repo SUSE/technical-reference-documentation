@@ -43,19 +43,19 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document
 // -
-:title: Kubeflow on Rancher
-:subtitle: Deploying Kubeflow with SUSE Rancher
+:title: Kubeflow with Rancher
+:subtitle: Deploying Kubeflow onto an RKE2 cluster with Rancher
 
-:product1: Harvester
-:product1_full: Harvester by SUSE
-:product1_url: www.suse.com/products/harvester/
-:product2: Rancher
-:product2_full: Rancher Prime by SUSE
-:product2_version: 2.7
-:product2_url: www.suse.com/solutions/enterprise-container-management/#rancher-product
-:product3: RKE2
-:product3_full: Rancher Kubernetes Engine 2
-:product3_url: docs.rke2.io/
+:product1: Rancher
+:product1_full: Rancher by SUSE
+:product1_version: 2.7
+:product1_url: www.suse.com/solutions/enterprise-container-management/#rancher-product
+:product2: RKE2
+:product2_full: Rancher Kubernetes Engine 2
+:product2_url: docs.rke2.io/
+:product3: Harvester
+:product3_full: Harvester by SUSE
+:product3_url: www.suse.com/products/harvester/
 :product4: SLES
 :product4_full: SUSE Linux Enterprise
 :product4_version: 15 SP4
@@ -63,7 +63,7 @@ include::./common_docinfo_vars.adoc[]
 
 :usecase: Simplify deployment of machine learning (ML) workflows on Kubernetes
 
-:executive_summary: Kubeflow simplifies deployment of machine learning (ML) workflows on Kubernetes clusters.  This document provides step-by-step guidance for deploying Kubeflow on an {product3} cluster with {product2_full}.
+:executive_summary: Kubeflow simplifies deployment of machine learning (ML) workflows on Kubernetes clusters.  This document provides step-by-step guidance for deploying Kubeflow on an {product2} cluster with {product1} in a {product3} hyperconverged infrastructure.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -74,11 +74,11 @@ include::./common_docinfo_vars.adoc[]
 // -
 :author1_firstname: Alex
 :author1_surname: Arnoldy
-:author1_jobtitle: job title
+:author1_jobtitle: Solutions Architect, Integrated Systems Solution
 :author1_orgname: SUSE
 :author2_firstname: Mark
 :author2_surname: Gonnelly
-:author2_jobtitle: job title
+:author2_jobtitle: Solutions Architect, GSI/IHV
 :author2_orgname: SUSE
 :author3_firstname: Terry
 :author3_surname: Smith
@@ -119,11 +119,11 @@ This is particularly true at production scale.
 https://{kubeflow_url}[Kubeflow] is an open source project that aims to make deploying and scaling ML models as simple as possible.
 To achieve this, Kubeflow takes a cloud-native approach, deploying workloads in containers on https://kubernetes.io[Kubernetes] clusters.
 
-Rancher Prime by SUSE empowers organizations to unify their Kubernetes landscape with secure, streamlined management.
-By deploying Kubeflow into a https://www.rancher.com/products/rancher[Rancher by SUSE] Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
+https://{product1_url}[Rancher by SUSE] empowers organizations to unify their Kubernetes landscape with secure, streamlined management.
+By deploying Kubeflow into a Rancher Kubernetes landscape, you can address the operational and security challenges of managing ML workflows at scale.
 
 The modern, enterprise Kubernetes landscape leverages computing, storage, and networking resources in a variety of environments.
-https://www.suse.com/products/harvester/[Harvester by SUSE] is a next generation open source, hyperconverged infrastructure (HCI) solution designed for modern cloud-native environments.
+https://{product3_url}[Harvester by SUSE] is a next generation open source, hyperconverged infrastructure (HCI) solution designed for modern cloud-native environments.
 Harvester provides operators with a cohesive platform to manage virtual machine and container workloads such as Kubeflow.
 
 
@@ -133,8 +133,8 @@ Harvester provides operators with a cohesive platform to manage virtual machine 
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you deploy Kubeflow onto a {product3} Kubernetes cluster managed by {product2_full}.
-This guide also illustrates provisioning virtual machines with {product1_full} to host the {product3} cluster.
+This document provides guidance for deploying Kubeflow onto a {product2} Kubernetes cluster managed by {product1_full}.
+This guide also illustrates provisioning virtual machines to host the {product2} cluster using {product3_full}.
 
 After completing these steps, you are able to access the Kubeflow user interface.
 
@@ -167,13 +167,13 @@ To be successful with this guide, you should have basic knowledge of Kubernetes 
 
 In this guide, you:
 
-. use {product1} to provision virtual machines for your Kubernetes cluster.
+. Provision virtual machines for your Kubernetes cluster nodes with {product3_full}.
 
-. instantiate and configure your {product3} Kubernetes cluster with {product2}.
+. Instantiate and configure a {product2} cluster with {product1_full}.
 
-. deploy Kubeflow onto your {product3} cluster.
+. Deploy Kubeflow onto your cluster.
 
-. access the Kubeflow user interface (UI).
+. Access the Kubeflow user interface (UI).
 
 
 [NOTE]
@@ -181,15 +181,6 @@ In this guide, you:
 Add diagram and say a few more words about the various pieces
 
 All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Internet
-
-
-. Why RKE2?
-
-. Why Rancher?
-
-. Why Harvester?
-
-. Why MetalLB load-balancer?
 
 ====
 
@@ -204,73 +195,64 @@ All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Inte
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-For this guide, you will use {product1} to create a five-node, {product3} Kubernetes cluster managed by {product2}.
+For this guide, you need the following:
 
-For this guide, you need:
+* Management workstation
++
+Your workstation must have access to the cluster environment and have these software tools:
++
+--
+* https://kubectl.docs.kubernetes.io/installation/kubectl/[Kubectl]
 
-* Linux workstation
-//
-+
-This system is used to access the cluster.
-//
-+
-{product4_full} ({product4}) is recommended.
+* https://helm.sh/docs/intro/install/[Helm]
+
+* https://kubectl.docs.kubernetes.io/installation/kustomize/[Kustomize]
+--
 +
 [NOTE]
 ====
-{product4} {product4_version} is used for this guide.
+A workstation running https://{product4_url}[{product4}] {product4_version} was used in the development of this guide.
 ====
-+
-Be sure to have the following software tools installed:
 
-** https://kubectl.docs.kubernetes.io/installation/kubectl/[Kubectl]
-
-** https://helm.sh/docs/intro/install/[Helm]
-
-** https://kubectl.docs.kubernetes.io/installation/kustomize/[Kustomize]
-
-
-* {product1} environment
+* Cluster infrastructure
 //
 +
-{product1} is used to deploy the five virtual machines for Kubernetes nodes.
+--
+The minimum recommended cluster consists of five nodes as follows:
 
-** {product1} namespace
+* Control plane and etcd pool nodes
 //
 +
-All nodes will be in the same {product1} namespace.
+Three nodes with vCPUs, 8 GB of RAM, and 40 GB storage volume.
 
-** Networking
+* Workload nodes
 //
 +
-All nodes will be connected to a single VLAN with DHCP, DNS, and routing to the Internet.
+Two nodes with 8 vCPUs, 16 GB of RAM, and 40 GB storage volume.
 
-** Control plane and etcd pool nodes
+* Operating system
 //
 +
-Each node will be configured with 4 vCPUs, 8 GB of RAM, and a 40 GB storage volume.
-
-** Workload nodes
-//
-+
-Each workload node will be configured with 8 vCPUs, 16 GB of RAM, and a 40 GB storage volume.
-
-** Operating system
-//
-+
-All nodes will be configured with {product4} {product4_version} minimal, using the QCOW2 image with cloud-init enabled (previously known as the OpenStack image).
+All nodes are configured with {product4} {product4_version} minimal, using the QCOW2 image with cloud-init enabled (previously known as the OpenStack image).
 +
 [IMPORTANT]
 ====
 The SSH user for the operating system image is `sles`.
 ====
 
+* Networking
+//
++
+All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Internet.
+
 
 [NOTE]
 ====
-The node sizings used here are for basic testing purposes only.
+Node sizings used here are for basic testing purposes only.
 To support a useful Kubeflow workload, you will likely need more vCPU cores and RAM, particularly on the workload nodes.
 ====
+
+--
 
 
 == Preparing the cluster
@@ -279,15 +261,14 @@ To support a useful Kubeflow workload, you will likely need more vCPU cores and 
 
 [NOTE]
 ====
-Authors: Organize the following into ordered steps.
+*Mark*: This section could use further formatting as numbered steps.
+The first step (creating a project in Harvester) needs to be explained better, as we can't expect the reader to know how to do this.
 ====
 
+In this guide, {product3} is used to provision virtual machines for your cluster nodes.
+
+
 Begin by using the Rancher UI to create a project in Harvester named _kubeflow-on-harvester_ that contains the _kubeflow-cluster_ namespace.
-The cluster name should be set to: 
-[source, console]
-----
-kubeflow-on-harvester
-----
 
 We now need to define our five nodes as described above in the prerequisites.
 
@@ -372,27 +353,31 @@ sudo zypper up
 After the RKE2 cluster has been created, gather the KUBECONFIG data from the Rancher Management server and provide it to a workstation with Kubectl and Helm installed.
 
 
-== Deploy the MetalLB load balancer
+=== Configure the MetalLB load balancer
 
 [NOTE]
 ====
-*Terry*: 
-I have combined the deployment and testing of MetalLB into one section. Three things...
-I think we want to remove this to a separate doc. 
-I changed the formatting of the part about IP addressing. I hope I retained the correct sense.
-The test procedure mentions nginx. Is this appropriate to our case?
+*Mark*: 
+I haven't moved this to a separate file yet.
+The IP address pools section was a bit confusing because of the options provided.
+I simplified by not mentioning the CIDR option.
+Could we illustrate with real IP addresses and say something like, "replace the addresses shown in the following command with the appropriate addresses for your environment"?
+I don't know the answer to this question: The test procedure mentions nginx. Is this appropriate to our case?
 ====
 
-MetalLB is a network load-balancer implementation for Kubernetes clusters on bare metal.
+MetalLB is a network load balancer implementation for Kubernetes clusters on bare metal.
 This allows you to create Kubernetes services of the type `LoadBalancer` to provide two important features:
 
 * _address allocation_: MetalLB will take care of assigning individual IP addresses from configured address pools as services are launched and reclaiming those addresses when the services end.
 
 * _external announcement_: MetalLB uses standard network or routing protocols to announce that the IP address is in use by a service.
 
-=== Deploy MetalLB from the kubectl server
 
-. Pull and apply the MetalLB manifests
+==== Deploy MetalLB
+
+. Open a terminal on your workstation.
+
+. Pull and apply the MetalLB manifests.
 +
 [source, console]
 ----
@@ -402,20 +387,45 @@ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manif
 kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 ----
 
-. Set the address ranges below:
-** Use CIDR notation (e.g.10.0.0.10/32) if only assigning a single IP address
-** Otherwise, set at least two IP addresses in the default IP range and optionally, at least two IP addresses in the reserved IP range, which will not be auto-assigned
-** IP ranges can also be defined by CIDR notation. Adjust these variables and the configmap file as needed. For example, put a CIDR block in the START variable (e.g. export DEFAULT_IP_RANGE_START="10.0.0.10/32") and leave the END variable empty. When creating the metallb-config.yaml, make sure you do not include any variables (or the dashes between variables) that have not been defined.
+. Specify IP address ranges for default and reserved pools.
+//
++
+MetalLB assigns IP addresses to services from these pools.
++
+--
+.. Define the default IP pool.
++
+MetalLB will automatically assign IP addresses from the default pool to services.
+Specify the starting and ending IP address for this default pool by replacing `aa.bb.cc.dd` and `ee.ff.gg.hh` in the following commands:
 +
 [source, console]
 ----
-export DEFAULT_IP_RANGE_START=
-export DEFAULT_IP_RANGE_END=
-export RESERVED_IP_RANGE_START=
-export RESERVED_IP_RANGE_END=
+export DEFAULT_IP_RANGE_START=aa.bb.cc.dd
+export DEFAULT_IP_RANGE_END=ee.ff.gg.hh
+----
++
+For example:
++
+[source, console]
+----
+export DEFAULT_IP_RANGE_START=10.0.0.10
+export DEFAULT_IP_RANGE_END=10.0.0.40
 ----
 
-. Create the MetalLB configuration file for layer 2 routing. See https://metallb.universe.tf/configuration/ for other routing options and https://raw.githubusercontent.com/google/metallb/v0.9.3/manifests/example-config.yaml for lots of configuration options
+.. Define the reserved IP pool.
++
+Reserved IP addresses are not autoassigned by MetalLB.
+[source, console]
+----
+export RESERVED_IP_RANGE_START=aa.bb.cc.dd
+export RESERVED_IP_RANGE_END=ee.ff.gg.hh
+----
+--
+
+. Create the MetalLB configuration file for layer 2 routing.
+//
++
+For other routing options, see https://metallb.universe.tf/configuration/#layer-2-configuration[MetalLB: Layer 2 Routing] and https://raw.githubusercontent.com/google/metallb/v0.9.3/manifests/example-config.yaml[MetalLB: Example Configuration].
 +
 [source, console]
 ----
@@ -440,19 +450,26 @@ data:
 EOF
 ----
 
-. Create the configmap: 
+. Create the configmap. 
 +
 [source, console]
 ----
 kubectl apply -f metallb-config.yaml
 ----
-. Verify the configuration was applied correctly (especially review the IP address pool): 
+
+. Verify the configuration was applied correctly.
 +
 [source, console]
 ----
 kubectl get configmap config -n metallb-system -o yaml
 ----
-. Verify the MetalLB load balancer is running: 
++
+[IMPORTANT]
+====
+Be sure to verify the IP address pools.
+====
+
+. Verify the MetalLB load balancer is running. 
 +
 [source, console]
 ----
@@ -460,9 +477,9 @@ kubectl get all -n metallb-system
 ----
 
 
-=== Validate MetalLB
+==== Validate MetalLB
 
-. Set this variable with the target namespace.
+. Set the `NAMESPACE` variable to the target namespace.
 +
 [source, console]
 ----
@@ -542,21 +559,26 @@ spec:
 EOF
 ----
 
-. Create the pod, service, and the PVC. 
+. Create the pod, service, and the PVC by applying the manifest. 
 +
 [source, console]
 ----
 kubectl apply -f nginx-metallb-test.yaml
 ----
 
-. Verify the pod is "Running", the `harvester` StorageClass is the `(default)`, the persistentvolumeclaim is `Bound`, and the service has an `EXTERNAL-IP`.
+. Verify the pod is "Running", that the `harvester` StorageClass is the `(default)`, that the persistentvolumeclaim is `Bound`, and that the service has an external IP address.
 + 
 [source, console]
 ----
 kubectl get pod,sc,pvc,svc -n ${NAMESPACE}
 ----
++
+[NOTE]
+====
+*Mark*: It would be good to provide the output of the command.
+====
 
-. Verify that the service is reachable through the load-balancer IP address from outside the cluster:
+. Verify that the service is reachable through the load balancer IP address from outside the cluster.
 +
 [source, console]
 ----
@@ -584,6 +606,14 @@ kubectl delete -f nginx-metallb-test.yaml
 
 
 == Install Kubeflow
+
+
+[NOTE]
+====
+*Mark*:
+I didn't get back to this section.
+We need to clarify that we are showing the single-command installation method that works at the time the document was written but that the reader should review the Kubeflow Installation guide for the latest updates.
+====
 
 The Kubeflow Manifests Working Groups provides two options for installing Kubeflow:
 
@@ -640,7 +670,10 @@ kubectl get pods -n kubeflow-user-example-com
 [NOTE]
 
 ====
-Need screenshot from Alex. Also, how exactly do we do this? The Kubeflow docs give two approaches: using port-forwarding and using NodePort/LoadBalancer/Ingress. Which is relevant to our case?
+*Mark*:
+As Alex noted on Tuesday's call, the port-forwarding (https://github.com/kubeflow/manifests#port-forward) works because all communication is essentially internal to the cluster.
+This is of no real value.
+I think we will be asked to detail the LoadBalancer method, but, as pointed out on the call, we don't know how to do this yet.
 ====
 
 
