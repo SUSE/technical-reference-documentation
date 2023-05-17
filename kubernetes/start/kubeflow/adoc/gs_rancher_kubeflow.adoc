@@ -184,6 +184,7 @@ All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Inte
 
 ====
 
+In this guide, {product3} is used to provision virtual machines for your RKE2 cluster nodes. This is not strictly necessary and Kubeflow can be deployed on any RKE2 cluster, regardless of how it is provisioned. For this reason, we will not discuss the creation of the Harvester cluster itself here. Instead, we will begin with the creation of the RKE2 cluster.
 
 
 == Prerequisites
@@ -259,18 +260,18 @@ To support a useful Kubeflow workload, you will likely need more vCPU cores and 
 
 === Deploy an RKE2 cluster with Harvester
 
-[NOTE]
-====
-*Mark*: This section could use further formatting as numbered steps.
-The first step (creating a project in Harvester) needs to be explained better, as we can't expect the reader to know how to do this.
-====
-
-In this guide, {product3} is used to provision virtual machines for your cluster nodes.
-
-
 Begin by using the Rancher UI to create a project in Harvester named _kubeflow-on-harvester_ that contains the _kubeflow-cluster_ namespace.
 
-We now need to define our five nodes as described above in the prerequisites.
+. Login to the Harvester UI and go to the __Virtual Machines__ page.
+. Choose the option to create either multiple VM instances.
+. Set the namespace of your VMs to _kubeflow-cluster_.
+. The VM Name is a required field.
+. Configure the virtual machines' CPU and memory as defined above in the prerequisites.
+. Select SSH keys or upload new keys.
+. Select a custom VM image on the Volumes tab. The default disk will be the root disk. You can add more disks to the VM.
+. To configure networks, go to the Networks tab. The Management Network is added by default, you can remove it if the VLAN network is configured. You can also add additional networks to the VMs using VLAN networks. You may configure the VLAN networks on Advanced > Networks first. 
+. Advanced options such as run strategy, os type and cloud-init data are optional. You may configure these in the Advanced Options section when applicable.
+
 
 The following User Data cloud-config (under __Show Advanced__) should be applied to all nodes during RKE2 cluster creation:
 
@@ -396,15 +397,9 @@ MetalLB assigns IP addresses to services from these pools.
 .. Define the default IP pool.
 +
 MetalLB will automatically assign IP addresses from the default pool to services.
-Specify the starting and ending IP address for this default pool by replacing `aa.bb.cc.dd` and `ee.ff.gg.hh` in the following commands:
-+
-[source, console]
-----
-export DEFAULT_IP_RANGE_START=aa.bb.cc.dd
-export DEFAULT_IP_RANGE_END=ee.ff.gg.hh
-----
-+
-For example:
+Specify the starting and ending IP address for this default pool by replacing the
+addresses shown in the following commands with the appropriate addresses for your en-
+vironment.
 +
 [source, console]
 ----
@@ -608,13 +603,6 @@ kubectl delete -f nginx-metallb-test.yaml
 == Install Kubeflow
 
 
-[NOTE]
-====
-*Mark*:
-I didn't get back to this section.
-We need to clarify that we are showing the single-command installation method that works at the time the document was written but that the reader should review the Kubeflow Installation guide for the latest updates.
-====
-
 The Kubeflow Manifests Working Groups provides two options for installing Kubeflow:
 
 * A single command that installs all components and targets ease of deployment for end users. 
@@ -623,15 +611,15 @@ The Kubeflow Manifests Working Groups provides two options for installing Kubefl
 
 In this guide, we will take the simpler approach and install everything. Please refer to the https://github.com/kubeflow/manifests#install-individual-components[Kubeflow Installation] documentation for more details of the alternative approach.
 
-Assuming your workstation meets the prerequisites described above, then the following command will download and install Kubeflow:
+Assuming your workstation meets the prerequisites described above, then the following single command will download and install Kubeflow:
 [source, console]
 ----
 while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ----
 
-Note that the `kubectl apply` command may fail on the first try. Hence the use of the while loop to retry until success is achieved. 
+Note that the `kubectl apply` command may fail on the first try. Hence the use of the while loop to retry until success is achieved. This method method is recommended by the Kubeflow documentation and has been confirmed to work at the time this document was written. However, the reader should review the latest Kubeflow Installation guide in case there have been updates.
 
-After installation completes, it can take some time for all of the components to deploy their pods. To check that all Kubeflow-related pods are ready, use the following commands:
+After installation completes, it can take some time for all of the components to deploy their pods. To check that all Kubeflow-related pods are ready, you can use the following commands:
 [source, console]
 ----
 kubectl get pods -n cert-manager
@@ -676,7 +664,12 @@ This is of no real value.
 I think we will be asked to detail the LoadBalancer method, but, as pointed out on the call, we don't know how to do this yet.
 ====
 
+[NOTE]
 
+====
+The Kubeflow doc says this "In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to setup HTTPS. The reason is that many of our web apps (e.g., Tensorboard Web App, Jupyter Web App, Katib UI) use Secure Cookies, so accessing Kubeflow with HTTP over a non-localhost domain does not work. Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available Kubeflow distributions, which are targeted to specific environments, and select the one that fits your needs." 
+So, until we figure this out we are stuck here.
+====
 
 
 == Summary
