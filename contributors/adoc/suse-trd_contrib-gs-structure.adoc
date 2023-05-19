@@ -1,0 +1,83 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section: Structure - getting started guides
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+A getting started guide features a combination of components by one or more "entities," such as SUSE, a partner company, or an open source project.
+The source files used to generate these guides are maintained under the _linux/start_ or _kubernetes/start_ directories, depending on the primary implementation focus.
+Guide files are further organized into directories named for a featured entity.
+This is typically the provider of the component at the highest layer of the technology stack and closest to the user's workload or use case.
+Thus, for example, you find directories for Kubeflow, MongoDB, Ondat, and so on.
+
+[listing]
+----
+start
+├── bin
+├── kubeflow
+├── minio
+├── mongodb
+├── ondat
+├── suse
+├── sysdig
+├── upbound
+└── veeam
+----
+
+[NOTE]
+====
+The _bin_ directory contains scripts to help contributors perform various tasks.
+====
+
+Inside an "entity" directory, you find further structure.
+For example:
+
+[listing]
+----
+veeam
+├── DC-gs_rancher_veeam-kasten <1>
+├── adoc <2>
+│   ├── common_gfdl1.2_i.adoc -> ../../../../common/adoc/common_gfdl1.2_i.adoc
+│   ├── ...
+│   ├── gs_rancher_veeam-kasten.adoc <3>
+│   └── gs_rancher_veeam-kasten-docinfo.xml <4>
+├── images -> media
+└── media <5>
+    └── src
+        ├── png
+        │   ├── rancher_veeam-kasten_k10_dashboard-welcome.png
+        │   ├── ...
+        │   └── rancher_veeam-kasten_architecture-1.png
+        └── svg
+            ├── logo-lockup_rancher-by-suse_kasten-by-veeam_hor_dark.svg
+            └── suse.svg -> ../../../../../../common/images/src/svg/suse.svg
+----
+<1> *Doc Config (DC) file*: There is one DC file for each documentation deliverable in which you specify parameters that define the name of the main content file, the rendering stylesheet, the revision date, and so on.
+<2> *_adoc_ directory*: Contains your AsciiDoc content files and your DocBook metadata file.
+<3> *Main content file*: This plain text file, formatted with the https://asciidoc.org/[AsciiDoc] markup language, is where you write most of the text of your document.
+You can use the `include` directive to merge content from other AsciiDoc files during the rendering process.
+<4> *DocBook metadata (docinfo.xml) file*: This file specifies metadata about your document, including title, author information, cover logo file, and executive summary.
+Much of this information is actually defined as document attributes (variables) in your main content file and referenced here to save you from having to type the same information twice.
+<5> *_media_ directory*: You can include logos, diagrams, screenshots, and other images in your guides.
+These media files are stored in subdirectories by file type under _media/src_.
+Many image file types are supported, but preference is given to:
++
+--
+* https://www.w3.org/Graphics/SVG/[Scaled Vector Graphics] or 'SVG' is a widely-deployed, royalty-free, vector graphics format developed and maintained by the W3C.
+A vector graphics image is rendered from a set of instructions that defines the image from basic, geometric shapes.
+This allows SVGs to be resized without loss of clarity.
+SVGs are typically used for logos and architectural diagrams.
+* https://en.wikipedia.org/wiki/PNG[Portable Network Graphics] or 'PNG' is a raster graphics format.
+A raster image encodes information (like position, color, or brightness)  for each pixel (picture element) that makes up the image.
+PNG uses lossless compression, allowing PNGs to be edited and resaved without loss of clarity (unlike Joint Photographic Experts Group or 'JPEG' images).
+Scaling raster images can introduce artifacts.
+This is particularly apparent when images are enlarged.
+Choose image resolutions to minimize these artifacts.
+--
++
+[NOTE]
+====
+In the "entity" directory, _images_ is a symbolic link to the _media_ directory, and is used to maintain compatibility with existing processes and tooling.
+====
+
+You can learn more about Doc Config, AsciiDoc, and DocBook metadata files in <<Templates and framework>>.
+
+

@@ -1,0 +1,577 @@
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section: AsciiDoc
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+{product1} documentation is rendered from plain text files.
+Formatting (including structure and text styling) is indicated with https://asciidoc.org/[AsciiDoc].
+This is a lightweight and semantic markup language with an intuitive syntax that is primarily designed for writing technical documentation.
+
+
+=== General guidelines
+
+When creating your content:
+
+* Use a plain text editor.
+
+* Ensure files are encoded to https://en.wikipedia.org/wiki/UTF-8[UTF-8].
+
+* Start each line in the first column.
+//
++
+There should be no leading whitespace.
+
+* Strip trailing whitespace from lines.
+
+* End lines with the line feed character only.
+//
++
+Some operating systems add both a carriage return and a line feed to the end of a line.
+You must strip these carriage return characters from your files before submission.
+This can also be done by https://https//docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings?platform=windows[configuring Git to handle line endings].
+
+* Do not edit files outside the scope of your project.
+//
++
+This includes common files, scripts, and the files associated with other published documentation.
+
+* Start each sentence on a new line, even if it is part of the same paragraph.
+//
++
+This makes it easier to edit and handle Git merge conflicts.
+
+
+The following sections address specific aspects of document structure and text styling with AsciiDoc.
+
+
+=== Document attributes and variables
+
+
+https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes/[Document attributes] are name-value pairs that you can use to configure the AsciiDoc processor, define document metadata, and create reusable content.
+Think of document attributes as document-scoped variables.
+Document attributes can be defined anywhere in your document and used from that point forward.
+
+{product1} uses document attributes to define some required content, such as document title, author information, and product names.
+You can define your own document attributes and reference them throughout your document for frequently repeated content.
+
+The definition of a document attribute takes the form:
+[source, asciidoc]
+----
+ :name-of-an-attribute: value of the attribute
+----
+
+For example:
+[source, asciidoc]
+----
+ :title: Edge Analytics in Finance
+ :product1: Rancher
+----
+
+You reference a document attribute in your text by its name surrounded in curly braces ( `{` and `}` ).
+For example:
+[source, asciidoc]
+----
+
+ This document provides guidance for deploying {product2} on {product1} to enable {usecase}.
+
+----
+
+
+=== Document title and subtitle
+
+With AsciiDoc, the title of your document is usually placed on the first line of the main content file and is prefixed by a single equal sign ( `=` ).
+An optional subtitle can be included on the same line, separated from the title by a colon and a space ( `:&#160;` ).
+
+[source, asciidoc]
+----
+
+ = My Document Title: My Document Subtitle
+
+----
+
+
+For getting started guides, you define title and subtitle as document attributes:
+
+[source, asciidoc]
+----
+
+ :title: Rancher by SUSE and Priority Support on AWS Marketplace
+ :subtitle: Deploy Rancher on Elastic Kubernetes Service (EKS)
+
+----
+
+and reference them in your adoc file as:
+
+[source, asciidoc]
+----
+
+ = {title}: {subtitle}
+
+----
+
+and in your docinfo file as:
+
+[source, asciidoc]
+----
+
+ <title>{title}</title>
+ <subtitle>{subtitle}</subtitle>
+
+----
+
+
+Titles and subtitles use title-style capitalization.
+You can implement title-style by following a few rules:
+
+* Capitalize the first and last word.
+
+* Write articles (_a_, _an_, _the_) in lowercase, unless it is the first word.
+
+* Write prepositions in lowercase unless they are used with a verb (_Logging In_) or in a noun (_The On Button_).
+
+* Write certain conjunctions in lowercase: _and_, _but_, _for_, _nor_, and _or_.
+
+* Write _as_ and _to_ in lowercase.
+
+* Capitalize everything that is not mentioned above.
+
+
+
+=== Sections
+
+Sections help you group and organize related text.
+Each section is marked by a section title or heading.
+This is short text, prefixed by a section marker that indicates the section level.
+Section markers are two or more equal signs ( `==`, `===`, and so on).
+
+[source, asciidoc]
+....
+
+ == Section title level 1
+
+ === Section title level 2
+
+ ==== Section title level 3
+
+....
+
+
+Guidance for section titles:
+
+* Choose a section title that clearly identifies what contents to expect.
+
+* Use sentence case.
+//
++
+That is, only the first word and proper nouns should be capitalized.
+
+* Minimize section title length (typically, 1 to 4 words).
+
+* Avoid using more than three section levels.
+
+* Ensure all sections have content.
+//
++
+This means that a subsection title should never immediately follow section title without some intervening text.
+
+* Start instruction section titles with an imperative verb or a verbal noun (gerund).
+
+Consider this example:
+
+[source, asciidoc]
+----
+
+ == Enabling Podman
+
+ Podman, which is short for Pod Manager, is a daemonless, open source tool ...
+
+
+ === Install Podman
+
+ Podman is not installed by default in SLES 15, but you can install it with these steps.
+ ...
+
+
+ === Define subordinate UIDs and GIDs
+
+ By default, only the root user can run Podman containers.  Running ...
+ ...
+
+
+ == Creating container images
+
+ You can build an application container image ...
+
+ === Make a build directory
+
+ You need a place in your file system to contain ...
+
+----
+
+
+
+=== Lists
+
+Lists can provide structure to your content.
+
+Unordered list::
+is a series of items in no particular order and is sometimes called a bulleted list.
++
+* Prefix an item by an asterisk ( `*` ) in the first column.
+* Create subordinate or nested lists by adding more asterisks.
+* Avoid creating more than three nest levels.
++
+[source, asciidoc]
+....
+
+ * Security and compliance
+
+ ** Prompt response by SUSE engineers to security incidents
+
+ ** Premium quality security updates
+
+ ** Configuration, auditing, and automation features
+
+ * Adaptability
+
+ ** Modular design
+
+ ** Broad hardware architecture support
+
+....
+
+
+Ordered list::
+is a series of items for which order matters, such as a series of instructions.
++
+* Prefix an item with a period or full stop ( `.` ) in the first column.
+//
++
+The rendering engine will replace the period with an appropriate number or letter.
+* Create subordinate or nested lists by adding more periods.
+* Avoid creating more than three levels.
++
+[source, asciidoc]
+....
+
+ . Verify target hardware support.
+
+ .. Confirm CPU capabilities.
+
+ .. Confirm RAM size.
+
+ .. Confirm space on target hard disk.
+
+ . Install system.
+
+ .. Prepare installation media.
+
+ .. Boot installation media.
+
+ .. Follow installation wizard.
+
+ . Reboot into new system.
+
+....
+
+
+Description list::
+is a collection of terms and their descriptions.
++
+* Start a term-description item with the term followed by two colons ( `::` ).
+* Place the description on the next line without any indentation.
+* Include at least one blank line between each term-description pair.
++
+[source, asciidoc]
+----
+
+ Cluster::
+ A set of worker machines, called nodes, that run containerized applciations.
+ Every cluster has at least one worker node.
+
+ Pod::
+ The smallest deployable unit of computing that you can create and manage in Kubernetes.
+
+ Control plane::
+ The container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.
+
+----
+
+
+=== File and directory names
+
+Use the grave accent or back tick ( ``` ) to delimit file and directory names.
+
+For example:
+
+[source, asciidoc]
+....
+
+The `manifest.yaml` file is located in the `$HOME/my-tuxy-project` directory.
+
+....
+
+For directory names, a trailing slash ( `/` ) can be used if it is not clear that you are referring to a directory.
+
+
+=== Admonitions
+
+Use admonitions are used to help draw the reader's attention to content.
+AsciiDoc supports five admonition types represented by the following labels: 
+
+* `NOTE`: provide additional information
+* `TIP`: suggest a helpful tip
+* `IMPORTANT`: highlight an important point
+* `CAUTION`: advise that care should be taken
+* `WARNING`: inform of danger, harm, or consequences
+
+
+The basic admonition style places the admonition label followed by a colon ( `:` ) at the beginning of a line of text.
+This is useful for short admonitions that do not contain a line break.
+For example:
+
+[source, asciidoc]
+....
+
+ TIP: By default, some `zypper` commands perform `refresh` automatically.
+....
+
+This is rendered as:
+
+TIP: By default, some `zypper` commands perform `refresh` automatically.
+
+
+
+The block admonition style provides more flexibility for the content, as illustrated with this example:
+
+[source, asciidoc]
+....
+
+ [IMPORTANT]
+ ====
+ When working with snapshots to restore data, it is important to know
+ that there are two fundamentally different scenarios Snapper can handle:
+
+ Undoing changes::
+ When undoing changes as described in the following, two snapshots are
+ being compared and the changes between these two snapshots are made undone.
+ Using this method also allows to explicitly select the files that should be
+ restored.
+
+ Rollback::
+ When doing rollbacks as described in <<System rollback>>, the system is
+ reset to the state at which the snapshot was taken.
+
+ ====
+
+....
+
+
+
+=== Source code, commands, and output
+
+Content in listing blocks are rendered in a fixed-width font, making them ideal for source code, commands, and console output where spacing can be important.
+
+A basic listing block has the form:
+
+[source, asciidoc]
+....
+
+ [listing]
+ ----
+ This   text has      really weird      spacing   that is    preserved.
+
+ Line spacing is also preserved.
+ ----
+
+....
+
+
+You can include a source code listing in your document with a source code block.
+This special type of listing block enables syntax highlighting, using color and text styles to highlight code structures (such as keyword, variables, constants, comments, and so on).
+
+To illustrate, review the following Python code snippet.
+
+[source, asciidoc]
+....
+
+ [source, python]  <1>
+ ----  <2>
+ # import libraries
+ import matplotlib.pyplot as plt
+ import numpy as np
+ 
+ # define data points
+ xpoints = np.array([1, 2, 5, 12])
+ ypoints = np.array([5, 3, 11, 6])
+ 
+ plt.plot(xpoints, ypoints)
+ plt.show()
+ ----  <2>
+
+....
+
+<1> `[source, python]` identifies this as a source code block and the source language as Python.
+Some common source language identifiers are: bash, c, html, python, sql, yaml, and xml.
+
+<2> `----` delimits the beginning and end of the block.
+
+[NOTE]
+====
+As with ordinary listing blocks, line spacing is preserved.
+====
+
+
+Commands entered on the command line are also handled with source code blocks.
+For commands, use `console` as the source language identifier.
+For example:
+
+[source, asciidoc]
+....
+
+ [source, console]
+ ----
+ sudo zypper install vim
+ ----
+
+....
+
+You can also reference a short command inline by delimiting it with the grave accent or back tick ( ``` ):
+
+[source, asciidoc]
+....
+
+ Use `zypper refresh` to update your enabled repositories.
+
+....
+
+
+For the output of a command, use a simple listing block for output.
+This will render with a fixed-width font and preserve line spacing.
+For example:
+
+[source, asciidoc]
+....
+
+ [listing]
+ ----
+ Type   | # |     | Cleanup | Description           | Userdata
+ -------+---+ ... +---------+-----------------------+--------------
+ single | 0 |     |         | current               |
+ single | 1 |     | number  | first root filesystem |
+ single | 2 |     | number  | after installation    | important=yes
+ single | 3 |     | number  | rollback backup of #1 | important=yes
+ single | 4 |     |         |                       |
+ ----
+
+....
+
+
+=== Graphical user interface elements
+
+As with commands on the command line, you may need to reference named elements of an application's graphical user interface (GUI).
+Use a double underscore ( `__` ) to delimit each element.
+If providing a series of element selections, separate each element with the greater than symbol ( `>` ).
+
+[source, asciidoc]
+....
+
+ . Open _myfile_.
+
+ .. Click __File__ > __Open__.
+
+ .. Select _myfile_ from the list.
+
+ .. Click __Open__.
+
+....
+
+
+=== Links
+
+Create links (or hyperlinks) to other addressable resources in AsciiDoc.
+A link consists of two parts:
+
+target::
+This is the external resource and is represented by an address, known as a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier[Uniform Resource Identifier] (URI).
+A common type of URI is the familiar https://en.wikipedia.org/wiki/URL[Uniform Resource Locator] (URL) or address of a Web page.
+
+link text::
+This is the text you wish the reader to see (typically in place of the URI) and be able to click to open the remote resource in an appropriate application (such as a Web browser).
+
+The AsciiDoc processor detects common URL protocols, including HTTP, HTTPS, FTP, IRC, and MAILTO.
+That is, if you include a URL (such as https://documentation.suse.com/) in your text, it will be rendered as a link with the URL itself as the link text.
+
+To use a custom link text, append it to the URL as an attribute.
+That is,
+
+[source, asciidoc]
+....
+
+ https://target-URL[custom link text]
+
+....
+
+For example:
+
+[source, asciidoc]
+....
+
+ Visit https://documentation.suse.com/[SUSE Documentation] to continue your learning journey.
+
+....
+
+
+
+=== Images
+
+You can enhance your document with graphical content, such as diagrams, screenshots, logos, and more.
+In AsciiDoc, the most common way to insert an image is with a block image macro.
+This takes the form:
+
+[source, asciidoc]
+....
+
+ image::TARGET[ATTRIBUTES]
+
+....
+
+where:
+
+* `image::` designates the block image macro.
+
+* `TARGET` is typically is your target image file.
++
+--
+AsciiDoc supports many image formats, but https://www.w3.org/Graphics/SVG/[Scaled Vector Graphics] (SVG) and https://en.wikipedia.org/wiki/PNG[Portable Network Graphics] (PNG) are preferred.
+
+Place your image files in the appropriate subdirectory of `media/src` by type.
+For example, if you are using a SVG file for a diagram, it would be located in `media/src/svg`.
+If you do this, you do not need to specify the path to the file.
+--
+
+* `[ATTRIBUTES]` is a comma-delimited list of attributes, as key=value pairs.
+//
++
+--
+The most common attributes you will use include:
+
+* _alt text_: alternate text that briefly identifies the image.
+It is useful for text-to-speech readers and situations when the image cannot be displayed.
+
+* _scaledwidth_: preferred width of the image for PDF renderings.
+This is typically specified as a percentage of the content width (area between margins).
+
+* _align_: suggest horizontal alignment for the image (that is, left, center, and right).
+--
+
+Thus, to display the image, `media/src/svg/my-tuxy-architecture.svg` at 75 percent of the page width and centered horizontally, you would use:
+
+[source, asciidoc]
+....
+
+ image::my-tuxy-architecture.svg[Tuxy Architecture, scaledwidth="75%", align="center"]
+
+....
+
+
