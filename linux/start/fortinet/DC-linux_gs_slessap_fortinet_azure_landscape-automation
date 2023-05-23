@@ -20,16 +20,14 @@ ADOC_TYPE="article"
 #ADOC_TYPE="book"
 
 # Stylesheet Root
-STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2021-ns"
-#STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2013-sbp-ns"
-#STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2013-ns"
-
+STYLEROOT=/usr/share/xml/docbook/stylesheet/trd
+FALLBACK_STYLEROOT=/usr/share/xml/docbook/stylesheet/suse2022-ns
 # Turn on postprocessing
 ADOC_POST="yes"
 
 # Leverage SUSE Best Practices
-XSLTPARAM="--stringparam publishing.series=sbp"
-DOCBOOK5_RNG_URI="http://docbook.org/xml/5.1/rng/docbookxi.rnc"
+XSLTPARAM="--stringparam publishing.series=trd"
+DOCBOOK5_RNG_URI="http://docbook.org/xml/5.2/rng/docbookxi.rnc"
 
 # Enable attributes
 ADOC_ATTRIBUTES="--attribute env-daps=1"
