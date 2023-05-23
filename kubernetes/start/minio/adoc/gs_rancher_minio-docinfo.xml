@@ -23,7 +23,42 @@
 <!--<orgname>Technical Reference Documentation</orgname>-->
 <productname>{productname}</productname>
 
-<author>
+<meta name="series">Technical Reference Documentation</meta>
+<meta name="type">Getting Started</meta>
+
+<meta name="platform">{productname}</meta>
+
+<authorgroup>
+    <author>
+        <personname>
+            <!--            <firstname></firstname>-->
+            <surname>{author1}</surname>
+        </personname>
+        <affiliation>
+            <!--          <jobtitle></jobtitle>-->
+            <!--           <orgname>SUSE</orgname>-->
+        </affiliation>
+    </author>
+    <author>
+        <personname>
+            <surname>{author2}</surname>
+        </personname>
+    </author>
+    <author>
+        <personname>
+            <surname>{author3}</surname>
+        </personname>
+    </author>  
+    <!--   <editor>
+        <orgname></orgname>
+        </editor>
+        <othercredit>
+        <orgname></orgname>
+        </othercredit>-->
+</authorgroup>
+
+
+<!--<author>
     <personname>
 	    <surname>{author1}</surname>
     </personname>
@@ -37,15 +72,19 @@
     <personname>
 	    <surname>{author3}</surname>
     </personname>
-</author>
+</author>-->
 
-<cover role="logos">
+<!--<cover role="logos">
     <mediaobject>
-        <imageobject>
-            <imagedata fileref="suse-white-logo-green.svg"/>
+        <imageobject role="fo">
+            <imagedata fileref="suse.svg" width="5em" align="center" valign="bottom"/>
+        </imageobject>
+        <imageobject role="html">
+            <imagedata fileref="suse.svg" width="152px" align="center" valign="bottom"/>
         </imageobject>
     </mediaobject>
-</cover>
+</cover>-->
+
 
 <abstract>
 	<para>This document provides a brief introduction to deploying MinIO object storage into a SUSE Rancher Kubernetes environment.</para>
