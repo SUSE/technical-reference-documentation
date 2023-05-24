@@ -271,6 +271,7 @@ Begin by using the Rancher UI to create a project in Harvester named _kubeflow-o
 . Select a custom VM image on the Volumes tab. The default disk will be the root disk. You can add more disks to the VM.
 . To configure networks, go to the Networks tab. The Management Network is added by default, you can remove it if the VLAN network is configured. You can also add additional networks to the VMs using VLAN networks. You may configure the VLAN networks on Advanced > Networks first. 
 . Advanced options such as run strategy, os type and cloud-init data are optional. You may configure these in the Advanced Options section when applicable.
+. Select the check-box to __Install guest agent__.
 
 
 The following User Data cloud-config (under __Show Advanced__) should be applied to all nodes during RKE2 cluster creation:
@@ -310,7 +311,9 @@ This version is currently deprecated but is needed for Harvester Cloud Provider 
 
 .. Set __Container Network__ Interface to `Calico`.
 
-.. Set the __Default Security Pod Policy__ to `unrestricted`.
+.. Ensure the Default Security Pod Policy is set to __Default - RKE2 Embedded__.
+
+.. Leave Pod Security Admission Configuration Template set to __(None)__.
 
 .. Disable the Nginx Ingress controller under __System Services__.
 
@@ -356,16 +359,6 @@ After the RKE2 cluster has been created, gather the KUBECONFIG data from the Ran
 
 === Configure the MetalLB load balancer
 
-[NOTE]
-====
-*Mark*: 
-I haven't moved this to a separate file yet.
-The IP address pools section was a bit confusing because of the options provided.
-I simplified by not mentioning the CIDR option.
-Could we illustrate with real IP addresses and say something like, "replace the addresses shown in the following command with the appropriate addresses for your environment"?
-I don't know the answer to this question: The test procedure mentions nginx. Is this appropriate to our case?
-====
-
 MetalLB is a network load balancer implementation for Kubernetes clusters on bare metal.
 This allows you to create Kubernetes services of the type `LoadBalancer` to provide two important features:
 
@@ -374,7 +367,7 @@ This allows you to create Kubernetes services of the type `LoadBalancer` to prov
 * _external announcement_: MetalLB uses standard network or routing protocols to announce that the IP address is in use by a service.
 
 
-==== Deploy MetalLB
+==== Deploy the MetalLB Load Balancer
 
 . Open a terminal on your workstation.
 
@@ -472,7 +465,7 @@ kubectl get all -n metallb-system
 ----
 
 
-==== Validate MetalLB
+==== Validate MetalLB and the Harvester/Longhorn CSI
 
 . Set the `NAMESPACE` variable to the target namespace.
 +
@@ -578,7 +571,7 @@ kubectl get pod,sc,pvc,svc -n ${NAMESPACE}
 [source, console]
 ----
 IPAddr=$(kubectl get svc -n ${NAMESPACE} | grep -w nginx | awk '{print$4":"$5}' | awk -F: '{print$1":"$2}')
-curl http://${IPAddr} | grep "Thank you"
+curl http://${IPAddr} 2>/dev/null | grep "Thank you for using nginx"
 ----
 An HTML encoded output should display the phrase "Thank you for using nginx."
 
@@ -599,9 +592,9 @@ The output should show that the volume is mounted at the location `/mnt/test-vol
 kubectl delete -f nginx-metallb-test.yaml
 ----
 
-
 == Install Kubeflow
 
+=== Running the Installer
 
 The Kubeflow Manifests Working Groups provides two options for installing Kubeflow:
 
@@ -619,6 +612,8 @@ while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do
 
 Note that the `kubectl apply` command may fail on the first try. Hence the use of the while loop to retry until success is achieved. This method method is recommended by the Kubeflow documentation and has been confirmed to work at the time this document was written. However, the reader should review the latest Kubeflow Installation guide in case there have been updates.
 
+=== Validating the Installation
+
 After installation completes, it can take some time for all of the components to deploy their pods. To check that all Kubeflow-related pods are ready, you can use the following commands:
 [source, console]
 ----
@@ -630,6 +625,379 @@ kubectl get pods -n knative-serving
 kubectl get pods -n kubeflow
 kubectl get pods -n kubeflow-user-example-com
 ----
+
+Next, you should enable kubectl port-forwarding and ensure the Kubeflow UI permits login:
+[source, console]
+----
+kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+----
+
+NOTE: In the following step ensure the connection protocol is HTTP, not HTTPS.
+
+* In a browser on the Linux workstation, connect to:
+[source, console]
+----
+http://127.0.0.1:8080
+----
+
+* Login with the credentials: 
+`Email address: user@example.com`
+`Password: 12341234`
+
+* Use `Ctrl+c` to close the kubectl port-forward session
+
+=== Troubleshooting Kubeflow installation
+
+Some things that could prevent connecting or loggging into the Kubeblow dashboard include:
+. The local copy of the https://github.com/kubeflow/manifests git repo doesn't match the origin
+** While in the `manifests` directory, run `git status` to see if any files are different from the origin repo
+** Remove the `manifests` directory and clone the repo again
+. Using a web browser that is not running on the Linux desktop
+** The kubectl port-forwarding opens a tunnel from the Linux workstation to the Kubeflow gateway service that only a web browser running on the same system can utilize.
+. The Kubeflow installation has not completed or failed to complete
+** Return to the beginning of this `Verify the Kubeflow installation` section and ensure all containers and pods are running correctly
+** A high number of container restarts can indicate other issues preventing the installation from completing sucessfully
+. The cluster's resources are saturated
+** Use the Linux `top` command on the worker nodes to ensure the system's CPU/memory are not overburdened
+** Check the Harvester dashboard to ensure the physical Harvester nodes are not overburdened or experiencing failures
+
+== Update Istio to use the MetalLB load balancer
+
+Enable HTTPS on the Kubeflow Istio Gateway
+
+* Verify the current `istio-ingressgateway` service type (Likely `ClusterIP`):
+
+[source, console]
+----
+kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' ; echo ""
+----
+
+* Patch the service to change the type to LoadBalancer:
+
+[source, console]
+----
+kubectl -n istio-system patch svc istio-ingressgateway -p '{"spec": {"type": "LoadBalancer"}}'
+----
+
+* Verify the service is a type of `LoadBalancer` and take note of the IP address:
+[source, console]
+----
+kubectl -n istio-system get svc istio-ingressgateway
+----
+
+== Enable HTTPS on the Kubeflow Istio Gateway
+
+* Edit the kubeflow-gateway resource to add HTTPS routing:
+[source, console]
+----
+kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
+----
+
+* Add this portion to the bottom of the `spec:` section:
+
+[source, console]
+----
+    tls:
+      httpsRedirect: false
+  - hosts:
+    - "*"
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: kubeflow-certificate-secret
+----
+
+* The entire `spec:` section should look like this:
+[source, console]
+----
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+    tls:
+      httpsRedirect: false
+  - hosts:
+    - "*"
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: kubeflow-certificate-secret
+----
+
+Update the AWS Route53
+
+* Update the AWS Route53 DNS provider wih the Kubeflow IP address and the desired Fully Qualified Domain Name for the Kubeflow UI
+
+## Use a browser to connect, with HTTP (not HTTPS), to Kubeflow UI at the FQDN
+
+* The screen should redirect to dex and offer a login prompt
+* (Optional) Login with the credentials: 
+`Email address`
+
+[source, console]
+----
+user@example.com
+----
+
+`Password`
+[source, console]
+----
+12341234
+----
+
+IMPORTANT: Proceed to the next section only after being able to connect to, and optionally, log into the Kubeflow UI
+
+
+Configure cert-manager to manage Let’s Encrypt certificates, using Route 53 DNS records
+
+NOTE: cert-manager can manage certificates from any public DNS provider. See the cert-manager documentation at https://cert-manager.io/docs/configuration/acme/ for more information.
+
+NOTE: An AWS user with appropriate IAM policies and API access keys is needed for cert-manager to access the Route53 DNS records. See the cert-manager documentation at https://cert-manager.io/docs/configuration/acme/dns01/route53/ for more information.
+
+.Create a cert-manager Issuer for Let's Encrypt:
+* Set these variables:
+[source, console]
+----
+# aws_access_key_id and aws_secret_access_key for the configured AWS user:
+export AWS_ACCESS_KEY_ID=""
+export AWS_SECRET_ACCESS_KEY=""
+export AWS_REGION="" # E.g. "us-west-2"
+export DNSZONE="" # E.g. "suse.com"
+export FQDN="" # E.g. "kubeflow.suse.com"
+export EMAIL_ADDR="" # valid email address for the Let's Encrypt certificate
+
+----
+
+NOTE: When initially creating the cert-manager Issuer, ensure the `server: https://acme-staging-v02` line is uncommented and the `server: https://acme-v02` line is commented out. After verifying that the certicate can be issued correctly, we will reverse this to obtain the valid, production certificate.
+
+* Create the cert-manager Issuer file:
+[source, console]
+----
+cat <<EOF> letsencrypt-issuer.yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-issuer
+  namespace: istio-system
+spec:
+  acme:
+    email: ${EMAIL_ADDR}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory # Use this line to test the process of issuing a certificate to avoid the Let's Encrypt production rate limits
+#    server: https://acme-v02.api.letsencrypt.org/directory # Use this line after the certificate issues correctly
+    privateKeySecretRef:
+      name: letsencrypt-issuer-priv-key # K8s secret that will contain the private key for this, specific issuer
+    solvers:
+    - selector:
+        dnsZones: 
+          - "${DNSZONE}"
+      dns01:
+        route53:
+          region: ${AWS_REGION}
+          accessKeyID: ${AWS_ACCESS_KEY_ID}
+          secretAccessKeySecretRef:
+            name: route53-credentials-secret
+            key: secret-access-key
+EOF
+----
+
+IMPORTANT: Review the letsencrypt-issuer.yaml file for accuracy before continuing
+
+* Verify the update to the file:
+[source, console]
+----
+cat letsencrypt-issuer.yaml
+----
+
+
+* Create the `letsencrypt-issuer` resource:
+
+[source, console]
+----
+kubectl apply -f letsencrypt-issuer.yaml
+----
+
+* Create the Kubernetes secret containing the aws_secret_access_key for the AWS user:
+
+[source, console]
+----
+kubectl create -n istio-system secret generic route53-credentials-secret --from-literal=secret-access-key=${AWS_SECRET_ACCESS_KEY}`
+----
+
+* Verify the contents of the secret:
+[source, console]
+----
+kubectl get -n istio-system secret route53-credentials-secret -o jsonpath={.data.secret-access-key} | base64 -d; echo ""
+----
+
+## Update OIDC to allow the Let's Encrypt DNS01 challenge:
+
+* From inside the Kubeflow `manifests` directory (i.e. the base directory from the cloned https://github.com/kubeflow/manifests repository), update the oidc-authservice params.env file:
+
+[source, console]
+----
+cp -p common/oidc-authservice/base/params.env /tmp/params.env.orig
+sed -i 's/SKIP_AUTH_URI=\/dex/SKIP_AUTH_URI=\/dex \/.well-known/' common/oidc-authservice/base/params.env
+sed -i 's/SKIP_AUTH_URLS=\/dex/SKIP_AUTH_URI=\/dex \/.well-known/' common/oidc-authservice/base/params.env
+----
+
+* Verify the file now contains `/dex /.well-known` on the SKIP_AUTH... line:
+[source, console]
+----
+cat common/oidc-authservice/base/params.env
+----
+
+* Update the running oidc-authservice instance and return the file to its original state:
+[source, console]
+----
+kustomize build common/oidc-authservice/base | kubectl apply -f -
+
+sleep 5
+
+cp -p /tmp/params.env.orig common/oidc-authservice/base/params.env
+----
+
+* Verify the hostname for the certificate resolves correctly:
+[source, console]
+----
+getent hosts ${FQDN}
+----
+
+* Create the cert-manager Certificate resource file:
+[source, console]
+----
+cat <<EOF> kubeflow-certificate.yaml 
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubeflow-certificate
+  namespace: istio-system
+spec: 
+  secretName: kubeflow-certificate-secret # Kubernetes secret that will contain the tls.key and tls.crt of the new cert
+  commonName: ${FQDN}
+  dnsNames:
+    - ${FQDN}
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: Issuer
+EOF
+----
+
+* Verify the Certificate resource file:
+[source, console]
+----
+cat kubeflow-certificate.yaml
+----
+
+* Create the Certificate resource:
+[source, console]
+----
+kubectl apply -f kubeflow-certificate.yaml
+----
+
+* Check the status of the certificate:
+[source, console]
+----
+kubectl get -w -n istio-system certificate
+----
+** Use `Ctrl+c` to exit the kubectl -w (watch) command
+
+
+NOTE: The certificate commonly takes 100 seconds to be issued but can take up to three minutes. The `READY` status will change to `True` when it is issued.
+
+
+* If needed, check the progress of the certificate:
+[source, console]
+----
+kubectl describe -n istio-system certificate kubeflow-certificate
+----
+
+IMPORTANT: If the certificate seems to be taking a long time to be issued, review the cert-manager logs for clues. Common errors are related to DNS resolution, credentials, and IAM policies. Keep checking back for the status of the certificate since it will likely keep working in the background. 
+
+* If needed, review the cert-manager logs:
+[source, console]
+----
+kubectl logs -n cert-manager -l app=cert-manager
+----
+
+IMPORTANT: Proceed to the next section only after the certificate shows a `READY` status of `True` 
+
+Use a web browser to connect to Kubeflow UI with the Let’s Encrypt Staging certificate
+
+=== Use a web browser to connect to Kubeflow UI with the Let's Encrypt Staging certificate
+
+NOTE: Since the certificate was issued by the Let's Encrypt *Staging* servers, it will cause an error in the browser that it is untrusted. 
+
+* Click the lock icon in the browser's URL pane, then continue selecting appropriate options until you are able to review the connection certificate. It should say that the certificate was issued by Let's Encrypt (Staging)
+
+Update the configuration to use a Let’s Encrypt production certificate
+
+* Update the letsencrypt-issuer.yaml file to comment out the `server: https://acme-staging-v02` line and uncomment the `server: https://acme-v02` line:
+
+Use a web browser to connect to Kubeflow UI with the Let’s Encrypt Production certificate
+
+
+
+* Update the `letsencrypt-issuer` resource:
+
+[source, console]
+----
+kubectl apply -f letsencrypt-issuer.yaml
+----
+
+* Remove the certificatate and its associated secret:
+[source, console]
+----
+kubectl -n istio-system delete secret kubeflow-certificate-secret
+kubectl -n istio-system delete certificate kubeflow-certificate
+----
+
+* Recreate the certificate:
+[source, console]
+----
+kubectl apply -f kubeflow-certificate.yaml
+----
+
+* Check the status of the certificate:
+[source, console]
+----
+kubectl get -w -n istio-system certificate
+----
+** Use `Ctrl+c` to exit the kubectl watch (-w) command
+
+
+NOTE: The certificate can take up to three minutes to be issued, as indicated by the `READY` status becoming `True`
+
+
+* Refresh the istio-gateway deployment to use the new certificate:
+[source, console]
+----
+kubectl rollout restart deployment -n istio-system istio-ingressgateway
+----
+
+* Close and reopen the browser to verify the publicly signed certificate at the Kubeflow UI's HTTPS URL
+
+== Optionally, set the kubeflow-gateway to redirect HTTP to HTTPS 
+
+* Edit the kubeflow resource:
+[source, console]
+----
+kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
+----
+** Change `httpsRedirect: false` to `httpsRedirect: true`
+
+
 
 == Validation
 
@@ -651,18 +1019,6 @@ kubectl get pods -n kubeflow-user-example-com
 // admonitions, and screenshots.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-
-
-[NOTE]
-
-====
-*Mark*:
-As Alex noted on Tuesday's call, the port-forwarding (https://github.com/kubeflow/manifests#port-forward) works because all communication is essentially internal to the cluster.
-This is of no real value.
-I think we will be asked to detail the LoadBalancer method, but, as pointed out on the call, we don't know how to do this yet.
-====
 
 [NOTE]
 
