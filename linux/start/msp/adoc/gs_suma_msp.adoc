@@ -88,7 +88,9 @@ include::./common_docinfo_vars.adoc[]
 
 == Introduction
 
-The Linux footprint of enterprise IT landscapes continues to grow, and you need a management tool that can scale with it.
+The Linux footprint of enterprise IT landscapes continues to grow.
+This growth can be particularly problematic for a managed services provider (MSP), who may need to manage systems lifecycles for many clients.
+You need a management tool that can scale with your business needs.
 
 {product1_full} {product1_version} is an enterprise, open source management solution for software-defined infrastructure.
 {product1} is designed to help enterprises reduce complexity and regain control of IT assets with a single tool.
@@ -98,36 +100,54 @@ It provides systems asset management, systems provisioning, and automated softwa
 Seamlessly manage a broad spectrum of Linux systems on a variety of hardware architectures and hypervisors as well as container, IoT, and cloud platforms.
 Unify system lifecycle management across your entire IT landscape.
 
+
 {product1} delivers flexibility and peace of mind that you can grow and manage your IT landscape efficiently and effectively.
 
 
 === Scope
 
-This document explains an architecture that allows Service Providers to leverage SUSE Manager to offer patching as a service to their clients. We will describe the use of a central server to consolidate management operations while maintaining the advantages of independent servers for each customer.
+This document explains an architecture that enables service providers to leverage {product1} to offer systems lifecycle management as a service to their clients.
+This document describes the use of a central server to consolidate management operations while maintaining the advantages of independent servers for each customer.
+
 
 === Audience
 
-This document is aimed at IT Professionals at Managed Service Providers who are responsible for delivering system lifecycle managed solutions to their customers. This document assumes basic familiarity with SUSE Manager and typical procedures for managing the provisioning and patching of Linux systems.
+This document is intended for IT professionals at managed services providers, who are responsible for delivering systems lifecycle mangement for their customers.
+You should have a basic familiarity with {product1} and with typical procedures for provisioning and patching Linux systems to get the most out of this document.
 
 
 == Solution Design
 
-While a Managed Service Provider could simply create a single SUSE Manager Server and use it to manage all of their customer’s systems, there are a number of problems with that approach:
+Managing a large and growing IT footprint can be challenge for any enterprise.
+Managed services providers (MSPs) must do this for multiple clients.
+A single {product1} server could be used to manage all customer systems.
+But there are key concerns with this approach, such as:
 
 Scaling::
-SUSE Manager is designed as a single server and typically can manage up to 10000 clients. An MSP with a number of large customers would hit that limit fairly easily In such situations, SUSE Manager can be scaled horizontally by adding servers.
+{product1} is designed as a single server that can manage up to 10000 clients.
+An MSP with multiple large customers could reach this limit fairly easily.
+To accommodate this, {product1} can be scaled horizontally by adding {product1} servers.
 
 Separation of entitlements::
-SUSE Manager uses customer credentials to access software entitlements from upstream providers like, for example, the SUSE Customer Center (SCC). It would not be a good idea to mix the entitlements of multiple customers in a single environment – it would be difficult to keep track of which managed systems are entitled to which products.
+{product1} uses customer credentials to access software entitlements from upstream providers like, for example, the SUSE Customer Center (SCC).
+It would not be a good idea to mix the entitlements of multiple customers in a single environment – it would be difficult to keep track of which managed systems are entitled to which products.
+
 Access control and user isolation::
-In situations where customers would expect to be able to access the SUSE Manager themselves, we need some way to separate each customer’s users so they can only see and manage this own systems.
-Alternatively, the Service provider could install a dedicated SUSE Manager server for each client. While this would address the above issues, this is somewhat inefficient however because of the need to manage each of these servers independently. 
-This solution leverages four components of SUSE Manager – Organizations, Content Lifecycle Management, Hub and Peripheral setups, and Inter-server Sync.
+In situations where customers would expect access to {product1}, an MSP would need some way to isolate each customer’s users so they can only see and manage their own systems.
+The MSP could install a dedicated {product1} server for each client.
+This would address isolation, but it is somewhat inefficient because of the need to manage each of these servers independently.
+
+{product1} empowers MSPs and large enterprises to address these concerns through:
+
+* Organizations
+* Content Lifecycle Management
+* Hub and Peripherals
+* Inter-server Sync
 
 
 === Organizations
 
-Organizations manage user access and permissions within a single SUSE Manager server.
+Organizations manage user access and permissions within a single {product1} server.
 You can think of an organization as a separate management environment with its own managed systems, users, and software channels.
 Organizations form the basic building blocks of the solution.
 You create one organization for each end customer, enabling you to keep the various managed systems, users, and software channels separate.
