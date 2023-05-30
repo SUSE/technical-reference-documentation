@@ -46,9 +46,9 @@ include::./common_docinfo_vars.adoc[]
 :title: Title
 :subtitle: Subtitle
 
-:product1: Primary SUSE product/platform short name (abbreviation)
-:product1_full: Primary SUSE product/platform full name
-:product1_version: Primary SUSE product/platform relevant version or versions
+:product1: SUSE Manager
+:product1_full: SUSE Manager
+:product1_version: 4.3
 :product1_url: Primary SUSE product/platform URL (without the protocol)
 :product2: Secondary product short name
 :product2_full: Secondary product full name
@@ -85,14 +85,19 @@ include::./common_docinfo_vars.adoc[]
 
 = {title}: {subtitle}
 
+
 == Introduction
 
-SUSE Manager is a best-in-class open source infrastructure management solution for  software-defined infrastructure. It was designed to help Enterprises reduce complexity and regain control of your IT assets with a single tool to manage Linux systems across a variety of hardware architectures, hypervisors as well as container, IoT and cloud platforms. 
-SUSE Manager enables you to manage large sets of Linux systems and keep them up-to-date, with automated software management, asset management, and system provisioning. SUSE Manager allows you to maintain a high level of security while effectively managing system life-cycle requirements.
-SUSE Manager offers seamless management of SUSE Linux Enterprise, openSUSE, Red Hat Enterprise Linux, CentOS, Oracle Linux, Ubuntu, Debian, Amazon Linux, and AlmaLinux client systems. They can be on-premise, or on public cloud, private cloud, hybrid cloud or even multi-cloud environments.
+SUSE Manager is an enterprise, open source, infrastructure management solution for software-defined infrastructure.
+SUSE Manager provides systems asset management, systems provisioning, and automated software management to keep your systems up-to-date.
+It is designed to help enterprises reduce complexity and regain control of IT assets with a single tool to seamlessly manage Linux systems across a variety of hardware architectures and hypervisors as well as container, IoT, and cloud platforms.
+With SUSE Manager you can effectively manage system lifecycle requirements across your IT landscape.
+
 
 === Motivation
-With ever growing Linux footprints you need your management tool be able to scale to tens of thousands of Linux devices and beyond. With the performance and scalability enhancements in 4.3, your SUSE Manager deployment can easily scale in your environment in any direction, while providing better performance than any previous version even in very large-scale environments.
+
+With ever growing Linux footprints you need your management tool to scale to tens of thousands of Linux devices and beyond.
+With the performance and scalability enhancements in SUSE Manager 4.3, you can easily scale in your environment in any direction, while providing better performance than any previous version even in very large-scale environments.
 
 This allows you the flexibility to grow your infrastructure as required by your business needs, with the peace of mind that SUSE Manager will be able to manage your large estate, and the cost implications of growing their footprint will not be exaggeratedly high.
 
@@ -104,6 +109,7 @@ This document explains an architecture that allows Service Providers to leverage
 === Audience
 
 This document is aimed at IT Professionals at Managed Service Providers who are responsible for delivering system lifecycle managed solutions to their customers. This document assumes basic familiarity with SUSE Manager and typical procedures for managing the provisioning and patching of Linux systems.
+
 
 == Solution Design
 
@@ -119,21 +125,30 @@ In situations where customers would expect to be able to access the SUSE Manager
 Alternatively, the Service provider could install a dedicated SUSE Manager server for each client. While this would address the above issues, this is somewhat inefficient however because of the need to manage each of these servers independently. 
 This solution leverages four components of SUSE Manager – Organizations, Content Lifecycle Management, Hub and Peripheral setups, and Inter-server Sync.
 
+
 === Organizations
 
-Organizations are used to manage user access and permissions within a single SUSE Manager server.. You can think of an organization as a separate management environment with its own managed systems, user and software channels.
-Organizations form the basic building blocks of our solution here. We will create one organization for each end customer. In this way, we will be able to keep their various managed systems, users and software channels separate. This gives us logical separation between the customers.
+Organizations manage user access and permissions within a single SUSE Manager server.
+You can think of an organization as a separate management environment with its own managed systems, users, and software channels.
+Organizations form the basic building blocks of the solution.
+You create one organization for each end customer, enabling you to keep the various managed systems, users, and software channels separate.
 
-=== Content Lifecycle Management
 
-Content lifecycle management involves creating clones of software channels at particualr point in time and assigning these to dofferent systems. This is typically used to create multi-stage lifecycles where patches are passed from vendor channels to a development environment, from there to a test stage and then finally to production. In our case, we will create separate lifecycles for each customer. In this way, we can ensure that each customer receives only the patches that are appropriate to their respective software lifecycle needs even though they might all be based on the same upstream channels.
+=== Content lifecycle management
+
+Content lifecycle management involves creating clones of software channels at particualr point in time and assigning these to dofferent systems.
+This is typically used to create multi-stage lifecycles where patches are passed from vendor channels to a development environment, from there to a test stage and then finally to production.
+In our case, we will create separate lifecycles for each customer.
+In this way, we can ensure that each customer receives only the patches that are appropriate to their respective software lifecycle needs even though they might all be based on the same upstream channels.
+
 
 === Hubs and Peripherals
 
 The SUSE Manager Hub concept was initially introduced to manage very large deployments by allowing horizontal scaling to multiple servers.  Essentially, one central SUSE Manager Server acts as the Hub Server and one or more additional SUSE Manager Servers, known as peripherals, are registered to the Hub as Salt clients. Any number of clients (both proxies and endpoints) can be registered to the peripheral servers. 
 A typical Hub topology looks like this:
 
-image::typical-hub-architecture-overview.svg
+image::typical-hub-architecture-overview.svg[Hub Architecture, scaledwidth="85%", align="center"]
+
 
 It is important to understand that the peripherals are all independent SUSE Manager servers. Immediately, we can see the value of this notion in the MSP environment – each customer could have a dedicated SUSE Manager server. This would address concerns about separation of customers, while the hub will still allow centralized control for the Service Provider.
 However, this means that activation keys, bootstrap, repositories, system groups etc need to be created on each peripheral. Similarly, custom Salt states that you create will need to be manually copied to the peripherals. Unfortunately, there is currently  no way to automatically synchronize these between the hub and the peripherals. However, SUSE have developed a set of Salt modules, states and formulas that allow management of Organizations, Users, System Groups, activation keys etc on peripheral servers 
