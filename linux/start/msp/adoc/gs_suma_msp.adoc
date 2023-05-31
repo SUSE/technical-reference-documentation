@@ -143,7 +143,7 @@ This would address isolation, but it is somewhat inefficient because of the need
 * Organizations
 * Content lifecycle management
 * Hub and peripherals
-* Inter-server sync
+* Inter-Server Synchronization
 
 
 === Organizations
@@ -180,10 +180,12 @@ Synchronizing these components between hub and peripherals is a manual process. 
 ====
 
 
-=== Inter-server Sync
+=== Inter-Server Synchronization
 
-If you have more than one SUSE Manager installation like this, you will need to copy content between servers – specifically, from the hub to the peripherals. Inter-Server Synchronization (ISS) allows you to export data from one server (source) and import it on another (target) server. 
-Because the peripheral servers will get all their content from the hub, a nice side benefit of this solution is that the peripheral servers do not need internet access. Only the hub needs to access external source such as SCC.
+With multiple {product1} servers in a hub and peripheral architecture, you need to ensure that content and permissions stay aligned.
+https://{product1_docs}/administration/iss.html[Inter-Server Synchronization (ISS)] allows you to connect two or more {product1} servers and keep them up-to-date.
+Since only the hub needs access to an external source (such as SCC), a side benefit is that peripheral servers do not require Internet access.
+
 
 == Deployment
 
