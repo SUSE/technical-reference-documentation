@@ -189,16 +189,25 @@ Since only the hub needs access to an external source (such as SCC), a side bene
 
 == Deployment
 
+{product1} can be deployed onto bare metal or virtual machines, running on-premises or in cloud environments.
+
+
+
 === Prerequisites
 
-When sizing SUSE Manager servers, the most important variables are disk space for the package repositories and database and CPU and memory. The latter typically depends on the number of clients. You can see the standard recommendations here:
-https://documentation.suse.com/suma/4.3/en/suse-manager/installation-and-upgrade/hardware-requirements.html
+When sizing servers for {product1}, the most important variables are CPU, RAM, and disk storage.
+Review https://{product1_docs}/installation-and-upgrade/hardware-requirements.html[{product1} Hardware requirements] for recommendations.
 
-The hub server is somewhat of a special case. Our hub server will have very few clients – probably just the peripheral servers and maybe a few test clients.   However, CPU and memory are very important because the import and export operations involve a lot of SQL transactions. For this reason, we recommend 8 dedicated cores and a minimum of 64GB of RAM for the hub. 
-Moreover, importing and exporting content requires significant amount of space for the database. Accordingly, the database location `/var/lib/pgsql` needs to be bigger on both hub and peripherals because of these import and export activities – we recommend at least 100GB for both hub and peripherals.
-Otherwise. the peripheral servers are all independent SUSE Managers, so all of the usual sizing guidelines apply.  
+For this guide, the hub and peripheral servers will have very few clients, but import and export operations involve a lot of SQL transactions and, potentially, significant storage for the database (located in `/var/lib/pgsql`).
+The recommended configuration for both hub and peripheral servers is:
 
-Finally, their must be some way to transfer the data between the hub and peripherals. Ideally, this could be through a NFS filesystem that is shared between all of the servers. If this is not possible, the next best alternative would be to copy the data across the network – for example, using rsync. 
+* CPU: 8 CPU cores
+* RAM: 64 GB
+* Storage: 100 GB
+ 
+A way to transfer data between the hub and peripherals is also needed.
+Ideally, this could be through a shared (NFS) filesystem, but you can also just copy the data across the network (such as with `rsync`). 
+
 
 === Creating the Hub Server
 
