@@ -50,6 +50,7 @@ include::./common_docinfo_vars.adoc[]
 :product1_full: SUSE Manager
 :product1_version: 4.3
 :product1_url: Primary SUSE product/platform URL (without the protocol)
+:product1_docs: documentation.suse.com/suma/{product1_version}/en/suse-manager
 :product2: Secondary product short name
 :product2_full: Secondary product full name
 :product2_url: Secondary product URL
@@ -163,20 +164,21 @@ This ensures that each customer receives only the patches that are appropriate t
 
 === Hub and peripherals
 
-https://documentation.suse.com/suma/4.3/en/suse-manager/specialized-guides/large-deployments/multi-server.html[{product1} Hub] was introduced to manage very large deployments by allowing horizontal scaling to multiple servers.
-In this configuration, one {product1} server acts as the central (or *Hub*) server.
-Then one or more additional {product1} servers (or *peripherals*) are registered to the Hub as Salt clients.
-Any number of clients (proxies and endpoints) can be registered to the peripheral servers.
+https://{product1_docs}/specialized-guides/large-deployments/multi-server.html[{product1} Hub] was introduced to manage very large deployments by allowing horizontal scaling to multiple servers.
 
-A typical {product1} Hub and peripheral topology is illustrated here:
+image::typical-hub-architecture-overview.svg[Hub and peripheral topology, scaledwidth="85%", align="center"]
 
-image::typical-hub-architecture-overview.svg[Hub Architecture, scaledwidth="85%", align="center"]
+In this hub and peripheral topology, one {product1} server acts as the central (or *hub*) server for one or more *peripheral* {product1} servers to which any number of client systems can be registered.
+Each peripheral server is an independent {product1} server.
+By dedicating a peripheral server for each customer, an MSP can address concerns about separation of customers while still allowing centralized control.
 
+[NOTE]
+====
+Activation keys, bootstrap, repositories, system groups, and so on need to be createdon each peripheral.
+Similarly, any custom Salt states you create must be manually copied to the appropriate peripheral.
+Synchronizing these components between hub and peripherals is a manual process.  However, SUSE provides a set of Salt modules, states, and formulas that allow management of organizations, users, system groups, activation keys, and other settings on peripheral servers.
+====
 
-It is important to note that each peripheral server is an independent {product1} server.
-
-Immediately,  see the value of this notion in the MSP environment – each customer could have a dedicated SUSE Manager server. This would address concerns about separation of customers, while the hub will still allow centralized control for the Service Provider.
-However, this means that activation keys, bootstrap, repositories, system groups etc need to be created on each peripheral. Similarly, custom Salt states that you create will need to be manually copied to the peripherals. Unfortunately, there is currently  no way to automatically synchronize these between the hub and the peripherals. However, SUSE have developed a set of Salt modules, states and formulas that allow management of Organizations, Users, System Groups, activation keys etc on peripheral servers 
 
 === Inter-server Sync
 
