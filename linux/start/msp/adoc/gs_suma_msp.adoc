@@ -118,19 +118,19 @@ You should have a basic familiarity with {product1} and with typical procedures 
 
 == Solution Design
 
-Managing a large and growing IT footprint can be challenge for any enterprise.
+Managing a large and growing IT footprint can be a challenge for any enterprise.
 Managed services providers (MSPs) must do this for multiple clients.
 A single {product1} server could be used to manage all customer systems.
 But there are key concerns with this approach, such as:
 
 Scaling::
 {product1} is designed as a single server that can manage up to 10000 clients.
-An MSP with multiple large customers could reach this limit fairly easily.
+An MSP with multiple large customers could reach this limit quickly.
 To accommodate this, {product1} can be scaled horizontally by adding {product1} servers.
 
 Separation of entitlements::
-{product1} uses customer credentials to access software entitlements from upstream providers like, for example, the SUSE Customer Center (SCC).
-It would not be a good idea to mix the entitlements of multiple customers in a single environment – it would be difficult to keep track of which managed systems are entitled to which products.
+{product1} uses customer credentials to access software entitlements from upstream providers, such as the https://scc.suse.com/[SUSE Customer Center (SCC)].
+It is not a good idea to mix the entitlements of multiple customers in a single environment, as it would be difficult to keep track of which managed systems are entitled to which products.
 
 Access control and user isolation::
 In situations where customers would expect access to {product1}, an MSP would need some way to isolate each customer’s users so they can only see and manage their own systems.
@@ -140,36 +140,42 @@ This would address isolation, but it is somewhat inefficient because of the need
 {product1} empowers MSPs and large enterprises to address these concerns through:
 
 * Organizations
-* Content Lifecycle Management
-* Hub and Peripherals
-* Inter-server Sync
+* Content lifecycle management
+* Hub and peripherals
+* Inter-server sync
 
 
 === Organizations
 
+Organizations form the basic building blocks of the solution.
 Organizations manage user access and permissions within a single {product1} server.
 You can think of an organization as a separate management environment with its own managed systems, users, and software channels.
-Organizations form the basic building blocks of the solution.
-You create one organization for each end customer, enabling you to keep the various managed systems, users, and software channels separate.
+You create one organization for each customer, enabling you to keep separate the various managed systems, users, and software channels.
 
 
 === Content lifecycle management
 
-Content lifecycle management involves creating clones of software channels at particualr point in time and assigning these to dofferent systems.
-This is typically used to create multi-stage lifecycles where patches are passed from vendor channels to a development environment, from there to a test stage and then finally to production.
-In our case, we will create separate lifecycles for each customer.
-In this way, we can ensure that each customer receives only the patches that are appropriate to their respective software lifecycle needs even though they might all be based on the same upstream channels.
+Content lifecycle management involves creating clones of software channels at particualr points in time and assigning these to different systems.
+This is used to create multi-stage lifecycles where patches are passed from vendor channels to a development environment, from there to a test stage, and then to production.
+MSPs can create separate lifecycles for each customer.
+This ensures that each customer receives only the patches that are appropriate to its respective software lifecycle needs even though the patches may be based on the same upstream channels.
 
 
-=== Hubs and Peripherals
+=== Hub and peripherals
 
-The SUSE Manager Hub concept was initially introduced to manage very large deployments by allowing horizontal scaling to multiple servers.  Essentially, one central SUSE Manager Server acts as the Hub Server and one or more additional SUSE Manager Servers, known as peripherals, are registered to the Hub as Salt clients. Any number of clients (both proxies and endpoints) can be registered to the peripheral servers. 
-A typical Hub topology looks like this:
+https://documentation.suse.com/suma/4.3/en/suse-manager/specialized-guides/large-deployments/multi-server.html[{product1} Hub] was introduced to manage very large deployments by allowing horizontal scaling to multiple servers.
+In this configuration, one {product1} server acts as the central (or *Hub*) server.
+Then one or more additional {product1} servers (or *peripherals*) are registered to the Hub as Salt clients.
+Any number of clients (proxies and endpoints) can be registered to the peripheral servers.
+
+A typical {product1} Hub and peripheral topology is illustrated here:
 
 image::typical-hub-architecture-overview.svg[Hub Architecture, scaledwidth="85%", align="center"]
 
 
-It is important to understand that the peripherals are all independent SUSE Manager servers. Immediately, we can see the value of this notion in the MSP environment – each customer could have a dedicated SUSE Manager server. This would address concerns about separation of customers, while the hub will still allow centralized control for the Service Provider.
+It is important to note that each peripheral server is an independent {product1} server.
+
+Immediately,  see the value of this notion in the MSP environment – each customer could have a dedicated SUSE Manager server. This would address concerns about separation of customers, while the hub will still allow centralized control for the Service Provider.
 However, this means that activation keys, bootstrap, repositories, system groups etc need to be created on each peripheral. Similarly, custom Salt states that you create will need to be manually copied to the peripherals. Unfortunately, there is currently  no way to automatically synchronize these between the hub and the peripherals. However, SUSE have developed a set of Salt modules, states and formulas that allow management of Organizations, Users, System Groups, activation keys etc on peripheral servers 
 
 === Inter-server Sync
