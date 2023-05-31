@@ -209,13 +209,21 @@ A way to transfer data between the hub and peripherals is also needed.
 Ideally, this could be through a shared (NFS) filesystem, but you can also just copy the data across the network (such as with `rsync`). 
 
 
-=== Creating the Hub Server
+=== Creating the hub server
 
-The hub server can be installed following the standard SUSE Manager method as documented here: https://documentation.suse.com/suma/4.3/en/suse-manager/quickstart/quickstart-install-suma-server.html
+The hub server can be installed following the standard {product1} method as documented in the https://{product1_docs}/quickstart/quickstart-install-suma-server.html[quickstart guide].
 
-To create a new hub server, you need to install the hub-xmlrpc-api package, and configure the Hub Server to use the API.
+[NOTE]
+====
+Commands shown here should be issued as the root user.
+====
 
-. On the Hub Server you should install the hub-xmlrpc-api package. The package is available in the SUSE Manager 4.3 repositories so can be installed with a simple command.
+To create a new hub server, you need to install and enable the Hub XMLRPC API service.
+
+. On the hub server, install the `hub-xmlrpc-api` package.
+//
++
+The package is available in the {product1} repositories, so can be installed with a simple command.
 +
 [source, console]
 ----
@@ -230,17 +238,43 @@ systemctl enable hub-xmlrpc-api.service
 systemctl start hub-xmlrpc-api.service
 ----
        
-. Check that these parameters in the /etc/hub/hub.conf configuration file are correct:
-** HUB_API_URL: URL to the Hub Server XMLRPC API endpoint. Use the default value if you are installing hub-xmlrpc-api on the Hub Server.
-** HUB_CONNECT_TIMEOUT: the maximum number of seconds to wait for a response when connecting to a Server. Use the default value in most cases.
-** HUB_REQUEST_TIMEOUT: the maximum number of seconds to wait for a response when calling a Server method. Use the default value in most cases.
-** HUB_CONNECT_USING_SSL: use HTTPS instead of HTTP for communicating with peripheral Servers. Recommended for a secure environment.
+. Check that these parameters in the `/etc/hub/hub.conf` configuration file are correct:
++
+--
 
-. if necessary, restart services to pick up any configuration changes you make.
+* HUB_API_URL: URL to the Hub Server XMLRPC API endpoint.
+//
++
+Use the default value.
 
-NOTE: To use HTTPS to connect to peripheral Servers, you must set the HUB_CONNECT_USING_SSL parameter to true, and ensure that the SSL certificates for all the peripheral Servers are installed on the machine where the hub-xmlrpc-api service runs. Do this by copying the RHN-ORG-TRUSTED-SSL-CERT certificate file from each peripheral Server’s http://<server-url>/pub/ directory to /etc/pki/trust/anchors/ and run update-ca-certificates.
+* HUB_CONNECT_TIMEOUT: the maximum number of seconds to wait for a response when connecting to a Server.
+//
++
+Use the default value in most cases.
 
-=== Onboarding New Customers
+* HUB_REQUEST_TIMEOUT: the maximum number of seconds to wait for a response when calling a Server method.
+//
++
+Use the default value in most cases.
+
+* HUB_CONNECT_USING_SSL: use HTTPS instead of HTTP for communicating with peripheral Servers.
+//
++
+This is recommended for a secure environment.
+To use HTTPS to connect to peripheral servers, you must set the HUB_CONNECT_USING_SSL parameter to `true` and ensure that the SSL certificates for all the peripheral servers are installed on the system where the Hub XMLRPC API service runs.
+Do this by copying the RHN-ORG-TRUSTED-SSL-CERT certificate file from each peripheral server’s `http://<server-url>/pub/` directory to `/etc/pki/trust/anchors/`, then run `update-ca-certificates`.
+
+--
+
+. Restart services to activate any configuration changes you make.
++
+[source, console]
+----
+sudo systemctl restart hub-xmlrpc-api.service
+----
+
+
+=== Onboarding new customers
 
 As each customer is added to the system, you will need to add their SUSE Customer Center credentials to the hub server. This is so that their software entitlements can be replicated from SCC to the hub. Do not create a separate organization for each customer - this will aloow us to properly synchronize Content Lifecycle channels later. SUSE Manager merges products coming from all SCC Credentials which give a single centralized view of all products that are available on the hub. 
 You can then go ahead and install an new SUSE MAnager server for this customer.
