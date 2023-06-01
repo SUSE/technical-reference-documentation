@@ -171,7 +171,7 @@ This ensures that each customer receives only the patches that are appropriate t
 
 https://{product1_docs}/specialized-guides/large-deployments/multi-server.html[{product1} Hub] was introduced to manage very large deployments by allowing horizontal scaling to multiple servers.
 
-image::typical-hub-architecture-overview.svg[Hub and peripheral topology, scaledwidth="85%", align="center"]
+image::suma_msp_hub-architecture.svg[Hub and peripheral topology, scaledwidth="85%", align="center"]
 
 In this hub and peripheral topology, one {product1} server acts as the central (or *hub*) server for one or more *peripheral* {product1} servers to which any number of client systems can be registered.
 Each peripheral server is an independent {product1} server.
@@ -216,16 +216,22 @@ Ideally, this could be through a shared (NFS) filesystem, but you can also copy 
 
 === Create the hub server
 
-The hub server can be installed following the standard {product1} method as documented in the https://{product1_docs}/quickstart/quickstart-install-suma-server.html[quickstart guide].
+At the center of the architecture is the {product1} hub server.
+This server follows a standard installation and setup processes with the exception of enabling the Hub XMLRPC API service service.
 
 [NOTE]
 ====
 Commands shown here should be issued as the root user.
 ====
 
-To create a new hub server, you need to install and enable the Hub XMLRPC API service.
+. Install {product1} Server on the designated hub system.
+//
++
+See the https://{product1_docs}/installation-and-upgrade/installation-and-upgrade-overview.html[{product1} Installation and Upgrade Guide].
 
-. On the hub server, install the `hub-xmlrpc-api` package.
+. To make this a hub server, you need to install and enable the Hub XMLRPC API service.
+
+.. On the hub server, install the `hub-xmlrpc-api` package.
 //
 +
 The package is available in the {product1} repositories, so can be installed with a simple command.
@@ -235,7 +241,7 @@ The package is available in the {product1} repositories, so can be installed wit
 zypper install hub-xmlrpc-api
 ----
 
-. Set the Hub XMLRPC API service to start automatically at boot time, and start it immediately:
+.. Set the Hub XMLRPC API service to start automatically at boot time, and start it immediately:
 +
 [source, console]
 ----
@@ -243,7 +249,7 @@ systemctl enable hub-xmlrpc-api.service
 systemctl start hub-xmlrpc-api.service
 ----
        
-. Check that these parameters in the `/etc/hub/hub.conf` configuration file are correct:
+.. Check that these parameters in the `/etc/hub/hub.conf` configuration file are correct:
 +
 --
 
@@ -271,7 +277,7 @@ Do this by copying the RHN-ORG-TRUSTED-SSL-CERT certificate file from each perip
 
 --
 
-. Restart services to activate any configuration changes you make.
+.. Restart services to activate any configuration changes you make.
 +
 [source, console]
 ----
@@ -295,37 +301,83 @@ To properly synchronize content lifecycle channels later, do not create a separa
 
 === Create a peripheral server
 
-SUSE Manager should be installed on each peripheral in the normal manner. SUSE Services have developed processes to automate this  which is especially useful for situations where there will be a large number of such systems. However, manual installation is also fine.
-However it is done, after the basic installation is complete, the normal process for setting up SUSE Manager involves a number of steps including setting up the database, creating the admin user and configuring credentials for the SUSE Customer Center. When setting up a new peripheral server we need to follow these steps with the exception of the SCC connection. Peripherals will not connect to the SCC but rather will obtain content from the hub.
+Peripheral servers are {product1} servers you can dedicate to a customer.
+Creating a peripheral server follows the normal {product1} installation process.
+This includes setting up the server database and administrator account.
+However, instead of configuring the SCC connection, you configure the peripheral server to obtain SCC content from the hub.
 
-First, we need to setup the database and certificates
-. On the SUSE Manager Server, at the command line, use this command to begin setup:
 
+. Install {product1} Server on the peripheral server.
+//
++
+See the https://{product1_docs}/installation-and-upgrade/installation-and-upgrade-overview.html[{product1} Installation and Upgrade Guide].
+
+. Set up the database and certificates on the peripheral server.
+
+.. At the command line, initiate the setup wizard:
++
 [source, console]
 ----
 yast2 susemanager_setup
 ----
 
-. From the introduction screen select __SUSE Manager Setup__ > __Setup SUSE Manager from scratch__ and click __Next__ to continue.
-. Enter an email address to receive status notifications and click Next to continue. SUSE Manager can sometimes send a large volume of notification emails. You can disable email notifications in the Web UI after setup, if you need to. 
-. Enter your certificate information and a password. If you intend to use a custom SSL certificate, you need to have set this up first. 
-. Click __Next__ to continue.
-. From the __SUSE Manager Setup__ > __Database Settings__ screen, enter a database user and password and click Next to continue.
-. Click __Next__ to continue.
-. Click __Yes__ to run setup when prompted, and wait for it to complete.
-. Click __Next__ to continue. Make a note of the address of the SUSE Manager Web UI.
-. Click __Finish__ to complete SUSE Manager setup.
+.. From the introduction screen, select __SUSE Manager Setup__ > __Setup SUSE Manager from scratch__ and click __Next__ to continue.
 
-Next we need to create the admin user and main organization. It is important that this should be the same on each peripheral as on the hub, 
-. In your browser, enter the address provided after completing setup. With this address you open the SUSE Manager Web UI.
-. In the Web UI, navigate to the __Create Organization__ > __Organization Name__ field and enter your organization name.
-. In the __Create Organization__ > __Desired Login__ and __Create Organization__ > __Desired Password__ fields, enter your username and password.
-. Fill in the Account Information fields including an email for system notifications.
-. Click __Create Organization__ to finish creating your administration account.
+.. Enter an email address to receive status notifications and click __Next__ to continue.
+//
++
+{product1} can sometimes send a large volume of notification emails.
+You can disable email notifications in the Web UI after setup, if you need to.
+
+.. Enter your certificate information and a password, then click __Next__.
+//
++
+[IMPORTANT]
+====
+If you intend to use a custom SSL certificate, you need to have set this up first.
+====
+
+.. From __SUSE Manager Setup__ > __Database Settings__, enter a database user and password, then click __Next__.
+
+.. Click __Next__ to continue.
+
+.. Click __Yes__ to run the setup and wait for it to complete.
+
+.. Click __Next__ to continue.
++
+[TIP]
+====
+Make note of the URL to the {product1} Web UI.
+====
+
+.. Click __Finish__ to complete {product1} setup.
+
+
+. Create organization and the {product1} Administrator account.
+//
++
+[IMPORTANT]
+====
+The organization name and administrator account should match those on the hub server.
+====
+
+.. In your browser, enter the URL to the {product1} Web UI noted during setup.
+
+.. Select __Create Organization__.
+
+.. Fill in the fields.
++
+image::suma_msp_create-org.png[Setup: Create Organization, scaledwidth="85%"]
+
+. Click __Create Organization__.
         
-You are now presented with the __SUSE Manager Home__ > __Overview page__. After this, you would normally proceed to enter SCC credentials and synchronize the SUSE Linux Enterprise product channels from SUSE Customer Center. However, we will not do that here. Instead, we will proceed to register this server as a peripheral of our hub.
+After creating the organization, you are presented with the __SUSE Manager Home__ > __Overview page__.
+In a single {product1} server architecture, you would normally proceed to enter SCC credentials and synchronize the SUSE Linux Enterprise product channels.
+Instead, you next register this server as a peripheral of the hub.
 
-=== Register a Peripheral
+
+
+=== Register a peripheral server
 
 Peripheral servers must be registered to the Hub Server as Salt clients. When you register the peripheral servers, you must assign them the appropriate SUSE Manager Server software channel as their base channel.  The best way to do this is to create a specific Activation Key for new peripherals and assign the the appropriate channel as the default base channel for this key.
 
@@ -342,12 +394,13 @@ There are a couple of ways to register new clients, we will look at using the We
 . Click __Bootstrap__ to begin registration.
 When the bootstrap process has completed, your client is listed at __Systems__ > __System List__. The peripheral server can now be managed as a standard salt client of the hub. 
 
-== Synchronizing Content
+
+
+== Synchronize content
 
 === Installing the ISS Package
 To use Inter Server Sync, you need to install the inter-server-sync package on source and target servers.
 
-+
 [source, console]
 ----
 zypper install inter-server-sync
