@@ -211,7 +211,7 @@ The recommended configuration for both hub and peripheral servers is:
 * Storage: 100 GB
  
 A way to transfer data between the hub and peripherals is also needed.
-Ideally, this could be through a shared (NFS) filesystem, but you can also just copy the data across the network (such as with `rsync`). 
+Ideally, this could be through a shared (NFS) filesystem, but you can also copy the data across the network (such as with `rsync`).
 
 
 === Creating the hub server
@@ -281,10 +281,16 @@ sudo systemctl restart hub-xmlrpc-api.service
 
 === Onboarding new customers
 
-The first step for onboarding a new customer involves adding the customer's SUSE Customer Center credentials to the hub server.
-This allows customer software entitlements can be replicated from SCC to the hub.
+Onboarding a new customer begins with adding the customer's SUSE Customer Center (SCC) credentials to the hub server.
+SUSE Manager merges products coming from all SCC credentials.
+This gives you a centralized view of all products that are available through the hub and enables replication of entitlements from the hub to peripheral servers.
+
+Follow https://{product1_docs}/installation-and-upgrade/server-setup.html#_synchronizing_products_from_suse_customer_center[Synchonizing Products from SUSE Customer Center] to onboard a customer.
+
+[IMPORTANT]
+====
 To properly synchronize content lifecycle channels later, do not create a separate organization for each new customer.
-SUSE Manager merges products coming from all SCC Credentials, which gives a centralized view of all products that are available through the hub. 
+====
 
 
 === Install SUSE Manager on a New Peripheral Server
