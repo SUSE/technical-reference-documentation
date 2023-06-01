@@ -214,7 +214,7 @@ A way to transfer data between the hub and peripherals is also needed.
 Ideally, this could be through a shared (NFS) filesystem, but you can also copy the data across the network (such as with `rsync`).
 
 
-=== Creating the hub server
+=== Create the hub server
 
 The hub server can be installed following the standard {product1} method as documented in the https://{product1_docs}/quickstart/quickstart-install-suma-server.html[quickstart guide].
 
@@ -279,7 +279,7 @@ sudo systemctl restart hub-xmlrpc-api.service
 ----
 
 
-=== Onboarding new customers
+=== Onboard new customers
 
 Onboarding a new customer begins with adding the customer's SUSE Customer Center (SCC) credentials to the hub server.
 SUSE Manager merges products coming from all SCC credentials.
@@ -293,7 +293,7 @@ To properly synchronize content lifecycle channels later, do not create a separa
 ====
 
 
-=== Install SUSE Manager on a New Peripheral Server
+=== Create a peripheral server
 
 SUSE Manager should be installed on each peripheral in the normal manner. SUSE Services have developed processes to automate this  which is especially useful for situations where there will be a large number of such systems. However, manual installation is also fine.
 However it is done, after the basic installation is complete, the normal process for setting up SUSE Manager involves a number of steps including setting up the database, creating the admin user and configuring credentials for the SUSE Customer Center. When setting up a new peripheral server we need to follow these steps with the exception of the SCC connection. Peripherals will not connect to the SCC but rather will obtain content from the hub.
@@ -301,7 +301,6 @@ However it is done, after the basic installation is complete, the normal process
 First, we need to setup the database and certificates
 . On the SUSE Manager Server, at the command line, use this command to begin setup:
 
-+
 [source, console]
 ----
 yast2 susemanager_setup
