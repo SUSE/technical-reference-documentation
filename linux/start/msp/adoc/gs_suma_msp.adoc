@@ -96,36 +96,34 @@ include::./common_docinfo_vars.adoc[]
 
 The Linux footprint of enterprise IT landscapes continues to grow.
 This growth can be particularly problematic for a managed services provider (MSP), who may need to manage systems lifecycles for many clients.
-You need a management tool that can scale with your business needs.
+As an MSP, you need a management tool that can scale with your business needs.
 
 {product1_full} {product1_version} is an enterprise, open source management solution for software-defined infrastructure.
-{product1} is designed to help enterprises reduce complexity and regain control of IT assets with a single tool.
-It provides systems asset management, systems provisioning, and automated software management to help you keep your systems up-to-date and secure.
+It is designed to help enterprises reduce complexity and regain control of IT assets with a single tool.
+{product1} provides you with systems asset management, systems provisioning, and automated software management to help you keep all your systems up-to-date and secure.
 
 {product1} easily scales to satisfy your technical and business requirements without compromising on operational performance.
-Seamlessly manage a broad spectrum of Linux systems on a variety of hardware architectures and hypervisors as well as container, IoT, and cloud platforms.
-Unify system lifecycle management across your entire IT landscape.
-
-
-{product1} delivers flexibility and peace of mind that you can grow and manage your IT landscape efficiently and effectively.
+It gives you the features and automation in a single tool to seamlessly manage a broad spectrum of Linux systems on a variety of hardware architectures and hypervisors as well as container, IoT, and cloud platforms.
+With {product1}, you can unify systems lifecycle management, streamline operations, and manage your growing IT landscape efficiently and effectively.
 
 
 === Scope
 
-This document explains an architecture that enables service providers to leverage {product1} to offer systems lifecycle management as a service to their clients.
-This document describes the use of a central server to consolidate management operations while maintaining the advantages of independent servers for each customer.
+You learn how to deploy {product1} to support unified systems lifecycle management for multiple, downstream customers.
+The hub and peripheral architecture described here enables managed services providers and large enterprises to consolidate management operations while maintaining the advantages of independent servers for each customer.
 
 
 === Audience
 
-This document is intended for IT professionals at managed services providers, who are responsible for delivering systems lifecycle mangement for their customers.
+Platform engineers and systems administrators of managed services providers and large enterprises - who are responsible for delivering systems lifecycle management for multiple customers, organizations, or business units - will find useful guidance in this document.
+
 You should have a basic familiarity with {product1} and with typical procedures for provisioning and patching Linux systems to get the most out of this document.
 
 
-== Solution Design
+== Solution design
 
 Managing a large and growing IT footprint can be a challenge for any enterprise.
-Managed services providers (MSPs) must do this for multiple clients.
+Managed services providers (MSPs) must do this for multiple customers.
 A single {product1} server could be used to manage all customer systems.
 But there are key concerns with this approach, such as:
 
@@ -185,25 +183,24 @@ Synchronizing these components between hub and peripherals is a manual process. 
 ====
 
 
-=== Inter-Server Synchronization
+=== Inter-Server Synchronization (ISS)
 
 With multiple {product1} servers in a hub and peripheral architecture, you need to ensure that content and permissions stay aligned.
 https://{product1_docs}/administration/iss.html[Inter-Server Synchronization (ISS)] allows you to connect two or more {product1} servers and keep them up-to-date.
 Since only the hub needs access to an external source (such as SCC), a side benefit is that peripheral servers do not require Internet access.
 
 
-== Deployment
-
-{product1} can be deployed onto bare metal or virtual machines, running on-premises or in cloud environments.
-
-
-
-=== Prerequisites
+== Prerequisites
 
 When sizing servers for {product1}, the most important variables are CPU, RAM, and disk storage.
 Review https://{product1_docs}/installation-and-upgrade/hardware-requirements.html[{product1} Hardware requirements] for recommendations.
 
-For this guide, the hub and peripheral servers will have very few clients, but import and export operations involve a lot of SQL transactions and, potentially, significant storage for the database (located in `/var/lib/pgsql`).
+For this guide, you need two systems.
+These can be bare metal or virtual machines.
+One will act as a hub server and the other will act as a peripheral server.
+
+As these servers will have very few clients, they do not need to follow normal sizing recommendations.
+However, import and export operations involve a lot of SQL transactions and, potentially, significant storage for the database (located in `/var/lib/pgsql`).
 The recommended configuration for both hub and peripheral servers is:
 
 * CPU: 8 CPU cores
@@ -212,6 +209,13 @@ The recommended configuration for both hub and peripheral servers is:
  
 A way to transfer data between the hub and peripherals is also needed.
 Ideally, this could be through a shared (NFS) filesystem, but you can also copy the data across the network (such as with `rsync`).
+
+
+== Deployment
+
+{product1} can be deployed onto bare metal or virtual machines, running on-premises or in cloud environments.
+
+
 
 
 === Create the hub server
