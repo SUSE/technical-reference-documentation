@@ -51,9 +51,6 @@ include::./common_docinfo_vars.adoc[]
 :product1_version: 4.3
 :product1_url: www.suse.com/products/suse-manager/
 :product1_docs: documentation.suse.com/suma/{product1_version}/en/suse-manager
-:product2: Secondary product short name
-:product2_full: Secondary product full name
-:product2_url: Secondary product URL
 
 :usecase: {product1} can enable managed services providers to streamline asset and lifecycle management across multi-client landscapes
 
@@ -66,17 +63,17 @@ include::./common_docinfo_vars.adoc[]
 // specify information about authors, editors, and others here,
 // then update docinfo file as appropriate
 // -
-:author1_firstname: first (given) name
-:author1_surname: surname
-:author1_jobtitle: job title
-:author1_orgname: organization affiliation
-:author2_firstname: first (given) name
-:author2_surname: surname
-:author2_jobtitle: job title
-:author2_orgname: organization affiliation
+:author1_firstname: Mark
+:author1_surname: Gonnelly
+:author1_jobtitle: Solution architect
+:author1_orgname: SUSE
+:author2_firstname: Dominic
+:author2_surname: Geevarghese
+:author2_jobtitle: Solution architect
+:author2_orgname: SUSE
 :author3_firstname: Terry
 :author3_surname: Smith
-:author3_jobtitle: Global partner solutions director
+:author3_jobtitle: Director, global partner solutions
 :author3_orgname: SUSE
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -400,7 +397,7 @@ The peripheral server can now be managed as a standard Salt client of the hub.
 
 
 
-== Synchronizing Content
+== Synchronizing content
 
 === Install Inter-Server Synchronization
 
@@ -477,7 +474,7 @@ For a full list supported clients and features, see https://{product1_docs}/clie
 
 There are three ways to register clients to a {product1} server:
 
-* https://{product1_docs}/client-configuration/registration-webui.html[with the Web UI]
+* https://{product1_docs}/client-configuration/registration-webui.html[through the Web UI]
 
 * https://{product1_docs}/client-configuration/registration-bootstrap.html[with a bootstrap script]
 
@@ -487,7 +484,7 @@ For bootstrap and command line methods, you must first create an https://{produc
 
 [IMPORTANT]
 ====
-For all methods, the client must have the date and time synchronized with the {product1} server.
+For all methods, date and time on the client must be synchronized with the {product1} server.
 ====
 
 For details on client configuration, see the https://{product1_docs}/client-configuration/client-config-overview.html[Client Configuration Guide].
@@ -562,7 +559,7 @@ For details on client configuration, see the https://{product1_docs}/client-conf
 // * Auto-connect mode: credentials are reused for each server, and any peripheral server you have access to is automatically connected.
 // 
 
-=== Reporting
+== Reporting
 
 Every {product1} peripheral server has its own reporting (PostgreSQL) database, where information is collected for that server and its registered clients.
 The {product1} hub server aggregates and stores information collected from all the peripheral servers in its own reporting database.
