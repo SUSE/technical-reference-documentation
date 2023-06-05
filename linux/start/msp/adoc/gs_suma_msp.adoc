@@ -400,15 +400,12 @@ The peripheral server can now be managed as a standard Salt client of the hub.
 
 
 
-== Synchronizing content
+== Synchronizing Content
 
-=== Enable Inter-Server Synchronization (ISS)
+=== Install Inter-Server Synchronization
 
-Inter-Server Synchronization (ISS) helps you keep your {product1} peripheral servers up-to-date with your hub.
-That is, it helps you ensure that content and permissions stay aligned.
-
-The `inter-server-sync` package must be installed on both source (hub) and target (peripheral) servers.
-Do this with the command:
+To use Inter-Server Synchronization (ISS), you need to install the `inter-server-sync` package on hub and peripheral {product1} servers.
+This is easily accomplished by issuing the following command:
 
 [source, console]
 ----
@@ -416,18 +413,25 @@ zypper install inter-server-sync
 ----
 
 
-=== Build Customer-Specific CLM Channels
+=== Build customer-specific content lifecycle management
 
-With {product1} you can create customer-specific channels for robust Content Lifecycle Management.
+As an MSP, you manage the systems lifecycles of many customers.
+Managing the testing and rollout of software packages to your customers can be challenging.
+Moreover, your customers may have each have different software needs, testing requirements, and deployment schedules.
+{product1} provides the flexibility you need to define and manage content lifecycles for your business and your customers.
 
-// More here 
+You begin by creating customer-specific software channels and assigning these to appropriate, managed clients.
+
+// Mark: Can we include some specific steps here ... an example the reader can follow?
 
 
-=== Export and Import CLM Channels
+To learn more, see https://{product1_docs}/administration/content-lifecycle.html[Content Lifecycle Management].
 
-// This needs to be fleshed out and formatted
 
-Use the `inter-server-sync` command to export the CLM channels from the hub to a local filesystem directory.
+
+=== Export and import content
+
+After defining customer-specific channels as part of your content lifecycle management, you can use the `inter-server-sync` command to export these channels from the {product1} hub to a local filesystem directory.
 For example:
 
 [source, console]
@@ -435,11 +439,34 @@ For example:
 inter-server-sync export –channel-with-children
 ----
 
-Once the epxort is complete, you can now transfer this to the peripheral server eitehr through a common NFS mount or some other method.
+[TIP]
+====
+Get detailed help on the ISS export command with `inter-server-sync export -h`.
+====
 
-On the target server, on the command line execute the ISS import command. The -h option provides detailed help:
 
-    inter-server-sync import -h
+// Mark: Where is this directory created?  Let's be walk the reader through a specific example.
+
+
+When the export is complete, you need to transfer the directory and its contents to the peripheral server.
+The simplest method is to use shared storage (such as a common NFS filesystem).
+You could also copy the exported channels over the network (such as with `rsync`).
+
+Next, import the content lifecycle management on the peripheral server with:
+
+[source, console]
+----
+inter-server-sync import ...
+----
+
+// Mark: Can we provide a specific example of the import?
+
+
+[TIP]
+====
+Get detailed help on the ISS import command with `inter-server-sync import -h`.
+====
+
 
 
 === Registering end-points
