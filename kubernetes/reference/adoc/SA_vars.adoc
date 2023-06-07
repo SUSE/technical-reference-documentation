@@ -2,6 +2,7 @@
 
 :companyName: SUSE
 :portfolioName: Rancher
+:logo: suse.svg
 
 :useCase: Enterprise Kubernetes
 
@@ -83,16 +84,42 @@ endif::RA,RC,RI,GS[]
 ifdef::RC[]
 :subtitle: Integrated with
 ifdef::iIHV[]
-ifdef::IHV-Ampere[:subtitle: {subtitle} {an_Ampere} (R) {familyAmpere-Altra} (R)]
-ifdef::IHV-Cisco[:subtitle: {subtitle} {vn_Cisco} (R)]
-ifdef::IHV-Dell[:subtitle: {subtitle} {vn_Dell} (R)]
-ifdef::IHV-Fujitsu[:subtitle: {subtitle} {vn_Fujitsu} (R)]
-ifdef::IHV-HPE[:subtitle: {subtitle} {vn_HPE} (R)]
-ifdef::IHV-HPQ[:subtitle: {subtitle} {vn_HPQ} (R)]
-ifdef::IHV-LNVGY[:subtitle: {subtitle} {vn_LNVGY} (R)]
-ifdef::IHV-IBM[:subtitle: {subtitle} {vn_IBM} (R)]
-ifdef::IHV-Lenovo[:subtitle: {subtitle} {vn_Lenovo} (R)]
-ifdef::IHV-SMCi[:subtitle: {subtitle} {vn_SMCi} (R)]
+ifdef::IHV-Ampere[]
+:subtitle: {subtitle} {an_Ampere} (R) {familyAmpere-Altra} (R)
+:logo: {companyName}-{an_Ampere}.svg
+endif::IHV-Ampere[]
+ifdef::IHV-Cisco[]
+:subtitle: {subtitle} {vn_Cisco} (R)
+:logo: {companyName}-{vn_Cisco}.svg
+endif::IHV-Cisco[]
+ifdef::IHV-Dell[]
+:subtitle: {subtitle} {vn_Dell} (R)
+:logo: {companyName}-{an_Dell}.svg
+endif::IHV-Dell[]
+ifdef::IHV-Fujitsu[]
+:subtitle: {subtitle} {vn_Fujitsu} (R)
+:logo: {companyName}-{an_Fujitsu}.svg
+endif::IHV-Fujitsu[]
+ifdef::IHV-HPE[]
+:subtitle: {subtitle} {vn_HPE} (R)
+:logo: {companyName}-{an_HPE}.svg
+endif::IHV-HPE[]
+ifdef::IHV-HPQ[]
+:subtitle: {subtitle} {vn_HPQ} (R)
+:logo: {companyName}-{vn_HPQ}.svg
+endif::IHV-HPQ[]
+ifdef::IHV-IBM[]
+:subtitle: {subtitle} {vn_IBM} (R)
+:logo: {companyName}-{an_IBM}.svg
+endif::IHV-IBM[]
+ifdef::IHV-LNVGY[]
+:subtitle: {subtitle} {vn_LNVGY} (R)
+:logo: {companyName}-{vn_LNVGY}.svg
+endif::IHV-LNVGY[]
+ifdef::IHV-SMCi[]
+:subtitle: {subtitle} {vn_SMCi} (R)
+:logo: {companyName}-{vn_SMCi}.svg
+endif::IHV-SMCi[]
 endif::iIHV[]
 endif::RC[]
 
