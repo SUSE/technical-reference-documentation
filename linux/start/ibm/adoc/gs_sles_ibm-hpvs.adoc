@@ -284,11 +284,11 @@ a|
 
 a|
 
-* Verify required hardware and Secure Execution feature code is enabled
-* Install and set up LPAR with KVM included in SLES for IBM Z and LinuxONE
-* Enable Secure Execution capabilities in KVM
-* Download the HPCR image
-* Set up a logging service for HPVS provisioning
+* <<Verify required hardware and enable IBM Secure Execution technology>>
+* <<Install and configure a LPAR with KVM included in SLES for IBM Z and LinuxONE>>
+* <<Enable Secure Execution capabilities on the KVM host>>
+* <<Download the HPCR image>>
+* <<Set up a rsyslog logging service for HPVS log information>>
 
 |===
 
@@ -334,7 +334,6 @@ image::arrow_down_jungle-green-50wide.png[Down arrow, align="center"]
 a|
 
 * <<Verify attestation and disk encryption>>
-* Recover or upgrade Hyper Protect Services confidential container workloads
 
 |===
 
@@ -461,7 +460,453 @@ Do not close the browser window or tab.
 
 === On-premises preparation
 
-NOTE: TO BE COMPLETED
+To simplify the preparation, the information and steps provided in following sections are consolidated from multiple documentation sources.  Links to the each documentation source is provided.
+
+==== Verify required hardware and enable IBM Secure Execution technology
+
+. Review the IBM Hyper Protect Virtual Servers 2.1.x https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#hardware-requirements[Hardware requirements]. 
+
+. Confirm that the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#additional-hardware-requirements-for-the-kvm-host[Feature Code 115 Secure Execution for Linux] has been ordered and installed.
+
+. Use the https://www.ibm.com/docs/en/linux-on-systems?topic=tasks-find-machine-serial[machine serial number] to https://www.ibm.com/docs/en/linux-on-systems?topic=execution-obtain-host-key-document[obtain the host key document] from IBM Resource Link.
+
+. https://www.ibm.com/docs/en/linux-on-systems?topic=execution-verify-host-key-document[Ensure the host key document] is genuine and provided by IBM.
+
+. https://www.ibm.com/docs/en/linux-on-systems?topic=tasks-key-bundles[Import] the host key document to complete the hardware enablement of the IBM Secure Execution technology.
+
+==== Install and configure a LPAR with KVM included in SLES for IBM Z and LinuxONE
+
+[NOTE]
+====
+This section provides installation configuration and guidance but does not provide a detailed set of steps.
+====
+
+. Use the recommendation in https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#additional-hardware-requirements-for-the-kvm-host[Additional hardware requirements for the KVM host] to define a LPAR.
++
+The following `lsblk` output is an example of the disk storage devices, sizes, lvm details, filesystem types and mountpoints used to test HPVS 2.1.x.
++
+[source, console]
+----
+NAME                                         SIZE FSTYPE       MOUNTPOINTS
+sde                                          500G mpath_member 
+├─sde1                                       500G LVM2_member  
+└─3600507638081855cd80000000000004a          500G              
+  └─3600507638081855cd80000000000004a-part1  500G LVM2_member  
+    └─vmsvg-vms                              500G xfs          /var/lib/libvirt/images
+sdj                                          500G mpath_member 
+├─sdj1                                       500G LVM2_member  
+└─3600507638081855cd80000000000004a          500G              
+  └─3600507638081855cd80000000000004a-part1  500G LVM2_member  
+    └─vmsvg-vms                              500G xfs          /var/lib/libvirt/images
+dasda                                        6.9G              
+├─dasda1                                     102M ext2         /boot/zipl
+└─dasda2                                     6.8G LVM2_member  
+  └─system-root                             13.6G btrfs        /
+dasdb                                        6.9G              
+└─dasdb1                                     6.9G LVM2_member  
+  └─system-root                             13.6G btrfs        /
+----
++
+At least one network interface must be defined.
+The following is the `lszdev qeth` output showing one OSA network interface has been defined.
++
+[source, console]
+----
+TYPE  ID                          ON   PERS  NAMES
+qeth  0.0.0800:0.0.0801:0.0.0802  yes  yes   eth0
+----
+
+. Use the https://documentation.suse.com/sles/15-SP4/single-html/SLES-deployment/#cha-zseries[Installation on IBM Z and LinuxONE] documentation to install the latest version of SUSE Linux Enterprise Server into the LPAR.
++
+The following is a list of recommended patterns to select during the installation.
++
+[listing]
+----
+Name          | Summary                           
+--------------+-----------------------------------
+apparmor      | AppArmor                          
+base          | Minimal Base System               
+enhanced_base | Enhanced Base System              
+hwcrypto      | System z HW crypto support        
+kvm_server    | KVM Host Server                   
+kvm_tools     | KVM Virtualization Host and tools 
+x11_yast      | YaST User Interfaces              
+yast2_basis   | YaST Base Utilities               
+----
++
+.. Register and fully patch the SLES installation.
+
+. Enable and start the KVM host
++
+[source, console]
+----
+systemctl enable --now libvirtd.service
+----
+
+[IMPORTANT]
+====
+A networking choice should be considered at this time.
+
+The https://www.ibm.com/docs/en/linux-on-systems?topic=recommendations-kvm-host-networking-configuration-choices[KVM Host Networking Configuration Choices] in the IBM documentation provides a detailed list of networking choices as well as pros and cons.
+
+* Using a Linux bridge with NAT for KVM guests
+* Using a Linux bridge (without NAT) for KVM guests
+* Using an Open vSwitch bridge with KVM guests
+* Using the MacVTap driver with KVM guests
+
+Confirm prerequisites like https://www.ibm.com/docs/en/linux-on-systems?topic=choices-osa-interface-traffic-forwarding[OSA interface traffic forwarding] are met for your choice of networking.
+
+This getting started guide will use the https://www.ibm.com/docs/en/linux-on-systems?topic=choices-using-macvtap-driver[MacVTap driver] in Bridge mode with the `eth0` interface.  
+No prerequites are required using MacVTap but it is important to review the `MacVTap isolation / limitations` section.
+
+An external DHCP server is required to provide networking information for the VMs using MacVTAP.
+====
+
+==== Enable Secure Execution capabilities on the KVM host
+
+. Enable https://www.ibm.com/docs/en/linux-on-systems?topic=tasks-enable-kvm-host[IBM Secure Execution]
+
+.. Append `prot_virt=1` to `GRUB_CMDLINE_LINUX_DEFAULT` in `/etc/default/grub`.
++
+The following is an example of the `GRUB_CMDLINE_LINUX_DEFAULT` line with `prot_virt=1` appended.
++
+[listing]
+----
+GRUB_CMDLINE_LINUX_DEFAULT="hvc_iucv=8 TERM=dumb mitigations=auto security=apparmor cio_ignore=all,!ipldev,!condev prot_virt=1"       
+----
+
+.. Recreate grub.cfg
++
+[source, console]
+----
+grub2-mkconfig -o /boot/grub2/grub.cfg
+----
+
+.. Reboot
+
+. Verify IBM Secure Execution is enabled with `virt-host-validate`.
++
+Verify the line has `PASS` in the ouput.
++
+[source, console]
+----
+  QEMU: Checking for secure guest support                                    : PASS
+----
+
+==== Download the HPCR image
+
+. Make a directory on the KVM host to store the HPCR image.
++
+[source, console]
+----
+mkdir /opt/hpvs-hpcr
+----
+
+. Download the latest version of the HPCR image from https://www-01.ibm.com/software/passportadvantage/pao_customer.html[IBM Passport Advantage] to the directory created in the previous step.
++
+[NOTE]
+====
+Verify if an IBM HPCR fix pack is available from https://www.ibm.com/support/fixcentral[IBM Fix Central].
+====
+
+. Verify the integrity and decompress the download following steps 5 - 6 of the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-downloading-hyper-protect-container-runtime-image#procedure[procedure].
+
+. Make a note of location and filename of qcow2 HPCR image[[note-hpcr-image-location]].
+For example, `ibm-hyper-protect-container-runtime-23.3.0.qcow2` is the filename which is located in the `/opt/hpvs-hpcr/IBM-HPVS-OnPrem-v2.1.4-EN-Trial/images`.
+
+==== Set up a rsyslog logging service for HPVS log information
+
+With the release of SLES 15 SP5, Minimal VM images for IBM Z and LinuxONE systems can be downloaded from https://www.suse.com/download/sles/[suse.com].
+Two KVM `qcow2` image file options are available - kvm and Cloud.
+The file name of the qcow2 image files will include either `kvm` or `Cloud` for differentiation.
+
+* The `kvm` image file will prompt during firstboot for information to customize items like hostname and networking information.
+* The `Cloud` image file uses cloud-init to customize the hostname and networking information.
+
+You can choose to manually install SLES with the installation media or use a pre-built SLES image file from SUSE.
+
+[NOTE]
+====
+This guide will provide the steps to use the `Cloud` image to deploy a rsyslog kvm virtual machine on the same KVM host where the confidential computing workload will be run.
+====
+
+. Make a directory to store the disk image and other files for the rsyslog VM.
++
+[source, console]
+----
+mkdir /var/lib/libvirt/images/rsyslog
+----
+
+. Download the SLES 15 SP5 Minimal VM Cloud qcow2 image file at https://www.suse.com/download/sles/[suse.com].
+Place the file in the `/var/lib/libvirt/images/rsyslog` directory.
+Name the file `rsyslog.qcow2`.
+
+. Create the following required cloud-init files.
+
+.. `vi /var/lib/libvirt/images/rsyslog/meta-data`
++
+[source, console]
+----
+local-hostname: rsyslog
+----
+
+.. `vi /var/lib/libvirt/images/rsyslog/user-data`
++
+[source, console]
+----
+#cloud-config
+ssh_authorized_keys:
+  - <public ssh key 1> <1>
+  - <public ssh key 2>
+----
++
+<1> where <public ssh key 1> and if needed <public ssh key 2> will be added to the authorized_keys file for the `sles` user.
++
+[NOTE]
+====
+This configuration requires an external DHCP server to provide the static networking information to the rsyslog server based on MAC address.
+Additional cloud examples for networking as well as other configurations can be found at the following.
+
+* https://documentation.suse.com/pt-br/sles/15-SP4/html/SLES-all/article-minimal-vm.html#sec-cloud-init-config-examples[cloud-init configuration examples]
+* https://en.opensuse.org/Portal:MicroOS/cloud-init[Configuration with cloud-init]
+* https://cloudinit.readthedocs.io/en/latest/reference/examples.html#cloud-config-examples[Cloud config examples]
+====
+
+. Generate a MAC address for the `rsyslog` VM.
+
+.. Create the `/root/bin/macgen.py` python script.
++
+[source, console]
+----
+#!/usr/bin/python3
+# macgen.py script to generate a MAC address for guests on KVM
+ 
+import random
+ 
+def randomMAC():
+    mac = [ 0x52, 0x54, 0x00,
+    random.randint(0x00, 0x7f),
+    random.randint(0x00, 0xff),
+    random.randint(0x00, 0xff) ]
+    return ':'.join(map(lambda x: "%02x" % x, mac))
+ 
+print(randomMAC())
+----
+
+.. Make the `macgen.py` script executable.
++
+[source, console]
+----
+chmod +x /root/bin/macgen.py
+----
+
+.. Run `macgen.py` and note the output.
+Here is an example when run.
++
+[source, console]
+----
+# macgen.py 
+52:54:00:5b:15:df
+----
+
+. Use the generated MAC address to define a host entry with a static IP address in your DHCP server.
+
+. Define and start the `rsyslog` VM with the following command.
++
+[source, console]
+----
+virt-install \
+--name=rsyslog \
+--osinfo sle15sp5 \
+--memory=2048 \
+--vcpus=2 \
+--clock offset=utc \
+--events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
+--disk /var/lib/libvirt/images/rsyslog/rsyslog.qcow2,driver.iommu=on,target.bus=virtio,boot.order=1 \
+--network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,mac.address=<macaddress> \ <1> 
+--console pty,target.type=sclp,target.port=0 \
+--audio id=1,type=none \
+--memballoon none \
+--panic s390 \
+--cloud-init user-data=/var/lib/libvirt/images/rsyslog/user-data,meta-data=/var/lib/libvirt/images/rsyslog/meta-data
+----
++
+<1> where <macaddress> was noted above.
++
+The VM console will be displayed and the VM will boot.
+The VM IP address is properly configured when the IP address is displayed next to `eth0`.
+For example:
++
+[source, console]
+----
+Welcome to SUSE Linux Enterprise Server 15 SP5  (s390x) - Kernel 5.14.21-150500.53.2-default (ttysclp0).
+
+eth0: 10.161.159.11 fe80::5054:ff:feb6:ad3e
+
+
+rsyslog login:
+----
++
+[NOTE]
+====
+Press `Ctrl + ]` keys to disconnect from the VM console.
+====
+
+. Log into the VM via ssh as the `sles` user from another system using the private portion of the ssh key defined above.
+
+. Register and fully patch SLES.
+
+.. Reboot if necessary.
+
+. Install the rsyslog packages.
++
+[source, console]
+----
+zypper in rsyslog rsyslog-module-gtls
+----
+
+. Generate self-signed certificates for encrypted communication from the HPCR instance to the rsyslog server.
+
+.. `mkdir /certs && cd /certs` to create and change into the directory.
+
+..  Create the following openssl configuration files.
++
+`/certs/ca.cnf`
++
+[source, console]
+----
+[ req ]
+default_bits = 2048
+default_md = sha256
+prompt = no
+encrypt_key = no
+distinguished_name = dn
+
+[ dn ]
+C = US
+O = rsyslog CA
+CN = ca.rsyslog
+----
++
+`/certs/rsyslog.cnf`
++
+[source, console]
+----
+[ req ]
+default_bits = 2048
+default_md = sha256
+prompt = no
+encrypt_key = no
+distinguished_name = dn
+
+[ server ]
+subjectAltName = IP:<ip address> <1>
+extendedKeyUsage = serverAuth
+
+[ dn ]
+CN = <ip address>
+----
++
+<1> where <ip address> is the IP address of the rsyslog VM.
++
+`/certs/slebci-paynow-website.cnf`
++
+[source, console]
+----
+[ req ]
+default_bits = 2048
+default_md = sha256
+prompt = no
+encrypt_key = no
+distinguished_name = dn
+
+[ server ]
+subjectAltName = IP:<ip address> <1>
+extendedKeyUsage = serverAuth
+
+[ dn ]
+CN = <ip address>
+----
++
+<1> where <ip address> is the IP address of the HPCR VM that will run the PayNow website application.
+
+.. Generate the key, certificate signing request and certificate for the certificate authority..
++
+[source, console]
+----
+openssl genrsa -out ca-key.pem 4096
+openssl req -config ca.cnf -key ca-key.pem -new -out ca-request.pem
+openssl x509 -signkey ca-key.pem -in ca-request.pem -req -days 3650 -out ca-cert.pem
+----
+
+.. Generate the key, certificate signing request and CA signed certificate for the rsyslog server.
++
+[source, console]
+----
+openssl genrsa -out rsyslog-key.pem 4096
+openssl req -config rsyslog.cnf -key rsyslog-key.pem -new -out rsyslog-request.pem
+openssl x509 -req -in rsyslog-request.pem -days 1000 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -extfile rsyslog.cnf -extensions server -out rsyslog-cert.pem
+----
+
+.. Generate the key, certificate signing request and CA signed certificate for the HPCR VM that will run the PayNow website.
++
+[source, console]
+----
+openssl genrsa -out slebci-paynow-website-key.pem 4096
+openssl req -config slebci-paynow-website.cnf -key slebci-paynow-website-key.pem -new -out slebci-paynow-website-request.pem
+openssl x509 -req -in slebci-paynow-website-request.pem -days 1000 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out slebci-paynow-website-cert.pem
+----
+
+. Create the rsyslog configuration to capture the logging information from the HPCR VM that will run the PayNow website.
++
+[source, console]
+----
+vi /etc/rsyslog.d/server.conf
+----
++
+[source, console]
+----
+# output to journal
+module(load="omjournal")
+template(name="journal" type="list") {
+# can add other metadata here
+property(outname="PRIORITY" name="pri")
+property(outname="SYSLOG_FACILITY" name="syslogfacility")
+property(outname="SYSLOG_IDENTIFIER" name="app-name")
+property(outname="HOSTNAME" name="hostname")
+property(outname="MESSAGE"  name="msg")
+}
+
+ruleset(name="journal-output") {
+# action(type="omjournal" template="journal")
+action(type="omfile" dirCreateMode="0766" FileCreateMode="0644" File="/var/log/hpcr.log") <1>
+}
+
+# make gtls driver the default and set certificate files
+$DefaultNetstreamDriver "gtls"
+$DefaultNetstreamDriverCAFile /certs/ca-cert.pem
+$DefaultNetstreamDriverCertFile /certs/rsyslog-cert.pem
+$DefaultNetstreamDriverKeyFile /certs/rsyslog-key.pem
+
+# load TCP listener
+module(
+load="imtcp"
+StreamDriver.Name="gtls"
+StreamDriver.Mode="1"
+StreamDriver.Authmode="x509/certvalid"
+)
+----
++
+<1> the logging information will be written to `/var/log/hpcr.log`.
+Comment out this line and uncomment the line above to write log information to the journal.
+
+. Enable, start and verify that the rsyslog service is `running`.
++
+[source, console]
+----
+systemctl enable --now rsyslog
+systemctl status rsyslog
+
 
 
 == Build, publish, and define
@@ -733,53 +1178,91 @@ tar -czvf - compose.yml | base64 -w0 > compose.b64
 ----
 vi slebci-paynow-website-contract.yml
 ----
+
+.. Add the logging configuration to the contract.
++
+Use the following if you <<Set up a logging service for HPVS for VPC provisioning>> in IBM Cloud.
++
+[source, yaml]
+----
+env: |
+  type: env
+  logging:
+    logDNA:
+      hostname: <hostname> <1>
+      port: 6514
+      ingestionKey: <ingestionKey>
+----
++
+<1> where <hostname> and <ingestionKey> were noted earlier.
++
+Use the following if you <<Set up a rsyslog logging service for HPVS log information>> for on-premises deployments.
++
+[source, yaml]
+----
+env: |
+  type: env
+  logging:
+    syslog:
+      hostname: <ip address> <1>
+      port: 6514
+      server: <ca-cert> <2>
+      cert: <client certificate>
+      key: <client private key>
+----
++
+<1> where <ip address> is the IP address of the rsyslog server.
+<2> where the output of the following command executed on the rsyslog server replaces each item.
++
+*<ca-cert>*
++
+`IFS=$'\n'; echo -n \"; for line in $(cat /certs/ca-cert.pem); do echo -n $line"\n"; done; echo \"`
++
+*<client certificate>*
++
+`IFS=$'\n'; echo -n \"; for line in $(cat /certs/slebci-paynow-website-cert.pem); do echo -n $line"\n"; done; echo \"`
++
+*<client private key>*
++
+`IFS=$'\n'; echo -n \"; for line in $(cat /certs/slebci-paynow-website-key.pem); do echo -n $line"\n"; done; echo \"`
++
+[NOTE]
+====
+The certificate and key output generated by the commands above will be copied and pasted as a single line for each item.
+====
+
+.. Add the workload configuration to the contract.
 +
 Use the following if using the pre-built PayNow Node.js application container image.
 +
 [source, yaml]
 ----
-env: |
-  type: env
-  logging:
-    logDNA:
-      hostname: <hostname> <1>
-      ingestionKey: <ingestionKey>
-      port: 6514
 workload: |
   type: workload
   compose:
-    archive: <archive> <2>
+    archive: <archive> <1>
 ----
 +
-<1> where <hostname> and <ingestionKey> were noted earlier.
-<2> where <archive> was created in the *Create a base64 encoded tar archive*<<base64-encoded-archive>> step.
+<1> where <archive> was created in the *Create a base64 encoded tar archive*<<base64-encoded-archive>> step.
 +
 Or use the following if the PayNow Node.js application container image was built by you and published in your GitHub Container registry.
 +
 [source, yaml]
 ----
-env: |
-  type: env
-  logging:
-    logDNA:
-      hostname: <hostname> <1>
-      ingestionKey: <ingestionKey>
-      port: 6514
 workload: |
   type: workload
   auths:
     ghcr.io:
-      username: <github user> <2>
+      username: <github user> <1>
       password: <github token>
   compose:
-    archive: <archive> <3>
+    archive: <archive> <2>
 ----
 +
-<1> where <hostname> and <ingestionKey> were noted earlier.
-<2> where <github user> and <github token> are from your personal GitHub account. 
-<3> where <archive> was created in the *Create a base64 encoded tar archive*<<base64-encoded-archive>> step.
+<1> where <github user> and <github token> are from your personal GitHub account. 
+<2> where <archive> was created in the *Create a base64 encoded tar archive*<<base64-encoded-archive>> step.
 
-An example contract using the pre-built image is shown below.
+An example contract using the IBM Cloud logging service with the pre-built image is shown below.
 
 [NOTE]
 ====
@@ -793,8 +1276,34 @@ env: |
   logging:
     logDNA:
       hostname: syslog-a.ca-tor.logging.cloud.ibm.com
-      ingestionKey: e2db535664e682b59101b742d59234da
       port: 6514
+      ingestionKey: e2db535664e682b59101b742d59234da
+workload: |
+  type: workload
+  compose:
+    archive: H4sIAAAAAAAAA+3UzW7bMAwHcJ/zFELucahP2gYG7LjjXkG2mNRoXQdWtrZvP6XBsCyHboeuW7H/
+----
+
+An example contract using the rsyslog logging service with the pre-built image is shown below.
+
+[NOTE]
+====
+The certificate and key data for the rsyslog logging service is truncated.
+
+The base64 data for the archive item is truncated.
+====
+
+[source, yaml]
+----
+env: |                                                                                                                                                                                       
+  type: env                                                                                                                                                                                  
+  logging:                                                                                                                                                                                   
+    syslog:                                                                                                                                                                                  
+      hostname: 10.161.159.11
+      port: 6514
+      server: "-----BEGIN CERTIFICATE-----\nMIIE9TCCAt0CFGXTURlEXHPvfkrSMq6u8Okeo3NrMA0GC...0qex34LGN3kYw==\n-----END CERTIFICATE-----\n"
+      cert: "-----BEGIN CERTIFICATE-----\nMIIE3jCCAsYCFBYlycZ0oZP8fenP3RSx7/PJDkjcMA0GCSq...M0yk3XJgr\nB5w=\n-----END CERTIFICATE-----\n"
+      key: "-----BEGIN RSA PRIVATE KEY-----\nMIIJKgIBAAKCAgEA1bSLJYv93O9nMUZOB4Qo79N9vrZE...4WUbz3Fyw==\n-----END RSA PRIVATE KEY-----\n"
 workload: |
   type: workload
   compose:
@@ -856,7 +1365,7 @@ Follow these steps to deploy your confidential container workload on IBM Cloud H
 
 .. Select __Open serial console__.
 
-.. Watch for the following within the serial console as the instance is being startedr:
+.. Watch for the following within the serial console as the instance is being started:
 +
 [source, console]
 ----
@@ -864,13 +1373,117 @@ VSI has started successfully.
 ----
 
 
-==== Verify the workload is running
+=== On-premises deployment
 
-Verify that the PayNow application is running by connecting to its Web UI.
+An on-premises deployment will prepared and started via the CLI on the KVM host.
+
+==== Deploy the workload
+
+. Make a directory to store the disk image and other files for the HPCR.
++
+[source, console]
+----
+mkdir /var/lib/libvirt/images/slebci-paynow-website
+----
+
+. Copy the HPCR image file from the location noted in a previous step<<note-hpcr-image-location>> to `/var/lib/libvirt/images/slebci-paynow-website`.
+
+. Create the cloud configuration files and init-disk iso.
+
+.. `vi /var/lib/libvirt/images/slebci-paynow-website/meta-data`
++
+[source, console]
+----
+local-hostname: slebci-paynow-website
+----
+
+.. `vi /var/lib/libvirt/images/slebci-paynow-website/vendor-data`
++
+[source, console]
+----
+#cloud-config
+users:
+- default
+----
+
+.. Copy the `slebci-paynow-website-contract.yml` contract file from the local system to `/var/lib/libvirt/images/slebci-paynow-website/user-data` on the KVM host.
+
+.. Create `init-disk` iso.
++
+[source, console]
+----
+mkisofs -output /var/lib/libvirt/images/slebci-paynow-website/init-disk -volid cidata -joliet -rock /var/lib/libvirt/images/slebci-paynow-website/user-data /var/lib/libvirt/images/slebci-paynow-website/meta-data /var/lib/libvirt/images/slebci-paynow-website/vendor-data
+----
+
+. Generate a MAC address for the HPCR VM.
+
+.. Run `macgen.py` and note the output.
+Here is an example when run.
++
+[source, console]
+----
+# macgen.py 
+52:54:00:02:77:72
+----
+
+. Use the generated MAC address to define a host entry with a static IP address in your DHCP server.
+
+. Define and start the `slebci-paynow-website` VM with the following command.
++
+[source, console]
+----
+virt-install \
+--name=slebci-paynow-website \
+--osinfo ubuntu20.04 \
+--memory=3815 \
+--vcpus vcpu.placement=static,vcpus=2 \
+--boot hd \
+--cpu mode=host-model,check=partial \
+--clock offset=utc \
+--events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
+--disk /var/lib/libvirt/images/slebci-paynow-website/ibm-hyper-protect-container-runtime-23.3.0.qcow2,driver.iommu=on,target.bus=virtio,\
+boot.order=1 \
+--disk /var/lib/libvirt/images/slebci-paynow-website/slebci-paynow-website-data.qcow2,size=10,format=qcow2,cache=none,\
+driver.discard=ignore,driver.iommu=on,target.bus=virtio \
+--disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
+target.bus=virtio \
+--controller type=pci,index=0,model=pci-root \
+--network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,driver.iommu=on,mac.address=<macaddress> \ <1>
+--console pty,target.type=sclp,target.port=0 \
+--audio id=1,type=none \
+--memballoon none \
+--panic s390 \
+--channel none \
+--rng none
+----
++
+<1> where <macaddress> was noted above.
+
+. The VM console will be displayed and the HPCR VM will boot.
+Watch for the following within the console as the instance is being started:
++
+[source, console]
+----
+VSI has started successfully.
+----
++
+[NOTE]
+====
+Press `Ctrl + ]` keys to disconnect from the VM console.
+====
+
+
+=== Verify the workload is running
+
+==== Access the PayNow application via its Web UI
 
 . Open a new Web browser window or tab.
 
-. Enter `\https://<floating-ip>:8443`, where <floating-ip> is the floating IP address noted earlier.
+. Enter `\https://<ip address>:8443` where <ip address> is either:
++
+The floating IP address noted earlier for the VPC deployment in IBM Cloud.
++
+The IP address assigned to the HPCR VM running on the KVM host.
 +
 [NOTE]
 ====
@@ -888,11 +1501,19 @@ image::paynow-website.png[PayNow UI, scaledwidth="75%", align="center"]
 
 ==== Review the logs
 
-Review the logs of the IBM Cloud Hyper Protect Virtual Servers for VPC instance for potential issues.
-
-. Return to the https://cloud.ibm.com/ window or tab where you created the logging service.
-
-. Verify that log information is displayed.
+. Access the log information.
++
+* Use the following to review the logs of the IBM Cloud Hyper Protect Virtual Servers for VPC instance.
++
+.. Return to the https://cloud.ibm.com/ window or tab where you created the logging service.
++
+.. Verify that log information is displayed.
++
+* Use the following to review the logs of the on-premises IBM Hyper Protect Virtual Servers Container Runtime VM.
++
+.. ssh to the rsyslog server.
++
+.. `less /var/log/hpcr.log`
 
 . Review the log and find the following:
 
@@ -928,11 +1549,6 @@ slebci-paynow-website compose-paynow-1 info GET /api/v1/transactions
 slebci-paynow-website compose-paynow-1 info POST /api/v1/transactions 
 slebci-paynow-website compose-paynow-1 info GET /api/v1/transactions 
 ----
-
-
-=== On-premises deployment
-
-NOTE: TO BE COMPLETED
 
 
 == Manage
