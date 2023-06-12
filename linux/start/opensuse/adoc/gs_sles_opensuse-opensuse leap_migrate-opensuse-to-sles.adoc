@@ -1,0 +1,431 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+// 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Document attributes and variables
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document
+// -
+:title: Migrate openSUSE Leap to SUSE Linux Enterprise Server on Azure
+:subtitle: Subtitle
+
+:product1: SLES
+:product1_full: SUSE Linux Enterprise Server
+//:product1_version: Primary SUSE product/platform relevant version or versions
+//:product1_url: Primary SUSE product/platform URL (without the protocol)
+//:product2: Secondary product short name
+//:product2_full: Secondary product full name
+//:product2_url: Secondary product URL
+
+:usecase: Move from a free openSUSE Leap to an SUSE Linux Enterprise Distribution
+
+:executive_summary: This document provides a brief showcase how to migrate from a free linux to an payg enterprise distribution in Azure.
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributor
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: Peter
+:author1_surname: Schinagl
+:author1_jobtitle: Sr. Technical Architect
+:author1_orgname: SUSE
+//:author2_firstname: first (given) name
+//:author2_surname: surname
+//:author2_jobtitle: job title
+//:author2_orgname: organization affiliation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// miscellaneous
+// define any additional variables here for use within the document
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+= {title}: {subtitle}
+
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a brief statement (1-4 sentences) of the purpose of the guide.
+// This is could be the same as the executive summary.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+=== Motivation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a motivation for the document in 2-4 sentences to identify:
+//   - what the document is about
+//   - why it may be of interest to the reader (e.g., a use case)
+//   - what products are being highlighted
+// Include an approved SUSE | Partner logo lock-up if possible
+// Include any additional, relevant details
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Several years back, SUSE had provided the sources from SUSE Linux Enterprise for usage in openSUSE Leap to bring the experience and quality of openSUSE Leap and SUSE Linux Enterprise (SLE) to a new level.
+
+This contribution promoted openSUSE Leap as a development platform for communities and industry partners going forward.
+
+Since version 15.3 it is very simple to migrate from openSUSE Leap to SLES, with version 15.4+ more simpler.
+In a second phase, it is also possible to move from a Bring-Your-Own-Subscription (BYOS) to a SLES Pay-as-you-go (PAYG) image in the cloud using the Azure Hybrid Benefit
+
+=== Scope
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Specify what this guide covers in no more than 2 sentences.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This guide will guide you through the detailed steps for the migration
+
+
+=== Audience
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify for whom this document is intended, perhaps with:
+//   - topics of interests (e.g., machine learning, security, etc.)
+//   - job roles (e.g., developer, administrator, platform architect, etc.)
+//   - required skills
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This document is intended for developers and administrators who started with a free linux and now want to have an Enterprise distribution for production 
+
+
+== Prerequisites
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify minimum requirements (prerequisites) the reader
+// would need in order to follow the steps of this guide.
+// - Link to existing resources whenever possible.
+// - Keep this section brief but elaborate as needed.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+. A Microsoft Azure Account
+. openSUSE Leap 15.3+ running in Azure
+. SUSE Linux Enterprise Serve (SLES) subscription
+
+
+
+== Technical overview
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a technical overview of the solution.
+// - Identify components.
+// - Describe how the components fit together.
+//   Leverage diagrams as appropriate, including (but not limited to):
+//   - component architecture
+//   - data flow diagram
+//   - workflow diagram
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Here is an overview of the process to switch from openSUSE to SUSE Linux Enterprise Server in Azure
+
+image::LeapMigrationWays.svg[Overview,scaledwidth="80"]
+
+The following is the current abstract procedure to migrate from openSUSE Leap 15.4 to SUSE Linux Enterprise Server 15 Service Pack 4. It needs aligned versions.
+
+. Install yast2-registration-sle within openSUSE Leap
+. Register the system with a valid subscription during the process
+. Reboot - now you have a SUSE Linux Enterprise Server
+. Install Azure Hybrid Benefit Extention to switch to PAYG
+
+## Azure Hybrid Benefit (AHB) for Linux
+
+In Azure, there are two main licensing pricing options: *pay-as-you-go* (PAYG) and *bring-your-own-subscription* (BYOS).
+
+PAYG:: is a pricing option where you pay Microsoft for the resources you use on an time based usage, e.g. and hourly or monthly. You will only pay for what you have used. It includes the OS and the used infrastructure.
+BYOS:: is the pricing option where you pay Microsoft only for the infrastructure, but not for the OS. You need to buy a subscription for the OS from SUSE directly (or its distributors).
+
+Azure Hybrid Benefit (AHB) for Linux lets you switch the software subscription model for your VM nearly on the fly.
+
+AHB works with Virtual Machine Scale Sets, Spot Virtual Machines, and custom images. It allows for easy bi-directional conversions between the two buying models without the need to re-install anything.
+
+The infrastruction pricing part does not change (see picture).
+
+image::AHB.svg[AzureHybridBenefit, scaledwidth="100%"]
+
+.Both options have pros and cons
+[cols="5h,~,5h,~"]
+|===
+| | On-Demand / PAYG | | BYOS
+
+|
+|OPEX
+|
+|CAPEX
+
+|+
+|One contact  - the CSP
+|-
+|Two contacts, CSP and SUSE
+
+|+
+|Fire up and use.
+|+
+|Migrate your existing subscriptions to Azure
+
+|+
+|Pay as you go, for the time the instance is running. 1y,3y Reservations possible
+|-
+|1y or 3y upfront payment
+
+|+
+|One support contact (L1,L2) by CSP, SUSE & CSP work together in the back (L3).
+|+
+|Two contacts, Direct access to SUSE Support.
+
+|+
+|No Registration needed, repositories automatically configured.
+|-
+|Manual Registration for every instance needed
+
+|+
+|Updates via Azure region local infrastructure.
+|-
+|Updates via SUSE Customer Center (Public Internet).
+
+|-
+|CSP's is not capable of handling Add-on's
+|+
+|Provides the ability to purchase Add-on's
+
+|+
+|OS always compliant due to PAYG model
+|-
+|Usage need to be monitored (compliance)
+
+|+
+|In SLES4SAP Live Patching and SUSE Manager Lifecycle Management is included
+|-
+|Extra subscriptions for Live Patching and SUSE Manager Life cycle Management needed
+
+|+
+|MACC eligible
+|-
+|NOT MACC eligible
+
+|===
+
+== Installation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Detail the steps of the installation procedure.
+// The reader should be able to copy and paste commands to
+// a local environment or follow along locally with screenshots.
+// Include one or more verification steps to validate installation.
+//
+// Leverage:
+// - Ordered lists
+// - Code blocks
+// - Screenshots
+// - Admonitions
+//
+// If multiple installation methods are to be detailed, then
+// - Create a summary list here
+// - Detail each method in its own subsection.
+//
+// NOTE: For solutions involving SUSE Rancher, it is preferred
+//       to detail two installation methods:
+//       - Through the Rancher Apps Catalog with appropriate
+//         screenshots and SUSE branding.
+//       - A more manual approach (e.g., on the command-line).
+//
+// Complex configuration procedures may be broken out into one or more
+// Configuration sections.
+// These may be subsections of Installation or separate sections at
+// the same level as Installation.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+### Get SLES subscription
+
+Depending on your needs and requirements you need to decide if you want to run you future SLES
+as PAYG or BYOS
+
+For PAYG you simply can download a 60-day trial subscription and for BYOS you can buy subscriptions through the SUSE Shop or any software distributor.
+
+
+#### Get Trial subscription
+
+Steps
+
+. goto http://www.suse.com
+. select "Free Downloads" in the upper right
+. scroll down to "SUSE Linux Enterprise Server"
+. click "Download"
+. choose a small iso-image, e.g. SLES15-SP4-Minimal-VM.x86_64-kvm-and-xen-GM.qcow2, as we do not really need it.
+. click "Download"
+. You need to create an SUSE Account, so please fill out the form. Be sure to fill in a valid email-adress and check the box "Don't Forget Your 60-day Trial"
+. Press "Create Account"
+. You will see a Success page with further instructions
+. You should get you subscription afterwards
+
+#### Buy subscription
+
+Steps
+
+. goto http://www.suse.com
+. select "Shop" in the upper right menu
+. scroll down to "SUSE Linux Enterprise Server"
+. Press "Start Shopping"
+. The default selection of "1-2 Sockets or 1-2 Virtual Machines" are right
+. Choose the time you want the subscription valid for (5y,3y,1y)
+. Press "Buy" and follow the shopping cart
+. You should get you subscription afterwards
+
+### The migration process step by step
+
+For the example here we use openSUSE Leap 15.4 as starting with this version its simpler as before.
+
+* start with a openSUSE image in the Azure Marketplace
+      e.g. opensuse-leap-15-4:gen2:2022.11.04
+
+* run all updates and install the package "yast2-migration-sle"
+[source]
+      sudo zypper update
+      sudo zypper in yast2-migration-sle
+
+* get a 60d-trial subscription for SLES via download.suse.com if you want to use the *PAYG* version of SLES 
+* or
+      buy a SLES subscription
+      from SUSE throught our distributors or from our webpage https://www.suse.com/shop/ for the *BYOS* model
+
+* login to the running openSUSE instance and run yast2-migration-sle
+[source]
+      sudo yast2 migration-sle
+
+IMPORTANT: This yast2 process will ask you for your email and the subscription key
+
+* Now you have a SLES BYOS instance. Check it with
+[source]
+      cat /etc/os-release
+
+NOTE: The openSUSE repositories will remain attached and are handled as 3rd party repositories at this point and not get touched.
+
+* Now you can switch to SLES PAYG with help of the Azure Hybrid Benefit (AHB) extention
+
+** Install the extention with the help of the az cmd-line tool.
+Log out of the instance, and from your shell or console do
+[source]
+az vm extension set -n AHBForSLES --publisher SUSE.AzureHybridBenefit --vm-name <YOUR_VM_NAME> --resource-group <YOUR_RESOURCE_GROUP>
+
+** Update now to a SLES PAYG version with
+[source]
+az vm update -g <YOUR_RESOURCE_GROUP> -n <YOUR_VM_NAME> --license-type SLES
+
+It could take up to five minutes for the extension to read the license type value and install the repositories.
+
+You should now be connected to the SUSE public cloud update infrastructure on Azure. The relevant repositories are installed on your machine. You can verify this change by running the following command to list SUSE repositories on your virtual machine:
+[source]
+sudo zypper repos
+
+Now you have an Azure SLES PAYG instance and you get billed by Azure for the time you use the instance.
+
+== Demonstration
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Illustrate functionality with a demonstration.
+// Begin with a description or outline of the demonstration.
+// Provide clear steps (in ordered lists) for the reader to follow.
+// Typical demonstration flow is:
+// 1. Prepare the environment for the demonstration.
+//    This should be minimal, such as downloading some data to use.
+//    If this requires more than a couple steps, consider putting it
+//    in a subsection.
+// 2. Perform the demonstration.
+//    Be careful not to overuse screenshots.
+// 3. Verify.
+//    This may be interwoven into performing the demonstration.
+//
+// As with Installation, leverage ordered lists, code blocks,
+// admonitions, and screenshots.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+== Summary
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize:
+// - Motivation (1 sentence)
+// - What was covered (1-2 sentences)
+// - Next steps (unordered list of 2-4 further learning resources)
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+If you started your project with the free openSUSE Leap version and now want to move a supported environment for maybe your production you can use the steps shown
+
+You learned how simple it is to migrate from openSUSE Leap to a SUSE Linux Enterprise Server in Azure.
+
+The SLES PAYG version even makes it possible to make use of your company agreements with Microsoft.
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
