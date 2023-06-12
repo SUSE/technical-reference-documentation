@@ -184,9 +184,9 @@ cd ${partnername}
 
 # create DC- file
 cp ${templatesroot}/_DC-file \
-   DC-${documentbase}
+   DC-"${documentbase}"
 # update adoc reference
-sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" DC-${documentbase}
+sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" DC-"${documentbase}"
 
 # create adoc directory if it does not already exist
 [ -d adoc ] || mkdir -p adoc
@@ -203,14 +203,14 @@ sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.a
   ln -s ../../../../common/adoc/common_docinfo_vars.adoc adoc/
 
 # create .adoc file
-[ -f "adoc/${documentbase}.adoc" ] || \
+[ -f "adoc/'${documentbase}'.adoc" ] || \
   cp ${templatesroot}/_adoc-file \
-    adoc/${documentbase}.adoc
+    adoc/"${documentbase}".adoc
 
 # create -docinfo.xml file
-[ -f "adoc/${documentbase}-docinfo.xml" ] || \
+[ -f "adoc/'${documentbase}'-docinfo.xml" ] || \
   cp ${templatesroot}/_docinfo-file \
-    adoc/${documentbase}-docinfo.xml
+    adoc/"${documentbase}"-docinfo.xml
 
 # create media directory structure
 #cd ..
