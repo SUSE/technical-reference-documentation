@@ -175,14 +175,10 @@ In this guide, you:
 
 . Access the Kubeflow user interface (UI).
 
+. Enable TLS for secure access to Kubeflow.
 
-[NOTE]
-====
-Add diagram and say a few more words about the various pieces
 
-All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Internet
-
-====
+image::Kubeflow-arch.svg[Solution Architecture, scaledwidth="75%", align="center"]
 
 In this guide, {product3} is used to provision virtual machines for your RKE2 cluster nodes. This is not strictly necessary and Kubeflow can be deployed on any RKE2 cluster, regardless of how it is provisioned. For this reason, we will not discuss the creation of the Harvester cluster itself here. Instead, we will begin with the creation of the RKE2 cluster.
 
@@ -559,11 +555,6 @@ kubectl apply -f nginx-metallb-test.yaml
 ----
 kubectl get pod,sc,pvc,svc -n ${NAMESPACE}
 ----
-+
-[NOTE]
-====
-*Mark*: It would be good to provide the output of the command.
-====
 
 . Verify that the service is reachable through the load balancer IP address from outside the cluster.
 +
@@ -634,6 +625,7 @@ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 NOTE: In the following step ensure the connection protocol is HTTP, not HTTPS.
 
 * In a browser on the Linux workstation, connect to:
++
 [source, console]
 ----
 http://127.0.0.1:8080
@@ -673,6 +665,10 @@ Some things that could prevent connecting or loggging into the Kubeblow dashboar
 
 == Configure TLS
 
+In order to connect to Kubeflow, you need to setup HTTPS. This is because many of the Kubeflow components use Secure Cookies. This means that accessing Kubeflow with HTTP over a non-localhost domain (for example, via MetalLB) does not work. To enable this, we need to configure Istio to use the MetalLB load balancer and then enable HTTPS on the Kubeflow Istio Gateway. Obviously, we will need a certificate for this. For the purposes of this guide, we document the process by using a public Let's Encrypt certificate.
+
+Let’s Encrypt provides certificates for free, but it has a challenge process to make sure you actually control the domain for which you are requesting a certificate.  One of the challenge methods is via DNS-01, which we can satisfy using AWS Route 53.  This is not the only way to handle this step for Let’s Encrypt (see https://letsencrypt.org/docs/challenge-types/ for other options) and obviously other certificate providers may be different.
+
 === Update Istio to use the MetalLB load balancer
 
 Enable HTTPS on the Kubeflow Istio Gateway
@@ -701,6 +697,7 @@ kubectl -n istio-system get svc istio-ingressgateway
 === Enable HTTPS on the Kubeflow Istio Gateway
 
 * Edit the kubeflow-gateway resource to add HTTPS routing:
++
 [source, console]
 ----
 kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
@@ -724,6 +721,7 @@ kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
 ----
 
 * The entire `spec:` section should look like this:
++
 [source, console]
 ----
 spec:
@@ -749,34 +747,34 @@ spec:
       credentialName: kubeflow-certificate-secret
 ----
 
-* Update the AWS Route53 DNS provider wih the Kubeflow IP address and the desired Fully Qualified Domain Name for the Kubeflow UI
+* Update the AWS Route53 DNS provider (or whatever DNS provider you use) wih the Kubeflow IP address and the desired Fully Qualified Domain Name for the Kubeflow UI.
 
-=== Use a browser to connect, with HTTP (not HTTPS), to Kubeflow UI at the FQDN
+* Use a browser to connect, with HTTP (not HTTPS), to the Kubeflow UI at the FQDN.
 
-* The screen should redirect to dex and offer a login prompt
+* The screen should redirect to dex and offer a login prompt.
 
-* (Optional) Login with the credentials:
+* Login with the credentials:
 
 `Email address`
-+
+
 [source, console]
 ----
 user@example.com
 ----
 
 `Password`
-+
+
 [source, console]
 ----
 12341234
 ----
 
-IMPORTANT: Proceed to the next section only after being able to connect to, and optionally, log into the Kubeflow UI
+IMPORTANT: Proceed to the next section only after being able to connect to and log into the Kubeflow UI
 
 
 === Configure cert-manager to manage Let’s Encrypt certificates, using Route 53 DNS records
 
-NOTE: cert-manager can manage certificates from any public DNS provider. See the cert-manager documentation at https://cert-manager.io/docs/configuration/acme/ for more information.
+Kubeflow's cert-manager can manage certificates from any public provider. See the cert-manager documentation at https://cert-manager.io/docs/configuration/acme/ for more information. As discused above, we are going to use Let's Encrypt sertifactes validated through DNS-01 and AWS Route53.
 
 NOTE: An AWS user with appropriate IAM policies and API access keys is needed for cert-manager to access the Route53 DNS records. See the cert-manager documentation at https://cert-manager.io/docs/configuration/acme/dns01/route53/ for more information.
 
@@ -794,7 +792,7 @@ export EMAIL_ADDR="" # valid email address for the Let's Encrypt certificate
 
 ----
 
-NOTE: When initially creating the cert-manager Issuer, ensure the `server: https://acme-staging-v02` line is uncommented and the `server: https://acme-v02` line is commented out. After verifying that the certicate can be issued correctly, we will reverse this to obtain the valid, production certificate.
+NOTE: To avoid potential issues with rate limiting on issuing Let's Encrypt production TLS certificates, when initially creating the cert-manager Issuer, ensure the server:  https://acme-staging-v02  line is uncommented and the server: https://acme-v02  line is commented out. After verifying that the certicate can be issued correctly, we will reverse this to obtain the valid, production certificate
 
 * Create the cert-manager Issuer file.
 +
@@ -978,24 +976,11 @@ NOTE: The certificate can take up to three minutes to be issued, as indicated by
 
 
 * Refresh the istio-gateway deployment to use the new certificate:
++
 [source, console]
 ----
 kubectl rollout restart deployment -n istio-system istio-ingressgateway
 ----
-
-* Close and reopen the browser to verify the publicly signed certificate at the Kubeflow UI's HTTPS URL
-
-=== Optionally, set the kubeflow-gateway to redirect HTTP to HTTPS 
-
-* Edit the kubeflow resource.
-+
-[source, console]
-----
-kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
-----
-** Change `httpsRedirect: false` to `httpsRedirect: true`
-
-
 
 == Validation
 
@@ -1018,12 +1003,36 @@ kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-[NOTE]
 
-====
-The Kubeflow doc says this "In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to setup HTTPS. The reason is that many of our web apps (e.g., Tensorboard Web App, Jupyter Web App, Katib UI) use Secure Cookies, so accessing Kubeflow with HTTP over a non-localhost domain does not work. Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available Kubeflow distributions, which are targeted to specific environments, and select the one that fits your needs." 
-So, until we figure this out we are stuck here.
-====
+* Close and reopen your browser to verify the publicly signed certificate is used at the Kubeflow UI's HTTPS URL.
+
+* Login with the credentials:
+
+`Email address`
+
+[source, console]
+----
+user@example.com
+----
+
+`Password`
+
+[source, console]
+----
+12341234
+----
+
+=== Optionally, set the kubeflow-gateway to redirect HTTP to HTTPS 
+
+* Edit the kubeflow resource.
++
+[source, console]
+----
+kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
+----
+** Change `httpsRedirect: false` to `httpsRedirect: true`
+
+* Confirm, by reloading your browser, that attempting to access the login page via HTTP results in a redirtection to HTTPS.
 
 
 == Summary
