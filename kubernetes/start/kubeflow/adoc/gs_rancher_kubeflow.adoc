@@ -19,7 +19,7 @@ include::./common_docinfo_vars.adoc[]
 //       (i.e., don't use two images when one conveys the message)
 //   - Use sections and subsections to organize and group related
 //     steps.
-// 
+//
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
@@ -139,10 +139,31 @@ Harvester provides operators with a cohesive platform to manage virtual machine 
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document provides guidance for deploying Kubeflow onto a {product2} Kubernetes cluster managed by {product1}.
-This guide also illustrates provisioning virtual machine hosts using {product3_full}.
+In this guide, you:
 
-After completing these steps, you are able to access the Kubeflow user interface.
+. Provision virtual machines for your Kubernetes cluster nodes with https://{product3_url}[{product3_full}].
++
+[NOTE]
+====
+Kubeflow can be deployed to any CNCF-certified Kubernetes cluster, regardless of how it is provisioned.
+{product3} simply provides a convenient mechanism for provisioning and managing IT infrastructure.
+Additionally {product3} provisions https://{product5_docs}[Longhorn] for persistent storage to support your Kubernetes deployment.
+====
+
+. Use https://{product1_url}[{product1_full}] {product1_version} to instantiate and configure an https://{product2_url}[{product2}] {product2_version} cluster.
+
+. Use {product1} to deploy Kubeflow {kubeflow_version} onto your cluster.
+
+. Secure Kubeflow with TLS.
+
+
+After completing these steps, you are able to access the Kubeflow user interface through your Web browser.
+
+[NOTE]
+====
+The steps outlined in this guide should require little to no modification for newer versions of the component software.
+====
+
 
 
 === Audience
@@ -158,41 +179,6 @@ This document is intended for data scientists, machine learning researchers and 
 
 To be successful with this guide, you should have basic knowledge of Kubernetes operations in a {product1} environment as well as standard Linux command line container management with Kubectl, Helm, and Kustomize.
 
-
-== Technical overview
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a technical overview of the solution.
-// - Identify components.
-// - Describe how the components fit together.
-//   Leverage diagrams as appropriate, including (but not limited to):
-//   - component architecture
-//   - data flow diagram
-//   - workflow diagram
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-In this guide, you:
-
-. Provision virtual machines for your Kubernetes cluster nodes with {product3}.
-
-. Instantiate and configure a {product2} cluster with {product1}.
-
-. Deploy Kubeflow onto your cluster.
-
-. Access the Kubeflow user interface (UI).
-
-. Enable TLS for secure access to Kubeflow.
-
-
-image::Kubeflow-arch.svg[Solution Architecture, scaledwidth="75%", align="center"]
-
-[NOTE]
-====
-Kubeflow can be deployed to any {product2} cluster, regardless of how it is provisioned.
-{product3_full} is used in this guide to provision virtual machines for the {product2} cluster nodes, along with https://{product5_url}[{product5_full}] for persistent storage.
-
-If you already have your target {product2} cluster, be sure you also provision persistent storage (such as https://{product5_docs}[Longhorn].
-====
 
 
 == Prerequisites
@@ -220,7 +206,7 @@ Your workstation must have access to the cluster environment and have these soft
 +
 [NOTE]
 ====
-A workstation running https://{product4_url}[{product4}] {product4_version} was used in the development of this guide.
+The operating system of the workstation used in the development of this guide was https://{product4_url}[{product4}] {product4_version}.
 ====
 
 * Cluster infrastructure
@@ -257,8 +243,8 @@ All nodes are connected to a single VLAN with DHCP, DNS, and routing to the Inte
 
 [NOTE]
 ====
-Node sizings used here are for basic testing purposes only.
-To support a useful Kubeflow workload, you will likely need more vCPU cores and RAM, particularly on the workload nodes.
+The node sizing used here is for basic testing purposes only.
+To support a useful Kubeflow workload, you will likely need more vCPU cores, RAM, and storage, particularly for the workload nodes.
 ====
 
 --
@@ -347,7 +333,7 @@ If you are not using {product3}, you can select a newer version.
 .. Disable the Nginx Ingress controller under __System Services__.
 
 
-. On the __Labels and Annotations__ tab, apply a cluster label where they key is `app` and the value is `kubeflow`. 
+. On the __Labels and Annotations__ tab, apply a cluster label where they key is `app` and the value is `kubeflow`.
 
 . Click __Create__.
 
@@ -356,7 +342,7 @@ After the cluster has been created, verify and reboot the RKE2 nodes:
 
 . SSH to each node as the user `sles`.
 
-. Verify that the `kernel-default` kernel has been installed and `kernel-default-base` kernel has been removed: 
+. Verify that the `kernel-default` kernel has been installed and `kernel-default-base` kernel has been removed.
 +
 [source, console]
 ----
@@ -365,7 +351,7 @@ sudo zypper se kernel-default
 +
 [TIP]
 ====
-After `kernel-default` has been installed, you can remove the `kernel-default-base` kernel with: 
+After `kernel-default` has been installed, you can remove the `kernel-default-base` kernel.
 
 [source, console]
 ----
@@ -373,7 +359,7 @@ sudo zypper rm kernel-default-base
 ----
 ====
 
-. Verify that all operating system software has been patched to the latest update: 
+. Verify that all operating system software has been patched to the latest update.
 +
 [source, console]
 ----
@@ -468,7 +454,7 @@ data:
 EOF
 ----
 
-. Create the configmap. 
+. Create the configmap.
 +
 [source, console]
 ----
@@ -487,7 +473,7 @@ kubectl get configmap config -n metallb-system -o yaml
 Be sure to verify the IP address pools.
 ====
 
-. Verify MetalLB is running. 
+. Verify MetalLB is running.
 +
 [source, console]
 ----
@@ -506,7 +492,7 @@ kubectl get all -n metallb-system
 export NAMESPACE="kubeflow"
 ----
 
-. Create the namespace. 
+. Create the namespace.
 +
 [source, console]
 ----
@@ -517,7 +503,7 @@ kubectl create namespace ${NAMESPACE}
 +
 [source, console]
 ----
-cat <<EOF> nginx-metallb-test.yaml 
+cat <<EOF> nginx-metallb-test.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -587,7 +573,7 @@ kubectl apply -f nginx-metallb-test.yaml
 ----
 
 . Verify the pod is "Running", that the `harvester` StorageClass is the `(default)`, that the persistentvolumeclaim is `Bound`, and that the service has an external IP address.
-+ 
++
 [source, console]
 ----
 kubectl get pod,sc,pvc,svc -n ${NAMESPACE}
@@ -603,7 +589,7 @@ curl http://${IPAddr} 2>/dev/null | grep "Thank you for using nginx"
 +
 An HTML encoded output should display the phrase "Thank you for using nginx."
 
-. Verify that the volume is mounted in the test pod. 
+. Verify that the volume is mounted in the test pod.
 +
 [source, console]
 ----
@@ -613,7 +599,7 @@ kubectl exec -it ${TEST_POD} -n ${NAMESPACE} -- mount | grep test-vol
 +
 The output should show that the volume is mounted at the location `/mnt/test-vol`.
 
-. When finished with testing, delete the pod and service. 
+. When finished with testing, delete the pod and service.
 +
 [source, console]
 ----
@@ -630,7 +616,7 @@ The Kubeflow Manifests Working Groups provides two options for installing Kubefl
 +
 This is the recommended method and is the method illustrated in this guide.
 
-* A multi-command approach that allows individual components to be included or excluded. 
+* A multi-command approach that allows individual components to be included or excluded.
 
 
 === Download the Kubeflow manifests
@@ -726,7 +712,7 @@ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 Use the HTTP connection protocol, not HTTPS.
 ====
 
-. Log in to the Kubeflow user interface (UI) with the credentials:
+. Log into the Kubeflow user interface (UI) with the credentials:
 +
 --
 * Email address: `user@example.com`
@@ -742,7 +728,7 @@ Use the HTTP connection protocol, not HTTPS.
 
 === Troubleshooting the Kubeflow installation
 
-Some things that could prevent connecting or loggging into the Kubeblow UI include:
+Some things that could prevent connecting or logging into the Kubeflow UI include:
 
 * Your local copy of the https://github.com/kubeflow/manifests is out-of-date.
 //
@@ -755,7 +741,7 @@ Update your local copy by cloning a newer release of the Kubeflow manifests.
 Ensure all containers and pods are in a 'Running' state (see <<Validating the Kubeflow installation>>).
 //
 +
-A high number of container restarts can indicate other issues preventing the installation from completing sucessfully.
+A high number of container restarts can indicate other issues preventing the installation from completing successfully.
 
 * Cluster resources are saturated.
 //
@@ -766,16 +752,19 @@ You can also check running processes with the Linux `top` command on each of the
 
 
 
-== Configure TLS
+== Securing Kubeflow with TLS
 
-Many Kubeflow components use secure cookies.
-This means that accessing Kubeflow with HTTP over a non-localhost domain (for example, via MetalLB) does not work.
-To overcome this, you need to configure https://istio.io/[Istio] (which was installed with Kubeflow) to use MetalLB and to enable the https://istio.io/latest/docs/reference/config/networking/gateway/[Istio Gateway] to use the HTTPS protocol. 
+Up to this point, you have been able to access the Kubeflow UI over HTTP from your workstation configured to connect to the cluster.
+In most cases, you will want to enable access to Kubeflow from additional systems.
+This should be done securely through https://en.wikipedia.org/wiki/HTTPS[HTTPS] with a https://en.wikipedia.org/wiki/Transport_Layer_Security[TLS] certificate.
+Moreover, many Kubeflow components leverage this cryptographic protocol for secure cookies and may not function at all without it.
 
-You will need a signed TLS certificate.
-If you do not have one, you can get one for free with https://letsencrypt.org/[Let's Encrypt].
+To overcome this, you need to configure https://istio.io/[Istio] (which was installed with Kubeflow) to use MetalLB with the HTTPS protocol on the https://istio.io/latest/docs/reference/config/networking/gateway/[Istio Gateway].
+You will also need a signed TLS certificate.
+
+If you do not have a signed TLS certificate, you can get one for free through https://letsencrypt.org/[Let's Encrypt].
 Let’s Encrypt uses a https://letsencrypt.org/docs/challenge-types/[challenge process] to make sure you actually control the domain for which you are requesting a certificate.
-One of the challenge methods uses https://letsencrypt.org/docs/challenge-types/#dns-01-challenge[DNS-01].
+One of these challenge methods uses https://letsencrypt.org/docs/challenge-types/#dns-01-challenge[DNS-01].
 You can satisfy this challenge using AWS Route 53 and https://community.letsencrypt.org/t/dns-providers-who-easily-integrate-with-lets-encrypt-dns-validation/86438[other DNS providers].
 
 
@@ -817,7 +806,7 @@ kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
 
 . Add the following to the bottom of the `spec:` section.
 +
-[source, console]
+[listing]
 ----
     tls:
       httpsRedirect: false
@@ -834,7 +823,7 @@ kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
 +
 When complete, the entire `spec:` section look like:
 +
-[source, console]
+[listing]
 ----
 spec:
   selector:
@@ -859,7 +848,7 @@ spec:
       credentialName: kubeflow-certificate-secret
 ----
 
-. Update AWS Route53 (or the DNS provider you use) wih the Kubeflow IP address and the desired fully qualified domain name (FQDN) for the Kubeflow UI.
+. Update AWS Route53 (or the DNS provider you use) with the Kubeflow IP address and the desired fully qualified domain name (FQDN) for the Kubeflow UI.
 
 . Use your browser to connect to the Kubeflow UI (over the HTTP protocol) at the specified FQDN.
 //
@@ -871,7 +860,7 @@ Your browser should redirect to a login prompt.
 For on-premises deployments, Kubeflow uses https://dexidp.io/[Dex] as a federated OpenID connection provider that can be integrated with a wide variety of identity providers, such as LDAP, SAML, and OAuth.
 ====
 
-. Log in to the Kubeflow user interface (UI) with the credentials:
+. Log into the Kubeflow UI with the credentials:
 +
 --
 * Email address: `user@example.com`
@@ -882,33 +871,44 @@ For on-premises deployments, Kubeflow uses https://dexidp.io/[Dex] as a federate
 
 [IMPORTANT]
 ====
-Proceed to the next section only after you verify that you can connect to and log into the Kubeflow UI.
+Proceed to the next section only after you have verified that you can connect to and log into the Kubeflow UI.
 ====
 
 
-=== Configure cert-manager to manage Let’s Encrypt certificates, using Route 53 DNS records
+=== Configure cert-manager with a Let's Encrypt staging certificate
 
-Kubeflow's cert-manager can manage certificates from any public provider. See the cert-manager documentation at https://cert-manager.io/docs/configuration/acme/ for more information. As discused above, we are going to use Let's Encrypt sertifactes validated through DNS-01 and AWS Route53.
+https://cert-manager.io/[cert-manager] is a powerful X.509 certificate controller
+r for Kubernetes workloads and can manage certificates from many public certificate issuers.
+You can configuring cert-manager for https://cert-manager.io/docs/configuration/acme/[Automated Certificate Management Environment (ACME)] issuers, like Let's Encrypt.
+Use the steps outlined below to configure cert-manager to use Let's Encrypt certificates validated through https://cert-manager.io/docs/configuration/acme/dns01/route53/[DNS-01 and AWS Route53].
 
-NOTE: An AWS user with appropriate IAM policies and API access keys is needed for cert-manager to access the Route53 DNS records. See the cert-manager documentation at https://cert-manager.io/docs/configuration/acme/dns01/route53/ for more information.
+[NOTE]
+====
+An AWS user with appropriate IAM policies and API access keys is needed for cert-manager to access the Route53 DNS records.
+====
 
-* Set these variables:
+. Set some variables to simplify later commands.
 +
 [source, console]
 ----
 # aws_access_key_id and aws_secret_access_key for the configured AWS user:
-export AWS_ACCESS_KEY_ID=""
-export AWS_SECRET_ACCESS_KEY=""
-export AWS_REGION="" # E.g. "us-west-2"
-export DNSZONE="" # E.g. "suse.com"
-export FQDN="" # E.g. "kubeflow.suse.com"
-export EMAIL_ADDR="" # valid email address for the Let's Encrypt certificate
-
+export AWS_ACCESS_KEY_ID=""        # valid AWS access key ID
+export AWS_SECRET_ACCESS_KEY=""    # valid AWS secret access key
+export AWS_REGION=""               # such as "us-west-2"
+export DNSZONE=""                  # such as "mycompany.com"
+export FQDN=""                     # such as "kubeflow.mycompany.com"
+export EMAIL_ADDR=""               # valid email address
 ----
 
-NOTE: To avoid potential issues with rate limiting on issuing Let's Encrypt production TLS certificates, when initially creating the cert-manager Issuer, ensure the server:  https://acme-staging-v02  line is uncommented and the server: https://acme-v02  line is commented out. After verifying that the certicate can be issued correctly, we will reverse this to obtain the valid, production certificate
+To avoid potential issues with rate limiting on issuing Let's Encrypt production TLS certificates,when initially creating the cert-manager Issuer, ensure the server:  https://acme-staging-v02  line is uncommented and the server: https://acme-v02  line is commented out. After verifying that the certificate can be issued correctly, we will reverse this to obtain the valid, production certificate
 
-* Create the cert-manager Issuer file.
+* Create the cert-manager issuer file.
++
+[NOTE]
+====
+You may encounter issues when setting up cert-manager for the first time.
+To avoid potential rate limiting, you can use the Let's Encrypt staging server for testing and switch to the Let's Encrypt production server once you are successful.
+====
 +
 [source, console]
 ----
@@ -921,13 +921,13 @@ metadata:
 spec:
   acme:
     email: ${EMAIL_ADDR}
-    server: https://acme-staging-v02.api.letsencrypt.org/directory # Use this line to test the process of issuing a certificate to avoid the Let's Encrypt production rate limits
+    server: https://acme-staging-v02.api.letsencrypt.org/directory # Use this line to avoid Let's Encrypt production rate limits
 #    server: https://acme-v02.api.letsencrypt.org/directory # Use this line after the certificate issues correctly
     privateKeySecretRef:
       name: letsencrypt-issuer-priv-key # K8s secret that will contain the private key for this, specific issuer
     solvers:
     - selector:
-        dnsZones: 
+        dnsZones:
           - "${DNSZONE}"
       dns01:
         route53:
@@ -938,57 +938,52 @@ spec:
             key: secret-access-key
 EOF
 ----
-
-IMPORTANT: Review the letsencrypt-issuer.yaml file for accuracy before continuing
-
-* Verify the update to the file.
 +
-[source, console]
-----
-cat letsencrypt-issuer.yaml
-----
+[IMPORTANT]
+====
+Review the `letsencrypt-issuer.yaml` file for accuracy before continuing.
+====
 
-
-* Create the `letsencrypt-issuer` resource.
+. Create the `letsencrypt-issuer` resource.
 +
 [source, console]
 ----
 kubectl apply -f letsencrypt-issuer.yaml
 ----
 
-* Create the Kubernetes secret containing the aws_secret_access_key for the AWS user.
+. Create the Kubernetes secret containing the aws_secret_access_key for the AWS user.
 +
 [source, console]
 ----
 kubectl create -n istio-system secret generic route53-credentials-secret --from-literal=secret-access-key=${AWS_SECRET_ACCESS_KEY}
 ----
 
-* Verify the contents of the secret.
+. Verify the contents of the secret.
 +
 [source, console]
 ----
 kubectl get -n istio-system secret route53-credentials-secret -o jsonpath={.data.secret-access-key} | base64 -d; echo ""
 ----
 
-* Verify the hostname for the certificate resolves correctly.
+. Verify that the hostname for the certificate resolves correctly.
 +
 [source, console]
 ----
 getent hosts ${FQDN}
 ----
 
-* Create the cert-manager Certificate resource file.
+. Create the cert-manager certificate resource file.
 +
 [source, console]
 ----
-cat <<EOF> kubeflow-certificate.yaml 
+cat <<EOF> kubeflow-certificate.yaml
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: kubeflow-certificate
   namespace: istio-system
-spec: 
-  secretName: kubeflow-certificate-secret # Kubernetes secret that will contain the tls.key and tls.crt of the new cert
+spec:
+  secretName: kubeflow-certificate-secret # Kubernetes secret that will contain the tls.key and tls.crt of the new certificate
   commonName: ${FQDN}
   dnsNames:
     - ${FQDN}
@@ -997,71 +992,110 @@ spec:
     kind: Issuer
 EOF
 ----
-
-* Verify the Certificate resource file.
 +
-[source, console]
-----
-cat kubeflow-certificate.yaml
-----
+[IMPORTANT]
+====
+Verify the contents of the certificate resource file before proceeding.
+====
 
-* Create the Certificate resource.
+. Create the certificate resource.
 +
 [source, console]
 ----
 kubectl apply -f kubeflow-certificate.yaml
 ----
 
-* Check the status of the certificate.
+. Check the status of the certificate.
 +
 [source, console]
 ----
 kubectl get -w -n istio-system certificate
 ----
++
+[TIP]
+====
+The `-w` flag causes `kubectl` to watch for and display changes.
+Exit this loop with `Ctrl+C`.
+====
 
-* Use `Ctrl+c` to exit the kubectl -w (watch) command
-
-
-NOTE: The certificate commonly takes 100 seconds to be issued but can take up to three minutes. The `READY` status will change to `True` when it is issued.
-
-
-* If needed, check the progress of the certificate:
+. If needed, check the progress of the certificate.
++
+[IMPORTANT]
+====
+The certificate commonly takes 100 seconds to be issued but can take up to three minutes.
+Do not proceed to the next step until the cert-manager `READY` status is `True`.
+This indicates that the certificate has been issued.
+====
 +
 [source, console]
 ----
 kubectl describe -n istio-system certificate kubeflow-certificate
 ----
-
-IMPORTANT: If the certificate seems to be taking a long time to be issued, review the cert-manager logs for clues. Common errors are related to DNS resolution, credentials, and IAM policies. Keep checking back for the status of the certificate since it will likely keep working in the background. 
-
-* If needed, review the cert-manager logs:
++
+If the certificate seems to be taking a long time to be issued, review the cert-manager logs for clues.
+Common errors are related to DNS resolution, credentials, and IAM policies.
+Keep checking back for the status of the certificate, since it will likely keep working in the background.
+//
++
+You can review the cert-manager logs with:
 +
 [source, console]
 ----
 kubectl logs -n cert-manager -l app=cert-manager
 ----
 
-IMPORTANT: Proceed to the next section only after the certificate shows a `READY` status of `True` 
+. Use a browser to connect to the Kubeflow UI.
+//
+Because you are using the certificate issued by the Let's Encrypt staging server, your browser will not trust it.
+
+. Use your browser's UI to view the connection certificate and verify that it was issued by the "Let's Encrypt (Staging)" server.
 
 
-* Use a web browser to connect to Kubeflow UI with the Let's Encrypt Staging certificate
+=== Switch to a Let’s Encrypt production certificate
 
-NOTE: Since the certificate was issued by the Let's Encrypt *Staging* servers, it will cause an error in the browser that it is untrusted. 
+After you have successfully configured cert-manager with the Let's Encrypt staging certificate, you can proceed to switch to the production certificate.
 
-* Click the lock icon in the browser's URL pane, then continue selecting appropriate options until you are able to review the connection certificate. It should say that the certificate was issued by Let's Encrypt (Staging)
+. Update the letsencrypt-issuer.yaml file.
+//
++
+Comment out the `server: https://acme-staging-v02` line and uncomment the `server: https://acme-v02` line.
+That is, the file should look like:
++
+[listing]
+----
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-issuer
+  namespace: istio-system
+spec:
+  acme:
+    email: ${EMAIL_ADDR}
+#    server: https://acme-staging-v02.api.letsencrypt.org/directory # Use this line to avoid Let's Encrypt production rate limits
+    server: https://acme-v02.api.letsencrypt.org/directory # Use this line after the certificate issues correctly
+    privateKeySecretRef:
+      name: letsencrypt-issuer-priv-key # K8s secret that will contain the private key for this, specific issuer
+    solvers:
+    - selector:
+        dnsZones:
+          - "${DNSZONE}"
+      dns01:
+        route53:
+          region: ${AWS_REGION}
+          accessKeyID: ${AWS_ACCESS_KEY_ID}
+          secretAccessKeySecretRef:
+            name: route53-credentials-secret
+            key: secret-access-key
+----
 
-=== Update the configuration to use a Let’s Encrypt production certificate
-
-* Update the letsencrypt-issuer.yaml file to comment out the `server: https://acme-staging-v02` line and uncomment the `server: https://acme-v02` line:
-
-* Update the `letsencrypt-issuer` resource:
+. Update the `letsencrypt-issuer` resource.
 +
 [source, console]
 ----
 kubectl apply -f letsencrypt-issuer.yaml
 ----
 
-* Remove the certificatate and its associated secret:
+. Remove the staging certificate and its associated secret.
 +
 [source, console]
 ----
@@ -1069,84 +1103,74 @@ kubectl -n istio-system delete secret kubeflow-certificate-secret
 kubectl -n istio-system delete certificate kubeflow-certificate
 ----
 
-* Recreate the certificate:
+. Recreate the certificate resource.
+//
++
+You do not need to change the `kubeflow-certificate.yaml` file.
 +
 [source, console]
 ----
 kubectl apply -f kubeflow-certificate.yaml
 ----
 
-* Check the status of the certificate.
+. Check the status of the certificate.
 +
 [source, console]
 ----
 kubectl get -w -n istio-system certificate
 ----
++
+[NOTE]
+====
+The `READY` status will become `True` when the certificate has been issued.
+Recall that this can take up to three minutes.
+====
 
-* Use `Ctrl+c` to exit the kubectl watch (-w) command
 
-
-NOTE: The certificate can take up to three minutes to be issued, as indicated by the `READY` status becoming `True`
-
-
-* Refresh the istio-gateway deployment to use the new certificate:
+. Refresh the istio-gateway deployment to use the new certificate.
 +
 [source, console]
 ----
 kubectl rollout restart deployment -n istio-system istio-ingressgateway
 ----
 
-== Validation
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Illustrate functionality with a demonstration.
-// Begin with a description or outline of the demonstration.
-// Provide clear steps (in ordered lists) for the reader to follow.
-// Typical demonstration flow is:
-// 1. Prepare the environment for the demonstration.
-//    This should be minimal, such as downloading some data to use.
-//    If this requires more than a couple steps, consider putting it
-//    in a subsection.
-// 2. Perform the demonstration.
-//    Be careful not to overuse screenshots.
-// 3. Verify.
-//    This may be interwoven into performing the demonstration.
-//
-// As with Installation, leverage ordered lists, code blocks,
-// admonitions, and screenshots.
-//
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+=== Validate secure access
+
+With a valid TLS certificate deployed and enabled, validate that you have secure access.
+
+. Open a browser to the Kubeflow UI using the HTTPS URL.
++
+[NOTE]
+====
+You may need to clear your browser's cache.
+====
+
+. Use your browser interface to verify that you are using the production, signed certificate.
+
+. Log into the Kubeflow UI with the credentials:
++
+--
+* Email address: `user@example.com`
+
+* Password: `12341234`
+--
 
 
-* Close and reopen your browser to verify the publicly signed certificate is used at the Kubeflow UI's HTTPS URL.
+=== Automatically redirect to secure access
 
-* Login with the credentials:
+Optionally, you can set the gateway to automatically redirect from HTTP to HTTPS.
 
-`Email address`
-
-[source, console]
-----
-user@example.com
-----
-
-`Password`
-
-[source, console]
-----
-12341234
-----
-
-=== Optionally, set the kubeflow-gateway to redirect HTTP to HTTPS 
-
-* Edit the kubeflow resource.
+. Edit the kubeflow-gateway resource.
 +
 [source, console]
 ----
 kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
 ----
-** Change `httpsRedirect: false` to `httpsRedirect: true`
 
-* Confirm, by reloading your browser, that attempting to access the login page via HTTP results in a redirtection to HTTPS.
+. Change `httpsRedirect: false` to `httpsRedirect: true`
+
+. Confirm the change by attempting to access the Kubeflow UI by the HTTP URL and seeing that you are redirected to the HTTPS URL.
 
 
 == Summary
@@ -1158,13 +1182,17 @@ kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Kubeflow is an important tool for deploying and scaling ML workloads in containers on Kubernetes clusters. SUSE Rancher faciliates deploying and managing Kubeflow at production scale. In this guide, we used Harvester to provision nodes for an RKE2 cluster and installed Kubeflow into that so it could be managed by Rancher.
+Kubeflow is an important tool for managing your ML workloads in Kubernetes.
+Combined with {product1_full}, you can leverage an enterprise solution for deploying and managing your entire Kubernetes landscape, securely and at scale.
 
-To learn more about Rancher, see
-
-To get started working with Kubeflow, refer to https://www.kubeflow.org/docs/[Kubeflow Docuemtation] for more details.
+In this guide, you used {product3_full} to provision nodes to host a {product2} Kubernetes cluster, then installed, configured, and secured Kubeflow so it could be managed by {product1_full}.
 
 
+Continue your learning journey with these resources:
+
+* https://www.kubeflow.org/docs/started/kubeflow-examples/[Kubeflow Examples]
+
+* https://documentation.suse.com/trd/[SUSE Technical Reference Documentation]
 
 
 
