@@ -141,7 +141,7 @@ Harvester provides operators with a cohesive platform to manage virtual machine 
 
 In this guide, you:
 
-. Provision virtual machines for your Kubernetes cluster nodes with https://{product3_url}[{product3_full}].
+. provision virtual machines for your Kubernetes cluster nodes with https://{product3_url}[{product3_full}].
 +
 [NOTE]
 ====
@@ -150,14 +150,14 @@ Kubeflow can be deployed to any CNCF-certified Kubernetes cluster, regardless of
 Additionally {product3} provisions https://{product5_docs}[Longhorn] for persistent storage to support your Kubernetes deployment.
 ====
 
-. Use https://{product1_url}[{product1_full}] {product1_version} to instantiate and configure an https://{product2_url}[{product2}] {product2_version} cluster.
+. use https://{product1_url}[{product1_full}] {product1_version} to instantiate and configure an https://{product2_url}[{product2}] {product2_version} cluster.
 
-. Use {product1} to deploy Kubeflow {kubeflow_version} onto your cluster.
+. use {product1} to deploy Kubeflow {kubeflow_version} onto your cluster.
 
-. Secure Kubeflow with TLS.
+. secure Kubeflow with TLS.
 
 
-After completing these steps, you are able to access the Kubeflow user interface through your Web browser.
+After completing these steps, you can access the Kubeflow user interface through your Web browser.
 
 [NOTE]
 ====
@@ -177,7 +177,8 @@ The steps outlined in this guide should require little to no modification for ne
 
 This document is intended for data scientists, machine learning researchers and developers, operational teams, and others with responsibility for ensuring the success of ML projects.
 
-To be successful with this guide, you should have basic knowledge of Kubernetes operations in a {product1} environment as well as standard Linux command line container management with Kubectl, Helm, and Kustomize.
+To be successful with this guide, you should have basic knowledge of Kubernetes operations in a {product1} environment. 
+In addition, you should have basic knowledge of standard Linux command line container management with Kubectl, Helm, and Kustomize.
 
 
 
@@ -190,7 +191,7 @@ To be successful with this guide, you should have basic knowledge of Kubernetes 
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-For this guide, you need the following:
+To follow the instructions of this guide, you need the following:
 
 * Management workstation
 +
@@ -215,7 +216,7 @@ The operating system of the workstation used in the development of this guide wa
 --
 The minimum recommended cluster consists of five nodes as follows:
 
-* Control plane and etcd pool nodes
+* Control plane and `etcd` pool nodes
 //
 +
 Three nodes with vCPUs, 8 GB of RAM, and 40 GB storage volume.
@@ -228,7 +229,7 @@ Two nodes with 8 vCPUs, 16 GB of RAM, and 40 GB storage volume.
 * Operating system
 //
 +
-All nodes are configured with {product4} {product4_version} minimal, using the QCOW2 image with cloud-init enabled (previously known as the OpenStack image).
+All nodes are configured with {product4} {product4_version} minimal, using the QCOW2 image with `cloud-init` enabled (previously known as the OpenStack image).
 +
 [IMPORTANT]
 ====
@@ -284,10 +285,10 @@ You may configure the VLAN networks in __Advanced__ > __Networks__.
 . Advanced options such as run strategy, operating system type, and cloud-init data are optional.
 You may configure these in the __Advanced Options__ section if applicable.
 
-. Select the check-box to __Install guest agent__.
+. Select the check box to __Install guest agent__.
 
 
-The following User Data cloud-config (under __Show Advanced__) should be applied to all nodes during RKE2 cluster creation:
+The following *User Data cloud-config* (under __Show Advanced__) should be applied to all nodes during RKE2 cluster creation:
 
 [listing]
 ----
@@ -368,14 +369,14 @@ sudo zypper up
 
 . Reboot each node to enable the `kernel-default` kernel.
 
-After the {product2} cluster has been created, download the kubeconfig file from the {product1} Management server to your workstation.
+After the {product2} cluster has been created, download the `kubeconfig` file from the {product1} Management server to your workstation.
 See https://{product1_docs}/how-to-guides/new-user-guides/manage-clusters/access-clusters/use-kubectl-and-kubeconfig#accessing-clusters-with-kubectl-from-your-workstation[Accessing Clusters with kubectl from Your Workstation].
 
 
 
 === Configure the MetalLB load balancer
 
-MetalLB is a network load balancer implementation for Kubernetes clusters on bare metal.
+*MetalLB* is a network load balancer implementation for Kubernetes clusters on bare metal.
 This allows you to create Kubernetes services of the type `LoadBalancer` to provide two important features:
 
 * _address allocation_: MetalLB will take care of assigning individual IP addresses from configured address pools as services are launched and reclaiming those addresses when the services end.
@@ -454,7 +455,7 @@ data:
 EOF
 ----
 
-. Create the configmap.
+. Create the ConfigMap.
 +
 [source, console]
 ----
@@ -643,7 +644,7 @@ git clone git@github.com:kubeflow/manifests.git --branch {kubeflow_version}
 [NOTE]
 ====
 This guide is verified with Kubeflow {kubeflow_version}.
-If you would like to try a different version, select it from the https://{kubeflow_url_repo}/manifests/releases[available releases] and update the above command with the appropriate release tag.
+If you want to try a different version, select it from the https://{kubeflow_url_repo}/manifests/releases[available releases] and update the above command with the appropriate release tag.
 ====
 
 . Change to the new `manifests` directory on your workstation.
@@ -712,7 +713,7 @@ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 Use the HTTP connection protocol, not HTTPS.
 ====
 
-. Log into the Kubeflow user interface (UI) with the credentials:
+. Log in to the Kubeflow user interface (UI) with the credentials:
 +
 --
 * Email address: `user@example.com`
@@ -720,7 +721,7 @@ Use the HTTP connection protocol, not HTTPS.
 * Password: `12341234`
 --
 
-. After verifying that you can log into the Kubeflow UI, you can simply close your browser.
+. After verifying that you can log in to the Kubeflow UI, you can simply close your browser.
 
 . Close the `kubectl` port-forward session by issuing `Ctrl+C` in the terminal.
 
@@ -728,7 +729,7 @@ Use the HTTP connection protocol, not HTTPS.
 
 === Troubleshooting the Kubeflow installation
 
-Some things that could prevent connecting or logging into the Kubeflow UI include:
+Some things that could prevent connecting or logging in to the Kubeflow UI include:
 
 * Your local copy of the https://github.com/kubeflow/manifests is out-of-date.
 //
@@ -757,13 +758,13 @@ You can also check running processes with the Linux `top` command on each of the
 Up to this point, you have been able to access the Kubeflow UI over HTTP from your workstation configured to connect to the cluster.
 In most cases, you will want to enable access to Kubeflow from additional systems.
 This should be done securely through https://en.wikipedia.org/wiki/HTTPS[HTTPS] with a https://en.wikipedia.org/wiki/Transport_Layer_Security[TLS] certificate.
-Moreover, many Kubeflow components leverage this cryptographic protocol for secure cookies and may not function at all without it.
+Moreover, many Kubeflow components leverage this cryptographic protocol for secure cookies and may not function without it.
 
 To overcome this, you need to configure https://istio.io/[Istio] (which was installed with Kubeflow) to use MetalLB with the HTTPS protocol on the https://istio.io/latest/docs/reference/config/networking/gateway/[Istio Gateway].
 You will also need a signed TLS certificate.
 
 If you do not have a signed TLS certificate, you can get one for free through https://letsencrypt.org/[Let's Encrypt].
-Let’s Encrypt uses a https://letsencrypt.org/docs/challenge-types/[challenge process] to make sure you actually control the domain for which you are requesting a certificate.
+*Let’s Encrypt* uses a https://letsencrypt.org/docs/challenge-types/[challenge process] to make sure you actually control the domain for which you are requesting a certificate.
 One of these challenge methods uses https://letsencrypt.org/docs/challenge-types/#dns-01-challenge[DNS-01].
 You can satisfy this challenge using AWS Route 53 and https://community.letsencrypt.org/t/dns-providers-who-easily-integrate-with-lets-encrypt-dns-validation/86438[other DNS providers].
 
@@ -860,7 +861,7 @@ Your browser should redirect to a login prompt.
 For on-premises deployments, Kubeflow uses https://dexidp.io/[Dex] as a federated OpenID connection provider that can be integrated with a wide variety of identity providers, such as LDAP, SAML, and OAuth.
 ====
 
-. Log into the Kubeflow UI with the credentials:
+. Log in to the Kubeflow UI with the credentials:
 +
 --
 * Email address: `user@example.com`
@@ -871,15 +872,15 @@ For on-premises deployments, Kubeflow uses https://dexidp.io/[Dex] as a federate
 
 [IMPORTANT]
 ====
-Proceed to the next section only after you have verified that you can connect to and log into the Kubeflow UI.
+Proceed to the next section only after you have verified that you can connect to and log in to the Kubeflow UI.
 ====
 
 
 === Configure cert-manager with a Let's Encrypt staging certificate
 
-https://cert-manager.io/[cert-manager] is a powerful X.509 certificate controller
+https://cert-manager.io/[*cert-manager*] is a powerful X.509 certificate controller
 r for Kubernetes workloads and can manage certificates from many public certificate issuers.
-You can configuring cert-manager for https://cert-manager.io/docs/configuration/acme/[Automated Certificate Management Environment (ACME)] issuers, like Let's Encrypt.
+You can configure cert-manager for https://cert-manager.io/docs/configuration/acme/[Automated Certificate Management Environment (ACME)] issuers, like Let's Encrypt.
 Use the steps outlined below to configure cert-manager to use Let's Encrypt certificates validated through https://cert-manager.io/docs/configuration/acme/dns01/route53/[DNS-01 and AWS Route53].
 
 [NOTE]
@@ -900,7 +901,7 @@ export FQDN=""                     # such as "kubeflow.mycompany.com"
 export EMAIL_ADDR=""               # valid email address
 ----
 
-To avoid potential issues with rate limiting on issuing Let's Encrypt production TLS certificates,when initially creating the cert-manager Issuer, ensure the server:  https://acme-staging-v02  line is uncommented and the server: https://acme-v02  line is commented out. After verifying that the certificate can be issued correctly, we will reverse this to obtain the valid, production certificate
+To avoid potential issues with rate limiting on issuing Let's Encrypt production TLS certificates, when initially creating the cert-manager Issuer, ensure the server:  https://acme-staging-v02  line is uncommented and the server: https://acme-v02  line is commented out. After verifying that the certificate can be issued correctly, we will reverse this to obtain the valid production certificate.
 
 * Create the cert-manager issuer file.
 +
@@ -965,7 +966,7 @@ kubectl create -n istio-system secret generic route53-credentials-secret --from-
 kubectl get -n istio-system secret route53-credentials-secret -o jsonpath={.data.secret-access-key} | base64 -d; echo ""
 ----
 
-. Verify that the hostname for the certificate resolves correctly.
+. Verify that the host name for the certificate resolves correctly.
 +
 [source, console]
 ----
@@ -1148,7 +1149,7 @@ You may need to clear your browser's cache.
 
 . Use your browser interface to verify that you are using the production, signed certificate.
 
-. Log into the Kubeflow UI with the credentials:
+. Log in to the Kubeflow UI with the credentials:
 +
 --
 * Email address: `user@example.com`
@@ -1185,7 +1186,8 @@ kubectl edit -n kubeflow gateways.networking.istio.io kubeflow-gateway
 Kubeflow is an important tool for managing your ML workloads in Kubernetes.
 Combined with {product1_full}, you can leverage an enterprise solution for deploying and managing your entire Kubernetes landscape, securely and at scale.
 
-In this guide, you used {product3_full} to provision nodes to host a {product2} Kubernetes cluster, then installed, configured, and secured Kubeflow so it could be managed by {product1_full}.
+In this guide, you used {product3_full} to provision nodes to host an {product2} Kubernetes cluster. 
+Then you installed, configured, and secured Kubeflow so it could be managed by {product1_full}.
 
 
 Continue your learning journey with these resources:
