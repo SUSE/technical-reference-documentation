@@ -45,10 +45,25 @@ include::./common_docinfo_vars.adoc[]
 // document and product
 :title: Edge Analytics in Finance
 :subtitle: Market Predictions
-:productname: Rancher 2.6
-:platform1: Rancher 2.6 by SUSE
-:platform2: SUSE Linux Enterprise Server 15 SP3
+:product1: Rancher
+:product1_full: Rancher Prime by SUSE
+:product1_url: www.rancher.com/products/rancher/
+:product1_docs: ranchermanager.docs.rancher.com
+:product1_version: 2.6
+:product2: K3s
+:product2_version: 1.21.3+k3s1
+:product2_url: k3s.io/
+:product3: SLES
+:product3_full: SUSE Linux Enterprise Server
+:product3_version: 15 SP4
+:product3_url: www.suse.com/products/server/
+:product3_docs: documentation.suse.com/sles/
+
 :otherproduct1: Fin-Dashboard
+:otherproduct1_url: github.com/navin772/GSOC_Stock_prediction/tree/master/fin_dashboard
+:other_product2: JupyterLab
+:other_product2_url: jupyter.org/
+
 :usecase: edge analytics in finance
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -71,9 +86,7 @@ include::./common_docinfo_vars.adoc[]
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // define any additional variables here for use within the document
-:pythonver: Python 3.10
-:k8s: K3s 1.21.3+k3s1
-
+:python_version: Python 3.10
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -117,11 +130,8 @@ Contributors learn from experienced open source developers while writing code fo
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide illustrates the facility of Kubernetes to support edge analytics in the financial sector by using Rancher by SUSE and K3s to deploy a machine learning model for stock price predictions and a Web-based front-end for user interaction and visualization.
-
-* https://www.suse.com/solutions/enterprise-container-management/#rancher-product[Rancher by SUSE] is an enterprise Kubernetes and container management platform that allows you to deploy workloads anywhere - at the data center core, in the cloud, and even at the edge - efficiently and with enterprise-grade security and support.
-
-* https://k3s.io/[K3s] is an open source, lightweight, certified Kubernetes distribution built for IoT and edge computing.
+Edge analytics in the financial sector is simplified through the use of modern container technologies.
+This is illustrated by using https://{product1_url}[Rancher] by SUSE to deploy a machine learning model for stock price predictions and a Web-based front-end for user interaction and visualization into a lightweight, https://{product2_url}[{product2}] Kubernetes cluster.
 
 
 
@@ -134,7 +144,7 @@ This guide illustrates the facility of Kubernetes to support edge analytics in t
 //   - Required skills <- This can be critically important
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for DevOps, MLOps, developers and data scientists who want to containerize their ML workloads and deploy them at the edge.
+DevOps, MLOps, developers and data scientists looking to containerize their ML workloads and deploy them anywhere (including at the edge) will find useful guidance in this document.
 To get the most out of this guide, you should have basic familiarity with the Linux command line, Python, Docker, and Kubernetes.
 
 
@@ -151,27 +161,39 @@ To get the most out of this guide, you should have basic familiarity with the Li
 
 For this guide, you need:
 
-* A https://ranchermanager.docs.rancher.com/v2.6[Rancher] environment.
+* A https://{product1_url}[Rancher] environment.
 //
 +
-This guide uses {platform1}.
-Subsequent minor releases should work with little to no modification.
+You can use {product1} or {product1_full} version {product1_version} or later.
 
-* A Kubernetes cluster managed by Rancher.
+* A {product2} Kubernetes cluster managed by Rancher.
 //
 +
-This guide leverages {k8s}.
+{product2} {product2_version} or later should work without modification.
 +
 [NOTE]
 ====
-K3s is an ideal Kubernetes distribution for edge deployments, but, with Rancher, you can manage any https://www.cncf.io/certification/software-conformance/#logos[CNCF-certified Kubernetes distribution].
+K3s is an ideal Kubernetes distribution for edge deployments.
+With {product1} and {product1_full}, you can manage any https://www.cncf.io/certification/software-conformance/#logos[CNCF-certified Kubernetes distribution].
 ====
++
+--
+For this guide, your cluster should consist of at least one worker node with the following specifications:
+
+* Processor: 2 vCPUs
+
+* Memory: 4 GB RAM
+
+* Storage: 10 GB (available)
+
+* Operating system: Linux ({product3} {product3_version} or later is recommended).
+--
 
 * The ability to install and execute https://www.python.org/[Python] programs.
 //
 +
 Machine learning software is in rapid development, which can result in version incompatibilities.
-This guide uses {pythonver}.
+Python {python_version} or later should work with little to no modification.
 +
 [TIP]
 ====
@@ -179,11 +201,12 @@ See https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyter
 ====
 
 * A https://hub.docker.com/[Docker Hub] account.
-//
 +
+[NOTE]
+====
 In this guide, you push your workload container image to Docker Hub and, later, pull this image for deployment onto your cluster.
 With appropriate command substitutions, any container image repository may be used.
-
+====
 
 
 == Technical overview
@@ -198,10 +221,9 @@ With appropriate command substitutions, any container image repository may be us
 //   - workflow
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Following this guide, you use Rancher to deploy {otherproduct1}, a stock prediction Web application, which you can obtain from the project's https://github.com/navin772/GSOC_Stock_prediction/tree/master/fin_dashboard[code repository].
-{otherproduct1} is discussed in more detail later on.
+In this guide, you use {product1} to deploy {otherproduct1}, a stock prediction Web application, which you can obtain from the project's https://{otherproduct1_url}[code repository].
+{otherproduct1} is discussed in more detail later.
 
-//
 
 There can be many paths to creating and deploying analytics applications.
 A typical process involves the following steps:
@@ -229,12 +251,8 @@ In this guide, you build a https://docs.docker.com/get-started/overview/[Docker]
 This is done by creating manifest files.
 
 . Deploy the application.
-//
-+
-In this guide, you use https://kubectl.docs.kubernetes.io/references/kustomize/[Kustomize].
 
 
-//
 
 Some additional components and tools used in this guide or by {otherproduct1} include:
 
@@ -244,7 +262,7 @@ Some additional components and tools used in this guide or by {otherproduct1} in
 
 * https://facebook.github.io/prophet/[Fbprophet] - to create the ML model to predict the stock/index price.
 
-* https://streamlit.io/[Streamlit v1.11.0] - to build a Web-based, interactive front-end for the ML model.
+* https://streamlit.io/[Streamlit] - to build a Web-based, interactive front-end for the ML model.
 
 * https://github.com/cjhutto/vaderSentiment[VADER] - to analyze market sentiment based on news content.
 
@@ -257,6 +275,7 @@ Some additional components and tools used in this guide or by {otherproduct1} in
 
 
 == ML model
+
 
 In this section, you explore a subset of the {otherproduct1} code by creating a https://jupyterlab.readthedocs.io/en/stable/[Jupyter Notebook] that illustrates how data is accumulated and processed, a model is created and used, and model predictions are visualized.
 
