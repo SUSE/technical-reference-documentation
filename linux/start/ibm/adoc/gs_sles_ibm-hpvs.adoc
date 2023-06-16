@@ -49,9 +49,9 @@ include::./common_docinfo_vars.adoc[]
 :product1: SLE BCI
 :product1_full: SUSE Linux Enterprise Base Container Images
 :product1_url: https://www.suse.com/products/base-container-images/
-:product2: SLES-Z
+:product2: SLES
 :product2_full: SUSE Linux Enterprise Server on IBM Z and LinuxONE
-:product2_version: 15
+:product2_version: 15 SP4
 :product2_url: https://www.suse.com/products/systemz/
 :product3: IBM HPVS
 :product3_full: IBM Hyper Protect Virtual Servers
@@ -61,6 +61,7 @@ include::./common_docinfo_vars.adoc[]
 :hpvs_onprem: {hpvs_full}
 :hpvs_onprem_ver: 2.1.x
 :hpvs_cloud: IBM Cloud Hyper Protect Virtual Servers
+:hpp: IBM Hyper Protect Platform
 
 :usecase:  confidential computing with containers
 
@@ -151,7 +152,20 @@ In this guide, you learn how to deploy a containerized confidential computing wo
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide you deploy a containerized confidential computing workload to an IBM Z and LinuxOne trusted execution environment using a SUSE Linux Enterprise Base Container Image (SLE BCI) and the IBM Hyper Protect Platform.
+In this guide you:
+
+* learn about the {hpp_full} architecture for on-premises and cloud deployments
+
+* prepare an on-premises or cloud environment for a confidential container workload
+
+* build a confidential container workload with {product1_full}
+
+* deploy the confidential container workload
+
+* verify the confidential container workload
+
+
+// deploy a containerized confidential computing workload to an IBM Z and LinuxOne trusted execution environment using a SUSE Linux Enterprise Base Container Image (SLE BCI) and the IBM Hyper Protect Platform.
 
 
 === Audience
@@ -163,13 +177,14 @@ In this guide you deploy a containerized confidential computing workload to an I
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide can help architects and developers evaluate the effort to deploy containerized workloads into a confidential computing environment.
-The required skills include a basic knowledge of container images, Docker Compose, and confidential computing concepts, such as attestation.
+This guide can help architects, platform engineers, developers, and operations teams to understand the requirements and processes for deploying containerized workloads into a confidential computing environment.
+
+To be successful with this guide, you should have basic knowledge of container images, Docker Compose, and confidential computing concepts (such as attestation).
 
 
 === Acknowledgements
 
-Contributions to the development of this guide by the following individuals is greatly appreciated:
+Contributions to the development of this guide by the following individuals is appreciated:
 
 * {contributor1_firstname} {contributor1_surname}, {contributor1_jobtitle}, {contributor1_orgname}
 
@@ -187,26 +202,42 @@ Contributions to the development of this guide by the following individuals is g
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-You are highly encouraged to start this journey using https://cloud.ibm.com/docs/vpc?topic=vpc-about-se#about-hyper-protect-virtual-servers-for-vpc[Confidential computing with LinuxONE] using IBM Cloud Hyper Protect Virtual Servers for Virtual Private Cloud (VPC).
+You are encouraged to start your journey with https://cloud.ibm.com/docs/vpc?topic=vpc-about-se#about-hyper-protect-virtual-servers-for-vpc[Confidential computing with LinuxONE] using {hpvs_cloud} for Virtual Private Cloud (VPC).
 
 The infrastructure for the trusted execution environment needed for HPVS is already set up and available as an easy-to-use service in IBM Cloud.
-If you would like to use IBM Cloud Hyper Protect Virtual Servers for VPC then all you need is an IBM Cloud https://cloud.ibm.com/docs/account?topic=account-accounts#paygo[Pay-As-You-Go account].
+If you would like to use {hpvs_cloud} for VPC then all you need is an IBM Cloud https://cloud.ibm.com/docs/account?topic=account-accounts#paygo[Pay-As-You-Go account].
 
-On-premises confidential computing deployments use https://www.ibm.com/products/hyper-protect-virtual-servers[IBM Hyper Protect Virtual Servers].
-The technology used in IBM Hyper Protect Virtual Servers is the same as IBM Cloud Hyper Protect Virtual Servers for VPC but you will need to prepare the required infrastructure before deploying a workload.
-The following high level infrastructure prerequisites are needed if you would like to use IBM Hyper Protect Virtual Servers:
+On-premises confidential computing deployments use https://www.ibm.com/products/hyper-protect-virtual-servers[{hpvs_onprem}].
+This is the same technology used in {hpvs_cloud} for VPC, but you will need to prepare the required infrastructure.
+The following high level infrastructure prerequisites are needed if you would like to use {hpvs_onprem}:
 
 * An IBM Z(R) or LinuxONE system
 ** IBM z16 (all models)
 ** IBM z15 (all models)
 ** IBM LinuxONE 4
 ** IBM LinuxONE III
-* Feature Code 115 Secure Execution for Linux
-* Logical parition (LPAR) running the latest SUSE Linux Enterprise Server version, which is an IBM Secure Execution enabled Kernel-based Virtual Machine (KVM) host
-* IBM Hyper Protect Virtual Servers {hpvs_onprem_ver}
-** A https://www.ibm.com/docs/en/hpvs/2.1.x?topic=trial-program[trial program] for IBM Hyper Protect Virtual Servers and Crypto Express Network API for Secure Execution Enclaves is available from IBM.
 
-Detailed system requirements can be found in the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements[Hyper Protect Virtual Servers {hpvs_onprem_ver} documentation].
+* Feature Code 115 Secure Execution for Linux
+
+* Logical parition (LPAR) running {product2_full} {product2_version}
+//
++
+{product2} will provide the IBM Secure Execution enabled Kernel-based Virtual Machine (KVM) host.
+
+* IBM Hyper Protect Virtual Servers {hpvs_onprem_ver}
+//
++
+A https://www.ibm.com/docs/en/hpvs/2.1.x?topic=trial-program[trial program] for IBM Hyper Protect Virtual Servers and Crypto Express Network API for Secure Execution Enclaves is available from IBM.
+//
++
+Detailed system requirements can be found in the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements[{hpvs_onprem} {hpvs_onprem_ver} documentation].
+
+
+[NOTE]
+====
+This guide was developed with the noted software versions.
+You are encouraged to use the latest releases to take advantage of various updates and security patches.
+====
 
 
 == Technical overview
@@ -224,10 +255,11 @@ Detailed system requirements can be found in the https://www.ibm.com/docs/en/hpv
 
 image::hpvs-architecture.svg[IBM Hyper Protect Platform architecture, scaledwidth="75%", align="center"]
 
-The IBM Hyper Protect Platform architecture is illustrated in this diagram at a high level with the components that comprise the confidential computing environment in IBM Cloud (on the left) as well as on-premises or in a hosted datacenter (on the right).
-The architectural similarities provide a hybrid deployment model that gives you the flexibility to easily target the location of your workload depending on business requirements.
+The {hpp} architecture is illustrated in this diagram at a high level.
+You are shown the components that comprise the confidential computing environment in IBM Cloud (on the left) as well as on-premises or in a hosted datacenter (on the right).
+The architectural similarities facilitates a hybrid deployment model that gives you the flexibility to easily target the location of your workload depending on business requirements.
 
-The components of the IBM Hyper Protect Platform include:
+The components of the {hpp} include:
 
 * https://www.ibm.com/docs/en/linux-on-systems?topic=virtualization-introducing-secure-execution-linux[Secure Execution for Linux]
 //
@@ -247,9 +279,9 @@ The KVM host runs in an LPAR, which, in practice, is equivalent to an independen
 +
 [NOTE]
 ====
-* IBM Cloud Hyper Protect Virtual Servers for VPC use an IBM provided KVM host.
+* {hpvs} for VPC use an IBM provided KVM host.
 
-* SUSE Linux Enterprise Server can be used for on-premises and hosted datacenter deployments as a supported KVM host for IBM Hyper Protect Virtual Servers {hpvs_onprem_ver}.
+* {product2_full} can be used for on-premises and hosted datacenter deployments as a supported KVM host for {hpvs_onprem} {hpvs_onprem_ver}.
 ====
 
 * KVM virtual machine
@@ -271,6 +303,7 @@ The HPCR requires input from a contract to pull and start containerized workload
 [NOTE]
 ====
 * The HPCR virtual machine protects data-at-rest by encrypting the root disk as well as encrypting a separate data disk for container workload persisent storage.
+
 * HPCR requires a contract, which is a definition of the workload configuration in YAML format.
 The HPCR virtual machine will immediately stop when a contract is missing or invalid.
 The contract is critical and is presented in more detail later in this document.
@@ -279,7 +312,7 @@ The contract is critical and is presented in more detail later in this document.
 * Container images
 //
 +
-Workload container images can be built on SUSE Linux Enterprise Base Container Images (SLE BCI).
+Workload container images can be built on {product1_full} ({product1}).
 //
 +
 You can run multiple workload containers on a single HPCR Secure Execution guest.
@@ -327,7 +360,7 @@ image::arrow_down_jungle-green-50wide.png[Down arrow, align="center"]
 [width="100%"]
 |===
 
-| Build, publish, and define a confidential container workload for the IBM Hyper Protect Platform
+| Build, publish, and define a confidential container workload for the {hpp}
 
 a|
 
@@ -372,7 +405,7 @@ a|
 
 Before you can deploy your confidential container workloads, you must prepare your environment.
 
-Follow the steps detailed in <<Cloud preparation>> or <<On-premises preparation>> depending on the infrastructure environment you are using.
+Follow the steps detailed in <<Cloud preparation>> or <<On-premises preparation>> depending on the infrastructure environment you intend to use.
 
 
 === Cloud preparation
