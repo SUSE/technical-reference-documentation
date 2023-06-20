@@ -56,7 +56,7 @@ include::./common_docinfo_vars.adoc[]
 
 :usecase: Move from a free openSUSE Leap to an SUSE Linux Enterprise Distribution
 
-:executive_summary: This document provides a brief showcase how to migrate from a free linux to an payg enterprise distribution in Azure.
+:executive_summary: This document provides a brief showcase how to migrate from a free linux to an PAYG enterprise distribution in Azure.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -170,20 +170,20 @@ The following is the current abstract procedure to migrate from openSUSE Leap 15
 . Install yast2-registration-sle within openSUSE Leap
 . Register the system with a valid subscription during the process
 . Reboot - now you have a SUSE Linux Enterprise Server
-. Install Azure Hybrid Benefit Extention to switch to PAYG
+. Install Azure Hybrid Benefit Extension to switch to PAYG
 
 ## Azure Hybrid Benefit (AHB) for Linux
 
 In Azure, there are two main licensing pricing options: *pay-as-you-go* (PAYG) and *bring-your-own-subscription* (BYOS).
 
-PAYG:: is a pricing option where you pay Microsoft for the resources you use on an time based usage, e.g. and hourly or monthly. You will only pay for what you have used. It includes the OS and the used infrastructure.
+PAYG:: is a pricing option where you pay Microsoft for the resources you use on a time based usage, e.g. and hourly or monthly. You will only pay for what you have used. It includes the OS and the used infrastructure.
 BYOS:: is the pricing option where you pay Microsoft only for the infrastructure, but not for the OS. You need to buy a subscription for the OS from SUSE directly (or its distributors).
 
 Azure Hybrid Benefit (AHB) for Linux lets you switch the software subscription model for your VM nearly on the fly.
 
-AHB works with Virtual Machine Scale Sets, Spot Virtual Machines, and custom images. It allows for easy bi-directional conversions between the two buying models without the need to re-install anything.
+AHB works with Virtual Machine Scale Sets, Spot Virtual Machines, and custom images. It allows for easy bidirectional conversions between the two buying models without the need to re-install anything.
 
-The infrastruction pricing part does not change (see picture).
+The pricing part for the infrastructure does not change (see picture).
 
 image::AHB.svg[AzureHybridBenefit, scaledwidth="100%"]
 
@@ -198,7 +198,7 @@ image::AHB.svg[AzureHybridBenefit, scaledwidth="100%"]
 |CAPEX
 
 |+
-|One contact  - the CSP
+|One contact - the CSP
 |-
 |Two contacts, CSP and SUSE
 
@@ -215,7 +215,7 @@ image::AHB.svg[AzureHybridBenefit, scaledwidth="100%"]
 |+
 |One support contact (L1,L2) by CSP, SUSE & CSP work together in the back (L3).
 |+
-|Two contacts, Direct access to SUSE Support.
+|Two contacts; Direct access to SUSE Support.
 
 |+
 |No Registration needed, repositories automatically configured.
@@ -291,29 +291,29 @@ For PAYG you simply can download a 60-day trial subscription and for BYOS you ca
 
 Steps
 
-. goto http://www.suse.com
-. select "Free Downloads" in the upper right
-. scroll down to "SUSE Linux Enterprise Server"
-. click "Download"
-. choose a small iso-image, e.g. SLES15-SP4-Minimal-VM.x86_64-kvm-and-xen-GM.qcow2, as we do not really need it.
-. click "Download"
-. You need to create an SUSE Account, so please fill out the form. Be sure to fill in a valid email-adress and check the box "Don't Forget Your 60-day Trial"
+. Goto http://www.suse.com
+. Select "Free Downloads" in the upper right
+. Scroll down to "SUSE Linux Enterprise Server"
+. Click "Download"
+. Choose a small iso-image, e.g. SLES15-SP4-Minimal-VM.x86_64-kvm-and-xen-GM.qcow2, as we do not really need it.
+. Click "Download"
+. You need to create an SUSE Account, so please fill out the form. Be sure to fill in a valid email-address and check the box "Don't Forget Your 60-day Trial"
 . Press "Create Account"
 . You will see a Success page with further instructions
-. You should get you subscription afterwards
+. You should get your subscription afterward
 
 #### Buy subscription
 
 Steps
 
-. goto http://www.suse.com
-. select "Shop" in the upper right menu
-. scroll down to "SUSE Linux Enterprise Server"
+. Goto http://www.suse.com
+. Select "Shop" in the upper right menu
+. Scroll down to "SUSE Linux Enterprise Server"
 . Press "Start Shopping"
 . The default selection of "1-2 Sockets or 1-2 Virtual Machines" are right
 . Choose the time you want the subscription valid for (5y,3y,1y)
 . Press "Buy" and follow the shopping cart
-. You should get you subscription afterwards
+. You should get your subscription afterward
 
 ### The migration process step by step
 
@@ -330,7 +330,7 @@ For the example here we use openSUSE Leap 15.4 as starting with this version its
 * get a 60d-trial subscription for SLES via download.suse.com if you want to use the *PAYG* version of SLES
 * or
       buy a SLES subscription
-      from SUSE throught our distributors or from our webpage https://www.suse.com/shop/ for the *BYOS* model
+      from SUSE through our distributors or from our web page https://www.suse.com/shop/ for the *BYOS* model
 
 * login to the running openSUSE instance and run yast2-migration-sle
 [source]
@@ -344,9 +344,9 @@ IMPORTANT: This yast2 process will ask you for your email and the subscription k
 
 NOTE: The openSUSE repositories will remain attached and are handled as 3rd party repositories at this point and not get touched.
 
-* Now you can switch to SLES PAYG with help of the Azure Hybrid Benefit (AHB) extention
+* Now you can switch to SLES PAYG with help of the Azure Hybrid Benefit (AHB) extension
 
-** Install the extention with the help of the az cmd-line tool.
+** Install the extension with the help of the az cmd-line tool.
 Log out of the instance, and from your shell or console do
 [source]
 az vm extension set -n AHBForSLES --publisher SUSE.AzureHybridBenefit --vm-name <YOUR_VM_NAME> --resource-group <YOUR_RESOURCE_GROUP>
