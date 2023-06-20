@@ -54,9 +54,9 @@ include::./common_docinfo_vars.adoc[]
 //:product2_full: Secondary product full name
 //:product2_url: Secondary product URL
 
-:usecase: Move from a free openSUSE Leap to an SUSE Linux Enterprise Distribution
+:usecase: Move from a free openSUSE Leap to a SUSE Linux Enterprise Distribution
 
-:executive_summary: This document provides a brief showcase how to migrate from a free linux to an PAYG enterprise distribution in Azure.
+:executive_summary: This document provides a brief showcase how to migrate from a free linux to a PAYG enterprise distribution in Azure.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -110,7 +110,7 @@ Several years back, SUSE had provided the sources from SUSE Linux Enterprise for
 
 This contribution promoted openSUSE Leap as a development platform for communities and industry partners going forward.
 
-Since version 15.3 it is very simple to migrate from openSUSE Leap to SLES, and with version 15.4+ it is much more simple.
+Since version 15.3 it is simple to migrate from openSUSE Leap to SLES, and with version 15.4+ it is much more simple.
 In a second phase, it is also possible to move from a Bring-Your-Own-Subscription (BYOS) to a SLES Pay-as-you-go (PAYG) image in the cloud using the Azure Hybrid Benefit
 
 === Scope
@@ -176,7 +176,7 @@ The following is the current abstract procedure to migrate from openSUSE Leap 15
 
 In Azure, there are two main licensing pricing options: *pay-as-you-go* (PAYG) and *bring-your-own-subscription* (BYOS).
 
-PAYG:: is a pricing option where you pay Microsoft for the resources you use on a time based usage, e.g. and hourly or monthly. You will only pay for what you have used. It includes the OS and the used infrastructure.
+PAYG:: is a pricing option where you pay Microsoft for the resources you use on a time based usage, e.g. and hourly or monthly. You only pay for what you have used. It includes the OS and the used infrastructure.
 BYOS:: is the pricing option where you pay Microsoft only for the infrastructure, but not for the OS. You need to buy a subscription for the OS from SUSE directly (or its distributors).
 
 Azure Hybrid Benefit (AHB) for Linux lets you switch the software subscription model for your VM nearly on the fly.
@@ -281,7 +281,7 @@ image::AHB.svg[AzureHybridBenefit, scaledwidth="100%"]
 
 ### Get SLES subscription
 
-Depending on your needs and requirements you need to decide if you want to run you future SLES
+Depending on your needs and requirements you need to decide to run you future SLES
 as PAYG or BYOS
 
 For PAYG you simply can download a 60-day trial subscription and for BYOS you can buy subscriptions through the SUSE Shop or any software distributor.
@@ -317,17 +317,17 @@ Steps
 
 ### The migration process step by step
 
-For the example here we use openSUSE Leap 15.4 as starting with this version its simpler as before.
+For the example here we use openSUSE Leap 15.4 as starting with this version it is simpler as before.
 
 * start with a openSUSE image in the Azure Marketplace
-      e.g. opensuse-leap-15-4:gen2:2022.11.04
+      for example opensuse-leap-15-4:gen2:2022.11.04
 
 * run all updates and install the package "yast2-migration-sle"
 [source]
       sudo zypper update
       sudo zypper in yast2-migration-sle
 
-* get a 60d-trial subscription for SLES via download.suse.com if you want to use the *PAYG* version of SLES
+* get a 60d-trial subscription for SLES via download.suse.com to use the *PAYG* version of SLES
 * or
       buy a SLES subscription
       from SUSE through our distributors or from our web page https://www.suse.com/shop/ for the *BYOS* model
@@ -336,13 +336,13 @@ For the example here we use openSUSE Leap 15.4 as starting with this version its
 [source]
       sudo yast2 migration-sle
 
-IMPORTANT: This yast2 process will ask you for your email and the subscription key
+IMPORTANT: This yast2 process ask you for your email and the subscription key
 
 * Now you have a SLES BYOS instance. Check it with
 [source]
       cat /etc/os-release
 
-NOTE: The openSUSE repositories will remain attached and are handled as 3rd party repositories at this point and not get touched.
+NOTE: The openSUSE repositories remain attached and are handled as third party repositories at this point and not get touched.
 
 * Now you can switch to SLES PAYG with help of the Azure Hybrid Benefit (AHB) extension
 
