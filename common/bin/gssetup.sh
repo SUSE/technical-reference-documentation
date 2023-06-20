@@ -22,7 +22,7 @@ echo "- 2. checked out your new branch: \`git checkout myproject\`"
 echo "- 3. changed to the 'kubernetes/start' or"
 echo "-    'linux/start' directory (as appropriate)"
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo 
+echo
 echo "Are you ready to proceed?"
 read -p "Press ENTER to continue or CTRL-C to cancel."
 
@@ -113,13 +113,13 @@ done
 
 # get Partner Name
 read -p "Please enter the name of the primary partner : " response
-partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
+partnername=$( echo ${response} | tr '[:upper: ]' '[:lower:_]' )
 
 
 # get Partner Product
 read -p "Please enter the primary partner product name : " response
 if [ -n "$response" ]; then
-  partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' )"
+  partnerprod="-$( echo ${response} | tr '[:upper: ]' '[:lower:_]' )"
 else
   # allow the partner product name to be left blank
   partnerprod=""
@@ -128,7 +128,7 @@ fi
 # get Use Case
 read -p "If you would like a use case or description (1-3 words), enter it now or just press ENTER : " response
 if [ -n "$response" ]; then
-  usecase="_$( echo ${response} | tr '[:upper:]' '[:lower:]' | tr ' ' '-' )"
+  usecase="_$( echo ${response} | tr '[:upper: ]' '[:lower:-]')"
 else
   usecase=""
 fi
@@ -164,7 +164,7 @@ echo "-                   └── svg"
 echo "-"
 echo "- Note: Several symbolic links will also be created."
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo 
+echo
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
