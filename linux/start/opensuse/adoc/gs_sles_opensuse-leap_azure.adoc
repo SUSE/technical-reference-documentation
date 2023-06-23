@@ -43,20 +43,25 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document
 // -
-:title: Migrate openSUSE Leap to SUSE Linux Enterprise Server on Azure
-:subtitle: Subtitle
+:title: Migrate to SUSE Linux Enterprise from openSUSE Leap on Microsoft Azure
+:subtitle: Enterprise Cloud Computing
 
-:product1: SLES
-:product1_full: SUSE Linux Enterprise Server
-//:product1_version: Primary SUSE product/platform relevant version or versions
-//:product1_url: Primary SUSE product/platform URL (without the protocol)
-//:product2: Secondary product short name
-//:product2_full: Secondary product full name
-//:product2_url: Secondary product URL
+:product1: SUSE Linux Enterprise
+:product1_short: SLE
+:product1_version: 15
+:product1_version_min: 15 SP3
+:product1_url: https://www.suse.com/products/server/
+:product2: openSUSE Leap
+:product2_version: 15
+:product2_version_min: 15.3
+:product2_url: https://www.opensuse.org/#Leap
+:product3: Microsoft Azure
+:product3_short: Azure
+:product3_url: https://azure.microsoft.com/en-us
 
-:usecase: Move from a free openSUSE Leap to a SUSE Linux Enterprise Distribution
+:usecase: migrate to supported, pay-as-you-go {product1} from {product2} on {product3}
 
-:executive_summary: This document provides a brief showcase how to migrate from a free linux to a PAYG enterprise distribution in Azure.
+:executive_summary: Learn how to {usecase}.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -66,7 +71,7 @@ include::./common_docinfo_vars.adoc[]
 // -
 :author1_firstname: Peter
 :author1_surname: Schinagl
-:author1_jobtitle: Sr. Technical Architect
+:author1_jobtitle: Senior Technical Architect
 :author1_orgname: SUSE
 //:author2_firstname: first (given) name
 //:author2_surname: surname
@@ -90,28 +95,23 @@ include::./common_docinfo_vars.adoc[]
 == Introduction
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a brief statement (1-4 sentences) of the purpose of the guide.
-// This is could be the same as the executive summary.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-
-=== Motivation
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a motivation for the document in 2-4 sentences to identify:
+// Provide the motivation and purpose for the document in 2-4 sentences
+// to identify:
 //   - what the document is about
 //   - why it may be of interest to the reader (e.g., a use case)
 //   - what products are being highlighted
 // Include an approved SUSE | Partner logo lock-up if possible
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-Several years back, SUSE had provided the sources from SUSE Linux Enterprise for usage in openSUSE Leap to bring the experience and quality of openSUSE Leap and SUSE Linux Enterprise (SLE) to a new level.
 
-This contribution promoted openSUSE Leap as a development platform for communities and industry partners going forward.
+Several years ago, SUSE and the openSUSE community began working to bring the source code streams of {product1} ({product1}) and {product2} into alignment.
+The goal was bring the experience and quality of both products to a new level.
+The contribution of {product1} source code promoted {product2} to be a development platform for communities and industry partners alike.
 
-Since version 15.3 it is simple to migrate from openSUSE Leap to SLES, and with version 15.4+ it is much more simple.
-In a second phase, it is also possible to move from a Bring-Your-Own-Subscription (BYOS) to a SLES Pay-as-you-go (PAYG) image in the cloud using the Azure Hybrid Benefit
+With {product2} {product2_version_min} and {product1} {product1_version_min}, it became possible to migrate from the community Linux to supported, enterprise Linux.
+Migration became even simpler with later releases.
+You can even move from an {product2} image in the cloud to a supported, {product1}, pay-as-you-go (PAYG) image, using the {product3} Hybrid Benefit.
+
 
 === Scope
 
@@ -119,7 +119,7 @@ In a second phase, it is also possible to move from a Bring-Your-Own-Subscriptio
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will guide you through the detailed steps for the migration
+Following step-by-step guidance, you will migrate from {product2} to {product1} on {product3}.
 
 
 === Audience
@@ -131,7 +131,7 @@ This guide will guide you through the detailed steps for the migration
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for developers and administrators who started with a free linux and now want to have an Enterprise distribution for production
+Developers and administrators, who may have started with {product2} on {product3} for development, can use this guide to migrate to a supported, {product1} deployment for production.
 
 
 == Prerequisites
@@ -143,9 +143,13 @@ This document is intended for developers and administrators who started with a f
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-. A Microsoft Azure Account
-. openSUSE Leap 15.3+ running in Azure
-. SUSE Linux Enterprise Serve (SLES) subscription
+To perform the steps described in this guide, you need:
+
+* {product3} account
+
+* {product2} {product2_version_min} or later, running in {product3}
+
+* {product1} Server subscription
 
 
 
@@ -161,18 +165,34 @@ This document is intended for developers and administrators who started with a f
 //   - workflow diagram
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Here is an overview of the process to switch from openSUSE to SUSE Linux Enterprise Server in Azure
 
-image::LeapMigrationWays.svg[Overview,scaledwidth="80"]
+The process to switch from {product2} to {product1} Server in {product3} is outlined below.
 
-The following is the current abstract procedure to migrate from openSUSE Leap 15.4 to SUSE Linux Enterprise Server 15 Service Pack 4. It needs aligned versions.
+image::sles_opensuse-leap_migration-ways.svg[Overview, scaledwidth="80%", align="center"]
 
-. Install yast2-registration-sle within openSUSE Leap
-. Register the system with a valid subscription during the process
-. Reboot - now you have a SUSE Linux Enterprise Server
-. Install Azure Hybrid Benefit Extension to switch to PAYG
 
-## Azure Hybrid Benefit (AHB) for Linux
+[IMPORTANT]
+====
+Migrating to {product1} from {product2} requires aligned versions.
+For example, you can migrate from {product2} 15.4 to {product1} 15 SP4, from {product2} 15.5 to {product1} 15 SP5, and so on.
+====
+
+The general procedure you will follow consists of the following steps:
+
+. Install `yast2-registration-sle` in your {product2} system.
+
+. Register the {product2} system with a valid subscription.
+
+. Reboot.
+//
++
+At this point, you have a virtual machine running {product1} Server.
+
+. Install te Azure Hybrid Benefit extension to switch to PAYG.
+
+
+
+== Azure Hybrid Benefit (AHB) for Linux
 
 In Azure, there are two main licensing pricing options: *pay-as-you-go* (PAYG) and *bring-your-own-subscription* (BYOS).
 
