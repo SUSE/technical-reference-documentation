@@ -398,7 +398,7 @@ image::arrow_down_jungle-green-50wide.png[Down arrow, align="center"]
 
 a|
 
-* <<Verify attestation and disk encryption>>
+* <<Enable and verify attestation>>
 
 |===
 
@@ -1618,11 +1618,146 @@ slebci-paynow-website compose-paynow-1 info GET /api/v1/transactions
 
 == Manage
 
-The manage section focuses on the steps in the <<Workflow>> of interacting with the confidential containized workload after deployment.
+The manage section focuses on steps in the <<Workflow>> that introduce additional ways to interact with the confidential containized workload.
 
-=== Verify attestation and disk encryption
+=== Enable and verify attestation
 
-NOTE: TO BE COMPLETED
+The IBM HyperProtect Platform container runtime generates attestation data as it starts.
+The attestation data creation process is the same in https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation[IBM Cloud] and https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-attestation[on-premises] storing the data in `/var/hyperprotect` on the container runtime.
+Several attestation related files are stored in `/var/hyperprotect`.
+The attestation record, also referred to as the https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation#attestation_doc[attestation document], contains checksums which are used to verify the integrityof the environment where a workload starts.
+
+The recommended method to access the attestation document is via the workload.
+The https://cloud.ibm.com/docs/vpc?topic=vpc-financial-transaction-confidential-computing-on-hyper-protect-virtual-server-for-vpc[PayNow Node.js application] application developers added API calls that provide an https://github.com/ibm-hyper-protect/paynow-website/blob/main/app/app.js#L42[encrypted] or an https://github.com/ibm-hyper-protect/paynow-website/blob/main/app/app.js#L47[unencrypted] attestation document.
+
+Follow the steps below to access the encrypted attestation document and verify the attestation data of a deployed PayNow Node.js application.
+
+. Enable the workload to access the attestation data.
+
+.. Add `volumes` section to `docker-compose.yml`.
+For example if you are using the pre-built PayNow Node.js application container image.
++
+[source, yaml]
+----
+services:
+  paynow:
+    image: ghcr.io/mfriesenegger/slebci-paynow-website@sha256:ecb229f68aef81ca4a2b7b5a9eb192081fa2a170e44d9e5a28180bb12682ce5d
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - "/var/hyperprotect/:/var/hyperprotect/:ro"
+----
+
+.. Recreate the base64 encoded tar archive.
+
+.. Update the `archive` item in the workload contract with the new base64 data.
+
+. Use a private/public key pair for attestation document encryption.
+
+.. In the directory where the Docker Compose file exists, the following commands will create the private/public key pair for attestation encryption.
++
+[NOTE]
+====
+You will be asked to define a pass phrase when creating the private key as well as provide the same pass phrase when creating public portion of the key. 
+====
++
+[source, console]
+----
+openssl genpkey -aes256 -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out attest-private-key.pem
+openssl pkey -in attest-private-key.pem -out attest-public-key.pem -pubout
+----
+
+.. Add `attestationPublicKey` to the contract.
++
+[NOTE]
+====
+A portion of the contract file is shown.
+====
++
+[source, yaml]
+----
+workload: |
+  type: workload
+  compose:
+    archive: H4sIAAAAAAAAA+3UzW7bMAwHcJ/zFELucahP2gYG7LjjXkG2mNRoXQdWtrZvP6XBsCyHboeuW7H/ 
+attestationPublicKey: <attest-pubkey>
+----
++
+where the output of the following command replaces the <attest-pubkey>.
++
+`IFS=$'\n'; echo -n \"; for line in $(cat attest-public-key.pem); do echo -n $line"\n"; done; echo \"`
+
+. Deploy the workload either in IBM Cloud or on-premises.
+
+. Enter https://<ip address>:8443//api/v1/attestation to access the encrypted attestation document.
+//
++
+The floating IP address noted earlier for the VPC deployment in IBM Cloud.
++
+The IP address assigned to the HPCR VM running on the KVM host.
+
+. Save the encrypted attestation document to `se-checksums.txt.enc`.
+//
++
+The file can be save on the local system where the Docker Compose file is located.
+
+. Use the following script to decrypt the encrypted attestation document.
++
+[source, console]
+----
+#!/bin/bash
+#
+# Example script to decrypt attestation document.
+#
+# Usage:
+#   ./decrypt-attestation.sh <rsa-priv-key.pem> [file]
+#
+# Token Format:
+#   hyper-protect-basic.<ENC_AES_KEY_BASE64>.<ENC_MESSAGE_BASE64>
+
+
+RSA_PRIV_KEY="$1"
+if [ -z "$RSA_PRIV_KEY" ]; then
+    echo "Usage: $0 <rsa-priv-key.pem>"
+    exit 1
+fi
+INPUT_FILE="${2:-se-checksums.txt.enc}"
+TMP_DIR="$(mktemp -d)"
+#trap 'rm -r $TMP_DIR' EXIT
+
+
+PASSWORD_ENC="${TMP_DIR}/password_enc"
+MESSAGE_ENC="${TMP_DIR}/message_enc"
+
+
+# extract encrypted AES key and encrypted message
+cut -d. -f 2 "$INPUT_FILE"| base64 -d > "$PASSWORD_ENC"
+cut -d. -f 3 "$INPUT_FILE"| base64 -d > "$MESSAGE_ENC"
+
+# decrypt password
+PASSWORD=$(openssl rsautl -decrypt -inkey "$RSA_PRIV_KEY" -in "$PASSWORD_ENC")
+
+# decrypt message
+echo -n "$PASSWORD" | openssl aes-256-cbc -d -pbkdf2 -in "$MESSAGE_ENC" -pass stdin --out se-checksums.txt
+----
+
+. Verify the integrity of workload contract.
+
+..  Generate a sha256 checksum of the local contract file.
++
+[source, console]
+----
+sha256sum slebci-paynow-website-contract.yml
+----
+
+.. Compare the output of the above command with the `user-data` line in the `se-checksums.txt` attestation document.
+//
++
+If the checksums match then the contract used to start the workload is same as its source.
+
+A similar verification process can be done for the other items listed in the attestation document.
+
 
 == Summary
 
