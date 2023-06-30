@@ -50,11 +50,11 @@ include::./common_docinfo_vars.adoc[]
 :product1_version: 15 SP5
 :product1_ver: 15.5
 :product1_version_min: 15 SP3
-:product1_url: https://www.suse.com/products/server/
+:product1_url: https://www.suse.com/products/server
 :product2: SLE-BCI
 :product2_full: SUSE Linux Enterprise Base Container Images
-:product2_url: https://www.suse.com/products/base-container-images/
-:product2_registry: https://registry.suse.com/
+:product2_url: https://www.suse.com/products/base-container-images
+:product2_registry: https://registry.suse.com
 :productname: SLES 15
 :platform1: SUSE Linux Enterprise Server 15
 :platform2: SUSE Linux Enterprise Base Container Images
@@ -96,7 +96,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // define any additional variables here for use within the document
 // -
-:containerguide_url: https://documentation.suse.com/container/all/single-html/SLES-container/
+:containerguide_url: https://documentation.suse.com/container/all/single-html/SLES-container
 :opensuse: openSUSE Leap
 :opensuse_version: 15.5
 :opensuse_url: https://www.opensuse.org/#Leap
@@ -357,54 +357,45 @@ Another important storage container setting determines how data are written.
 This is determined by the storage driver and is defined with the 'driver' setting in the '[storage]' section of `/etc/containers/storage.conf`.
 For the root user, valid drivers include 'overlay', 'vfs', 'zfs', and 'btrfs'.
 
-[NOTE]
+[TIP]
 ====
-The 'btrfs' driver is the default for {product1}, as https://en.wikipedia.org/wiki/Btrfs[Btrfs] is the default file system for system volumes.
-Btrfs offers many advantages over earlier file systems, such as copy-on-write, pooling, snapshots, and checksums.
-====
+The 'overlay' driver is a safe default choice.
 
-If your home directory is in a partition formatted with a different file system, Podman will default to the 'overlay' or 'vfs' driver and warn you to set an appropriate storage driver.
-Usually this will be the 'overlay' driver.
-You can set this without administrator help by creating or editing the file `$HOME/.config/containers/storage.conf` with the following contents:
+If your home directory is on a different, supported filesystem, create or edit the file, `$HOME/.config/containers/storage.conf`, and add a '[storage]' section, such as:
 
 [listing]
 ----
 [storage]
-driver = "overlay"
+driver = "btrfs"
 ----
 
-[TIP]
 ====
-See the manual page for containers-storage.conf for more storage settings:
-`man containers-storage.conf 5`
-====
+
 
 
 === Grant access to your SUSE Customer Center credentials
 
-An application container image starts with a base image.
-Onto this, you layer additional contents, such as libraries and applications.
-One way to do this is by installing software RPM packages from the {product1_full} repositories.
-This requires your user account to have read access to your SUSE Customer Center (SCC) credentials.
+It is only necessary to grant your user access to your SUSE Customer Center (SCC) credentials if you intend to install RPM software packages from the official {product1_full} repositories.
 
-For this guide, you use the latest {product2_full} Python container image as your base.
-This container image already includes the development and runtime components for Python {python_ver}, saving you from having to install them.
-All other required software and libraries can be installed from the {pypi_url}[{pypi_full}].
-Thus, you do not need to grant your user access to your SCC credentials for this guide.
 
-[NOTE]
-====
-If you do not grant access to your SCC credentials, you may see a warning of an "error mounting subscriptions" when building your container.
-This is because `/etc/SUSEConnect` and `/etc/zypp/credentials.d/SCCcredentials` are specified as default mounts in `/etc/containers/mounts.conf`.
-This does not impact your ability to build containers unless you need to install official {product1_full} RPM packages.
-====
+In this guide, you use the latest {product2_full} Python container image as your base.
+This container image already includes the official development and runtime components of a recent Python release, saving you from having to install them.
+All other software and libraries required for this guide can be installed from the {pypi_url}[{pypi_full}] with the `pip` command.
+Thus, you do not need to grant your user this access to follow this guide.
 
-To install official RPM packages from the {product1_full} repositories, you need to grant read permission for your current user with:
+If you choose to use a different base image or want to use other software packages, your user may require access to your SCC credentials.
+You can do this by simply granting read permission to the files in `/etc/zypp/credentials.d`:
 
 [source, console]
 ----
 sudo setfacl -m u:${USER}:r /etc/zypp/credentials.d/*
 ----
+
+[NOTE]
+====
+If you do not grant access to your SCC credentials, you may see a warning of an "error mounting subscriptions" when building your container.
+This is because `/etc/SUSEConnect` and `/etc/zypp/credentials.d/SCCcredentials` are specified as default mounts in `/etc/containers/mounts.conf`.
+====
 
 
 
@@ -421,7 +412,7 @@ Your build directory can be located anywhere you have write access, such as a di
 
 Create your build directory and change to it.
 
-For example,
+For example:
 
 [source, console]
 ----
@@ -433,17 +424,30 @@ cd $HOME/jupcontainer
 === Define the Python environment
 
 Replicability is critical in science and engineering.
-Complex applications, like an ML model, can produce wildly different results or not run because of minor code variations in a library dependency.
+Complex applications, like an ML model, can produce wildly different results or not run at all because of minor code variations in a library dependency.
 Thus, it can be critical when building such applications to explicitly define all the software dependencies and their versions.
 
 Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
 Keys to this process are the `pip` Python package management tool, the {pypi_url}[{pypi_full}], and a list of required Python packages, usually in a file named `requirements.txt`.
 
 Your `requirements.txt` file is a simple list of the names and versions of required packages.
+For example:
+
+[listing]
+----
+matplotlib==3.6.2
+numpy==1.23.5
+pandas==1.5.2
+----
+
 Each package you specify may have several dependencies of its own, and you can explicitly list every package and its version in your `requirements.txt` file.
 Often, though, you only need to list the major packages you want to install, and the `pip` resolver will attempt to identify and install compatible versions of the dependencies.
 
+If you do not specify the version of a package you want, the `pip` dependency resolver will attempt to install the latest version that is compatible with the other packages.
+Due to code changes in different versions, this can result in unexpected behaviors in your code.
 
+
+For this guide, you can just let the `pip` resolver pick the versions for you.
 Create this `requirements.txt` file in your build directory:
 
 [listing]
@@ -457,13 +461,6 @@ scipy
 seaborn
 ----
 
-In this example, you list only the names of the packages you want to install.
-The `pip` dependency resolver attempts to install the latest, available and compatible versions of the specified packages.
-This can result in unexpected versions (and behaviors) of the specified packages.
-
-You can specify the exact version of each package you want to install.
-For example, instead of `seaborn`, you could specify `seaborn==0.12.1`.
-However, if the dependency resolver is unable to install the specified version of a package, the entire installation will fail.
 
 
 [TIP]
@@ -477,8 +474,8 @@ This will include all installed packages, except `pip` itself and its dependenci
 
 === Define the container image
 
-You define your application container image by providing the instructions to add the components of your application onto a base image.
-These build instructions are provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[Containerfile].
+Define your application container image by providing the instructions to add the components of your application onto the base image.
+These instructions are provided in a https://github.com/containers/common/blob/main/docs/Containerfile.5.md[Containerfile].
 If you are familiar with the Docker container ecosystem, a Containerfile shares the same format and most of the same options as a Dockerfile.
 After defining your application container in a Containerfile, you use another tool to execute the instructions and build the image.
 
@@ -502,9 +499,11 @@ Are you able to use the image with your preferred software, tooling, and workflo
 Redistribution::
 Are you legally able to redistribute the custom application container images you build on it?
 
-Learn {containerguide_url}/cha-bci.html[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
+Learn {containerguide_url}/#cha-bci[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
 
 //
+
+Now create your Containerfile to define the container image.
 
 
 . Change to your build directory.
@@ -537,8 +536,8 @@ ENV PATH="/home/jupyter/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr
 # set working directory for subsequent commands
 WORKDIR /home/jupyter
 
-# copy requirements file into working directory
-COPY requirements.txt .
+# copy requirements file into working directory and set ownership
+COPY --chown=1000:1000 requirements.txt .
 
 # install JuypterLab
 RUN set -eux pipefail; \
@@ -677,10 +676,7 @@ host_volume=$(pwd)
 
 # launch container with options
 podman run \
-  --uidmap $container_uid:0:1 \
-  --uidmap 0:1:$container_uid \
-  --gidmap $container_gid:0:1 \
-  --gidmap 0:1:$container_gid \
+  --userns=keep-id \
   --name $container_name \
   --publish $host_port:$container_port \
   --volume $host_volume:$container_volume:z \
@@ -711,26 +707,31 @@ Use `:z` to tell Podman to relabel file objects so two or more containers can sh
 Use `:Z` to tell Podman to relabel file objects so that only the current container can use the volume.
 ====
 
---uidmap / --gidmap:: Map the UID and GID, respectively, from the user namespace inside the container to your user namespace outside the container.
-This allows you to avoid permission and ownership issues when accessing files in mounted volumes.
-User namespace mappings can be complex, as rootless (unprivileged) UIDs and GIDs are mapped through intermediary subUIDs and subGIDs.
-See the {podman_docs}/markdown/podman-run.1.html[Podman run documentation] for a more detailed discussion.
+--userns:: Set the user namespace mode for the container.
+Setting the namespace mode to `keep-id` maps the UID and GID of the user inside the container to your UID and GID outside the container.
+This allows you to avoid ownership and permission issues when accessing files in mounted volumes.
+Further discussion of user namespace mapping can be found in the {podman_docs}/markdown/podman-run.1.html[Podman run documentation].
 +
 [NOTE]
 ====
 With the release of Podman 4.3.0, user namespace mapping is simplified with the `--userns=keep-id` option.
 
-To use this option, replace the `--uidmap` and `--gidmap` options in your launch script as follows:
+If you do run into ownership and permissions issues, you can try an older approach by using the `--uidmap` and `--gidmap` options by modifying the `podman run` command in your launch script as follows:
 
 [source, console]
 ----
+
 # launch container with options
 podman run \
-  --userns=keep-id:uid=$container_uid,gid=$container_gid \
+  --uidmap $container_uid:0:1 \
+  --uidmap 0:1:$container_uid \
+  --gidmap $container_gid:0:1 \
+  --gidmap 0:1:$container_gid \
   --name $container_name \
   --publish $host_port:$container_port \
   --volume $host_volume:$container_volume:z \
   localhost/$container_name
+
 ----
 
 ====
