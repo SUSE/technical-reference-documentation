@@ -53,11 +53,9 @@ include::./common_docinfo_vars.adoc[]
 :product2_full: SUSE Linux Enterprise Server on IBM Z and LinuxONE
 :product2_version: 15 SP5
 :product2_url: https://www.suse.com/products/systemz/
-:product3: IBM HPVS
-:product3_full: IBM Hyper Protect Virtual Servers
-:product3_url: https://www.ibm.com/products/hyper-protect-virtual-servers 
 :hpvs: IBM HPVS
 :hpvs_full: IBM Hyper Protect Virtual Servers
+:hpvs_url: https://www.ibm.com/products/hyper-protect-virtual-servers 
 :hpvs_onprem: {hpvs_full}
 :hpvs_onprem_ver: 2.1.x
 :hpvs_cloud: IBM Cloud Hyper Protect Virtual Servers
@@ -228,10 +226,10 @@ The following high level infrastructure prerequisites are needed if you would li
 +
 {product2} will provide the IBM Secure Execution enabled Kernel-based Virtual Machine (KVM) host.
 
-* IBM Hyper Protect Virtual Servers {hpvs_onprem_ver}
+* {hpvs_full} {hpvs_onprem_ver}
 //
 +
-A https://www.ibm.com/docs/en/hpvs/2.1.x?topic=trial-program[trial program] for IBM Hyper Protect Virtual Servers and Crypto Express Network API for Secure Execution Enclaves is available from IBM.
+A https://www.ibm.com/docs/en/hpvs/2.1.x?topic=trial-program[trial program] for {hpvs_full} and Crypto Express Network API for Secure Execution Enclaves is available from IBM.
 +
 //
 Detailed system requirements can be found in the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements[{hpvs_onprem} {hpvs_onprem_ver} documentation].
@@ -529,7 +527,7 @@ To simplify the preparation, the information and steps provided in following sec
 
 ==== Verify required hardware and enable IBM Secure Execution technology
 
-. Review the IBM Hyper Protect Virtual Servers 2.1.x https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#hardware-requirements[Hardware requirements]. 
+. Review the {hpvs_full} 2.1.x https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#hardware-requirements[Hardware requirements]. 
 
 . Confirm that the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#additional-hardware-requirements-for-the-kvm-host[Feature Code 115 Secure Execution for Linux] has been ordered and installed.
 
@@ -962,7 +960,7 @@ StreamDriver.Authmode="x509/certvalid"
 )
 ----
 +
-<1> the logging information will be written to `/var/log/hpcr.log`.
+<1> Logging information will be written to `/var/log/hpcr.log`.
 Comment out this line and uncomment the line above to write log information to the journal.
 
 . Enable, start and verify that the rsyslog service is `running`.
@@ -1064,7 +1062,7 @@ You can go to <<Define the contract>> to use the PayNow Node.js application cont
 
 Access to the same Linux on s390x instance that built the PayNow Node.js application container image is required to publish the image.
 These steps will use `podman` to publish the OCI-compliant PayNow Node.js application container image.
-A properly configured github account is required to publish the image to your https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry[GitHub Container registry].
+A properly configured GitHub account is required to publish the image to your https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry[GitHub Container registry].
 
 . Tag the PayNow Node.js application container image to your GitHub account.
 +
@@ -1075,7 +1073,7 @@ podman tag localhost/slebci-paynow-website:latest ghcr.io/<github user>/slebci-p
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal github user id.
+Replace _<github user>_ with your personal GitHub username.
 ====
 
 . Log into the GitHub Container registry.
@@ -1090,9 +1088,9 @@ Login Succeeded!
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal github user id.
+Replace _<github user>_ with your personal GitHub username.
 
-Replace _<github token>_ with your personal github access token.
+Replace _<github token>_ with your personal GitHub access token.
 ====
 
 . Push the PayNow Node.js application container image.
@@ -1119,7 +1117,7 @@ Storing signatures
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal github user id.
+Replace _<github user>_ with your personal GitHub username.
 ====
 
 . Remove the PayNow Node.js application container image.
@@ -1162,7 +1160,7 @@ e71fdf2e7ad357830ece71bfc30367f52ab7afa74401d1506cefcb091a62064b
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal github user id.
+Replace _<github user>_ with your personal GitHub username.
 ====
 
 . Logout of ghcr.io.
@@ -1225,7 +1223,7 @@ services:
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal github user id.
+Replace _<github user>_ with your personal GitHub username.
 
 Replace _<github digest>_ with the digest information for the in published in your GitHub Container registry.
 ====
@@ -1324,8 +1322,8 @@ workload: |
     archive: <archive> <2>
 ----
 +
-<1> where <github user> and <github token> are from your personal GitHub account. 
-<2> where <archive> was created in the *Create a base64 encoded tar archive*<<base64-encoded-archive>> step.
+<1> where <github user> and <github token> are for your personal GitHub account. 
+<2> where <archive> was created in the *Create a base64 encoded tar archive* <<base64-encoded-archive>> step.
 
 An example contract using the IBM Cloud logging service with the pre-built image is shown below.
 
@@ -1404,7 +1402,7 @@ Follow these steps to deploy your confidential container workload on IBM Cloud H
 
 .. Change __Architecture__ to `IBM Z, LinuxONE`.
 
-.. Use the slider under __Confidential computing__ to enable `Run your workoad with an OS and a profile protected by Secure Execution`.
+.. Use the slider under __Confidential computing__ to enable `Run your workload with an OS and a profile protected by Secure Execution`.
 
 .. Verify that the __Zone__ in __Location__ matches the location (zone) within the region that you noted earlier.
 
@@ -1451,41 +1449,69 @@ An on-premises deployment will prepared and started via the CLI on the KVM host.
 mkdir /var/lib/libvirt/images/slebci-paynow-website
 ----
 
-. Copy the HPCR image file from the location noted in a previous step<<note-hpcr-image-location>> to `/var/lib/libvirt/images/slebci-paynow-website`.
+. Copy the HPCR image file from the location noted in a previous step <<note-hpcr-image-location>> to `/var/lib/libvirt/images/slebci-paynow-website`.
 
-. Create the cloud configuration files and init-disk iso.
+. Create the cloud configuration files and init-disk ISO.
 
-.. `vi /var/lib/libvirt/images/slebci-paynow-website/meta-data`
+.. Create the `meta-data` file in the directory created above.
+//
++
+For example:
 +
 [source, console]
+----
+vi /var/lib/libvirt/images/slebci-paynow-website/meta-data
+----
++
+Add the following line to the file:
++
+[listing]
 ----
 local-hostname: slebci-paynow-website
 ----
 
-.. `vi /var/lib/libvirt/images/slebci-paynow-website/vendor-data`
+.. Create the `vendor-data` file in the same directory.
++
+For example:
 +
 [source, console]
+----
+vi /var/lib/libvirt/images/slebci-paynow-website/vendor-data
+----
++
+Add the following contents to the `vendor-data` file:
++
+[listing]
 ----
 #cloud-config
 users:
 - default
 ----
 
-.. Copy the `slebci-paynow-website-contract.yml` contract file from the local system to `/var/lib/libvirt/images/slebci-paynow-website/user-data` on the KVM host.
+.. Copy the `slebci-paynow-website-contract.yml` contract file from the local system to the `/var/lib/libvirt/images/slebci-paynow-website/user-data` file on the KVM host.
 
-.. Create `init-disk` iso.
+.. Create the `init-disk` ISO image.
 +
 [source, console]
 ----
-mkisofs -output /var/lib/libvirt/images/slebci-paynow-website/init-disk -volid cidata -joliet -rock /var/lib/libvirt/images/slebci-paynow-website/user-data /var/lib/libvirt/images/slebci-paynow-website/meta-data /var/lib/libvirt/images/slebci-paynow-website/vendor-data
+mkisofs \
+  -output /var/lib/libvirt/images/slebci-paynow-website/init-disk \
+  -volid cidata -joliet -rock \
+  /var/lib/libvirt/images/slebci-paynow-website/user-data \
+  /var/lib/libvirt/images/slebci-paynow-website/meta-data \
+  /var/lib/libvirt/images/slebci-paynow-website/vendor-data
 ----
 
-. Generate a MAC address for the HPCR VM.
-
-.. Run `macgen.py` and note the output.
-Here is an example when run.
+. Generate a MAC address for the HPCR VM with `macgen.py`.
 +
 [source, console]
+----
+macgen.py
+----
++
+You should see something like:
++
+[listing]
 ----
 # macgen.py 
 52:54:00:02:77:72
@@ -1493,41 +1519,43 @@ Here is an example when run.
 
 . Use the generated MAC address to define a host entry with a static IP address in your DHCP server.
 
-. Define and start the `slebci-paynow-website` VM with the following command.
+. Define and start the `slebci-paynow-website` VM.
 +
 [source, console]
 ----
 virt-install \
---name=slebci-paynow-website \
---osinfo ubuntu20.04 \
---memory=3815 \
---vcpus vcpu.placement=static,vcpus=2 \
---boot hd \
---cpu mode=host-model,check=partial \
---clock offset=utc \
---events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
---disk /var/lib/libvirt/images/slebci-paynow-website/ibm-hyper-protect-container-runtime-23.3.0.qcow2,driver.iommu=on,target.bus=virtio,\
+  --name=slebci-paynow-website \
+  --osinfo ubuntu20.04 \
+  --memory=3815 \
+  --vcpus vcpu.placement=static,vcpus=2 \
+  --boot hd \
+  --cpu mode=host-model,check=partial \
+  --clock offset=utc \
+  --events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
+  --disk /var/lib/libvirt/images/slebci-paynow-website/ibm-hyper-protect-container-runtime-23.3.0.qcow2,driver.iommu=on,target.bus=virtio,\
 boot.order=1 \
---disk /var/lib/libvirt/images/slebci-paynow-website/slebci-paynow-website-data.qcow2,size=10,format=qcow2,cache=none,\
+  --disk /var/lib/libvirt/images/slebci-paynow-website/slebci-paynow-website-data.qcow2,size=10,format=qcow2,cache=none,\
 driver.discard=ignore,driver.iommu=on,target.bus=virtio \
---disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
+  --disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
 target.bus=virtio \
---controller type=pci,index=0,model=pci-root \
---network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,driver.iommu=on,mac.address=<macaddress> \ <1>
---console pty,target.type=sclp,target.port=0 \
---audio id=1,type=none \
---memballoon none \
---panic s390 \
---channel none \
---rng none
+  --controller type=pci,index=0,model=pci-root \
+  --network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,driver.iommu=on,mac.address=<macaddress> \ <1>
+  --console pty,target.type=sclp,target.port=0 \
+  --audio id=1,type=none \
+  --memballoon none \
+  --panic s390 \
+  --channel none \
+  --rng none
 ----
 +
-<1> where <macaddress> was noted above.
+<1> Be sure to replace `<macaddress>` in this command with the MAC address you noted in the previous step.
 
 . The VM console will be displayed and the HPCR VM will boot.
-Watch for the following within the console as the instance is being started:
+//
 +
-[source, console]
+Watch for the following in the console as the instance is being started:
++
+[listing]
 ----
 VSI has started successfully.
 ----
@@ -1544,16 +1572,18 @@ Press `Ctrl + ]` keys to disconnect from the VM console.
 
 . Open a new Web browser window or tab.
 
-. Enter `\https://<ip address>:8443` where <ip address> is either:
+. Enter `\https://<ip address>:8443`, where `<ip address>` is one of the following:
 +
-The floating IP address noted earlier for the VPC deployment in IBM Cloud.
-+
-The IP address assigned to the HPCR VM running on the KVM host.
-+
+--
+* the floating IP address noted earlier for the VPC deployment in IBM Cloud.
+
+* the IP address assigned to the HPCR VM running on the KVM host.
+
 [NOTE]
 ====
 Your Web browser may display a warning about a insecure connection and a invalid certificate because the application uses a self-signed certificate.
 ====
+--
 
 . You should see that the PayNow application is running.
 +
@@ -1561,30 +1591,35 @@ image::paynow-website.png[PayNow UI, scaledwidth="75%", align="center"]
 
 . Click the __PayNow__ button.
 
-. Enter example PII and credit card information.
+. Enter example personally identifiable information (PII) and credit card information.
 
 
 ==== Review the logs
 
 . Access the log information.
 +
-* Use the following to review the logs of the IBM Cloud Hyper Protect Virtual Servers for VPC instance.
+* Use the following to review the logs of the {hpvs_cloud} for VPC instance.
 +
 .. Return to the https://cloud.ibm.com/ window or tab where you created the logging service.
 +
 .. Verify that log information is displayed.
 +
-* Use the following to review the logs of the on-premises IBM Hyper Protect Virtual Servers Container Runtime VM.
+* Use the following to review the logs of the on-premises {hpvs_onprem} Container Runtime VM.
 +
-.. ssh to the rsyslog server.
+.. Log into the rsyslog server with `ssh`.
 +
-.. `less /var/log/hpcr.log`
+.. Display the log file on the command line.
++
+[source, console]
+----
+less /var/log/hpcr.log
+----
 
-. Review the log and find the following:
+. Review the log information and find the entries:
 
-.. Entries where the `slebci-paynow-website` container image is being pulled from the container registry.
+.. where the `slebci-paynow-website` container image is being pulled from the container registry.
 
-.. Entries where the `slebci-paynow-website` container image being started.
+.. where the `slebci-paynow-website` container image being started.
 //
 +
 For example:
@@ -1603,7 +1638,7 @@ slebci-paynow-website hpcr-container debug Container service completed successfu
 Date and time stamps for entries have been removed from the logging output examples shown here.
 ====
 
-.. Entries for PayNow application API calls.
+.. for PayNow application API calls.
 //
 +
 For example:
@@ -1618,14 +1653,13 @@ slebci-paynow-website compose-paynow-1 info GET /api/v1/transactions
 
 == Manage
 
-The manage section focuses on steps in the <<Workflow>> that introduce additional ways to interact with the confidential containized workload.
+This section focuses on steps in the <<Workflow>> that introduce additional ways to interact with the confidential containized workload.
 
 === Enable and verify attestation
 
-The IBM HyperProtect Platform container runtime generates attestation data as it starts.
-The attestation data creation process is the same in https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation[IBM Cloud] and https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-attestation[on-premises] storing the data in `/var/hyperprotect` on the container runtime.
-Several attestation related files are stored in `/var/hyperprotect`.
-The attestation record, also referred to as the https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation#attestation_doc[attestation document], contains checksums which are used to verify the integrityof the environment where a workload starts.
+The {hpp} container runtime generates attestation data as it starts.
+The attestation data creation process is the same in https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation[IBM Cloud] and https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-attestation[on-premises] storing several attestation-related files in `/var/hyperprotect` on the container runtime.
+The attestation record (also referred to as the https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation#attestation_doc[attestation document]) contains checksums, which are used to verify the integrity of the environment where a workload starts.
 
 The recommended method to access the attestation document is via the workload.
 The https://cloud.ibm.com/docs/vpc?topic=vpc-financial-transaction-confidential-computing-on-hyper-protect-virtual-server-for-vpc[PayNow Node.js application] application developers added API calls that provide an https://github.com/ibm-hyper-protect/paynow-website/blob/main/app/app.js#L42[encrypted] or an https://github.com/ibm-hyper-protect/paynow-website/blob/main/app/app.js#L47[unencrypted] attestation document.
@@ -1634,8 +1668,10 @@ Follow the steps below to access the encrypted attestation document and verify t
 
 . Enable the workload to access the attestation data.
 
-.. Add `volumes` section to `docker-compose.yml`.
-For example if you are using the pre-built PayNow Node.js application container image.
+.. Add `volumes` section to your Docker Compose file.
+//
++
+For example, if you are using the pre-built PayNow Node.js application container image, update your `docker-compose.yml` as follows:
 +
 [source, yaml]
 ----
@@ -1657,23 +1693,18 @@ services:
 
 .. In the directory where the Docker Compose file exists, the following commands will create the private/public key pair for attestation encryption.
 +
-[NOTE]
-====
-You will be asked to define a pass phrase when creating the private key as well as provide the same pass phrase when creating public portion of the key. 
-====
-+
 [source, console]
 ----
 openssl genpkey -aes256 -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out attest-private-key.pem
 openssl pkey -in attest-private-key.pem -out attest-public-key.pem -pubout
 ----
-
-.. Add `attestationPublicKey` to the contract.
 +
 [NOTE]
 ====
-A portion of the contract file is shown.
+You will be asked to define a passphrase when creating the private key as well as provide the same passphrase when creating public portion of the key. 
 ====
+
+.. Add `attestationPublicKey` to the contract file (the relevant portion is shown below).
 +
 [source, yaml]
 ----
@@ -1684,27 +1715,28 @@ workload: |
 attestationPublicKey: <attest-pubkey>
 ----
 +
-where the output of the following command replaces the <attest-pubkey>.
+where the output of the following command replaces `<attest-pubkey>`.
 +
-`IFS=$'\n'; echo -n \"; for line in $(cat attest-public-key.pem); do echo -n $line"\n"; done; echo \"`
+[source, console]
+----
+IFS=$'\n'; echo -n \"; for line in $(cat attest-public-key.pem); do echo -n $line"\n"; done; echo \"
+----
 
 . Deploy the workload either in IBM Cloud or on-premises.
 
-. Enter https://<ip address>:8443//api/v1/attestation to access the encrypted attestation document.
+. Open your Web browser to `\https://<ip address>:8443//api/v1/attestation` to access the encrypted attestation document.
 //
 +
-The floating IP address noted earlier for the VPC deployment in IBM Cloud.
-+
-The IP address assigned to the HPCR VM running on the KVM host.
+Replace `<ip address>` with the floating IP address noted earlier for the VPC deployment in IBM Cloud or the IP address assigned to the HPCR VM running on the KVM host.
 
 . Save the encrypted attestation document to `se-checksums.txt.enc`.
 //
 +
-The file can be save on the local system where the Docker Compose file is located.
+The file can be saved on the local system where the Docker Compose file is located.
 
 . Use the following script to decrypt the encrypted attestation document.
 +
-[source, console]
+[source, bash]
 ----
 #!/bin/bash
 #
@@ -1744,7 +1776,7 @@ echo -n "$PASSWORD" | openssl aes-256-cbc -d -pbkdf2 -in "$MESSAGE_ENC" -pass st
 
 . Verify the integrity of workload contract.
 
-..  Generate a sha256 checksum of the local contract file.
+..  Generate a SHA256 checksum of the local contract file.
 +
 [source, console]
 ----
@@ -1754,9 +1786,12 @@ sha256sum slebci-paynow-website-contract.yml
 .. Compare the output of the above command with the `user-data` line in the `se-checksums.txt` attestation document.
 //
 +
-If the checksums match then the contract used to start the workload is same as its source.
-
+If the checksums match, then the contract used to start the workload is same as its source.
++
+[TIP]
+====
 A similar verification process can be done for the other items listed in the attestation document.
+====
 
 
 == Summary
@@ -1768,15 +1803,20 @@ A similar verification process can be done for the other items listed in the att
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you have been introduced to containized confidential computing with SUSE Linux Enterprise Base Container Images using the IBM Hyper Protect Platform.
-The PayNow website application was already built for you on SUSE Linux Enterprise Base Container images.
-You deployed the application securely in a confidential computing environment via a workload contract using the IBM Hyper Protect Platform either in the cloud or on-premise.
+Containerized confidential computing enables you to protect your workload data no matter where it is running.
+This guide featured the PayNow Website application.
+It was built on {product1_full} and you securely deployed it on the {hpp}, either in the cloud or on-premises.
 
-Now that you have taken your first steps, you are encouraged to learn more about the following.
+Continue your learning journey with the following additional resources:
 
-* Accelerate Application Development with Open, Secure Containers with https://www.suse.com/products/base-container-images/[SUSE Linux Enterprise Base Container Images].
-* https://documentation.suse.com/trd/linux/tbd[Build] a trusted PayNow Website container on a SLE Base Container image using https://cloud.ibm.com/docs/vpc?topic=vpc-about-hpsb[IBM Cloud Hyper Protect Secure Build].
-* Learn more about Confidential computing with LinuxONE for deployments in https://cloud.ibm.com/docs/vpc?topic=vpc-about-se[IBM Cloud] and https://community.ibm.com/community/user/ibmz-and-linuxone/blogs/nicolas-mding/2022/10/06/ibm-hyper-protect-virtual-servers-v21[on-premises].
+* Accelerate Application Development with Open, Secure Containers with https://www.suse.com/products/base-container-images/[{product1_full}].
+
+* https://documentation.suse.com/trd/linux/tbd[Build] a trusted PayNow Website container on {product1_full} using https://cloud.ibm.com/docs/vpc?topic=vpc-about-hpsb[{hpp} Secure Build].
+
+* https://cloud.ibm.com/docs/vpc?topic=vpc-about-se[Confidential computing with LinuxONE] in IBM Cloud.
+
+* https://community.ibm.com/community/user/ibmz-and-linuxone/blogs/nicolas-mding/2022/10/06/ibm-hyper-protect-virtual-servers-v21[{hpvs_onprem} {hpvs_onprem_ver}].
+
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Do not modify below this break.
