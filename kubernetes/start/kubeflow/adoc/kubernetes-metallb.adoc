@@ -1,0 +1,181 @@
+//Section: Deploy MetalLB
+
+. Open a terminal on your workstation and change to your working directory.
+
+. Pull and apply the MetalLB manifests.
++
+[source, console]
+----
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/namespace.yaml
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/metallb.yaml
+
+# On first install only
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+----
++
+[NOTE]
+====
+*Mark*: Above, what is meant by "On first install only"?
+This should be the first installation of MetalLB on this RKE2 cluster.
+====
+
+[NOTE]
+====
+*Mark*: Below, in the example code, we usually provide sample values.
+What do you think about including actually IP addresses, along with a note that reader should replace them with their own values?
+====
+
+. Set your IP address ranges.
+//
++
+MetalLB uses two ranges of IP addresses.
+Addresses in the DEFAULT_IP_RANGE will be automatically assigned, and those in the RESERVED_IP_RANGE are not.
++
+[source, console]
+----
+export DEFAULT_IP_RANGE_START=
+export DEFAULT_IP_RANGE_END=
+export RESERVED_IP_RANGE_START=
+export RESERVED_IP_RANGE_END=
+----
++
+[NOTE]
+====
+*Mark*: Do we want to include this?
+It starts to get complicated when we have to tell the user to edit the configuration file.
+
+IP ranges can also be defined by CIDR notation.
+To use CIDR notation:
+
+. Specify the CIDR block in the '_START' variable (for example, `export DEFAULT_IP_RANGE_START="10.0.0.10/32"`).
+
+. Do not define the '_END' variable empty.
+
+. Do not include the '_END' variable in your MetalLB configuration file (`metallb-config.yaml`).
+====
++
+[TIP]
+====
+It can be useful to configure MetalLB with at least one IP address that will not be auto-assigned and then specify that IP address for a critical service that should not be allowed to lose its external IP address to external DNS mapping.
+====
+
+
+. Create the MetalLB configuration file.
+//
++
+See https://metallb.universe.tf/configuration/[MetalLB Configuration] for other routing options.
++
+[listing]
+----
+cat <<EOF > metallb-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - ${DEFAULT_IP_RANGE_START}-${DEFAULT_IP_RANGE_END}
+    - name: rsvd
+      protocol: layer2
+      auto-assign: false
+      addresses:
+      - ${RESERVED_IP_RANGE_START}-${RESERVED_IP_RANGE_END}
+EOF
+----
+
+. Apply the configuration.
++
+[source, console]
+----
+kubectl apply -f metallb-config.yaml
+----
+
+. Verify the configuration.
+[source, console]
+----
+kubectl get configmap config -n metallb-system -o yaml
+----
+
+. Verify the MetalLB load-balancer is running.
+[source, console]
+----
+kubectl get all -n metallb-system
+----
++
+[NOTE]
+====
+*MARK*: Can we include an example here of what the reader should see?
+====
+
+[NOTE]
+====
+*Mark*: What do you think about including the test of MetalLB as simply another list item?
+The other way to do it is to drop it into another section.
+I stopped editing here.
+====
+
+## Test MetalLB:
+
+* Create a deployment and LoadBalancer service:
+----
+cat <<EOF> metallb-test.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1
+        ports:
+        - name: http
+          containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  type: LoadBalancer
+EOF
+
+----
+
+* Create the deployment and service: 
+** `NAMESPACE="default"`  # Modify as needed
+** `kubectl apply -f metallb-test.yaml -n ${NAMESPACE}`
+* Verify the deployment has a running pod and the service has an "EXTERNAL-IP": `kubectl get deploy,svc -n ${NAMESPACE}`
+* Test that the service is reachable through the load balancer IP address from outside the cluster:
+
+----
+IPAddr=$(kubectl get svc -n ${NAMESPACE} | grep -w nginx | awk '{print$4":"$5}' | awk -F: '{print$1":"$2}')
+curl http://${IPAddr}
+----
+* An HTML encoded output should be displayed that includes the phrase "Thank you for using nginx."
+
+* When finished with testing, delete the pod and service: `kubectl delete -f metallb-test.yaml -n ${NAMESPACE}`
+
+

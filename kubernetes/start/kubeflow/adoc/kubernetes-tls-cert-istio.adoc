@@ -1,0 +1,93 @@
+// Section: Install TLS certificate in Istio
+
+
+[NOTE]
+====
+*Mark*: Is where to place the manifest content in the listings below clear enough?
+====
+
+After the TLS secret has been created, add the required TLS information to Istio.
+
+. Edit the `istio-ingressgateway` gateway.
++
+[source, console]
+----
+kubectl edit gateway -n istio-system istio-ingressgateway
+----
+
+. Add this information at the bottom of the manifest, after the "host" HTTP information.
++
+[listing]
+----
+    tls:
+      httpsRedirect: true
+  - hosts:
+    - '*'
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: kubeflow-lb-tls
+      mode: SIMPLE
+----
++
+[IMPORTANT]
+====
+Consistent indentation is important.
+For instance, in this listing, the first 'tls:' is preceded by four spaces.
+====
+
+. Add this `spec` section to the manifest.
++
+[listing]
+----
+spec:
+  selector:
+    app: istio-ingressgateway
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+  - hosts:
+    - '*'
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: kubeflow-lb-tls
+      mode: SIMPLE
+----
+
+[IMPORTANT]
+====
+The `credentialName` must match the TLS secret created earlier.
+====
+
+. Change the `istio-ingressgateway` service type to `LoadBalancer`.
+
+.. Verify the current service type.
++
+[source, console]
+----
+kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' ; echo ""
+----
+
+.. Patch the service to make the change.
++
+[source, console]
+----
+kubectl -n istio-system patch svc istio-ingressgateway -p '{"spec": {"type": "LoadBalancer"}}'
+----
+
+.. Verify the service type is changed.
++
+[source, console]
+----
+kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.spec.type}' ; echo ""
+----

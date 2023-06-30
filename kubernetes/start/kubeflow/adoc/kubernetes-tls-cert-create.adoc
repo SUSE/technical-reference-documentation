@@ -1,0 +1,220 @@
+// Section: Create TLS certificate for Kubernetes application
+
+You can secure the network traffic of an application running on Kubernetes by encrypting it with a TLS (Transport Layer Security) private key and certificate.
+Kubernetes provides the `certificates.k8s.io` API, which you can use to provision TLS certificates signed by a Certificate Authority (CA) that you control.
+
+Generate a TLS certificate and private key for your application with the steps detailed here.
+
+[NOTE]
+====
+Perform these steps from your terminal with the `kubectl` command and access to your Kubernetes cluster.
+====
+
+. Gather internal Kubernetes cluster information.
+
+.. Obtain cluster name.
+
++
+[source, console]
+----
+# run the dnsutils image as dnstest
+kubectl run \
+  dnstest \
+  --image=registry.k8s.io/e2e-test-images/jessie-dnsutils:1.3 \
+  -- \
+  sleep infinite
+
+# wait for dnstest to be ready
+kubectl wait --for=condition=Ready pod dnstest
+
+# export the cluster name to a variable
+export K8S_CLUSTER_NAME=$( kubectl exec -i -t dnstest -- \
+  nslookup kubernetes.default | \
+  awk '/Name/ {print$2}' | \
+  awk -F. '{ print$4"."$5 }' )
+
+# display the cluster name
+echo ""; echo "Cluster name is: ${K8S_CLUSTER_NAME}"
+
+# delete the dnstest container
+kubectl delete --force pod dnstest 2>/dev/null
+----
+
+.. Define information about application and deployment.
++
+[source, console]
+----
+export APP="kubeflow"                            # app name
+export APP_K8S_NAMESPACE="istio-system"          # app namespace
+export APP_SERVICE_NAME="istio-ingressgateway"   # app service name
+export SECRET_NAME="kubeflow-tls"                # app name for secrets
+----
+
+
+. Create application key and certificate signing request (CSR).
+
+.. Make a working directory.
++
+[source, console]
+----
+mkdir -p /tmp/${APP}
+----
+
+.. Create an application key.
++
+[source, console]
+----
+openssl genrsa -out /tmp/${APP}/${APP}.key 2048
+----
+
+.. Define the contents of the certificate signing request (CSR).
++
+[source, console]
+----
+cat <<EOF > /tmp/${APP}/${APP}-csr.conf
+[req]
+default_bits = 2048
+prompt = no
+encrypt_key = yes
+default_md = sha256
+distinguished_name = kubelet_serving
+req_extensions = v3_req
+[ kubelet_serving ]
+O = system:nodes
+CN = system:node:*.${APP_K8S_NAMESPACE}.svc.${K8S_CLUSTER_NAME}
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = *.${APP_SERVICE_NAME}
+DNS.2 = *.${APP_SERVICE_NAME}.${APP_K8S_NAMESPACE}.svc.${K8S_CLUSTER_NAME}
+DNS.3 = *.${APP_K8S_NAMESPACE}
+DNS.4 = ${EXTERNAL_FQDN}
+IP.1 = 127.0.0.1
+IP.2 = ${EXTERNAL_IP_ADDR}
+EOF
+----
+
+.. Generate the CSR.
++
+[source, console]
+----
+openssl req -new -key /tmp/${APP}/${APP}.key \
+        -out /tmp/${APP}/${APP}.csr \
+        -config /tmp/${APP}/${APP}-csr.conf
+----
+
+.. Validate the CSR.
++
+[source, console]
+----
+openssl req -noout -text -in /tmp/${APP}/${APP}.csr
+----
+
+. Create the TLS certificate.
+
+.. Create the Kubernetes CSR manifest.
++
+[source, console]
+----
+cat <<EOF > /tmp/${APP}/${APP}-csr.yaml
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+   name: ${APP}.svc
+spec:
+   signerName: kubernetes.io/kubelet-serving
+   expirationSeconds: 8640000
+   request: $(cat /tmp/${APP}/${APP}.csr|base64|tr -d '\n')
+   usages:
+   - digital signature
+   - key encipherment
+   - server auth
+EOF
+----
+
+.. Create the Kubernetes resource.
++
+[source, console]
+----
+kubectl create -f /tmp/${APP}/${APP}-csr.yaml
+----
+
+.. Approve the CSR.
++
+[source, console]
+----
+kubectl certificate approve ${APP}.svc
+----
+
+.. Verify CSR approval.
++
+[source, console]
+----
+kubectl get csr ${APP}.svc
+----
+
+. Retrieve the application TLS certificate.
+
+.. Download the TLS certificate file.
++
+[source, console]
+----
+kubectl get csr ${APP}.svc \
+        -o jsonpath='{.status.certificate}' | \
+        openssl base64 -d -A \
+        -out /tmp/${APP}/${APP}.crt
+----
+
+.. Verify the application TLS certificate file.
++
+[source, console]
+----
+openssl x509 -in /tmp/${APP}/${APP}.crt -noout -text | less
+----
+
+. Retrieve the Kubernetes root CA TLS certificate.
+
+.. Download the root CA certificate.
++
+[source, console]
+----
+kubectl get cm kube-root-ca.crt -o jsonpath="{['data']['ca\.crt']}" > /tmp/${APP}/${APP}.ca
+----
+
+.. Verify the root CA certificate.
++
+[source, console]
+----
+openssl x509 -in /tmp/${APP}/${APP}.ca -noout -text | less
+----
+
+. Create the Kubernetes secret with TLS information.
++
+[source, console]
+----
+kubectl create secret tls ${SECRET_NAME} \
+   -n $APP_K8S_NAMESPACE \
+   --key=/tmp/${APP}/${APP}.key \
+   --cert=/tmp/${APP}/${APP}.crt
+----
++
+[NOTE]
+====
+In some cases, you may need to include the Kubernetes root CA TLS certificate.
+You can do this with:
+
+[source, console]
+----
+kubectl create secret generic ${SECRET_NAME} \
+   -n $APP_K8S_NAMESPACE \
+   --from-file=${APP}.key=/tmp/${APP}/${APP}.key \
+   --from-file=${APP}.crt=/tmp/${APP}/${APP}.crt \
+   --from-file=${APP}.ca=/tmp/${APP}/${APP}.ca
+----
+
+====
+
+
