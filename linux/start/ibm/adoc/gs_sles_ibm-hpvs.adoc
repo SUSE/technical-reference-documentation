@@ -783,13 +783,16 @@ virt-install \
 --vcpus=2 \
 --clock offset=utc \
 --events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
---disk /var/lib/libvirt/images/rsyslog/rsyslog.qcow2,driver.iommu=on,target.bus=virtio,boot.order=1 \
---network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,mac.address=<macaddress> \
+--disk /var/lib/libvirt/images/rsyslog/rsyslog.qcow2,\
+driver.iommu=on,target.bus=virtio,boot.order=1 \
+--network type=direct,source=eth0,source.mode=bridge,model.type=virtio,\
+driver.name=vhost,mac.address=<macaddress> \
 --console pty,target.type=sclp,target.port=0 \
 --audio id=1,type=none \
 --memballoon none \
 --panic s390 \
---cloud-init user-data=/var/lib/libvirt/images/rsyslog/user-data,meta-data=/var/lib/libvirt/images/rsyslog/meta-data
+--cloud-init user-data=/var/lib/libvirt/images/rsyslog/user-data,\
+meta-data=/var/lib/libvirt/images/rsyslog/meta-data
 ----
 +
 where <macaddress> was noted above.
@@ -891,13 +894,14 @@ CN = <ip address>
 +
 where <ip address> is the IP address of the HPCR VM that will run the PayNow website application.
 
-.. Generate the key, certificate signing request and certificate for the certificate authority..
+.. Generate the key, certificate signing request and certificate for the certificate authority.
 +
 [source, console]
 ----
 openssl genrsa -out ca-key.pem 4096
 openssl req -config ca.cnf -key ca-key.pem -new -out ca-request.pem
-openssl x509 -signkey ca-key.pem -in ca-request.pem -req -days 3650 -out ca-cert.pem
+openssl x509 -signkey ca-key.pem -in ca-request.pem -req -days 3650 \
+-out ca-cert.pem
 ----
 
 .. Generate the key, certificate signing request and CA signed certificate for the rsyslog server.
@@ -905,8 +909,11 @@ openssl x509 -signkey ca-key.pem -in ca-request.pem -req -days 3650 -out ca-cert
 [source, console]
 ----
 openssl genrsa -out rsyslog-key.pem 4096
-openssl req -config rsyslog.cnf -key rsyslog-key.pem -new -out rsyslog-request.pem
-openssl x509 -req -in rsyslog-request.pem -days 1000 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -extfile rsyslog.cnf -extensions server -out rsyslog-cert.pem
+openssl req -config rsyslog.cnf -key rsyslog-key.pem -new \
+-out rsyslog-request.pem
+openssl x509 -req -in rsyslog-request.pem -days 1000 -CA ca-cert.pem \
+-CAkey ca-key.pem -CAcreateserial -extfile rsyslog.cnf -extensions server \
+-out rsyslog-cert.pem
 ----
 
 .. Generate the key, certificate signing request and CA signed certificate for the HPCR VM that will run the PayNow website.
@@ -914,8 +921,11 @@ openssl x509 -req -in rsyslog-request.pem -days 1000 -CA ca-cert.pem -CAkey ca-k
 [source, console]
 ----
 openssl genrsa -out slebci-paynow-website-key.pem 4096
-openssl req -config slebci-paynow-website.cnf -key slebci-paynow-website-key.pem -new -out slebci-paynow-website-request.pem
-openssl x509 -req -in slebci-paynow-website-request.pem -days 1000 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out slebci-paynow-website-cert.pem
+openssl req -config slebci-paynow-website.cnf \
+-key slebci-paynow-website-key.pem -new -out slebci-paynow-website-request.pem
+openssl x509 -req -in slebci-paynow-website-request.pem -days 1000 \
+-CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial \
+-out slebci-paynow-website-cert.pem
 ----
 
 . Create the rsyslog configuration to capture the logging information from the HPCR VM that will run the PayNow website.
@@ -1012,7 +1022,8 @@ podman build -f ./Dockerfile -t slebci-paynow-website
 +
 [source, console]
 ----
-podman run -d --rm --name paynow-website -p 8443:8443 localhost/slebci-paynow-website
+podman run -d --rm --name paynow-website -p 8443:8443 \
+localhost/slebci-paynow-website
 ----
 +
 You will see similar output.
@@ -1066,7 +1077,8 @@ A properly configured GitHub account is required to publish the image to your ht
 +
 [source, console]
 ----
-podman tag localhost/slebci-paynow-website:latest ghcr.io/<github user>/slebci-paynow-website:latest
+podman tag localhost/slebci-paynow-website:latest \
+ghcr.io/<github user>/slebci-paynow-website:latest
 ----
 +
 [NOTE]
@@ -1280,15 +1292,27 @@ where the output of the following command executed on the rsyslog server replace
 +
 *<ca-cert>*
 +
-`IFS=$'\n'; echo -n \"; for line in $(cat /certs/ca-cert.pem); do echo -n $line"\n"; done; echo \"`
+[source, console]
+----
+IFS=$'\n'; echo -n \"; for line in $(cat /certs/ca-cert.pem);\
+ do echo -n $line"\n"; done; echo \"
+----
 +
 *<client certificate>*
 +
-`IFS=$'\n'; echo -n \"; for line in $(cat /certs/slebci-paynow-website-cert.pem); do echo -n $line"\n"; done; echo \"`
+[source, console]
+----
+IFS=$'\n'; echo -n \"; for line in $(cat\
+ /certs/slebci-paynow-website-cert.pem); do echo -n $line"\n"; done; echo \"
+----
 +
 *<client private key>*
 +
-`IFS=$'\n'; echo -n \"; for line in $(cat /certs/slebci-paynow-website-key.pem); do echo -n $line"\n"; done; echo \"`
+[source, console]
+----
+IFS=$'\n'; echo -n \"; for line in $(cat\
+ /certs/slebci-paynow-website-key.pem); do echo -n $line"\n"; done; echo \"
+----
 +
 [NOTE]
 ====
@@ -1536,14 +1560,20 @@ virt-install \
   --cpu mode=host-model,check=partial \
   --clock offset=utc \
   --events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
-  --disk /var/lib/libvirt/images/slebci-paynow-website/ibm-hyper-protect-container-runtime-23.3.0.qcow2,driver.iommu=on,target.bus=virtio,\
+  --disk /var/lib/libvirt/images/slebci-paynow-website/\
+  ibm-hyper-protect-container-runtime-23.3.0.qcow2,driver.iommu=on,\
+  target.bus=virtio,\
 boot.order=1 \
-  --disk /var/lib/libvirt/images/slebci-paynow-website/slebci-paynow-website-data.qcow2,size=10,format=qcow2,cache=none,\
+  --disk /var/lib/libvirt/images/slebci-paynow-website/\
+  slebci-paynow-website-data.qcow2,size=10,format=qcow2,cache=none,\
 driver.discard=ignore,driver.iommu=on,target.bus=virtio \
-  --disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
+  --disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,\
+  format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
 target.bus=virtio \
   --controller type=pci,index=0,model=pci-root \
-  --network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,driver.iommu=on,mac.address=<macaddress> \
+  --network type=direct,source=eth0,source.mode=bridge,\
+  model.type=virtio,driver.name=vhost,driver.iommu=on,\
+  mac.address=<macaddress> \
   --console pty,target.type=sclp,target.port=0 \
   --audio id=1,type=none \
   --memballoon none \
@@ -1699,7 +1729,8 @@ services:
 +
 [source, console]
 ----
-openssl genpkey -aes256 -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out attest-private-key.pem
+openssl genpkey -aes256 -algorithm RSA -pkeyopt rsa_keygen_bits:2048 \
+-out attest-private-key.pem
 openssl pkey -in attest-private-key.pem -out attest-public-key.pem -pubout
 ----
 +
@@ -1723,7 +1754,8 @@ where the output of the following command replaces `<attest-pubkey>`.
 +
 [source, console]
 ----
-IFS=$'\n'; echo -n \"; for line in $(cat attest-public-key.pem); do echo -n $line"\n"; done; echo \"
+IFS=$'\n'; echo -n \"; for line in $(cat attest-public-key.pem);\
+ do echo -n $line"\n"; done; echo \"
 ----
 
 . Deploy the workload either in IBM Cloud or on-premises.
