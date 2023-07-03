@@ -717,11 +717,11 @@ local-hostname: rsyslog
 ----
 #cloud-config
 ssh_authorized_keys:
-  - <public ssh key 1> <1>
+  - <public ssh key 1>
   - <public ssh key 2>
 ----
 +
-<1> where <public ssh key 1> and if needed <public ssh key 2> will be added to the authorized_keys file for the `sles` user.
+where <public ssh key 1> and if needed <public ssh key 2> will be added to the authorized_keys file for the `sles` user.
 +
 [NOTE]
 ====
@@ -784,7 +784,7 @@ virt-install \
 --clock offset=utc \
 --events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
 --disk /var/lib/libvirt/images/rsyslog/rsyslog.qcow2,driver.iommu=on,target.bus=virtio,boot.order=1 \
---network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,mac.address=<macaddress> \ <1> 
+--network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,mac.address=<macaddress> \
 --console pty,target.type=sclp,target.port=0 \
 --audio id=1,type=none \
 --memballoon none \
@@ -792,7 +792,7 @@ virt-install \
 --cloud-init user-data=/var/lib/libvirt/images/rsyslog/user-data,meta-data=/var/lib/libvirt/images/rsyslog/meta-data
 ----
 +
-<1> where <macaddress> was noted above.
+where <macaddress> was noted above.
 +
 The VM console will be displayed and the VM will boot.
 The VM IP address is properly configured when the IP address is displayed next to `eth0`.
@@ -861,14 +861,14 @@ encrypt_key = no
 distinguished_name = dn
 
 [ server ]
-subjectAltName = IP:<ip address> <1>
+subjectAltName = IP:<ip address>
 extendedKeyUsage = serverAuth
 
 [ dn ]
 CN = <ip address>
 ----
 +
-<1> where <ip address> is the IP address of the rsyslog VM.
+where <ip address> is the IP address of the rsyslog VM.
 +
 `/certs/slebci-paynow-website.cnf`
 +
@@ -882,14 +882,14 @@ encrypt_key = no
 distinguished_name = dn
 
 [ server ]
-subjectAltName = IP:<ip address> <1>
+subjectAltName = IP:<ip address>
 extendedKeyUsage = serverAuth
 
 [ dn ]
 CN = <ip address>
 ----
 +
-<1> where <ip address> is the IP address of the HPCR VM that will run the PayNow website application.
+where <ip address> is the IP address of the HPCR VM that will run the PayNow website application.
 
 .. Generate the key, certificate signing request and certificate for the certificate authority..
 +
@@ -940,7 +940,7 @@ property(outname="MESSAGE"  name="msg")
 
 ruleset(name="journal-output") {
 # action(type="omjournal" template="journal")
-action(type="omfile" dirCreateMode="0766" FileCreateMode="0644" File="/var/log/hpcr.log") <1>
+action(type="omfile" dirCreateMode="0766" FileCreateMode="0644" File="/var/log/hpcr.log")
 }
 
 # make gtls driver the default and set certificate files
@@ -958,7 +958,7 @@ StreamDriver.Authmode="x509/certvalid"
 )
 ----
 +
-<1> Logging information will be written to `/var/log/hpcr.log`.
+where logging information will be written to `/var/log/hpcr.log`.
 Comment out this line and uncomment the line above to write log information to the journal.
 
 . Enable, start and verify that the rsyslog service is `running`.
@@ -1250,12 +1250,12 @@ env: |
   type: env
   logging:
     logDNA:
-      hostname: <hostname> <1>
+      hostname: <hostname>
       port: 6514
       ingestionKey: <ingestionKey>
 ----
 +
-<1> where <hostname> and <ingestionKey> were noted earlier.
+where <hostname> and <ingestionKey> were noted earlier.
 +
 Use the following if you <<Set up a rsyslog logging service for HPVS log information>> for on-premises deployments.
 +
@@ -1265,15 +1265,18 @@ env: |
   type: env
   logging:
     syslog:
-      hostname: <ip address> <1>
+      hostname: <ip address>
       port: 6514
-      server: <ca-cert> <2>
+      server: <ca-cert>
       cert: <client certificate>
       key: <client private key>
 ----
 +
-<1> where <ip address> is the IP address of the rsyslog server.
-<2> where the output of the following command executed on the rsyslog server replaces each item.
+where <ip address> is the IP address of the rsyslog server.
++
+//
++
+where the output of the following command executed on the rsyslog server replaces each item.
 +
 *<ca-cert>*
 +
@@ -1301,10 +1304,10 @@ Use the following if using the pre-built PayNow Node.js application container im
 workload: |
   type: workload
   compose:
-    archive: <archive> <1>
+    archive: <archive>
 ----
 +
-<1> where <archive> was created in the *Create a base64 encoded tar archive*<<base64-encoded-archive>> step.
+where <archive> was created in the *Create a base64 encoded tar archive*<<base64-encoded-archive>> step.
 +
 Or use the following if the PayNow Node.js application container image was built by you and published in your GitHub Container registry.
 +
@@ -1314,14 +1317,17 @@ workload: |
   type: workload
   auths:
     ghcr.io:
-      username: <github user> <1>
+      username: <github user>
       password: <github token>
   compose:
-    archive: <archive> <2>
+    archive: <archive>
 ----
 +
-<1> where <github user> and <github token> are for your personal GitHub account. 
-<2> where <archive> was created in the *Create a base64 encoded tar archive* <<base64-encoded-archive>> step.
+where <github user> and <github token> are for your personal GitHub account.
++
+//
++
+where <archive> was created in the *Create a base64 encoded tar archive* <<base64-encoded-archive>> step.
 
 An example contract using the IBM Cloud logging service with the pre-built image is shown below.
 
@@ -1537,7 +1543,7 @@ driver.discard=ignore,driver.iommu=on,target.bus=virtio \
   --disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
 target.bus=virtio \
   --controller type=pci,index=0,model=pci-root \
-  --network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,driver.iommu=on,mac.address=<macaddress> \ <1>
+  --network type=direct,source=eth0,source.mode=bridge,model.type=virtio,driver.name=vhost,driver.iommu=on,mac.address=<macaddress> \
   --console pty,target.type=sclp,target.port=0 \
   --audio id=1,type=none \
   --memballoon none \
@@ -1546,7 +1552,7 @@ target.bus=virtio \
   --rng none
 ----
 +
-<1> Be sure to replace `<macaddress>` in this command with the MAC address you noted in the previous step.
+where `<macaddress>` in this command is replaced with the MAC address you noted in the previous step.
 
 . The VM console will be displayed and the HPCR VM will boot.
 //
