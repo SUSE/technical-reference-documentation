@@ -139,7 +139,7 @@ In this guide, you learn how to deploy a containerized confidential computing wo
 
 
 // Confidential computing focuses on securing your data through technical assurance which guarantees that a cloud operator cannot access your data.
-// Confidential computing can also be used within your datacenter or within the data center of a service provider to protect your data.
+// Confidential computing can also be used within your data center or within the data center of a service provider to protect your data.
 // Hardware capabilities within IBM Z(R) and LinuxONE systems provide the trusted execution environment that protects your data-in-use.
 // The confidential computing workload is built on SUSE Linux Enterprise Base Container images and deployed securely using the IBM Hyper Protect Platform.
 
@@ -207,11 +207,11 @@ Contributions to the development of this guide by the following individuals is a
 You are encouraged to start your journey with https://cloud.ibm.com/docs/vpc?topic=vpc-about-se#about-hyper-protect-virtual-servers-for-vpc[Confidential computing with LinuxONE] using {hpvs_cloud} for Virtual Private Cloud (VPC).
 
 The infrastructure for the trusted execution environment needed for HPVS is already set up and available as an easy-to-use service in IBM Cloud.
-If you would like to use {hpvs_cloud} for VPC then all you need is an IBM Cloud https://cloud.ibm.com/docs/account?topic=account-accounts#paygo[Pay-As-You-Go account].
+If you want to use {hpvs_cloud} for VPC, then all you need is an IBM Cloud https://cloud.ibm.com/docs/account?topic=account-accounts#paygo[Pay-As-You-Go account].
 
 On-premises confidential computing deployments use https://www.ibm.com/products/hyper-protect-virtual-servers[{hpvs_onprem}].
 This is the same technology used in {hpvs_cloud} for VPC, but you will need to prepare the required infrastructure.
-The following high level infrastructure prerequisites are needed if you would like to use {hpvs_onprem}:
+The following high level infrastructure prerequisites are needed to use {hpvs_onprem}:
 
 * An IBM Z(R) or LinuxONE system
 ** IBM z16 (all models)
@@ -221,7 +221,7 @@ The following high level infrastructure prerequisites are needed if you would li
 
 * Feature Code 115 Secure Execution for Linux
 
-* Logical parition (LPAR) running {product2_full} {product2_version}
+* Logical partition (LPAR) running {product2_full} {product2_version}
 //
 +
 {product2} will provide the IBM Secure Execution enabled Kernel-based Virtual Machine (KVM) host.
@@ -257,8 +257,8 @@ You are encouraged to use the latest releases to take advantage of various updat
 image::hpvs-architecture.svg[IBM Hyper Protect Platform architecture, scaledwidth="75%", align="center"]
 
 The https://www.ibm.com/downloads/cas/GPVMWPM3[{hpp}] architecture is illustrated in this diagram at a high level.
-You are shown the components that comprise the confidential computing environment in IBM Cloud (on the left) as well as on-premises or in a hosted datacenter (on the right).
-The architectural similarities facilitates a hybrid deployment model that gives you the flexibility to easily target the location of your workload depending on business requirements.
+On the left are the components that comprise the confidential computing environment in IBM Cloud, on the right are those for on-premises or hosted datacenter scenarios.
+The architectural similarities facilitate a hybrid deployment model that gives you the flexibility to easily target the location of your workload depending on business requirements.
 
 The components of the {hpp} include:
 
@@ -281,7 +281,7 @@ The KVM host runs in an LPAR, which, in practice, is equivalent to an independen
 [NOTE]
 ====
 * {hpvs} for VPC use an IBM provided KVM host.
-* {product2_full} can be used for on-premises and hosted datacenter deployments as a supported KVM host for {hpvs_onprem} {hpvs_onprem_ver}.
+* {product2_full} can be used for on-premises and hosted data center deployments as a supported KVM host for {hpvs_onprem} {hpvs_onprem_ver}.
 ====
 
 * KVM virtual machine
@@ -302,7 +302,7 @@ The HPCR requires input from a contract to pull and start containerized workload
 +
 [NOTE]
 ====
-* The HPCR virtual machine protects data-at-rest by encrypting the root disk as well as encrypting a separate data disk for container workload persisent storage.
+* The HPCR virtual machine protects data-at-rest by encrypting the root disk and a separate data disk for container workload persistent storage.
 
 * HPCR requires a contract, which is a definition of the workload configuration in YAML format.
 The HPCR virtual machine will immediately stop when a contract is missing or invalid.
@@ -326,7 +326,7 @@ The HPCR virtual machine will immediately stop if logging is not defined in the 
 
 === Workflow
 
-The workflow to prepare, deploy, and manage a confidential container workload in IBM Cloud or on-premises are shown below.  
+The workflow to prepare, deploy, and manage a confidential container workload in IBM Cloud or on-premises is shown below.  
 
 // image::hpvs-deployment-workflow.svg[Prepare and deploy confidential container workloads, scaledwidth="75%", align="center"]
 
@@ -340,16 +340,16 @@ The workflow to prepare, deploy, and manage a confidential container workload in
 
 a|
 
-* <<Create a Virtual Private Cloud (VPC)>>
-* <<Set up a logging service for HPVS for VPC provisioning>>
+* <<Creating a Virtual Private Cloud (VPC)>>
+* <<Setting up a logging service for HPVS for VPC provisioning>>
 
 a|
 
-* <<Verify required hardware and enable IBM Secure Execution technology>>
-* <<Install and configure a LPAR with KVM included in SLES for IBM Z and LinuxONE>>
-* <<Enable Secure Execution capabilities on the KVM host>>
-* <<Download the HPCR image>>
-* <<Set up a rsyslog logging service for HPVS log information>>
+* <<Verifying required hardware and enabling IBM Secure Execution technology>>
+* <<Installing and configuring an LPAR with KVM included in SLES for IBM Z and LinuxONE>>
+* <<Enabling Secure Execution capabilities on the KVM host>>
+* <<Downloading the HPCR image>>
+* <<Setting up an `rsyslog` logging service for HPVS log information>>
 
 |===
 
@@ -362,9 +362,9 @@ image::arrow_down_jungle-green-50wide.png[Down arrow, align="center"]
 
 a|
 
-* <<Build a container image>>
-* <<Publish the container image to a registry>>
-* <<Define the contract>>
+* <<Building a container image>>
+* <<Publishing the container image to a registry>>
+* <<Defining the contract>>
 
 |===
 
@@ -394,7 +394,7 @@ image::arrow_down_jungle-green-50wide.png[Down arrow, align="center"]
 
 a|
 
-* <<Enable and verify attestation>>
+* <<Enabling and verifying attestation>>
 
 |===
 
@@ -410,11 +410,11 @@ Follow the steps detailed in <<Cloud preparation>> or <<On-premises preparation>
 
 The IBM Cloud Web Console is used in this guide, but it is also possible to perform the same actions using the IBM Cloud CLI or Terraform.
 
-==== Create a Virtual Private Cloud (VPC)
+==== Creating a Virtual Private Cloud (VPC)
 
-. Log into the https://cloud.ibm.com/[IBM Cloud Web Console].
+. Log in to the https://cloud.ibm.com/[IBM Cloud Web Console].
 
-. In the upper right part of the web console (between __Manage__ and __Help__), select the correct account from the list.
+. In the upper right part of the Web console (between __Manage__ and __Help__), select the correct account from the list.
 
 . Select __Navigation Menu__ > __VPC Infrastructure__ > __VPCs__.
 
@@ -458,7 +458,7 @@ For example, three, regional zones could be named: `sn-myvpc-01`, `sn-myvpc-02`,
 
 ... Confirm the __Region__.
 
-... Click __Edit__ if you would like to select a different __Zone__.
+... Click __Edit__ if you want to select a different __Zone__.
 
 ... Enter the __Floating IP name__ (for example, `myvpc-paynow-floatip`).
 
@@ -472,9 +472,9 @@ Do not close the browser window or tab.
 ====
 
 
-==== Set up a logging service for HPVS for VPC provisioning
+==== Setting up a logging service for HPVS for VPC provisioning
 
-. In a new browser window or tab, log into the https://cloud.ibm.com/[IBM Cloud Web Console].
+. In a new browser window or tab, log in to the https://cloud.ibm.com/[IBM Cloud Web Console].
 
 . Select __Navigation Menu__ > __Observability__ > __Logging__.
 
@@ -482,9 +482,9 @@ Do not close the browser window or tab.
 
 . Complete the following in the IBM Log Analysis screen:
 
-.. In __Select a location__, choose the same region that is used for your VPC.
+.. In __Select a location__, select the same region that is used for your VPC.
 
-.. Under __Select a pricing plan__, choose a plan.
+.. Under __Select a pricing plan__, select a plan.
 
 .. Under __Configure your resource__, set __Service name__ (for example, `IBM Log Analysis`).
 
@@ -496,18 +496,18 @@ Do not close the browser window or tab.
 
 . Click __Install Instructions__ (the icon is a question mark inside a circle).
 
-. Select __Add Log Sources__ > __Via Syslog__ side menu, then choose `rsyslog`.
+. Select __Add Log Sources__ > __Via Syslog__ side menu, then select `rsyslog`.
 
 . Make a note of the following items:
 +
 --
 * The ingestion key in the __Your Ingestion key is:__ field.
 
-* The hostname.
+* The host name.
 +
-. View the `/etc/rsyslog.d/22-logdna.conf` configuration file.
+. View the _/etc/rsyslog.d/22-logdna.conf_ configuration file.
 . Find the comment line, '# Send messages to LogDNA over TCP using the template'.
-. Locate the hostname between `@@` and `:6514`.
+. Locate the host name between `@@` and `:6514`.
 
 --
 
@@ -523,7 +523,7 @@ Do not close the browser window or tab.
 
 To simplify the preparation, the information and steps provided in following sections are consolidated from multiple documentation sources.  Links to the each documentation source is provided.
 
-==== Verify required hardware and enable IBM Secure Execution technology
+==== Verifying required hardware and enabling IBM Secure Execution technology
 
 . Review the {hpvs_full} 2.1.x https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#hardware-requirements[Hardware requirements]. 
 
@@ -531,20 +531,20 @@ To simplify the preparation, the information and steps provided in following sec
 
 . Use the https://www.ibm.com/docs/en/linux-on-systems?topic=tasks-find-machine-serial[machine serial number] to https://www.ibm.com/docs/en/linux-on-systems?topic=execution-obtain-host-key-document[obtain the host key document] from IBM Resource Link.
 
-. https://www.ibm.com/docs/en/linux-on-systems?topic=execution-verify-host-key-document[Ensure the host key document] is genuine and provided by IBM.
+. Ensure the https://www.ibm.com/docs/en/linux-on-systems?topic=execution-verify-host-key-document[host key document] is genuine and provided by IBM.
 
 . https://www.ibm.com/docs/en/linux-on-systems?topic=tasks-key-bundles[Import] the host key document to complete the hardware enablement of the IBM Secure Execution technology.
 
-==== Install and configure a LPAR with KVM included in SLES for IBM Z and LinuxONE
+==== Installing and configuring an LPAR with KVM included in SLES for IBM Z and LinuxONE
 
 [NOTE]
 ====
-This section provides installation configuration and guidance but does not provide a detailed set of steps.
+This section provides installation configuration and guidance but *not* a detailed set of steps.
 ====
 
-. Use the recommendation in https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#additional-hardware-requirements-for-the-kvm-host[Additional hardware requirements for the KVM host] to define a LPAR.
+. Use the recommendation in https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-system-requirements#additional-hardware-requirements-for-the-kvm-host[Additional hardware requirements for the KVM host] to define an LPAR.
 +
-The following `lsblk` output is an example of the disk storage devices, sizes, lvm details, filesystem types and mountpoints used to test HPVS 2.1.x.
+The following `lsblk` output is an example of the disk storage devices, sizes, lvm details, file system types and mount points used to test HPVS 2.1.x.
 +
 [source, console]
 ----
@@ -608,7 +608,7 @@ systemctl enable --now libvirtd.service
 ====
 A networking choice should be considered at this time.
 
-The https://www.ibm.com/docs/en/linux-on-systems?topic=recommendations-kvm-host-networking-configuration-choices[KVM Host Networking Configuration Choices] in the IBM documentation provides a detailed list of networking choices as well as pros and cons.
+The https://www.ibm.com/docs/en/linux-on-systems?topic=recommendations-kvm-host-networking-configuration-choices[KVM Host Networking Configuration Choices] in the IBM documentation provides a detailed list of networking choices and pros and cons.
 
 * Using a Linux bridge with NAT for KVM guests
 * Using a Linux bridge (without NAT) for KVM guests
@@ -618,12 +618,12 @@ The https://www.ibm.com/docs/en/linux-on-systems?topic=recommendations-kvm-host-
 Confirm prerequisites like https://www.ibm.com/docs/en/linux-on-systems?topic=choices-osa-interface-traffic-forwarding[OSA interface traffic forwarding] are met for your choice of networking.
 
 This getting started guide will use the https://www.ibm.com/docs/en/linux-on-systems?topic=choices-using-macvtap-driver[MacVTap driver] in Bridge mode with the `eth0` interface.  
-No prerequites are required using MacVTap but it is important to review the `MacVTap isolation / limitations` section.
+No prerequisites are required using MacVTap but it is important to review the `MacVTap isolation / limitations` section.
 
 An external DHCP server is required to provide networking information for the VMs using MacVTAP.
 ====
 
-==== Enable Secure Execution capabilities on the KVM host
+==== Enabling Secure Execution capabilities on the KVM host
 
 . Enable https://www.ibm.com/docs/en/linux-on-systems?topic=tasks-enable-kvm-host[IBM Secure Execution]
 
@@ -636,25 +636,25 @@ The following is an example of the `GRUB_CMDLINE_LINUX_DEFAULT` line with `prot_
 GRUB_CMDLINE_LINUX_DEFAULT="hvc_iucv=8 TERM=dumb mitigations=auto security=apparmor cio_ignore=all,!ipldev,!condev prot_virt=1"       
 ----
 
-.. Recreate grub.cfg
+.. Recreate `grub.cfg`.
 +
 [source, console]
 ----
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ----
 
-.. Reboot
+.. Reboot.
 
 . Verify IBM Secure Execution is enabled with `virt-host-validate`.
 +
-Verify the line has `PASS` in the ouput.
+Verify the line has `PASS` in the output.
 +
 [source, console]
 ----
   QEMU: Checking for secure guest support                                    : PASS
 ----
 
-==== Download the HPCR image
+==== Downloading the HPCR image
 
 . Make a directory on the KVM host to store the HPCR image.
 +
@@ -672,46 +672,46 @@ Verify if an IBM HPCR fix pack is available from https://www.ibm.com/support/fix
 
 . Verify the integrity and decompress the download following steps 5 - 6 of the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-downloading-hyper-protect-container-runtime-image#procedure[procedure].
 
-. Make a note of location and filename of qcow2 HPCR image[[note-hpcr-image-location]].
-For example, `ibm-hyper-protect-container-runtime-23.3.0.qcow2` is the filename which is located in the `/opt/hpvs-hpcr/IBM-HPVS-OnPrem-v2.1.4-EN-Trial/images`.
+. Make a note of location and file name of `qcow2` HPCR image[[note-hpcr-image-location]].
+For example, _ibm-hyper-protect-container-runtime-23.3.0.qcow2_ is the file name which is located in the _/opt/hpvs-hpcr/IBM-HPVS-OnPrem-v2.1.4-EN-Trial/images_.
 
-==== Set up a rsyslog logging service for HPVS log information
+==== Setting up an `rsyslog` logging service for HPVS log information
 
 With the release of SLES 15 SP5, Minimal VM images for IBM Z and LinuxONE systems can be downloaded from https://www.suse.com/download/sles/[suse.com].
 Two KVM `qcow2` image file options are available - kvm and Cloud.
-The file name of the qcow2 image files will include either `kvm` or `Cloud` for differentiation.
+The file name of the `qcow2` image files will include either _kvm_ or _Cloud_ for differentiation.
 
-* The `kvm` image file will prompt during firstboot for information to customize items like hostname and networking information.
-* The `Cloud` image file uses cloud-init to customize the hostname and networking information.
+* The _kvm_ image file will prompt during firstboot for information to customize items like host name and networking information.
+* The _Cloud_ image file uses cloud-init to customize the host name and networking information.
 
 You can choose to manually install SLES with the installation media or use a pre-built SLES image file from SUSE.
 
 [NOTE]
 ====
-This guide will provide the steps to use the `Cloud` image to deploy a rsyslog kvm virtual machine on the same KVM host where the confidential computing workload will be run.
+This guide will provide the steps to use the _Cloud_ image to deploy an `rsyslog` kvm virtual machine on the same KVM host where the confidential computing workload will be run.
 ====
 
-. Make a directory to store the disk image and other files for the rsyslog VM.
+. Make a directory to store the disk image and other files for the `rsyslog` VM.
 +
 [source, console]
 ----
 mkdir /var/lib/libvirt/images/rsyslog
 ----
 
-. Download the SLES 15 SP5 Minimal VM Cloud qcow2 image file at https://www.suse.com/download/sles/[suse.com].
-Place the file in the `/var/lib/libvirt/images/rsyslog` directory.
-Name the file `rsyslog.qcow2`.
+. Download the _SLES 15 SP5 Minimal VM Cloud qcow2_ image file at https://www.suse.com/download/sles/[suse.com].
+Place the file in the _/var/lib/libvirt/images/rsyslog_ directory.
+Name the file _rsyslog.qcow2_.
 
 . Create the following required cloud-init files.
 
-.. `vi /var/lib/libvirt/images/rsyslog/meta-data`
+.. _vi /var/lib/libvirt/images/rsyslog/meta-data_
 +
 [source, console]
 ----
 local-hostname: rsyslog
 ----
 
-.. `vi /var/lib/libvirt/images/rsyslog/user-data`
+.. _vi /var/lib/libvirt/images/rsyslog/user-data_
 +
 [source, console]
 ----
@@ -721,12 +721,12 @@ ssh_authorized_keys:
   - <public ssh key 2>
 ----
 +
-where <public ssh key 1> and if needed <public ssh key 2> will be added to the authorized_keys file for the `sles` user.
+=> where <public ssh key 1> and if needed <public ssh key 2> will be added to the _authorized_keys_ file for the `sles` user. +
 +
 [NOTE]
 ====
-This configuration requires an external DHCP server to provide the static networking information to the rsyslog server based on MAC address.
-Additional cloud examples for networking as well as other configurations can be found at the following.
+This configuration requires an external DHCP server to provide the static networking information to the `rsyslog` server based on MAC address.
+Additional cloud examples for networking and other configurations can be found at the following resources:
 
 * https://documentation.suse.com/pt-br/sles/15-SP4/html/SLES-all/article-minimal-vm.html#sec-cloud-init-config-examples[cloud-init configuration examples]
 * https://en.opensuse.org/Portal:MicroOS/cloud-init[Configuration with cloud-init]
@@ -795,7 +795,7 @@ driver.name=vhost,mac.address=<macaddress> \
 meta-data=/var/lib/libvirt/images/rsyslog/meta-data
 ----
 +
-where <macaddress> was noted above.
+=> where <macaddress> was noted above. 
 +
 The VM console will be displayed and the VM will boot.
 The VM IP address is properly configured when the IP address is displayed next to `eth0`.
@@ -816,26 +816,26 @@ rsyslog login:
 Press `Ctrl + ]` keys to disconnect from the VM console.
 ====
 
-. Log into the VM via ssh as the `sles` user from another system using the private portion of the ssh key defined above.
+. Log in to the VM via SSH as the `sles` user from another system using the private portion of the SSH key defined above.
 
 . Register and fully patch SLES.
 
 .. Reboot if necessary.
 
-. Install the rsyslog packages.
+. Install the `rsyslog` packages.
 +
 [source, console]
 ----
 zypper in rsyslog rsyslog-module-gtls
 ----
 
-. Generate self-signed certificates for encrypted communication from the HPCR instance to the rsyslog server.
+. Generate self-signed certificates for encrypted communication from the HPCR instance to the `rsyslog` server.
 
 .. `mkdir /certs && cd /certs` to create and change into the directory.
 
-..  Create the following openssl configuration files.
+..  Create the following OpenSSL configuration files.
 +
-`/certs/ca.cnf`
+_/certs/ca.cnf_
 +
 [source, console]
 ----
@@ -852,7 +852,7 @@ O = rsyslog CA
 CN = ca.rsyslog
 ----
 +
-`/certs/rsyslog.cnf`
+_/certs/rsyslog.cnf_
 +
 [source, console]
 ----
@@ -871,9 +871,9 @@ extendedKeyUsage = serverAuth
 CN = <ip address>
 ----
 +
-where <ip address> is the IP address of the rsyslog VM.
+=> where <ip address> is the IP address of the `rsyslog` VM.
 +
-`/certs/slebci-paynow-website.cnf`
+_/certs/slebci-paynow-website.cnf_
 +
 [source, console]
 ----
@@ -892,7 +892,7 @@ extendedKeyUsage = serverAuth
 CN = <ip address>
 ----
 +
-where <ip address> is the IP address of the HPCR VM that will run the PayNow website application.
+=> where <ip address> is the IP address of the HPCR VM that will run the PayNow Web site application.
 
 .. Generate the key, certificate signing request and certificate for the certificate authority.
 +
@@ -904,7 +904,7 @@ openssl x509 -signkey ca-key.pem -in ca-request.pem -req -days 3650 \
 -out ca-cert.pem
 ----
 
-.. Generate the key, certificate signing request and CA signed certificate for the rsyslog server.
+.. Generate the key, certificate signing request and CA signed certificate for the `rsyslog` server.
 +
 [source, console]
 ----
@@ -916,7 +916,7 @@ openssl x509 -req -in rsyslog-request.pem -days 1000 -CA ca-cert.pem \
 -out rsyslog-cert.pem
 ----
 
-.. Generate the key, certificate signing request and CA signed certificate for the HPCR VM that will run the PayNow website.
+.. Generate the key, certificate signing request and CA signed certificate for the HPCR VM that will run the PayNow Web site.
 +
 [source, console]
 ----
@@ -928,7 +928,7 @@ openssl x509 -req -in slebci-paynow-website-request.pem -days 1000 \
 -out slebci-paynow-website-cert.pem
 ----
 
-. Create the rsyslog configuration to capture the logging information from the HPCR VM that will run the PayNow website.
+. Create the `rsyslog` configuration to capture the logging information from the HPCR VM that will run the PayNow Web site.
 +
 [source, console]
 ----
@@ -968,10 +968,10 @@ StreamDriver.Authmode="x509/certvalid"
 )
 ----
 +
-where logging information will be written to `/var/log/hpcr.log`.
+=> where logging information will be written to _/var/log/hpcr.log_.
 Comment out this line and uncomment the line above to write log information to the journal.
 
-. Enable, start and verify that the rsyslog service is `running`.
+. Enable, start and verify that the `rsyslog` service is `running`.
 +
 [source, console]
 ----
@@ -980,22 +980,22 @@ systemctl status rsyslog
 ----
 
 
-== Build, publish, and define
+== Building, publishing, and defining
 
 In this section you prepare a workload container image, publish the container image to a registry, and define the IBM Hyper Protect Services contract that will be used during deployment.
 The steps in this section are the same for cloud and on-premises deployments.
 
 You will use the https://cloud.ibm.com/docs/vpc?topic=vpc-financial-transaction-confidential-computing-on-hyper-protect-virtual-server-for-vpc[PayNow Node.js application], which has been already built on a SLE BCI container image and published to a container registry.
-The steps are also available if you would like to build the PayNow Node.js application on a SLE BCI container.
+The steps are also available if you want to build the PayNow Node.js application on a SLE BCI container.
 
 See https://mediacenter.ibm.com/media/Confidential+Computing+for+a+financial+transaction+using+Hyper+Protect+Virtual+Server+for+VPC/1_vv3j2oo6[confidential computing in action].
 In this demonstration, the PayNow Node.js application shows a financial transaction running without confidential computing and with confidential computing.
 
-=== Build a container image
+=== Building a container image
 
 Building one or more application container images is a necessary step.
 The PayNow Node.js application container image has already been built on a SLE BCI container and published to a container registry.
-You can go to <<Define the contract>> to use the PayNow Node.js application container image or follow the steps below to build your own image of the PayNow Node.js application.
+You can go to <<Defining the contract>> to use the PayNow Node.js application container image or follow the steps below to build your own image of the PayNow Node.js application.
 
 Access to a Linux on s390x instance is required to build the PayNow Node.js application container image.
 These steps will use `git` and `podman` to build and publish the OCI-compliant PayNow Node.js application container image.
@@ -1003,7 +1003,7 @@ An option is to use an IBM Cloud virtual server instance (VSI) for VPC with a SU
 
 The https://registry.suse.com/bci/nodejs18/index.html[SLE BCI Node.js 18 Container Image] will be the base for the PayNow Node.js application container image.
 
-. Clone the Pay Now Website sources.
+. Clone the Pay Now Web site sources.
 +
 [source, console]
 ----
@@ -1018,7 +1018,7 @@ cd paynow-website
 podman build -f ./Dockerfile -t slebci-paynow-website
 ----
 
-. Start the Verify the PayNow Node.js application container.
+. Start the *Verify the PayNow Node.js* application container.
 +
 [source, console]
 ----
@@ -1063,11 +1063,11 @@ You will see similar output.
 ----
 
 
-=== Publish the container image to a registry
+=== Publishing the container image to a registry
 
 Publishing one or more application container images is a necessary step.
 The PayNow Node.js application container image has already been built on a SLE BCI container and published to a container registry.
-You can go to <<Define the contract>> to use the PayNow Node.js application container image or follow the steps below to publish your own image of the PayNow Node.js application.
+You can go to <<Defining the contract>> to use the PayNow Node.js application container image or follow the steps below to publish your own image of the PayNow Node.js application.
 
 Access to the same Linux on s390x instance that built the PayNow Node.js application container image is required to publish the image.
 These steps will use `podman` to publish the OCI-compliant PayNow Node.js application container image.
@@ -1083,10 +1083,10 @@ ghcr.io/<github user>/slebci-paynow-website:latest
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal GitHub username.
+Replace _<github user>_ with your personal GitHub user name.
 ====
 
-. Log into the GitHub Container registry.
+. Log in to the GitHub Container registry.
 +
 [source, console]
 ----
@@ -1098,7 +1098,7 @@ Login Succeeded!
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal GitHub username.
+Replace _<github user>_ with your personal GitHub user name.
 
 Replace _<github token>_ with your personal GitHub access token.
 ====
@@ -1127,7 +1127,7 @@ Storing signatures
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal GitHub username.
+Replace _<github user>_ with your personal GitHub user name.
 ====
 
 . Remove the PayNow Node.js application container image.
@@ -1170,10 +1170,10 @@ e71fdf2e7ad357830ece71bfc30367f52ab7afa74401d1506cefcb091a62064b
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal GitHub username.
+Replace _<github user>_ with your personal GitHub user name.
 ====
 
-. Logout of ghcr.io.
+. Log out of ghcr.io.
 +
 [source, console]
 ----
@@ -1188,7 +1188,7 @@ Removed login credentials for ghcr.io
 ----
 
 
-=== Define the contract
+=== Defining the contract
 
 A contract is a required definition of the workload configuration in YAML format.
 
@@ -1233,12 +1233,12 @@ services:
 +
 [NOTE]
 ====
-Replace _<github user>_ with your personal GitHub username.
+Replace _<github user>_ with your personal GitHub user name.
 
 Replace _<github digest>_ with the digest information for the in published in your GitHub Container registry.
 ====
 
-. Create a base64 encoded tar archive[[base64-encoded-archive]].
+. Create a base64 encoded TAR archive [[base64-encoded-archive]].
 +
 [source, console]
 ----
@@ -1254,7 +1254,7 @@ vi slebci-paynow-website-contract.yml
 
 .. Add the logging configuration to the contract.
 +
-Use the following if you <<Set up a logging service for HPVS for VPC provisioning>> in IBM Cloud.
+Use the following <<Setting up a logging service for HPVS for VPC provisioning>> for IBM Cloud.
 +
 [source, yaml]
 ----
@@ -1267,9 +1267,9 @@ env: |
       ingestionKey: <ingestionKey>
 ----
 +
-where <hostname> and <ingestionKey> were noted earlier.
+=> where <hostname> and <ingestionKey> were noted earlier.
 +
-Use the following if you <<Set up a rsyslog logging service for HPVS log information>> for on-premises deployments.
+Use the following <<Setting up an `rsyslog` logging service for HPVS log information>> for on-premises deployments.
 +
 [source, yaml]
 ----
@@ -1284,11 +1284,11 @@ env: |
       key: <client private key>
 ----
 +
-where <ip address> is the IP address of the rsyslog server.
+=> where <ip address> is the IP address of the `rsyslog` server.
 +
 //
 +
-where the output of the following command executed on the rsyslog server replaces each item.
+=> where the output of the following command executed on the `rsyslog` server replaces each item.
 +
 *<ca-cert>*
 +
@@ -1331,7 +1331,7 @@ workload: |
     archive: <archive>
 ----
 +
-where <archive> was created in the *Create a base64 encoded tar archive*<<base64-encoded-archive>> step.
+=> where <archive> was created in the *Create a base64 encoded TAR archive* <<base64-encoded-archive>> step.
 +
 Or use the following if the PayNow Node.js application container image was built by you and published in your GitHub Container registry.
 +
@@ -1347,11 +1347,11 @@ workload: |
     archive: <archive>
 ----
 +
-where <github user> and <github token> are for your personal GitHub account.
+=> where <github user> and <github token> are for your personal GitHub account.
 +
 //
 +
-where <archive> was created in the *Create a base64 encoded tar archive* <<base64-encoded-archive>> step.
+=> where <archive> was created in the *Create a base64 encoded TAR archive* <<base64-encoded-archive>> step.
 
 An example contract using the IBM Cloud logging service with the pre-built image is shown below.
 
@@ -1375,11 +1375,11 @@ workload: |
     archive: H4sIAAAAAAAAA+3UzW7bMAwHcJ/zFELucahP2gYG7LjjXkG2mNRoXQdWtrZvP6XBsCyHboeuW7H/
 ----
 
-An example contract using the rsyslog logging service with the pre-built image is shown below.
+An example contract using the `rsyslog` logging service with the pre-built image is shown below.
 
 [NOTE]
 ====
-The certificate and key data for the rsyslog logging service is truncated.
+The certificate and key data for the `rsyslog` logging service is truncated.
 
 The base64 data for the archive item is truncated.
 ====
@@ -1402,7 +1402,7 @@ workload: |
 ----
 
 
-== Deploy
+== Deployment
 
 The deployment steps differ, depending on whether you are deploying to cloud or to your on-premises environment.
 Proceed to either <<Cloud deployment>> or <<On-premises deployment>>.
@@ -1414,7 +1414,7 @@ For this guide, you use the IBM Cloud Web Console to perform the deployment.
 It is also possible to perform a deployment using the IBM Cloud CLI or Terraform.
 
 
-==== Deploy the workload
+==== Deploying the workload
 
 Follow these steps to deploy your confidential container workload on IBM Cloud Hyper Protect Virtual Servers for VPC.
 
@@ -1468,7 +1468,7 @@ VSI has started successfully.
 
 An on-premises deployment will prepared and started via the CLI on the KVM host.
 
-==== Deploy the workload
+==== Deploying the workload
 
 . Make a directory to store the disk image and other files for the HPCR.
 +
@@ -1477,11 +1477,11 @@ An on-premises deployment will prepared and started via the CLI on the KVM host.
 mkdir /var/lib/libvirt/images/slebci-paynow-website
 ----
 
-. Copy the HPCR image file from the location noted in a previous step <<note-hpcr-image-location>> to `/var/lib/libvirt/images/slebci-paynow-website`.
+. Copy the HPCR image file from the location noted in a previous step <<note-hpcr-image-location>> to _/var/lib/libvirt/images/slebci-paynow-website_.
 
 . Create the cloud configuration files and init-disk ISO.
 
-.. Create the `meta-data` file in the directory created above.
+.. Create the _meta-data_ file in the directory created above.
 //
 +
 For example:
@@ -1498,7 +1498,7 @@ Add the following line to the file:
 local-hostname: slebci-paynow-website
 ----
 
-.. Create the `vendor-data` file in the same directory.
+.. Create the _vendor-data_ file in the same directory.
 +
 For example:
 +
@@ -1507,7 +1507,7 @@ For example:
 vi /var/lib/libvirt/images/slebci-paynow-website/vendor-data
 ----
 +
-Add the following contents to the `vendor-data` file:
+Add the following contents to the _vendor-data_ file:
 +
 [listing]
 ----
@@ -1516,7 +1516,7 @@ users:
 - default
 ----
 
-.. Copy the `slebci-paynow-website-contract.yml` contract file from the local system to the `/var/lib/libvirt/images/slebci-paynow-website/user-data` file on the KVM host.
+.. Copy the _slebci-paynow-website-contract.yml_ contract file from the local system to the _/var/lib/libvirt/images/slebci-paynow-website/user-data_ file on the KVM host.
 
 .. Create the `init-disk` ISO image.
 +
@@ -1582,7 +1582,7 @@ target.bus=virtio \
   --rng none
 ----
 +
-where `<macaddress>` in this command is replaced with the MAC address you noted in the previous step.
+=> where `<macaddress>` in this command is replaced with the MAC address you noted in the previous step.
 
 . The VM console will be displayed and the HPCR VM will boot.
 //
@@ -1600,9 +1600,9 @@ Press `Ctrl + ]` keys to disconnect from the VM console.
 ====
 
 
-=== Verify the workload is running
+=== Verifying the workload is running
 
-==== Access the PayNow application via its Web UI
+==== Accessing the PayNow application via its Web UI
 
 . Open a new Web browser window or tab.
 
@@ -1615,7 +1615,7 @@ Press `Ctrl + ]` keys to disconnect from the VM console.
 
 [NOTE]
 ====
-Your Web browser may display a warning about a insecure connection and a invalid certificate because the application uses a self-signed certificate.
+Your Web browser may display a warning about an insecure connection and an invalid certificate because the application uses a self-signed certificate.
 ====
 --
 
@@ -1628,7 +1628,7 @@ image::paynow-website.png[PayNow UI, scaledwidth="75%", align="center"]
 . Enter example personally identifiable information (PII) and credit card information.
 
 
-==== Review the logs
+==== Reviewing the logs
 
 . Access the log information.
 +
@@ -1640,7 +1640,7 @@ image::paynow-website.png[PayNow UI, scaledwidth="75%", align="center"]
 +
 * Use the following to review the logs of the on-premises {hpvs_onprem} Container Runtime VM.
 +
-.. Log into the rsyslog server with `ssh`.
+.. Log in to the `rsyslog` server with `ssh`.
 +
 .. Display the log file on the command line.
 +
@@ -1685,15 +1685,15 @@ slebci-paynow-website compose-paynow-1 info GET /api/v1/transactions
 ----
 
 
-== Manage
+== Managing workloads
 
 This section focuses on steps in the <<Workflow>> that introduce additional ways to interact with the confidential containized workload.
 
-=== Enable and verify attestation
+=== Enabling and verifying attestation
 
 The {hpp} container runtime generates attestation data as it starts.
-The attestation data creation process is the same in https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation[IBM Cloud] and https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-attestation[on-premises] storing several attestation-related files in `/var/hyperprotect` on the container runtime.
-The attestation record (also referred to as the https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation#attestation_doc[attestation document]) contains checksums, which are used to verify the integrity of the environment where a workload starts.
+The attestation data creation process is the same in https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation[IBM Cloud] and https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-attestation[on-premises] storing several attestation-related files in _/var/hyperprotect_ on the container runtime.
+The attestation record (also called https://cloud.ibm.com/docs/vpc?topic=vpc-about-attestation#attestation_doc[attestation document]) contains checksums, which are used to verify the integrity of the environment where a workload starts.
 
 The recommended method to access the attestation document is via the workload.
 The https://cloud.ibm.com/docs/vpc?topic=vpc-financial-transaction-confidential-computing-on-hyper-protect-virtual-server-for-vpc[PayNow Node.js application] application developers added API calls that provide an https://github.com/ibm-hyper-protect/paynow-website/blob/main/app/app.js#L42[encrypted] or an https://github.com/ibm-hyper-protect/paynow-website/blob/main/app/app.js#L47[unencrypted] attestation document.
@@ -1719,7 +1719,7 @@ services:
       - "/var/hyperprotect/:/var/hyperprotect/:ro"
 ----
 
-.. Recreate the base64 encoded tar archive.
+.. Recreate the base64 encoded TAR archive.
 
 .. Update the `archive` item in the workload contract with the new base64 data.
 
@@ -1736,7 +1736,7 @@ openssl pkey -in attest-private-key.pem -out attest-public-key.pem -pubout
 +
 [NOTE]
 ====
-You will be asked to define a passphrase when creating the private key as well as provide the same passphrase when creating public portion of the key. 
+You will be asked to define a passphrase when creating the private key and to provide the same passphrase when creating public portion of the key. 
 ====
 
 .. Add `attestationPublicKey` to the contract file (the relevant portion is shown below).
@@ -1750,7 +1750,7 @@ workload: |
 attestationPublicKey: <attest-pubkey>
 ----
 +
-where the output of the following command replaces `<attest-pubkey>`.
+=> where the output of the following command replaces `<attest-pubkey>`.
 +
 [source, console]
 ----
@@ -1765,7 +1765,7 @@ IFS=$'\n'; echo -n \"; for line in $(cat attest-public-key.pem);\
 +
 Replace `<ip address>` with the floating IP address noted earlier for the VPC deployment in IBM Cloud or the IP address assigned to the HPCR VM running on the KVM host.
 
-. Save the encrypted attestation document to `se-checksums.txt.enc`.
+. Save the encrypted attestation document to _se-checksums.txt.enc_.
 //
 +
 The file can be saved on the local system where the Docker Compose file is located.
@@ -1812,14 +1812,14 @@ echo -n "$PASSWORD" | openssl aes-256-cbc -d -pbkdf2 -in "$MESSAGE_ENC" -pass st
 
 . Verify the integrity of workload contract.
 
-..  Generate a SHA256 checksum of the local contract file.
+..  Generate an SHA256 checksum of the local contract file.
 +
 [source, console]
 ----
 sha256sum slebci-paynow-website-contract.yml
 ----
 
-.. Compare the output of the above command with the `user-data` line in the `se-checksums.txt` attestation document.
+.. Compare the output of the above command with the `user-data` line in the _se-checksums.txt_ attestation document.
 //
 +
 If the checksums match, then the contract used to start the workload is same as its source.
@@ -1840,14 +1840,16 @@ A similar verification process can be done for the other items listed in the att
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Containerized confidential computing enables you to protect your workload data no matter where it is running.
-This guide featured the PayNow Website application.
+This guide featured the PayNow Web site application.
 It was built on {product1_full} and you securely deployed it on the {hpp}, either in the cloud or on-premises.
 
 Continue your learning journey with the following additional resources:
 
 * Accelerate Application Development with Open, Secure Containers with https://www.suse.com/products/base-container-images/[{product1_full}].
 
-* https://documentation.suse.com/trd/linux/tbd[Build] a trusted PayNow Website container on {product1_full} using https://cloud.ibm.com/docs/vpc?topic=vpc-about-hpsb[{hpp} Secure Build].
+* Build a trusted PayNow Website container on {product1_full} using https://cloud.ibm.com/docs/vpc?topic=vpc-about-hpsb[{hpp} Secure Build].
+
+* Deploy multiple containers using the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=notes-whats-new-in-version-215#deploying-multiple-containers[play] subsection, which explains a new HPCR capability that was recently added for https://cloud.ibm.com/docs/vpc?topic=vpc-about-contract_se#hpcr_contract_play[IBM Cloud] and https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-about-contract#hpcr_contract_play[on-premises] deployments.
 
 * Deploy multiple containers using the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=notes-whats-new-in-version-215#deploying-multiple-containers[play] subsection which is a new HPCR capability that was recently added for https://cloud.ibm.com/docs/vpc?topic=vpc-about-contract_se#hpcr_contract_play[IBM Cloud] and https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-about-contract#hpcr_contract_play[on-premises] deployments.
 
