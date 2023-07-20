@@ -1,0 +1,469 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+// 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Document attributes and variables
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document
+// -
+:title: Efficient Multi-Tenancy with CLASTIX Kamaji and Rancher Prime by SUSE
+:subtitle: Streamline Deployment and Management of Multi-Tenant Kubernetes Landscapes
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributor
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: Dario
+:author1_surname: Tranchitella
+:author1_jobtitle: CTO
+:author1_orgname: CLASTIX
+:author2_firstname: Dominic
+:author2_surname: Geeverghese
+:author2_jobtitle: Solution Architect
+:author2_orgname: SUSE
+:author3_firstname: Terry
+:author3_surname: Smith
+:author3_jobtitle: Director, Global Partner Solutions
+:author3_orgname: SUSE
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// products and projects
+// specify information about products and projects used in this guide
+// use variables for proper names, versions, URLs, and more
+// -
+// SUSE products
+:product1: Rancher Prime
+:product1_full: Rancher Prime by SUSE
+:product1_version: 2.7.3
+:product1_url: https://www.suse.com/solutions/enterprise-container-management/#rancher-product
+
+// Rancher by SUSE (community)
+:rancher_full: Rancher by SUSE
+:rancher_url: https://www.rancher.com/
+:rancher_url_docs: https://ranchermanager.docs.rancher.com/
+
+// Kubernetes
+:k3s_url: https://k3s.io/
+:rke2_url: https://docs.rke2.io/
+:k8s_url_docs: https://kubernetes.io/docs/
+
+// Storage
+:longhorn_url: https://www.rancher.com/products/longhorn
+:lpp_url: https://github.com/rancher/local-path-provisioner
+
+// partner products
+:partner: CLASTIX
+:partner_url: https://clastix.io/
+:kamaji_full: {partner} Kamaji
+:kamaji_url: {partner_url}kamaji
+:kamaji_url_docs: https://kamaji.clastix.io/
+:kamajietcd_url: https://github.com/clastix/kamaji-etcd
+
+
+// miscellaneous products/projects
+:certmanager_url: https://cert-manager.io/
+:cloudnativepg_url: https://cloudnative-pg.io/
+:helm_url_docs: https://helm.sh/docs/
+:kine_url: https://github.com/k3s-io/kine
+:metallb_url: https://metallb.org/
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// useful text
+// define use case, executive summary, and other content
+// -
+
+:usecase: efficient multi-tenancy with strict Kubernetes cluster isolation
+
+:executive_summary: Streamline deployment and management of multi-tenant Kubernetes landscapes with {kamaji_full} and {product1_full}.
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// miscellaneous
+// define any additional variables here for use within the document
+// -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+= {title}: {subtitle}
+
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a brief statement (1-4 sentences) of the purpose of the guide.
+// This is could be the same as the executive summary.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Efficiency, security, and cost savings are top concerns for most businesses.
+This becomes particularly important for large enterprises, who need to share Kubernetes infrastructure and resources between multiple teams, departments, or business units.
+These are also concerns for managed services providers, who offer Kubernetes-as-a-Service or leverage Kubernetes to deliver other services.
+
+Multi-tenancy enables different users or tenants to securely share Kubernetes resources, simplifying administration and reducing costs.
+Multi-tenancy is recognized as key to achieving these goals.
+Yet Kubernetes does not have first-class concepts of end users or tenants.
+
+image::logo-lockup_suse+clastix_hor_lightbackground.svg[SUSE | CLASTIX, scaledwidth="75%", align="center"]
+
+By integrating :kamaji_full: into your :product1_full: environment, you gain:
+
+* A highly scalable and high-density Kubernetes control plane infrastructure.
+* Reduced operational overhead, yielding faster deployment, configuration, upgrades, and maintenance.
+* Consistent configurations across multiple tenants.
+* Distributed architectures across clouds, edge, and data center.
+* Hard multi-tenancy with strong security and isolation.
+
+
+
+=== Scope
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Specify what this guide covers in no more than 2 sentences.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Learn how to deploy :kamaji_full: into an existing Kubernetes cluster managed by :product1_full:.
+
+
+=== Audience
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify for whom this document is intended, perhaps with:
+//   - topics of interests (e.g., machine learning, security, etc.)
+//   - job roles (e.g., developer, administrator, platform architect, etc.)
+//   - required skills
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Systems architects, platform engineers, administrators, and others seeking efficient operation of Kubernetes infrastructure through multi-tenancy and secure workload isolation will find this guide relevant.
+
+A basic understanding of Kubernetes and cluster management with :product1_full: is needed.
+
+
+== Prerequisites
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify minimum requirements (prerequisites) the reader
+// would need in order to follow the steps of this guide.
+// - Link to existing resources whenever possible.
+// - Keep this section brief but elaborate as needed.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+For this guide, you need the following:
+
+* {product1_url}[{product1_full}]
+//
++
+You can follow this guide with {rancher_url}[{rancher_full}] {product1_version} or later, which enables support for {rancher_url_docs}integrations-in-rancher/rancher-extensions[Rancher Extensions].
+See {rancher_url_docs}[Rancher Deployment Quick Start Guides] for setting up your Rancher environment.
+
+* A Kubernetes cluster to be the Kamaji Admin Cluster and managed by Rancher.
++
+--
+Any CNCF-certified Kubernetes cluster can be used, including {rke2_url}[RKE2] and {k3s_url}[K3s].
+Follow the instructions of your chosen Kubernetes distribution for proper setup of the Kamaji Admin Cluster.
+
+For this guide, in addition to the cluster's control plane nodes, you need at least 3 worker nodes.
+Each worker node should have the following minimum specifications:
+
+* 2 vCPUs
+
+* 2 GB of RAM
+
+* 16 GB storage
+
+* Swap disabled
+
+* Full network connectivity between all machines
+
+
+Your Kamaji Admin Cluster also must provide the following services:
+
+* A Container Storage Interface (CSI) module installed with a defined {rancher_url_docs}pages-for-subheaders/create-kubernetes-persistent-storage[Storage Class] for the tenant datastores.
+For example, you can use {longhorn_url}[Rancher Longhorn] or any other persistent storage system.
+The {lpp_url}[Rancher Local Path Provisioner] is also an option.
+
+* Support for {k8s_url_docs}concepts/services-networking/service/#loadbalancer[LoadBalancer] service types, such as {metallb_url}[MetalLB] or one provided by your cloud provider.
+The addresses provided by the load balancer must be accessible by the worker nodes of the tenant clusters as well as by tenant users.
+
+* {k8s_url_docs}concepts/services-networking/ingress-controllers/[Ingress Controller].
+The Kamaji Console is exposed through Ingress, so the cluster needs an Ingress controller.
+For RKE2 and K3s installations, you an ingress controller is installed by default.
+For other Kubernetes distributions, such as AKS, EKS, or GKE, you may need to deploy the ingress controller before continuing.
+
+* {certmanager_url}[Cert-Manager].
+Kamaji takes advantage of dynamic admission control, such as validating and mutating webhook configurations.
+These webhooks are secured by https://en.wikipedia.org/wiki/Transport_Layer_Security[Transport Layer Security (TLS)], and the certificates are managed by Cert-Manager.
+
+--
+
+* An arbitrary number of Linux machines to host multiple tenant worker nodes.
+These can be bare metal systems or virtual machines, on-premises or in any cloud.
+For this guide, each tenant worker node should have at least:
++
+--
+* 2 vCPUs
+
+* 2 GB of RAM
+
+* 16 GB of storage
+
+* Swap disabled
+
+* Full network connectivity between all machines
++
+[NOTE]
+====
+Kubernetes components communicate through various {k8s_url_docs}reference/networking/ports-and-protocols/[network ports and protocols].
+====
+
+
+--
+
+* A Linux workstation with the following tools installed:
++
+--
+* {k8s_url_docs}tasks/tools/#kubectl[kubectl]
+
+* {k8s_url_docs}tasks/tools/#kubeadm[kubeadm]
+
+* {helm_url_docs}intro/install/[Helm]
+
+--
+
+
+
+
+== Technical overview
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a technical overview of the solution.
+// - Identify components.
+// - Describe how the components fit together.
+//   Leverage diagrams as appropriate, including (but not limited to):
+//   - component architecture
+//   - data flow diagram
+//   - workflow diagram
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+image::rancher_clastix-kamaji_architecture.svg[Kamaji + Rancher Prime Architecture, scaledwidth="75%", align="center"]
+
+
+{kamaji_url}[{kamaji_full}] turns any CNCF-conformant Kubernetes cluster into an “Admin Cluster” to orchestrate other Kubernetes clusters called “tenant clusters.”
+With Kamaji the tenant control planes run in pods on the Admin Cluster instead of on dedicated machines.
+This makes running Kubernetes at scale less costly, easier to deploy, and simpler to operate while providing users with a fully managed, native Kubernetes experience.
+
+After a tenant cluster is created, you can import it into {product1_url}[{product1_full}] for centralized management of your Kubernetes landscape.
+Rancher Prime enables global administrators to streamline operations, improve consistency and security through an intuitive interface or through GitOps-driven workflows.
+
+
+=== Components and tools
+
+Key Kamaji components discussed in this guide are:
+
+Kamaji Operator::
++
+--
+The Kamaji Operator is installed on the Admin Cluster.
+It is responsible for creating and monitoring multiple custom resources called tenant control planes (TCPs).
+
+* The Kamaji Operator continuously checks for any deviations or changes in the TCPs.
+If it detects any drift, such as misconfigurations or inconsistencies, it initiates immediate reconciliation to bring the TCPs back to their desired states.
+
+* The Kamaji Operator rolls out new versions of TCPs and seamlessly migrates between different datastores.
+It ensures smooth transitions and minimizes disruptions during updates or changes to the control plane infrastructure.
+
+--
+
+Tenant Control Plane (TCP)::
+Running in the Admin Cluster as pods, tenant control planes provide dedicated control plane capabilities for each tenant cluster.
+They expose the control plane endpoint (the address and port) to the tenant’s worker nodes through a balanced and secure network service.
+
+Datastore::
+Installed on the Admin Cluster, the datastore is responsible for storing the state of the tenant clusters into a multi-tenant capable datastore as etcd running on the Admin Cluster.
+The relationship between the datastore and TCPs can be one-to-one or one-to-many.
+Thanks to {kine_url}[kine] integration, an open-source component from SUSE acting as a shim for etcd, Kamaji supports other datastore types, including PostgreSQL and MySQL.
++
+[TIP]
+====
+It is highly recommended that you use a managed datastore in production, such as {cloudnativepg_url}[CloudNativePG], an open source, PostgreSQL distribution for Kubernetes.
+You can also use the {kamajietcd_url}[kamaji-etcd] Helm chart to set up a multi-tenant etcd datastore, running as a StatefulSet of three replicas.
+====
+
+Tenant Worker Nodes::
+Tenant worker nodes run workloads of the respective tenants.
+They consist of virtual or bare metal machines that are connected to the TCP through a secure network connection.
+Tenant worker nodes can be isolated by infrastructure for hard multi-tenancy and can run on different infrastructures in data centers, clouds, and edge locations.
+
+
+Konnectivity::
+Konnectivity is a cloud-native network technology that facilitates traffic between the TCP and the worker nodes.
+It establishes a secure tunnel between the TCP and the tenant worker nodes, which is especially useful when the worker nodes are not directly reachable from the TCP.
+
+
+You can find additional details in the {kamaji_url_docs}[Kamaji documentation].
+
+
+=== Workflow
+
+The workflow for this guide and in general for working with Kamaji in a Rancher Prime landscape is as follows:
+
+. Installation
+
+.. Install Kamaji
+
+.. Install Console
+
+.. Install Kamaji Rancher Extension
+
+. Provision a tenant (downstream) cluster
+
+.. Deploy a tenant control plane (TCP)
+
+.. Join worker nodes to the TCP
+
+.. Install the Cluster Network Interface (CNI)
+
+. Import the tenant cluster into Rancher Prime
+
+
+
+== Installation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Detail the steps of the installation procedure.
+// The reader should be able to copy and paste commands to
+// a local environment or follow along locally with screenshots.
+// Include one or more verification steps to validate installation.
+//
+// Leverage:
+// - Ordered lists
+// - Code blocks
+// - Screenshots
+// - Admonitions
+//
+// If multiple installation methods are to be detailed, then
+// - Create a summary list here
+// - Detail each method in its own subsection.
+//
+// NOTE: For solutions involving SUSE Rancher, it is preferred
+//       to detail two installation methods:
+//       - Through the Rancher Apps Catalog with appropriate
+//         screenshots and SUSE branding.
+//       - A more manual approach (e.g., on the command-line).
+//
+// Complex configuration procedures may be broken out into one or more
+// Configuration sections.
+// These may be subsections of Installation or separate sections at
+// the same level as Installation.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+== Demonstration
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Illustrate functionality with a demonstration.
+// Begin with a description or outline of the demonstration.
+// Provide clear steps (in ordered lists) for the reader to follow.
+// Typical demonstration flow is:
+// 1. Prepare the environment for the demonstration.
+//    This should be minimal, such as downloading some data to use.
+//    If this requires more than a couple steps, consider putting it
+//    in a subsection.
+// 2. Perform the demonstration.
+//    Be careful not to overuse screenshots.
+// 3. Verify.
+//    This may be interwoven into performing the demonstration.
+//
+// As with Installation, leverage ordered lists, code blocks,
+// admonitions, and screenshots.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+== Summary
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize:
+// - Motivation (1 sentence)
+// - What was covered (1-2 sentences)
+// - Next steps (unordered list of 2-4 further learning resources)
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+In this guide, you learned ...
+
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
