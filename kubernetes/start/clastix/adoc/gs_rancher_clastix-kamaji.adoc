@@ -317,6 +317,11 @@ It ensures smooth transitions and minimizes disruptions during updates or change
 
 --
 
+Kamaji Console::
+//
++
+The Kamaji Console is a Web-based, graphical interface for global administrators.
+
 Tenant Control Plane (TCP)::
 Running in the Admin Cluster as pods, tenant control planes provide dedicated control plane capabilities for each tenant cluster.
 They expose the control plane endpoint (the address and port) to the tenant’s worker nodes through a balanced and secure network service.
@@ -352,9 +357,11 @@ The workflow for this guide and in general for working with Kamaji in a Rancher 
 
 . Installation
 
-.. Install Kamaji
+.. Install Kamaji Operator
 
-.. Install Console
+.. Install Kamaji Console
+
+.. Verify Kamaji Operator and Kamaji Console
 
 .. Install Kamaji Rancher Extension
 
@@ -399,6 +406,108 @@ The workflow for this guide and in general for working with Kamaji in a Rancher 
 // These may be subsections of Installation or separate sections at
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+:kamaji_full: is available through the Rancher App catalog.
+This curated collection of software, packaged and maintained as Helm charts, makes it easy to install software directly from the Rancher user interface (UI).
+Kamaji consists of the Kamaji Operator and the Kamaji Console, both of which are available in the Rancher App catalog.
+
+In addition, :partner: has created a Rancher extension.
+Rancher extensions allow users, developers, partners, and customers to extend and enhance the Rancher UI.
+
+
+=== Install Kamaji Operator
+
+Install the Kamaji Operator and default datastore through the Rancher Apps catalog.
+
+. Log into the Rancher UI.
+
+. Select the Kamaji Admin Cluster you provisioned as part of the prerequisites for this guide.
+
+. Navigate to __Apps__ > __Charts__ and search for 'kamaji'.
++
+image::clastix-kamaji_01_apps-charts.png[Kamaji Rancher Charts, scaledwidth="85%", align="center"]
+
+. Click the __Kamaji__ chart to begin installation of the Kamaji Operator.
+
+. In __Namespace__, select 'Create new namespace' and enter a name, such as 'kamaji-system'.
+//
++
+Optionally select __Customize Helm options before install__ to customize the deployment.
++
+image::clastix-kamaji_02_kamaji-namespace.png[Kamaji Rancher Chart - Namespace, scaledwidth="85%", align="center"]
+
+
+. Click __Next__, then click __Install__.
+
+
+
+=== Install Kamaji Console
+
+Install the Kamaji Console through the Rancher App catalog.
+
+. In the Rancher UI, select __Apps__ > __Charts__ and search for 'Kamaji Console'.
+
+. Click the __Kamaji Console__ chart to begin installation.
+
+. Select 'kamaji-system' in __Namespace__, then click __Next__.
+//
++
+Optionally, select __Customize Helm options before install__ to customize the deployment.
++
+image::clastix-kamaji_03_kamaji-console-step1.png[Kamaji Console Rancher Chart Installation Step 1, scaledwidth="85%", align="center"]
+
+. Select __Console Configuration__ and make the following adjustments:
+
+.. Enable the __Generate Console Config Secret__ option.
+
+.. Fill in each of the required fields with appropriate values.
++
+image::clastix-kamaji_04_kamaji-console-config.png[Kamaji Console Rancher Chart Installation Step 2 - Console Configuration, scaledwidth="85%", align="center"]
+
+. Select __Ingress Configuration__ and make the following adjustments:
+
+.. Ensure __Manage Ingress Status__ is enabled.
+
+.. Fill in each of the required fields with appropriate values.
++
+image::clastix-kamaji_05_kamaji-console-ingress.png[Kamaji Console Rancher Chart Installation Step 2 - Ingress Configuration, scaledwidth="85%", align="center"]
+
+.. Finish the installation by clicking __Install__.
+
+
+=== Verify Kamaji Operator and Kamji Console
+
+Verify that the Kamaji Operator and Kamaji Console are installed.
+
+. In the Rancher UI, make sure you have selected the Kamaji Admin Cluster.
+
+. Select __Installed Apps__.
+
+. Verify that 'kamaji', 'console', and 'etcd' are listed.
++
+image::clastix-kamaji_06_verify-apps.png[Installed Kamaji Apps, scaledwidth="85%", align="center"]
+
+
+
+=== Install Kamaji Rancher Extension
+
+{rancher_url_docs}}integrations-in-rancher/rancher-extensions[Rancher ￼extensions] allow users, developers, partners, and customers to extend and enhance the Rancher UI.
+Examples of built-in Rancher extensions are Fleet, Explorer, and Harvester.
+Other extensions that use the Extensions API can be manually added.
+
+. In the Rancher UI, select Extensions.
+
+. Add the Partner Extensions repository.
+
+.. Click the three vertical dots in the upper right of the screen and select __Manage Repositories__ > __Create__.
++
+image::clastix-kamaji_07_extensions-manage-repos.png[Rancher Extensions page, scaledwidth="85%", align="center"]
+
+.. For __Name__, enter 'partner-extensions'.
+
+.. For __Git Repo URL__ enter 'https://github.com/rancher/partner-extensions'.
+
+.. For __Git Branch__, enter 'main'.
 
 
 
