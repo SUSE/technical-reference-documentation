@@ -225,7 +225,7 @@ Your Kamaji Admin Cluster also must provide the following services:
 For example, you can use {longhorn_url}[Rancher Longhorn] or any other persistent storage system.
 The {lpp_url}[Rancher Local Path Provisioner] is also an option.
 
-* Support for {k8s_url_docs}concepts/services-networking/service/#loadbalancer[LoadBalancer] service types, such as {metallb_url}[MetalLB] or one provided by your cloud provider.
+* Support for {k8s_url_docs}concepts/services-networking/service/#loadbalancer[Load Balancer] service types, such as {metallb_url}[MetalLB] or one provided by your cloud provider.
 The addresses provided by the load balancer must be accessible by the worker nodes of the tenant clusters as well as by tenant users.
 
 * {k8s_url_docs}concepts/services-networking/ingress-controllers/[Ingress Controller].
@@ -292,7 +292,7 @@ Kubernetes components communicate through various {k8s_url_docs}reference/networ
 image::rancher_clastix-kamaji_architecture.svg[Kamaji + Rancher Prime Architecture, scaledwidth="75%", align="center"]
 
 
-{kamaji_url}[{kamaji_full}] turns any CNCF-conformant Kubernetes cluster into an “Admin Cluster” to orchestrate other Kubernetes clusters called “tenant clusters.”
+{kamaji_url}[{kamaji_full}] turns any CNCF-compliant Kubernetes cluster into an “Admin Cluster” to orchestrate other Kubernetes clusters called “tenant clusters.”
 With Kamaji the tenant control planes run in pods on the Admin Cluster instead of on dedicated machines.
 This makes running Kubernetes at scale less costly, easier to deploy, and simpler to operate while providing users with a fully managed, native Kubernetes experience.
 
@@ -476,7 +476,7 @@ image::clastix-kamaji_05_kamaji-console-ingress.png[Kamaji Console Rancher Chart
 .. Finish the installation by clicking __Install__.
 
 
-=== Verify Kamaji Operator and Kamji Console
+=== Verify Kamaji Operator and Kamaji Console
 
 Verify that the Kamaji Operator and Kamaji Console are installed.
 
@@ -545,8 +545,8 @@ The first step to provision a tenant cluster is to create a tenant control plane
 
 [IMPORTANT]
 ====
-Tenant control plane pods are exposed by a LoadBalancer service that is the 'ControlPlaneEndpoint' for the worker nodes.
-Make sure your Kamaji Admin Cluster supports the creation of the LoadBalancer service type and that IP addresses can be provisioned and assigned.
+Tenant control plane pods are exposed by a load balancer service that is the 'ControlPlaneEndpoint' for the worker nodes.
+Make sure your Kamaji Admin Cluster supports the creation of the 'LoadBalancer' service type and that IP addresses can be provisioned and assigned.
 Otherwise, the Kamaji Operator will wait indefinitely to deploy your tenant control plane.
 ====
 
@@ -775,7 +775,7 @@ image::clastix-kamaji_16_imported-tenants.png[Tenant clusters imported into Ranc
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 {product1_full} empowers enterprises to streamline multi-cluster Kubernetes operations everywhere with unified security, policy, and user management.
-CLASTIX Kamaji delivers a highly scalable and high-density Kubernetes control plane infrastructure with reduced operational overhead, yielding faster deployment, configuration, upgrades, and maintenance.
+{kamaji_full} delivers a highly scalable and high-density Kubernetes control plane infrastructure with reduced operational overhead, yielding faster deployment, configuration, upgrades, and maintenance.
 Together, SUSE and CLASTIX enable enterprises, managed services providers, and others to leverage Kubernetes resources more efficiently and enable secure Kubernetes-as-a-Service to multiple departments and clients.
 
 In this guide, you learned how to seamlessly deploy {kamaji_full} Kamaji into your {product1_full} Kubernetes landscape, create tenant clusters, and import them into Rancher for unified and streamlined management.
