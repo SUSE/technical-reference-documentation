@@ -1,0 +1,153 @@
+<!-- https://tdg.docbook.org/tdg/5.2/info -->
+
+<dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+    <dm:bugtracker>
+        <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
+	<!--  <dm:product>{title}</dm:product> -->
+    </dm:bugtracker>
+</dm:docmanager>
+
+<!-- Note to author/editor
+     Attributes used here (enclosed in curly braces).
+     General variables are defined in common_docinfo_vars.adoc.
+     Variable specific to this document (such as the title) are
+     defined with the main content in the adoc file.
+     See comments below for additional options.
+-->
+
+
+<!-- document organization metadata
+     Do NOT modify this section
+     <orgname>Technical Reference Documentation</orgname>
+-->
+<meta name="series">{trd}</meta>
+<meta name="type">{type}</meta>
+
+
+<!-- document title and subtitle -->
+<title>{title}</title>
+<subtitle>{subtitle}</subtitle>
+
+
+<!-- platform and product metadata
+     Replicate for additional platforms.
+     Define platform2, etc. in adoc file.
+-->
+<productname>{product1}</productname>
+<meta name="platform">{product1_full}</meta>
+<meta name="platform">{kamaji_full}</meta>
+
+
+<!-- author metadata
+     Replicate author tag structure inside this authorgroup
+     for additional authors.
+     Use editor and othercredit tag groups for additional contributors.
+     Update variables in adoc file.
+-->
+<authorgroup>
+  <author>
+    <personname>
+      <firstname>{author1_firstname}</firstname>
+      <surname>{author1_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author1_jobtitle}</jobtitle>
+      <orgname>{author1_orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author2_firstname}</firstname>
+      <surname>{author2_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author2_jobtitle}</jobtitle>
+      <orgname>{author2_orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author3_firstname}</firstname>
+      <surname>{author3_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author3_jobtitle}</jobtitle>
+      <orgname>{author3_orgname}</orgname>
+    </affiliation>
+  </author>
+</authorgroup>
+
+<!-- cover logo images
+     Specify the image or images to use on the document cover.
+
+     The default logo (`common/images/src/svg/suse.svg`) is the
+     official SUSE chameleon with 'SUSE' printed to its right.
+     The logo is designed for light backgrounds.
+     When you run the setup script, a symbolic link to this image
+     file is created in your project's `media/src/svg` directory.
+
+     NOTE: Two image objects are used to accommodate different
+           width requirements for HTML ('role="html"') and for
+           PDF ('role="fo"').
+           Always use '5em' for for PDF and '152px' for HTML.
+     
+     To display multiple logos on the document cover:
+
+     1. (preferred) Use an existing, approved logo lock-up SVG image.
+        a. Find the existing image file in `common/images/src/svg`.
+        b. Create a symbolic link to the image file in your project's
+           `media/src/svg` directory.
+        c. Update the 'fileref' attributes with the link target.
+
+     2. Create a single SVG image file with required logos.
+        a. Create a single logo lock-up image complying with brand
+           guidelines and approved by all parties.
+           Be sure to trim whitespace from all sides.
+        b. Place the file in the `common/images/src/svg` directory.
+        c. Create a symbolic link to the image file in your project's
+           `media/src/svg` directory.
+        d. Update the 'fileref' attributes with the new file name.
+
+     3. Use multiple, separate SVG logo image files.
+        a. Obtain an additional, approved logo (preferrably as an SVG file).
+        b. Trim extraneous whitespace from the top, bottom, and sides.
+           Very slim or very high logos may need some whitespace padding to
+           the fit in line with other logos.
+           If you need help, contact Jana Jaeger <jana.jaeger@suse.com>.
+        c. Place the file in the `common/images/src/svg` directory.
+        d. Create a symbolic link to the image file in your project's
+           `media/src/svg` directory.
+        e. Create a copy of the existing mediaobject section just before
+           the closing </cover> tag.
+        f. Update the 'fileref' attributes in the new mediaobject with
+           the new file name.
+
+-->
+<cover role="logos">
+  <mediaobject>
+    <imageobject role="fo">
+      <imagedata fileref="logo-lockup_suse+clastix_hor_lightbackground.svg" width="10em"/>
+    </imageobject>
+    <imageobject role="html">
+      <imagedata fileref="logo-lockup_suse+clastix_hor_lightbackground.svg" width="152px"/>
+    </imageobject>
+  </mediaobject>
+</cover>
+
+<!-- brief abstract for document
+     Update with an enticing summary.
+-->
+<abstract role="executivesummary">
+  <title>Summary</title>
+  <para>{executive_summary}</para>
+</abstract>
+
+
+<!-- disclaimer
+     Do NOT edit
+-->
+<abstract>
+  <title>Disclaimer</title>
+  <para>{disclaimer}</para>
+</abstract>
+
