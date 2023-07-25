@@ -149,7 +149,7 @@ Yet Kubernetes does not have first-class concepts of end users or tenants.
 
 image::logo-lockup_suse+clastix_hor_lightbackground.svg[SUSE | CLASTIX, scaledwidth="75%", align="center"]
 
-By integrating :kamaji_full: into your :product1_full: environment, you gain:
+By integrating {kamaji_full} into your {product1_full} environment, you gain:
 
 * A highly scalable and high-density Kubernetes control plane infrastructure.
 * Reduced operational overhead, yielding faster deployment, configuration, upgrades, and maintenance.
@@ -165,7 +165,7 @@ By integrating :kamaji_full: into your :product1_full: environment, you gain:
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Learn how to deploy :kamaji_full: into an existing Kubernetes cluster managed by :product1_full:.
+Learn how to deploy {kamaji_full} into an existing Kubernetes cluster managed by {product1_full}.
 
 
 === Audience
@@ -179,7 +179,7 @@ Learn how to deploy :kamaji_full: into an existing Kubernetes cluster managed by
 
 Systems architects, platform engineers, administrators, and others seeking efficient operation of Kubernetes infrastructure through multi-tenancy and secure workload isolation will find this guide relevant.
 
-A basic understanding of Kubernetes and cluster management with :product1_full: is needed.
+A basic understanding of Kubernetes and cluster management with {product1_full} is needed.
 
 
 == Prerequisites
@@ -293,7 +293,7 @@ image::rancher_clastix-kamaji_architecture.svg[Kamaji + Rancher Prime Architectu
 
 
 {kamaji_url}[{kamaji_full}] turns any CNCF-compliant Kubernetes cluster into an “Admin Cluster” to orchestrate other Kubernetes clusters called “tenant clusters.”
-With Kamaji the tenant control planes run in pods on the Admin Cluster instead of on dedicated machines.
+With Kamaji, the tenant control planes run in pods on the Admin Cluster instead of on dedicated machines.
 This makes running Kubernetes at scale less costly, easier to deploy, and simpler to operate while providing users with a fully managed, native Kubernetes experience.
 
 After a tenant cluster is created, you can import it into {product1_url}[{product1_full}] for centralized management of your Kubernetes landscape.
@@ -330,7 +330,7 @@ They expose the control plane endpoint (the address and port) to the tenant’s 
 Datastore::
 Installed on the Admin Cluster, the datastore is responsible for storing the state of the tenant clusters into a multi-tenant capable datastore as etcd running on the Admin Cluster.
 The relationship between the datastore and TCPs can be one-to-one or one-to-many.
-Thanks to {kine_url}[kine] integration, an open-source component from SUSE acting as a shim for etcd, Kamaji supports other datastore types, including PostgreSQL and MySQL.
+Thanks to {kine_url}[kine] integration, an open source component from SUSE acting as a shim for `etcd`, Kamaji supports other datastore types, including PostgreSQL and MySQL.
 +
 [TIP]
 ====
@@ -408,11 +408,11 @@ The workflow for this guide and in general for working with Kamaji in a Rancher 
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-:kamaji_full: is available through the Rancher App catalog.
+{kamaji_full} is available through the Rancher App catalog.
 This curated collection of software, packaged and maintained as Helm charts, makes it easy to install software directly from the Rancher user interface (UI).
 Kamaji consists of the Kamaji Operator and the Kamaji Console, both of which are available in the Rancher App catalog.
 
-In addition, :partner: has created a Rancher extension.
+In addition, {partner} has created a Rancher extension.
 Rancher extensions allow users, developers, partners, and customers to extend and enhance the Rancher UI.
 
 
@@ -420,7 +420,7 @@ Rancher extensions allow users, developers, partners, and customers to extend an
 
 Install the Kamaji Operator and default datastore through the Rancher Apps catalog.
 
-. Log into the Rancher UI.
+. Log in to the Rancher UI.
 
 . Select the Kamaji Admin Cluster you provisioned as part of the prerequisites for this guide.
 
@@ -558,7 +558,7 @@ image::clastix-kamaji_11_extension-console.png[Rancher Extensions - launch Kamaj
 +
 The Kamaji Console opens in another tab or window of your browser.
 
-. Log into the Kamaji Console UI with the email address and password you set during deployment.
+. Log in to the Kamaji Console UI with the e-mail address and password you set during deployment.
 
 . In the Kamaji Console, select __Tenant Control Planes__ in the left panel, then click __Create__.
 +
@@ -654,7 +654,7 @@ The current approach for joining nodes is to run a `kubeadm` command on each nod
 
 . Open the command line on your Linux workstation.
 
-. Store the IP address (or hostname) of each node in a variable.
+. Store the IP address (or host name) of each node in a variable.
 +
 [source, console]
 ----
@@ -670,7 +670,7 @@ WORKER2=<address of third node>
 JOIN_CMD=$(echo "sudo ")$(kubeadm --kubeconfig=default-sample.kubeconfig token create --print-join-command)
 ----
 
-. Use a loop to log into and run the join command on each node.
+. Use a loop to log in to and run the join command on each node.
 +
 [source, console]
 ----
@@ -737,7 +737,7 @@ image::clastix-kamaji_15_console-tenant-nodes-visible.png[Tenant Nodes in the Ka
 
 Bring your tenant clusters into {product1_full} for unified management and oversight of your Kubernetes landscape.
 
-. Log into the Rancher UI.
+. Log in to the Rancher UI.
 
 . In __Cluster Management__, select __Clusters__.
 
