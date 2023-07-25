@@ -356,29 +356,29 @@ You can find additional details in the {kamaji_url_docs}[Kamaji documentation].
 
 The workflow for this guide and in general for working with Kamaji in a Rancher Prime landscape is as follows:
 
-. Installation
+. Installing Kamaji
 
-.. Install Kamaji Operator
+.. Installing Kamaji Operator
 
-.. Install Kamaji Console
+.. Installing Kamaji Console
 
-.. Verify Kamaji Operator and Kamaji Console
+.. Verifying Kamaji Operator and Kamaji Console
 
-.. Install Kamaji Rancher Extension
+.. Installing Kamaji Rancher Extension
 
-. Provision a tenant cluster
+. Provisioning a tenant cluster
 
-.. Deploy a tenant control plane
+.. Deploying a tenant control plane
 
-.. Join worker nodes
+.. Joining worker nodes
 
-.. Install the Cluster Network Interface
+.. Installing the Cluster Network Interface
 
-. Import the tenant cluster into Rancher Prime
+. Importing the tenant cluster into Rancher Prime
 
 
 
-== Installation
+== Installing Kamaji
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Detail the steps of the installation procedure.
@@ -416,7 +416,7 @@ In addition, {partner} has created a Rancher extension.
 Rancher extensions allow users, developers, partners, and customers to extend and enhance the Rancher UI.
 
 
-=== Install Kamaji Operator
+=== Installing Kamaji Operator
 
 Install the Kamaji Operator and default datastore through the Rancher Apps catalog.
 
@@ -442,7 +442,7 @@ image::clastix-kamaji_02_kamaji-namespace.png[Kamaji Rancher Chart - Namespace, 
 
 
 
-=== Install Kamaji Console
+=== Installing Kamaji Console
 
 Install the Kamaji Console through the Rancher App catalog.
 
@@ -476,7 +476,7 @@ image::clastix-kamaji_05_kamaji-console-ingress.png[Kamaji Console Rancher Chart
 .. Finish the installation by clicking __Install__.
 
 
-=== Verify Kamaji Operator and Kamaji Console
+=== Verifying Kamaji Operator and Kamaji Console
 
 Verify that the Kamaji Operator and Kamaji Console are installed.
 
@@ -490,7 +490,7 @@ image::clastix-kamaji_06_verify-apps.png[Installed Kamaji Apps, scaledwidth="85%
 
 
 
-=== Install Kamaji Rancher Extension
+=== Installing Kamaji Rancher Extension
 
 {rancher_url_docs}integrations-in-rancher/rancher-extensions[Rancher extensions] allow users, developers, partners, and customers to extend and enhance the Rancher UI.
 Examples of built-in Rancher extensions are Fleet, Explorer, and Harvester.
@@ -534,12 +534,12 @@ image::clastix-kamaji_10_extension-menu.png[Rancher Extensions - Multitenancy Ma
 
 
 
-== Provision a tenant cluster
+== Provisioning a tenant cluster
 
 With the Kamaji Operator, the Kamaji Console, and the Kamaji Rancher Extension deployed to your Kamaji Admin Cluster, you are ready to provision tenant (downstream) clusters.
 
 
-=== Deploy a tenant control plane
+=== Deploying a tenant control plane
 
 The first step to provision a tenant cluster is to create a tenant control plane (TCP) in the Kamaji Admin Cluster.
 
@@ -619,7 +619,7 @@ image::clastix-kamaji_14_tcp-sample.png[Tenant Control Plane overview, scaledwid
 . Click __VIEW KUBECONFIG__ to retrieve the Kubeconfig for your tenant control plane and save it as the file, `default-sample.kubeconfig`.
 
 
-=== Prepare worker nodes
+=== Preparing worker nodes
 
 Be sure the bare metal or virtual machines you will use as your worker nodes have the following components installed:
 
@@ -639,7 +639,7 @@ The `nodes-prerequisites.sh` script can automate installation of these prerequis
 ====
 
 
-=== Join worker nodes
+=== Joining worker nodes
 
 The tenant control plane is made of pods running in the Kamaji Admin Cluster.
 At this point, the tenant cluster has no worker nodes.
@@ -695,7 +695,7 @@ See https://github.com/clastix/yaki/tree/master[yaki nodesetup.sh script], which
 ====
 
 
-=== Install the Cluster Network Interface
+=== Installing the Cluster Network Interface
 
 Your tenant cluster also needs a {rancher_url_docs}faq/container-network-interface-providers[Container Network Interface (CNI)] plugin.
 The CNI plugin enables seamless communication and connectivity between containers and external networks.
@@ -733,7 +733,7 @@ kubectl --kubeconfig=default-sample.kubeconfig get nodes
 image::clastix-kamaji_15_console-tenant-nodes-visible.png[Tenant Nodes in the Kamaji Console, scaledwidth="85%", align="center"]
 
 
-== Import the tenant cluster into Rancher Prime
+== Importing the tenant cluster into Rancher Prime
 
 Bring your tenant clusters into {product1_full} for unified management and oversight of your Kubernetes landscape.
 
