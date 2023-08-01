@@ -397,7 +397,29 @@ The __Clean resources__ function gives you a mechanism for removing your {produc
 
 == Upgrade to latest version 
 
-The automated deployment of {productname} may vary from the latest release version. You can upgrade to the latest version with Helm by following this https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster/upgrades[guidance].
+The automated deployment of {productname} may vary from the latest release version.
+You can upgrade to the latest version with Helm by following this https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster/upgrades[guidance].
+
+[IMPORTANT]
+====
+When using the {offering1} marketplace listing, the deployment name is `rancher-stable` instead of `rancher`.
+
+Thus, to export the Helm chart values of your current {product1} deployment, you would use:
+[source, console]
+----
+helm get values rancher-stable -n cattle-system -o yaml > values.yaml
+----
+
+And to upgrade to the latest stable version, you would use:
+[source, console]
+----
+helm upgrade rancher-stable rancher-stable/rancher \
+  --namespace cattle-system \
+  -f values.yaml``
+----
+
+====
+
 
 == Accessing {productname}
 
