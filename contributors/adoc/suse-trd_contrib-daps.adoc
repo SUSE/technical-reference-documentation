@@ -14,7 +14,10 @@
 :os1-ver: 15 SP5
 :os1-docs-ver: 15-SP5
 :os1-mod-ver: 15.5
-:os1-docs-mods-url: https://documentation.suse.com/sles/{os1-docs-ver}/single-html/SLES-modules/#sec-modules-install
+:os1-docs-url: https://documentation.suse.com/sles/{os1-docs-ver}/html/SLES-all/
+:os1-docs-url-software-yast: {os1-docs-url}cha-yast-software.html
+:os1-docs-url-software-zypper: {os1-docs-url}cha-sw-cl.html
+:os1-docs-mods-url: {os1-docs-url}article-modules.html
 :os2: Leap
 :os2-full: openSUSE Leap
 :os2-ver: 15.5
@@ -153,16 +156,30 @@ Configure your system to use the Documentation:Tools software repository.
 
 . Open your Web browser to the {repo-doctools-url}[Documentation:Tools repository].
 
-. Select the directory link for the desired operating system.
+. Select the directory link for your operating system (for example, '{doctools-os1}/').
 
-. Download the `Documentation:Tools.repo` file.
+. Download the `Documentation:Tools.repo` file and name it `Documentation_Tools.repo`.
+//
++
+This https://en.opensuse.org/openSUSE:Standards_RepoInfo[RepoInfo file] specifies  some characteristics of the repository, such as a unique identifier, URL, and GPG checking.
 
-. Copy or move the `Documentation:Tools.repo` to `/etc/zypp/repos.d/`.
+. On the command line, change to the directory containing the `Documentation_Tools.repo` file you just downloaded.
+//
++
+For example:
 +
 [source, console]
 ----
-sudo cp Documentation:Tools.repo /etc/zypp/repos.d/
+cd ~/Downloads
 ----
+
+. Copy or move the `Documentation_Tools.repo` to `/etc/zypp/repos.d/`.
++
+[source, console]
+----
+sudo cp Documentation_Tools.repo /etc/zypp/repos.d/
+----
+
 
 . Refresh repository data.
 +
@@ -171,7 +188,7 @@ sudo cp Documentation:Tools.repo /etc/zypp/repos.d/
 sudo zypper refresh
 ----
 +
-[NOTE]
+[TIP]
 ====
 If you see the prompt:
 
@@ -195,9 +212,9 @@ You can install {prod1} with `zypper` on the command line.
 +
 [source, console]
 ----
-sudo zypper install --repo Documentation:Tools daps2docker
+sudo zypper install --repo Documentation_Tools daps2docker
 ----
-+
+
 [IMPORTANT]
 ====
 When you install {prod1}, you may see output like the following:
@@ -285,7 +302,7 @@ daps2docker DC-FILE [FORMAT]
 ====
 If you do not specify FORMAT, the configured default formats will be assumed.
 
-See `daps2docker --help` for a list of supported formats.
+See `daps2docker --help` for a list of supported formats and other options.
 ====
 
 . Review the command output.
@@ -326,7 +343,5 @@ And, thus, your contribution may be rejected for publication.
 This is why it is important that you validate your document for content, style, and coding.
 
 {prod2-full} provides robust tooling that enable you validate and render your documents on your own computer.
-
-
 
 
