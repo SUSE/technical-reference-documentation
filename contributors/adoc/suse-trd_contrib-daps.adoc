@@ -232,7 +232,7 @@ Because Podman is being used, you can safely choose to "break" this dependency b
 
 === Configuring {prod1}
 
-Some aspects of how {prod1} works are specified in a configuration file.
+Configure how {prod1} works for you in a local configuration file.
 
 . Make a directory for your configuration file.
 +
@@ -241,7 +241,7 @@ Some aspects of how {prod1} works are specified in a configuration file.
 mkdir -p ~/.config/daps2docker
 ----
 
-. Create your configuration file.
+. Copy and execute this command to create your configuration file.
 +
 [source, console]
 ----
@@ -260,28 +260,12 @@ container_engine="podman"
 containername="registry.opensuse.org/documentation/containers/containers/opensuse-daps-toolchain:latest"
 EOL
 ----
-+
-[NOTE]
-====
-This sample configuration file sets the default rendering formats, changes the container engine to Podman, and specifies that the latest container image should be used.
-====
 
 
 === Using {prod1}
 
-You run {prod1} from the command line with provided `daps2docker` script.
+{prod1} is run from the command line with the `/usr/bin/daps2docker` script.
 
-[NOTE]
-====
-If you have not configured your system to run Podman in rootless mode, you will also be prompted for your root or sudo password.
-
-[listing]
-----
-podman needs to be run as root.
-[sudo] password for root: *************
-----
-
-====
 
 . Enter your documentation directory, containing your DocBook Config (DC) file.
 +
@@ -303,6 +287,18 @@ If you do not specify FORMAT, the configured default formats will be assumed.
 
 See `daps2docker --help` for a list of supported formats and other options.
 ====
++
+[NOTE]
+====
+If you have not configured your system to run Podman in rootless mode, you will be prompted for your root or sudo password when you run this script.
+
+[listing]
+----
+podman needs to be run as root.
+[sudo] password for root: *************
+----
+
+====
 
 . Review the command output.
 //
@@ -322,25 +318,24 @@ Your output documents are:
 The contents of the `/tmp` directory are ephemeral.
 If you wish to save your rendered documents, move them to another location.
 ====
-+
-If your document cannot be rendered, prints messages to the console to help you identify the issue.
-For example:
-+
-[listing]
-----
-asciidoctor: WARNING: skipping reference to missing attribute: productname
-----
 
 
 === Validating your document code
 
 You contribution to {product1} is submitted as a collection of source files, such as DocBook metadata, AsciiDoc text, and images.
-These files are combined and rendered into an accessible format, like HTML and PDF, which are then published.
+These files are combined and rendered into an accessible format, like HTML and PDF, which can then be published.
 If source files are missing or if they contain code errors, your document may render incorrectly or not at all.
 And, thus, your contribution may be rejected for publication.
 
-This is why it is important that you validate your document for content, style, and coding.
+If your document cannot be rendered, {prod1} prints messages to the console to help you identify the issue.
+For example, if you did not define the document attribute, 'product1', but you reference it within your document, you would see:
 
-{prod2-full} provides robust tooling that enable you validate and render your documents on your own computer.
+[listing]
+----
+asciidoctor: WARNING: skipping reference to missing attribute: product1
+----
+
+Even if your document renders, be sure to validate it for content, style, and formatting by reviewing the renderings.
+Peer reviews can help immensely to identify both content errors and better ways to express the information you wish to share.
 
 
