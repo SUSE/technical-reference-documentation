@@ -1,0 +1,341 @@
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section: DAPS
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section Variables & Attributes
+//
+// Operating Systems
+:os1: SLES
+:os1-full: SUSE Linux Enterprise Server
+:os1-url: https://www.suse.com/products/server/
+:os1-ver: 15 SP5
+:os1-docs-ver: 15-SP5
+:os1-mod-ver: 15.5
+:os1-docs-url: https://documentation.suse.com/sles/{os1-docs-ver}/html/SLES-all/
+:os1-docs-url-software-yast: {os1-docs-url}cha-yast-software.html
+:os1-docs-url-software-zypper: {os1-docs-url}cha-sw-cl.html
+:os1-docs-mods-url: {os1-docs-url}article-modules.html
+:os2: Leap
+:os2-full: openSUSE Leap
+:os2-ver: 15.5
+:os2-url: https://www.opensuse.org/#Leap
+:os3: Tumbleweed
+:os3-full: openSUSE Tumbleweed
+:os3-url: https://www.opensuse.org/#Tumbleweed
+
+
+// Documentation Tools
+:prod1: Daps2Docker
+:prod1-url: https://github.com/openSUSE/daps2docker
+:prod2: DAPS
+:prod2-full: DocBook Authoring and Publishing Suite
+:prod2-url: https://opensuse.github.io/daps/
+:repo-doctools-url: https://download.opensuse.org/repositories/Documentation:/Tools/
+:repo-publishing-url: https://download.opensuse.org/repositories/Publishing/openSUSE_Factory/
+:stylesheets-url: https://github.com/openSUSE/suse-xsl
+
+:doctools-os1: SLE_15_SP5
+:doctools-os2: openSUSE_Leap_15.5
+:doctools-os3: openSUSE_Tumbleweed
+:repo-doctools-url-os1: {repo-doctools-url}{doctools-os1}
+:repo-doctools-url-os2: {repo-doctools-url}{doctools-os2}
+:repo-doctools-url-os3: {repo-doctools-url}{doctools-os3}
+
+// Other
+:asciidoc-url: https://asciidoc.org/
+:docbook-url: https://docbook.org/
+:container-guide-url: https://documentation.suse.com/container/all/single-html/SLES-container/
+:podman-overview-url: {container-guide-url}#cha-podman-overview
+:podman-url: https://podman.io
+:suse-trd-url: https://documentation.suse.com/trd-supported.html
+:suse-trd-repo-url: https://github.com/SUSE/technical-reference-documentation
+:suse-trd-contrib-url: https://documentation.suse.com/trd/contributors/single-html/suse-trd_contrib-guide/
+:suse-stylesheets-url: https://github.com/openSUSE/suse-xsl
+:docbook-xslt-stylesheets-url: https://github.com/docbook/xslt10-stylesheets
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Among the important tools for your workflow as a contributor to {product1_full} is the {prod2-url}[{prod2-full}] ({prod2}).
+{prod2} helps you author and publish documentation written in {docbook-url}[DocBook XML] and {asciidoc-url}[AsciiDoc] to a variety of different formats, such as HTML, EPUB, and PDF.
+It also includes tooling for validation, link checking, spell checking, and editor macros.
+
+{prod2} is dual-licensed under GPL 2.0 and GPL 3.0, and it is available as binary packages for the openSUSE and SUSE Linux Enterprise, and it can be installed from source on any Linux distribution.
+{prod2} has several software dependencies, some of which are required and others are recommended to enable certain functionality.
+For details, see the {prod2-url}/doc/cha.daps.user.inst.html[System Requirements and Installation] section of the {prod2} User Guide.
+
+{prod1-url}[{prod1}] aims to simplify and expand access to the rendering capabilities of {prod2}.
+It does this by packaging {prod2} and some of its dependencies in an easy-to-use, OCI compliant container.
+
+Below are details for installing and configuring {prod1} on a bare metal or virtual machine running one of the following operating systems:
+
+* {os1-url}[{os1-full}] ({os1}) {os1-ver}
+
+* {os2-url}[{os2-full}] ({os2}) {os2-ver}
+
+* {os3-url}[{os3-full}] ({os3})
+
+[NOTE]
+====
+It should require little effort to adapt these steps for other operating systems that can run https://opencontainers.org/[OCI-compliant containers].
+====
+
+
+=== Prerequisites
+
+The installation steps outlined here assume that you have the following prerequisites:
+
+* A bare metal or virtual machine with access to the Internet and running one of the following operating systems:
++
+--
+* {os1-url}[{os1-full}] ({os1}) {os1-ver}
+
+* {os2-url}[{os2-full}] ({os2}) {os2-ver}
+
+* {os3-url}[{os3-full}] ({os3})
+--
++
+[NOTE]
+====
+
+If you are using {os1-full}, some of the tools you will require are curated through {os1-docs-mods-url}[modules and extensions].
+You can use YaST or follow the steps below at the command line to activate the needed modules and extensions.
+
+. Enable the SLE Desktop Applications Module
++
+[source, console, subs="attributes+"]
+----
+sudo SUSEConnect -p sle-module-desktop-applications/{os1-mod-ver}/x86_64
+----
+
+. Enable the SLE Development Tools Module
++
+[source, console, subs="attributes+"]
+----
+sudo SUSEConnect -p sle-module-development-tools/{os1-mod-ver}/x86_64
+----
+
+. Enable the SLE Workstation Extension
++
+[source, console, subs="attributes+"]
+----
+sudo SUSEConnect -p sle-we/{os1-mod-ver}/x86_64
+----
+
+. Enable the SLE Containers Module
++
+[source, console, subs="attributes+"]
+----
+sudo SUSEConnect -p sle-module-containers/{os1-mod-ver}/x86_64
+----
+
+====
+
+* {podman-overview-url}[Podman] installed and accessible to your user account.
+//
++
+Podman is an open source, daemonless, container engine and toolset for deploying, running, and managing OCI compliant containers.
++
+[source, console]
+----
+sudo zypper install podman
+----
++
+[NOTE]
+====
+As {prod1}'s name implies, you can use Docker instead.
+====
+
+
+=== Enabling the Documentation:Tools repository
+
+Configure your system to use the Documentation:Tools software repository.
+
+. Open your Web browser to the {repo-doctools-url}[Documentation:Tools repository].
+
+. Select the directory link for your operating system (for example, '{doctools-os1}/').
+
+. Download the `Documentation:Tools.repo` file and name it `Documentation_Tools.repo`.
+//
++
+This https://en.opensuse.org/openSUSE:Standards_RepoInfo[RepoInfo file] specifies  some characteristics of the repository, such as a unique identifier, URL, and GPG checking.
+
+. On the command line, change to the directory containing the `Documentation_Tools.repo` file you just downloaded.
+//
++
+For example:
++
+[source, console]
+----
+cd ~/Downloads
+----
+
+. Copy or move the `Documentation_Tools.repo` to `/etc/zypp/repos.d/`.
++
+[source, console]
+----
+sudo cp Documentation_Tools.repo /etc/zypp/repos.d/
+----
+
+
+. Refresh repository data.
++
+[source, console]
+----
+sudo zypper refresh
+----
++
+[TIP]
+====
+If you see the prompt:
+
+[listing]
+----
+  Do you want to reject the key, trust temporarily, or trust always? [r/t/a/?] (r): a
+----
+
+Enter 'a' to always trust the repository signing key.
+
+====
+
+
+
+=== Installing {prod1}
+
+You can install {prod1} with `zypper` on the command line.
+
+
+. Install {prod1} from the Documentation:Tools repository.
++
+[source, console]
+----
+sudo zypper install --repo Documentation_Tools daps2docker
+----
+
+[IMPORTANT]
+====
+When you install {prod1}, you may see output like the following:
+[listing]
+----
+Problem: nothing provides 'docker' needed by the to be installed daps2docker-0.18-150400.1.1.noarch
+ Solution 1: do not install daps2docker-0.18-150400.1.1.noarch
+ Solution 2: break daps2docker-0.18-150400.1.1.noarch by ignoring some of its dependencies
+
+Choose from above solutions by number or cancel [1/2/c/d/?] (c): 2
+----
+
+Because Podman is being used, you can safely choose to "break" this dependency by selecting option '2'.
+====
+
+
+=== Configuring {prod1}
+
+Configure how {prod1} works for you in a local configuration file.
+
+. Make a directory for your configuration file.
++
+[source, console]
+----
+mkdir -p ~/.config/daps2docker
+----
+
+. Copy and execute this command to create your configuration file.
++
+[source, console]
+----
+cat >> ~/.config/daps2docker/config <<EOL
+#
+# This is the configuration file for the daps2docker package
+#
+
+# set the default rendering formats
+formats="html,pdf"
+
+# set the container engine
+container_engine="podman"
+
+# set the container name
+containername="registry.opensuse.org/documentation/containers/containers/opensuse-daps-toolchain:latest"
+EOL
+----
+
+
+=== Using {prod1}
+
+{prod1} is run from the command line with the `/usr/bin/daps2docker` script.
+
+
+. Enter your documentation directory, containing your DocBook Config (DC) file.
++
+[source, console]
+----
+cd PATH/TO/YOUR/DC-FILE
+----
+
+. Run {prod1} to render your document.
++
+[source, console]
+----
+daps2docker DC-FILE [FORMAT]
+----
++
+[TIP]
+====
+If you do not specify FORMAT, the configured default formats will be assumed.
+
+See `daps2docker --help` for a list of supported formats and other options.
+====
++
+[NOTE]
+====
+If you have not configured your system to run Podman in rootless mode, you will be prompted for your root or sudo password when you run this script.
+
+[listing]
+----
+podman needs to be run as root.
+[sudo] password for root: *************
+----
+
+====
+
+. Review the command output.
+//
++
+{prod1} prints to your console various status and error messages.
+If your document can be rendered, you will get output like the following to tell you where to find your documents:
++
+[listing]
+----
+Your output documents are:
+/tmp/daps2docker-MavBGlXK/<filename>/html/FILENAME_draft/
+/tmp/daps2docker-MavBGlXK/<filename>/FILENAME_draft_en.pdf
+----
++
+[IMPORTANT]
+====
+The contents of the `/tmp` directory are ephemeral.
+If you wish to save your rendered documents, move them to another location.
+====
+
+
+=== Validating your document code
+
+You contribution to {product1} is submitted as a collection of source files, such as DocBook metadata, AsciiDoc text, and images.
+These files are combined and rendered into an accessible format, like HTML and PDF, which can then be published.
+If source files are missing or if they contain code errors, your document may render incorrectly or not at all.
+And, thus, your contribution may be rejected for publication.
+
+If your document cannot be rendered, {prod1} prints messages to the console to help you identify the issue.
+For example, if you did not define the document attribute, 'product1', but you reference it within your document, you would see:
+
+[listing]
+----
+asciidoctor: WARNING: skipping reference to missing attribute: product1
+----
+
+Even if your document renders, be sure to validate it for content, style, and formatting by reviewing the renderings.
+Peer reviews can help immensely to identify both content errors and better ways to express the information you wish to share.
+
+
