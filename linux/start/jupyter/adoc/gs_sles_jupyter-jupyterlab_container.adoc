@@ -47,6 +47,7 @@ include::./common_docinfo_vars.adoc[]
 :subtitle: Developing with SUSE Linux Enterprise Base Container Images
 :product1: SLES
 :product1_full: SUSE Linux Enterprise Server
+:product1_ver_base: 15
 :product1_version: 15 SP5
 :product1_ver: 15.5
 :product1_version_min: 15 SP3
@@ -108,6 +109,7 @@ include::./common_docinfo_vars.adoc[]
 :python_url: https://www.python.org/
 :pypi_full: Python Package Index
 :pypi_url: https://pypi.org/
+:rancher_url: https://rancher.com/
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -259,13 +261,18 @@ Podman is not installed by default in {product1_full}, but you can install it wi
 +
 [source, console]
 ----
-sudo SUSEConnect -p sle-module-containers/<release_version>/x86_64
+sudo SUSEConnect -p sle-module-containers/RELEASE_VERSION/x86_64
 ----
 +
-Replace `<release_version>` with the {product1_full} release you are using.
+Replace `_RELEASE_VERSION_` with the {product1_full} release you are using.
 //
 +
-For example: If you are using {product1_full} {product1_version}, then you would replace `<release_version>` with `{product1_ver}`.
+For example: If you are using {product1_full} {product1_version}, then you would use:
++
+[source, console, subs="attributes+"]
+----
+sudo SUSEConnect -p sle-module-containers/{product1_ver}/x86_64
+----
 
 . Install Podman.
 +
@@ -624,7 +631,9 @@ REPOSITORY                      TAG         IMAGE ID      CREATED         SIZE
 localhost/jupyter               latest      d8bbefc6be69  2 minutes ago   837 MB
 registry.suse.com/bci/python    latest      35ebb6a7981e  11 minutes ago  125 MB
 ----
-You should see your container image, _localhost/jupyter_.
+You should see your container image with the name, 'jupyter', in your 'localhost' repository.
+Your container image is also assigned a unique identifier.
+The first several digits of this unique identifier is shown in the 'IMAGE ID' column.
 +
 [TIP]
 ====
@@ -808,6 +817,12 @@ This produces output like:
 CONTAINER ID  IMAGE                     COMMAND               CREATED         STATUS             PORTS                   NAMES
 95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  10 seconds ago  Up 10 seconds ago  0.0.0.0:8888->8888/tcp  jupyter
 ----
++
+[TIP]
+====
+The first column, 'CONTAINER ID', is the truncated, unique identifier of your container.
+You can use this container ID with various Podman commands to manage your container.
+====
 
 . Verify you can access an existing file.
 //
@@ -874,6 +889,9 @@ This did not delete the container.
 It still exists, and you can start and stop it again and again.
 
 . Identify your stopped container.
+//
++
+The default behavior of `podman container list` is to list only running containers, you need to use the `--all` option.
 +
 [source, console]
 ----
@@ -885,30 +903,47 @@ podman container list --all
 CONTAINER ID  IMAGE                     COMMAND               CREATED         STATUS                    PORTS                   NAMES
 95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  19 minutes ago  Exited (0) 8 minutes ago  0.0.0.0:8888->8888/tcp  jupyter
 ----
-Notice the 'Exited' status.
+Notice that the STATUS of your container is 'Exited'.
 
 . Start your container.
 +
 [source, console]
 ----
-podman start 95038cde3755
+podman start CONTAINER-ID
+----
+Replace `CONTAINER-ID` with the ID of your container.
++
+[TIP]
+====
+You only need to type the first few unique digits of the container ID.
+Alternatively, you can refer to the container by its name ('jupyter').
+====
+
+. Verify that your container is running.
++
+[source, console]
+----
+podman ps
+----
++
+[listing]
+----
+CONTAINER ID  IMAGE                     COMMAND               CREATED         STATUS                    PORTS                   NAMES
+95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  22 minutes ago  Up 2 minutes  0.0.0.0:8888->8888/tcp  jupyter
 ----
 +
 [TIP]
 ====
-You do not need to specify the full container ID here.
-Instead, you could specify the container name ('jupyter') or the first few unique digits of the container ID.
+`podman ps`, `podman container ps`, `podman container list`, and `podman container ls` are synonyms for the same command.
 ====
-+
-At this point, your container is started, but you may not have the URL with the token to access the JupyterLab server.
 
-. Obtain the URL with access token for JupyterLab running in your container.
+. Obtain the URL for JupyterLab running in your container.
 
 .. Enter a Bash shell inside your container.
 +
 [source, console]
 ----
-podman exec -it 95038cde3755 /bin/bash
+podman exec -it CONTAINER-ID /bin/bash
 ----
 
 .. Display any running JupyterLab servers.
@@ -919,7 +954,7 @@ jupyter-server list
 ----
 Resulting in output like the following:
 +
-[source, console]
+[listing]
 ----
 [JupyterServerListApp] Currently running servers:
 [JupyterServerListApp] http://localhost:8888/?token=889b9af1f0c76fb9cda24c3327b3d723a928a8298af1dd22 :: /home/jupyter/notebooks
@@ -944,14 +979,18 @@ exit
 . Log out of the JupyterLab session by selecting __File__ > __Log Out__.
 //
 +
-[NOTE]
+[TIP]
 ====
 By using the __Log Out__ option, the JupyterLab server and your container continue to run.
+Check this with the `podman ps` command.
 ====
 
 . Access JupyterLab by opening your Web browser to the same URL you used in the previous step.
 
 . This time, shut down JupyterLab by selecting __File__ > __Shutdown__.
+//
++
+Verify that your container has shut down.
 
 
 
@@ -980,15 +1019,16 @@ podman container list --all
 [listing]
 ----
 CONTAINER ID  IMAGE                     COMMAND               CREATED      STATUS                     PORTS                   NAMES
-95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  4 hours ago  Exited (0) 23 minutes ago  0.0.0.0:8888->8888/tcp  jupyter
+95038cde3755  localhost/jupyter:latest  /bin/sh -c cd $NO...  2 hours ago  Exited (0) 23 minutes ago  0.0.0.0:8888->8888/tcp  jupyter
 ----
 
 .. Remove the selected container.
 +
 [source, console]
 ----
-podman container rm 95038cde3755
+podman container rm CONTAINER-ID
 ----
+Replace _CONTAINER-ID_ with the appropriate container ID.
 
 . Delete an application container image.
 
@@ -1002,16 +1042,18 @@ podman image list
 [listing]
 ----
 REPOSITORY                      TAG         IMAGE ID      CREATED         SIZE
-localhost/jupyter               latest      d8bbefc6be69  2 minutes ago   837 MB
-registry.suse.com/bci/python    latest      35ebb6a7981e  11 minutes ago  125 MB
+localhost/jupyter               latest      d8bbefc6be69  2 hours ago     837 MB
+registry.suse.com/bci/python    latest      35ebb6a7981e  3 hours ago     125 MB
 ----
 
 .. Remove the selected container image.
 +
 [source, console]
 ----
-podman image rm d8bbefc6be69
+podman image rm IMAGE-ID
 ----
++
+Be sure to replace _IMAGE-ID_ with the appropriate container image ID.
 +
 [listing]
 ----
@@ -1028,14 +1070,16 @@ Deleted: 9837e4f38101da542ed17059a09c666ee07245a7831aeb34f79dbfa774acc4d5
 Deleted: a00eadade3fe2bfd4f6f42905691c143b2826fb120913d7b6cd087b773550a77
 ----
 +
-[NOTE]
+--
+The command output lists the image IDs of deleted container images.
+
+Recall that container images are built of layers, and each layer is a container image.
+If these "parent" container images are not used by another image, they are deleted as well.
+--
++
+[IMPORTANT]
 ====
-Recall that container images are built of layers.
-The additional deletions represent "parent" images not used by another image.
-
-The base container image, 'registry.suse.com/bci/python' is not deleted.
-
-To list all images, use `podman image list --all`.
+The base container image, 'registry.suse.com/bci/python', is not deleted.
 ====
 
 
@@ -1046,14 +1090,14 @@ Some Podman commands also have synonyms that can save you a few keystrokes (for 
 == Sharing
 
 Now that you have an application container image and you have verified that it works, you can share it with your team, fellow researchers, or others for whom it may be of value.
-A couple options are outlined here.
+Some sharing options are outlined here.
 
 . Use the source.
 //
 +
 An easy method is to simply share the source files you used to create your container image.
-These are small text files that you could share via email, file share service, Git repository, and so on.
-The recipient can use the received files and follow the same steps you used to create the container image and run the container.
+These are small text files that you could share via email, a file share service, a Git repository, and so on.
+The recipient can use the received files and follow the same steps you used to create and run the container.
 
 . Use an image archive.
 //
@@ -1070,8 +1114,19 @@ Your recipient would likely appreciate receiving a copy of your launch script or
 +
 [source, console]
 ----
+podman image save --output jupyter.tar CONTAINER-ID
+----
++
+[TIP]
+====
+You could also refer to your container by name.
+
+For example:
+[source, console]
+----
 podman image save --output jupyter.tar localhost/jupyter:latest
 ----
+====
 +
 [listing]
 ----
@@ -1087,7 +1142,7 @@ Writing manifest to image destination
 Storing signatures
 ----
 
-.. Send the archive to the recipient.
+.. Send the image archive to the recipient.
 +
 [TIP]
 ====
@@ -1096,7 +1151,7 @@ Even compressed, they may be too large to send via email.
 Make sure to choose a sharing method that both you and your intended recipient can use.
 ====
 
-.. The recipient can load the image and launch a container with it.
+.. When you receive an image archive, use Podman to load it into your local registry.
 +
 [source, console]
 ----
@@ -1151,14 +1206,15 @@ Factors to consider when choosing a registry solution include (but are not limit
 == Summary
 
 Modern application development eschews closed, monolithic structures in favor of open, interoperable, microservices architectures designed and implemented with containers.
-Podman and other container technologies, like https://www.suse.com/c/rancher_blog/what-is-kubernetes/[Kubernetes], support modern Agile software development.
-They enable operations teams to manage the full life cycle of complex application landscapes across a broad spectrum of infrastructure and services - in the data center, in the cloud, and at the edge.
-Innovation across many domains, including machine learning, has been accelerated by the availability of container technologies that make it easier to collaborate, test, and deploy new capabilities.
+Container technologies accelerate innovation by enabling complex applications and processes to be developed, deployed, and managed across a broad spectrum of infrastructures and services - in the data center, in the cloud, and at the edge.
+Fast-developing fields, like machine learning, have benefited greatly from the use of container technologies.
 
-
-In this guide, you took first steps working with containers.
-You learned how to install Podman, then use it to build, run, manage, and share an application container.
-You also learned how to use {product2_full} as a reliable, secure, supportable, and freely redistributable base layer for your containers.
+Modern, OCI-compliant containers are built in layers on top of a base image.
+{product2_full} provides a reliable, secure, supportable, and freely redistributable base image for your application containers.
+There are a variety of tools for building and managing containers.
+A simple but powerful container management tool is Podman.
+In this guide you used Podman to build a container image featuring JupyterLab, a Web-based Python development environment.
+You then used Podman to run, manage and share your application container.
 
 
 
