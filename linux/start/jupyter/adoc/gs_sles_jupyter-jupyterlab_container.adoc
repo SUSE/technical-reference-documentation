@@ -97,7 +97,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // define any additional variables here for use within the document
 // -
-:containerguide_url: https://documentation.suse.com/container/all/single-html/SLES-container
+:containerguide_url: https://documentation.suse.com/container/all/single-html/Container-guide
 :opensuse: openSUSE Leap
 :opensuse_version: 15.5
 :opensuse_url: https://www.opensuse.org/#Leap
@@ -368,7 +368,7 @@ For the root user, valid drivers include 'overlay', 'vfs', 'zfs', and 'btrfs'.
 ====
 The 'overlay' driver is a safe default choice.
 
-If your home directory is on a different, supported filesystem, create or edit the file, `$HOME/.config/containers/storage.conf`, and add a '[storage]' section, such as:
+If your home directory is on a different, supported file system, create or edit the file, `$HOME/.config/containers/storage.conf`, and add a '[storage]' section, such as:
 
 [listing]
 ----
@@ -451,10 +451,10 @@ Each package you specify may have several dependencies of its own, and you can e
 Often, though, you only need to list the major packages you want to install, and the `pip` resolver will attempt to identify and install compatible versions of the dependencies.
 
 If you do not specify the version of a package you want, the `pip` dependency resolver will attempt to install the latest version that is compatible with the other packages.
-Due to code changes in different versions, this can result in unexpected behaviors in your code.
+Because of code changes in different versions, this can result in unexpected behaviors in your code.
 
 
-For this guide, you can just let the `pip` resolver pick the versions for you.
+For this guide, you can let the `pip` resolver pick the versions for you.
 Create this `requirements.txt` file in your build directory:
 
 [listing]
@@ -1096,7 +1096,7 @@ Some sharing options are outlined here.
 //
 +
 An easy method is to simply share the source files you used to create your container image.
-These are small text files that you could share via email, a file share service, a Git repository, and so on.
+These are small text files that you could share via e-mail, a file share service, a Git repository, and so on.
 The recipient can use the received files and follow the same steps you used to create and run the container.
 
 . Use an image archive.
@@ -1147,7 +1147,7 @@ Storing signatures
 [TIP]
 ====
 Image archive files can be large.
-Even compressed, they may be too large to send via email.
+Even compressed, they may be too large to send via e-mail.
 Make sure to choose a sharing method that both you and your intended recipient can use.
 ====
 
