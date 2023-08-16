@@ -42,12 +42,24 @@ include::./common_docinfo_vars.adoc[]
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document and product
-:title: Replicable Python Environments with JupyterLab
-:productname: SLES 15 SP4
-:platform1: SUSE Linux Enterprise Server 15 SP4
-:otherproduct1: JupyterLab
-:otherproduct2: Jupyter Notebook
-:usecase: machine learning development
+:title: Python Development with JupyterLab and SUSE Linux Enterprise
+:subtitle: Create replicable and sharable development environments
+:product1: SLES
+:product1_full: SUSE Linux Enterprise Server
+:product1_version: 15 SP4
+:product1_url: www.suse.com/products/server/
+:product1_docs_base: documentation.suse.com/sles
+:product1_docs_version: 15-SP4
+:product1_docs: {product1_docs_baseurl}/{product1_docs_version}
+:product1_docs_all: {product1_docs}/html/SLES-all/index.html
+:product1alt: Leap
+:product1alt_full: openSUSE Leap
+:product1alt_version: 15.4
+:product1alt_url: www.opensuse.org/#Leap
+:app1: JupyterLab
+:app2: Jupyter Notebook
+:usecase: replicable Python development for machine learning, data analysis, and more
+:executive_summary: Create and share {usecase} with {product1_full} and {app1}.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -65,13 +77,12 @@ include::./common_docinfo_vars.adoc[]
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // define any additional variables here for use within the document
-:defaultpython: Python 3.6
-:defaultpythonbin: python3.6
-:newpython: Python 3.10
-:newpythonpkg: python310
-:newpythonbin: python3.10
-:partnerprod1: JupyterLab
-:partnerprod2: Jupyter Notebook
+:python_url: www.python.org/
+:python_default_ver: 3.6
+:python_default_bin: python3.6
+:python_new_ver: 3.11
+:python_new_bin: python3.11
+:python_new_pkg: python311
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -97,7 +108,7 @@ This guide helps you take a first step to overcoming the challenge of creating a
 
 Specifically, you get a brief introduction to the following concepts, systems, tools, and applications:
 
-* https://www.suse.com/products/server/[SUSE Linux Enterprise Server], the adaptable, reliable, and secure platform that enables you to go from development to production with confidence.
+* https://{product1_url}[SUSE Linux Enterprise Server], the adaptable, reliable, and secure platform that enables you to go from development to production with confidence.
 
 * https://www.python.org/[Python] programming ecosystem.
 
@@ -126,22 +137,20 @@ The reader should have basic Linux command line skills.
 
 For this guide, you need:
 
-* {platform1} ({productname})
+* {product1_full} ({product1})
 //
 +
-** If you do not already have {productname} installed on your system (bare metal or virtual machine), instructions can be found here: https://documentation.suse.com/sles/15-SP4/html/SLES-all/book-deployment.html
+** If you do not already have {product1} installed on your system (bare metal or virtual machine), see the https://{product1_docs}/html/SLES-all/article-installation.html[Installation Quick Start] and https://{product1_docs}/html/SLES-all/book-deployment.html[Deployment Guide].
 
-** Make sure your {productname} installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
+** Make sure your {product1} installation is up-to-date by running `zypper patch`, `zypper update`, or by using https://{product1_docs}/html/SLES-all/cha-onlineupdate-you.html[YaST online update].
 
 * Python 3
-//
 +
-{defaultpython} is included with {productname} by default.
-It is a stable version, tested against the libraries and tools that are part of the operating system.
-This version is usually adequate for many use cases, but may not be new enough to support some workloads.
-//
-+
-This guide uses {newpython}, which you install in the next section.
+--
+https://www.python.org/[Python] is a powerful, easy to learn, open source programming language.
+
+For this guide, you will install a newer version of Python from the SLES software repositories alongside the default or "system" version.
+--
 
 * Internet access
 +
@@ -152,56 +161,98 @@ You need Internet access to download additional libraries and applications used 
 
 == Setting up your Python environment
 
-Some disciplines, like machine learning, are in fast development and often have strict version dependencies.
-Installing dependent packages to support one project may thus break another project.
-Developers need a way to create isolated environments where they can install the packages they need without impacting other projects or system operations.
+Developers use Python in Web and Internet development, mobile and desktop applications, systems management and automation, and so much more.
+Python has also become very popular in scientific and analytics use cases, including machine learning and artificial intelligence.
+
+Some disciplines, like machine learning, are developing rapidly and often have strict version requirements for not only the version of Python but also for a variety of other libraries and packages.
+
+Developers need a mechanism for isolating all the required dependencies for a project from other projects and the operating system's Python toolchain.
+
 
 
 === Addressing Python versions
 
-Your application may have a hard dependency for a specific version of the Python interpreter itself.
-You can install a newer version of Python on your system.
-In fact, you can have multiple versions of Python.
-But care must be taken not to break dependencies for system tools or other applications.
+{product1} ships with a default version of Python.
+This "system" Python was thoroughly tested with the libraries and tools that make up the operating system.
+This version is adequate for many use cases.
+Some disciplines, like machine learning, are developing rapidly and often have strict version dependencies.
+And your application may have a hard dependency for a specific version of the Python interpreter itself.
 
-At the time of this writing, {defaultpython} is the default version installed with {productname}.
-And {newpython} is included in the standard repositories.
+You can install newer versions of Python through a variety of mechanisms.
+In fact, you can have multiple versions of Python installed simultaneously.
+But care must be taken not to break dependencies for system tools or other applications.
+You can mitigate this risk by installing Python from the official {product1} software repositories.
+
+Typically, two Python versions are available to you in the {product1} software repositories.
+The default version is often integrated with various, Python-based system tools.
+At the time of this guide's publication, the default version is Python {python_default_ver}.
+The Python interpreter is installed as the executable file, `/usr/bin/{python_default_bin}`, and this is symbolically linked so it may be called with `/usr/bin/python3` or, simply, `python3`.
+
+Try it:
+
+[source, console]
+----
+python3 --version
+----
+
+When you install a newer Python from the {product1} repositories, it is installed with unique file and directory names.
+At publication of this guide, Python {python_new_ver} is available in the official repositories.
+The interpreter for this Python is the file, `/usr/bin/{python_new_ver}`.
 
 You should use the Python packages in the official SUSE repositories when possible.
-These packages have undergone extensive testing and are supported by SUSE.
-If you must use another version, you can build and install it from source code or use an implementation from a trusted provider (such as https://www.anaconda.com/[Anaconda]).
+If you must use a different version, you can build and install it from source code, but be sure to specify unique naming to avoid conflicts.
 
-
-[TIP]
+[NOTE]
 ====
-SUSE mitigates the risk of Python version conflicts with explicit naming, ensuring that respective versions installed from the official repositories have unique file and directory names.
-For example, you will find the default Python interpreter is the executable file, `/usr/bin/{defaultpythonbin}`, but, if you have {newpython} installed, its interpreter is the file, `/usr/bin/{newpythonbin}`.
+There are tools, like https://github.com/pyenv/pyenv[pyenv], that are designed to help you install and manage multiple versions of Python.
+It is also possible to install a curated distribution of Python, such as https://www.anaconda.com/[Anaconda]).
+These options have their own benefits and drawbacks.
+For now, they are out of scope of this guide.
 ====
 
 
-. Install {newpython} or the latest version available in the official repositories.
+Follow the steps below to install the latest Python from the official {product1} software repositories.
+
+. List the available Python 3 Interpeter packages.
 +
-[source, bash, subs="attributes"]
+[source, console]
 ----
-sudo zypper install {newpythonpkg}
+sudo zypper search -d "Python 3 Interpreter"
 ----
 +
-[TIP]
-====
-You can list the available Python 3 packages with `sudo zypper search -d "Python 3 Interpreter"` or `sudo zypper search python3`.
-====
+This command produces output like:
++
+[listing, subs="attributes"]
+----
+S  | Name                | Summary                                 | Type
+---+---------------------+-----------------------------------------+--------
+i  | python3             | Python 3 Interpreter                    | package
+i  | python3-base        | Python 3 Interpreter and Stdlib Core    | package
+   | python3-pyotherside | Asynchronous Python 3 Bindings for Qt 5 | package
+   | python311           | Python 3 Interpreter                    | package
+   | python311-base      | Python 3 Interpreter and Stdlib Core    | package
+----
++
+You see the installed, default Python 3 packages and an additional version (Python {python_new_ver}) is available. 
+
+. Install the newer Python 3 packages.
++
+[source, console, subs="attributes"]
+----
+sudo zypper install {python_new_pkg}
+----
 
 . Verify installation.
 +
-[source, bash, subs="attributes"]
+[source, console, subs="attributes"]
 ----
-/usr/bin/{newpythonbin} --version
+/usr/bin/{python_new_bin} --version
 ----
 or, with `/usr/bin/` in your path:
 +
 [source, bash, subs="attributes"]
 ----
-{newpythonbin} --version
+{python_new_bin} --version
 ----
 
 
@@ -209,12 +260,6 @@ or, with `/usr/bin/` in your path:
 ====
 The default Python is still symbolically linked to `/usr/bin/python3`.
 Do not change this symbolic link, as this could break system tools that rely on the default version.
-====
-
-
-[TIP]
-====
-Tools like https://github.com/pyenv/pyenv[pyenv] can help simplify installation and management of multiple Python environments, but this is out of scope for this document.
 ====
 
 
