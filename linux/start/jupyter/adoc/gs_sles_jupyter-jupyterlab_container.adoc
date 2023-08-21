@@ -547,7 +547,7 @@ WORKDIR /home/jupyter
 COPY --chown=1000:1000 requirements.txt .
 
 # install JuypterLab
-RUN set -eux pipefail; \
+RUN set -euxo pipefail; \
     pip install --upgrade pip; \
     pip install -r requirements.txt; \
     pip cache purge;
@@ -555,11 +555,10 @@ RUN set -eux pipefail; \
 # expose JupyterLab web port
 EXPOSE 8888/tcp 
 
-# change to notebooks directory
-RUN cd $NOTEBOOKS
+VOLUME $NOTEBOOKS
 
 # change to notebooks directory and launch JupyterLab
-CMD cd $NOTEBOOKS; jupyter-lab --ip=* --port=8888 --no-browser --notebook-dir=$NOTEBOOKS
+CMD jupyter-lab --ip=* --port=8888 --no-browser --notebook-dir=$NOTEBOOKS
 
 ----
 
