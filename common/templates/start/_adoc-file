@@ -3,22 +3,10 @@ include::./common_docinfo_vars.adoc[]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // General comments
-// Keep in mind that this is a "getting started" guide and the
-//   audience that you are trying to reach.
-// Leverage ASCIIDoc features to make this document readable and usable:
-//   - Text highlights (follow SUSE style guides)
-//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
-//   - Code blocks
-//   - Lists (ordered and unordered, as appropriate)
-//   - Links (to other resources)
-//   - Images
-//     - Place image files under the ./media directory tree
-//       (e.g., ./media/src/svg, ./media/src/png)
-//     - Format preference: svg > png > jpg
-//     - Consolidate images wherever possible
-//       (i.e., don't use two images when one conveys the message)
-//   - Use sections and subsections to organize and group related
-//     steps.
+//   - See the SUSE TRD Contributors Guide for detailed guidance:
+//     https://documentation.suse.com/trd/contributors/single-html/suse-trd_contrib-guide/
+//   - Keep in mind that this is a "getting started" guide.
+//   - Write to the audience you are trying to reach.
 // 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -27,9 +15,8 @@ include::./common_docinfo_vars.adoc[]
 // Document attributes and variables
 //
 // NOTES:
-// 1. Update variables below and adjust docbook file accordingly.
-// 2. Comment out any variables/attributes not used.
-// 3. Follow the pattern to include additional variables.
+// 1. Define and use document attributes or variables in this file.
+// 2. Update the docinfo.xml file if needed.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -41,28 +28,46 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// document
+// document title and subtitle
+//   Provide concise but descriptive title and subtitle.
 // -
-:title: Title
-:subtitle: Subtitle
+:title: (<75 characters) Concisely identify the guide (e.g., "Kubeflow with Rancher")
+:subtitle: (<75 characters) Use for clarification (e.g., "Deploying Kubeflow onto an RKE2 Cluster with Rancher")
 
-:product1: Primary SUSE product/platform short name (abbreviation)
-:product1_full: Primary SUSE product/platform full name
-:product1_version: Primary SUSE product/platform relevant version or versions
-:product1_url: Primary SUSE product/platform URL (without the protocol)
-:product2: Secondary product short name
-:product2_full: Secondary product full name
-:product2_url: Secondary product URL
 
-:usecase: A few words to identify high level use case (e.g., Database-as-a-Service, edge analytics in healthcare, Kubernetes-native object storage)
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// technical components
+//   Identify the technical components used in the guide.
+// -
+:comp1-provider: SUSE
+:comp1: Primary SUSE product short name (e.g., SLES, Rancher Prime)
+:comp1-full: Primary SUSE product full name (e.g., SUSE Linux Enterprise Server, Rancher Prime by SUSE)
+:comp1-version: Primary SUSE product relevant version (e.g., 15, 15 SP5, 2.7) or versions (e.g., 15 SP3+, 2.6+)
+:comp1-website: Primary SUSE product URL
+:comp1-docs: Primary SUSE product documentation URL
+//:comp2-provider: Name of second component
+//:comp2: Short name of second component
+//:comp2-full: Full name of second component
+//:comp2-page: Product/project website URL of second component
+//:comp2-docs: Documentation URL of second component
 
-:executive_summary: A brief statement of what this document provides (e.g., This document provides a brief introduction to implementing {usecase} with {product2_full} and {product1_full}.)
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Metadata
+//   Provide metadata to identify the guide by its purpose, use case, value.
+// -
+:description: (<150 characters) (e.g., "Deploy Kubeflow with Rancher Prime")
+
+:usecase: (<55 characters) (e.g., Database-as-a-Service, edge analytics in healthcare, Kubernetes-native object storage)
+
+:executive_summary: Give a brief summary of what this document provides (e.g., "Streamline deployment and management of multi-tenant Kubernetes landscapes with {comp2_full} and {comp1_full}.")
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // contributor
-// specify information about authors, editors, and others here,
-// then update docinfo file as appropriate
+//   Specify information about authors, editors, and others here.
+//   If more than one author, update the docinfo.xml file as well
+//     for them to appear on the cover page.
 // -
 :author1_firstname: first (given) name
 :author1_surname: surname
@@ -76,7 +81,7 @@ include::./common_docinfo_vars.adoc[]
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // miscellaneous
-// define any additional variables here for use within the document
+//   Define any additional variables here for use within the document.
 // -
 
 
@@ -90,15 +95,6 @@ include::./common_docinfo_vars.adoc[]
 == Introduction
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a brief statement (1-4 sentences) of the purpose of the guide.
-// This is could be the same as the executive summary.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-
-=== Motivation
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a motivation for the document in 2-4 sentences to identify:
 //   - what the document is about
 //   - why it may be of interest to the reader (e.g., a use case)
@@ -106,7 +102,6 @@ include::./common_docinfo_vars.adoc[]
 // Include an approved SUSE | Partner logo lock-up if possible
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 
 
 === Scope
@@ -128,6 +123,15 @@ This guide will help you take the first steps to ...
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 This document is intended for ...
+
+
+=== Acknowledgements
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Acknowledge contributors not listed as authors.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+//* {contrib1_firstname} {contrib1_surname}, {contrib1_jobtitle}, {contrib1_orgname}
 
 
 == Prerequisites
