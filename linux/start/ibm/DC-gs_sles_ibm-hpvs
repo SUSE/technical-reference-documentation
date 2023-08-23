@@ -1,0 +1,47 @@
+# Comment out to deactivate draft mode when completed
+# DRAFT=yes
+ROLE="trd"
+#PROFROLE="trd"
+
+## -------------------------------
+## Doc Config File for DAPS
+## Technical Reference Document
+## -------------------------------
+
+##
+# Basics
+##
+
+# Main Document 
+MAIN="gs_sles_ibm-hpvs.adoc"
+
+# Format Type
+ADOC_TYPE="article"
+#ADOC_TYPE="book"
+
+# Stylesheet Root
+STYLEROOT="/usr/share/xml/docbook/stylesheet/trd"
+
+# Turn on postprocessing
+ADOC_POST="yes"
+
+# Leverage SUSE Best Practices
+#XSLTPARAM="--stringparam publishing.series=sbp"
+DOCBOOK5_RNG_URI="http://docbook.org/xml/5.2/rng/docbookxi.rnc"
+
+# Enable attributes
+ADOC_ATTRIBUTES="--attribute env-daps=1"
+
+##
+# Attributes
+##
+
+# BP = suggestions/considerations above default settings
+ADOC_ATTRIBUTES+=" --attribute BP=1"
+
+# Uncomment line below for SUSE One Partner Solution Stack
+#ADOC_ATTRIBUTES+=" --attribute PSS=1"
+
+# Set document date (yyyy-mm-dd)
+ADOC_ATTRIBUTES+=" --attribute docdate=2023-07-05"
+
