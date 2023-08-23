@@ -106,7 +106,7 @@ With {product1}, you can manage systems lifecycle management, streamline operati
 
 === Scope
 
-You learn how to deploy {product1} to support systems lifecycle management for multiple, downstream customers.
+You will learn how to deploy {product1} to support systems lifecycle management for multiple, downstream customers.
 The hub and peripheral architecture described here enables managed services providers and large enterprises to consolidate certain management operations while maintaining the advantages of separate peripheral servers for each customer.
 
 
@@ -140,22 +140,11 @@ This would address isolation, but it is somewhat inefficient because of the need
 
 {product1} empowers MSPs and large enterprises to address these concerns through:
 
-* Organizations
 * Content lifecycle management
 * Hub and peripherals
 * Inter-Server Synchronization
 
 Each of these is discussed further below.
-
-
-=== Organizations
-
-// Mark: Don't we invalidate this by using the same organization (the MSP's organization) on all servers?
-
-Organizations are basic building blocks of the solution.
-Organizations manage user access and permissions within a single {product1} server.
-You can think of an organization as a separate management environment with its own managed systems, users, and software channels.
-You create one organization for each customer, enabling you to keep separate the various managed systems, users, and software channels.
 
 
 === Content lifecycle management
@@ -170,7 +159,7 @@ This ensures that each customer receives only the patches that are appropriate t
 
 https://{product1_docs}/specialized-guides/large-deployments/multi-server.html[{product1} Hub] was introduced to manage very large deployments by allowing horizontal scaling to multiple servers.
 
-image::suma_msp_hub-architecture.svg[Hub and peripheral topology, scaledwidth="85%", align="center"]
+image::suma_msp_hub-architecture2.png[Hub and peripheral topology, scaledwidth="85%", align="center"]
 
 In this hub and peripheral topology, one {product1} server acts as the central (or *hub*) server for one or more *peripheral* {product1} servers to which any number of client systems can be registered.
 Each peripheral server is an independent {product1} server.
@@ -178,12 +167,15 @@ By dedicating a peripheral server for each customer, an MSP can address concerns
 
 [NOTE]
 ====
-For each peripheral server, you will need to create: activation keys, bootstrap, repositories, system groups, users, and so on.
-
-Similarly, any custom Salt states you create must be manually copied to the appropriate peripheral.
-
-SUSE provides a set of Salt modules, states, and formulas that can automate this process.
+Pay special attention to the security boundaries shown in the diagram above. End customers may have access to their own SUSE Manger servers if they wish. However, it is imperative that no customer be given access to the hub server because this server has control over all of the peripheral servers. A customer who was able to access this would be able to access other customers' systems.
 ====
+
+
+For each peripheral server, you will need to create: activation keys, bootstrap, repositories, system groups, users, and so on. Similarly, any custom Salt states you create must be manually copied to the appropriate peripheral. 
+SUSE provides a set of Salt modules, states, and formulas that can automate this process.
+
+It is important to understand that the hub and peripheral concept was developed primarily to provide horizontal scaling. In this document, we are using it to provide isolation between systems and any benefits from scaling are incidental to this use case.
+
 
 
 === Inter-Server Synchronization (ISS)
@@ -212,7 +204,7 @@ The recommended configuration for both hub and peripheral servers is:
 * Storage: 100 GB
  
 You will also need a way to transfer data between the hub and peripheral.
-Ideally, this could be through a shared (NFS) filesystem, but you can also copy the data across the network (such as with `rsync`).
+Ideally, this could be through a shared (NFS) filesystem, but you can also copy the data across the network (such as with `rsync`) or use a removable disk such as a USB storage device.
 
 
 == Deployment
@@ -312,9 +304,14 @@ sudo systemctl restart hub-xmlrpc-api.service
 
 === Onboard a customer
 
-Onboarding a new customer begins with adding the customer's SUSE Customer Center (SCC) credentials to the hub server.
-SUSE Manager merges products coming from all SCC credentials.
+Onboarding a new customer begins with adding the customer's SUSE Customer Center (SCC) credentials to the hub server. This gives you centralized access to the products they have subscribed to because 
+SUSE Manager merges products coming from all SCC credentials. Alternatively, if the Service provider is using their own subscriptions to provide access under an MSP agreement with SUSE, then only that subscription needs to be added on the hub.
+
+image::suma_msp_orgcreds.png[Adding Organization Credentials, scaledwidth="85%", align="center"]
+
 This gives you a centralized view of all products that are available through the hub and enables replication of entitlements from the hub to peripheral servers.
+
+image::suma_msp_products.png[Synchronizing Products, scaledwidth="85%", align="center"]
 
 Follow https://{product1_docs}/installation-and-upgrade/server-setup.html#_synchronizing_products_from_suse_customer_center[Synchronizing Products from SUSE Customer Center] to onboard a customer.
 
@@ -330,7 +327,6 @@ Peripheral servers are {product1} servers you can dedicate to a customer.
 Creating a peripheral server follows the normal {product1} installation and setup processes.
 However, instead of configuring the SCC connection, you configure the peripheral server to obtain SCC content from the hub.
 
-
 . Install {product1} on the designated hub system.
 //
 +
@@ -343,7 +339,7 @@ Follow the guidance in https://{product1_docs}/installation-and-upgrade/server-s
 +
 [IMPORTANT]
 ====
-Your main administration user and organization should match those you created on the hub server.
+Your main administration user and organization should match those you created on the hub server. This is so that the later Inter-Server Synchronization of content will work correctly. This limitation may be removed in a future version of {product1}.
 ====
 
 
@@ -355,6 +351,11 @@ The best way to do this is with activation keys.
 You can create a specific activation key and assign the appropriate channel as the base channel based on the key.
 
 Register a peripheral server to the hub using one of the https://{product1_docs}/client-configuration/registration-methods.html[Client Registration Methods].
+
+[Note]
+====
+You may want to create an Activation Key specifically for peripheral servers, expecially if you will also have other types of client registered to your hub.
+====
 
 For example, to register a peripheral with the {product1} Web UI, you can follow these steps:
 
@@ -392,9 +393,10 @@ If you check this option, the client is configured to use SSH for its connection
 
 . Click __Bootstrap__ to begin registration.
 
+image::suma_msp_bootstrap.png[Bootstrapping a peripheral, scaledwidth="85%", align="center"]
 
 When the bootstrap process has completed, your client is listed at __Systems__ > __System List__.
-The peripheral server can now be managed as a standard Salt client of the hub. 
+The peripheral server can now be managed as a standard Salt client of the hub and patche din teh normal way. 
 
 
 == Synchronizing content
@@ -416,23 +418,39 @@ Managing the testing and roll out of software packages to your customers can be 
 Moreover, your customers may have each have different software needs, testing requirements, and deployment schedules.
 {product1} provides the flexibility you need to define and manage content lifecycles for your business and your customers.
 
-You begin by creating customer-specific software channels and assigning these to appropriate, managed clients.
+You begin by creating customer-specific software channels and assigning these to appropriate, managed clients. For example, let's suppose we have a customer called ACME Corp. We can create a Content Lifecycle Project just for them. 
 
-// Mark: Can we include some specific steps here ... an example the reader can follow?
+. In the {product1} Web UI, navigate to __Content Lifecycle__ > __Projects__.
 
+. Click on __Create Project__
 
-To learn more, see https://{product1_docs}/administration/content-lifecycle.html[Content Lifecycle Management].
+. In the __Name__ field, type a name for this project.
 
+. In the __Label__ field, type the name that will be used internally.
 
+. In the __Description__ field, you can add a more verbose explanation.
+
+image::suma_msp_newclm.png[Creating a new CLM project, scaledwidth="85%", align="center"]
+
+You can now proceed to build the CLM for this customer in the usual manner by adding sources and environemnts in the usual manner. To learn more, see https://{product1_docs}/administration/content-lifecycle.html[Content Lifecycle Management].
+
+image::suma_msp_clmbuild.png[Creating a new CLM environment, scaledwidth="85%", align="center"]
 
 === Export and import content
 
 After defining customer-specific channels as part of your content lifecycle management, you can use the `inter-server-sync` command to export these channels from the {product1} hub to a local filesystem directory.
-For example:
+For example, here we export the dev environment from a customer's CLM to an NFS export mounted at /mnt/shared on the hub server. Note that this command can take a considerable time to run and is very CPU intensive. It copies all of the required packages and creates all of the SQL commands needed to recreate the channel structure and contents on the importing server.
 
 [source, console]
 ----
-inter-server-sync export –channel-with-children
+suma-hub:/mnt/shared # inter-server-sync export --channel-with-children acmecorp-acmedev-sle15sp4-sle-product-sles15-sp4-pool-x86_64 
+
+suma-hub:/mnt/shared # ll
+total 457384
+-rw-r--r-- 1 root root       540 Jul 11 13:38 exportedChannels.txt
+drwxr-x--- 1 root root         8 Jul 11 13:03 packages
+-rw------- 1 root root 468349180 Jul 11 13:38 sql_statements.sql.gz
+-rw-r--r-- 1 root root        44 Jul 11 13:38 version.txt
 ----
 
 [TIP]
@@ -441,28 +459,21 @@ Get detailed help on the ISS export command with `inter-server-sync export -h`.
 ====
 
 
-// Mark: Where is this directory created?  Let's be walk the reader through a specific example.
-
-
 When the export is complete, you need to transfer the directory and its contents to the peripheral server.
-The simplest method is to use shared storage (such as a common NFS filesystem).
-You could also copy the exported channels over the network (such as with `rsync`).
 
-Next, import the content lifecycle management on the peripheral server with:
+Next, you can import the content lifecycle management on the peripheral server. Fro example, here we import the channel we exported above from an NFS export mounted on the peripheral server.
 
 [source, console]
 ----
-inter-server-sync import ...
+suma-peripheral:/mnt/shared # inter-server-sync import 
 ----
 
-// Mark: Can we provide a specific example of the import?
-
+Notice that there is no need to specify channel names because that is impicit in the SQL statements. You simply need to refer to the directory that contains the exported content and that is the current directory by default.
 
 [TIP]
 ====
 Get detailed help on the ISS import command with `inter-server-sync import -h`.
 ====
-
 
 
 === Registering clients
@@ -494,71 +505,56 @@ For details on client configuration, see the https://{product1_docs}/client-conf
 
 // Mark: Add some verbiage and link to more documentation here.
 
+=== Salt modules and formulas
 
-// Mark: After a general statement link to external documentation for the Centralized management section, I don't think we need to go over Salt modules and formulas. I'm going to go ahead and comment out this subsection.
+Management of users, system groups, activation keys, and so on.
+Salt states are defined on the hub level and can be applied to the peripheral servers. 
 
+Activation keys make reference to channels so you need to import the appropriate content first.
 
-// === Salt modules and formulas
-// 
-// Management of users, system groups, activation keys, and so on.
-// Salt states are defined on the hub level and can be applied to the peripheral servers. 
-// 
-// Activation keys make reference to channels so you need to import the appropriate content first.
-// 
-// Salt uses execution and state modules to define, apply, and orchestrate configuration of your devices. Uyuni provides a set of modules called Uyuni configuration modules, that you can use to configure both SUSE Manager and Uyuni Servers.
-// 
-// You can use the Uyuni configuration modules directly or using SLS files. They are are especially useful if you have multiple Uyuni Servers, for example in Hub installations, but they are also useful for smaller installations.
-// 
-// You can use Uyuni configuration modules to configure:
-// 
-// * Organizations
-// * Users
-// * User permissions
-// * System groups
-// * Activation Keys
-// 
-// The Uyuni configuration modules are available in the uyuni-config-modules package. On the SUSE Manager Hub Server, at the command prompt, as root, use this command to install them:
-// 
-// [source, console]
-// ----
-// zypper in uyuni-config-modules
-// ----
-// 
-// This package also installs detailed API descriptions, indications on pillar settings, and examples. When you have installed the package, navigate to /usr/share/doc/packages/uyuni-config-modules/
+Salt uses execution and state modules to define, apply, and orchestrate configuration of your devices. Uyuni provides a set of modules called Uyuni configuration modules, that you can use to configure both SUSE Manager and Uyuni Servers.
+
+You can use the Uyuni configuration modules directly or using SLS files. They are are especially useful if you have multiple Uyuni Servers, for example in Hub installations, but they are also useful for smaller installations.
+
+You can use Uyuni configuration modules to configure:
+
+* Organizations
+* Users
+* User permissions
+* System groups
+* Activation Keys
+
+The Uyuni configuration modules are available in the uyuni-config-modules package. On the SUSE Manager Hub Server, at the command prompt, as root, use this command to install them:
+
+[source, console]
+----
+zypper in uyuni-config-modules
+----
+
+This package also installs detailed API descriptions, indications on pillar settings, and examples. When you have installed the package, navigate to /usr/share/doc/packages/uyuni-config-modules/
 
 
-// Mark: Do we need any of this Hub API section?
+=== Hub API
 
-//=== Hub API
-// 
-// The Hub XMLRPC API operates in a similar way to the SUSE Manager API. https://documentation.suse.com/suma/4.3/api/suse-manager/index.html
-// 
-// Make sure the hub-xmlrpc-api service is started:
-// 
-// [source, console]
-// ----
-// systemctl start hub-xmlrpc-api
-// ----
-// 
-// Once it is running, you can connect to the service at port 2830 using any XMLRPC-compliant client libraries. The Hub XMLRPC API exposes the same methods that are available from the server’s XMLRPC API, with a few differences in parameter and return types. Additionally, the Hub XMLRPC API supports some Hub-specific end points which are not available in the SUSE Manager API.
-// 
-// The Hub XMLRPC API supports three different namespaces:
-// 
-// * The hub namespace is used to target the Hub XMLRPC API Server itself. It supports Hub-specific XMLRPC endpoints which are primarily related to authentication.
-// * The unicast namespace is used to target a single server registered in the hub. It redirects any call transparently to one specific server and returns any value as if the server’s XMLRPC API endpoint was used directly.
-// * The multicast namespace is used to target multiple peripheral servers registered in the hub. It redirects any call transparently to all the specified servers and returns the results in the form of a map.
-// 
-// 
-// The Hub XMLRPC API supports three different authentication modes:
-// 
-// * Manual mode (default): API credentials must be explicitly provided for each server.
-// 
-// * Relay mode: the credentials used to authenticate with the Hub are also used to authenticate to each server. You must provide a list of servers to connect to.
-// 
-// * Auto-connect mode: credentials are reused for each server, and any peripheral server you have access to is automatically connected.
-// 
+The Hub XMLRPC API allows you to control all of the peripheral servers programmatically from the hub. It operates in a similar way to the standard SUSE Manager API. https://documentation.suse.com/suma/4.3/api/suse-manager/index.html
 
-== Reporting
+Make sure the hub-xmlrpc-api service is started:
+
+[source, console]
+----
+systemctl start hub-xmlrpc-api
+----
+
+Once the service is running, you can connect to the service at port 2830 using any XMLRPC-compliant client libraries. The Hub XMLRPC API exposes the same methods that are available from the server’s XMLRPC API, with a few differences in parameter and return types. Additionally, the Hub XMLRPC API supports some Hub-specific end points which are not available in the SUSE Manager API.
+
+The Hub XMLRPC API supports three different namespaces:
+
+* The hub namespace is used to target the Hub XMLRPC API Server itself. It supports Hub-specific XMLRPC endpoints which are primarily related to authentication.
+* The unicast namespace is used to target a single server registered in the hub. It redirects any call transparently to one specific server and returns any value as if the server’s XMLRPC API endpoint was used directly.
+* The multicast namespace is used to target multiple peripheral servers registered in the hub. It redirects any call transparently to all the specified servers and returns the results in the form of a map.
+ 
+
+=== Reporting
 
 Every {product1} peripheral server has its own reporting (PostgreSQL) database, where information is collected for that server and its registered clients.
 The {product1} hub server aggregates and stores information collected from all the peripheral servers in its own reporting database.
@@ -574,17 +570,6 @@ Connect to an external reporting tool only through a user account with read-only
 ====
 
 For more on reporting, see https://{product1_docs}/administration/reports.html[Reports Generation].
-
-// Mark: If we are not going to walk through an example, I suggest we delete the content commented out below:
-
-//SUSE Manager uses taskomatic jobs to generate the data for the reporting database and to get the data from the peripheral servers to the hub.
-//
-//To generate and update the data on a peripheral server, the responsible schedule is called update-reporting-default. It is executed by default daily at midnight.
-//
-//On the SUSE Manager Hub there is a second schedule which is important. To fetch the reporting data from all registered peripheral servers, the task with the name update-reporting-hub-default is executed daily at 1:30 AM.
-//
-//All times are in the local timezone of the server. If the peripheral servers are in different timezones, it is recommended to align all the schedules. Make sure that all reporting data are gathered at a specific point in time, and update-reporting-hub-default is running when all peripheral servers have actually finished their local jobs.
-
 
 == Summary
 
