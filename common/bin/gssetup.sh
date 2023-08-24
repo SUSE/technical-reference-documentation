@@ -14,6 +14,10 @@ echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo "= Set up workspace for new TRD getting started guide      ="
 echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo
+echo " This script will prompt you for information about the"
+echo "   solution and its components, then use your responses"
+echo "   to name the files and directories required for your"
+echo "   guide."
 echo
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "- Before proceeding make sure you have:"
@@ -28,24 +32,9 @@ read -p "Press ENTER to continue or CTRL-C to cancel."
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
-# Verify readiness
-##
-
-# check present working directory
-if [ $(basename $PWD) != "start" ]; then
-  echo
-  echo "Your current working directory is:"
-  echo "  '$PWD'"
-  echo "Make sure you change to 'kubernetes/start' or 'linux/start'"
-  echo "  then execute this script again."
-  echo
-  exit 1
-fi
-
-
-## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # Initialize variables
 ##
+currentbranch="$(git branch --show-current)"
 templatesroot="../../../common/templates/start"
 category=""
 doctype=""
@@ -57,40 +46,49 @@ documentbase=""
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+# Verify readiness
+##
+
+# Verify current branch is not 'main'
+if [[ "${currentbranch}" == "main" ]]; then
+  echo
+  echo "Be sure to work in a branch other than 'main'."
+  echo
+  echo "Create a branch for your project and check it out,"
+  echo "  then re-run this script."
+  echo
+  exit 1
+fi
+
+
+# Verify present working directory is correct for a getting started guide
+if [[ ! $PWD =~ kubernetes/start$ ]] && [[ ! $PWD =~ linux/start$ ]]; then
+  echo
+  echo "Your current working directory is:"
+  echo "  '$PWD'"
+  echo "Make sure you change to the 'kubernetes/start' or 'linux/start'"
+  echo "  subdirectory, then execute this script again."
+  echo
+  exit 2
+fi
+
+
+
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # Gather inputs
 ##
 
 echo
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo " Gather some information"
+echo " Gathering some information"
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo
 
-# get solution category
-while read -p "Please enter the relevant category (i.e., 'k' for Kubernetes or 'l' for Linux) : " response
-do
-  case ${response} in
-    'k' | 'K' | 'Kubernetes' | 'kubernetes')
-      category='kubernetes'
-      break
-    ;;
-    'l' | 'L' | 'Linux' | 'linux')
-      category='linux'
-      break
-    ;;
-    'q' | 'quit')
-      echo "Quitting ... nothing done."
-      exit 1
-    ;;
-    *)
-      echo "Invalid input.  Please try again or enter 'q' to quit."
-    ;;
-  esac
-done
-
 
 # get primary SUSE product
-while read -p "Please enter the primary SUSE product name (e.g., 'rancher', 'k3s', 'sles', 'suma', etc.) : " response
+echo "    Please enter the primary SUSE product name"
+echo "    (e.g., 'rancher', 'neuvector', 'sles', 'slemicro', 'suma', etc.)"
+while read -p "Primary SUSE product name : " response
 do
   suseprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
   # validate SUSE product
@@ -98,12 +96,12 @@ do
     'sles' | 'slehpc' | 'slemicro' | 'suma')
       break
     ;;
-    'rancher' | 'rke' | 'rke2' | 'k3s' | 'longhorn' | 'harvester')
+    'rancher' | 'rke' | 'rke2' | 'k3s' | 'longhorn' | 'neuvector' | 'harvester')
       break
     ;;
     'q' | 'quit')
       echo "Quitting ... nothing done."
-      exit 2
+      exit 3
     ;;
     *)
       echo "Invalid input.  Please try again or enter 'q' to quit."
@@ -111,22 +109,36 @@ do
   esac
 done
 
-# get Partner Name
-read -p "Please enter the name of the primary partner : " response
-partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
+# get Name of the Primary Partner
+echo
+echo "    Please enter the name of the primary partner or project"
+echo "      contributing a component to this solution."
+echo "    If you need it identify multiple partners or projects,"
+echo "      this can be done manually after running this script."
+read -p "Primary partner or project : " response
+partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
 
 
-# get Partner Product
-read -p "Please enter the primary partner product name : " response
+# get Name of the Primary Partner's product
+echo "    Please enter the primary partner's product name."
+echo "    Avoid using spaces or punctuation of any kind."
+read -p "Primary partner's product name : " response
 if [ -n "$response" ]; then
-  partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' )"
+  partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )"
 else
   # allow the partner product name to be left blank
   partnerprod=""
 fi
 
-# get Use Case
-read -p "If you would like a use case or description (1-3 words), enter it now or just press ENTER : " response
+# get Use Case or other text
+echo
+echo "    Sometimes a solution with the same components can address"
+echo "      more than one use case."
+echo "    If you need to distinguish this guide from an existing one,"
+echo "      you can provide up to 20 characters here that will be added"
+echo "      to the directory and file names."
+echo "    In most cases, you should leave this blank by just pressing ENTER."
+read -p "Distinctive text (or ENTER) : " response
 if [ -n "$response" ]; then
   usecase="_$( echo ${response} | tr '[:upper:]' '[:lower:]' | tr ' ' '-' )"
 else
@@ -147,7 +159,7 @@ documentbase="gs_${suseprod}_${partnername}${partnerprod}${usecase}"
 
 echo
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "- About to create the following structure:"
+echo "- Getting ready to create the following structure:"
 echo "-"
 echo "-   ${category}"
 echo "-   └── start"
@@ -183,14 +195,22 @@ read -p "Press ENTER to create document structure or CTRL-C to cancel."
 cd ${partnername}
 
 # create DC- file
-cp ${templatesroot}/_DC-file \
-   DC-${documentbase}
+if [ ! -f "DC-${documentbase}" ]; then
+  cp -n ${templatesroot}/_DC-file DC-${documentbase}
+else
+  echo
+  echo "'DC-${documentbase}' could not be created in '${partnername}'."
+  echo "Make sure 'DC-${documentbase}' does not already exist."
+  echo "If it does, consider using a different name."
+  echo
+  exit 4
+fi
+
 # update adoc reference
-sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" DC-${documentbase}
+[ -f "DC-${documentbase}" ] && sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" DC-${documentbase}
 
 # create adoc directory if it does not already exist
 [ -d adoc ] || mkdir -p adoc
-#cd adoc
 
 # create symlinks to common files
 [ -L common_gfdl1.2_i.adoc ] || \
