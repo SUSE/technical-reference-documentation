@@ -7,6 +7,7 @@ include::./common_docinfo_vars.adoc[]
 //     https://documentation.suse.com/trd/contributors/single-html/suse-trd_contrib-guide/
 //   - Keep in mind that this is a "getting started" guide.
 //   - Write to the audience you are trying to reach.
+//   - Add or remove sections and subsections as needed.
 // 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -20,12 +21,14 @@ include::./common_docinfo_vars.adoc[]
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // organization - do NOT modify
 // -
 :trd: Technical Reference Documentation
 :type: Getting Started
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document title and subtitle
@@ -45,39 +48,44 @@ include::./common_docinfo_vars.adoc[]
 :comp1-version: Primary SUSE product relevant version (e.g., 15, 15 SP5, 2.7) or versions (e.g., 15 SP3+, 2.6+)
 :comp1-website: Primary SUSE product URL
 :comp1-docs: Primary SUSE product documentation URL
-//:comp2-provider: Name of second component
-//:comp2: Short name of second component
-//:comp2-full: Full name of second component
-//:comp2-page: Product/project website URL of second component
-//:comp2-docs: Documentation URL of second component
+:comp2-provider: Name of second component
+:comp2: Short name of second component
+:comp2-full: Full name of second component
+:comp2-page: Product/project website URL of second component
+:comp2-docs: Documentation URL of second component
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// Metadata
-//   Provide metadata to identify the guide by its purpose, use case, value.
+// Descriptions
+//   Provide description to identify the guide by its purpose, use case, value.
 // -
-:description: (<150 characters) (e.g., "Deploy Kubeflow with Rancher Prime")
-
 :usecase: (<55 characters) (e.g., Database-as-a-Service, edge analytics in healthcare, Kubernetes-native object storage)
 
-:executive_summary: Give a brief summary of what this document provides (e.g., "Streamline deployment and management of multi-tenant Kubernetes landscapes with {comp2_full} and {comp1_full}.")
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+:executive-summary: Give a brief summary of what this document provides (e.g., "Streamline deployment and management of multi-tenant Kubernetes landscapes with {comp2-full} and {comp1-full}.")
+
+:description: (<150 characters) (e.g., "Deploy Kubeflow with Rancher Prime")
+
+:description-short: (<55 characters) Give a much shorter description that might be useful for social media platforms
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// contributor
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributors
 //   Specify information about authors, editors, and others here.
 //   If more than one author, update the docinfo.xml file as well
 //     for them to appear on the cover page.
 // -
-:author1_firstname: first (given) name
-:author1_surname: surname
-:author1_jobtitle: job title
-:author1_orgname: organization affiliation
-//:author2_firstname: first (given) name
-//:author2_surname: surname
-//:author2_jobtitle: job title
-//:author2_orgname: organization affiliation
+:author1-firstname: first (given) name
+:author1-surname: surname
+:author1-jobtitle: job title
+:author1-orgname: organization affiliation
+//:author2-firstname: first (given) name
+//:author2-surname: surname
+//:author2-jobtitle: job title
+//:author2-orgname: organization affiliation
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // miscellaneous
@@ -104,6 +112,8 @@ include::./common_docinfo_vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+
+
 === Scope
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -111,6 +121,7 @@ include::./common_docinfo_vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 This guide will help you take the first steps to ...
+
 
 
 === Audience
@@ -125,13 +136,20 @@ This guide will help you take the first steps to ...
 This document is intended for ...
 
 
+
 === Acknowledgements
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Acknowledge contributors not listed as authors.
+// Something like:
+//   The authors wish to acknowledge the contributions of the following
+//   individuals:
+//   * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+//   * {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-//* {contrib1_firstname} {contrib1_surname}, {contrib1_jobtitle}, {contrib1_orgname}
+
+
 
 
 == Prerequisites
@@ -143,20 +161,29 @@ This document is intended for ...
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+To complete the steps illustrated in this guide, you need the following resources:
+
+* Prerequisite 1
+
+* Prerequisite 2
 
 
 
-== Technical overview
+
+== Overview
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a technical overview of the solution.
-// - Identify components.
-// - Describe how the components fit together.
+// Provide an overview of the solution and the processes detailed
+// in this guide.
+// - Identify components
+// - Describe how the components fit together
 //   Leverage diagrams as appropriate, including (but not limited to):
 //   - component architecture
 //   - data flow diagram
 //   - workflow diagram
+//  - Summarize the major steps the reader will perform
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 
 
 
@@ -168,7 +195,8 @@ This document is intended for ...
 // Detail the steps of the installation procedure.
 // The reader should be able to copy and paste commands to
 // a local environment or follow along locally with screenshots.
-// Include one or more verification steps to validate installation.
+// Be sure tp include verifications that the reader can use to
+// validate that major steps were performed correctly.
 //
 // Leverage:
 // - Ordered lists
@@ -181,16 +209,16 @@ This document is intended for ...
 // - Detail each method in its own subsection.
 //
 // NOTE: For solutions involving SUSE Rancher, it is preferred
-//       to detail two installation methods:
-//       - Through the Rancher Apps Catalog with appropriate
-//         screenshots and SUSE branding.
-//       - A more manual approach (e.g., on the command-line).
+//       to highlight installation through the Rancher Apps Catalog
+//       with appropriate screenshots and SUSE branding.
+//       Alternatively or additionally, installation via the
+//       command line can be documented.
 //
-// Complex configuration procedures may be broken out into one or more
-// Configuration sections.
-// These may be subsections of Installation or separate sections at
-// the same level as Installation.
+// Complex installations may be broken into one or more sections
+// or subsections.
+//
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 
 
 
@@ -199,18 +227,18 @@ This document is intended for ...
 == Demonstration
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Illustrate functionality with a demonstration.
-// Begin with a description or outline of the demonstration.
-// Provide clear steps (in ordered lists) for the reader to follow.
+// Illustrate functionality of the solution for a use case.
+//
+// NOTE: This demonstration text could be used to script a
+//       demonstration video.
+//
 // Typical demonstration flow is:
-// 1. Prepare the environment for the demonstration.
+// 1. Outline the demonstration.
+// 2. Prepare the environment.
 //    This should be minimal, such as downloading some data to use.
-//    If this requires more than a couple steps, consider putting it
-//    in a subsection.
-// 2. Perform the demonstration.
-//    Be careful not to overuse screenshots.
-// 3. Verify.
-//    This may be interwoven into performing the demonstration.
+// 3. Perform the demonstration.
+//    Do not overuse screenshots.
+// 4. Clean up the environment.
 //
 // As with Installation, leverage ordered lists, code blocks,
 // admonitions, and screenshots.
