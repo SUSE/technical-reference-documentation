@@ -124,23 +124,30 @@ You should have a basic familiarity with {product1} and with typical procedures 
 
 === Prerequisites
 
-When sizing servers for {product1}, the most important variables are CPU, RAM, and disk storage.
-Review https://{product1_docs}/installation-and-upgrade/hardware-requirements.html[{product1} Hardware requirements] for recommendations.
-
-To follow the steps outlined in this guide for yourself, you need at least two systems.
+For this guide, you need at least two systems.
 These can be bare metal or virtual machines.
-One will act as a hub server and the other will act as a peripheral server.
-If you would like to explore registering a client to a peripheral server, add one more more systems to use as clients.
+These will be your {product1} hub and peripheral servers.
+If you would like to explore registering client systems for management, add one or more additional systems.
 
-As the hub and peripheral servers will have very few clients, they do not need to follow normal sizing recommendations.
-However, import and export operations involve a lot of SQL transactions and, potentially, significant storage for the database (located in `/var/lib/pgsql`).
-The recommended configuration for both hub and peripheral servers is:
+For this guide, the recommended configuration for each server is:
 
 * CPU: 8 CPU cores
 * RAM: 64 GB
 * Storage: 100 GB
 
-You also need a way to transfer data between the hub and peripheral.
+[IMPORTANT]
+====
+For a typical production deployment, be sure to review https://{product1_docs}/installation-and-upgrade/hardware-requirements.html[{product1} Hardware requirements].
+
+When sizing servers for {product1}, the most important variables are CPU, RAM, and disk storage.
+This can be critical when implementing the hub and peripheral solution for the real world.
+Import and export operations involve a lot of SQL transactions, which can be CPU and memory intensive.
+And, you can have significant storage requirements for the database (located in `/var/lib/pgsql`), depending on the size and complexity of your IT landscape.
+
+SUSE offers https://www.suse.com/services/[Consulting Services] that can help you assess your needs and provide proper sizing recommendations.
+====
+
+Additionally, you need a way to transfer data between the servers.
 Ideally, this could be through a shared (NFS) filesystem, but you can also copy the data across the network (such as with `rsync`) or use a removable disk such as a USB storage device.
 
 
@@ -193,16 +200,20 @@ In this hub and peripheral topology, one {product1} server acts as the central (
 Each peripheral server is an independent {product1} server.
 By dedicating a peripheral server for each customer, an MSP can address concerns about separation of customers while still allowing centralized control.
 
-[NOTE]
+[IMPORTANT]
 ====
-Pay special attention to the security boundaries shown in the diagram above. End customers may have access to their own SUSE Manger servers if they wish. However, it is imperative that no customer be given access to the hub server because this server has control over all of the peripheral servers. A customer who was able to access this would be able to access other customers' systems.
+Pay special attention to the security boundaries shown in the diagram above.
+End customers may have access to their own {product1} servers if they wish.
+However, it is imperative that no customer be given access to the hub server because this server has control over all of the peripheral servers.
+A customer who is able to access the hub would be able to access other customers' systems.
 ====
 
-
-For each peripheral server, you will need to create: activation keys, bootstrap, repositories, system groups, users, and so on. Similarly, any custom Salt states you create must be manually copied to the appropriate peripheral.
+For each peripheral server, you need to create activation keys, bootstrap, repositories, system groups, users, and so on.
+Similarly, any custom Salt states you create must be manually copied to the appropriate peripheral.
 SUSE provides a set of Salt modules, states, and formulas that can automate this process.
 
-It is important to understand that the hub and peripheral concept was developed primarily to provide horizontal scaling. In this document, we are using it to provide isolation between systems and any benefits from scaling are incidental to this use case.
+It is important to understand that the hub and peripheral concept was developed primarily to provide horizontal scaling.
+For this guide, it is being used to provide isolation between systems and any benefits from scaling are incidental to this use case.
 
 
 
@@ -299,13 +310,13 @@ Do this by copying the RHN-ORG-TRUSTED-SSL-CERT certificate file from each perip
 +
 [source, console]
 ----
-sudo systemctl restart hub-xmlrpc-api.service
+systemctl restart hub-xmlrpc-api.service
 ----
 
 
 == Onboarding a customer
 
-To onbooard a new customer, you start by adding the customer's SUSE Customer Center (SCC) credentials to the hub server.
+To onboard a new customer, you start by adding the customer's SUSE Customer Center (SCC) credentials to the hub server.
 You do this for each customer.
 Then {product1} can provide you with centralized access to all subscribed products.
 
@@ -404,13 +415,13 @@ If you select this option, the client is configured to use SSH for its connectio
 
 image::suma_msp_bootstrap.png[Bootstrapping a peripheral, scaledwidth="85%", align="center"]
 
-When the bootstrap process has completed, your client is listed in the WebUI at __Systems__ > __System List__.
+When the bootstrap process has completed, your client is listed in the Web UI at __Systems__ > __System List__.
 The peripheral server can now be managed as a standard Salt client of the hub and patched in the normal way.
 
 
 == Synchronizing content
 
-You need to ensure that your {product1} servers stay aligned on content and permissions.
+You need to ensure that your {product1} servers stay aligned on content.
 This is accomplished with the help of Inter-Server Synchronization.
 
 
@@ -435,7 +446,7 @@ It can be quite challenging to manage CLM for all of your customers.
 
 {product1} provides the flexibility you need to define and manage content lifecycles for your business and your customers.
 You begin by creating customer-specific software channels.
-These are then assigning to appropriate, managed clients.
+These are then assigned to appropriate, managed clients.
 
 For example, suppose you have a customer called ACME Corp.
 You can create a Content Lifecycle Project just for this customer as follows:
@@ -452,7 +463,7 @@ You can create a Content Lifecycle Project just for this customer as follows:
 
 image::suma_msp_newclm.png[Creating a new CLM project, scaledwidth="85%", align="center"]
 
-You can now proceed to build the CLM for this customer in the usual manner by adding sources and environemnts in the usual manner. To learn more, see https://{product1_docs}/administration/content-lifecycle.html[Content Lifecycle Management].
+You can now proceed to build the CLM for this customer in the usual manner by adding sources and environments in the usual manner. To learn more, see https://{product1_docs}/administration/content-lifecycle.html[Content Lifecycle Management].
 
 image::suma_msp_clmbuild.png[Creating a new CLM environment, scaledwidth="85%", align="center"]
 
@@ -533,7 +544,7 @@ Get detailed help on the ISS import command with `inter-server-sync import -h`.
 +
 [NOTE]
 ====
-There is no need to specify channel names because that is impicit in the SQL statements.
+There is no need to specify channel names because that is implicit in the SQL statements.
 You simply need to refer to the directory that contains the exported content and, by default, that is the current directory.
 ====
 
@@ -576,7 +587,7 @@ Salt states are defined on the hub level and can be applied to the peripheral se
 
 [IMPORTANT]
 ====
-Since activation keys make reference to channels, so you need to import appropriate content first.
+Activation keys make reference to channels, so you need to import appropriate content first.
 ====
 
 You can use Uyuni configuration modules to configure:
@@ -588,7 +599,7 @@ You can use Uyuni configuration modules to configure:
 * Activation Keys
 
 The Uyuni configuration modules are available in the `uyuni-config-modules` package.
-Install this package on the {product1} hub server by logging in as root and issuing the commnad:
+Install this package on the {product1} hub server by logging in as root and issuing the command:
 
 [source, console]
 ----
@@ -606,7 +617,8 @@ The https://{product1_docs}/large-deployments/hub-api.html[Hub XMLRPC API] allow
 It operates in a similar way to the standard https://{product1_docs_api}/index.html[{product1} API].
 
 
-Earlier, you installed the `hub-xmlrpc-api` package and enabled and started the service.
+In <<Creating the hub server>>, you installed the `hub-xmlrpc-api` package and enabled and started the service.
+With the service running, you can connect to it at port 2830 using any XMLRPC-compliant client libraries.
 
 Verify that the service is running on your hub server.
 [source, console]
@@ -614,10 +626,9 @@ Verify that the service is running on your hub server.
 systemctl status hub-xmlrpc-api.service
 ----
 
-With the service started, you can connect to it at port 2830 using any XMLRPC-compliant client libraries.
 
 The Hub XMLRPC API exposes the same methods that are available from the server’s XMLRPC API, with a few differences in parameter and return types.
-Additionally, the Hub XMLRPC API supports some Hub-specific end points which are not available in the SUSE Manager API.
+Additionally, the Hub XMLRPC API supports some hub-specific end points which are not available in the SUSE Manager API.
 
 The Hub XMLRPC API supports three different namespaces:
 
