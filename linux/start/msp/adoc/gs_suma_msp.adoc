@@ -1,0 +1,701 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Document attributes and variables
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document
+// -
+:title: SUSE Manager for Managed Services Providers
+:subtitle: How MSPs Can Streamline Systems Lifecycle Management
+
+:product1: SUSE Manager
+:product1_full: SUSE Manager
+:product1_version: 4.3
+:product1_url: www.suse.com/products/suse-manager/
+:product1_docs: documentation.suse.com/suma/{product1_version}/en/suse-manager
+:product1_docs_api: documentation.suse.com/suma/{product1_version}/api/suse-manager
+
+:usecase: {product1} can enable managed services providers to streamline asset and lifecycle management across multi-client landscapes
+
+:executive_summary: {product1_full} can enable managed services providers (MSPs) to streamline IT systems management with a single tool that provides systems asset management, systems provisioning, and automated software management to keep systems up-to-date and secure.
+
+:description: Managed Services Providers use {product1_full} to streamline IT operations.
+
+:description-short: MSPs streamline IT with {product1_full}.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributor
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: Mark
+:author1_surname: Gonnelly
+:author1_jobtitle: Solution Architect
+:author1_orgname: SUSE
+:author2_firstname: Dominic
+:author2_surname: Geevarghese
+:author2_jobtitle: Solution Architect
+:author2_orgname: SUSE
+:author3_firstname: Terry
+:author3_surname: Smith
+:author3_jobtitle: Global Partner Solutions Director
+:author3_orgname: SUSE
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// miscellaneous
+// define any additional variables here for use within the document
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+= {title}: {subtitle}
+
+
+== Introduction
+
+The Linux footprint of enterprise IT landscapes continues to grow.
+This growth can be particularly problematic for a managed services provider (MSP), who may need to manage systems lifecycles for many clients.
+As an MSP, you need a management tool that can scale with your business needs.
+
+{product1_full} {product1_version} is an enterprise, open source management solution for software-defined infrastructure.
+It is designed to help enterprises reduce complexity and regain control of IT assets with a single tool.
+{product1} provides you with systems asset management, systems provisioning, and automated software management to help you keep all your systems up-to-date and secure.
+
+{product1} easily scales to satisfy your technical and business requirements without compromising on operational performance.
+It gives you the features and automation in a single tool to seamlessly manage a broad spectrum of Linux systems on a variety of hardware architectures and hypervisors as well as container, IoT, and cloud platforms.
+With {product1}, you can manage systems lifecycle management, streamline operations, and manage your growing IT landscape.
+
+
+=== Scope
+
+You will learn how to deploy {product1} to support systems lifecycle management for multiple, downstream customers.
+The hub and peripheral architecture described here enables managed services providers and large enterprises to consolidate certain management operations while maintaining the advantages of separate peripheral servers for each customer.
+
+
+=== Audience
+
+Platform engineers and systems administrators of managed services providers and large enterprises - who are responsible for delivering systems lifecycle management for multiple customers, organizations, or business units - will find useful guidance in this document.
+
+You should have a basic familiarity with {product1} and with typical procedures for provisioning and patching Linux systems to get the most out of this document.
+
+
+=== Prerequisites
+
+For this guide, you need at least two systems.
+These can be bare metal or virtual machines.
+These will be your {product1} hub and peripheral servers.
+If you would like to explore registering client systems for management, add one or more additional systems.
+
+For this guide, the recommended configuration for each server is:
+
+* CPU: 8 CPU cores
+* RAM: 64 GB
+* Storage: 100 GB
+
+[IMPORTANT]
+====
+For a typical production deployment, be sure to review https://{product1_docs}/installation-and-upgrade/hardware-requirements.html[{product1} Hardware requirements].
+
+When sizing servers for {product1}, the most important variables are CPU, RAM, and disk storage.
+This can be critical when implementing the hub and peripheral solution for the real world.
+Import and export operations involve a lot of SQL transactions, which can be CPU and memory intensive.
+And, you can have significant storage requirements for the database (located in `/var/lib/pgsql`), depending on the size and complexity of your IT landscape.
+
+SUSE offers https://www.suse.com/services/[Consulting Services] that can help you assess your needs and provide proper sizing recommendations.
+====
+
+Additionally, you need a way to transfer data between the servers.
+Ideally, this could be through a shared (NFS) filesystem, but you can also copy the data across the network (such as with `rsync`) or use a removable disk such as a USB storage device.
+
+
+
+== Solution design
+
+Managing a large and growing IT footprint can be a challenge for any enterprise.
+Managed services providers (MSPs) must do this for multiple customers.
+A single {product1} server could be used to manage all customer systems.
+But there are key concerns with this approach, such as:
+
+Scaling::
+{product1} is designed as a single server that can manage up to 10000 clients.
+An MSP with multiple large customers could reach this limit quickly.
+To accommodate this, {product1} can be scaled horizontally by adding {product1} servers.
+
+Separation of entitlements::
+{product1} uses customer credentials to access software entitlements from upstream providers, such as the https://scc.suse.com/[SUSE Customer Center (SCC)].
+It is not a good idea to mix the entitlements of multiple customers in a single environment, as it would be difficult to keep track of which managed systems are entitled to which products.
+
+Access control and user isolation::
+In situations where customers would expect access to {product1}, an MSP would need some way to isolate each customer’s users so they can only see and manage their own systems.
+The MSP could install a dedicated {product1} server for each client.
+This would address isolation, but it is somewhat inefficient because of the need to manage each of these servers independently.
+
+{product1} empowers MSPs and large enterprises to address these concerns through:
+
+* Content lifecycle management
+* Hub and peripherals
+* Inter-Server Synchronization
+
+Each of these is discussed further below.
+
+
+=== Content lifecycle management
+
+Content lifecycle management involves creating clones of software channels at particular points in time and assigning these to different systems.
+This is used to create multi-stage lifecycles where patches are passed from vendor channels to a development environment, from there to a test stage, and then to production.
+MSPs can create separate lifecycles for each customer.
+This ensures that each customer receives only the patches that are appropriate to its respective software lifecycle needs even though the patches may be based on the same upstream channels.
+
+
+=== Hub and peripherals
+
+https://{product1_docs}/specialized-guides/large-deployments/multi-server.html[{product1} Hub] was introduced to manage very large deployments by allowing horizontal scaling to multiple servers.
+
+image::suma_msp_hub-architecture2.png[Hub and peripheral topology, scaledwidth="85%", align="center"]
+
+In this hub and peripheral topology, one {product1} server acts as the central (or *hub*) server for one or more *peripheral* {product1} servers to which any number of client systems can be registered.
+Each peripheral server is an independent {product1} server.
+By dedicating a peripheral server for each customer, an MSP can address concerns about separation of customers while still allowing centralized control.
+
+[IMPORTANT]
+====
+Pay special attention to the security boundaries shown in the diagram above.
+End customers may have access to their own {product1} servers if they wish.
+However, it is imperative that no customer be given access to the hub server because this server has control over all of the peripheral servers.
+A customer who is able to access the hub would be able to access other customers' systems.
+====
+
+For each peripheral server, you need to create activation keys, bootstrap, repositories, system groups, users, and so on.
+Similarly, any custom Salt states you create must be manually copied to the appropriate peripheral.
+SUSE provides a set of Salt modules, states, and formulas that can automate this process.
+
+It is important to understand that the hub and peripheral concept was developed primarily to provide horizontal scaling.
+For this guide, it is being used to provide isolation between systems and any benefits from scaling are incidental to this use case.
+
+
+
+=== Inter-Server Synchronization (ISS)
+
+With multiple {product1} servers in a hub and peripheral architecture, you need to ensure that content and permissions stay aligned.
+https://{product1_docs}/administration/iss_v2.html#_install_iss_packages[Inter-Server Synchronization (ISS)] allows you to connect two or more {product1} servers and keep them up-to-date.
+Since only the hub needs access to an external source (such as SCC), a side benefit is that peripheral servers do not require Internet access.
+
+
+
+== Creating the hub server
+
+At the center of the architecture is the {product1} hub server.
+This server follows standard installation and setup processes.
+{product1} can be deployed onto bare metal or virtual machines, running on-premises or in cloud environments.
+However, for the hub server, you must also enable the Hub XMLRPC API service service.
+
+
+. Install {product1} on the designated hub system.
+//
++
+Follow the steps detailed in the https://{product1_docs}/installation-and-upgrade/installation-and-upgrade-overview.html[{product1} Installation and Upgrade Guide].
+
+. Set up {product1}.
+//
++
+Follow the guidance in https://{product1_docs}/installation-and-upgrade/server-setup.html[{product1} Server Setup], where you create your main administration account and organization.
+
+. To make this a hub server, you need to install and enable the Hub XMLRPC API service.
++
+[NOTE]
+====
+Commands shown here should be issued as the root user on the server.
+====
+
+.. On the hub server, install the `hub-xmlrpc-api` package.
+//
++
+The package is available in the {product1} repositories, so can be installed with a simple command.
++
+[source, console]
+----
+zypper install hub-xmlrpc-api
+----
+
+.. Set the Hub XMLRPC API service to start automatically at boot time, and start it immediately:
++
+[source, console]
+----
+systemctl enable hub-xmlrpc-api.service
+systemctl start hub-xmlrpc-api.service
+----
+
+.. Check that these parameters in the `/etc/hub/hub.conf` configuration file are correct:
++
+--
+
+* HUB_API_URL: URL to the Hub Server XMLRPC API endpoint.
+//
++
+Use the default value.
+
+* HUB_CONNECT_TIMEOUT: the maximum number of seconds to wait for a response when connecting to a Server.
+//
++
+Use the default value in most cases.
+
+* HUB_REQUEST_TIMEOUT: the maximum number of seconds to wait for a response when calling a Server method.
+//
++
+Use the default value in most cases.
+
+* HUB_CONNECT_USING_SSL: use HTTPS instead of HTTP for communicating with peripheral Servers.
++
+[NOTE]
+====
+Using secure communications is recommended.
+
+To use HTTPS to connect to peripheral servers, you must:
+
+. Set the HUB_CONNECT_USING_SSL parameter to `true`
+
+. Ensure that the SSL certificates for all the peripheral servers are installed on the hub server.
+//
++
+Do this by copying the RHN-ORG-TRUSTED-SSL-CERT certificate file from each peripheral server’s `http://<server-url>/pub/` directory to `/etc/pki/trust/anchors/`, then run `update-ca-certificates`.
+
+====
+
+--
+
+.. Restart services to activate any configuration changes you make.
++
+[source, console]
+----
+systemctl restart hub-xmlrpc-api.service
+----
+
+
+== Onboarding a customer
+
+To onboard a new customer, you start by adding the customer's SUSE Customer Center (SCC) credentials to the hub server.
+You do this for each customer.
+Then {product1} can provide you with centralized access to all subscribed products.
+
+Alternatively, if you (as the service provider) are using your own subscriptions to provide access under an MSP agreement with SUSE, then you only need to add that subscription to the hub.
+
+image::suma_msp_orgcreds.png[Adding Organization Credentials, scaledwidth="85%", align="center"]
+
+Once the SCC credentials have been added, you have a centralized view of all products that are available through the hub and the ability to replicate entitlements from the hub to peripheral servers.
+
+image::suma_msp_products.png[Synchronizing Products, scaledwidth="85%", align="center"]
+
+Follow https://{product1_docs}/installation-and-upgrade/server-setup.html#_synchronizing_products_from_suse_customer_center[Synchronizing Products from SUSE Customer Center] to onboard a customer.
+
+[IMPORTANT]
+====
+To properly synchronize content lifecycle channels later, do not create a separate organization for each new customer.
+====
+
+
+== Creating a peripheral server
+
+Peripheral servers are {product1} servers you can dedicate to a customer.
+Creating a peripheral server follows the normal {product1} installation and setup processes.
+However, instead of configuring the SCC connection, you configure the peripheral server to obtain SCC content from the hub.
+
+. Install {product1} on the designated hub system.
+//
++
+Follow the steps detailed in the https://{product1_docs}/installation-and-upgrade/installation-and-upgrade-overview.html[{product1} Installation and Upgrade Guide].
+
+. Set up {product1}.
+//
++
+Follow the guidance in https://{product1_docs}/installation-and-upgrade/server-setup.html[{product1} Server Setup].
++
+[IMPORTANT]
+====
+Your main administration user and organization should match those you created on the hub server.
+This enables Inter-Server Synchronization of content to work correctly.
+This limitation may be removed in a future version of {product1}.
+====
+
+
+== Registering a peripheral server
+
+Peripheral servers must be registered to the hub server as Salt clients.
+When you register a peripheral server, you must assign it to the appropriate {product1} software channel as its base channel.
+The best way to do this is with activation keys.
+You can create a specific activation key and assign the appropriate channel as the base channel with the key.
+
+Register a peripheral server to the hub using one of the https://{product1_docs}/client-configuration/registration-methods.html[Client Registration Methods].
+
+[NOTE]
+====
+You may want to create an activation key specifically for peripheral servers, especially if you will have other types of clients registered to your hub.
+====
+
+To register a peripheral with the {product1} Web UI, you can follow these steps:
+
+. In the {product1} Web UI, navigate to __Systems__ > __Bootstrapping__.
+
+. In the __Host__ field, type the fully qualified domain name (FQDN) of the client to be bootstrapped.
+
+. In the __SSH Port__ field, type the SSH port number to use to connect to and bootstrap the client.
+//
++
+The default SSH port number is `22`.
+
+. In the __User__ field, type the username to log in to the client.
+//
++
+The default username is `root`.
+
+. To bootstrap the client with SSH, in the __Authentication__ field, check __SSH Private Key__, and upload the SSH private key to use.
+//
++
+If your SSH private key requires a passphrase, type it into the __SSH Private Key Passphrase__ field.
+
+. To bootstrap the client with a password, in the __Authentication__ field, check __Password__, and type the client password.
+
+. In the __Activation Key__ field, select the activation key that is associated with the peripheral servers.
+
+. __Disable SSH Strict Key Host Checking__ is selected by default.
+//
++
+This allows the bootstrap process to automatically accept SSH host keys without requiring you to manually authenticate each one.
+
+. Check the __Manage System Completely via SSH__ checkbox.
++
+[IMPORTANT]
+====
+If you select this option, the client is configured to use SSH for its connection to the server, and no other connection method is configured.
+====
+
+. Click __Bootstrap__ to begin registration.
+
+image::suma_msp_bootstrap.png[Bootstrapping a peripheral, scaledwidth="85%", align="center"]
+
+When the bootstrap process has completed, your client is listed in the Web UI at __Systems__ > __System List__.
+The peripheral server can now be managed as a standard Salt client of the hub and patched in the normal way.
+
+
+== Synchronizing content
+
+You need to ensure that your {product1} servers stay aligned on content.
+This is accomplished with the help of Inter-Server Synchronization.
+
+
+=== Installing Inter-Server Synchronization
+
+To use Inter-Server Synchronization (ISS), you need to install the `inter-server-sync` package on hub and peripheral {product1} servers.
+
+Do this by issuing the following command on each server:
+
+[source, console]
+----
+zypper install inter-server-sync
+----
+
+
+=== Building customer-specific content lifecycle management
+
+
+Content lifecycle management (CLM) allows you to customize and test software before deploying to production systems.
+As an MSP, each of your customers may have different software needs, testing requirements, and deployment schedules.
+It can be quite challenging to manage CLM for all of your customers.
+
+{product1} provides the flexibility you need to define and manage content lifecycles for your business and your customers.
+You begin by creating customer-specific software channels.
+These are then assigned to appropriate, managed clients.
+
+For example, suppose you have a customer called ACME Corp.
+You can create a Content Lifecycle Project just for this customer as follows:
+
+. In the {product1} Web UI, navigate to __Content Lifecycle__ > __Projects__.
+
+. Click __Create Project__
+
+. In the __Name__ field, type a name for this project.
+
+. In the __Label__ field, type the name that will be used internally.
+
+. In the __Description__ field, you can add a more verbose explanation.
+
+image::suma_msp_newclm.png[Creating a new CLM project, scaledwidth="85%", align="center"]
+
+You can now proceed to build the CLM for this customer in the usual manner by adding sources and environments in the usual manner. To learn more, see https://{product1_docs}/administration/content-lifecycle.html[Content Lifecycle Management].
+
+image::suma_msp_clmbuild.png[Creating a new CLM environment, scaledwidth="85%", align="center"]
+
+
+=== Exporting and importing content
+
+After defining customer-specific channels as part of your content lifecycle management (CLM), use the `inter-server-sync` command to export these channels from the {product1} hub to a directory.
+This directory and its contents needs to be transferred to to the peripheral server.
+The easiest way to do this is to use a shared filesystem.
+
+The example below shows how to export the development environment from the ACME Corp customer's CLM to an NFS filesystem mounted at `/mnt/shared` on the hub and peripheral servers.
+
+[NOTE]
+====
+Exporting can take considerable time to run and is very CPU intensive.
+It copies all of the required packages and creates all of the SQL commands needed to recreate the channel structure and contents on the importing server.
+====
+
+. Export the CLM on the hub server.
+
+.. On the hub server command line, change to the shared directory.
++
+[source, console]
+----
+cd /mnt/shared
+----
+
+.. Initiate the export.
++
+[source, console]
+----
+inter-server-sync export --channel-with-children acmecorp-acmedev-sle15sp4-sle-product-sles15-sp4-pool-x86_64
+----
++
+[TIP]
+====
+The `inter-server-sync export` command outputs to the current directory by default.
+You could specify an output directory with the `--outputDir` flag.
+Get detailed help on the export command with `inter-server-sync export -h`.
+====
+
+.. Verify that the export succeeded by viewing the contents of the directory.
++
+[source, console]
+----
+ls -l
+----
++
+[listing]
+----
+total 457384
+-rw-r--r-- 1 root root       540 Jul 11 13:38 exportedChannels.txt
+drwxr-x--- 1 root root         8 Jul 11 13:03 packages
+-rw------- 1 root root 468349180 Jul 11 13:38 sql_statements.sql.gz
+-rw-r--r-- 1 root root        44 Jul 11 13:38 version.txt
+----
+
+. Import the CLM on the peripheral server.
+
+.. On the peripheral server command line, change to the shared directory.
++
+[source, console]
+----
+cd /mnt/shared
+----
+
+.. Initiate the import.
++
+[source, console]
+----
+inter-server-sync import
+----
++
+[TIP]
+====
+Get detailed help on the ISS import command with `inter-server-sync import -h`.
+====
++
+[NOTE]
+====
+There is no need to specify channel names because that is implicit in the SQL statements.
+You simply need to refer to the directory that contains the exported content and, by default, that is the current directory.
+====
+
+
+== Registering clients
+
+Clients are the end-point systems you want to manage.
+{product1} is compatible with a wide range of client technologies.
+For a full list supported clients and features, see https://{product1_docs}/client-configuration/supported-features.html[Supported Clients and Features].
+
+There are three ways to register clients to a {product1} server:
+
+* https://{product1_docs}/client-configuration/registration-webui.html[through the Web UI]
+
+* https://{product1_docs}/client-configuration/registration-bootstrap.html[with a bootstrap script]
+
+* https://{product1_docs}/client-configuration/registration-bootstrap.html[on the command line (Salt)]
+
+For bootstrap and command line methods, you must first create an https://{product1_docs}/client-configuration/activation-keys.html[activation key].
+
+[IMPORTANT]
+====
+For all methods, date and time on the client must be synchronized with the {product1} server.
+====
+
+For details on client configuration, see the https://{product1_docs}/client-configuration/client-config-overview.html[Client Configuration Guide].
+
+
+
+== Working with Salt modules and formulas
+
+Salt is a remote execution engine, configuration management, and orchestration system used by SUSE Manager.
+Salt uses execution and state modules to define, apply, and orchestrate configuration of your devices.
+You use Salt states to manage users, system groups, activation keys, and so on.
+
+SUSE Manager provides a set of modules called Uyuni configuration modules, that you can use to configure both SUSE Manager and https://www.uyuni-project.org/[Uyuni] Servers.
+You can use the Uyuni configuration modules and create your own custom Salt State (SLS) files.
+Salt states are defined on the hub level and can be applied to the peripheral servers.
+
+
+[IMPORTANT]
+====
+Activation keys make reference to channels, so you need to import appropriate content first.
+====
+
+You can use Uyuni configuration modules to configure:
+
+* Organizations
+* Users
+* User permissions
+* System groups
+* Activation Keys
+
+The Uyuni configuration modules are available in the `uyuni-config-modules` package.
+Install this package on the {product1} hub server by logging in as root and issuing the command:
+
+[source, console]
+----
+zypper in uyuni-config-modules
+----
+
+This package also installs detailed API descriptions, indications on pillar settings, and examples.
+You can find these in `/usr/share/doc/packages/uyuni-config-modules/`.
+
+
+
+=== Understanding the Hub XMLRPC API namespaces
+
+The https://{product1_docs}/large-deployments/hub-api.html[Hub XMLRPC API] allows you to control all of the peripheral servers programmatically from the hub.
+It operates in a similar way to the standard https://{product1_docs_api}/index.html[{product1} API].
+
+
+In <<Creating the hub server>>, you installed the `hub-xmlrpc-api` package and enabled and started the service.
+With the service running, you can connect to it at port 2830 using any XMLRPC-compliant client libraries.
+
+Verify that the service is running on your hub server.
+[source, console]
+----
+systemctl status hub-xmlrpc-api.service
+----
+
+
+The Hub XMLRPC API exposes the same methods that are available from the server’s XMLRPC API, with a few differences in parameter and return types.
+Additionally, the Hub XMLRPC API supports some hub-specific end points which are not available in the SUSE Manager API.
+
+The Hub XMLRPC API supports three different namespaces:
+
+* The `hub` namespace is used to target the Hub XMLRPC API Server itself. It supports Hub-specific XMLRPC endpoints which are primarily related to authentication.
+
+* The `unicast` namespace is used to target a single server registered in the hub.
+It redirects any call transparently to one specific server and returns any value as if the server’s XMLRPC API end point was used directly.
+
+* The `multicast` namespace is used to target multiple peripheral servers registered in the hub.
+It redirects any call transparently to all the specified servers and returns the results in the form of a map.
+
+See the https://{product1_docs}/large-deployments/hub-api.html[{product1} documentation}] for further details.
+
+
+
+=== Reporting
+
+Every {product1} peripheral server has its own reporting (PostgreSQL) database, where information is collected for that server and its registered clients.
+The hub server aggregates and stores information collected from all the peripheral servers in its own reporting database.
+This gives you easy access to data from all clients under management.
+
+{product1} provides some pre-configured reports that you can leverage for a variety of tasks, such as taking inventory of subscribed systems, users, and organizations.
+You can also use an external reporting tool to create fully customized reports.
+
+[TIP]
+====
+Connect to an external reporting tool only through a user account with read-only permissions.
+====
+
+For more on reporting, see https://{product1_docs}/administration/reports.html[Reports Generation].
+
+
+
+== Summary
+
+// Summarize what was covered and provide some next step suggestions.
+
+
+{product1_full} is the enterprise, open source solution that helps you maintain control of your IT landscape.
+{product1} provides systems asset management, systems provisioning, and automated software management to help you keep all your systems up-to-date and secure.
+Seamlessly manage a broad spectrum of Linux systems on a variety of hardware architectures, hypervisors, container, IoT, and cloud platforms.
+And easily scale your landscape to satisfy your technical and business requirements.
+
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
