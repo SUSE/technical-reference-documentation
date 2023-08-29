@@ -33,19 +33,26 @@
 <meta name="social-desc" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description-short}</meta>
 
 
-<!-- platform and product metadata
-     Replicate for additional platforms.
-     Define platform2, etc. in adoc file.
+<!-- SUSE component metadata
+     Replicate and follow the pattern to list additional SUSE components.
+     Variables are defined in the adoc file.
+
+     '<productname>' references the short name of the SUSE component.
+     '<platform>' references the full/long name of the SUSE component.
 -->
-<productname>{comp1}</productname>
-<meta name="platform">{comp1-full}</meta>
+<meta name="productname">
+  <productname version="{scomp1-version}">{scomp1}</productname>
+</meta>
+<meta name="platform">{scomp1-full}</meta>
+
 
 
 <!-- author metadata
      Replicate author tag structure inside this authorgroup
      for additional authors.
-     Use editor and othercredit tag groups for additional contributors.
-     Update variables in adoc file.
+     Be sure to create/update appropriate variables in adoc file.
+     NOTE: Editors and other contributors can be acknowledged in
+     an acknowledgement section in the adoc file.
 -->
 <authorgroup>
   <author>
