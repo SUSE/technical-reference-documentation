@@ -53,7 +53,7 @@ include::./common_docinfo_vars.adoc[]
 :product1_docs: documentation.suse.com/suma/{product1_version}/en/suse-manager
 :product1_docs_api: documentation.suse.com/suma/{product1_version}/api/suse-manager
 
-:usecase: {product1} can enable managed services providers to streamline asset and lifecycle management across multi-client landscapes
+:usecase: {product1} can enable managed services providers to streamline asset and lifecycle management across multi-client landscapes.
 
 :executive_summary: {product1_full} can enable managed services providers (MSPs) to streamline IT systems management with a single tool that provides systems asset management, systems provisioning, and automated software management to keep systems up-to-date and secure.
 
@@ -97,7 +97,7 @@ include::./common_docinfo_vars.adoc[]
 == Introduction
 
 The Linux footprint of enterprise IT landscapes continues to grow.
-This growth can be particularly problematic for a managed services provider (MSP), who may need to manage systems lifecycles for many clients.
+This growth can be particularly problematic for managed services provider (MSPs), who may need to manage systems lifecycles for many clients.
 As an MSP, you need a management tool that can scale with your business needs.
 
 {product1_full} {product1_version} is an enterprise, open source management solution for software-defined infrastructure.
@@ -105,7 +105,7 @@ It is designed to help enterprises reduce complexity and regain control of IT as
 {product1} provides you with systems asset management, systems provisioning, and automated software management to help you keep all your systems up-to-date and secure.
 
 {product1} easily scales to satisfy your technical and business requirements without compromising on operational performance.
-It gives you the features and automation in a single tool to seamlessly manage a broad spectrum of Linux systems on a variety of hardware architectures and hypervisors as well as container, IoT, and cloud platforms.
+It gives you the features and automation in a single tool. Thus, you can seamlessly manage a broad spectrum of Linux systems on a variety of hardware architectures and hypervisors, and container, IoT, and cloud platforms.
 With {product1}, you can manage systems lifecycle management, streamline operations, and manage your growing IT landscape.
 
 
@@ -117,7 +117,7 @@ The hub and peripheral architecture described here enables managed services prov
 
 === Audience
 
-Platform engineers and systems administrators of managed services providers and large enterprises - who are responsible for delivering systems lifecycle management for multiple customers, organizations, or business units - will find useful guidance in this document.
+Platform engineers and systems administrators of MSPs and large enterprises - who are responsible for delivering systems lifecycle management for multiple customers, organizations, or business units - will find useful guidance in this document.
 
 You should have a basic familiarity with {product1} and with typical procedures for provisioning and patching Linux systems to get the most out of this document.
 
@@ -127,7 +127,7 @@ You should have a basic familiarity with {product1} and with typical procedures 
 For this guide, you need at least two systems.
 These can be bare metal or virtual machines.
 These will be your {product1} hub and peripheral servers.
-If you would like to explore registering client systems for management, add one or more additional systems.
+If you want to explore registering client systems for management, add one or more additional systems.
 
 For this guide, the recommended configuration for each server is:
 
@@ -148,7 +148,7 @@ SUSE offers https://www.suse.com/services/[Consulting Services] that can help yo
 ====
 
 Additionally, you need a way to transfer data between the servers.
-Ideally, this could be through a shared (NFS) filesystem, but you can also copy the data across the network (such as with `rsync`) or use a removable disk such as a USB storage device.
+Ideally, this could be through a shared (NFS) file system, but you can also copy the data across the network (such as with `rsync`) or use a removable disk such as a USB storage device.
 
 
 
@@ -196,16 +196,16 @@ https://{product1_docs}/specialized-guides/large-deployments/multi-server.html[{
 
 image::suma_msp_hub-architecture2.png[Hub and peripheral topology, scaledwidth="85%", align="center"]
 
-In this hub and peripheral topology, one {product1} server acts as the central (or *hub*) server for one or more *peripheral* {product1} servers to which any number of client systems can be registered.
+In this hub and peripheral topology, one {product1} server acts as the central (or *hub*) server for one or more *peripheral* {product1} servers. Any number of client systems can be registered to the server.
 Each peripheral server is an independent {product1} server.
 By dedicating a peripheral server for each customer, an MSP can address concerns about separation of customers while still allowing centralized control.
 
 [IMPORTANT]
 ====
 Pay special attention to the security boundaries shown in the diagram above.
-End customers may have access to their own {product1} servers if they wish.
+End customers may have access to their own {product1} servers if they want.
 However, it is imperative that no customer be given access to the hub server because this server has control over all of the peripheral servers.
-A customer who is able to access the hub would be able to access other customers' systems.
+A customer who can access the hub would be able to access other customers' systems.
 ====
 
 For each peripheral server, you need to create activation keys, bootstrap, repositories, system groups, users, and so on.
@@ -230,7 +230,7 @@ Since only the hub needs access to an external source (such as SCC), a side bene
 At the center of the architecture is the {product1} hub server.
 This server follows standard installation and setup processes.
 {product1} can be deployed onto bare metal or virtual machines, running on-premises or in cloud environments.
-However, for the hub server, you must also enable the Hub XMLRPC API service service.
+However, for the hub server, you must also enable the Hub XMLRPC API service.
 
 
 . Install {product1} on the designated hub system.
@@ -324,7 +324,7 @@ Alternatively, if you (as the service provider) are using your own subscriptions
 
 image::suma_msp_orgcreds.png[Adding Organization Credentials, scaledwidth="85%", align="center"]
 
-Once the SCC credentials have been added, you have a centralized view of all products that are available through the hub and the ability to replicate entitlements from the hub to peripheral servers.
+When the SCC credentials have been added, you have a centralized view of all products that are available through the hub and the ability to replicate entitlements from the hub to peripheral servers.
 
 image::suma_msp_products.png[Synchronizing Products, scaledwidth="85%", align="center"]
 
@@ -371,7 +371,7 @@ Register a peripheral server to the hub using one of the https://{product1_docs}
 
 [NOTE]
 ====
-You may want to create an activation key specifically for peripheral servers, especially if you will have other types of clients registered to your hub.
+You should create an activation key specifically for peripheral servers, especially if you will have other types of clients registered to your hub.
 ====
 
 To register a peripheral with the {product1} Web UI, you can follow these steps:
@@ -385,10 +385,10 @@ To register a peripheral with the {product1} Web UI, you can follow these steps:
 +
 The default SSH port number is `22`.
 
-. In the __User__ field, type the username to log in to the client.
+. In the __User__ field, type the user name to log in to the client.
 //
 +
-The default username is `root`.
+The default user name is `root`.
 
 . To bootstrap the client with SSH, in the __Authentication__ field, check __SSH Private Key__, and upload the SSH private key to use.
 //
@@ -404,7 +404,7 @@ If your SSH private key requires a passphrase, type it into the __SSH Private Ke
 +
 This allows the bootstrap process to automatically accept SSH host keys without requiring you to manually authenticate each one.
 
-. Check the __Manage System Completely via SSH__ checkbox.
+. Check the __Manage System Completely via SSH__ check box.
 +
 [IMPORTANT]
 ====
@@ -422,7 +422,7 @@ The peripheral server can now be managed as a standard Salt client of the hub an
 == Synchronizing content
 
 You need to ensure that your {product1} servers stay aligned on content.
-This is accomplished with the help of Inter-Server Synchronization.
+This is accomplished using Inter-Server Synchronization.
 
 
 === Installing Inter-Server Synchronization
@@ -449,7 +449,7 @@ You begin by creating customer-specific software channels.
 These are then assigned to appropriate, managed clients.
 
 For example, suppose you have a customer called ACME Corp.
-You can create a Content Lifecycle Project just for this customer as follows:
+You can create a Content Lifecycle Project only for this customer as follows:
 
 . In the {product1} Web UI, navigate to __Content Lifecycle__ > __Projects__.
 
@@ -471,10 +471,10 @@ image::suma_msp_clmbuild.png[Creating a new CLM environment, scaledwidth="85%", 
 === Exporting and importing content
 
 After defining customer-specific channels as part of your content lifecycle management (CLM), use the `inter-server-sync` command to export these channels from the {product1} hub to a directory.
-This directory and its contents needs to be transferred to to the peripheral server.
-The easiest way to do this is to use a shared filesystem.
+This directory and its contents needs to be transferred to the peripheral server.
+The easiest way to do this is to use a shared file system.
 
-The example below shows how to export the development environment from the ACME Corp customer's CLM to an NFS filesystem mounted at `/mnt/shared` on the hub and peripheral servers.
+The example below shows how to export the development environment from the ACME Corp customer's CLM to an NFS file system mounted at `/mnt/shared` on the hub and peripheral servers.
 
 [NOTE]
 ====
@@ -650,7 +650,7 @@ Every {product1} peripheral server has its own reporting (PostgreSQL) database, 
 The hub server aggregates and stores information collected from all the peripheral servers in its own reporting database.
 This gives you easy access to data from all clients under management.
 
-{product1} provides some pre-configured reports that you can leverage for a variety of tasks, such as taking inventory of subscribed systems, users, and organizations.
+{product1} provides some preconfigured reports that you can leverage for a variety of tasks, such as taking inventory of subscribed systems, users, and organizations.
 You can also use an external reporting tool to create fully customized reports.
 
 [TIP]
