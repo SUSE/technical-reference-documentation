@@ -107,7 +107,18 @@ Before we dig into the specifics of interacting with the Rancher API server, let
 
 4. *Web Browser*: You'll need access to a web browser that has network access the Rancher Prime Server user interface.
 
-4. *Rancher Prime Server*: Ensure you have access to an instance of the Rancher Prime server. This also be installed in a data-center environment, on a cloud instance, or Virtual Machine. Often, installing the Rancher Prime server on a public cloud instance with a publicly routable IP address provides the easiest access to the server.
+5. *Rancher Prime Server*: Ensure you have access to an instance of the Rancher Prime server. This also be installed in a data-center environment, on a cloud instance, or Virtual Machine. Often, installing the Rancher Prime server on a public cloud instance with a publicly routable IP address provides the easiest access to the server.
+
+6. *Rancher Prime Server Bearer Token*: The captured API calls will use the temporary bearer token of the Rancher user that is logged into the user interface, which will expire after a set amount of time. It is recommended to create a longer-lasting bearer token using the following instructions:
+- Log into the Rancher user interface as a user with sufficient privileges to perform the required API calls
+- Click on the User icon in the top right of the screen, then select `Account & API Keys`
+- Click `Create API Key`
+- Provide a description such as `Rancher automation through curl API calls`
+- Keep `Scope` as "No Scope"
+- Set `Automatically expire` to a value that meets your organization's security needs. For the purposes of this paper, selecting `A month from now` will work fine
+- Click `Create`
+- Be sure to keep a copy of the "Bearer Token" someplace safe for future use. It will never be viewable again in the Rancher UI
+`token-4ws6s:bmmbfk85wgw7wgbgvb8xbzdpbfprn54sz8rdjjvvj996pm8lnj2gk5`
 
 == Technical Overview
 
@@ -124,17 +135,19 @@ Here's a breakdown of the key components:
 
 * `URL`: This is the API endpoint you want to access. It can be an HTTP or HTTPS URL specific to the Rancher Prime API server.
 
+* In the next section we will capture the curl command through the Rancher Prime server user interface. This captured command will include an extensive group of options. Many of them are specific to the web browser. They can be left in for `curl` command operations, or removed for cleaner commands.
+
 == Demonstration
 
-Let's put theory into practice by making a sample request to the Rancher Prime API server. In this example, we'll retrieve information about clusters. We'll also learn how to capture the Network XHR output using a web browser's "Inspect" function to use with `curl` commands.
+Let's put theory into practice by capturing the API call for creating a sample request to the Rancher Prime API server. In this example, we'll retrieve information about clusters. We'll also learn how to capture the Network XHR output using a web browser's "Inspect" function to use with `curl` commands.
 
-1. Open your web browser (e.g., Google Chrome, Mozilla Firefox).
+1. Open your web browser (Google Chrome seems to format the `curl` commands better than most browsers).
 
 2. Navigate to the Rancher Prime web interface and log in.
 
 3. Once logged in, open the browser's developer tools by pressing `F12` or right-clicking on the page and selecting "Inspect" from the context menu.
 
-4. In the developer tools, go to the "Network" tab.
+4. In the developer tools (top pane), go to the "Network" tab.
 
 5. Now, perform the action in the Rancher Prime interface that triggers the API request you want to capture. For example, if you want to fetch cluster information, navigate to the clusters page within Rancher Prime.
 
