@@ -93,19 +93,21 @@ Fortunately, every bit of the Rancher UI functionality is available through dire
 
 The intended audience for this paper is anyone who is new to the art of constructing these API calls. This paper will only reference the most readily available tools. Very likely these methods will be less efficient for experienced developers, but hopefully will serve as a starting point for a much richer, wider journey in interacting with publicly available API services.
 
-Public, or simply widely accessible, APIs (Application Programming Interfaces) open up a world of retrieving data and automating tasks that simply cannot be made available through normal command line or graphical interfaces. They allow us to access and interact with a huge number of web services in ways that we define ourselves. In this guide, we'll explore how to capture API calls, reformat them to our needs, and run them against the Rancher Prime API server using Linux `curl` commands, an essential skill for any developer or system administrator.
+Public, or simply widely accessible, APIs (Application Programming Interfaces) open up a world of retrieving data and automating tasks that simply cannot be made available through normal command line or graphical interfaces. They allow us to access and interact with a huge number of web services in ways that we can define ourselves. In this guide, we'll explore how to capture API calls, reformat them for our needs, and run them against the Rancher Prime API server using Linux `curl` commands. 
 
 == Prerequisites
 
-Before we dive into the world of API interactions, let's ensure you have everything you need:
+Before we dig into the specifics of interacting with the Rancher API server, let's ensure you have everything you need:
 
-1. *Linux Environment*: This guide assumes you are using a Linux-based operating system. You can use a Linux distribution like Ubuntu, CentOS, or even a Linux subsystem on Windows.
+1. *Linux Environment*: This guide assumes you have access to a Linux-based operating system. This can be a cloud instance, Virtual Machine, or even the Cygwin (https://www.cygwin.com) command line for Windows. This environment must have network to the Rancher Prime server instance.
 
-2. *Terminal*: You'll need a terminal application for running `curl` commands. Most Linux distributions come with a terminal pre-installed.
+2. *Command Line*: You'll need to be able to run Linux commands. This can be on a Linux console or terminal application.
 
-3. *`curl` Installed*: Check if `curl` is already installed on your system by running `curl --version` in your terminal. If not, you can install it using your system's package manager (e.g., `apt`, `yum`, or `brew`).
+3. *`curl` Installed*: Ensure the `curl` command is installed in your Linux command line environment by running `curl --version` in your console or terminal. If not, install it using your system's package manager.
 
-4. *Rancher Prime API Server*: Ensure you have access to the Rancher Prime API server and the necessary authentication credentials.
+4. *Web Browser*: You'll need access to a web browser that has network access the Rancher Prime Server user interface.
+
+4. *Rancher Prime Server*: Ensure you have access to an instance of the Rancher Prime server. This also be installed in a data-center environment, on a cloud instance, or Virtual Machine. Often, installing the Rancher Prime server on a public cloud instance with a publicly routable IP address provides the easiest access to the server.
 
 == Technical Overview
 
