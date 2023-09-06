@@ -10,22 +10,21 @@
 # Display banner
 ##
 echo
-echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
-echo "= Set up workspace for new TRD getting started guide      ="
-echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
+echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
+echo "= Set up workspace for new TRD getting started guide        ="
+echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo
-echo " This script will prompt you for information about the"
-echo "   solution and its components, then use your responses"
-echo "   to name the files and directories required for your"
-echo "   guide."
+echo " This script will prompt you for information about your"
+echo " guide, then use your responses to create the directories"
+echo " and template files for your guide"
 echo
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "- Before proceeding make sure you have:"
-echo "- 1. created a local branch: \`git branch myproject\`"
-echo "- 2. checked out your new branch: \`git checkout myproject\`"
-echo "- 3. changed to the 'kubernetes/start' or"
-echo "-    'linux/start' directory (as appropriate)"
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "  - Before proceeding make sure you have:"
+echo "  - 1. created a local branch: \`git branch myproject\`"
+echo "  - 2. checked out your new branch: \`git checkout myproject\`"
+echo "  - 3. changed to the 'kubernetes/start' or"
+echo "  -    'linux/start' directory (as appropriate)"
+echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
 echo "Are you ready to proceed?"
 read -p "Press ENTER to continue or CTRL-C to cancel."
@@ -52,10 +51,12 @@ documentbase=""
 # Verify current branch is not 'main'
 if [[ "${currentbranch}" == "main" ]]; then
   echo
-  echo "Be sure to work in a branch other than 'main'."
-  echo
-  echo "Create a branch for your project and check it out,"
-  echo "  then re-run this script."
+  echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+  echo "  - Be sure to work in a branch other than 'main'."
+  echo "  -"
+  echo "  - Create a branch for your project and check it out,"
+  echo "  - then re-run this script."
+  echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo
   exit 1
 fi
@@ -64,12 +65,18 @@ fi
 # Verify present working directory is correct for a getting started guide
 if [[ ! $PWD =~ kubernetes/start$ ]] && [[ ! $PWD =~ linux/start$ ]]; then
   echo
-  echo "Your current working directory is:"
-  echo "  '$PWD'"
-  echo "Make sure you change to the 'kubernetes/start' or 'linux/start'"
-  echo "  subdirectory, then execute this script again."
+  echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+  echo "  - Your current working directory is:"
+  echo "  - '$PWD'"
+  echo "  -"
+  echo "  - Make sure you change to the 'kubernetes/start' or"
+  echo "  - 'linux/start' subdirectory, then execute this"
+  echo "  - script again."
+  echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo
   exit 2
+else
+  category=$(dirname $PWD)
 fi
 
 
@@ -80,15 +87,15 @@ fi
 
 echo
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo " Gathering some information"
+echo "- Gathering some information"
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo
 
 
 # get primary SUSE product
-echo "    Please enter the primary SUSE product name"
-echo "    (e.g., 'rancher', 'neuvector', 'sles', 'slemicro', 'suma', etc.)"
-while read -p "Primary SUSE product name : " response
+echo "Please enter the primary SUSE product name"
+echo "(e.g., 'rancher', 'neuvector', 'sles', 'slemicro', 'suma', etc.)"
+while read -p ">> Primary SUSE product name : " response
 do
   suseprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
   # validate SUSE product
@@ -100,29 +107,47 @@ do
       break
     ;;
     'q' | 'quit')
-      echo "Quitting ... nothing done."
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+      echo "  - Quitting ... nothing done."
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
       exit 3
     ;;
     *)
-      echo "Invalid input.  Please try again or enter 'q' to quit."
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+      echo "  - Invalid input."
+      echo "  - Valid options include:"
+      echo "  -   sles, slehpc, slemicro, suma,"
+      echo "  -   rancher, rke2, rke, k3s, longhorn,"
+      echo "  -   neuvector, harvester"
+      echo "  - Please try again or press CTRL-C to quit."
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     ;;
   esac
 done
 
 # get Name of the Primary Partner
 echo
-echo "    Please enter the name of the primary partner or project"
-echo "      contributing a component to this solution."
-echo "    If you need it identify multiple partners or projects,"
-echo "      this can be done manually after running this script."
-read -p "Primary partner or project : " response
-partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
+echo "Please enter the name of the primary partner."
+echo "Multiple partners and partner products can be featured"
+echo "in a guide, but one should be selected as primary."
+while read -p ">> Name of primary partner or project : " response
+do
+  partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
+  if [ -n "$partnername" ]; then
+    break
+  else
+    echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+    echo "  - Invalid input."
+    echo "  - Partner name cannot be blank."
+    echo "  - Please try again or press CTRL-C to quit."
+    echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+  fi
+done
 
 
 # get Name of the Primary Partner's product
-echo "    Please enter the primary partner's product name."
-echo "    Avoid using spaces or punctuation of any kind."
-read -p "Primary partner's product name : " response
+echo "Please enter the primary partner's product name."
+read -p ">> Primary partner's product name : " response
 if [ -n "$response" ]; then
   partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )"
 else
@@ -132,13 +157,13 @@ fi
 
 # get Use Case or other text
 echo
-echo "    Sometimes a solution with the same components can address"
-echo "      more than one use case."
-echo "    If you need to distinguish this guide from an existing one,"
-echo "      you can provide up to 20 characters here that will be added"
-echo "      to the directory and file names."
-echo "    In most cases, you should leave this blank by just pressing ENTER."
-read -p "Distinctive text (or ENTER) : " response
+echo "Sometimes a solution with the same components can address"
+echo "more than one use case."
+echo "If you need to distinguish this guide from an existing one,"
+echo "you can provide up to 20 characters here that will be added"
+echo "to the file names."
+echo "In most cases, you should leave this blank by just pressing ENTER."
+read -p ">> Distinctive text : " response
 if [ -n "$response" ]; then
   usecase="_$( echo ${response} | tr '[:upper:]' '[:lower:]' | tr ' ' '-' )"
 else
@@ -158,24 +183,24 @@ documentbase="gs_${suseprod}_${partnername}${partnerprod}${usecase}"
 ##
 
 echo
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "- Getting ready to create the following structure:"
-echo "-"
-echo "-   ${category}"
-echo "-   └── start"
-echo "-       └── ${partnername}"
-echo "-           ├── DC-${documentbase}"
-echo "-           ├── adoc"
-echo "-           │   ├── ${documentbase}.adoc"
-echo "-           │   ├── ${documentbase}-docinfo.xml"
-echo "-           ├── images -> media"
-echo "-           └── media"
-echo "-               └── src"
-echo "-                   ├── png"
-echo "-                   └── svg"
-echo "-"
-echo "- Note: Several symbolic links will also be created."
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "  - Preparing to create the following structure:"
+echo "  -"
+echo "  -   ${category}"
+echo "  -   └── start"
+echo "  -       └── ${partnername}"
+echo "  -           ├── DC-${documentbase}"
+echo "  -           ├── adoc"
+echo "  -           │   ├── ${documentbase}.adoc"
+echo "  -           │   ├── ${documentbase}-docinfo.xml"
+echo "  -           ├── images -> media"
+echo "  -           └── media"
+echo "  -               └── src"
+echo "  -                   ├── png"
+echo "  -                   └── svg"
+echo "  -"
+echo "  - NOTE: Several symbolic links will also be created."
+echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
 
 
@@ -183,7 +208,7 @@ echo
 # confirm user is ready to proceed
 ##
 
-read -p "Press ENTER to create document structure or CTRL-C to cancel."
+read -p ">> Press ENTER to create document structure or CTRL-C to cancel."
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -199,9 +224,15 @@ if [ ! -f "DC-${documentbase}" ]; then
   cp -n ${templatesroot}/_DC-file DC-${documentbase}
 else
   echo
-  echo "'DC-${documentbase}' could not be created in '${partnername}'."
-  echo "Make sure 'DC-${documentbase}' does not already exist."
-  echo "If it does, consider using a different name."
+  echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+  echo "  - 'DC-${documentbase}' could not be created in"
+  echo "  - '${partnername}'."
+  echo "  -"
+  echo "  - Make sure that"
+  echo "  - 'DC-${documentbase}'"
+  echo "  - does not already exist."
+  echo "  - If it does, re-run this script with different input."
+  echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo
   exit 4
 fi
@@ -252,12 +283,12 @@ cd ..
 # display closing banner
 ##
 echo
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "- Your new workspace has been set up."
-echo "-"
-echo "- Access your workspace in:"
-echo "-   ${category}/start/${partnername}"
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
+echo "= Your new workspace has been set up."
+echo "="
+echo "= Access your workspace in:"
+echo "=   ${category}/start/${partnername}"
+echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo
 
 
@@ -268,6 +299,7 @@ echo
 # - Terry Smith <terry.smith@suse.com>
 # - Bryan Gartner <bryan.gartner@suse.com>
 # Revisions:
+# - 20230906: Added more checks; clarified prompts
 # - 20221213: Removed underscore prefix from generated DC file
 # - 20220824: Migrated to common/bin; implemented run location test
 # - 20220729: Removed extraneous space; created action preview banner
