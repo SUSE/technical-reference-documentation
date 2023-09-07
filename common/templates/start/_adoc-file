@@ -2,7 +2,7 @@
 include::./common_docinfo_vars.adoc[]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// General comments
+// GENERAL COMMENTS
 //   - See the SUSE TRD Contributors Guide for detailed guidance:
 //     https://documentation.suse.com/trd/contributors/single-html/suse-trd_contrib-guide/
 //   - Keep in mind that this is a "getting started" guide.
@@ -13,7 +13,7 @@ include::./common_docinfo_vars.adoc[]
 
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Document attributes and variables
+// DOCUMENT ATTRIBUTES AND VARIABLES
 //
 // NOTES:
 // 1. Define and use document attributes or variables in this file.
@@ -23,7 +23,8 @@ include::./common_docinfo_vars.adoc[]
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// organization - do NOT modify
+// ORGANIZATION
+//   Do NOT modify this section.
 // -
 :trd: Technical Reference Documentation
 :type: Getting Started
@@ -31,7 +32,7 @@ include::./common_docinfo_vars.adoc[]
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// document title and subtitle
+// DOCUMENT TITLE AND SUBTITLE
 //   Provide concise but descriptive title and subtitle.
 // -
 :title: (<75 characters) Concisely identify the guide (e.g., "Kubeflow with Rancher")
@@ -39,19 +40,26 @@ include::./common_docinfo_vars.adoc[]
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// technical components
-//   Identify the technical components used in the guide.
-//   Follow the pattern for additional components.
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Define variables for various product information, such as
+//     product names (long and short), versions, websites, etc.
+//   For additional components, replicate the pattern (e.g.,
+//     scomp2, scomp3-version, pcomp2-website, etc.)
+//   Remove or comment out unneeded variables.
 // -
-// SUSE components
+// SUSE Components
+// -
 :scomp1-provider: SUSE
 :scomp1: Primary SUSE product short name (e.g., SLES, Rancher Prime)
 :scomp1-full: Primary SUSE product full name (e.g., SUSE Linux Enterprise Server, Rancher Prime by SUSE)
 :scomp1-version: Primary SUSE product relevant version (e.g., '15', '15SP5', '2.7') or versions (e.g., '15SP4, 15SP5', '15SP3+', '2.6+', '2.x')
-:scomp1-website: Primary SUSE product URL
+:scomp1-website: Primary SUSE product website URL
 :scomp1-docs: Primary SUSE product documentation URL
 
-// Partner/Project components
+// -
+// Partner/Project Components
+// -
 :pcomp1-provider: Partner/Project name
 :pcomp1: Partner/Project component short name
 :pcomp1-full: Partner/Project component full name
@@ -61,8 +69,9 @@ include::./common_docinfo_vars.adoc[]
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// Descriptions
-//   Provide description to identify the guide by its purpose, use case, value.
+// DOCUMENT DESCRIPTIONS
+//   Provide information to identify the guide by its purpose,
+//     use case, value.
 // -
 :usecase: (<55 characters) (e.g., Database-as-a-Service, edge analytics in healthcare, Kubernetes-native object storage)
 
@@ -76,13 +85,13 @@ include::./common_docinfo_vars.adoc[]
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// contributors
+// CONTRIBUTORS
 //   Specify information about authors, editors, and other contributors
 //     here.
 //   Follow the pattern to provide fist name, surname, job title, and
 //     organization name for each contributor.
-//   To list additional authors or others on the cover page, you must
-//     edit the docinfo.xml file as well.
+//   NOTE: To list additional authors or others on the cover page,
+//         you must edit the docinfo.xml file as well.
 // -
 :author1-firstname: first (given) name
 :author1-surname: surname
@@ -95,7 +104,7 @@ include::./common_docinfo_vars.adoc[]
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// miscellaneous
+// MISCELLANEOUS
 //   Define any additional variables here for use within the document.
 // -
 
@@ -112,7 +121,7 @@ include::./common_docinfo_vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a motivation for the document in 2-4 sentences to identify:
 //   - what the document is about
-//   - why it may be of interest to the reader (e.g., a use case)
+//   - why it may be of interest to the reader
 //   - what products are being highlighted
 // Include an approved SUSE | Partner logo lock-up if possible
 // Include any additional, relevant details
@@ -121,13 +130,15 @@ include::./common_docinfo_vars.adoc[]
 
 
 
+
 === Scope
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Specify what this guide covers in no more than 2 sentences.
+//   E.g., "You will learn how to ..."
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will help you take the first steps to ...
+
 
 
 
@@ -140,7 +151,7 @@ This guide will help you take the first steps to ...
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for ...
+
 
 
 
@@ -153,6 +164,7 @@ This document is intended for ...
 //   individuals:
 //   * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
 //   * {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
+// NOTE: If there are none, comment out this section.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
@@ -164,6 +176,7 @@ This document is intended for ...
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Identify minimum requirements (prerequisites) the reader
 // would need in order to follow the steps of this guide.
+// - Use an unordered list.
 // - Link to existing resources whenever possible.
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -184,11 +197,11 @@ To complete the steps illustrated in this guide, you need the following resource
 // in this guide.
 // - Identify components
 // - Describe how the components fit together
-//   Leverage diagrams as appropriate, including (but not limited to):
+// - Leverage diagrams as appropriate, including (but not limited to):
 //   - component architecture
 //   - data flow diagram
 //   - workflow diagram
-//  - Summarize the major steps the reader will perform
+// - Summarize the major steps the reader will perform
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
@@ -200,29 +213,28 @@ To complete the steps illustrated in this guide, you need the following resource
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Detail the steps of the installation procedure.
-// The reader should be able to copy and paste commands to
-// a local environment or follow along locally with screenshots.
-// Be sure tp include verifications that the reader can use to
-// validate that major steps were performed correctly.
+// - The reader should be able to copy and paste commands to
+//   a local environment or follow along locally with screenshots.
+// - Be sure tp include verifications that the reader can use to
+//   validate that major steps were performed correctly.
 //
-// Leverage:
-// - Ordered lists
-// - Code blocks
-// - Screenshots
-// - Admonitions
+// - Make use of:
+//   - Ordered lists
+//   - Code blocks
+//   - Screenshots
+//   - Admonitions
 //
-// If multiple installation methods are to be detailed, then
-// - Create a summary list here
-// - Detail each method in its own subsection.
+// - If multiple installation methods are to be detailed, then
+//   - Create a summary list here.
+//   - Detail each method in a subsection.
 //
-// NOTE: For solutions involving SUSE Rancher, it is preferred
-//       to highlight installation through the Rancher Apps Catalog
-//       with appropriate screenshots and SUSE branding.
-//       Alternatively or additionally, installation via the
-//       command line can be documented.
+//   NOTE: For solutions involving SUSE Rancher, it is preferred
+//         to highlight installation through the Rancher Apps Catalog
+//         with appropriate screenshots and SUSE branding.
+//         Alternatively or additionally, installation via the
+//         command line can be documented.
 //
-// Complex installations may be broken into one or more sections
-// or subsections.
+// - Complex installations may be broken into one or more subsections.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -239,16 +251,15 @@ To complete the steps illustrated in this guide, you need the following resource
 // NOTE: This demonstration text could be used to script a
 //       demonstration video.
 //
-// Typical demonstration flow is:
-// 1. Outline the demonstration.
-// 2. Prepare the environment.
-//    This should be minimal, such as downloading some data to use.
-// 3. Perform the demonstration.
-//    Do not overuse screenshots.
-// 4. Clean up the environment.
+// - Typical demonstration flow is:
+//   1. Outline the demonstration.
+//   2. Prepare the environment.
+//      This should be minimal, such as downloading some data to use.
+//   3. Perform the demonstration.
+//   4. Do not overuse screenshots.
+//   5. Clean up the environment.
 //
-// As with Installation, leverage ordered lists, code blocks,
-// admonitions, and screenshots.
+// - Make use of ordered lists, code blocks, admonitions, and screenshots.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -260,12 +271,11 @@ To complete the steps illustrated in this guide, you need the following resource
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Summarize:
-// - Motivation (1 sentence)
+// - Motivation for the guide (1 sentence)
 // - What was covered (1-2 sentences)
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you learned ...
 
 
 
