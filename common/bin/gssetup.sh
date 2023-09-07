@@ -34,7 +34,8 @@ read -p "Press ENTER to continue or CTRL-C to cancel."
 # Initialize variables
 ##
 currentbranch="$(git branch --show-current)"
-templatesroot="../../../common/templates/start"
+commonroot="../../common"
+templatesroot="${commonroot}/templates/start"
 category=""
 doctype=""
 suseprod=""
@@ -69,7 +70,7 @@ if [[ ! $PWD =~ kubernetes/start$ ]] && [[ ! $PWD =~ linux/start$ ]]; then
   echo "  - Your current working directory is:"
   echo "  - '$PWD'"
   echo "  -"
-  echo "  - Make sure you change to the 'kubernetes/start' or"
+  echo "  - Be sure you change to the 'kubernetes/start' or"
   echo "  - 'linux/start' subdirectory, then execute this"
   echo "  - script again."
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
@@ -209,6 +210,7 @@ echo
 ##
 
 read -p ">> Press ENTER to create document structure or CTRL-C to cancel."
+echo
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -217,11 +219,10 @@ read -p ">> Press ENTER to create document structure or CTRL-C to cancel."
 
 # create primary directory if it does not already exist
 [ -d ${partnername} ] || mkdir ${partnername}
-cd ${partnername}
 
 # create DC- file
-if [ ! -f "DC-${documentbase}" ]; then
-  cp -n ${templatesroot}/_DC-file DC-${documentbase}
+if [ ! -f "${partnername}/DC-${documentbase}" ]; then
+  cp -n ${templatesroot}/_DC-file ${partnername}/DC-${documentbase}
 else
   echo
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
@@ -238,46 +239,41 @@ else
 fi
 
 # update adoc reference
-[ -f "DC-${documentbase}" ] && sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" DC-${documentbase}
+[ -f "${partnername}/DC-${documentbase}" ] && sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ${partnername}/DC-${documentbase}
 
 # create adoc directory if it does not already exist
-[ -d adoc ] || mkdir -p adoc
+[ -d ${partnername}/adoc ] || mkdir -p ${partnername}/adoc
 
 # create symlinks to common files
-[ -L common_gfdl1.2_i.adoc ] || \
-  ln -s ../../../../common/adoc/common_gfdl1.2_i.adoc adoc/
-[ -L common_sbp_legal_notice.adoc ] || \
-  ln -s ../../../../common/adoc/common_sbp_legal_notice.adoc adoc/
-[ -L common_trd_legal_notice.adoc ] || \
-  ln -s ../../../../common/adoc/common_trd_legal_notice.adoc adoc/
-[ -L common_docinfo_vars.adoc ] || \
-  ln -s ../../../../common/adoc/common_docinfo_vars.adoc adoc/
+[ -L ${partnername}/adoc/common_gfdl1.2_i.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_gfdl1.2_i.adoc ${partnername}/adoc/
+[ -L ${partnername}/adoc/common_sbp_legal_notice.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_sbp_legal_notice.adoc ${partnername}/adoc/
+[ -L ${partnername}/adoc/common_trd_legal_notice.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_trd_legal_notice.adoc ${partnername}/adoc/
+[ -L ${partnername}/adoc/common_docinfo_vars.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_docinfo_vars.adoc ${partnername}/adoc/
 
 # create .adoc file
-[ -f "adoc/${documentbase}.adoc" ] || \
+[ -f "${partnername}/adoc/${documentbase}.adoc" ] || \
   cp ${templatesroot}/_adoc-file \
-    adoc/${documentbase}.adoc
+     ${partnername}/adoc/${documentbase}.adoc
 
 # create -docinfo.xml file
-[ -f "adoc/${documentbase}-docinfo.xml" ] || \
+[ -f "${partnername}/adoc/${documentbase}-docinfo.xml" ] || \
   cp ${templatesroot}/_docinfo-file \
-    adoc/${documentbase}-docinfo.xml
+     ${partnername}/adoc/${documentbase}-docinfo.xml
 
 # create media directory structure
-#cd ..
-[ -d media/src/png ] || mkdir -p media/src/png
-[ -d media/src/svg ] || mkdir -p media/src/svg
-#cd media/src/svg
+[ -d ${partnername}/media/src/png ] || mkdir -p ${partnername}/media/src/png
+[ -d ${partnername}/media/src/svg ] || mkdir -p ${partnername}/media/src/svg
 # create symlink to logo
-[ -L media/src/svg/suse.svg ] || \
-  ln -s ../../../../../../common/images/src/svg/suse.svg media/src/svg/
-#cd ../../..
+[ -L ${partnername}/media/src/svg/suse.svg ] || \
+  ln -sr ${commonroot}/images/src/svg/suse.svg ${partnername}/media/src/svg/
 # create images symlink
-[ -L images ] || \
-  ln -s media images
+[ -L ${partnername}/images ] || \
+  ln -sr ${partnername}/media ${partnername}/images
 
-# return to original directory
-cd ..
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # display closing banner
@@ -299,7 +295,7 @@ echo
 # - Terry Smith <terry.smith@suse.com>
 # - Bryan Gartner <bryan.gartner@suse.com>
 # Revisions:
-# - 20230906: Added more checks; clarified prompts
+# - 20230907: Simplified paths; added more checks; clarified prompts
 # - 20221213: Removed underscore prefix from generated DC file
 # - 20220824: Migrated to common/bin; implemented run location test
 # - 20220729: Removed extraneous space; created action preview banner
