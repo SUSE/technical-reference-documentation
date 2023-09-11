@@ -77,7 +77,9 @@ if [[ ! $PWD =~ kubernetes/start$ ]] && [[ ! $PWD =~ linux/start$ ]]; then
   echo
   exit 2
 else
-  category=$(dirname $PWD)
+  # Set category from the path (kubernetes or linux)
+  # category=$(dirname $PWD)
+  category=${PWD%/*}
 fi
 
 
@@ -101,7 +103,7 @@ do
   suseprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
   # validate SUSE product
   case $suseprod in
-    'sles' | 'slehpc' | 'slemicro' | 'suma')
+    'sles' | 'slessap' | 'slehpc' | 'slemicro' | 'slelp' | 'sleha' | 'suma')
       break
     ;;
     'rancher' | 'rke' | 'rke2' | 'k3s' | 'longhorn' | 'neuvector' | 'harvester')
