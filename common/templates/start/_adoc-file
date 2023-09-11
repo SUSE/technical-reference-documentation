@@ -41,62 +41,104 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT TITLE AND SUBTITLE
 //   Provide concise but descriptive title and subtitle.
+//   title - (<75 characters) concisely identify the guide.
+//           (e.g.: "Kubeflow with Rancher")
+//   subititle - (<75 characters) expound on the title.
+//               (e.g., "Deploying Kubeflow onto an RKE2 Cluster with Rancher")
 // -
-:title: (<75 characters) Concisely identify the guide (e.g., "Kubeflow with Rancher")
-:subtitle: (<75 characters) Use for clarification (e.g., "Deploying Kubeflow onto an RKE2 Cluster with Rancher")
+:title: (<75 characters) Your Guide Title
+:subtitle: (<75 characters) Your Guide Subtitle
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TECHNICAL COMPONENTS
 //   Identify the technical components featured in the guide.
-//   Define variables for various product information, such as
-//     product names (long and short), versions, websites, etc.
-//   For additional components, replicate the pattern (e.g.,
-//     scomp2, scomp3-version, pcomp2-website, etc.)
-//   Remove or comment out unneeded variables.
+//   Use variables to store information about the solution components.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Variable names follow a simple pattern:
+//   - for SUSE components: scompX[-MODIFIER]
+//   - for partner/project components: pcompX[-MODIFIER]
+//   where:
+//   - X is an integer starting from 1 for the primary component,
+//     2 for a secondary component, and so on.
+//   - -MODIFIER is text that identifies the stored information.
+//   Some -MODIFIER values include:
+//   - EMPTY: If the modifier is missing, the variable contains
+//     a short name for the component (e.g., 'SLES', 'Rancher Prime')
+//   - -full: Long name of the component
+//     (e.g., 'SUSE Linux Enterprise Server', 'Rancher Prime by SUSE')
+//   - -provider: Name of company or project providing the component
+//     (e.g., 'SUSE', 'HPE', 'Kubeflow', 'Veeam')
+//   - -version: Relevant product version (e.g., '15', '15SP5', '2.7')
+//     or versions (e.g., '15SP4, 15SP5', '15SP3+', '2.6+', '2.x')
+//   - -website: Product website (e.g., https://www.suse.com/products/server/)
+//   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//
+//   You can create additional modifiers as needed.
+//  
 // -
 // SUSE Components
 // -
 :scomp1-provider: SUSE
-:scomp1: Primary SUSE product short name (e.g., SLES, Rancher Prime)
-:scomp1-full: Primary SUSE product full name (e.g., SUSE Linux Enterprise Server, Rancher Prime by SUSE)
-:scomp1-version: Primary SUSE product relevant version (e.g., '15', '15SP5', '2.7') or versions (e.g., '15SP4, 15SP5', '15SP3+', '2.6+', '2.x')
-:scomp1-website: Primary SUSE product website URL
-:scomp1-docs: Primary SUSE product documentation URL
+:scomp1: SUSE component 1 - short name
+:scomp1-full: SUSE component 1 - long name
+:scomp1-version: SUSE component 1 - relevant versions
+:scomp1-website: SUSE component 1 - product website URL
+:scomp1-docs: SUSE component 1 - product documentation URL
 
 // -
 // Partner/Project Components
 // -
-:pcomp1-provider: Partner/Project name
-:pcomp1: Partner/Project component short name
-:pcomp1-full: Partner/Project component full name
-:pcomp1-version: Partner/Project component version or versions
-:pcomp1-page: Partner/Project component website URL
-:pcomp1-docs: Partner/Project component documentation URL
+:pcomp1-provider: Partner/Project component 1 - provider name
+:pcomp1: Partner/Project component 1 - short name
+:pcomp1-full: Partner/Project component 1 - full name
+:pcomp1-version: Partner/Project component 1 - relevant versions
+:pcomp1-website: Partner/Project component 1 - product website URL
+:pcomp1-docs: Partner/Project component 1 - product documentation URL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT DESCRIPTIONS
-//   Provide information to identify the guide by its purpose,
-//     use case, value.
+//   Describe the guide by its purpose, use case, value.
+//
+// usecase: (<55 characters) key words or phrases that identify the
+//          use case of this guide
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) brief description of what this guide
+//              provides (e.g.: "Deploy Kubeflow with Rancher Primer")
+// description-short: (<55 characters) condensed description suitable for
+//                    social media (e.g.: "Kubeflow with Rancher")
+// executive-summary: (<300 characters) brief summary of the guide that
+//                    appears near the beginning of the rendered document
+//                    (e.g.: "Kubeflow simplifies deployment of machine
+//                            learning (ML) workflows on Kubernetes clusters.
+//                            This document provides step-by-step guidance
+//                            for deploying Kubeflow on an RKE2 cluster with
+//                            Rancher."
+//
 // -
-:usecase: (<55 characters) (e.g., Database-as-a-Service, edge analytics in healthcare, Kubernetes-native object storage)
+:usecase: (<55 characters) use case
 
-:executive-summary: Give a brief summary of what this document provides (e.g., "Streamline deployment and management of multi-tenant Kubernetes landscapes with {pcomp1-full} and {scomp1-full}.")
+:description: (<150 characters) description
 
-:description: (<150 characters) (e.g., "Deploy Kubeflow with Rancher Prime")
+:description-short: (<55 characters) social media description
 
-:description-short: (<55 characters) Give a much shorter description that might be useful for social media platforms
+:executive-summary: (<300 characters) brief summary
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // CONTRIBUTORS
-//   Specify information about authors, editors, and other contributors
-//     here.
-//   Follow the pattern to provide fist name, surname, job title, and
-//     organization name for each contributor.
+//   Specify information about authors, editors, and other
+//   contributors here.
+//   Follow the pattern to provide fist name, surname, job title,
+//   and organization name for each contributor.
 //   NOTE: To list additional authors or others on the cover page,
 //         you must edit the docinfo.xml file as well.
 // -
@@ -134,7 +176,7 @@ include::./common_docinfo_vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+Your introduction and motivation for this guide
 
 
 
@@ -145,8 +187,7 @@ include::./common_docinfo_vars.adoc[]
 //   E.g., "You will learn how to ..."
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
-
+The scope for your guide
 
 
 === Audience
@@ -158,7 +199,7 @@ include::./common_docinfo_vars.adoc[]
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+The intended audience for your guide
 
 
 
@@ -174,7 +215,7 @@ include::./common_docinfo_vars.adoc[]
 // NOTE: If there are none, comment out this section.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+Any acknowledgements you would like to make
 
 
 
@@ -211,7 +252,7 @@ To complete the steps illustrated in this guide, you need the following resource
 // - Summarize the major steps the reader will perform
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+An overview of this guide
 
 
 
@@ -245,7 +286,7 @@ To complete the steps illustrated in this guide, you need the following resource
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+Installation procedures
 
 
 
@@ -271,6 +312,7 @@ To complete the steps illustrated in this guide, you need the following resource
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+Demonstration or validation procedures
 
 
 
@@ -283,7 +325,7 @@ To complete the steps illustrated in this guide, you need the following resource
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+Summary of this guide
 
 
 
