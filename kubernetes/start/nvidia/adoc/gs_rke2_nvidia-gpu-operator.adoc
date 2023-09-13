@@ -165,6 +165,27 @@ Before embarking on the procedures outlined in this guide, it is imperative to e
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+This section offers a high-level explanation of the steps required to create OCI compliant container images with the Nvidia GPU Operator on the SUSE Linux Enterprise 15 SP5 Base Container Image.
+Step 1: Repository Cloning
+
+Begin by cloning the Nvidia GPU operator repository. This step ensures that you have the necessary source code to build the container image.
+Step 2: Select the Appropriate Branch
+
+Navigate to the 'sle15' branch within the cloned repository. This step ensures that you are working with the correct branch containing the relevant configurations for SUSE Linux Enterprise 15 SP5.
+Step 3: Build OCI Compliant Container Images
+
+Build OCI compliant container images with the Nvidia GPU Operator. This step is crucial for creating container images that include the Nvidia GPU Operator, making it accessible for use within your Kubernetes cluster.
+Step 4: Kubernetes Cluster Preparation
+
+Ensure your Kubernetes cluster, preferably RKE2, is configured with Nvidia GPU support and the necessary Nvidia drivers installed on the cluster nodes. This preparation step ensures that your cluster is ready to accommodate GPU-accelerated workloads.
+Step 5: Deployment in Kubernetes
+
+Craft a Kubernetes Deployment YAML file specifying the utilization of the Nvidia GPU Operator OCI compliant container image. Deploy this YAML to your Kubernetes cluster. This step enables you to run applications and workloads that can leverage GPU resources effectively.
+Step 6: Validation
+
+Access the active pod to validate GPU functionality. This validation step is crucial for ensuring that GPU resources are accessible within your Kubernetes pods and that GPU-accelerated tasks can be executed successfully.
+
+By following these steps, you can create OCI compliant container images that integrate the Nvidia GPU Operator and deploy them within a Kubernetes cluster, enabling GPU-accelerated workloads with confidence. Detailed instructions for each step are provided in the full guide.
 
 
 
