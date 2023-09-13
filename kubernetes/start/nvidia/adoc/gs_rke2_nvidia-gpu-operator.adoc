@@ -95,7 +95,7 @@ include::./common_docinfo_vars.adoc[]
 // This is could be the same as the executive summary.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+This professional technical guide provides comprehensive instructions for the creation of OCI compliant container images based on the SUSE Linux Enterprise 15 SP5 Base Container Image. The primary objective is to seamlessly integrate the Nvidia GPU operator, simplifying GPU management within Kubernetes clusters for GPU-intensive workloads. The choice of SUSE's SLE 15 SP5 Base Container Image is motivated by the unparalleled security certifications and enhanced supportability it offers, particularly when operating heterogeneous software stacks.
 
 === Motivation
 
@@ -108,7 +108,9 @@ include::./common_docinfo_vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+The integration of the Nvidia GPU operator with the SUSE Linux Enterprise 15 SP5 Base Container Image is motivated by a commitment to providing a secure, certified, and supportable foundation for GPU-accelerated workloads. SUSE's SLE 15 SP5 Base Container Image is distinguished by a myriad of security certifications, including Common Criteria, FIPS, and EAL, making it a trusted choice for organizations with stringent security requirements.
 
+Furthermore, the supportability offered by SUSE ensures that users can confidently run diverse and complex software stacks on top of the SLE 15 SP5 Base Container Image, including the Nvidia GPU operator. This support extends to the seamless integration of GPU resources within Kubernetes clusters, fostering stability and reliability in GPU-driven applications.
 
 === Scope
 
@@ -116,8 +118,9 @@ include::./common_docinfo_vars.adoc[]
 // Specify what this guide covers in no more than 2 sentences.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will help you take the first steps to ...
+//This guide will help you take the first steps to ...
 
+This guide is dedicated to the meticulous process of crafting OCI compliant container images that incorporate the Nvidia GPU operator within the framework of the SUSE Linux Enterprise 15 SP5 Base Container Image. Additionally, it provides instructions for deploying these container images within a Kubernetes cluster, specifically RKE2.
 
 === Audience
 
@@ -128,8 +131,9 @@ This guide will help you take the first steps to ...
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended for ...
+// This document is intended for ...
 
+This guide caters to an audience comprising seasoned system administrators, proficient DevOps practitioners, and adept developers. It assumes a foundational understanding of Docker, Kubernetes, and Nvidia GPU technologies, rendering it suitable for individuals seeking to leverage GPU resources within their containerized application ecosystems.
 
 == Prerequisites
 
@@ -140,7 +144,12 @@ This document is intended for ...
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Before embarking on the procedures outlined in this guide, it is imperative to ensure the fulfillment of the following prerequisites:
 
+   1. Access to a SUSE Linux Enterprise 15 SP5 system.
+   1. An operational Docker environment on the host system.
+   1. Establishment and availability of a Kubernetes cluster, with a particular focus on RKE2.
+   1. A basic familiarity with Docker, Kubernetes, and Nvidia GPU concepts.
 
 
 == Technical overview
@@ -189,11 +198,77 @@ This document is intended for ...
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Installation
+
+    Clone the Nvidia GPU operator repository by executing the following command:
+
+    bash
+
+git clone https://gitlab.com/rdoxenham/driver.git
+
+Navigate to the 'sle15' branch within the cloned repository:
+
+bash
+
+cd driver/sle15
+
+Proceed to build OCI compliant container images with the following command:
+
+bash
+
+docker build -t sle15-nvidia-operator .
+
+Confirm the successful creation of the OCI compliant container image by executing:
+
+bash
+
+    docker images
+
+    The listing should display the 'sle15-nvidia-operator' image.
+
+Deployment in Kubernetes (RKE2)
+
+    Ensure the Kubernetes cluster, preferably RKE2, is suitably configured with Nvidia GPU support and the essential Nvidia drivers installed on the cluster nodes.
+
+    Craft a Kubernetes Deployment YAML file, detailing the utilization of the Nvidia GPU operator OCI compliant container image, as exemplified below:
+
+    yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-gpu-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-gpu-app
+    spec:
+      containers:
+      - name: my-gpu-container
+        image: sle15-nvidia-operator
+        resources:
+          limits:
+            nvidia.com/gpu: 1  # Adjust GPU resource allocation as necessitated
+
+Deploy the articulated Deployment YAML to the Kubernetes cluster via the following command:
+
+bash
+
+kubectl apply -f my-gpu-app-deployment.yaml
+
+Ascertain the operational status of the deployment by issuing the command:
+
+bash
+
+kubectl get pods
+
+The resulting list should feature the 'my-gpu-app' pod in the 'Running' state.
 
 
 
-
-== Demonstration
+== Validation
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Illustrate functionality with a demonstration.
@@ -214,7 +289,14 @@ This document is intended for ...
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+1. Gain access to the active pod to conduct a comprehensive validation of GPU functionality:
 
+
+1. kubectl exec -it my-gpu-app-<pod-id> -- /bin/bash
+
+1. Within the pod's context, employ Nvidia tools such as 'nvidia-smi' to meticulously scrutinize GPU-related metrics and execute tasks necessitating GPU capabilities.
+
+1. Execute comprehensive tests of GPU-intensive workloads or applications within the pod to substantiate the unimpeded access and optimal utilization of GPU resources.
 
 
 
@@ -227,8 +309,17 @@ This document is intended for ...
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you learned ...
+// In this guide, you learned ...
 
+This guide has effectively steered the creation of OCI compliant container images rooted in the SUSE Linux Enterprise 15 SP5 Base Container Image, incorporating the Nvidia GPU operator. Furthermore, it has provided coherent instructions for the seamless deployment of these images within a Kubernetes cluster, specifically RKE2. The ensuing utilization of this integrated solution is aimed at affording containerized applications GPU-acceleration, thus enhancing computational performance and efficiency.
+
+The strategic choice of SUSE's SLE 15 SP5 Base Container Image as the foundation for this integration underscores the commitment to security, certifications, and supportability. Organizations with exacting security requirements will find solace in the numerous certifications such as Common Criteria, FIPS, and EAL. Additionally, the enhanced support for heterogeneous software stacks guarantees the reliability and stability of GPU-accelerated applications running on this foundation.
+
+This holistic approach to GPU management within containerized landscapes is poised to augment the capabilities of developers and system administrators alike, fostering innovation and operational excellence. For further insights and updates pertaining to the Nvidia GPU operator and its multifaceted functionalities, kindly refer to the official Nvidia documentation and the designated repository mentioned within this guide.
+
+A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably RKE2, that is provisioned with Nvidia GPU support and the requisite Nvidia drivers to fully harness GPU resources when deploying containers integrated with the aforementioned OCI compliant container images.
+
+For an exhaustive comprehension of advanced configurations and nuanced details, the consultative resources made available by SUSE, Docker, Nvidia, and RKE2 are strongly recommended.
 
 
 
