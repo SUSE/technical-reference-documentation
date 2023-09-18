@@ -164,6 +164,41 @@ Before embarking on the procedures outlined in this guide, it is imperative to e
 //   - workflow diagram
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+.Rough notes on process:
+* Clone the Nvidia repository:
+----
+git clone https://gitlab.com/nvidia/container-images/driver && cd driver/sle15
+----
+
+* Can find the latest Data Center Driver for Linux x64 version at https://www.nvidia.com/en-us/drivers/unix/, or https://www.nvidia.com/download/index.aspx
+** Copy the driver version number
+
+* Update the Dockerfile: 
+** Update `ARG CUDA_VERSION` to `12.1.1`
+** Update `FROM registry.suse.com/bci/golang` to version `1.18`
+
+* Set these variables:
+
+----
+REGISTRY=""		# E.g. REGISTRY="registry.susealliances.com"
+SLE15_SP_VERSION=""	# I.e. For SLE15 SP5, set to SP_VERSION="5"
+DRIVER_VERSION=""	# E.g. DRIVER_VERSION="535.104.05"
+DRIVER_TYPE=""		# I.e. "vgpu" or "passthrough"
+----
+
+* Build the container:
+----
+sudo podman build -t \
+${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
+  --build-arg SLES_VERSION="15.${SLE15_SP_VERSION}" \   
+  --build-arg DRIVER_TYPE="${DRIVER_TYPE}" \     
+  --build-arg DRIVER_ARCH="x86_64" \     
+  --build-arg DRIVER_VERSION="${DRIVER_VERSION}" \     
+  --build-arg CUDA_VERSION="12.1.1" \   
+  --build-arg PRIVATE_KEY=empty  \
+.
+
+----
 
 This section offers a high-level explanation of the steps required to create OCI compliant container images with the Nvidia GPU Operator on the SUSE Linux Enterprise 15 SP5 Base Container Image.
 Step 1: Repository Cloning
