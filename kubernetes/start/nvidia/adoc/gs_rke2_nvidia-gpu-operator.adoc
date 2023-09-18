@@ -177,16 +177,19 @@ git clone https://gitlab.com/nvidia/container-images/driver && cd driver/sle15
 ** Update `ARG CUDA_VERSION` to `12.1.1`
 ** Update `FROM registry.suse.com/bci/golang` to version `1.18`
 
+NOTE: When using a SLE15 build host that has a different Service Pack version that the SLE BCI container image to be used, the SUSE software repositories for the host will be used. This means that packages that are installed into the container image will match the Service Pack version of the host, not the BCI container image. Ensure build host Service Pack matches the BCI container image to avoid this situation.
+
 * Set these variables:
 
 ----
-REGISTRY=""		# E.g. REGISTRY="registry.susealliances.com"
+REGISTRY=""		# E.g. REGISTRY="local" or REGISTRY="registry.susealliances.com"
 SLE15_SP_VERSION=""	# I.e. For SLE15 SP5, set to SP_VERSION="5"
 DRIVER_VERSION=""	# E.g. DRIVER_VERSION="535.104.05"
 DRIVER_TYPE=""		# I.e. "vgpu" or "passthrough"
 ----
 
 * Build the container:
+
 ----
 sudo podman build -t \
 ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
@@ -197,7 +200,12 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
   --build-arg CUDA_VERSION="12.1.1" \   
   --build-arg PRIVATE_KEY=empty  \
 .
+----
 
+* Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
+
+----
+for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
 
 This section offers a high-level explanation of the steps required to create OCI compliant container images with the Nvidia GPU Operator on the SUSE Linux Enterprise 15 SP5 Base Container Image.
