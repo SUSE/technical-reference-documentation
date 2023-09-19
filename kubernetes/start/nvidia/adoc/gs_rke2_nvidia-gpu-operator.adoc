@@ -122,6 +122,8 @@ Furthermore, users can confidently run diverse and complex software stacks witho
 
 This guide is dedicated to the process of creating OCI compliant container images that incorporate the Nvidia GPU operator within the SUSE Linux Enterprise 15 SP5 Base Container Image. Additionally, it provides instructions for deploying these container images within a Kubernetes cluster, specifically RKE2.
 
+It is assumed that the Nvidia GPU(s) being used are Data Center class. It is beyond the scope of this document to integrate Consumer GPUs.
+
 === Audience
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -219,17 +221,53 @@ for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi $
 
 
 
-This section offers a high-level explanation of the steps required to create OCI compliant container images with the Nvidia GPU Operator on the SUSE Linux Enterprise 15 SP5 Base Container Image.
-Step 1: Repository Cloning
+This section offers a detailed explanation of the steps required to create OCI compliant container images with the Nvidia GPU Operator on the SUSE Linux Enterprise 15 SP5 Base Container Image.
 
-Begin by cloning the Nvidia GPU operator repository. This step ensures that you have the necessary source code to build the container image.
-Step 2: Select the Appropriate Branch
+Step 1: Clone the Nvidia GitLab repository and change to the `driver/sle15` directory:
 
-Navigate to the 'sle15' branch within the cloned repository. This step ensures that you are working with the correct branch containing the relevant configurations for SUSE Linux Enterprise 15 SP5.
-Step 3: Build OCI Compliant Container Images
+----
+git clone https://gitlab.com/nvidia/container-images/driver && cd driver/sle15
+----
 
-Build OCI compliant container images with the Nvidia GPU Operator. This step is crucial for creating container images that include the Nvidia GPU Operator, making it accessible for use within your Kubernetes cluster.
-Step 4: Kubernetes Cluster Preparation
+Step 2: Update the Dockerfile in that directory:
+* Update `ARG CUDA_VERSION` to version `12.1.1`
+* Update `FROM registry.suse.com/bci/golang` to version `1.18`
+
+Step 3: Find the latest "Data Center Driver for Linux x64" version for your GPU at https://www.nvidia.com/en-us/drivers/unix/, or https://www.nvidia.com/download/index.aspx
+
+Step 4: Build the SLE15 container image with the Nvidia GPU operator installed:
+
+NOTE: When using a SLE15 build host that has a different Service Pack version that the SLE BCI container image to be used, the SUSE software repositories for the host will be used. This means that packages installed into the container image will match the Service Pack version of the host, not the BCI container image. Ensure build host Service Pack matches the BCI container image to avoid this situation.
+
+* Set these variables:
+
+----
+REGISTRY=""		# E.g. REGISTRY="local" or REGISTRY="registry.susealliances.com"
+SLE15_SP_VERSION=""	# I.e. For SLE15 SP5, set to SP_VERSION="5"
+DRIVER_VERSION=""	# E.g. DRIVER_VERSION="535.104.05"
+DRIVER_TYPE=""		# I.e. "vgpu" or "passthrough"
+----
+
+* Build the container:
+
+----
+sudo podman build -t \
+${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
+  --build-arg SLES_VERSION="15.${SLE15_SP_VERSION}" \   
+  --build-arg DRIVER_TYPE="${DRIVER_TYPE}" \     
+  --build-arg DRIVER_ARCH="x86_64" \     
+  --build-arg DRIVER_VERSION="${DRIVER_VERSION}" \     
+  --build-arg CUDA_VERSION="12.1.1" \   
+  --build-arg PRIVATE_KEY=empty  \
+.
+----
+
+Step 5: Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
+
+----
+for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
+----
+
 
 Ensure your Kubernetes cluster, preferably RKE2, is configured with Nvidia GPU support and the necessary Nvidia drivers installed on the cluster nodes. This preparation step ensures that your cluster is ready to accommodate GPU-accelerated workloads.
 Step 5: Deployment in Kubernetes
