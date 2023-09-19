@@ -95,7 +95,7 @@ include::./common_docinfo_vars.adoc[]
 // This is could be the same as the executive summary.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This Getting Started guide provides comprehensive instructions for the creation of an OCI compliant container image containing the Nvidia GPU Kubernetes operator, and which is based on the SUSE Linux Enterprise 15 SP5 Base Container Image. The primary objective is to seamlessly integrate the Nvidia GPU operator, simplifying GPU management within Kubernetes clusters for GPU-intensive workloads. The choice of SUSE's SLE 15 SP5 Base Container Image is motivated by the unparalleled security certifications and enhanced supportability it offers, particularly when operating heterogeneous software stacks.
+This Getting Started guide provides comprehensive instructions for the creation of an OCI compliant container image containing the Nvidia GPU Kubernetes operator, and which is based on the SUSE Linux Enterprise 15 SP5 Base Container Image. The primary objective is to seamlessly integrate the Nvidia GPU operator, simplifying GPU management and support within Kubernetes clusters for GPU-intensive workloads. The choice of SUSE's SLE 15 SP5 Base Container Image is motivated by the unparalleled security certifications and enhanced supportability it offers, particularly when operating heterogeneous software stacks.
 
 === Motivation
 
@@ -120,7 +120,7 @@ Furthermore, users can confidently run diverse and complex software stacks witho
 
 //This guide will help you take the first steps to ...
 
-This guide is dedicated to the meticulous process of crafting OCI compliant container images that incorporate the Nvidia GPU operator within the framework of the SUSE Linux Enterprise 15 SP5 Base Container Image. Additionally, it provides instructions for deploying these container images within a Kubernetes cluster, specifically RKE2.
+This guide is dedicated to the process of creating OCI compliant container images that incorporate the Nvidia GPU operator within the SUSE Linux Enterprise 15 SP5 Base Container Image. Additionally, it provides instructions for deploying these container images within a Kubernetes cluster, specifically RKE2.
 
 === Audience
 
@@ -133,7 +133,7 @@ This guide is dedicated to the meticulous process of crafting OCI compliant cont
 
 // This document is intended for ...
 
-This guide caters to an audience comprising seasoned system administrators, proficient DevOps practitioners, and adept developers. It assumes a foundational understanding of Docker, Kubernetes, and Nvidia GPU technologies, rendering it suitable for individuals seeking to leverage GPU resources within their containerized application ecosystems.
+This guide caters to an audience comprising Kubernetes administrators, proficient DevOps practitioners, and application developers. It assumes a foundational understanding of Podman and/or Docker, Kubernetes, and Nvidia GPU technologies. This this guide should be suitable for most high technology professionals seeking to unlock the full potential of their GPU accellerated containerized applications.
 
 == Prerequisites
 
@@ -146,10 +146,10 @@ This guide caters to an audience comprising seasoned system administrators, prof
 
 Before embarking on the procedures outlined in this guide, it is imperative to ensure the fulfillment of the following prerequisites:
 
-   1. Access to a SUSE Linux Enterprise 15 SP5 system.
-   1. An operational Docker environment on the host system.
-   1. Establishment and availability of a Kubernetes cluster, with a particular focus on RKE2.
-   1. A basic familiarity with Docker, Kubernetes, and Nvidia GPU concepts.
+   1. Access to a SUSE Linux Enterprise 15 build host. It is highly recommended to ensure the build host is the same Service Pack version as the SLE BCI image that will be used. This guide will focus on SLE15 SP5.
+   1. Podman installed on the host system.
+   1. Availability of a Kubernetes cluster that includes at least one node with an Nvidia GPU. These instructions will focus on RKE2. 
+   1. A basic familiarity with Docker and/or Podman, Kubernetes, and Nvidia GPU concepts.
 
 
 == Technical overview
@@ -216,6 +216,8 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
 ----
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
+
+
 
 This section offers a high-level explanation of the steps required to create OCI compliant container images with the Nvidia GPU Operator on the SUSE Linux Enterprise 15 SP5 Base Container Image.
 Step 1: Repository Cloning
