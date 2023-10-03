@@ -241,6 +241,8 @@ Step 3: Find the latest "Data Center Driver for Linux x64" version for your GPU 
 
 Step 4: (Optional) To utilize the vGPU capabilities of your datacenter grade GPU, you'll need to download the latest "vGPU Driver Catalog" (filename vgpuDriverCatalog.yaml) and the latest "Linux KVM" package (filename "NVIDIA-GRID-Linux-KVM-*.zip").  
 
+NOTE: Additional information can be found at https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/install-gpu-operator-vgpu.html
+
 * To obtain these two files, sign in to your https://ui.licensing.nvidia.com/:"NVIDIA Licensing Portal" account
 ** Navigate to "Software Downloads" and download the files
 
@@ -342,7 +344,7 @@ sudo podman search ${REGISTRY}/
 
 Step 8: Validate the container image
 
-NOTE: This step is optional and requires that `Podman` is installed on the target Kuberentes worker node
+NOTE: This step is optional and requires running the GPU operator container locally with `Podman`, outside of the Kubernetes context. This can be done one a SLE15 node configured with an Nvidia GPU, or a Kuberentes worker node that is configured with an Nvidia GPU
 
 * Open a command line session to a node in the Kubernetes cluster that is equipped with, and correctly configured to use, a Data Center class Nvidia GPU
 
@@ -363,7 +365,7 @@ read -p "Provide the Nvidia GPU driver version (e.g. 535.104.05): " DRIVER_VERSI
 ----
 
 
-* Run the GPU operator container locally (outside of the Kubernetes cluster context):
+* Run the GPU operator container locally:
 
 ----
 clear && \
@@ -392,7 +394,12 @@ sudo podman ps -a
 * Watch the deployment of the Nvidia GPU operator:
 
 ----
-
+clear && \
+echo "
+REGISTRY=${REGISTRY}
+SLE15_SP_VERSION=${SLE15_SP_VERSION}
+DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
+sudo podman logs -f nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 ----
 
 * The deployment process is complete when the following message is shown:
@@ -422,14 +429,6 @@ SLE15_SP_VERSION=${SLE15_SP_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
 sudo podman exec -it nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} nvidia-smi
 ----
-
-Craft a Kubernetes Deployment YAML file specifying the utilization of the Nvidia GPU Operator OCI compliant container image. Deploy this YAML to your Kubernetes cluster. This step enables you to run applications and workloads that can leverage GPU resources effectively.
-Step 6: Validation
-
-Access the active pod to validate GPU functionality. This validation step is crucial for ensuring that GPU resources are accessible within your Kubernetes pods and that GPU-accelerated tasks can be executed successfully.
-
-By following these steps, you can create OCI compliant container images that integrate the Nvidia GPU Operator and deploy them within a Kubernetes cluster, enabling GPU-accelerated workloads with confidence. Detailed instructions for each step are provided in the full guide.
-
 
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -462,11 +461,9 @@ By following these steps, you can create OCI compliant container images that int
 
 == Deployment in Kubernetes (RKE2)
 
-    Ensure the Kubernetes cluster, preferably RKE2, is suitably configured with Nvidia GPU support and the essential Nvidia drivers installed on the cluster nodes.
+Afer building and validating the SLE15 Nvidia GPU operator container image, you can now deploy it to a Kubernetes cluster with worker nodes configured with Data Center class Nvidia GPUs. Note that the Kubernetes worker nodes must be confgiured with the essential Nvidia drivers for the appropriate GPU(s).
 
-    Craft a Kubernetes Deployment YAML file, detailing the utilization of the Nvidia GPU operator OCI compliant container image, as exemplified below:
-
-    yaml
+* Deploy 
 
 apiVersion: apps/v1
 kind: Deployment
