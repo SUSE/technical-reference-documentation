@@ -468,6 +468,44 @@ sudo podman rm nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 
 == Deployment to a Kubernetes (RKE2) cluster
 
+Each node on the RKE2 cluster needs to have the containerd runtime environment updated to recognize and run GPU workloads
+
+* Find this secition in the `/var/lib/rancher/rke2/agent/etc/containerd/config.toml` file:
+
+----
+[plugins."io.containerd.grpc.v1.cri".containerd]
+  snapshotter = "overlayfs"
+  disable_snapshot_annotations = true
+----
+
+** Add these lines directly below those entries:
+
+----
+  default_runtime_name = "nvidia"
+
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
+    privileged_without_host_devices = false
+    runtime_engine = ""
+    runtime_root = ""
+    runtime_type = "io.containerd.runc.v2"
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
+      BinaryName = "/usr/bin/nvidia-container-runtime"
+----
+
+* Restart RKE2 on each node, one at a time, with this command:
+
+----
+sudo systemctl restart rke2-server.service
+sudo systemctl status rke2-server.service
+----
+
+
+After an Nvidia GPU Operator image has 
+
+
+NOTE: If any of the variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
+
 ----
 clear && \
 echo "Cluster name: $(kubectl config current-context)" && 
@@ -484,11 +522,22 @@ DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if th
 helm install --wait --generate-name \
   -n gpu-operator --create-namespace \
   nvidia/gpu-operator \
-  --set driver.repository=${REGISTRY} 
+  --set driver.repository=${REGISTRY} \
+  --set operator.defaultRuntime=containerd
+  --set toolkit.env[0].name=CONTAINERD_CONFIG \
+  --set toolkit.env[0].value=/var/lib/rancher/rke2/agent/etc/containerd/config.toml \
+  --set toolkit.env[1].name=CONTAINERD_SOCKET \
+  --set toolkit.env[1].value=/run/k3s/containerd/containerd.sock \
+  --set toolkit.env[2].name=CONTAINERD_RUNTIME_CLASS \
+  --set toolkit.env[2].value=nvidia \
+  --set toolkit.env[3].name=CONTAINERD_SET_AS_DEFAULT \
+  --set-string toolkit.env[3].value=true
 ----
 
+////
   --set operator.image=nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
   --set driver.version=${DRIVER_VERSION}
+
 
 Afer building and validating the SLE15 Nvidia GPU operator container image, you can now deploy it to a Kubernetes cluster with worker nodes configured with Data Center class Nvidia GPUs. Note that the Kubernetes worker nodes must be confgiured with the essential Nvidia drivers for the appropriate GPU(s).
 
@@ -525,6 +574,8 @@ kubectl get pods
 The resulting list should feature the 'my-gpu-app' pod in the 'Running' state.
 
 Need to view logs of the pod
+
+////
 
 
 
