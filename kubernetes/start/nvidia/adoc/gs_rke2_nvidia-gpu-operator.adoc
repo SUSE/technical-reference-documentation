@@ -295,7 +295,7 @@ CAUTION: While the follow steps allow for building the image in a "local" regist
 
 * Build the container:
 
-NOTE: If any of the variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
 
 ----
 clear && \
@@ -334,7 +334,7 @@ for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi $
 
 Step 7: If the specified build registry was not set to "local", push the newly build image to the container registry:
 
-NOTE: If any of the variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
 
 ----
 clear && \
@@ -367,7 +367,7 @@ sudo mkdir -p /run/nvidia
 
 * Run the GPU operator container locally:
 
-NOTE: If any of the variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
 
 ----
 clear && \
@@ -505,7 +505,7 @@ sudo systemctl status rke2-server.service
 The preferred method for installing the Nvidia GPU Operator is with the Helm Kuberenetes package manager.
 
 
-NOTE: If any of the variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
 
 * Deploy the GPU Operator with Helm:
 
