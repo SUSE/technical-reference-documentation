@@ -355,11 +355,11 @@ sudo podman search --list-tags ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${D
 
 Step 8: Validate the container image
 
-NOTE: This step is optional and requires running the GPU operator container locally with `Podman`, outside of the Kubernetes context. This can be done one a SLE15 node configured with an Nvidia GPU, or a Kuberentes worker node that is configured with an Nvidia GPU
+NOTE: This step is optional and requires running the GPU operator container locally with `Podman`, outside of the Kubernetes context. This can be done on a SLE15 node configured with an Nvidia GPU, or a Kuberentes worker node that is configured with an Nvidia GPU
 
 * Open a command line session to a node in the Kubernetes cluster that is equipped with, and correctly configured to use, a Data Center class Nvidia GPU
 
-* Create the `/run/nvidia` directory, in case it has not yet been created:
+* Create the `/run/nvidia` directory, in case it does not yet exist:
 
 ----
 sudo mkdir -p /run/nvidia
@@ -393,7 +393,8 @@ sudo podman ps -a
 
 ** The container's `STATUS` field should show that it is "Up" and the amount of time it has been up should increment with repeated runs of the command.
 
-* Watch the deployment of the Nvidia GPU operator:
+
+* Monitor the deployment of the Nvidia GPU operator:
 
 ----
 clear && \
@@ -420,6 +421,7 @@ sudo lsmod | grep nvidia
 ----
 
 ** You should see modules such as `nvidia`, `nvidia_modeset`, and `nvidia_uvm`
+
 
 * Verify that the `nvidia-smi` utility can communicate withe the GPU:
 
