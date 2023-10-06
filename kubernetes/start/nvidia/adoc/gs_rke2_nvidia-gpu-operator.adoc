@@ -501,10 +501,12 @@ sudo systemctl status rke2-server.service
 ----
 
 
-After an Nvidia GPU Operator image has 
+The preferred method for installing the Nvidia GPU Operator is with the Helm Kuberenetes package manager.
 
 
 NOTE: If any of the variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
+
+* Deploy the GPU Operator with Helm:
 
 ----
 clear && \
@@ -534,7 +536,35 @@ helm install --wait --generate-name \
   --set-string toolkit.env[3].value=true
 ----
 
+* Verify the Nvidia GPU Operator, driver and associated elements have been deployed correctly with the command: 
+
+----
+kubectl get pods -n gpu-operator
+----
+
+** The output should resemble:
+
+----
+NAME                                                          READY   STATUS      RESTARTS   AGE
+gpu-feature-discovery-crrsq                                   1/1     Running     0          60s
+gpu-operator-7fb75556c7-x8spj                                 1/1     Running     0          5m13s
+gpu-operator-node-feature-discovery-master-58d884d5cc-w7q7b   1/1     Running     0          5m13s
+gpu-operator-node-feature-discovery-worker-6rht2              1/1     Running     0          5m13s
+gpu-operator-node-feature-discovery-worker-9r8js              1/1     Running     0          5m13s
+nvidia-container-toolkit-daemonset-lhgqf                      1/1     Running     0          4m53s
+nvidia-cuda-validator-rhvbb                                   0/1     Completed   0          54s
+nvidia-dcgm-5jqzg                                             1/1     Running     0          60s
+nvidia-dcgm-exporter-h964h                                    1/1     Running     0          60s
+nvidia-device-plugin-daemonset-d9ntc                          1/1     Running     0          60s
+nvidia-device-plugin-validator-cm2fd                          0/1     Completed   0          48s
+nvidia-driver-daemonset-5xj6g                                 1/1     Running     0          4m53s
+nvidia-mig-manager-89z9b                                      1/1     Running     0          4m53s
+nvidia-operator-validator-bwx99                               1/1     Running     0          58s
+----
+
+
 ////
+
   --set operator.image=nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
   --set driver.version=${DRIVER_VERSION}
 
