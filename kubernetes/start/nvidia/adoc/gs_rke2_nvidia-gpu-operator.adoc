@@ -308,7 +308,7 @@ DRIVER_TYPE=${DRIVER_TYPE}" && echo && read -n1 -p "Press Ctrl+c now if these va
 
 ## Build the Nvidia GPU driver container
 sudo podman build -t \
-${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${OPERATOR_VERSION} \
+${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} \
   --build-arg SLES_VERSION="15.${SLE15_SP_VERSION}" \   
   --build-arg DRIVER_TYPE="${DRIVER_TYPE}" \     
   --build-arg DRIVER_ARCH="x86_64" \     
