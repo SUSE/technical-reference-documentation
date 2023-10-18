@@ -507,8 +507,7 @@ Each node on the RKE2 cluster needs to have the containerd runtime environment u
 ** Add these lines directly below those entries:
 
 ----
-  default_runtime_name = "nvidia"
-
+  default_runtime_name = "runc"
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
     privileged_without_host_devices = false
