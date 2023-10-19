@@ -556,7 +556,7 @@ helm install --wait --generate-name \
   -n gpu-operator --create-namespace \
   nvidia/gpu-operator \
   --set driver.repository=${REGISTRY} \
-  --set operator.defaultRuntime=containerd
+  --set operator.defaultRuntime=containerd \
   --set toolkit.env[0].name=CONTAINERD_CONFIG \
   --set toolkit.env[0].value=/var/lib/rancher/rke2/agent/etc/containerd/config.toml \
   --set toolkit.env[1].name=CONTAINERD_SOCKET \
