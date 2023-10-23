@@ -151,7 +151,7 @@ This guide caters to an audience comprising Kubernetes administrators, proficien
 Before embarking on the procedures outlined in this guide, it is imperative to ensure the fulfillment of the following prerequisites:
 
    1. You have access to a SUSE Linux Enterprise 15 build host. It is highly recommended to ensure the build host is the same Service Pack version as the SLE BCI image to be used. NOTE: The build host does not have to have access to an Nvidia GPU.
-   1. Podman and sudo applications have been installed on the build host.
+   1. Podman has been installed on the build host. If needed, you can enable the SLE Containers module by running this command: `sudo SUSEConnect -p sle-module-containers/15.5/x86_64`.
    1. You have access to an OCI image registry that is available to the build host and target Kubernetes cluster. This will allow the GPU operator to be easily deployed across all Kubernetes worker nodes that have Nvidia GPUs.
    1. You have access to a Kubernetes cluster that is equipped and correctly configured to use Data Center class Nvidia GPUs. These instructions leverage SUSE's security focused Kubernetes distribution, RKE2. 
    1. You possess a basic familiarity with Podman and/or Docker, Kubernetes, and Nvidia GPU concepts.
@@ -295,6 +295,8 @@ CAUTION: While the follow steps allow for building the image in a "local" regist
 
 * Build the container:
 
+IMPORTANT: When building the container image, you may be prompted for the registry that contains the `nvidia/cuda` image. Select the image from docker.io.
+
 NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
 
 ----
@@ -336,6 +338,8 @@ for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi $
 ----
 
 Step 7: If the specified build registry was not set to "local", push the newly build image to the container registry:
+
+IMPORTANT: If the target container registry requires authentication, use the `sudo podman login` command to successfully authenticate before continuing. See https://docs.podman.io/en/latest/markdown/podman-login.1.html for more information.
 
 NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
 
@@ -528,6 +532,13 @@ sudo systemctl status rke2-server.service
 
 The preferred method for installing the Nvidia GPU Operator is with the Helm Kuberenetes package manager.
 
+IMPORTANT: The following commands must be run from a Linux system that has the kubectl and helm (version 3) commands, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. See these documents for more information: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  https://docs.rke2.io/cluster_access 
+* Add the Nvidia helm software repository:
+
+----
+helm repo add nvidia https://helm.ngc.nvidia.com/nvidia 
+  && helm repo update
+----
 
 NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to Step 1 in this process before continuing
 
