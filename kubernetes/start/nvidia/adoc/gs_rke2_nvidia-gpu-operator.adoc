@@ -252,7 +252,7 @@ IMPORTANT: When building the container image, you may be prompted for the regist
 
 NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
 
-----
+```
 ## Validate the variables before using them in the subsequent command
 echo &&
 echo "
@@ -271,7 +271,7 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION
   --build-arg CUDA_VERSION="12.1.1" \   
   --build-arg PRIVATE_KEY=empty  \
 .
-----
+```
 
 * Watch the build output for errors, warnings, and failures. Errors and warnings that don't stop the build process can often be safely ignored.
 
