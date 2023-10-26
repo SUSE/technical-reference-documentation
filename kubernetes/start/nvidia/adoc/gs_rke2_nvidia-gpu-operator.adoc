@@ -309,10 +309,10 @@ SLE15_SP_VERSION=${SLE15_SP_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
 ## Tag the image with the format that Helm will need when deploying on Kubernetes
-sudo podman tag ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} ${REGISTRY}/driver:${DRIVER_VERSION} &&
-## Push both the image (with both tags) to the container registry
+sudo podman tag ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
+## Push the image (with both tags) to the container registry
 sudo podman push ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} &&
-sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}
+sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
 
 * Verify the image is saved in the registry, and remotely available:
@@ -519,13 +519,18 @@ echo &&
 echo "
 REGISTRY=${REGISTRY}
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
+OPERATOR_VERSION=${OPERATOR_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
 ## Deploy the Nvidia GPU Operator with supporting software and drivers
-helm install --wait --generate-name \
-  -n gpu-operator --create-namespace \
-  nvidia/gpu-operator \
+helm install -n gpu-operator \
+  --generate-name \
+  --wait \
+  --create-namespace \
+  --version=${OPERATOR_VERSION} \
+    nvidia/gpu-operator \
   --set driver.repository=${REGISTRY} \
+  --set driver.version=${DRIVER_VERSION} \
   --set operator.defaultRuntime=containerd \
   --set toolkit.env[0].name=CONTAINERD_CONFIG \
   --set toolkit.env[0].value=/var/lib/rancher/rke2/agent/etc/containerd/config.toml \
