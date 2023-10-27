@@ -508,7 +508,7 @@ sudo systemctl status rke2-server.service
 ////
 
 
-* Enable the SLE Containers software Module on the build host:
+* Enable the SLE Containers software Module on each Kubernetes GPU worker:
 
 NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this beginning of this procedure before continuing
 
@@ -517,6 +517,11 @@ sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
 sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
 ----
 
+* Install the following packages:
+
+----
+sudo zypper in kernel-firmware-nvidia libnvidia-container-tools libnvidia-container1 nvidia-container-runtime sle-module-NVIDIA-compute sle-module-NVIDIA-compute-release
+----
 
 NOTE: The preferred method for installing the Nvidia GPU Operator is with the Helm Kuberenetes package manager.
 
