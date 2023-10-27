@@ -148,9 +148,10 @@ This guide is intened for an audience comprising Kubernetes administrators, prof
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Before embarking on the procedures outlined in this guide, you should ensure the fulfillment of the following prerequisites:
+* Before embarking on the procedures outlined in this guide, you should ensure the following prerequisites have been met
 
-   1. You have access to a SUSE Linux Enterprise 15 build host. It is highly recommended to ensure the build host is the same Service Pack (e.g. SLE15 SP5) version as the SLE BCI image to be used. NOTE: The build host does not have to have access to an Nvidia GPU.
+   1. You have access to a SUSE Linux Enterprise 15 build host. It is highly recommended to ensure the build host is the same Service Pack (e.g. SLE15 SP5) version as the SLE BCI image to be used. NOTE: The build host does not require access to an Nvidia GPU.
+//   1. The SLE Containers Module has been enabled on the build host, and the SLE Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes.
    1. Podman is installed on the build host. If needed, you can install Podman from the SLE Containers module.
    1. You have access to an OCI image registry that is available to the build host AND the target Kubernetes cluster. This will allow the GPU driver to be easily deployed across all Kubernetes worker nodes that have Nvidia GPUs as part of the Nvidia Kubernetes Operator Helm chart.
    1. You have access to a Kubernetes cluster that is equipped and correctly configured with Data Center class Nvidia GPUs. These instructions leverage SUSE's security focused Kubernetes distribution, RKE2. 
@@ -199,18 +200,26 @@ read -p "Provide the Nvidia GPU Operator version (e.g. v23.6.1): " OPERATOR_VERS
 read -p "Enter vgpu or passthrough for the type of Nvidia driver: " DRIVER_TYPE 
 ```
 
-Step 2: Clone the Nvidia GitLab repository and change to the `driver/sle15` directory:
+Step 2: Enable the SLE Containers software Module on the build host:
+
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+
+----
+sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
+----
+
+Step 3: Clone the Nvidia GitLab repository and change to the `driver/sle15` directory:
 
 ----
 git clone https://gitlab.com/nvidia/container-images/driver && cd driver/sle15
 ----
 
-Step 3: Update the Dockerfile in this directory:
+Step 4: Update the Dockerfile in this directory:
 
 * Update `ARG CUDA_VERSION` to version `12.1.1`
 * Update `FROM registry.suse.com/bci/golang` to version `1.18`
 
-Step 4: (Optional) To utilize the vGPU capabilities of your datacenter grade GPU, you'll need to download the latest "vGPU Driver Catalog" (filename vgpuDriverCatalog.yaml) and the latest "Linux KVM" package (filename "NVIDIA-GRID-Linux-KVM-*.zip").  
+Step 5: (Optional) To utilize the vGPU capabilities of your datacenter grade GPU, you'll need to download the latest "vGPU Driver Catalog" (filename vgpuDriverCatalog.yaml) and the latest "Linux KVM" package (filename "NVIDIA-GRID-Linux-KVM-*.zip").  
 
 NOTE: Additional information can be found at https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/install-gpu-operator-vgpu.html
 
@@ -241,7 +250,7 @@ cp -p Guest_Drivers/NVIDIA-Linux-x86_64-525.105.17-grid.run drivers/
 cp -p /path/to/downloads/vgpuDriverCatalog.yaml drivers/
 ----
 
-Step 5: Build the SLE15 container image with the Nvidia GPU operator installed:
+Step 6: Build the SLE15 container image with the Nvidia GPU operator installed:
 
 NOTE: When using a SLE15 build host that has a different Service Pack version that the SLE BCI container image to be used, the SUSE software repositories for the host will be used. This means that packages installed into the container image will match the Service Pack version of the host, not the BCI container image. Ensure build host Service Pack matches the BCI container image to avoid this situation.
 
@@ -288,13 +297,13 @@ Successfully tagged registry.susealliances.com/nvidia-sle15sp5-535.104.05:latest
 cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 ====
 
-Step 6: Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
+Step 7: Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
 
 ----
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
 
-Step 7: If the specified build registry was not set to "local", push the newly build image to the container registry:
+Step 8: If the specified build registry was not set to "local", push the newly build image to the container registry:
 
 IMPORTANT: If the target container registry requires authentication, use the `sudo podman login` command to successfully authenticate before continuing. See https://docs.podman.io/en/latest/markdown/podman-login.1.html for more information.
 
@@ -317,11 +326,13 @@ sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 
 * Verify the image is saved in the registry, and remotely available:
 
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+
 ----
 sudo podman search --list-tags ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 ----
 
-Step 8: Validate the container image
+Step 9: Validate the container image
 
 NOTE: This step is optional and requires running the newly created GPU driver container locally with `Podman`, outside of the Kubernetes context. This can be done on a SLE15 host configured with the same kind of Nvidia GPU the container was created for, or on a Kuberentes worker node that is configured with an Nvidia GPU.
 
@@ -367,6 +378,8 @@ sudo podman ps -a
 
 * Monitor the deployment of the Nvidia GPU operator:
 
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -399,6 +412,8 @@ sudo lsmod | grep nvidia
 
 * Verify the `nvidia-smi` utility can communicate withe the GPU:
 
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -414,6 +429,8 @@ sudo podman exec -it nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} nvidia-
 
 
 * When ready to move forward, stop and remove the Podman container:
+
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
 
 ----
 ## Validate the variables before using them in the subsequent command
@@ -457,6 +474,7 @@ sudo podman rm nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 
 == Deployment to a Kubernetes (RKE2) cluster
 
+////
 Each node on the RKE2 cluster needs to have the containerd runtime environment updated to recognize and run GPU workloads
 
 * Find this secition in the `/var/lib/rancher/rke2/agent/etc/containerd/config.toml` file:
@@ -487,9 +505,20 @@ Each node on the RKE2 cluster needs to have the containerd runtime environment u
 sudo systemctl restart rke2-server.service
 sudo systemctl status rke2-server.service
 ----
+////
 
 
-The preferred method for installing the Nvidia GPU Operator is with the Helm Kuberenetes package manager.
+* Enable the SLE Containers software Module on the build host:
+
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this beginning of this procedure before continuing
+
+----
+sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
+sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
+----
+
+
+NOTE: The preferred method for installing the Nvidia GPU Operator is with the Helm Kuberenetes package manager.
 
 IMPORTANT: The following commands must be run from a Linux system that has the kubectl and helm (version 3) commands, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. See these documents for more information: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  https://docs.rke2.io/cluster_access 
 * Add the Nvidia helm software repository:
@@ -567,51 +596,6 @@ nvidia-driver-daemonset-5xj6g                                 1/1     Running   
 nvidia-mig-manager-89z9b                                      1/1     Running     0          4m53s
 nvidia-operator-validator-bwx99                               1/1     Running     0          58s
 ----
-
-
-////
-
-  --set operator.image=nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
-  --set driver.version=${DRIVER_VERSION}
-
-
-Afer building and validating the SLE15 Nvidia GPU operator container image, you can now deploy it to a Kubernetes cluster with worker nodes configured with Data Center class Nvidia GPUs. Note that the Kubernetes worker nodes must be confgiured with the essential Nvidia drivers for the appropriate GPU(s).
-
-* Deploy 
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-gpu-app
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: my-gpu-app
-    spec:
-      containers:
-      - name: my-gpu-container
-        image: sle15-nvidia-operator
-        resources:
-          limits:
-            nvidia.com/gpu: 1  # Adjust GPU resource allocation as necessitated
-
-Deploy the articulated Deployment YAML to the Kubernetes cluster via the following command:
-
-bash
-
-kubectl apply -f my-gpu-app-deployment.yaml
-
-Ascertain the operational status of the deployment by issuing the command:
-
-kubectl get pods
-
-The resulting list should feature the 'my-gpu-app' pod in the 'Running' state.
-
-Need to view logs of the pod
-
-////
 
 
 
