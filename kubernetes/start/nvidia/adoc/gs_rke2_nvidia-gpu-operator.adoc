@@ -216,15 +216,25 @@ git clone https://gitlab.com/nvidia/container-images/driver && cd driver/sle15
 
 Step 4: Update the Dockerfile in this directory:
 
-* Update the golang build container image to version `1.18`:
+. Make a copy of the Dockerfile to use, if the modifications go badly:
+//
++
+[console, bash]
+----
+cp Dockerfile /tmp/Dockerfile.orig
+----
 
+. Update the golang build container image to version `1.18`:
+//
++
 [console, bash]
 ----
 sed -i '/^FROM/ s/golang\:1\.../golang\:1.18/' Dockerfile
 ----
 
-* Update the base container image to the SLE15 SP5 BCI:
-
+. Update the base container image to the SLE15 SP5 BCI:
+//
++
 [console, bash]
 ----
 sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
@@ -636,18 +646,24 @@ nvidia-operator-validator-bwx99                               1/1     Running   
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-ATTENTION: Need to review the prior work I did for GPU integration, likely with Supermicro
+* To validate that the Nvidia GPU driver is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
 
-1. Gain access to the active pod to conduct a comprehensive validation of GPU functionality:
+[console, bash]
+----
+kubectl exec -it \
+"$(for EACH in \
+$(kubectl get pods -n gpu-operator \
+-l app=nvidia-driver-daemonset \
+-o jsonpath={.items..metadata.name}); \
+do echo ${EACH}; done)" \
+-n gpu-operator \
+nvidia-smi
+----
 
-
-1. kubectl exec -it my-gpu-app-<pod-id> -- /bin/bash
-
-1. Within the pod's context, employ Nvidia tools such as 'nvidia-smi' to meticulously scrutinize GPU-related metrics and execute tasks necessitating GPU capabilities.
-
-1. Execute comprehensive tests of GPU-intensive workloads or applications within the pod to substantiate the unimpeded access and optimal utilization of GPU resources.
-
-
+[NOTE]
+====
+This command can also be used to verify which application processes are running on the Nvidia GPUs, and how many resources are being consumed.
+====
 
 == Summary
 
