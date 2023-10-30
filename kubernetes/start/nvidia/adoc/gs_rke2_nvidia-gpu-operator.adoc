@@ -216,8 +216,19 @@ git clone https://gitlab.com/nvidia/container-images/driver && cd driver/sle15
 
 Step 4: Update the Dockerfile in this directory:
 
-* Update `ARG CUDA_VERSION` to version `12.1.1`
-* Update `FROM registry.suse.com/bci/golang` to version `1.18`
+* Update the golang build container image to version `1.18`:
+
+[console, bash]
+----
+sed -i '/^FROM/ s/golang\:1\.../golang\:1.18/' Dockerfile
+----
+
+* Update the base container image to the SLE15 SP5 BCI:
+
+[console, bash]
+----
+sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
+----
 
 Step 5: (Optional) To utilize the vGPU capabilities of your datacenter grade GPU, you'll need to download the latest "vGPU Driver Catalog" (filename vgpuDriverCatalog.yaml) and the latest "Linux KVM" package (filename "NVIDIA-GRID-Linux-KVM-*.zip").  
 
