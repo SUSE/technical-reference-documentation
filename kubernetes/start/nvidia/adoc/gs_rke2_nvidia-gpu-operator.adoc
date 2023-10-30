@@ -43,10 +43,10 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document
 // -
-:title: Nvidia GPU Driver on BCI
-:subtitle: Creating and deploying the SLE15 Base Container Image based Nvidia GPU Driver on RKE2 Kubernetes
+:title: Nvidia GPU Driver on SLE BCI
+:subtitle: Creating and deploying the SLE15 Base Container Image with the Nvidia GPU Driver on RKE2 Kubernetes
 
-:product1: BCI
+:product1: SLE BCI
 :product1_full: SUSE Linux Enterprise Base Container Image
 :product1_version: SLE15 SP5
 :product1_url: registry.suse.com/bci/bci-base-15sp5/index.html
@@ -55,6 +55,12 @@ include::./common_docinfo_vars.adoc[]
 :product2_url: www.suse.com/products/rancher-kubernetes-engine/
 
 :usecase: Nvidia GPU Driver based on SLE BCI
+
+:sle15sp_version: SP5
+:bci-base_version: 15.5
+:golang_version: 12.1.1
+:gpu-driver_version: 535.104.05
+:gpu-operator_version: v23.6.1
 
 // :executive_summary: A brief statement of what this document provides (e.g., This document provides a brief introduction to implementing {usecase} with {product2_full} and {product1_full}.)
 :executive_summary: This document describes the process of creating an {usecase} and deploying it as part of the Nvidia Kubernetes Operator on the Rancher Kubernetes Engine 2 distribution of Kubernetes
@@ -148,14 +154,14 @@ This guide is intened for an audience comprising Kubernetes administrators, prof
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-* Before embarking on the procedures outlined in this guide, you should ensure the following prerequisites have been met
+.Before embarking on the procedures outlined in this guide, you should ensure the following prerequisites have been met
 
-   1. You have access to a SUSE Linux Enterprise 15 build host. It is highly recommended to ensure the build host is the same Service Pack (e.g. SLE15 SP5) version as the SLE BCI image to be used. NOTE: The build host does not require access to an Nvidia GPU.
-//   1. The SLE Containers Module has been enabled on the build host, and the SLE Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes.
-   1. Podman is installed on the build host. If needed, you can install Podman from the SLE Containers module.
-   1. You have access to an OCI image registry that is available to the build host AND the target Kubernetes cluster. This will allow the GPU driver to be easily deployed across all Kubernetes worker nodes that have Nvidia GPUs as part of the Nvidia Kubernetes Operator Helm chart.
-   1. You have access to a Kubernetes cluster that is equipped and correctly configured with Data Center class Nvidia GPUs. These instructions leverage SUSE's security focused Kubernetes distribution, RKE2. 
-   1. You possess a basic familiarity with Podman and/or Docker, Kubernetes, and Nvidia GPU concepts.
+* You have access to a SUSE Linux Enterprise 15 build host. It is highly recommended to ensure the build host is the same Service Pack (e.g. {product1_version}) version as the {product1} image to be used. NOTE: The build host does not require access to an Nvidia GPU.
+* The SLE Containers Module has been enabled on the build host, and the SLE Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes.
+* Podman is installed on the build host. If needed, you can install Podman from the SLE Containers module.
+* You have access to an OCI image registry that is available to the build host AND the target Kubernetes cluster. This will allow the GPU driver to be easily deployed across all Kubernetes worker nodes that have Nvidia GPUs as part of the Nvidia Kubernetes Operator Helm chart.
+* You have access to a Kubernetes cluster that is equipped and correctly configured with Data Center class Nvidia GPUs. These instructions leverage SUSE's security focused Kubernetes distribution, RKE2. 
+* You possess a basic familiarity with Podman and/or Docker, Kubernetes, and Nvidia GPU concepts.
 
 
 == Technical overview
@@ -170,16 +176,14 @@ This guide is intened for an audience comprising Kubernetes administrators, prof
 //   - workflow diagram
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-////
 
-Resources:
-https://gitlab.com/rdoxenham/driver/-/tree/main/sle15
-https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html#suse15
-https://docs.asciidoctor.org/asciidoc/latest/verbatim/source-blocks/
-https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#vmware-vsphere-with-tanzu
-https://docs.nvidia.com/grid/12.0/index.html
+// Resources:
+// https://gitlab.com/rdoxenham/driver/-/tree/main/sle15
+// https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html#suse15
+// https://docs.asciidoctor.org/asciidoc/latest/verbatim/source-blocks/
+// https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#vmware-vsphere-with-tanzu
+// https://docs.nvidia.com/grid/12.0/index.html
 
-////
 
 
 This section offers a detailed explanation of the steps required to create OCI compliant container images with the Nvidia GPU Operator inside the SUSE Linux Enterprise 15 SP5 Base Container Image.
@@ -232,7 +236,7 @@ cp Dockerfile /tmp/Dockerfile.orig
 sed -i '/^FROM/ s/golang\:1\.../golang\:1.18/' Dockerfile
 ----
 
-. Update the base container image to the SLE15 SP5 BCI:
+. Update the Dockerfile's base container image to the {product1_version} BCI:
 //
 +
 [console, bash]
@@ -242,7 +246,7 @@ sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 
 Step 5: Build the SLE15 container image with the Nvidia GPU operator installed:
 
-NOTE: When using a SLE15 build host that has a different Service Pack version that the SLE BCI container image to be used, the SUSE software repositories for the host will be used. This means that packages installed into the container image will match the Service Pack version of the host, not the BCI container image. Ensure build host Service Pack matches the BCI container image to avoid this situation.
+NOTE: When using a SLE15 build host that has a different Service Pack version that the {product1} container image to be used, the SUSE software repositories for the host will be used. This means that packages installed into the container image will match the Service Pack version of the host, not the {product1} container image. Ensure build host Service Pack matches the {product1} container image to avoid this situation.
 
 
 CAUTION: While the follow steps allow for building the image in a "local" registry, it is highly recommended that this option only be used when building on a SLE15 host that has a Data Center class GPU. Building to a "local" registry will prevent you from deploying the new container image to a Kubernetes cluster.
@@ -324,7 +328,7 @@ sudo podman search --list-tags ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${D
 
 Step 8: Validate the container image
 
-NOTE: This step is optional and requires running the newly created GPU driver container locally with `Podman`, outside of the Kubernetes context. This can be done on a SLE15 host configured with the same kind of Nvidia GPU the container was created for, or on a Kuberentes worker node that is configured with an Nvidia GPU.
+NOTE: This step is optional and requires running the newly created GPU driver container locally with `Podman`, outside of the Kubernetes context. This can be done on a {product1_version} host configured with the same kind of Nvidia GPU the container was created for, or on a Kuberentes worker node that is configured with an Nvidia GPU.
 
 * Open a command line session to the host or Kubernetes worker node on which you will test the container image.
 
