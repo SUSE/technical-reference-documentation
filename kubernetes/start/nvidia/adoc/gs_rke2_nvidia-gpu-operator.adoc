@@ -468,39 +468,6 @@ sudo podman rm nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 
 == Deployment to a Kubernetes (RKE2) cluster
 
-////
-Each node on the RKE2 cluster needs to have the containerd runtime environment updated to recognize and run GPU workloads
-
-* Find this secition in the `/var/lib/rancher/rke2/agent/etc/containerd/config.toml` file:
-
-----
-[plugins."io.containerd.grpc.v1.cri".containerd]
-  snapshotter = "overlayfs"
-  disable_snapshot_annotations = true
-----
-
-** Add these lines directly below those entries:
-
-----
-  default_runtime_name = "runc"
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
-  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
-    privileged_without_host_devices = false
-    runtime_engine = ""
-    runtime_root = ""
-    runtime_type = "io.containerd.runc.v2"
-    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
-      BinaryName = "/usr/bin/nvidia-container-runtime"
-----
-
-* Restart RKE2 on each node, one at a time, with this command:
-
-----
-sudo systemctl restart rke2-server.service
-sudo systemctl status rke2-server.service
-----
-////
-
 
 * Enable the SLE Containers software Module on each Kubernetes GPU worker:
 
