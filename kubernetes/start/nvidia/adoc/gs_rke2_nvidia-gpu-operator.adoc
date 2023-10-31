@@ -162,7 +162,7 @@ This guide is intened for an audience comprising Kubernetes administrators, prof
 
 * You have access to a SUSE Linux Enterprise 15 build host. You should ensure the build host is the same Service Pack (e.g. {product1_version}) version as the {product1} image to be used. NOTE: The build host does not require access to an Nvidia GPU.
 
-* The SLE Containers Module has been enabled on the build host, and the SLE Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes. You can use the following commands to enable the appropriate software modules.
+* The SLE Containers Module has been enabled on the build host and the SLE Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes. You can use the following commands to enable the appropriate software modules.
 //
 +
 [NOTE]
@@ -174,6 +174,8 @@ Change the variable SLE15_SP_VERSION in the following command to match the servi
 ----
 export SLE15_SP_VERSION=5
 sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
+sudo SUSEConnect -p sle-module-desktop-applications/15.${SLE15_SP_VERSION}/x86_64
+sudo SUSEConnect -p sle-module-development-tools/15.${SLE15_SP_VERSION}/x86_64
 sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
 ----
 
@@ -187,7 +189,6 @@ sudo zypper install \
   libnvidia-container-tools \
   libnvidia-container1 \
   nvidia-container-runtime \
-  sle-module-NVIDIA-compute \
   sle-module-NVIDIA-compute-release
 ----
 
@@ -199,7 +200,7 @@ sudo zypper install \
 sudo zypper install podman
 ----
 
-* You have access to an OCI image registry that is available to the build host AND the target Kubernetes cluster. This will allow the GPU driver to be deployed across all Kubernetes worker nodes that have Nvidia GPUs, when installing the Nvidia Kubernetes Operator Helm chart.
+* You have access to a container image registry that is available to the build host AND the target Kubernetes cluster. This will allow the GPU driver to be deployed across all Kubernetes worker nodes that have Nvidia GPUs, when installing the Nvidia Kubernetes Operator Helm chart.
 //
 +
 [NOTE]
