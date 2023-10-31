@@ -130,7 +130,7 @@ You can confidently run diverse and complex software stacks without affecting th
 
 //This guide will help you take the first steps to ...
 
-This guide is dedicated to helping you create an OCI compliant container images that incorporate an appropriate Nvidia GPU driver within the SUSE Linux Enterprise 15 Base Container Image. Additionally, it provides instructions for deploying these container images within a Kubernetes cluster, specifically RKE2.
+This guide is dedicated to helping you create an OCI compliant container images that incorporate an appropriate Nvidia GPU driver within the SUSE Linux Enterprise 15 Base Container Image. Additionally, it provides instructions for deploying these container images within a Kubernetes cluster, specifically {product2}.
 
 SUSE always recommends you use the most current Service Pack of SUSE Linux Enterprise that is available.
 
@@ -292,12 +292,12 @@ sed -i '/^FROM/ s/golang\:1\.../golang\:1.18/' Dockerfile
 sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 ----
 
-Step 5: Build the SLE15 container image with the Nvidia GPU operator installed:
+Step 5: Build the {product3} container image with the Nvidia GPU operator installed:
 
-NOTE: When using a SLE15 build host that has a different Service Pack version that the {product1} container image to be used, the SUSE software repositories for the host will be used. This means that packages installed into the container image will match the Service Pack version of the host, not the {product1} container image. Ensure build host Service Pack matches the {product1} container image to avoid this situation.
+NOTE: When using a {product3} build host that has a different Service Pack version that the {product1} container image to be used, the SUSE software repositories for the host will be used. This means that packages installed into the container image will match the Service Pack version of the host, not the {product1} container image. Ensure build host Service Pack matches the {product1} container image to avoid this situation.
 
 
-CAUTION: While the follow steps allow for building the image in a "local" registry, it is highly recommended that this option only be used when building on a SLE15 host that has a Data Center class GPU. Building to a "local" registry will prevent you from deploying the new container image to a Kubernetes cluster.
+CAUTION: While the follow steps allow for building the image in a "local" registry, it is highly recommended that this option only be used when building on a {product3} host that has a Data Center class GPU. Building to a "local" registry will prevent you from deploying the new container image to a Kubernetes cluster.
 
 
 * Build the container:
@@ -514,7 +514,7 @@ sudo podman rm nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-== Deployment to a Kubernetes (RKE2) cluster
+== Deployment to a Kubernetes {product2} cluster
 
 
 * Enable the SLE Containers software Module on each Kubernetes GPU worker:
@@ -664,15 +664,15 @@ This command can also be used to verify which application processes are running 
 
 // In this guide, you learned ...
 
-This guide has effectively steered the creation of OCI compliant container images rooted in the SUSE Linux Enterprise 15 SP5 Base Container Image, incorporating the Nvidia GPU operator. Furthermore, it has provided coherent instructions for the seamless deployment of these images within a Kubernetes cluster, specifically RKE2. The ensuing utilization of this integrated solution is aimed at affording containerized applications GPU-acceleration, thus enhancing computational performance and efficiency.
+This guide has effectively steered the creation of OCI compliant container images rooted in the SUSE Linux Enterprise 15 SP5 Base Container Image, incorporating the Nvidia GPU operator. Furthermore, it has provided coherent instructions for the seamless deployment of these images within a Kubernetes cluster, specifically {product2}. The ensuing utilization of this integrated solution is aimed at affording containerized applications GPU-acceleration, thus enhancing computational performance and efficiency.
 
 The strategic choice of SUSE's SLE 15 SP5 Base Container Image as the foundation for this integration underscores the commitment to security, certifications, and supportability. Organizations with exacting security requirements will find solace in the numerous certifications such as Common Criteria, FIPS, and EAL. Additionally, the enhanced support for heterogeneous software stacks guarantees the reliability and stability of GPU-accelerated applications running on this foundation.
 
 This holistic approach to GPU management within containerized landscapes is poised to augment the capabilities of developers and system administrators alike, fostering innovation and operational excellence. For further insights and updates pertaining to the Nvidia GPU operator and its multifaceted functionalities, kindly refer to the official Nvidia documentation and the designated repository mentioned within this guide.
 
-A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably RKE2, that is provisioned with Nvidia GPU support and the requisite Nvidia drivers to fully harness GPU resources when deploying containers integrated with the aforementioned OCI compliant container images.
+A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably {product2}, that is provisioned with Nvidia GPU support and the requisite Nvidia drivers to fully harness GPU resources when deploying containers integrated with the aforementioned OCI compliant container images.
 
-For an exhaustive comprehension of advanced configurations and nuanced details, the consultative resources made available by SUSE, Docker, Nvidia, and RKE2 are strongly recommended.
+For an exhaustive comprehension of advanced configurations and nuanced details, the consultative resources made available by SUSE, Docker, Nvidia, and {product2}are strongly recommended.
 
 
 
