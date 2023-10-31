@@ -53,11 +53,15 @@ include::./common_docinfo_vars.adoc[]
 :product2: RKE2
 :product2_full: Rancher Kubernetes Engine 2
 :product2_url: www.suse.com/products/rancher-kubernetes-engine/
+:product3: SLE15
+:product3_full: SUSE Linux Enterprise 
+:product3_version: SLE15 SP5
+:product3_url: www.XZY.ZYX.com
+
 
 :usecase: Nvidia GPU Driver based on SLE BCI
 
-:sle15sp_version: SP5
-:bci-base_version: 15.5
+:sle:bci-base_version: 15.5
 :golang_version: 12.1.1
 :gpu-driver_version: 535.104.05
 :gpu-operator_version: v23.6.1
@@ -156,11 +160,55 @@ This guide is intened for an audience comprising Kubernetes administrators, prof
 
 .Before embarking on the procedures outlined in this guide, you should ensure the following prerequisites have been met
 
-* You have access to a SUSE Linux Enterprise 15 build host. It is highly recommended to ensure the build host is the same Service Pack (e.g. {product1_version}) version as the {product1} image to be used. NOTE: The build host does not require access to an Nvidia GPU.
-* The SLE Containers Module has been enabled on the build host, and the SLE Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes.
-* Podman is installed on the build host. If needed, you can install Podman from the SLE Containers module.
-* You have access to an OCI image registry that is available to the build host AND the target Kubernetes cluster. This will allow the GPU driver to be easily deployed across all Kubernetes worker nodes that have Nvidia GPUs as part of the Nvidia Kubernetes Operator Helm chart.
-* You have access to a Kubernetes cluster that is equipped and correctly configured with Data Center class Nvidia GPUs. These instructions leverage SUSE's security focused Kubernetes distribution, RKE2. 
+* You have access to a SUSE Linux Enterprise 15 build host. You should ensure the build host is the same Service Pack (e.g. {product1_version}) version as the {product1} image to be used. NOTE: The build host does not require access to an Nvidia GPU.
+
+* The SLE Containers Module has been enabled on the build host, and the SLE Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes. You can use the following commands to enable the appropriate software modules.
+//
++
+[NOTE]
+====
+Change the variable SLE15_SP_VERSION in the following command to match the service pack release of your {product3_full} Kubernetes worker nodes.
+====
+
+[console, bash]
+----
+export SLE15_SP_VERSION=5
+sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
+sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
+----
+
+* You have installed the required {product3_full} Nvidia software packages. You can use the following commands to install the appropriate software.
+//
++
+[console, bash]
+----
+sudo zypper install \
+  kernel-firmware-nvidia \
+  libnvidia-container-tools \
+  libnvidia-container1 \
+  nvidia-container-runtime \
+  sle-module-NVIDIA-compute \
+  sle-module-NVIDIA-compute-release
+----
+
+* Podman is installed on the build host. You can use the following command to install Podman.
+//
++
+[console, bash]
+----
+sudo zypper install podman
+----
+
+* You have access to an OCI image registry that is available to the build host AND the target Kubernetes cluster. This will allow the GPU driver to be deployed across all Kubernetes worker nodes that have Nvidia GPUs, when installing the Nvidia Kubernetes Operator Helm chart.
+//
++
+[NOTE]
+====
+The container registry does not need to support authenication, but should be configured with a valid TLS certificate.
+====
+
+* You have access to a Kubernetes cluster that is equipped and correctly configured with Data Center class Nvidia GPUs. These instructions leverage SUSE's security focused Kubernetes distribution, {product2}. 
+
 * You possess a basic familiarity with Podman and/or Docker, Kubernetes, and Nvidia GPU concepts.
 
 
