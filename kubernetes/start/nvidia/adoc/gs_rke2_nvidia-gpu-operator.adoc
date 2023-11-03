@@ -237,37 +237,46 @@ The container registry does not need to support authenication, but should be con
 
 This section offers a detailed explanation of the steps required to create OCI compliant container images with the Nvidia GPU Operator inside the SUSE Linux Enterprise 15 SP5 Base Container Image.
 
-Step 1[[step_1]]: Set these variables that will be consumed throughout this procedure:
-
-// NOTE:  Find the latest "Data Center Driver for Linux x64" version for your GPU at https://www.nvidia.com/download/index.aspx. Find the associated GPU Operator version at https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
-
-NOTE:  Find the latest "Data Center Driver for Linux x64" version for your GPU at https://www.nvidia.com/download/index.aspx. Find the associated GPU Operator version at https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
-
-[console, bash]
-----
-## Set the variables that will be used throughout this procedure
-echo &&
-read -p "Enter \"local\" (withoout quotes) or provide the name of the registry where the new image will be saved: " REGISTRY && 
-read -p "Enter the number for the SLE 15 service pack to be used for the container image (i.e. 5 for SP5): " SLE15_SP_VERSION && 
-read -p "Provide the Nvidia GPU driver version (e.g. 535.104.05): " DRIVER_VERSION && 
-read -p "Provide the Nvidia GPU Operator version (e.g. v23.6.1): " OPERATOR_VERSION && 
-----
-
-Step 2: Enable the SLE Containers software Module on the build host:
-
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
-
-----
-sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
-----
-
-Step 3: Clone the Nvidia GitLab repository and change to the `driver/sle15` directory:
+.Step 1: Clone the Nvidia GitLab repository and change to the `driver/sle15` directory:
 
 ----
 git clone https://gitlab.com/nvidia/container-images/driver && cd driver/sle15
 ----
 
-Step 4: Update the Dockerfile in this directory:
+.Step 2[[step_2]]: Set the following variables that will be consumed throughout this procedure:
+
+* Create the .build-variables.sh file:
+
+[console, bash]
+----
+cat <<EOF> .build-variables.sh
+## Provide the URL of the registry where the new image will be saved:
+export REGISTRY=""
+## Enter the number for the SLE 15 service pack to be used for the container image (i.e. 5 for SP5)
+export SLE15_SP_VERSION=""
+## Provide the Nvidia GPU driver version (e.g. 535.104.05)
+## Find the latest "Data Center Driver for Linux x64" version for your GPU at https://www.nvidia.com/download/index.aspx
+export DRIVER_VERSION=""
+## Provide the Nvidia GPU Operator version (e.g. v23.6.1)
+## Find the associated GPU Operator version at https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
+export OPERATOR_VERSION=""
+EOF
+----
+
+* Edit the .build-varilables.sh file to provide the appropriate values.
+* Source the variables into your current terminal environment
+
+[TIP]
+====
+Disconnecting from your current terminal envionment will cause the variables to be lost. Repeat the following step to set the variables again.
+====
+
+[console, bash]
+----
+source .build-varilables.sh
+----
+
+.Step 3: Update the Dockerfile in this directory:
 
 . Make a copy of the Dockerfile to use, if the modifications go badly:
 //
@@ -293,21 +302,20 @@ sed -i '/^FROM/ s/golang\:1\.../golang\:1.18/' Dockerfile
 sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 ----
 
-Step 5: Build the {product3} container image with the Nvidia GPU operator installed:
-
-NOTE: When using a {product3} build host that has a different Service Pack version that the {product1} container image to be used, the SUSE software repositories for the host will be used. This means that packages installed into the container image will match the Service Pack version of the host, not the {product1} container image. Ensure build host Service Pack matches the {product1} container image to avoid this situation.
+.Step 4: Build the {product3} container image with the Nvidia GPU operator installed:
 
 
-CAUTION: While the follow steps allow for building the image in a "local" registry, it is highly recommended that this option only be used when building on a {product3} host that has a Data Center class GPU. Building to a "local" registry will prevent you from deploying the new container image to a Kubernetes cluster.
+CAUTION: While the follow steps allow for building the image in a "local" registry, it is highly recommended that this option only be used when building on a {product3} host that has a Data Center class GPU. Building to a "local" registry will prevent you from deploying the new container image to a Kubernetes cluster using the Helm package installer.
 
 
 * Build the container:
 
 IMPORTANT: When building the container image, you may be prompted for the registry that contains the `nvidia/cuda` image. Select the image from docker.io.
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
-```
+[console, bash]
+----
 ## Validate the variables before using them in the subsequent command
 echo &&
 echo "
@@ -326,7 +334,7 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION
   --build-arg CUDA_VERSION="12.1.1" \   
   --build-arg PRIVATE_KEY=empty  \
 .
-```
+----
 
 * Watch the build output for errors, warnings, and failures. You can safely ignore errors and warnings that don't stop the build process.
 
@@ -340,17 +348,17 @@ Successfully tagged registry.susealliances.com/nvidia-sle15sp5-535.104.05:latest
 cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 ====
 
-Step 6: Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
+.Step 5: Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
 
 ----
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
 
-Step 7: If the specified build registry was not set to "local", push the newly build image to the container registry:
+.Step 6: If the specified build registry was not set to "local", push the newly build image to the container registry:
 
 IMPORTANT: If the target container registry requires authentication, use the `sudo podman login` command to successfully authenticate before continuing. See https://docs.podman.io/en/latest/markdown/podman-login.1.html for more information.
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
 ----
 ## Validate the variables before using them in the subsequent command
@@ -369,13 +377,13 @@ sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 
 * Verify the image is saved in the registry, and remotely available:
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
 ----
 sudo podman search --list-tags ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 ----
 
-Step 8: Validate the container image
+.Step 7: Validate the container image
 
 NOTE: This step is optional and requires running the newly created GPU driver container locally with `Podman`, outside of the Kubernetes context. This can be done on a {product1_version} host configured with the same kind of Nvidia GPU the container was created for, or on a Kuberentes worker node that is configured with an Nvidia GPU.
 
@@ -389,7 +397,7 @@ sudo mkdir -p /run/nvidia
 
 * Run the GPU operator container locally:
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
 ----
 ## Validate the variables before using them in the subsequent command
@@ -421,7 +429,7 @@ sudo podman ps -a
 
 * Monitor the deployment of the Nvidia GPU operator:
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
 ----
 ## Validate the variables before using them in the subsequent command
@@ -455,7 +463,7 @@ sudo lsmod | grep nvidia
 
 * Verify the `nvidia-smi` utility can communicate withe the GPU:
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
 ----
 ## Validate the variables before using them in the subsequent command
@@ -473,7 +481,7 @@ sudo podman exec -it nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} nvidia-
 
 * When ready to move forward, stop and remove the Podman container:
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
 ----
 ## Validate the variables before using them in the subsequent command
@@ -520,7 +528,7 @@ sudo podman rm nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 
 * Enable the SLE Containers software Module on each Kubernetes GPU worker:
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this beginning of this procedure before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this beginning of this procedure before continuing
 
 ----
 sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
@@ -543,7 +551,7 @@ helm repo add nvidia https://helm.ngc.nvidia.com/nvidia &&
 helm repo update
 ----
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing
+NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
 * Deploy the GPU Operator with Helm:
 
