@@ -118,7 +118,7 @@ This Getting Started guide provides comprehensive instructions for the creation 
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The integration of the Nvidia GPU operator with the SUSE Linux Enterprise 15 Base Container Image provides a secure, certified, and supportable foundation for GPU-accelerated workloads. SUSE's SLE 15 Base Container Image is distinguished by a wide range of security certifications, including Common Criteria, FIPS, and EAL, making it a trusted choice for organizations with stringent security requirements.
+The integration of the Nvidia GPU driver with the SUSE Linux Enterprise 15 Base Container Image provides a secure, certified, and supportable foundation for GPU-accelerated workloads. SUSE's SLE 15 Base Container Image is distinguished by a wide range of security certifications, including Common Criteria, FIPS, and EAL, making it a trusted choice for organizations with stringent security requirements.
 
 You can confidently run diverse and complex software stacks without affecting the supportability of the base container image that is providing the Nvidia GPU operator. This ensures better stability and reliability for GPU-driven Kubernetes applications.
 
@@ -169,7 +169,8 @@ This guide is intened for an audience comprising Kubernetes administrators, prof
 ====
 Change the variable SLE15_SP_VERSION in the following command to match the service pack release of your {product3_full} Kubernetes worker nodes.
 ====
-
+//
++
 [console, bash]
 ----
 export SLE15_SP_VERSION=5
@@ -304,10 +305,6 @@ sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 
 .Step 4: Build the {product3} container image with the Nvidia GPU operator installed:
 
-
-CAUTION: While the follow steps allow for building the image in a "local" registry, it is highly recommended that this option only be used when building on a {product3} host that has a Data Center class GPU. Building to a "local" registry will prevent you from deploying the new container image to a Kubernetes cluster using the Helm package installer.
-
-
 * Build the container:
 
 IMPORTANT: When building the container image, you may be prompted for the registry that contains the `nvidia/cuda` image. Select the image from docker.io.
@@ -354,7 +351,7 @@ cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
 
-.Step 6: If the specified build registry was not set to "local", push the newly build image to the container registry:
+.Step 6: Push the newly build image to the container registry:
 
 IMPORTANT: If the target container registry requires authentication, use the `sudo podman login` command to successfully authenticate before continuing. See https://docs.podman.io/en/latest/markdown/podman-login.1.html for more information.
 
@@ -380,7 +377,7 @@ sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
 ----
-sudo podman search --list-tags ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
+sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
 
 .Step 7: Validate the container image
@@ -395,7 +392,7 @@ NOTE: This step is optional and requires running the newly created GPU driver co
 sudo mkdir -p /run/nvidia
 ----
 
-* Run the GPU operator container locally:
+* Run the GPU driver container locally:
 
 NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
@@ -427,7 +424,7 @@ sudo podman ps -a
 ** The container's `STATUS` field should show that it is "Up" and the amount of time it has been up should increment with repeated runs of the command.
 
 
-* Monitor the deployment of the Nvidia GPU operator:
+* Monitor the deployment of the Nvidia GPU driver:
 
 NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
 
