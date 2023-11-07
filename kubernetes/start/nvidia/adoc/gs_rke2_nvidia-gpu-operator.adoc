@@ -463,7 +463,7 @@ DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if th
 
 ## Run the container image 
 sudo podman run -d \
-  --name nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} \
+  --name driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} \
   --privileged \
   --pid=host \
   -v /run/nvidia:/run/nvidia:shared \
@@ -503,7 +503,7 @@ SLE15_SP_VERSION=${SLE15_SP_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
 
 ## Review the standard output of the running container
-sudo podman logs -f nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
+sudo podman logs -f driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} \
 ----
 
 * The deployment process is complete when the following message is shown:
@@ -546,7 +546,7 @@ SLE15_SP_VERSION=${SLE15_SP_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
 
 ## Verify the nvidia-smi utitlity can communicate with the GPU
-sudo podman exec -it nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} nvidia-smi
+sudo podman exec -it driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} nvidia-smi
 ----
 
 * When ready to move forward, stop and remove the Podman container:
@@ -567,8 +567,8 @@ SLE15_SP_VERSION=${SLE15_SP_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
 ## Stop and remove the container instance
-sudo podman stop nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} &&
-sudo podman rm nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION} 
+sudo podman stop driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
+sudo podman rm driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
 ----
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -613,16 +613,24 @@ The following commands must be run from a Linux system that has the kubectl and 
 ====
 
 * Add the Nvidia helm software repository:
-
+//
++
+[console, bash]
 ----
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia && 
 helm repo update
 ----
 
-NOTE: If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
-
 * Deploy the GPU Operator with Helm:
-
+//
++
+[NOTE] 
+====
+If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_2, Step 2>> in this process before continuing
+====
+//
++
+[console, bash]
 ----
 ## Verify the selected cluster before deploying
 echo &&
@@ -663,14 +671,18 @@ helm install -n gpu-operator \
 ----
 
 * Verify the Nvidia GPU Operator, driver and associated elements have been deployed correctly with the command: 
-
+//
++
+[console, bash]
 ----
 kubectl get pods -n gpu-operator
 ----
-
+//
++
 ** The output should resemble:
-
-----
+//
++
+====
 NAME                                                          READY   STATUS      RESTARTS   AGE
 gpu-feature-discovery-crrsq                                   1/1     Running     0          60s
 gpu-operator-7fb75556c7-x8spj                                 1/1     Running     0          5m13s
@@ -686,7 +698,7 @@ nvidia-device-plugin-validator-cm2fd                          0/1     Completed 
 nvidia-driver-daemonset-5xj6g                                 1/1     Running     0          4m53s
 nvidia-mig-manager-89z9b                                      1/1     Running     0          4m53s
 nvidia-operator-validator-bwx99                               1/1     Running     0          58s
-----
+====
 
 
 
@@ -712,7 +724,8 @@ nvidia-operator-validator-bwx99                               1/1     Running   
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 * To validate that the Nvidia GPU driver is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
-
+//
++
 [console, bash]
 ----
 kubectl exec -it \
@@ -724,7 +737,8 @@ do echo ${EACH}; done)" \
 -n gpu-operator \
 nvidia-smi
 ----
-
+//
++
 [NOTE]
 ====
 This command can also be used to verify which application processes are running on the Nvidia GPUs, and how many resources are being consumed.
