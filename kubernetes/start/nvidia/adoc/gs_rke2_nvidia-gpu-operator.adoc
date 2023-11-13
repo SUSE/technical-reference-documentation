@@ -132,7 +132,10 @@ The choice of SUSE's SLE 15 Base Container Image is motivated by the unparallele
 
 This guide will help you:
 
-* Build an OCI compliant container image that incorporate an appropriate {nvidia-drv} within the 
+* Build an OCI compliant container image that incorporate an appropriate {nvidia-drv} installed into a {product-bci-full}.
+* Validate the functionality of that container image
+* Push the image to a central container image registry so that it can be accessed by a {product-rke2} Kubernetes cluster.
+* Install 
 is dedicated to helping you create  SUSE Linux Enterprise 15 Base Container Image. Additionally, it provides instructions for deploying these container images within a Kubernetes cluster, specifically {product-rke2}.
 
 SUSE always recommends you use the most current Service Pack of SUSE Linux Enterprise that is available.
@@ -174,7 +177,7 @@ Change the variable SLE15_SP_VERSION in the following command to match the servi
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 export SLE15_SP_VERSION=5
 sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
