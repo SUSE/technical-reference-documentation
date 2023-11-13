@@ -114,22 +114,10 @@ include::./common_docinfo_vars.adoc[]
 // This is could be the same as the executive summary.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This Getting Started guide provides comprehensive instructions for the creation of an OCI compliant container image containing an Nvidia GPU driver, and which is based on the SUSE Linux Enterprise 15 Base Container Image. The primary objective is to seamlessly integrate the Nvidia GPU Operator, simplifying GPU management and support within Kubernetes clusters for GPU-intensive workloads. The choice of SUSE's SLE 15 Base Container Image is motivated by the unparalleled security certifications and enhanced supportability it offers, particularly when operating heterogeneous software stacks.
+This Getting Started guide provides comprehensive instructions for two imporant tasks. The first is the creation of an OCI compliant container image based on the SUSE Linux Enterprise 15 Base Container Image, that runs the Nvidia GPU driver. The second is deploying the container image on {product2_full}. The primary objective is to enable you to seamlessly integrate Nvidia's Kuberentes GPU Operator, simplifying GPU management and support within Kubernetes clusters for GPU-intensive workloads. 
 
-=== Motivation
+The choice of SUSE's SLE 15 Base Container Image is motivated by the unparalleled security certifications and enhanced supportability it offers, particularly when operating heterogeneous software stacks. SUSE's SLE 15 Base Container Image is distinguished by a wide range of security certifications, including Common Criteria, FIPS, and EAL, making it a trusted choice for organizations with stringent security requirements.
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a motivation for the document in 2-4 sentences to identify:
-//   - what the document is about
-//   - why it may be of interest to the reader (e.g., a use case)
-//   - what products are being highlighted
-// Include an approved SUSE | Partner logo lock-up if possible
-// Include any additional, relevant details
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-The integration of the Nvidia GPU driver with the SUSE Linux Enterprise 15 Base Container Image provides a secure, certified, and supportable foundation for GPU-accelerated workloads. SUSE's SLE 15 Base Container Image is distinguished by a wide range of security certifications, including Common Criteria, FIPS, and EAL, making it a trusted choice for organizations with stringent security requirements.
-
-You can confidently run diverse and complex software stacks without affecting the supportability of the base container image that is providing the Nvidia GPU driver. This ensures better stability and reliability for GPU-driven Kubernetes applications.
 
 === Scope
 
