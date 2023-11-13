@@ -43,7 +43,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document
 // -
-:title: Nvidia GPU Driver on SLE BCI
+:title: Nvidia GPU Driver With SLE BCI on RKE2
 :subtitle: Creating and deploying the SLE15 Base Container Image with the Nvidia GPU Driver on RKE2 Kubernetes
 
 :product1: SLE BCI
@@ -68,6 +68,12 @@ include::./common_docinfo_vars.adoc[]
 :gpu-operator_version: v23.6.1
 
 :nvidia-driver-download-url: https://www.nvidia.com/download/index.aspx
+:nvidia-driver-gpu-operator-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
+:nvidia-helm-url: https://helm.ngc.nvidia.com/nvidia
+:nvidia-git-lab-url: https://gitlab.com/nvidia/container-images/driver
+
+:rancher-kubectl-url: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  
+:rke2-cluster-access-url: https://docs.rke2.io/cluster_access
 
 // :executive_summary: A brief statement of what this document provides (e.g., This document provides a brief introduction to implementing {usecase} with {product2_full} and {product1_full}.)
 :executive_summary: This document describes the process of creating an {usecase} and deploying it as part of the Nvidia Kubernetes Operator on the Rancher Kubernetes Engine 2 distribution of Kubernetes
@@ -266,12 +272,12 @@ export REGISTRY=""
 ## Enter the number for the SLE 15 service pack to be used for the container image (i.e. 5 for SP5)
 export SLE15_SP_VERSION=""
 ## Provide the Nvidia GPU driver version (e.g. 535.104.05)
-## Find the latest "Data Center Driver for Linux x64" version for your GPU at https://www.nvidia.com/download/index.aspx
+## Find the latest "Data Center Driver for Linux x64" version for your GPU at {nvidia-driver-download-url}
 export DRIVER_VERSION=""
 ## Provide the Nvidia GPU Operator version (e.g. v23.6.1)
-## Find the associated GPU Operator version at https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
+## Find the associated GPU Operator version at {nvidia-driver-gpu-operator-url}
 export OPERATOR_VERSION=""
-## Provide the required CUDA version (e.g. 12.2.2) for GPU driver by selecting your driver version at https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
+## Provide the required CUDA version (e.g. 12.2.2) for GPU driver by selecting your driver version at {nvidia-driver-gpu-operator-url}
 ## The CUDA version will be listed under "Software Versions"
 export CUDA_VERSION=""
 EOF
@@ -292,12 +298,17 @@ Disconnecting from your current terminal envionment will cause the variables to 
 source /tmp/.build-variables.sh
 ----
 
+[IMPORTANT]
+====
+After setting and sourcing the variables, you will be able to copy and paste the entire code blocks from this document to the command line and execute them without editing. For the best results, be sure and execute each code block in its entirety as a single command.
+====
+
 .Step 2: Clone the Nvidia GitLab repository and change to the `driver/sle15` directory:
 //
 +
 [console, bash]
 ----
-git clone https://gitlab.com/nvidia/container-images/driver && cd driver/sle15
+git clone {nvidia-git-lab-url} && cd driver/sle15
 ----
 
 .Step 3: Update the Dockerfile in this directory:
@@ -634,7 +645,7 @@ The preferred method for installing the Nvidia GPU Operator is with the Helm Kub
 
 [IMPORTANT] 
 ====
-The following steps must be run from a Linux system that has the kubectl and helm (version 3) utilities, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. See these documents for more information: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  https://docs.rke2.io/cluster_access 
+The following steps must be run from a Linux system that has the kubectl and helm (version 3) utilities, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. See these documents for more information: {rancher-kubectl-url} and {rke2-cluster-access-url} 
 
 In addition, if the container build host is a different system than the one being used to perform the Helm install, the /tmp/.build-variables.sh file will need to be created on the second system. Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
@@ -645,7 +656,7 @@ In addition, if the container build host is a different system than the one bein
 +
 [console, bash]
 ----
-helm repo add nvidia https://helm.ngc.nvidia.com/nvidia && 
+helm repo add {nvidia-helm-url}
 helm repo update
 ----
 
