@@ -189,7 +189,7 @@ sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
 * You have installed the required {product-sle-full} Nvidia software packages on each Kubernetes worker node that is configured with an NVIDIA GPU. You can use the following commands to install the appropriate software.
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sudo zypper install \
   kernel-firmware-nvidia \
@@ -202,7 +202,7 @@ sudo zypper install \
 * Podman is installed on the build host and at least one of the Nvidia GPU equiped Kubernetes worker nodes. You can use the following command to install Podman.
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sudo zypper install podman
 ----
@@ -210,7 +210,7 @@ sudo zypper install podman
 * The git utility is installed on the build host. You can use the following command to install git.
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sudo zypper install git-core
 ----
@@ -290,7 +290,7 @@ Disconnecting from your current terminal envionment will cause the variables to 
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 source /tmp/.build-variables.sh
 ----
@@ -303,7 +303,7 @@ After setting and sourcing the variables, you will be able to copy and paste the
 .Step 2: Clone the Nvidia GitLab repository and change to the `driver/sle15` directory:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 git clone {nvidia-git-lab-url} && cd driver/sle15
 ----
@@ -313,7 +313,7 @@ git clone {nvidia-git-lab-url} && cd driver/sle15
 . Make a backup copy of the Dockerfile before modifying:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 cp Dockerfile /tmp/Dockerfile.orig
 ----
@@ -321,7 +321,7 @@ cp Dockerfile /tmp/Dockerfile.orig
 . Update the golang build container image to version `{golang-version}`:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 ----
@@ -329,7 +329,7 @@ sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 . Update the Dockerfile's base container image to the {product-bci-version} BCI:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 ----
@@ -337,7 +337,7 @@ sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 . Verify the changes that have been made to the Dockerfile:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 diff /tmp/Dockerfile.orig Dockerfile
 ----
@@ -358,7 +358,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -397,7 +397,7 @@ cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 .Step 5: Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
@@ -417,7 +417,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -441,7 +441,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
@@ -455,7 +455,7 @@ NOTE: This step is optional and requires running the newly created {nvidia-drv} 
 * Create the `/run/nvidia` directory, if it does not yet exist:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sudo mkdir -p /run/nvidia
 ----
@@ -469,7 +469,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -492,7 +492,7 @@ ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 * Verify the container is running:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sudo podman ps -a
 ----
@@ -510,7 +510,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -535,7 +535,7 @@ Done, now waiting for signal
 * Ensure the Nvidia kernel modules have been loaded:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sudo lsmod | grep nvidia
 ----
@@ -553,7 +553,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -575,7 +575,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -591,7 +591,7 @@ sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 * Before continuing to the Kubernetes deployment procedure, ensure the Nvidia kernel modules are not loaded on any of the Nvidia GPU equipped Kuberenetes worker nodes:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 sudo lsmod | grep nvidia
 ----
@@ -651,7 +651,7 @@ In addition, if the container build host is a different system than the one bein
 * Add the Nvidia helm software repository:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 helm repo add {nvidia-helm-url}
 helm repo update
@@ -666,7 +666,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 ## Verify the selected cluster before deploying
 echo &&
@@ -709,7 +709,7 @@ helm install -n gpu-operator \
 * Verify the {nvidia-op}, {nvidia-drv} and associated elements have been deployed correctly with the command: 
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 kubectl get pods -n gpu-operator
 ----
@@ -762,7 +762,7 @@ nvidia-operator-validator-bwx99                               1/1     Running   
 * To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
 //
 +
-[console, bash]
+[console, subs="attributes"]
 ----
 kubectl exec -it \
 "$(for EACH in \
