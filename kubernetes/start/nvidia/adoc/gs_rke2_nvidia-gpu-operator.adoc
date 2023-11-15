@@ -133,14 +133,20 @@ The choice of SUSE's SLE 15 Base Container Image is motivated by the unparallele
 This guide will help you:
 
 * Build an OCI compliant container image that incorporate an appropriate {nvidia-drv} installed into a {product-bci-full}.
-* Validate the functionality of that container image
+* Validate the functionality of that container image.
 * Push the image to a central container image registry so that it can be accessed by a {product-rke2} Kubernetes cluster.
-* Install 
-is dedicated to helping you create  SUSE Linux Enterprise 15 Base Container Image. Additionally, it provides instructions for deploying these container images within a Kubernetes cluster, specifically {product-rke2}.
+* Deploy the {nvidia-op} Helm chart to an {product-rke2} Kubernetes cluster in a way that leverages the {nvidia-drv} container image.
+* Verify the Helm installation process completed correctly.
 
+[TIP]
+====
 SUSE always recommends you use the most current Service Pack of SUSE Linux Enterprise that is available.
+====
 
+[IMPORTANT]
+====
 It is assumed that you are using Data Center class Nvidia GPU(s). Integrating consumer grade GPUs is beyond the scope of this document.
+====
 
 === Audience
 
