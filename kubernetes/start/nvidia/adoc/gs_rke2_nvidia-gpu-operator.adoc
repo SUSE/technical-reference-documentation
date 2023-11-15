@@ -60,7 +60,7 @@ include::./common_docinfo_vars.adoc[]
 :nvidia-op: NVIDIA GPU Operator
 :nvidia-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html
 :nvidia-drv: NVIDIA GPU driver
-
+:nvidia-cuda: NVIDIA CUDA driver
 
 :usecase: Nvidia GPU Driver based on SLE BCI
 
@@ -758,6 +758,40 @@ nvidia-operator-validator-bwx99                               1/1     Running   
 // admonitions, and screenshots.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+[NOTE]
+====
+The {nvidia-op} Helm chart provides two pods that validate the state of the installed software.
+====
+
+* Validate the state of the {nvidia-op} software:
+
+
+[console, subs="attributes"]
+----
+kubectl logs -n gpu-operator -l app=nvidia-operator-validator
+----
+
+** The output should be similar to:
+
+====
+Defaulted container "nvidia-operator-validator" out of: nvidia-operator-validator, driver-validation (init), toolkit-validation (init), cuda-validation (init), plugin-validation (init)
+*all validations are successful*
+====
+
+* Validate the state of the {nvidia-cuda} software:
+
+[console, subs="attributes"]
+----
+kubectl logs -n gpu-operator -l app=nvidia-cuda-validator
+----
+
+** The output should be similar to:
+
+====
+Defaulted container "nvidia-cuda-validator" out of: nvidia-cuda-validator, cuda-validation (init)
+*cuda workload validation is successful*
+====
 
 * To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
 //
