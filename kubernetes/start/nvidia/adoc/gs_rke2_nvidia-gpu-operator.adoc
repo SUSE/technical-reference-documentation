@@ -50,21 +50,22 @@ include::./common_docinfo_vars.adoc[]
 :product-rke2: RKE2
 :product-rke2-full: Rancher Kubernetes Engine 2
 :product-rke2-url: www.suse.com/products/rancher-kubernetes-engine/
-:product-sle: SLE
+:product-sle: SLES
 :product-sle-version: 15
 :product-sle-sp-version: SP5
 :product-sle-sp-version-short: 5
-:product-sle-full: SUSE Linux Enterprise 
+:product-sle-full: SUSE Linux Enterprise Server
 :product-sle-version: {product-bci-version}
 :product-sle-url: https://www.suse.com/products/server/
-:nvidia-op: NVIDIA GPU Operator
+:nvidia-name: NVIDIA
+:nvidia-op: {nvidia-name} GPU Operator
 :nvidia-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html
-:nvidia-drv: NVIDIA GPU driver
-:nvidia-cuda: NVIDIA CUDA driver
+:nvidia-drv: {nvidia-name} GPU driver
+:nvidia-cuda: {nvidia-name} CUDA driver
 
 :title: {nvidia-drv} With {product-bci-full} on {product-rke2-full}
 :subtitle: Creating and deploying an {nvidia-drv} on {product-bci-full} on an {product-rke2} Kubernetes cluster with Helm
-:usecase: Nvidia GPU Driver based on SLE BCI
+:usecase: {nvidia-name} GPU Driver based on SLE BCI
 
 // :sle:bci-base_version: 15.5
 :golang-version: 1.18
@@ -155,7 +156,7 @@ SUSE always recommends you use the most current Service Pack of {product-sle-ful
 
 [IMPORTANT]
 ====
-It is assumed that you are using Data Center class Nvidia GPU(s). Integrating consumer grade GPUs is beyond the scope of this document.
+It is assumed that you are using Data Center class {nvidia-name} GPU(s). Integrating consumer grade GPUs is beyond the scope of this document.
 ====
 
 === Audience
@@ -170,7 +171,7 @@ It is assumed that you are using Data Center class Nvidia GPU(s). Integrating co
 // This document is intended for ...
 
 This guide is intened for an audience comprising Kubernetes administrators, proficient DevOps practitioners, and application developers. 
-It assumes a foundational understanding of Podman and/or Docker, Kubernetes, and Nvidia GPU technologies. 
+It assumes a foundational understanding of Podman and/or Docker, Kubernetes, and {nvidia-name} GPU technologies. 
 This guide should be suitable for most high technology professionals seeking to unlock the full potential of their GPU accellerated containerized applications.
 
 == Prerequisites
@@ -189,10 +190,10 @@ You should ensure the build host is the same Service Pack (e.g. {product-bci-ver
 
 [TIP] 
 ====
-The build host does not require access to an Nvidia GPU.
+The build host does not require access to an {nvidia-name} GPU.
 ====
 
-* The {product-sle} Containers Module has been enabled on the build host and the {product-sle} Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes. 
+* The {product-sle} Containers Module has been enabled on the build host and the {product-sle} Containers Module plus the {nvidia-name} Compute Module have been enabled on all Kubernetes worker nodes. 
 You can use the following commands to enable the appropriate software modules. on each host/node.
 //
 +
@@ -208,10 +209,10 @@ export SLE15_SP_VERSION=5
 sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
 sudo SUSEConnect -p sle-module-desktop-applications/15.${SLE15_SP_VERSION}/x86_64
 sudo SUSEConnect -p sle-module-development-tools/15.${SLE15_SP_VERSION}/x86_64
-sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
+sudo SUSEConnect -p sle-module-{nvidia-name}-compute/15/x86_64
 ----
 
-* You have installed the required {product-sle-full} Nvidia software packages on each Kubernetes worker node that is configured with an NVIDIA GPU. 
+* You have installed the required {product-sle-full} {nvidia-name} software packages on each Kubernetes worker node that is configured with an {nvidia-name} GPU. 
 You can use the following commands to install the appropriate software.
 //
 +
@@ -222,10 +223,10 @@ sudo zypper install \
   libnvidia-container-tools \
   libnvidia-container1 \
   nvidia-container-runtime \
-  sle-module-NVIDIA-compute-release
+  sle-module-{nvidia-name}-compute-release
 ----
 
-* Podman is installed on the build host and at least one of the Nvidia GPU equiped Kubernetes worker nodes. 
+* Podman is installed on the build host and at least one of the {nvidia-name} GPU equiped Kubernetes worker nodes. 
 You can use the following command to install Podman.
 //
 +
@@ -244,7 +245,7 @@ sudo zypper install git-core
 ----
 
 * You have access to a container image registry that is available to the build host AND the target Kubernetes cluster. 
-This will allow the {nvidia-drv} to be deployed across all Kubernetes worker nodes that have Nvidia GPUs, when installing the {nvidia-op} Helm chart.
+This will allow the {nvidia-drv} to be deployed across all Kubernetes worker nodes that have {nvidia-name} GPUs, when installing the {nvidia-op} Helm chart.
 //
 +
 [NOTE]
@@ -252,10 +253,10 @@ This will allow the {nvidia-drv} to be deployed across all Kubernetes worker nod
 The container registry does not need to support authenication, but should be configured with a valid TLS certificate.
 ====
 
-* You have access to a Kubernetes cluster that is equipped and correctly configured with Data Center class Nvidia GPUs. 
+* You have access to a Kubernetes cluster that is equipped and correctly configured with Data Center class {nvidia-name} GPUs. 
 These instructions leverage SUSE's security focused Kubernetes distribution, {product-rke2}. 
 
-* You possess a basic familiarity with Podman and/or Docker, Kubernetes, and Nvidia GPU concepts.
+* You possess a basic familiarity with Podman and/or Docker, Kubernetes, and {nvidia-name} GPU concepts.
 
 
 == Technical overview
@@ -333,7 +334,7 @@ After setting and sourcing the variables, you will be able to copy and paste the
 For the best results, be sure and execute each code block in its entirety as a single command.
 ====
 
-.Step 2: Clone the Nvidia GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
+.Step 2: Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
 //
 +
 [console, subs="attributes"]
@@ -487,7 +488,7 @@ sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE
 [NOTE] 
 ====
 This step is optional and requires running the newly created {nvidia-drv} container locally with `Podman`, outside of the Kubernetes context. 
-This can be done on a {product-bci-version} host configured with the same kind of Nvidia GPU the container was created for, or on a Kuberentes worker node that is configured with an Nvidia GPU.
+This can be done on a {product-bci-version} host configured with the same kind of {nvidia-name} GPU the container was created for, or on a Kuberentes worker node that is configured with an {nvidia-name} GPU.
 ====
 
 * Open a command line session to the host or Kubernetes worker node on which you will test the container image.
@@ -566,13 +567,13 @@ sudo podman logs -f driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 * The deployment process is complete when the following message is shown:
 
 ====
-Mounting NVIDIA driver rootfs...
+Mounting {nvidia-name} driver rootfs...
 Done, now waiting for signal
 ====
 
 * Press `Ctrl+c` to close the log viewing session
 
-* Ensure the Nvidia kernel modules have been loaded:
+* Ensure the {nvidia-name} kernel modules have been loaded:
 //
 +
 [console, subs="attributes"]
@@ -628,7 +629,7 @@ sudo podman stop driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
 sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
 ----
 
-* Before continuing to the Kubernetes deployment procedure, ensure the Nvidia kernel modules are not loaded on any of the Nvidia GPU equipped Kuberenetes worker nodes:
+* Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
 //
 +
 [console, subs="attributes"]
@@ -691,7 +692,7 @@ Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
 
 
-* Add the Nvidia helm software repository:
+* Add the {nvidia-name} helm software repository:
 //
 +
 [console, subs="attributes"]
@@ -854,7 +855,7 @@ nvidia-smi
 +
 [NOTE]
 ====
-This command can also be used to verify which application processes are running on the Nvidia GPUs, and how many resources are being consumed.
+This command can also be used to verify which application processes are running on the {nvidia-name} GPUs, and how many resources are being consumed.
 ====
 
 == Summary
@@ -875,7 +876,7 @@ The strategic choice of SUSE's {product-bci-full} as the foundation for this int
 Organizations with exacting security requirements depend on {product-sle-full}'s numerous certifications such as Common Criteria, FIPS, and EAL. 
 Additionally, SUSE's commitment to providing robust support for heterogeneous software stacks guarantees customer's the freedom to design their IT landscape to suit their unique business challenges. 
 
-A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably {product-rke2}, that provides full Nvidia GPU support and the requisite {nvidia-op} to fully harness GPU resources when deploying GPU intensive workloads.
+A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably {product-rke2}, that provides full {nvidia-name} GPU support and the requisite {nvidia-op} to fully harness GPU resources when deploying GPU intensive workloads.
 
 
 
