@@ -43,9 +43,6 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document
 // -
-:title: Nvidia GPU Driver With SLE BCI on RKE2
-:subtitle: Creating and deploying the SLE15 Base Container Image with the Nvidia GPU Driver on RKE2 Kubernetes
-
 :product-bci: SLE BCI
 :product-bci-full: SUSE Linux Enterprise Base Container Image
 :product-bci-version: 15 SP5
@@ -54,6 +51,9 @@ include::./common_docinfo_vars.adoc[]
 :product-rke2-full: Rancher Kubernetes Engine 2
 :product-rke2-url: www.suse.com/products/rancher-kubernetes-engine/
 :product-sle: SLE
+:product-sle-version: 15
+:product-sle-sp-version: SP5
+:product-sle-sp-version-short: 5
 :product-sle-full: SUSE Linux Enterprise 
 :product-sle-version: {product-bci-version}
 :product-sle-url: https://www.suse.com/products/server/
@@ -62,6 +62,8 @@ include::./common_docinfo_vars.adoc[]
 :nvidia-drv: NVIDIA GPU driver
 :nvidia-cuda: NVIDIA CUDA driver
 
+:title: {nvidia-drv} With {product-bci-full} on {product-rke2-full}
+:subtitle: Creating and deploying an {nvidia-drv} on {product-bci-full} on an {product-rke2} Kubernetes cluster with Helm
 :usecase: Nvidia GPU Driver based on SLE BCI
 
 // :sle:bci-base_version: 15.5
@@ -74,6 +76,9 @@ include::./common_docinfo_vars.adoc[]
 :nvidia-driver-gpu-operator-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
 :nvidia-helm-url: https://helm.ngc.nvidia.com/nvidia
 :nvidia-git-lab-url: https://gitlab.com/nvidia/container-images/driver
+:nvidia-git-lab-directory: driver/sle15
+:nvidia-license-image-registry: docker.io
+:build-variables-file: /tmp/.build-variables.sh
 
 :rancher-kubectl-url: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  
 :rke2-cluster-access-url: https://docs.rke2.io/cluster_access
@@ -119,12 +124,12 @@ include::./common_docinfo_vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 This Getting Started guide provides comprehensive instructions for two imporant tasks. 
-The first is the creation of an OCI compliant container image based on the SUSE Linux Enterprise 15 Base Container Image, that runs the {nvidia-drv}. 
+The first is the creation of an OCI compliant container image based on the {product-bci-full}, that runs the {nvidia-drv}. 
 The second is deploying the container image on {product-rke2-full}. 
 The primary objective is to enable you to seamlessly integrate the {nvidia-op}, simplifying GPU management and support within Kubernetes clusters for GPU-intensive workloads. 
 
-The choice of SUSE's SLE 15 Base Container Image is motivated by the unparalleled security certifications and enhanced supportability it offers, particularly when operating heterogeneous software stacks. 
-SUSE's SLE 15 Base Container Image is distinguished by a wide range of security certifications, including Common Criteria, FIPS, and EAL, making it a trusted choice for organizations with stringent security requirements.
+The choice of {product-bci-full} is motivated by the unparalleled security certifications and enhanced supportability it offers, particularly when operating heterogeneous software stacks. 
+SUSE's {product-bci-full} is distinguished by a wide range of security certifications, including Common Criteria, FIPS, and EAL, making it a trusted choice for organizations with stringent security requirements.
 
 
 == Scope
@@ -145,7 +150,7 @@ This guide will help you:
 
 [TIP]
 ====
-SUSE always recommends you use the most current Service Pack of SUSE Linux Enterprise that is available.
+SUSE always recommends you use the most current Service Pack of {product-sle-full} that is available.
 ====
 
 [IMPORTANT]
@@ -179,7 +184,7 @@ This guide should be suitable for most high technology professionals seeking to 
 
 .Before embarking on the procedures outlined in this guide, you should ensure the following prerequisites have been met
 
-* You have access to a SUSE Linux Enterprise 15 build host. 
+* You have access to a {product-sle}{product-bci-version} build host. 
 You should ensure the build host is the same Service Pack (e.g. {product-bci-version}) version as the {product-bci} image to be used. 
 
 [TIP] 
@@ -187,7 +192,7 @@ You should ensure the build host is the same Service Pack (e.g. {product-bci-ver
 The build host does not require access to an Nvidia GPU.
 ====
 
-* The SLE Containers Module has been enabled on the build host and the SLE Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes. 
+* The {product-sle} Containers Module has been enabled on the build host and the {product-sle} Containers Module plus the NVIDIA Compute Module have been enabled on all Kubernetes worker nodes. 
 You can use the following commands to enable the appropriate software modules. on each host/node.
 //
 +
@@ -284,14 +289,14 @@ The following commands must be run on the {product-sle-full} build host.
 
 .Step 1[[step_1]]: Set the following variables that will be consumed throughout this procedure:
 
-* Create the /tmp/.build-variables.sh file:
+* Create the {build-variables-file} file:
 
 [console, subs="attributes"]
 ----
-cat <<EOF> /tmp/.build-variables.sh
+cat <<EOF> {build-variables-file}
 ## Provide the URL of the registry where the new image will be saved:
 export REGISTRY=""
-## Enter the number for the SLE 15 service pack to be used for the container image (i.e. 5 for SP5)
+## Enter the number for the {product-sle} {product-sle-version} service pack to be used for the container image (i.e. {product-sle-sp-version-short} for {product-sle-sp-version})
 export SLE15_SP_VERSION=""
 ## Provide the {nvidia-drv} version (e.g. {gpu-driver-version})
 ## Find the latest "Data Center Driver for Linux x64" version for your GPU at {nvidia-driver-download-url}
@@ -305,7 +310,7 @@ export CUDA_VERSION=""
 EOF
 ----
 
-* Edit the /tmp/.build-variables.sh file to provide the appropriate values.
+* Edit the {build-variables-file} file to provide the appropriate values.
 
 * Source the variables into your current terminal environment:
 //
@@ -319,7 +324,7 @@ Repeat the following step to set the variables again.
 +
 [console, subs="attributes"]
 ----
-source /tmp/.build-variables.sh
+source {build-variables-file}
 ----
 
 [IMPORTANT]
@@ -328,12 +333,12 @@ After setting and sourcing the variables, you will be able to copy and paste the
 For the best results, be sure and execute each code block in its entirety as a single command.
 ====
 
-.Step 2: Clone the Nvidia GitLab repository and change to the `driver/sle15` directory:
+.Step 2: Clone the Nvidia GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
 //
 +
 [console, subs="attributes"]
 ----
-git clone {nvidia-git-lab-url} && cd driver/sle15
+git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
 ----
 
 .Step 3: Update the Dockerfile in this directory:
@@ -377,7 +382,7 @@ diff /tmp/Dockerfile.orig Dockerfile
 [IMPORTANT] 
 ====
 When building the container image, you may be prompted for the registry that contains the `nvidia/cuda` image. 
-If so, select the image located in docker.io.
+If so, select the image located in {nvidia-license-image-registry}.
 ====
 //
 +
@@ -409,7 +414,7 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION
 ----
 
 // DRIVER_TYPE=${DRIVER_TYPE}
-//   --build-arg DRIVER_TYPE="${DRIVER_TYPE}" \     
+//   --build-arg DRIVER_TYPE="${DRIVER_TYPE}"      
 
 * Watch the build output for errors, warnings, and failures. You can safely ignore errors and warnings that don't stop the build process.
 
@@ -437,7 +442,7 @@ for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi $
 +
 [IMPORTANT] 
 ====
-If the target container registry requires authentication, use the `sudo podman login` command to successfully authenticate before continuing. 
+If the target container registry requires authentication, use the `Podman login` command to successfully authenticate before continuing. 
 See {podman-login-url} for more information.
 ====
 //
@@ -678,10 +683,10 @@ The preferred method for installing the {nvidia-op} is with the Helm Kuberenetes
 
 [IMPORTANT] 
 ====
-The following steps must be run from a Linux system that has the kubectl and helm (version 3) utilities, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. 
+The following steps must be run from a Linux system that has the kubectl and Helm (version 3) utilities, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. 
 See these documents for more information: {rancher-kubectl-url} and {rke2-cluster-access-url}.
 
-In addition, if the container build host is a different system than the one being used to perform the Helm install, the /tmp/.build-variables.sh file will need to be created on the second system. 
+In addition, if the container build host is a different system than the one being used to perform the Helm install, the {build-variables-file} file will need to be created on the second system. 
 Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
 
