@@ -357,7 +357,7 @@ After setting and sourcing the variables, you will be able to copy and paste the
 For the best results, be sure and execute each code block in its entirety as a single command.
 ====
 
-.Step 2: Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
+. Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
 //
 +
 [console, subs="attributes"]
@@ -365,7 +365,7 @@ For the best results, be sure and execute each code block in its entirety as a s
 git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
 ----
 
-.Step 3: Update the Dockerfile in this directory:
+. Update the Dockerfile in this directory:
 
 . Make a backup copy of the Dockerfile before modifying:
 //
@@ -399,7 +399,7 @@ sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 diff /tmp/Dockerfile.orig Dockerfile
 ----
 
-.Step 4: Build the {product-sle} container image with the {nvidia-drv} installed:
+. Build the {product-sle} container image with the {nvidia-drv} installed:
 
 * Build the container:
 
@@ -454,7 +454,7 @@ Successfully tagged registry.susealliances.com/nvidia-sle15sp5-535.104.05:latest
 cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 ====
 
-.Step 5: Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
+. Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
 //
 +
 [console, subs="attributes"]
@@ -462,7 +462,7 @@ cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
 
-.Step 6: Push the newly build image to the container registry:
+. Push the newly build image to the container registry:
 //
 +
 [IMPORTANT] 
