@@ -57,6 +57,8 @@ include::./common_docinfo_vars.adoc[]
 :product-sle-full: SUSE Linux Enterprise Server
 :product-sle-version: {product-bci-version}
 :product-sle-url: https://www.suse.com/products/server/
+:suse-customer-center-name: SUSE Customer Center
+:product-rmt: RMT
 :nvidia-name: NVIDIA
 :nvidia-op: {nvidia-name} GPU Operator
 :nvidia-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html
@@ -279,6 +281,24 @@ These instructions leverage SUSE's security focused Kubernetes distribution, {pr
 // https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#vmware-vsphere-with-tanzu
 // https://docs.nvidia.com/grid/12.0/index.html
 
+The process of building the OCI compliant {nvidia-drv} image using {product-bci} and deploying it to an {product-rke2} cluster will leverage the following primary components:
+//
++
+* A build host. This can be an {product-rke2} worker node or a separate node or VM with, or without access to an {nvidia-name} GPU.
+** If the build host has access to an {nvidia-name} GPU, the specified validations can be done on that node.
+* A container image registry to which the build host and the {product-rke2} cluster can access.
+* An {product-rke2} Kubernetes cluster with at least one worker node that is confgiured with an {nvidia-name} GPU. 
+* Access to the {product-sle-full} software modules through the {suse-customer-center-name} or an {product-rmt} server.
+
+The process of building the OCI compliant and deploying it to an {product-rke2} cluster will entail the following steps:
+//
++
+. Build the container image
+. Validate the state of the image
+. Save it to a container image registry so it can be accessed by the {product-rke2} cluster
+. Deploy the entire {nvidia-op} Helm chart, including the {nvidia-drv} image to the {product-rke2} cluster
+. Validate the state of the {nvidia-op} installation
+
 
 == Build the {product-bci} container image with {nvidia-drv}
 
@@ -424,6 +444,7 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION
 For example:
 
 
+[listing]
 ====
  COMMIT registry.susealliances.com/nvidia-sle15sp5-535.104.05
 --> cf976870489
@@ -567,6 +588,7 @@ sudo podman logs -f driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 
 * The deployment process is complete when the following message is shown:
 
+[listing]
 ====
 Mounting {nvidia-name} driver rootfs...
 Done, now waiting for signal
@@ -763,6 +785,7 @@ kubectl get pods -n gpu-operator
 ** The output should be similar to the following:
 //
 +
+[listing]
 ====
 NAME                                                          READY   STATUS      RESTARTS   AGE
 gpu-feature-discovery-crrsq                                   1/1     Running     0          60s
@@ -819,6 +842,7 @@ kubectl logs -n gpu-operator -l app=nvidia-operator-validator
 
 ** The output should be similar to:
 
+[listing]
 ====
 Defaulted container "nvidia-operator-validator" out of: nvidia-operator-validator, driver-validation (init), toolkit-validation (init), cuda-validation (init), plugin-validation (init)
 *all validations are successful*
@@ -833,6 +857,7 @@ kubectl logs -n gpu-operator -l app=nvidia-cuda-validator
 
 ** The output should be similar to the following:
 
+[listing]
 ====
 Defaulted container "nvidia-cuda-validator" out of: nvidia-cuda-validator, cuda-validation (init)
 *cuda workload validation is successful*
