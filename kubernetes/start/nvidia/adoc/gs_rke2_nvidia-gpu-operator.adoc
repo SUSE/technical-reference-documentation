@@ -284,6 +284,7 @@ These instructions leverage SUSE's security focused Kubernetes distribution, {pr
 The process of building the OCI compliant {nvidia-drv} image using {product-bci} and deploying it to an {product-rke2} cluster will leverage the following primary components:
 //
 +
+
 * A build host. This can be an {product-rke2} worker node or a separate node or VM with, or without access to an {nvidia-name} GPU.
 ** If the build host has access to an {nvidia-name} GPU, the specified validations can be done on that node.
 * A container image registry to which the build host and the {product-rke2} cluster can access.
@@ -293,6 +294,7 @@ The process of building the OCI compliant {nvidia-drv} image using {product-bci}
 The process of building the OCI compliant and deploying it to an {product-rke2} cluster will entail the following steps:
 //
 +
+
 . Build the container image
 . Validate the state of the image
 . Save it to a container image registry so it can be accessed by the {product-rke2} cluster
