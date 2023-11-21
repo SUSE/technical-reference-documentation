@@ -314,7 +314,8 @@ The following commands must be run on the {product-sle-full} build host.
 . [[step_1]]Set the following variables that will be consumed throughout this procedure:
 
 .. Create the {build-variables-file} file:
-
+//
++
 [console, subs="attributes"]
 ----
 cat <<EOF> {build-variables-file}
@@ -333,10 +334,18 @@ export OPERATOR_VERSION=""
 export CUDA_VERSION=""
 EOF
 ----
-
+//
++
 .. Edit the {build-variables-file} file to provide the appropriate values.
-
+//
++
 .. Source the variables into your current terminal environment:
+//
++
+[console, subs="attributes"]
+----
+source {build-variables-file}
+----
 //
 +
 [TIP]
@@ -346,7 +355,6 @@ Repeat the following step to set the variables again.
 ====
 //
 +
-
 [IMPORTANT]
 ====
 After setting and sourcing the variables, you will be able to copy and paste the entire code blocks from this document to the command line and execute them without editing. 
@@ -354,13 +362,6 @@ For the best results, be sure and execute each code block in its entirety as a s
 ====
 //
 +
-
-[console, subs="attributes"]
-----
-source {build-variables-file}
-----
-
-
 . Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
 //
 +
