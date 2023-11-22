@@ -406,8 +406,9 @@ diff /tmp/Dockerfile.orig Dockerfile
 
 . Build the {product-sle} container image with the {nvidia-drv} installed:
 
-* Build the container:
-
+.. Build the container:
+//
++
 [IMPORTANT] 
 ====
 When building the container image, you may be prompted for the registry that contains the `nvidia/cuda` image. 
@@ -441,16 +442,20 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION
   --build-arg PRIVATE_KEY=empty  \
 .
 ----
-
 // DRIVER_TYPE=${DRIVER_TYPE}
 //   --build-arg DRIVER_TYPE="${DRIVER_TYPE}"      
-
-* Watch the build output for errors, warnings, and failures. You can safely ignore errors and warnings that don't stop the build process.
-
-* The build process should finish with a message saying that the final image was committed and tagged. 
+//
++
+[TIP]
+====
+Watch the build output for errors, warnings, and failures. You can safely ignore errors and warnings that don't stop the build process.
+====
+//
++
+.. The build process should finish with a message saying that the final image was committed and tagged. 
 For example:
-
-
+//
++
 [listing]
 ====
  COMMIT registry.susealliances.com/nvidia-sle15sp5-535.104.05
@@ -458,7 +463,8 @@ For example:
 Successfully tagged registry.susealliances.com/nvidia-sle15sp5-535.104.05:latest
 cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 ====
-
+//
++
 . Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
 //
 +
@@ -499,8 +505,9 @@ sudo podman push ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}
 sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
 
-* Verify the image is saved in the registry, and remotely available:
-
+. Verify the image is saved in the registry, and remotely available:
+//
++
 [NOTE] 
 ====
 If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
@@ -511,26 +518,31 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ----
 sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
-
-.Step 7: Validate the container image
-
+//
++
+. Validate the container image
+//
++
 [NOTE] 
 ====
 This step is optional and requires running the newly created {nvidia-drv} container locally with `Podman`, outside of the Kubernetes context. 
 This can be done on a {product-bci-version} host configured with the same kind of {nvidia-name} GPU the container was created for, or on a Kuberentes worker node that is configured with an {nvidia-name} GPU.
 ====
-
-* Open a command line session to the host or Kubernetes worker node on which you will test the container image.
-
-* Create the `/run/nvidia` directory, if it does not yet exist:
+//
++
+.. Open a command line session to the build host or Kubernetes worker node on which you will test the container image.
+//
++
+.. Create the `/run/nvidia` directory, if it does not yet exist:
 //
 +
 [console, subs="attributes"]
 ----
 sudo mkdir -p /run/nvidia
 ----
-
-* Run the {nvidia-drv} container locally:
+//
++
+.. Run the {nvidia-drv} container locally:
 //
 +
 [NOTE] 
@@ -558,8 +570,9 @@ sudo podman run -d \
   --restart=unless-stopped \
 ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
-
-* Verify the container is running:
+//
++
+. Verify the container is running:
 //
 +
 [console, subs="attributes"]
@@ -568,10 +581,13 @@ sudo podman ps -a
 ----
 //
 +
-** The container's `STATUS` field should show that it is "Up" and the amount of time it has been up should increment with repeated runs of the command.
-
-
-* Monitor the deployment of the {nvidia-drv}:
+[TIP] 
+====
+The container's `STATUS` field should show that it is "Up" and the amount of time it has been up should increment with repeated runs of the command.
+====
+//
++
+. Monitor the deployment of the {nvidia-drv}:
 //
 +
 [NOTE] 
@@ -592,18 +608,22 @@ DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if th
 ## Review the standard output of the running container
 sudo podman logs -f driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
 ----
-
-* The deployment process is complete when the following message is shown:
-
+//
++
+. The deployment process is complete when the following message is shown:
+//
++
 [listing]
 ====
 Mounting {nvidia-name} driver rootfs...
 Done, now waiting for signal
 ====
-
-* Press `Ctrl+c` to close the log viewing session
-
-* Ensure the {nvidia-name} kernel modules have been loaded:
+//
++
+. Press `Ctrl+c` to close the log viewing session
+//
++
+. Ensure the {nvidia-name} kernel modules have been loaded:
 //
 +
 [console, subs="attributes"]
@@ -612,10 +632,10 @@ sudo lsmod | grep nvidia
 ----
 //
 +
-** You should see modules such as `nvidia`, `nvidia_modeset`, and `nvidia_uvm`
-
-
-* Verify the `nvidia-smi` utility can communicate withe the GPU:
+.. You should see modules such as `nvidia`, `nvidia_modeset`, and `nvidia_uvm`
+//
++
+. Verify the `nvidia-smi` utility can communicate withe the GPU:
 //
 +
 [NOTE] 
@@ -636,8 +656,9 @@ DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if th
 ## Verify the nvidia-smi utitlity can communicate with the GPU
 sudo podman exec -it driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} nvidia-smi
 ----
-
-* When ready to move forward, stop and remove the Podman container:
+//
++
+. When ready to move forward, stop and remove the Podman container:
 //
 +
 [NOTE] 
@@ -658,8 +679,9 @@ DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if th
 sudo podman stop driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
 sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
 ----
-
-* Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
+//
++
+. Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
 //
 +
 [console, subs="attributes"]
