@@ -744,7 +744,7 @@ Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
 
 
-* Add the {nvidia-name} helm software repository:
+. Add the {nvidia-name} helm software repository:
 //
 +
 [console, subs="attributes"]
@@ -752,8 +752,9 @@ Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 helm repo add {nvidia-helm-url}
 helm repo update
 ----
-
-* Deploy the {nvidia-op} with Helm:
+//
++
+. Deploy the {nvidia-op} with Helm:
 //
 +
 [NOTE]
@@ -801,8 +802,9 @@ helm install -n gpu-operator \
   --set toolkit.env[3].name=CONTAINERD_SET_AS_DEFAULT \
   --set-string toolkit.env[3].value=true
 ----
-
-* Verify the {nvidia-op}, {nvidia-drv} and associated elements have been deployed correctly with the command: 
+//
++
+. Verify the {nvidia-op}, {nvidia-drv} and associated elements have been deployed correctly with the command: 
 //
 +
 [console, subs="attributes"]
@@ -811,7 +813,7 @@ kubectl get pods -n gpu-operator
 ----
 //
 +
-** The output should be similar to the following:
+.. The output should be similar to the following:
 //
 +
 [listing]
@@ -832,8 +834,6 @@ nvidia-driver-daemonset-5xj6g                                 1/1     Running   
 nvidia-mig-manager-89z9b                                      1/1     Running     0          4m53s
 nvidia-operator-validator-bwx99                               1/1     Running     0          58s
 ====
-
-
 
 == Validation
 
@@ -861,38 +861,45 @@ nvidia-operator-validator-bwx99                               1/1     Running   
 The {nvidia-op} Helm chart provides two pods that validate the state of the installed software.
 ====
 
-* Validate the state of the {nvidia-op} software:
-
-
+. Validate the state of the {nvidia-op} software:
+//
++
 [console, subs="attributes"]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-operator-validator
 ----
-
-** The output should be similar to:
-
+//
++
+.. The output should be similar to:
+//
++
 [listing]
 ====
 Defaulted container "nvidia-operator-validator" out of: nvidia-operator-validator, driver-validation (init), toolkit-validation (init), cuda-validation (init), plugin-validation (init)
 *all validations are successful*
 ====
-
-* Validate the state of the {nvidia-cuda} software:
-
+//
++
+. Validate the state of the {nvidia-cuda} software:
+//
++
 [console, subs="attributes"]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-cuda-validator
 ----
-
-** The output should be similar to the following:
-
+//
++
+.. The output should be similar to the following:
+//
++
 [listing]
 ====
 Defaulted container "nvidia-cuda-validator" out of: nvidia-cuda-validator, cuda-validation (init)
 *cuda workload validation is successful*
 ====
-
-* To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
+//
++
+. To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
 //
 +
 [console, subs="attributes"]
@@ -924,11 +931,15 @@ This command can also be used to verify which application processes are running 
 
 // In this guide, you learned ...
 
-This guide has effectively steered the creation of OCI compliant container images leveraging the {product-bci-full} and incorporating the {nvidia-drv}. 
-Furthermore, it has provided coherent instructions for validating the functionality of the container image and the seamless deployment of the image within a Kubernetes cluster, specifically {product-rke2}. 
-This integrated solution is aimed at affording containerized applications GPU-acceleration, while avoiding the need to manage additional software on each GPU equiped node.
+This guide has guided you in the creation of OCI compliant container images leveraging the {product-bci-full} and incorporating the {nvidia-drv}. 
+As well, it has provided coherent instructions for validating the functionality of the container image and the seamless deployment of the image within a Kubernetes cluster, specifically {product-rke2}. 
+
+This integrated solution is designed for containerized applications GPU-acceleration, while centralizing the deployment of the {nvidia-op} software across any size Kubernetes cluster.
+
 The strategic choice of SUSE's {product-bci-full} as the foundation for this integration underscores an organization's commitment to security, certifications, and supportability. 
+
 Organizations with exacting security requirements depend on {product-sle-full}'s numerous certifications such as Common Criteria, FIPS, and EAL. 
+
 Additionally, SUSE's commitment to providing robust support for heterogeneous software stacks guarantees customer's the freedom to design their IT landscape to suit their unique business challenges. 
 
 A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably {product-rke2}, that provides full {nvidia-name} GPU support and the requisite {nvidia-op} to fully harness GPU resources when deploying GPU intensive workloads.
