@@ -205,7 +205,8 @@ Change the variable SLE15_SP_VERSION in the following command to match the servi
 ====
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 export SLE15_SP_VERSION=5
 sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
@@ -218,7 +219,8 @@ sudo SUSEConnect -p sle-module-{nvidia-name}-compute/15/x86_64
 You can use the following commands to install the appropriate software.
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo zypper install \
   kernel-firmware-nvidia \
@@ -232,7 +234,8 @@ sudo zypper install \
 You can use the following command to install Podman.
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo zypper install podman
 ----
@@ -241,7 +244,8 @@ sudo zypper install podman
 You can use the following command to install git.
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo zypper install git-core
 ----
@@ -315,7 +319,8 @@ The following commands must be run on the {product-sle-full} build host.
 
 .. Create the {build-variables-file} file:
 
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 cat <<EOF> {build-variables-file}
 ## Provide the URL of the registry where the new image will be saved:
@@ -355,7 +360,8 @@ For the best results, be sure and execute each code block in its entirety as a s
 //
 +
 
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 source {build-variables-file}
 ----
@@ -364,7 +370,8 @@ source {build-variables-file}
 . Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
 ----
@@ -374,7 +381,8 @@ git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
 . Make a backup copy of the Dockerfile before modifying:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 cp Dockerfile /tmp/Dockerfile.orig
 ----
@@ -382,7 +390,8 @@ cp Dockerfile /tmp/Dockerfile.orig
 . Update the golang build container image to version `{golang-version}`:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 ----
@@ -390,7 +399,8 @@ sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 . Update the Dockerfile's base container image to the {product-bci-version} BCI:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 ----
@@ -398,7 +408,8 @@ sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 . Verify the changes that have been made to the Dockerfile:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 diff /tmp/Dockerfile.orig Dockerfile
 ----
@@ -420,7 +431,8 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -461,7 +473,8 @@ cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 . Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
@@ -482,7 +495,8 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -506,7 +520,8 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
@@ -524,7 +539,8 @@ This can be done on a {product-bci-version} host configured with the same kind o
 * Create the `/run/nvidia` directory, if it does not yet exist:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo mkdir -p /run/nvidia
 ----
@@ -538,7 +554,8 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -561,7 +578,8 @@ ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 * Verify the container is running:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo podman ps -a
 ----
@@ -579,7 +597,8 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -605,7 +624,8 @@ Done, now waiting for signal
 * Ensure the {nvidia-name} kernel modules have been loaded:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo lsmod | grep nvidia
 ----
@@ -623,7 +643,8 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -645,7 +666,8 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
 echo &&
@@ -661,7 +683,8 @@ sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 * Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo lsmod | grep nvidia
 ----
@@ -724,7 +747,8 @@ Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 * Add the {nvidia-name} helm software repository:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 helm repo add {nvidia-helm-url}
 helm repo update
@@ -739,7 +763,8 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-[console, subs="attributes"]
+// [console, subs="attributes"]
+[console, bash]
 ----
 ## Verify the selected cluster before deploying
 echo &&
@@ -782,7 +807,8 @@ helm install -n gpu-operator \
 * Verify the {nvidia-op}, {nvidia-drv} and associated elements have been deployed correctly with the command: 
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 kubectl get pods -n gpu-operator
 ----
@@ -841,7 +867,8 @@ The {nvidia-op} Helm chart provides two pods that validate the state of the inst
 * Validate the state of the {nvidia-op} software:
 
 
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-operator-validator
 ----
@@ -856,7 +883,8 @@ Defaulted container "nvidia-operator-validator" out of: nvidia-operator-validato
 
 * Validate the state of the {nvidia-cuda} software:
 
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-cuda-validator
 ----
@@ -872,7 +900,8 @@ Defaulted container "nvidia-cuda-validator" out of: nvidia-cuda-validator, cuda-
 * To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
 //
 +
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 kubectl exec -it \
 "$(for EACH in \
