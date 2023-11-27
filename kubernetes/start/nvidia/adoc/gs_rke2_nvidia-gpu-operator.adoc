@@ -212,22 +212,22 @@ export SLE15_SP_VERSION=5
 sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
 sudo SUSEConnect -p sle-module-desktop-applications/15.${SLE15_SP_VERSION}/x86_64
 sudo SUSEConnect -p sle-module-development-tools/15.${SLE15_SP_VERSION}/x86_64
-sudo SUSEConnect -p sle-module-{nvidia-name}-compute/15/x86_64
+sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
 ----
 
 * You have installed the required {product-sle-full} {nvidia-name} software packages on each Kubernetes worker node that is configured with an {nvidia-name} GPU. 
 You can use the following commands to install the appropriate software.
 //
 +
-//[console, subs="attributes"]
-[console, bash]
+//[console, bash]
+[console, subs="attributes"]
 ----
 sudo zypper install \
   kernel-firmware-nvidia \
   libnvidia-container-tools \
   libnvidia-container1 \
   nvidia-container-runtime \
-  sle-module-{nvidia-name}-compute-release
+  sle-module-NVIDIA-compute-release
 ----
 
 * Podman is installed on the build host and at least one of the {nvidia-name} GPU equiped Kubernetes worker nodes. 
@@ -319,8 +319,8 @@ The following commands must be run on the {product-sle-full} build host.
 
 .. Create the {build-variables-file} file:
 
-//[console, subs="attributes"]
-[console, bash]
+//[console, bash]
+[console, subs="attributes"]
 ----
 cat <<EOF> {build-variables-file}
 ## Provide the URL of the registry where the new image will be saved:
@@ -360,8 +360,8 @@ For the best results, be sure and execute each code block in its entirety as a s
 //
 +
 
-//[console, subs="attributes"]
-[console, bash]
+//[console, bash]
+[console, subs="attributes"]
 ----
 source {build-variables-file}
 ----
@@ -370,8 +370,8 @@ source {build-variables-file}
 . Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
 //
 +
-//[console, subs="attributes"]
-[console, bash]
+//[console, bash]
+[console, subs="attributes"]
 ----
 git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
 ----
@@ -390,8 +390,8 @@ cp Dockerfile /tmp/Dockerfile.orig
 . Update the golang build container image to version `{golang-version}`:
 //
 +
-//[console, subs="attributes"]
-[console, bash]
+//[console, bash]
+[console, subs="attributes"]
 ----
 sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 ----
@@ -442,7 +442,7 @@ SLE15_SP_VERSION=${SLE15_SP_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}
 CUDA_VERSION=${CUDA_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
-## Build the {nvidia-drv} container
+## Build the container
 sudo podman build -t \
 ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} \
   --build-arg SLES_VERSION="15.${SLE15_SP_VERSION}" \   
@@ -747,8 +747,8 @@ Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 * Add the {nvidia-name} helm software repository:
 //
 +
-//[console, subs="attributes"]
-[console, bash]
+//[console, bash]
+[console, subs="attributes"]
 ----
 helm repo add {nvidia-helm-url}
 helm repo update
@@ -772,7 +772,7 @@ echo "Cluster name: $(kubectl config current-context)" &&
 echo "" && 
 kubectl get nodes -o wide && 
 echo "" && 
-read -n1 -p "Is this the correct Kuberentes cluster to install the {nvidia-op} Helm chart? (y/n) " YESNO && 
+read -n1 -p "Is this the target Kuberentes cluster for the Helm chart? (y/n) " YESNO && 
 echo "" && 
 [ ${YESNO} != y ] && { echo "Exiting."; echo ""; exit; } || echo "" && 
 
@@ -784,7 +784,7 @@ SLE15_SP_VERSION=${SLE15_SP_VERSION}
 OPERATOR_VERSION=${OPERATOR_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
-## Deploy the {nvidia-op} with supporting software and drivers
+## Deploy the Helm chart
 helm install -n gpu-operator \
   --generate-name \
   --wait \
