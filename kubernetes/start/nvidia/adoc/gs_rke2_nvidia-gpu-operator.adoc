@@ -205,7 +205,6 @@ Change the variable SLE15_SP_VERSION in the following command to match the servi
 ====
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 export SLE15_SP_VERSION=5
@@ -219,7 +218,6 @@ sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
 You can use the following commands to install the appropriate software.
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sudo zypper install \
@@ -234,7 +232,6 @@ sudo zypper install \
 You can use the following command to install Podman.
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sudo zypper install podman
@@ -244,7 +241,6 @@ sudo zypper install podman
 You can use the following command to install git.
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sudo zypper install git-core
@@ -285,7 +281,7 @@ These instructions leverage SUSE's security focused Kubernetes distribution, {pr
 // https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#vmware-vsphere-with-tanzu
 // https://docs.nvidia.com/grid/12.0/index.html
 
-The process of building the OCI compliant {nvidia-drv} image using {product-bci} and deploying it to an {product-rke2} cluster will leverage the following primary components:
+The process of building the OCI compliant {nvidia-drv} container image using {product-bci} and deploying it to an {product-rke2} cluster will leverage the following primary components:
 //
 +
 
@@ -295,7 +291,7 @@ The process of building the OCI compliant {nvidia-drv} image using {product-bci}
 * An {product-rke2} Kubernetes cluster with at least one worker node that is confgiured with an {nvidia-name} GPU. 
 * Access to the {product-sle-full} software modules through the {suse-customer-center-name} or an {product-rmt} server.
 
-The process of building the OCI compliant and deploying it to an {product-rke2} cluster will entail the following steps:
+The process of building the OCI compliant container image and deploying it to an {product-rke2} cluster will entail the following steps:
 //
 +
 
@@ -316,9 +312,11 @@ The following commands must be run on the {product-sle-full} build host.
 ====
 
 . [[step_1]]Set the following variables that will be consumed throughout this procedure:
-
+//
++
 .. Create the /tmp/.build-variables.sh file:
-
+//
++
 [TIP]
 ====
 For the REGISTRY variable, provide the URL of the registry where the new image will be saved.
@@ -331,8 +329,8 @@ For the OPERATOR_VERSION variable, provide the {nvidia-op} version (e.g.{gpu-ope
 
 For the CUDA_VERSION variable, provide the required CUDA version (e.g. {cuda-version}) for {nvidia-drv} by selecting your driver version at {nvidia-driver-gpu-operator-url}. The CUDA version will be listed under "Software Versions".
 ====
-
-//[console, subs="attributes"]
+//
++
 [console, bash]
 ----
 cat <<EOF> /tmp/.build-variables.sh
@@ -343,20 +341,21 @@ export OPERATOR_VERSION=""
 export CUDA_VERSION=""
 EOF
 ----
-
+//
++
 .. Edit the /tmp/.build-variables.sh file to provide the appropriate values.
-
+//
++
 .. Source the variables into your current terminal environment:
 //
 +
 [TIP]
 ====
-Disconnecting from your current terminal envionment will cause the variables to be lost. 
+Disconnecting from your current terminal environment will cause the variables to be lost. 
 Repeat the following step to set the variables again.
 ====
 //
 +
-
 [IMPORTANT]
 ====
 After setting and sourcing the variables, you will be able to copy and paste the entire code blocks from this document to the command line and execute them without editing. 
@@ -364,18 +363,15 @@ For the best results, be sure and execute each code block in its entirety as a s
 ====
 //
 +
-
-//[console, bash]
 [console, subs="attributes"]
 ----
 source /tmp/.build-variables.sh
 ----
-
-
+//
++
 . Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
 //
 +
-//[console, bash]
 [console, subs="attributes"]
 ----
 git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
@@ -388,7 +384,6 @@ git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
 . Make a backup copy of the Dockerfile before modifying:
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 cp Dockerfile /tmp/Dockerfile.orig
@@ -398,7 +393,6 @@ cp Dockerfile /tmp/Dockerfile.orig
 . Update the golang build container image to version `{golang-version}`:
 //
 +
-//[console, bash]
 [console, subs="attributes"]
 ----
 sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
@@ -408,7 +402,6 @@ sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 . Update the Dockerfile's base container image to the {product-bci-version} BCI:
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
@@ -418,7 +411,6 @@ sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 . Verify the changes that have been made to the Dockerfile:
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 diff /tmp/Dockerfile.orig Dockerfile
@@ -444,7 +436,6 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
@@ -486,7 +477,6 @@ cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 . Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
@@ -509,7 +499,6 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
@@ -536,7 +525,6 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
@@ -559,7 +547,6 @@ This can be done on a {product-bci-version} host configured with the same kind o
 * Create the `/run/nvidia` directory, if it does not yet exist:
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sudo mkdir -p /run/nvidia
@@ -575,7 +562,6 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
@@ -600,7 +586,6 @@ ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 * Verify the container is running:
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sudo podman ps -a
@@ -619,7 +604,6 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
@@ -650,7 +634,6 @@ Done, now waiting for signal
 * Ensure the {nvidia-name} kernel modules have been loaded:
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sudo lsmod | grep nvidia
@@ -669,7 +652,6 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
@@ -693,7 +675,6 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ====
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 ## Validate the variables before using them in the subsequent command
@@ -710,7 +691,6 @@ sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 * Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 sudo lsmod | grep nvidia
@@ -774,7 +754,6 @@ Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 * Add the {nvidia-name} helm software repository:
 //
 +
-//[console, bash]
 [console, subs="attributes"]
 ----
 helm repo add {nvidia-helm-url}
@@ -834,7 +813,6 @@ helm install -n gpu-operator \
 * Verify the {nvidia-op}, {nvidia-drv} and associated elements have been deployed correctly with the command: 
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 kubectl get pods -n gpu-operator
@@ -894,7 +872,6 @@ The {nvidia-op} Helm chart provides two pods that validate the state of the inst
 * Validate the state of the {nvidia-op} software:
 
 
-//[console, subs="attributes"]
 [console, bash]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-operator-validator
@@ -910,7 +887,6 @@ Defaulted container "nvidia-operator-validator" out of: nvidia-operator-validato
 
 * Validate the state of the {nvidia-cuda} software:
 
-//[console, subs="attributes"]
 [console, bash]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-cuda-validator
@@ -927,7 +903,6 @@ Defaulted container "nvidia-cuda-validator" out of: nvidia-cuda-validator, cuda-
 * To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
 //
 +
-//[console, subs="attributes"]
 [console, bash]
 ----
 kubectl exec -it \
