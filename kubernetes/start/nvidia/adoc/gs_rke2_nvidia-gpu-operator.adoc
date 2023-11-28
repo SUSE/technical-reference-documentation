@@ -219,8 +219,8 @@ sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
 You can use the following commands to install the appropriate software.
 //
 +
-//[console, bash]
-[console, subs="attributes"]
+//[console, subs="attributes"]
+[console, bash]
 ----
 sudo zypper install \
   kernel-firmware-nvidia \
@@ -320,7 +320,7 @@ The following commands must be run on the {product-sle-full} build host.
 .. Create the {build-variables-file} file:
 
 //[console, bash]
-[console, subs="attributes"]
+[listing, subs="attributes"]
 ----
 cat <<EOF> {build-variables-file}
 ## Provide the URL of the registry where the new image will be saved:
@@ -452,9 +452,6 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION
   --build-arg PRIVATE_KEY=empty  \
 .
 ----
-
-// DRIVER_TYPE=${DRIVER_TYPE}
-//   --build-arg DRIVER_TYPE="${DRIVER_TYPE}"      
 
 * Watch the build output for errors, warnings, and failures. You can safely ignore errors and warnings that don't stop the build process.
 
