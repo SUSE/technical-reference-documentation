@@ -363,7 +363,7 @@ For the best results, be sure and execute each code block in its entirety as a s
 ====
 //
 +
-[console, subs="attributes"]
+[console, bash]
 ----
 source /tmp/.build-variables.sh
 ----
@@ -687,7 +687,8 @@ DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if th
 sudo podman stop driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
 sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
 ----
-
+//
++
 * Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
 //
 +
