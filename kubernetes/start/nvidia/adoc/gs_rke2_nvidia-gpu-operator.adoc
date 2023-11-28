@@ -743,8 +743,7 @@ If any modules fail to unload, reboot the node.
 ====
 The preferred method for installing the {nvidia-op} is with the Helm Kuberenetes package manager.
 ====
-//
-+
+
 [IMPORTANT] 
 ====
 The following steps must be run from a Linux system that has the kubectl and Helm (version 3) utilities, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. 
@@ -754,8 +753,7 @@ In addition, if the container build host is a different system than the one bein
 Return to <<Set the command variables>> in the proceeding procedure before continuing.
 //Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
-//
-+
+
 . Add the {nvidia-name} helm software repository:
 //
 +
@@ -961,10 +959,12 @@ This command can also be used to verify which application processes are running 
 
 // In this guide, you learned ...
 
-This guide has effectively steered the creation of OCI compliant container images leveraging the {product-bci-full} and incorporating the {nvidia-drv}. 
-Furthermore, it has provided coherent instructions for validating the functionality of the container image and the seamless deployment of the image within a Kubernetes cluster, specifically {product-rke2}. 
+This guide has effectively steered the creation of OCI compliant container images leveraging the {product-bci-full} and incorporating the {nvidia-drv}.
+Furthermore, it has provided coherent instructions for validating the functionality of the container image and the seamless deployment of the image within a Kubernetes cluster, specifically {product-rke2}.
+
 This integrated solution is aimed at affording containerized applications GPU-acceleration, while avoiding the need to manage additional software on each GPU equiped node.
 The strategic choice of SUSE's {product-bci-full} as the foundation for this integration underscores an organization's commitment to security, certifications, and supportability. 
+
 Organizations with exacting security requirements depend on {product-sle-full}'s numerous certifications such as Common Criteria, FIPS, and EAL. 
 Additionally, SUSE's commitment to providing robust support for heterogeneous software stacks guarantees customer's the freedom to design their IT landscape to suit their unique business challenges. 
 
