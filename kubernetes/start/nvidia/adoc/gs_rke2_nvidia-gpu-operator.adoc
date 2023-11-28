@@ -301,20 +301,19 @@ The process of building the OCI compliant container image and deploying it to an
 . Deploy the entire {nvidia-op} Helm chart, including the {nvidia-drv} image to the {product-rke2} cluster
 . Validate the state of the {nvidia-op} installation
 
+== Set the command variables 
 
-== Build the {product-bci} container image with {nvidia-drv}
-
-This section offers a detailed explanation of the steps required to create OCI compliant container images with the {nvidia-op} inside the {product-bci-full}.
+[TIP]
+====
+These variables will be consumed throughout this procedure.
+====
 
 [IMPORTANT] 
 ====
 The following commands must be run on the {product-sle-full} build host.
 ====
 
-. [[step_1]]Set the following variables that will be consumed throughout this procedure:
-//
-+
-.. Create the /tmp/.build-variables.sh file:
+. Create the /tmp/.build-variables.sh file:
 //
 +
 [TIP]
@@ -343,10 +342,7 @@ EOF
 ----
 //
 +
-.. Edit the /tmp/.build-variables.sh file to provide the appropriate values.
-//
-+
-.. Source the variables into your current terminal environment:
+. Edit the /tmp/.build-variables.sh file to provide the appropriate values.
 //
 +
 [TIP]
@@ -359,16 +355,22 @@ Repeat the following step to set the variables again.
 [IMPORTANT]
 ====
 After setting and sourcing the variables, you will be able to copy and paste the entire code blocks from this document to the command line and execute them without editing. 
-For the best results, be sure and execute each code block in its entirety as a single command.
+For the best results, be sure and execute each code block in its entirety as a single command set.
 ====
+//
++
+. Source the variables into your current terminal environment:
 //
 +
 [console, bash]
 ----
 source /tmp/.build-variables.sh
 ----
-//
-+
+
+== Build the container image 
+
+This section offers a detailed explanation of the steps required to create OCI compliant container images with the {nvidia-op} inside the {product-bci-full}.
+
 . Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
 //
 +
@@ -399,7 +401,7 @@ sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 ----
 //
 +
-. Update the Dockerfile's base container image to the {product-bci-version} BCI:
+. Update the Dockerfile's base container image to the {product-sle} {product-bci-version} BCI:
 //
 +
 [console, bash]
@@ -420,7 +422,7 @@ diff /tmp/Dockerfile.orig Dockerfile
 . Build the {product-sle} container image with the {nvidia-drv} installed:
 //
 +
-* Build the container:
+.. Build the container:
 //
 +
 [IMPORTANT] 
@@ -432,7 +434,7 @@ If so, select the image located in {nvidia-license-image-registry}.
 +
 [NOTE] 
 ====
-If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to <<Set the command variables>> in this process before continuing.
 ====
 //
 +
@@ -444,7 +446,7 @@ echo "
 REGISTRY=${REGISTRY}
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}
-CUDA_VERSION=${CUDA_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
+CUDA_VERSION=${CUDA_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
 ## Build the container
 sudo podman build -t \
@@ -458,10 +460,10 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION
 ----
 //
 +
-* Watch the build output for errors, warnings, and failures. You can safely ignore errors and warnings that don't stop the build process.
+.. Watch the build output for errors, warnings, and failures. You can safely ignore errors and warnings that don't stop the build process.
 //
 +
-* The build process should finish with a message saying that the final image was committed and tagged. 
+.. The build process should finish with a message saying that the final image was committed and tagged. 
 For example:
 //
 +
@@ -495,7 +497,7 @@ See {podman-login-url} for more information.
 +
 [NOTE] 
 ====
-If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to <<Set the command variables>> in this process before continuing.
 ====
 //
 +
@@ -506,7 +508,7 @@ echo &&
 echo "
 REGISTRY=${REGISTRY}
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
+DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
 ## Tag the image with the format that Helm will need when deploying on Kubernetes
 sudo podman tag ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
@@ -516,12 +518,12 @@ sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
 //
 +
-* Verify the image is saved in the registry, and remotely available:
+.. Verify the image is saved in the registry, and remotely available:
 //
 +
 [NOTE] 
 ====
-If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to <<Set the command variables>> in this process before continuing.
 ====
 //
 +
@@ -541,10 +543,10 @@ This can be done on a {product-bci-version} host configured with the same kind o
 ====
 //
 +
-* Open a command line session to the host or Kubernetes worker node on which you will test the container image.
+.. Open a command line session to the host or Kubernetes worker node on which you will test the container image.
 //
 +
-* Create the `/run/nvidia` directory, if it does not yet exist:
+.. Create the `/run/nvidia` directory, if it does not yet exist:
 //
 +
 [console, bash]
@@ -553,12 +555,12 @@ sudo mkdir -p /run/nvidia
 ----
 //
 +
-* Run the {nvidia-drv} container locally:
+.. Run the {nvidia-drv} container locally:
 //
 +
 [NOTE] 
 ====
-If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to <<Set the command variables>> in this process before continuing.
 ====
 //
 +
@@ -569,7 +571,7 @@ echo &&
 echo "
 REGISTRY=${REGISTRY}
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
+DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
 
 ## Run the container image 
 sudo podman run -d \
@@ -583,7 +585,7 @@ ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
 //
 +
-* Verify the container is running:
+.. Verify the container is running:
 //
 +
 [console, bash]
@@ -592,15 +594,15 @@ sudo podman ps -a
 ----
 //
 +
-** The container's `STATUS` field should show that it is "Up" and the amount of time it has been up should increment with repeated runs of the command.
+... The container's `STATUS` field should show that it is "Up" and the amount of time it has been up should increment with repeated runs of the command.
 //
 +
-* Monitor the deployment of the {nvidia-drv}:
+.. Monitor the deployment of the {nvidia-drv}:
 //
 +
 [NOTE] 
 ====
-If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to <<Set the command variables>> in this process before continuing.
 ====
 //
 +
@@ -611,14 +613,14 @@ echo &&
 echo "
 REGISTRY=${REGISTRY}
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
+DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
 
 ## Review the standard output of the running container
 sudo podman logs -f driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
 ----
 //
 +
-* The deployment process is complete when the following message is shown:
+.. The deployment process is complete when the following message is shown:
 //
 +
 [listing]
@@ -628,10 +630,10 @@ Done, now waiting for signal
 ====
 //
 +
-* Press `Ctrl+c` to close the log viewing session
+.. Press `CTRL+C` to close the log viewing session
 //
 +
-* Ensure the {nvidia-name} kernel modules have been loaded:
+.. Ensure the {nvidia-name} kernel modules have been loaded:
 //
 +
 [console, bash]
@@ -640,15 +642,15 @@ sudo lsmod | grep nvidia
 ----
 //
 +
-** You should see modules such as `nvidia`, `nvidia_modeset`, and `nvidia_uvm`
+... You should see modules such as `nvidia`, `nvidia_modeset`, and `nvidia_uvm`
 //
 +
-* Verify the `nvidia-smi` utility can communicate withe the GPU:
+.. Verify the `nvidia-smi` utility can communicate withe the GPU:
 //
 +
 [NOTE] 
 ====
-If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to <<Set the command variables>> in this process before continuing.
 ====
 //
 +
@@ -659,19 +661,19 @@ echo &&
 echo "
 REGISTRY=${REGISTRY}
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
+DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
 
 ## Verify the nvidia-smi utitlity can communicate with the GPU
 sudo podman exec -it driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} nvidia-smi
 ----
 //
 +
-* When ready to move forward, stop and remove the Podman container:
+.. When ready to move forward, stop and remove the Podman container:
 //
 +
 [NOTE] 
 ====
-If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to <<Set the command variables>> in this process before continuing.
 ====
 //
 +
@@ -681,7 +683,7 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 echo &&
 echo "
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
+DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
 ## Stop and remove the container instance
 sudo podman stop driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
@@ -689,7 +691,7 @@ sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
 //
 +
-* Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
+.. Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
 //
 +
 [console, bash]
@@ -698,7 +700,7 @@ sudo lsmod | grep nvidia
 ----
 //
 +
-** You should receive no output.
+... You should receive no output.
 //+
 [NOTE]
 ====
@@ -734,25 +736,27 @@ If any modules fail to unload, reboot the node.
 // the same level as Installation.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-== Deployment to a Kubernetes {product-rke2} cluster
+== Deploy to a Kubernetes cluster
 
 
 [NOTE] 
 ====
 The preferred method for installing the {nvidia-op} is with the Helm Kuberenetes package manager.
 ====
-
+//
++
 [IMPORTANT] 
 ====
 The following steps must be run from a Linux system that has the kubectl and Helm (version 3) utilities, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. 
 See these documents for more information: {rancher-kubectl-url} and {rke2-cluster-access-url}.
 
 In addition, if the container build host is a different system than the one being used to perform the Helm install, the /tmp/.build-variables.sh file will need to be created on the second system. 
-Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
+Return to <<Set the command variables>> in the proceeding procedure before continuing.
+//Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
-
-
-* Add the {nvidia-name} helm software repository:
+//
++
+. Add the {nvidia-name} helm software repository:
 //
 +
 [console, subs="attributes"]
@@ -760,13 +764,14 @@ Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 helm repo add {nvidia-helm-url}
 helm repo update
 ----
-
-* Deploy the {nvidia-op} with Helm:
+//
++
+. Deploy the {nvidia-op} with Helm:
 //
 +
 [NOTE]
 ====
-If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in the proceeding procedure before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to <<Set the command variables>> in the proceeding procedure before continuing.
 ====
 //
 +
@@ -778,7 +783,7 @@ echo "Cluster name: $(kubectl config current-context)" &&
 echo "" && 
 kubectl get nodes -o wide && 
 echo "" && 
-read -n1 -p "Is this the target Kuberentes cluster for the Helm chart? (y/n) " YESNO && 
+read -n1 -p "Is this the target Kubernetes cluster for the Helm chart? (y/n) " YESNO && 
 echo "" && 
 [ ${YESNO} != y ] && { echo "Exiting."; echo ""; exit; } || echo "" && 
 
@@ -788,7 +793,7 @@ echo "
 REGISTRY=${REGISTRY}
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
 OPERATOR_VERSION=${OPERATOR_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
+DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
 
 ## Deploy the Helm chart
 helm install -n gpu-operator \
@@ -809,8 +814,9 @@ helm install -n gpu-operator \
   --set toolkit.env[3].name=CONTAINERD_SET_AS_DEFAULT \
   --set-string toolkit.env[3].value=true
 ----
-
-* Verify the {nvidia-op}, {nvidia-drv} and associated elements have been deployed correctly with the command: 
+//
++
+. Verify the {nvidia-op}, {nvidia-drv} and associated elements have been deployed correctly with the command: 
 //
 +
 [console, bash]
@@ -819,25 +825,39 @@ kubectl get pods -n gpu-operator
 ----
 //
 +
-** The output should be similar to the following:
+.. The output should be similar to the following:
 //
 +
-[listing]
+[console, bash]
 ====
 NAME                                                          READY   STATUS      RESTARTS   AGE
+
 gpu-feature-discovery-crrsq                                   1/1     Running     0          60s
+
 gpu-operator-7fb75556c7-x8spj                                 1/1     Running     0          5m13s
+
 gpu-operator-node-feature-discovery-master-58d884d5cc-w7q7b   1/1     Running     0          5m13s
+
 gpu-operator-node-feature-discovery-worker-6rht2              1/1     Running     0          5m13s
+
 gpu-operator-node-feature-discovery-worker-9r8js              1/1     Running     0          5m13s
+
 nvidia-container-toolkit-daemonset-lhgqf                      1/1     Running     0          4m53s
+
 nvidia-cuda-validator-rhvbb                                   0/1     Completed   0          54s
+
 nvidia-dcgm-5jqzg                                             1/1     Running     0          60s
+
 nvidia-dcgm-exporter-h964h                                    1/1     Running     0          60s
+
 nvidia-device-plugin-daemonset-d9ntc                          1/1     Running     0          60s
+
 nvidia-device-plugin-validator-cm2fd                          0/1     Completed   0          48s
+
 nvidia-driver-daemonset-5xj6g                                 1/1     Running     0          4m53s
+
 nvidia-mig-manager-89z9b                                      1/1     Running     0          4m53s
+
 nvidia-operator-validator-bwx99                               1/1     Running     0          58s
 ====
 
@@ -869,38 +889,47 @@ nvidia-operator-validator-bwx99                               1/1     Running   
 The {nvidia-op} Helm chart provides two pods that validate the state of the installed software.
 ====
 
-* Validate the state of the {nvidia-op} software:
-
-
+. Validate the state of the {nvidia-op} software:
+//
++
 [console, bash]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-operator-validator
 ----
-
-** The output should be similar to:
-
+//
++
+.. The output should be similar to:
+//
++
 [listing]
 ====
 Defaulted container "nvidia-operator-validator" out of: nvidia-operator-validator, driver-validation (init), toolkit-validation (init), cuda-validation (init), plugin-validation (init)
+
 *all validations are successful*
 ====
-
-* Validate the state of the {nvidia-cuda} software:
-
+//
++
+. Validate the state of the {nvidia-cuda} software:
+//
++
 [console, bash]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-cuda-validator
 ----
-
-** The output should be similar to the following:
-
+//
++
+.. The output should be similar to the following:
+//
++
 [listing]
 ====
 Defaulted container "nvidia-cuda-validator" out of: nvidia-cuda-validator, cuda-validation (init)
+
 *cuda workload validation is successful*
 ====
-
-* To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
+//
++
+. To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
 //
 +
 [console, bash]
