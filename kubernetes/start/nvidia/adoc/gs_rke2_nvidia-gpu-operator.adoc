@@ -81,7 +81,7 @@ include::./common_docinfo_vars.adoc[]
 :nvidia-git-lab-url: https://gitlab.com/nvidia/container-images/driver
 :nvidia-git-lab-directory: driver/sle15
 :nvidia-license-image-registry: docker.io
-:build-variables-file: /tmp/.build-variables.sh
+//:build-variables-file: /tmp/.build-variables.sh
 
 :rancher-kubectl-url: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  
 :rke2-cluster-access-url: https://docs.rke2.io/cluster_access
@@ -317,29 +317,34 @@ The following commands must be run on the {product-sle-full} build host.
 
 . [[step_1]]Set the following variables that will be consumed throughout this procedure:
 
-.. Create the {build-variables-file} file:
+.. Create the /tmp/.build-variables.sh file:
 
-//[console, bash]
-[listing, subs="attributes"]
+[TIP]
+====
+For the REGISTRY variable, provide the URL of the registry where the new image will be saved.
+
+For the SLE15_SP_VERSION, enter the number for the {product-sle} {product-sle-version} service pack to be used for the container image (i.e. {product-sle-sp-version-short} for {product-sle-sp-version}).
+
+For the DRIVER_VERSION variable, provide the {nvidia-drv} version (e.g. {gpu-driver-version}). Find the latest "Data Center Driver for Linux x64" version for your GPU at {nvidia-driver-download-url}.
+
+For the OPERATOR_VERSION variable, provide the {nvidia-op} version (e.g.{gpu-operator-version}). Find the associated {nvidia-op} version at {nvidia-driver-gpu-operator-url}.
+
+For the CUDA_VERSION variable, provide the required CUDA version (e.g. {cuda-version}) for {nvidia-drv} by selecting your driver version at {nvidia-driver-gpu-operator-url}. The CUDA version will be listed under "Software Versions".
+====
+
+//[console, subs="attributes"]
+[console, bash]
 ----
-cat <<EOF> {build-variables-file}
-## Provide the URL of the registry where the new image will be saved:
+cat <<EOF> /tmp/.build-variables.sh
 export REGISTRY=""
-## Enter the number for the {product-sle} {product-sle-version} service pack to be used for the container image (i.e. {product-sle-sp-version-short} for {product-sle-sp-version})
 export SLE15_SP_VERSION=""
-## Provide the {nvidia-drv} version (e.g. {gpu-driver-version})
-## Find the latest "Data Center Driver for Linux x64" version for your GPU at {nvidia-driver-download-url}
 export DRIVER_VERSION=""
-## Provide the {nvidia-op} version (e.g.{gpu-operator-version})
-## Find the associated {nvidia-op} version at {nvidia-driver-gpu-operator-url}
 export OPERATOR_VERSION=""
-## Provide the required CUDA version (e.g. {cuda-version}) for {nvidia-drv} by selecting your driver version at {nvidia-driver-gpu-operator-url}
-## The CUDA version will be listed under "Software Versions"
 export CUDA_VERSION=""
 EOF
 ----
 
-.. Edit the {build-variables-file} file to provide the appropriate values.
+.. Edit the /tmp/.build-variables.sh file to provide the appropriate values.
 
 .. Source the variables into your current terminal environment:
 //
@@ -363,7 +368,7 @@ For the best results, be sure and execute each code block in its entirety as a s
 //[console, bash]
 [console, subs="attributes"]
 ----
-source {build-variables-file}
+source /tmp/.build-variables.sh
 ----
 
 
@@ -375,9 +380,11 @@ source {build-variables-file}
 ----
 git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
 ----
-
+//
++
 . Update the Dockerfile in this directory:
-
+//
++
 . Make a backup copy of the Dockerfile before modifying:
 //
 +
@@ -386,7 +393,8 @@ git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
 ----
 cp Dockerfile /tmp/Dockerfile.orig
 ----
-
+//
++
 . Update the golang build container image to version `{golang-version}`:
 //
 +
@@ -395,7 +403,8 @@ cp Dockerfile /tmp/Dockerfile.orig
 ----
 sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 ----
-
+//
++
 . Update the Dockerfile's base container image to the {product-bci-version} BCI:
 //
 +
@@ -404,7 +413,8 @@ sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 ----
 sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 ----
-
+//
++
 . Verify the changes that have been made to the Dockerfile:
 //
 +
@@ -413,11 +423,14 @@ sed -i '/^FROM/ s/suse\/sle15/bci\/bci-base/' Dockerfile
 ----
 diff /tmp/Dockerfile.orig Dockerfile
 ----
-
+//
++
 . Build the {product-sle} container image with the {nvidia-drv} installed:
-
+//
++
 * Build the container:
-
+//
++
 [IMPORTANT] 
 ====
 When building the container image, you may be prompted for the registry that contains the `nvidia/cuda` image. 
@@ -452,13 +465,15 @@ ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION
   --build-arg PRIVATE_KEY=empty  \
 .
 ----
-
+//
++
 * Watch the build output for errors, warnings, and failures. You can safely ignore errors and warnings that don't stop the build process.
-
+//
++
 * The build process should finish with a message saying that the final image was committed and tagged. 
 For example:
-
-
+//
++
 [listing]
 ====
  COMMIT registry.susealliances.com/nvidia-sle15sp5-535.104.05
@@ -466,7 +481,8 @@ For example:
 Successfully tagged registry.susealliances.com/nvidia-sle15sp5-535.104.05:latest
 cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 ====
-
+//
++
 . Remove the intermediate build container image that was created as part of the build process (and any other leftover artifacts):
 //
 +
@@ -475,7 +491,8 @@ cf9768704892c4b8b9e37a4ef591472e121b81949519204811dcc37d2be9d16c
 ----
 for EACH in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${EACH}; done
 ----
-
+//
++
 . Push the newly build image to the container registry:
 //
 +
@@ -508,9 +525,11 @@ sudo podman tag ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:
 sudo podman push ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} &&
 sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
-
+//
++
 * Verify the image is saved in the registry, and remotely available:
-
+//
++
 [NOTE] 
 ====
 If any of the following variables are not set correctly, press `Ctrl+c` and return to <<step_1, Step 1>> in this process before continuing.
@@ -522,17 +541,21 @@ If any of the following variables are not set correctly, press `Ctrl+c` and retu
 ----
 sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
-
-.Step 7: Validate the container image
-
+//
++
+. Validate the container image
+//
++
 [NOTE] 
 ====
 This step is optional and requires running the newly created {nvidia-drv} container locally with `Podman`, outside of the Kubernetes context. 
 This can be done on a {product-bci-version} host configured with the same kind of {nvidia-name} GPU the container was created for, or on a Kuberentes worker node that is configured with an {nvidia-name} GPU.
 ====
-
+//
++
 * Open a command line session to the host or Kubernetes worker node on which you will test the container image.
-
+//
++
 * Create the `/run/nvidia` directory, if it does not yet exist:
 //
 +
@@ -541,7 +564,8 @@ This can be done on a {product-bci-version} host configured with the same kind o
 ----
 sudo mkdir -p /run/nvidia
 ----
-
+//
++
 * Run the {nvidia-drv} container locally:
 //
 +
@@ -571,7 +595,8 @@ sudo podman run -d \
   --restart=unless-stopped \
 ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
-
+//
++
 * Verify the container is running:
 //
 +
@@ -583,8 +608,8 @@ sudo podman ps -a
 //
 +
 ** The container's `STATUS` field should show that it is "Up" and the amount of time it has been up should increment with repeated runs of the command.
-
-
+//
++
 * Monitor the deployment of the {nvidia-drv}:
 //
 +
@@ -607,17 +632,21 @@ DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if th
 ## Review the standard output of the running container
 sudo podman logs -f driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
 ----
-
+//
++
 * The deployment process is complete when the following message is shown:
-
+//
++
 [listing]
 ====
 Mounting {nvidia-name} driver rootfs...
 Done, now waiting for signal
 ====
-
+//
++
 * Press `Ctrl+c` to close the log viewing session
-
+//
++
 * Ensure the {nvidia-name} kernel modules have been loaded:
 //
 +
@@ -629,8 +658,8 @@ sudo lsmod | grep nvidia
 //
 +
 ** You should see modules such as `nvidia`, `nvidia_modeset`, and `nvidia_uvm`
-
-
+//
++
 * Verify the `nvidia-smi` utility can communicate withe the GPU:
 //
 +
@@ -653,7 +682,8 @@ DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press Ctrl+c now if th
 ## Verify the nvidia-smi utitlity can communicate with the GPU
 sudo podman exec -it driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} nvidia-smi
 ----
-
+//
++
 * When ready to move forward, stop and remove the Podman container:
 //
 +
@@ -736,7 +766,7 @@ The preferred method for installing the {nvidia-op} is with the Helm Kuberenetes
 The following steps must be run from a Linux system that has the kubectl and Helm (version 3) utilities, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. 
 See these documents for more information: {rancher-kubectl-url} and {rke2-cluster-access-url}.
 
-In addition, if the container build host is a different system than the one being used to perform the Helm install, the {build-variables-file} file will need to be created on the second system. 
+In addition, if the container build host is a different system than the one being used to perform the Helm install, the /tmp/.build-variables.sh file will need to be created on the second system. 
 Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
 
