@@ -48,8 +48,8 @@ include::./common_docinfo_vars.adoc[]
 :productname: SUSE Technical Reference Documentation
 :product1: SUSE TRD
 :product1_full: SUSE Technical Reference Documentation
-:product1_url1: documentation.suse.com/trd-supported.html
-:product1_url2: github.com/SUSE/technical-reference-documentation
+:product1_url1: https://documentation.suse.com/trd-supported.html
+:product1_url2: https://github.com/SUSE/technical-reference-documentation
 :usecase: contributor workflow
 :executive_summary: This document provides guidance for contributing to {product1_full}.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -73,6 +73,12 @@ include::./common_docinfo_vars.adoc[]
 // define any additional variables here for use within the document
 // -
 
+:asciidoc-url: https://asciidoc.org/
+:daps-install-url: https://opensuse.github.io/daps/doc/cha.daps.user.inst.html#sec.daps.user.inst
+:daps2docker-url: https://github.com/openSUSE/daps2docker
+:suse-xsl-url: https://github.com/openSUSE/suse-xsl
+:git-line-endings-url: https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings?platform=windows
+:github-url: https://github.com/
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -94,9 +100,9 @@ include::./common_docinfo_vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-https://{product1_url1}[{product1_full}] ({product1})is an open collection of high quality guidance for solutions that address real-world use cases with featured SUSE, partner, and community components.
+{product1_url1}[{product1_full}] ({product1})is an open collection of high quality guidance for solutions that address real-world use cases with featured SUSE, partner, and community components.
 Documents are modular and rendered from multiple source files.
-These source files are freely available and open source licensed in the https://{product1_url2}[GitHub repository].
+These source files are freely available and open source licensed in the {product1_url2}[GitHub repository].
 
 
 {product1} can be generally divided into four types:
@@ -169,12 +175,12 @@ Contributors to {product1} need the following:
 ====
 Your editor should save files encoded to https://en.wikipedia.org/wiki/UTF-8[UTF-8] and end lines only with the line feed character.
 
-See also https://https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings?platform=windows[Configuring Git to handle line endings].
+See also {git-line-endings-url}[Configuring Git to handle line endings].
 ====
 
-* https://github.com/[GitHub] account and basic Git skills
+* {github-url}[GitHub] account and basic Git skills
 
-* Basic understanding of the https://asciidoc.org/[AsciiDoc] markup language
+* Basic understanding of the {asciidoc-url}[AsciiDoc] markup language
 //
 +
 See <<AsciiDoc>>.
@@ -184,8 +190,10 @@ See <<AsciiDoc>>.
 +
 --
 You have two options:
-** https://opensuse.github.io/daps/doc/cha.daps.user.inst.html#sec.daps.user.inst[Install DAPS] and its dependencies directly, including the latest https://github.com/openSUSE/suse-xsl[SUSE XSL Stylesheets].
-** Use the https://github.com/openSUSE/daps2docker[DAPS2Docker] container implementation.
+
+* {daps-install-url}[Install DAPS] and its dependencies directly, including the latest {suse-xsl-url}[SUSE XSL Stylesheets].
+
+* Use the {daps2docker-url}[DAPS2Docker] container implementation.
 --
 +
 See <<DAPS>> for more information.
@@ -211,7 +219,7 @@ include::suse-trd_contrib-workflow.adoc[]
 // Describe the general file and directory structure
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-{product1} is both a https://{product1_url1}[website] with links to published documents and a https://{product1_url2}[GitHub repository] of their source files.
+{product1} is both a {product1_url1}[website] with links to published documents and a {product1_url2}[GitHub repository] of their source files.
 As a contributor, you need a general understanding of the structure of the source repository.
 
 

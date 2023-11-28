@@ -15,6 +15,13 @@ You can create this structure and the requisite files manually, but the `gssetup
 cd ~/git/GITHUB_USER/technical-reference-documentation
 ----
 
+. If you have not done so already, create a branch for your project.
++
+[source, console]
+----
+git branch tux-my-project
+----
+
 . Check out your project branch.
 +
 [source, console]
@@ -22,7 +29,7 @@ cd ~/git/GITHUB_USER/technical-reference-documentation
 git checkout tux-my-project
 ----
 
-. Change to either the _kubernetes/start/_ or _linux/start/_ subdirectory.
+. Change to either the `kubernetes/start/` or `linux/start/` subdirectory.
 //
 +
 For example:
@@ -31,154 +38,189 @@ For example:
 ----
 cd kubernetes/start
 ----
++
+[TIP]
+====
+Linux is likely a part of every solution, but, if any portion of SUSE's Enterprise Container Management portfolio is involved, the documentation should be created in the `kubernetes` directory tree.
+====
 
 . Execute the setup script to generate directory structures and basic files from templates.
 +
 [source, console]
 ----
-bin/gssetup.sh
+./bin/gssetup.sh
 ----
 
 . Verify that you have performed the prerequisite actions presented in the banner, then press ENTER to continue.
 +
 [listing]
 ----
-= = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-= Set up workspace for new TRD getting started guide      =
-= = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+= Set up workspace for new TRD getting started guide        =
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+ This script will prompt you for information about your
+ guide, then use your responses to create the directories
+ and template files for your guide
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- Before proceeding make sure you have:
-- 1. created a local branch: `git branch myproject`
-- 2. checked out your new branch: `git checkout myproject`
-- 3. changed to the 'kubernetes/start' or
--    'linux/start' directory (as appropriate)
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - Before proceeding make sure you have:
+  - 1. created a local branch: `git branch myproject`
+  - 2. checked out your new branch: `git checkout myproject`
+  - 3. changed to the 'kubernetes/start' or
+  -    'linux/start' directory (as appropriate)
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Are you ready to proceed?
-Press ENTER to continue or CTRL-C to cancel.
-----
-
-. Select whether this guide focuses on a Kubernetes or Linux solution.
-+
-[listing]
-----
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- Gather some information
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-Please enter the relevant category (i.e., 'k' for Kubernetes or 'l' for Linux) : k
+Press ENTER to continue or CTRL+C to cancel.
 ----
 +
 [NOTE]
 ====
-Linux is likely a part of every solution, but, if any portion of SUSE's Enterprise Container Management portfolio is involved, select 'k' for Kubernetes.
+The setup script makes the following checks:
+
+* that you do not have the _main_ branch checked out
+* that your current working directory is either `kubernetes/start` or `linux/start`
 ====
 
 . Identify the primary SUSE product name.
 +
 [listing]
 ----
-Please enter the primary SUSE product name (e.g., 'rancher', 'k3s', 'sles', 'suma', etc.) : rancher
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- Gathering some information
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Please enter the primary SUSE product name
+(e.g., 'rancher', 'neuvector', 'sles', 'slemicro', 'suma', etc.)
+>> Primary SUSE product name : rancher
 ----
 +
 [NOTE]
 ====
-Identify one product as the primary component by entering a product abbreviation with lowercase, alphanumeric characters (no hyphens or other special characters).
-Product options include: harvester, rancher, rke, rke2, k3s, longhorn, sles, and suma.
+Identify one product as the primary component by entering a product abbreviation with lowercase, alphanumeric, and no special characters (see the table below).
+
 
 A solution may involve multiple SUSE products.
-If you have difficulty selecting one product as primary, select as primary the component that appears first in the above product list.
-Thus, for a solution with Rancher, RKE2, Longhorn, and SLES, you would enter 'rancher' at the prompt.
+Select one product as primary and enter it at the prompt.
+If it is critical for additional SUSE products to appear in directory and file names, this can be handled through a manual process after running the script.
 
-If it is critical to reference additional SUSE products in the directory and file names, this can be handled with a manual process after running the script.
+[cols="1,2"]
+|===
+|Abbreviation | Product name
+
+|sles |SUSE Linux Enterprise Server
+|slessap |SUSE Linux Enterprise Server for SAP Applications
+|slehpc |SUSE Linux Enterprise High Performance Computing
+|slemicro |SUSE Linux Enterprise Micro
+|slelp |SUSE Linux Enterprise Live Patching
+|slert |SUSE Linux Enterprise Real Time
+|sleha |SUSE Linux Enterprise for High Availability Extension
+|suma |SUSE Manager
+|rancher | Rancher Prime by SUSE
+|neuvector | NeuVector Prime by SUSE
+|harvester | Harvester by SUSE
+|rke | Rancher Kubernetes Engine
+|rke2 | Rancher Kubernetes Engine 2
+|k3s | K3s by SUSE
+|longhorn | Longhorn by SUSE
+|===
+
 ====
 
 . Identify a primary partner.
 +
 [listing]
 ----
-Please enter the name of the primary partner : tuxy
+Please enter the name of the primary partner.
+Multiple partners and partner products can be featured
+in a guide, but one should be selected as primary.
+>> Name of primary partner or project : tuxy
 ----
 +
 [NOTE]
 ====
-As with SUSE products, multiple partners and multiple partner products may appear in a solution.
-This selection only affects directory and file names.
-All other partners and products are properly can be identified in the text of the guide.
+Generally, you should select as primary the partner whose product is at the highest layer of the solution stack.
+Enter the name of the partner using lowercase letters and numbers but no special characters.
 
-Generally, select as primary the partner whose product is at the highest layer of the solution stack.
-Enter the name of the partner using lowercase letters and numbers without special characters (like hyphens).
-
-If it is critical to reference additional partners in the directory and file names, this can be done with a manual process after running this script.
+This entry only affects the directory and file names.
+Additional partners can be fully identified in the text of the document.
+However, if it is critical to reference additional partners in directory and file names, this can be done through a manual process after running this script.
 ====
 
-. Identify the primary partner product.
+. Identify the primary partner's product.
 +
 [listing]
 ----
-Please enter the primary partner product name : penguin
+Please enter the primary partner's product name.
+>> Primary partner's product name : penguin
 ----
 +
 [NOTE]
 ====
-Use a lowercase abbreviation of the primary partner's product that is featured in the solution.
+Use only lowercase letters and numbers.
 
-If it is critical for a second product of the primary partner to appear in the file name, you can enter both product abbreviations separated by a hyphen.
+If it is critical to list additional products of the primary partner in diretory and file names, you can enter both product abbreviations separated by a hyphen.
 ====
 
 . Optionally enter a use case or description.
 +
 [listing]
 ----
-If you would like a use case or description (1-3 words), enter it now or just press ENTER : 
+Sometimes a solution with the same components can address
+more than one use case.
+If you need to distinguish this guide from an existing one,
+you can provide up to 20 characters here that will be added
+to the file names.
+In most cases, you should leave this blank by just pressing ENTER.
+>> Distinctive text :
 ----
 +
 [NOTE]
 ====
-This use case text is used in file and directory names.
-It is useful to include such text if there are or will be guides detailing use of the same solution stack for different purposes.
-In most cases, it is fine to leave this blank.
+This descriptive text appears in file names.
+It can be useful to distinguish guides targeting different use cases with the same solution stack.
+In most cases, you should leave this entry blank.
 ====
 
 . Review the proposed structure and naming.
 +
 [listing]
 ----
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- About to create the following structure:
--
--   kubernetes
--   └── start
--       └── tuxy
--           ├── DC-gs_rancher_tuxy-penguin
--           ├── adoc
--           │   ├── gs_rancher_tuxy-penguin.adoc
--           │   ├── gs_rancher_tuxy-penguin-docinfo.xml
--           ├── images -> media
--           └── media
--               └── src
--                   ├── png
--                   └── svg
--
-- Note: Several symbolic links will also be created.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Press ENTER to create document structure or CTRL-C to cancel.
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - Preparing to create the following structure:
+  -
+  -   /home/terry/git/technical-reference-documentation/kubernetes
+  -   └── start
+  -       └── tuxy
+  -           ├── DC-gs_rancher_tuxy-penguin
+  -           ├── adoc
+  -           │   ├── gs_rancher_tuxy-penguin.adoc
+  -           │   ├── gs_rancher_tuxy-penguin-docinfo.xml
+  -           ├── images -> media
+  -           └── media
+  -               └── src
+  -                   ├── png
+  -                   └── svg
+  -
+  - NOTE: Several symbolic links will also be created.
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+>> Press ENTER to create document structure or CTRL+C to cancel.
 ----
 +
 [TIP]
 ====
 No directories or files are created until you press ENTER.
-If you want to make changes, press CTRL-C to cancel the planned operation and rerun the script.
+If you want to make changes, press CTRL+C to cancel the planned operation and rerun the script.
 ====
 
 . Confirm that the script has correctly created the structure as intended.
 +
 [source, console]
 ----
-> cd tuxy
-> tree .
+cd tuxy
+tree .
 ----
 +
 [listing]
@@ -199,10 +241,18 @@ tree .
         ├── png
         └── svg
             └── suse.svg -> ../../../../../../common/images/src/svg/suse.svg
+
+7 directories, 8 files
 ----
 
 
-The `gssetup.sh` script creates the standard directory structure, symbolic links to common files, and the three principal files you will edit for your document: the Doc Config (DC) file, the DocBook metadata docinfo) file, and the AsciiDoc (adoc) file for your main content.
+The `gssetup.sh` script creates the standard directory structure, symbolic links to common files, and the three principal files you will edit for your document:
+
+* Doc Config (DC) file - `DC-gs_rancher_tuxy-penguin`
+* DocBook metadata (docinfo) file - `gs_rancher_tuxy-penguin-docinfo.xml`
+* AsciiDoc (adoc) - `gs_rancher_tuxy-penguin.adoc`
+
+These files are discussed in more detail in the following sections.
 
 
 ==== Doc Config file
