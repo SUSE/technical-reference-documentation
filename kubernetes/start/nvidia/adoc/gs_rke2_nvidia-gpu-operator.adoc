@@ -50,6 +50,7 @@ include::./common_docinfo_vars.adoc[]
 :product-rke2: RKE2
 :product-rke2-full: Rancher Kubernetes Engine 2
 :product-rke2-url: www.suse.com/products/rancher-kubernetes-engine/
+:product-rke2-version: 1.25+
 :product-sle: SLES
 :product-sle-version: 15
 :product-sle-sp-version: SP5
@@ -98,7 +99,7 @@ include::./common_docinfo_vars.adoc[]
 // -
 :author1_firstname: Alex
 :author1_surname: Arnoldy
-:author1_jobtitle: Embedded Solutions Architect
+:author1_jobtitle: Global Solutions Architect
 :author1_orgname: SUSE Alliance Architects
 //:author2_firstname: first (given) name
 //:author2_surname: surname
@@ -126,7 +127,7 @@ include::./common_docinfo_vars.adoc[]
 // This is could be the same as the executive summary.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This Getting Started guide provides comprehensive instructions for two imporant tasks. 
+This Getting Started guide provides comprehensive instructions for two important tasks. 
 The first is the creation of an OCI compliant container image based on the {product-bci-full}, that runs the {nvidia-drv}. 
 The second is deploying the container image on {product-rke2-full}. 
 The primary objective is to enable you to seamlessly integrate the {nvidia-op}, simplifying GPU management and support within Kubernetes clusters for GPU-intensive workloads. 
@@ -172,9 +173,9 @@ It is assumed that you are using Data Center class {nvidia-name} GPU(s). Integra
 
 // This document is intended for ...
 
-This guide is intened for an audience comprising Kubernetes administrators, proficient DevOps practitioners, and application developers. 
+This guide is intended for an audience comprising Kubernetes administrators, proficient DevOps practitioners, and application developers. 
 It assumes a foundational understanding of Podman and/or Docker, Kubernetes, and {nvidia-name} GPU technologies. 
-This guide should be suitable for most high technology professionals seeking to unlock the full potential of their GPU accellerated containerized applications.
+This guide should be suitable for most high technology professionals seeking to unlock the full potential of their GPU accelerated containerized applications.
 
 == Prerequisites
 
@@ -228,7 +229,7 @@ sudo zypper install \
   sle-module-NVIDIA-compute-release
 ----
 
-* Podman is installed on the build host and at least one of the {nvidia-name} GPU equiped Kubernetes worker nodes. 
+* Podman is installed on the build host and at least one of the {nvidia-name} GPU equipped Kubernetes worker nodes. 
 You can use the following command to install Podman.
 //
 +
@@ -252,11 +253,11 @@ This will allow the {nvidia-drv} to be deployed across all Kubernetes worker nod
 +
 [NOTE]
 ====
-The container registry does not need to support authenication, but should be configured with a valid TLS certificate.
+The container registry does not need to support authentication, but should be configured with a valid TLS certificate.
 ====
 
 * You have access to a Kubernetes cluster that is equipped and correctly configured with Data Center class {nvidia-name} GPUs. 
-These instructions leverage SUSE's security focused Kubernetes distribution, {product-rke2}. 
+These instructions leverage SUSE's security focused Kubernetes distribution, {product-rke2} {product-rke2-version}.
 
 * You possess a basic familiarity with Podman and/or Docker, Kubernetes, and {nvidia-name} GPU concepts.
 
@@ -288,7 +289,7 @@ The process of building the OCI compliant {nvidia-drv} container image using {pr
 * A build host. This can be an {product-rke2} worker node or a separate node or VM with, or without access to an {nvidia-name} GPU.
 ** If the build host has access to an {nvidia-name} GPU, the specified validations can be done on that node.
 * A container image registry to which the build host and the {product-rke2} cluster can access.
-* An {product-rke2} Kubernetes cluster with at least one worker node that is confgiured with an {nvidia-name} GPU. 
+* An {product-rke2} Kubernetes cluster with at least one worker node that is configured with an {nvidia-name} GPU. 
 * Access to the {product-sle-full} software modules through the {suse-customer-center-name} or an {product-rmt} server.
 
 The process of building the OCI compliant container image and deploying it to an {product-rke2} cluster will entail the following steps:
@@ -539,7 +540,7 @@ sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE
 [NOTE] 
 ====
 This step is optional and requires running the newly created {nvidia-drv} container locally with `Podman`, outside of the Kubernetes context. 
-This can be done on a {product-bci-version} host configured with the same kind of {nvidia-name} GPU the container was created for, or on a Kuberentes worker node that is configured with an {nvidia-name} GPU.
+This can be done on a {product-bci-version} host configured with the same kind of {nvidia-name} GPU the container was created for, or on a Kubernetes worker node that is configured with an {nvidia-name} GPU.
 ====
 //
 +
@@ -663,7 +664,7 @@ REGISTRY=${REGISTRY}
 SLE15_SP_VERSION=${SLE15_SP_VERSION}
 DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
 
-## Verify the nvidia-smi utitlity can communicate with the GPU
+## Verify the nvidia-smi utility can communicate with the GPU
 sudo podman exec -it driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} nvidia-smi
 ----
 //
@@ -691,7 +692,7 @@ sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
 //
 +
-.. Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kuberenetes worker nodes:
+.. Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kubernetes worker nodes:
 //
 +
 [console, bash]
@@ -741,7 +742,7 @@ If any modules fail to unload, reboot the node.
 
 [NOTE] 
 ====
-The preferred method for installing the {nvidia-op} is with the Helm Kuberenetes package manager.
+The preferred method for installing the {nvidia-op} is with the Helm Kubernetes package manager.
 ====
 
 [IMPORTANT] 
@@ -962,7 +963,7 @@ This command can also be used to verify which application processes are running 
 This guide has effectively steered the creation of OCI compliant container images leveraging the {product-bci-full} and incorporating the {nvidia-drv}.
 Furthermore, it has provided coherent instructions for validating the functionality of the container image and the seamless deployment of the image within a Kubernetes cluster, specifically {product-rke2}.
 
-This integrated solution is aimed at affording containerized applications GPU-acceleration, while avoiding the need to manage additional software on each GPU equiped node.
+This integrated solution is aimed at affording containerized applications GPU-acceleration, while avoiding the need to manage additional software on each GPU equipped node.
 The strategic choice of SUSE's {product-bci-full} as the foundation for this integration underscores an organization's commitment to security, certifications, and supportability. 
 
 Organizations with exacting security requirements depend on {product-sle-full}'s numerous certifications such as Common Criteria, FIPS, and EAL. 
