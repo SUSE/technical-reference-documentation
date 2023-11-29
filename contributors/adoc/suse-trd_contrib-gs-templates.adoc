@@ -6,7 +6,7 @@ Getting started guides are relatively simple documents, but they do require mult
 You can create this structure and the requisite files manually, but the `gssetup.sh` script is available to help automate the process.
 
 
-==== Generate the framework
+==== Generating the framework
 
 . Open a local terminal and change to the directory containing your clone.
 +
@@ -19,14 +19,14 @@ cd ~/git/GITHUB_USER/technical-reference-documentation
 +
 [source, console]
 ----
-git branch tux-my-project
+git branch my-tuxy-project
 ----
 
 . Check out your project branch.
 +
 [source, console]
 ----
-git checkout tux-my-project
+git checkout my-tuxy-project
 ----
 
 . Change to either the `kubernetes/start/` or `linux/start/` subdirectory.
@@ -246,124 +246,175 @@ tree .
 ----
 
 
-The `gssetup.sh` script creates the standard directory structure, symbolic links to common files, and the three principal files you will edit for your document:
+==== Understanding the templates
 
-* Doc Config (DC) file - `DC-gs_rancher_tuxy-penguin`
-* DocBook metadata (docinfo) file - `gs_rancher_tuxy-penguin-docinfo.xml`
-* AsciiDoc (adoc) - `gs_rancher_tuxy-penguin.adoc`
-
-These files are discussed in more detail in the following sections.
+The `gssetup.sh` script creates the standard directory structure, symbolic links to common files, and the three principal files you will edit for your document.
+These three files include copious comments to help you understand how to use them.
+The following sections provide some highlights.
 
 
-==== Doc Config file
+===== Doc Config (DC) file
 
-Your Doc Config (or DC) file specifies parameters that define the documentation deliverable.
-Some key parameters in the file are highlighted below.
+The DC file (`DC-gs_rancher_tuxy-penguin` in the example) is located in the root of the generated partner directory.
+It specifies parameters that define how the document will be rendered.
 
-[listing]
-----
-DRAFT=yes <1>
+As a contributor, you only need to be concerned with two of these parameters:
 
-...
-
-MAIN="gs_rancher_tuxy-penguin.adoc" <2>
-
-...
-
-ADOC_ATTRIBUTES+=" --attribute docdate=yyyy-mm-dd" <3>
-
-----
-
-<1> Specifies that the document is in draft mode.
-Prior to submitting for publication, deactivate draft mode by simply prepending the line with a hash mark ( # ):
+DRAFT=yes::
+//
 +
+Specifies that the document is in draft mode and watermarks the document accordingly.
++
+[IMPORTANT]
+====
+When you are ready to submit your document for final review, you must comment out this parameter by preceding it with a hash mark:
+
 [listing]
 ----
 #DRAFT=yes
 ----
-
-<2> Specifies the filename of your main content file.
-
-<3> Specifies the document revision date.
-Update this date prior to submitting for publication.
-
-
-
-==== DocBook metadata file
-
-The DocBook metadata (docinfo) file specifies metadata about your document, including title, author information, cover logo, and an executive summary.
-
-[WARNING]
 ====
-Be sure document attributes (variables) referenced in the docinfo file are properly defined in your adoc file.
+
+MAIN="gs_rancher_tuxy-penguin.adoc"::
+//
++
+Specifies the AsciiDoc file with the main contents of your guide.
++
+[NOTE]
+====
+This parameter is set by the `gssetup.sh` script.
+You only need to change it if you rename the main document file.
+====
+
+
+===== DocBook metadata (docinfo) file
+
+The docinfo file (`gs_rancher_tuxy-penguin-docinfo.xml`, in the example) is located in the adoc subdirectory.
+It defines metadata about your document, such as title and subtitle, brief descriptions, featured products and partners, authors, and even which logo to feature on the cover page.
+You only need to edit the docinfo file if you need to add metadata tags that are not already defined.
+
+[IMPORTANT]
+====
+The docinfo file references attributes (variables) defined in your AsciiDoc file.
+These appear in the docinfo file as words (or any sequence of characters, like "scomp1-version") enclosed in curly braces ( `{` and `}` ).
+
+All referenced attributes must be defined in your AsciiDoc file.
 Otherwise, your document will fail to render.
 ====
 
+
+The docinfo template provides metadata tags for only one SUSE product, but you can easily add metadata for additional SUSE products.
+
 [listing, xml]
 ----
- <productname>{product1} {product1_version}</productname> <1>
- <meta name="platform">{product1_full}</meta> <2>
+<meta name="productname"> <1>
+  <productname version="{scomp1-version}">{scomp1}</productname> <2>
+</meta>
+<meta name="platform">{scomp1-full}</meta> <3>
+----
 
-...
+<1> The `<meta name="productname"> </meta>` tag pair encloses the list of named SUSE products.
 
- <authorgroup>
-   <author> <3>
-     <personname> <4>
-       <firstname>{author1_firstname}</firstname>
-       <surname>{author1_surname}</surname>
-     </personname>
-     <affiliation> <5>
-       <jobtitle>{author1_jobtitle}</jobtitle>
-       <orgname>{author1_orgname}</orgname>
-     </affiliation>
-   </author>
- </authorgroup>
+<2> List each product with a separate `<productname> </productname>` entry.
++
+--
+For example, to include a second SUSE product, you would add a new tag pair below the first:
+[listing, xml]
+----
+  <productname version="{scomp2-version}">{scomp2}</productname>
+----
+where:
 
-...
+* `scomp2` must be defined in your AsciiDoc file with the short name (or official abbreviation) for the SUSE product
+* `scomp2-version` must be defined in your AsciiDoc file with the relevant versions or versions of the SUSE product
+--
 
- <cover role="logos"> <6>
-   <mediaobject>
-     <imageobject role="fo">
-       <imagedata fileref="suse.svg" width="10em"/>
-     </imageobject>
-     <imageobject role="html">
-       <imagedata fileref="suse.svg" width="30em"/>
-     </imageobject>
-   </mediaobject>
- </cover>
+<3> The primary SUSE product is identified with the `<meta name="platform"> </meta>` tag pair.
+//
++
+The `scomp1-full` attribute, defined in your AsciiDoc file, must be the full SUSE product name.
+
+
+List technical partners (those companies or organizations) supplying components featured in the solution with:
+
+[listing, xml]
+----
+<meta name="techpartner">
+  <techpartner>{pcomp1-provider}</techpartner>
+</meta>
+----
+
+
+Identify the document author or authors in the `<authorgroup> </authorgroup>`.
+
+[listing, xml]
+----
+<authorgroup>
+  <author> <1>
+    <personname> <2>
+      <firstname>{author1-firstname}</firstname>
+      <surname>{author1-surname}</surname>
+    </personname>
+    <affiliation> <3>
+      <jobtitle>{author1-jobtitle}</jobtitle>
+      <orgname>{author1-orgname}</orgname>
+    </affiliation>
+  </author>
+</authorgroup>
 
 ----
 
-<1> Specifies the guide's primary SUSE product by official abbreviation and version.
-Examples: 'SLES 15', 'SLES 15 SP4', 'Rancher 2.x', 'Rancher 2.7', 'Rancher 2.6+'
+<1> Each author's information is enclosed in `<author> </author>` tag pairs.
+To add another author, replicate the contents in a new `<author> </author>` tag pair and update the attribute references.
 
-<2> Specifies the official full name of the primary SUSE product.
-Examples: 'SUSE Linux Enterprise Server', 'SUSE Manager', 'Rancher by SUSE'
+<2> Include first (or given) name and surname (family name).
 
-<3> Delimits the information about a single author.
-Add an `<author>`...`</author>` section for each author.
-+
+<3> Include company, organization, or project affiliation along with job, position, or role title.
+
+[NOTE]
+====
+The authors identified in this section are displayed on the rendered document.
+
+You can also acknowledge the contributions of editors and others in an "Acknowlegement" section of your AsciiDoc file.
+====
+
+The last section of the docinfo file you may want to edit identifies the logo that appears on the cover image.
+
+[listing, xml]
+----
+<cover role="logos">
+  <mediaobject>
+    <imageobject role="fo">
+      <imagedata fileref="suse.svg" width="5em"/>
+    </imageobject>
+    <imageobject role="html">
+      <imagedata fileref="suse.svg" width="152px"/>
+    </imageobject>
+  </mediaobject>
+</cover>
+----
+
+The default logo is the official SUSE company logo, which is always appropriate for all {product1_full}.
+If you wish, you can specify a logo "lock-up" or "mash-up" by updating the "fileref" option with the name of the appropriate image file.
+
+[NOTE]
+====
+You must have documented approval from the partner before using the logo and the usage must follow SUSE and partner branding guidelines.
+====
+
+
+
+===== *Main AsciiDoc (asciidoc) content file*
+
+The text of your document is contained in one or more https://asciidoc.org/[AsciiDoc] (adoc) files, located in the `adoc` subdirectory.
+For a getting started guide, you typically put all your content in a single adoc file (`gs_rancher_tuxy-penguin.adoc` in the example).
+This is the file specified in the DC file with the `MAIN` parameter.
+
 [TIP]
 ====
-You can also indicate an editor with `<editor>`...`</editor>` and other contributor with `<othercredit>`...`</othercredit>`.
-
-Alternatively, it is acceptable to thank editors and other contributors in an "Acknowledgements" subsection of your "Introduction."
+There are many reasons you might want to split your contents into multiple adoc files, such as to organize more complex documents or to make it easier for multiple contributors to work independently on different sections.
+If you choose to split your document, you will need to use the AsciiDoc https://docs.asciidoctor.org/asciidoc/latest/directives/include/[include directive] to link all the files so the content is properly merged in a single rendered document.
 ====
-
-<4> Specifies the name of the author with document attributes defined in your adoc file.
-
-<5> Specifies the job title and affiliation (company, foundation, agency, project, etc.) of the author.
-
-<6> Specifies the logo image to appear on the cover page of rendered documents.
-The SUSE logo is used by default.
-To use a joint logo with a partner or project, create a logo lock-up that is compliant with https://brand.suse.com[brand guidelines] (approvals may be required from all parties).
-
-
-==== AsciiDoc content files
-
-The text of your document is contained in one or more https://asciidoc.org/[AsciiDoc] (adoc) files.
-For a getting started guide, you typically put all your content in a single adoc file, the one specified in the DC file with the `MAIN` parameter.
-You can split your contents into multiple adoc files and use the AsciiDoc https://docs.asciidoctor.org/asciidoc/latest/directives/include/[include directive] so all the content will be merged in the rendered document.
 
 
 ===== Document attributes and variables
