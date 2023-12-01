@@ -41,60 +41,80 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// document
-// -
-:product-bci: SLE BCI
-:product-bci-full: SUSE Linux Enterprise Base Container Images
-:product-bci-version: 15 SP5
-:product-bci-registry: https://registry.suse.com
-:product-bci-url: {product-bci-registry}/bci/bci-base-15sp5/index.html
-:product-rke2: RKE2
-:product-rke2-full: Rancher Kubernetes Engine 2
-:product-rke2-url: https://www.suse.com/products/rancher-kubernetes-engine/
-:product-rke2-support-matrix: https://www.suse.com/suse-rke2/support-matrix/all-supported-versions/
-:product-rke2-version: 1.25
-:product-sle: SLES
-:product-sle-version: 15
-:product-sle-sp-version: SP5
-:product-sle-sp-version-short: 5
-:product-sle-version-full: 15 SP5
-:product-sle-full: SUSE Linux Enterprise Server
-:product-sle-version: {product-bci-version}
-:product-sle-url: https://www.suse.com/products/server/
-:sle-docs: https://documentation.suse.com/sles/{product-sle-version}-{product-sle-sp-version}
-:sle-docs-modules: {sle-docs}/single-html/SLES-modules/#sec-modules-install
-:scc-full: SUSE Customer Center
-:product-rmt: RMT
-:nvidia-name: NVIDIA
-:nvidia-op: {nvidia-name} GPU Operator
-:nvidia-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html
-:nvidia-drv: {nvidia-name} GPU driver
-:nvidia-cuda: {nvidia-name} CUDA driver
+// DOCUMENT REVISION DATE
+//-
+:revision-date: 2023-12-01
+:docdate: {revision-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-:title: {nvidia-drv} With {product-bci-full} on {product-rke2-full}
-:subtitle: Creating and deploying an {nvidia-drv} on {product-bci-full} on an {product-rke2} Kubernetes cluster with Helm
-:usecase: {nvidia-name} GPU Driver based on SLE BCI
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// components
+// -
+:rke2: RKE2
+:rke2-full: Rancher Kubernetes Engine 2
+:rke2-url: https://www.suse.com/products/rancher-kubernetes-engine/
+:rke2-support-matrix: https://www.suse.com/suse-rke2/support-matrix/all-supported-versions/
+:rke2-version: 1.25
+
+:sles: SLES
+:sles-full: SUSE Linux Enterprise Server
+:sles-version: 15
+:sles-sp: 5
+:sles-sp-full: SP{sles-sp}
+:sles-url: https://www.suse.com/products/server/
+:sles-docs: https://documentation.suse.com/sles/{sles-version}-{sles-sp-full}
+:sles-docs-modules: {sles-docs}/single-html/SLES-modules/#sec-modules-install
+
+:sle-bci: SLE BCI
+:sle-bci-full: SUSE Linux Enterprise Base Container Images
+:sle-bci-version: {sles-version {sles-sp-full}
+:sle-bci-registry: https://registry.suse.com
+:sle-bci-url: {sle-bci-registry}/bci/bci-base-{sles-version}sp{sles-sp}/index.html
+
+:scc-full: SUSE Customer Center
+:scc-url: https://scc.suse.com
+
+:rmt: RMT
+:rmt-docs: {sles-docs}/single-html/SLES-rmt/
+
+:nvidia-org: NVIDIA
+:nvidia-url: https://nvidia.com
+:nvidia-dc-url: {nvidia-url}/en-us/data-center/
+:nvidia-drv: {nvidia-org} GPU Driver
+:nvidia-drv-version: 535.104.05
+:nvidia-drv-url: https://www.nvidia.com/download/index.aspx
+:nvidia-op: {nvidia-org} GPU Operator
+:nvidia-op-version: v23.6.1
+:nvidia-op-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html
+:nvidia-op-platforms-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
+:nvidia-cuda: {nvidia-org} CUDA Toolkit
+:nvidia-cuda-url: https://developer.nvidia.com/cuda-toolkit
+:nvidia-cuda-version: 12.2.2
+:nvidia-helm-url: https://helm.ngc.nvidia.com/nvidia
+:nvidia-gitlab-url: https://gitlab.com/nvidia
+:nvidia-gitlab-drv-url: {nvidia-gitlab-url}/container-images/driver
+:nvidia-gitlab-drv-dir: sle{sles-version}
+:nvidia-license-image-registry: docker.io
 
 // :sle:bci-base_version: 15.5
 :golang-version: 1.18
-:cuda-version: 12.2.2
-:gpu-driver-version: 535.104.05
-:gpu-operator-version: v23.6.1
 
-:nvidia-driver-download-url: https://www.nvidia.com/download/index.aspx
-:nvidia-driver-gpu-operator-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
-:nvidia-helm-url: https://helm.ngc.nvidia.com/nvidia
-:nvidia-git-lab-url: https://gitlab.com/nvidia/container-images/driver
-:nvidia-git-lab-directory: driver/sle15
-:nvidia-license-image-registry: docker.io
+
+
 //:build-variables-file: /tmp/.build-variables.sh
 
 :rancher-kubectl-url: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  
 :rke2-cluster-access-url: https://docs.rke2.io/cluster_access
 :podman-login-url: https://docs.podman.io/en/latest/markdown/podman-login.1.html
 
-// :executive_summary: A brief statement of what this document provides (e.g., This document provides a brief introduction to implementing {usecase} with {product-rke2-full} and {product-bci-full}.)
-:executive_summary: This guide describes a process for building {nvidia-drv} enabled container images with {product-bci-full} and deploying these containers with the {nvidia-op} on {product-rke2-full}.
+
+
+:title: Creating and Deploying {nvidia-org} GPU Enabled Containers
+:subtitle: Create {nvidia-org} GPU-enabled containers with {sles-full} and deploy them on {rke2-full}
+:usecase: enable GPU acceleration for containerized workloads
+:executive_summary: This guide describes a process for building {nvidia-drv} enabled container images with {sle-bci-full} and deploying these containers with the {nvidia-op} to {rke2-full} clusters.
+:description: Create and deploy {nvidia-org} GPU-enabled containers with {sles-full} and {rke2-full}
+:description-short: GPU-enabled containers with SUSE
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -140,11 +160,11 @@ Graphical Processor Units (GPUs) provide unique capabilities for accelerating a 
 These workloads are increasingly being deployed in containers on Kubernetes clusters.
 In this guide, you learn how to:
 
-. create OCI-compliant container images with {product-bci-full} that contain the {nvidia-drv}
+. create OCI-compliant container images with {sle-bci-full} that contain the {nvidia-drv}
 
-. deploy a GPU-enabled container image on {product-rke2-full} with the {nvidia-op}
+. deploy a GPU-enabled container image on {rke2-full} with the {nvidia-op}
 
-{product-bci-full} ({product-bci}) are a trusted choice for organizations with stringent security requirements, providing unparalleled security certifications (including Common Criteria, FIPS, and EAL) and enhanced supportability even when operating heterogeneous software stacks.
+{sle-bci-full} ({sle-bci}) are a trusted choice for organizations with stringent security requirements, providing unparalleled security certifications (including Common Criteria, FIPS, and EAL) and enhanced supportability even when operating heterogeneous software stacks.
 
 
 == Scope
@@ -155,20 +175,20 @@ In this guide, you learn how to:
 
 This guide covers the following:
 
-* building an OCI-compliant container image on {product-bci-full} that includes the {nvidia-drv}
+* building an OCI-compliant container image on {sle-bci-full} that includes the {nvidia-drv}
 
 * validating the GPU-enabled container image
 
 * publishing the image to a container image registry
 
-* deploying the container image with the {nvidia-op} Helm chart to a {product-rke2} cluster
+* deploying the container image with the {nvidia-op} Helm chart to a {rke2} cluster
 
 * verifying the container deployment
 
 
 [IMPORTANT]
 ====
-This guide assumes that you are using Data Center class {nvidia-name} GPUs. Integrating consumer grade GPUs is outside the scope of this document.
+This guide assumes that you are using Data Center class {nvidia-org} GPUs. Integrating consumer grade GPUs is outside the scope of this document.
 ====
 
 
@@ -183,7 +203,7 @@ This guide assumes that you are using Data Center class {nvidia-name} GPUs. Inte
 
 This guide is intended for high technology professionals (including Kubernetes administrators, proficient DevOps practitioners, and application developers) seeking to unlock the full potential of their GPU-accelerated containerized applications.
 
-To be successful, you need a foundational understanding of Podman or Docker, Kubernetes, and {nvidia-name} GPU technologies.
+To be successful, you need a foundational understanding of Podman or Docker, Kubernetes, and {nvidia-org} GPU technologies.
 
 
 === Acknowledgements
@@ -211,41 +231,64 @@ Your build host is the computer system (physical or virtual) on which you will b
 +
 [NOTE]
 ====
-The build host does not require access to an {nvidia-name} GPU.
+The build host does not require access to an {nvidia-org} GPU.
 ====
 +
-Ensure your build host has:
+Ensure your build host:
 +
 --
-* a modern Linux operating system
+* is running {sles-url}[{sles-full}].
 //
 +
-This guide uses {product-sle-url}[{product-sle-full}] {product-sle-version-full}.
-It is strongly recommended that your build host run the same operating system as the {product-bci-full} image you will use (matching version and service pack).
+This guide is written for {sles-full} {sles-version} {sles-sp-full}, but it is strongly recommended that your build host run the same version as the {sle-bci-full} image you will use for your container.
 
-* the following {sle-docs-modules}[modules enabled]:
-** Containers
-** Desktop Applications
-** Development Tools
+* has the Containers, Desktop Applications, and Development Tools {sles-full} {sles-docs-modules}[modules enabled].
++
+//
+You can easily enable these
++
+[source, console, subs="attributes+"]
+----
+VER={sles-version}
+SP={sles-sp}
+sudo SUSEConnect -p sle-module-containers/$\{VER\}.$\{SP\}/x86_64
+sudo SUSEConnect -p sle-module-desktop-applications/$\{VER\}.$\{SP\}/x86_64
+sudo SUSEConnect -p sle-module-development-tools/$\{VER\}.$\{SP\}/x86_64
+sudo SUSEConnect -p sle-module-NVIDIA-compute/$\{VER\}/x86_64
+----
 
-* access to {product-sle-full}
+* has Podman is installed
++
+[source, console]
+----
+sudo zypper install podman
+----
+
+* has git installed
++
+[source, console]
+----
+sudo zypper install git-core
+----
+
+
+* has access to SUSE Container Images
 //
 +
-Ensure that your build host can access and download base container images from the {product-bci-registry}[SUSE container registry].
+Ensure that your build host can access and download base container images from the {sle-bci-registry}[SUSE container registry].
+
 --
-
 
 * Kubernetes cluster
+//
 +
---
-Your Kubernetes cluster must haver worker nodes that are equipped and configured with Data Center class {nvidia-name} GPUs.
-You will leverage the security focused Kubernetes distribution, {product-rke2-full}, developed by SUSE.
+Your Kubernetes cluster must have worker nodes that are equipped and configured with Data Center class {nvidia-org} GPUs.
 
-Be sure that the Containers Module and {nvidia-name} Compute Module are enabled on the worker nodes of your Kubernetes cluster.
+Be sure that the Containers Module and {nvidia-org} Compute Module are enabled on the worker nodes of your Kubernetes cluster.
 +
 [NOTE]
 ====
-Change the variable SLE15_SP_VERSION in the following command to match the service pack release of your {product-sle-full} Kubernetes worker nodes.
+Change the variable SLE15_SP_VERSION in the following command to match the service pack release of your {sles-full} Kubernetes worker nodes.
 ====
 //
 +
@@ -258,7 +301,7 @@ sudo SUSEConnect -p sle-module-development-tools/15.${SLE15_SP_VERSION}/x86_64
 sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
 ----
 
-* You have installed the required {product-sle-full} {nvidia-name} software packages on each Kubernetes worker node that is configured with an {nvidia-name} GPU. 
+* You have installed the required {sles-full} {nvidia-org} software packages on each Kubernetes worker node that is configured with an {nvidia-org} GPU.
 You can use the following commands to install the appropriate software.
 //
 +
@@ -272,7 +315,7 @@ sudo zypper install \
   sle-module-NVIDIA-compute-release
 ----
 
-* Podman is installed on the build host and at least one of the {nvidia-name} GPU equipped Kubernetes worker nodes. 
+* Podman is installed on the build host and at least one of the {nvidia-org} GPU equipped Kubernetes worker nodes.
 You can use the following command to install Podman.
 //
 +
@@ -290,8 +333,11 @@ You can use the following command to install git.
 sudo zypper install git-core
 ----
 
+* You will leverage the security focused Kubernetes distribution, {rke2-full}, developed by SUSE.
+
+
 * You have access to a container image registry that is available to the build host AND the target Kubernetes cluster. 
-This will allow the {nvidia-drv} to be deployed across all Kubernetes worker nodes that have {nvidia-name} GPUs, when installing the {nvidia-op} Helm chart.
+This will allow the {nvidia-drv} to be deployed across all Kubernetes worker nodes that have {nvidia-org} GPUs, when installing the {nvidia-op} Helm chart.
 //
 +
 [NOTE]
@@ -324,24 +370,23 @@ The container registry does not need to support authentication, but should be co
 // https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#vmware-vsphere-with-tanzu
 // https://docs.nvidia.com/grid/12.0/index.html
 
-The process of building the OCI compliant {nvidia-drv} container image using {product-bci} and deploying it to an {product-rke2} cluster will leverage the following primary components:
+The process of building the OCI compliant {nvidia-drv} container image using {sle-bci} and deploying it to an {rke2} cluster will leverage the following primary components:
 //
 +
 
-* A build host. This can be an {product-rke2} worker node or a separate node or VM with, or without access to an {nvidia-name} GPU.
-** If the build host has access to an {nvidia-name} GPU, the specified validations can be done on that node.
-* A container image registry to which the build host and the {product-rke2} cluster can access.
-* An {product-rke2} Kubernetes cluster with at least one worker node that is configured with an {nvidia-name} GPU. 
-* Access to the {product-sle-full} software modules through the {scc-full} or an {product-rmt} server.
+* A build host. This can be an {rke2} worker node or a separate node or VM with, or without access to an {nvidia-org} GPU.
+** If the build host has access to an {nvidia-org} GPU, the specified validations can be done on that node.
+* A container image registry to which the build host and the {rke2} cluster can access.
+* An {rke2} Kubernetes cluster with at least one worker node that is configured with an {nvidia-org} GPU.
+* Access to the {sles-full} software modules through the {scc-url}[{scc-full}] or a {rmt-docs}[{rmt} server].
 
-The process of building the OCI compliant container image and deploying it to an {product-rke2} cluster will entail the following steps:
+The process of building the OCI compliant container image and deploying it to an {rke2} cluster will entail the following steps:
 //
-+
 
 . Build the container image
 . Validate the state of the image
-. Save it to a container image registry so it can be accessed by the {product-rke2} cluster
-. Deploy the entire {nvidia-op} Helm chart, including the {nvidia-drv} image to the {product-rke2} cluster
+. Save it to a container image registry so it can be accessed by the {rke2} cluster
+. Deploy the entire {nvidia-op} Helm chart, including the {nvidia-drv} image to the {rke2} cluster
 . Validate the state of the {nvidia-op} installation
 
 == Set the command variables 
@@ -353,7 +398,7 @@ These variables will be consumed throughout this procedure.
 
 [IMPORTANT] 
 ====
-The following commands must be run on the {product-sle-full} build host.
+The following commands must be run on the {sles-full} build host.
 ====
 
 . Create the /tmp/.build-variables.sh file:
@@ -363,13 +408,13 @@ The following commands must be run on the {product-sle-full} build host.
 ====
 For the REGISTRY variable, provide the URL of the registry where the new image will be saved.
 
-For the SLE15_SP_VERSION, enter the number for the {product-sle} {product-sle-version} service pack to be used for the container image (i.e. {product-sle-sp-version-short} for {product-sle-sp-version}).
+For the SLE15_SP_VERSION, enter the number for the {sles} {sles-version} service pack to be used for the container image (i.e. {sles-sp} for {sles-sp-full}).
 
-For the DRIVER_VERSION variable, provide the {nvidia-drv} version (e.g. {gpu-driver-version}). Find the latest "Data Center Driver for Linux x64" version for your GPU at {nvidia-driver-download-url}.
+For the DRIVER_VERSION variable, provide the {nvidia-drv} version (e.g. {nvidia-drv-version}). Find the latest "Data Center Driver for Linux x64" version for your GPU at {nvidia-drv-url}.
 
-For the OPERATOR_VERSION variable, provide the {nvidia-op} version (e.g.{gpu-operator-version}). Find the associated {nvidia-op} version at {nvidia-driver-gpu-operator-url}.
+For the OPERATOR_VERSION variable, provide the {nvidia-op} version (e.g.{nvidia-op-version}). Find the associated {nvidia-op} version at {nvidia-op-url}.
 
-For the CUDA_VERSION variable, provide the required CUDA version (e.g. {cuda-version}) for {nvidia-drv} by selecting your driver version at {nvidia-driver-gpu-operator-url}. The CUDA version will be listed under "Software Versions".
+For the CUDA_VERSION variable, provide the required CUDA version (e.g. {nvidia-cuda-version}) for {nvidia-drv} by selecting your driver version at {nvidia-op-url}. The CUDA version will be listed under "Software Versions".
 ====
 //
 +
@@ -413,14 +458,14 @@ source /tmp/.build-variables.sh
 
 == Build the container image 
 
-This section offers a detailed explanation of the steps required to create OCI compliant container images with the {nvidia-op} inside the {product-bci-full}.
+This section offers a detailed explanation of the steps required to create OCI compliant container images with the {nvidia-op} inside the {sle-bci-full}.
 
-. Clone the {nvidia-name} GitLab repository and change to the `{nvidia-git-lab-directory}` directory:
+. Clone the {nvidia-org} GitLab repository and change to the `{nvidia-gitlab-drv-dir}` directory:
 //
 +
 [source, console]
 ----
-git clone {nvidia-git-lab-url} && cd {nvidia-git-lab-directory}
+git clone {nvidia-drv-gitlab-url} && cd {nvidia-gitlab-drv-dir}
 ----
 //
 +
@@ -445,7 +490,7 @@ sed -i '/^FROM/ s/golang\:1\.../golang\:{golang-version}/' Dockerfile
 ----
 //
 +
-. Update the Dockerfile's base container image to the {product-sle} {product-bci-version} BCI:
+. Update the Dockerfile's base container image to the {sles} {sle-bci-version} BCI:
 //
 +
 [source, console]
@@ -463,7 +508,7 @@ diff /tmp/Dockerfile.orig Dockerfile
 ----
 //
 +
-. Build the {product-sle} container image with the {nvidia-drv} installed:
+. Build the {sles} container image with the {nvidia-drv} installed:
 //
 +
 .. Build the container:
@@ -583,7 +628,7 @@ sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE
 [NOTE] 
 ====
 This step is optional and requires running the newly created {nvidia-drv} container locally with `Podman`, outside of the Kubernetes context. 
-This can be done on a {product-bci-version} host configured with the same kind of {nvidia-name} GPU the container was created for, or on a Kubernetes worker node that is configured with an {nvidia-name} GPU.
+This can be done on a {sle-bci-version} host configured with the same kind of {nvidia-org} GPU the container was created for, or on a Kubernetes worker node that is configured with an {nvidia-org} GPU.
 ====
 //
 +
@@ -671,7 +716,7 @@ sudo podman logs -f driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 +
 [listing]
 ====
-Mounting {nvidia-name} driver rootfs...
+Mounting {nvidia-org} driver rootfs...
 Done, now waiting for signal
 ====
 //
@@ -679,7 +724,7 @@ Done, now waiting for signal
 .. Press `CTRL+C` to close the log viewing session
 //
 +
-.. Ensure the {nvidia-name} kernel modules have been loaded:
+.. Ensure the {nvidia-org} kernel modules have been loaded:
 //
 +
 [source, console]
@@ -737,7 +782,7 @@ sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
 ----
 //
 +
-.. Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-name} kernel modules are not loaded on any of the {nvidia-name} GPU equipped Kubernetes worker nodes:
+.. Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-org} kernel modules are not loaded on any of the {nvidia-org} GPU equipped Kubernetes worker nodes:
 //
 +
 [source, console]
@@ -773,10 +818,10 @@ Return to <<Set the command variables>> in the proceeding procedure before conti
 //Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
 
-. Add the {nvidia-name} helm software repository:
+. Add the {nvidia-org} helm software repository:
 //
 +
-[console, subs="attributes"]
+[console, subs="attributes+"]
 ----
 helm repo add {nvidia-helm-url}
 helm repo update
@@ -964,7 +1009,7 @@ nvidia-smi
 +
 [NOTE]
 ====
-This command can also be used to verify which application processes are running on the {nvidia-name} GPUs, and how many resources are being consumed.
+This command can also be used to verify which application processes are running on the {nvidia-org} GPUs, and how many resources are being consumed.
 ====
 
 == Summary
@@ -978,16 +1023,16 @@ This command can also be used to verify which application processes are running 
 
 // In this guide, you learned ...
 
-This guide has effectively steered the creation of OCI compliant container images leveraging the {product-bci-full} and incorporating the {nvidia-drv}.
-Furthermore, it has provided coherent instructions for validating the functionality of the container image and the seamless deployment of the image within a Kubernetes cluster, specifically {product-rke2}.
+This guide has effectively steered the creation of OCI compliant container images leveraging the {sle-bci-full} and incorporating the {nvidia-drv}.
+Furthermore, it has provided coherent instructions for validating the functionality of the container image and the seamless deployment of the image within a Kubernetes cluster, specifically {rke2}.
 
 This integrated solution is aimed at affording containerized applications GPU-acceleration, while avoiding the need to manage additional software on each GPU equipped node.
-The strategic choice of SUSE's {product-bci-full} as the foundation for this integration underscores an organization's commitment to security, certifications, and supportability. 
+The strategic choice of SUSE's {sle-bci-full} as the foundation for this integration underscores an organization's commitment to security, certifications, and supportability.
 
-Organizations with exacting security requirements depend on {product-sle-full}'s numerous certifications such as Common Criteria, FIPS, and EAL. 
+Organizations with exacting security requirements depend on {sles-full}'s numerous certifications such as Common Criteria, FIPS, and EAL.
 Additionally, SUSE's commitment to providing robust support for heterogeneous software stacks guarantees customer's the freedom to design their IT landscape to suit their unique business challenges. 
 
-A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably {product-rke2}, that provides full {nvidia-name} GPU support and the requisite {nvidia-op} to fully harness GPU resources when deploying GPU intensive workloads.
+A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably {rke2}, that provides full {nvidia-org} GPU support and the requisite {nvidia-op} to fully harness GPU resources when deploying GPU intensive workloads.
 
 
 

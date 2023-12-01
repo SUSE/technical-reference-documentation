@@ -28,14 +28,26 @@
 <title>{title}</title>
 <subtitle>{subtitle}</subtitle>
 
+<!-- document revision date -->
+<meta name="updated">{revision-date}</meta>
 
-<!-- platform and product metadata
-     Replicate for additional platforms.
-     Define platform2, etc. in adoc file.
+<!-- descriptions -->
+<meta name="description" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description}</meta>
+<meta name="social-desc" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description-short}</meta>
+
+<!-- SUSE component metadata
+     Replicate and follow the pattern to list additional SUSE components.
+     Variables are defined in the adoc file.
+
+     '<productname>' references the short name of the SUSE component.
+     '<platform>' references the full/long name of the SUSE component.
 -->
-<productname>{product-bci}</productname>
-<meta name="platform">{product-bci-full}</meta>
-
+<meta name="productname">
+  <productname version="{sle-bci-version}">{sle-bci}</productname>
+</meta>
+<meta name="platform">{sle-bci-full}</meta>
+<meta name="platform">{sles-full}</meta>
+<meta name="platform">{rke2-full}</meta>
 
 <!-- author metadata
      Replicate author tag structure inside this authorgroup
