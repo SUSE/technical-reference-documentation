@@ -54,6 +54,7 @@ include::./common_docinfo_vars.adoc[]
 :rke2-full: Rancher Kubernetes Engine 2
 :rke2-url: https://www.suse.com/products/rancher-kubernetes-engine/
 :rke2-support-matrix: https://www.suse.com/suse-rke2/support-matrix/all-supported-versions/
+:rke2-docs: https://docs.rke2.io/
 :rke2-version: 1.25
 
 :sles: SLES
@@ -73,6 +74,12 @@ include::./common_docinfo_vars.adoc[]
 
 :scc-full: SUSE Customer Center
 :scc-url: https://scc.suse.com
+
+:suse-container-docs: https://documentation.suse.com/container/all/single-html/Container-guide/
+
+:rancher-url: https://www.suse.com/solutions/enterprise-container-management/#rancher-product
+:rancher-docs: https://ranchermanager.docs.rancher.com
+:rancher-docs-rke2: {rancher-docs}/pages-for-subheaders/launch-kubernetes-with-rancher#rke2
 
 :rmt: RMT
 :rmt-docs: {sles-docs}/single-html/SLES-rmt/
@@ -128,7 +135,7 @@ include::./common_docinfo_vars.adoc[]
 :author1_orgname: SUSE
 :contrib1_firstname: Rhys
 :contrib1_surname: Oxenham
-:contrib1_jobtitle: Senior Director, Field PM & Engineering - Edge
+:contrib1_jobtitle: Senior Director of Field PM & Engineering - Edge
 :contrib1_orgname: SUSE
 //:author2_firstname: first (given) name
 //:author2_surname: surname
@@ -141,6 +148,8 @@ include::./common_docinfo_vars.adoc[]
 // define any additional variables here for use within the document
 // -
 
+:git-url: https://git-scm.com/
+:oci-url: https://opencontainers.org/
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -208,7 +217,7 @@ To be successful, you need a foundational understanding of Podman or Docker, Kub
 
 === Acknowledgements
 
-This guide builds on the process created by {contrib1_firstname} {contrib1_surname}, {contrib1_jobtitle}, {contrib1_orgname}.
+This guide builds on the work by {contrib1_firstname} {contrib1_surname}, {contrib1_orgname} {contrib1_jobtitle}.
 
 
 == Prerequisites
@@ -220,32 +229,33 @@ This guide builds on the process created by {contrib1_firstname} {contrib1_surna
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Before you embark on the procedures outlined in this guide, ensure that your environment is ready.
-
-For this guide, you need:
+Before you embark on the procedures outlined in this guide, ensure that your environment is ready with the resources listed here.
 
 * *Build host*
 //
 +
-Your build host is the computer system (physical or virtual) on which you will build your OCI-compliant container.
+Your build host is the computer system (physical or virtual) on which you build your OCI-compliant container.
 +
 [NOTE]
 ====
 The build host does not require access to an {nvidia-org} GPU.
 ====
 +
-Ensure your build host:
+Your build host should have the following:
 +
 --
-* is running {sles-url}[{sles-full}].
+. Operating system
 //
 +
-This guide is written for {sles-full} {sles-version} {sles-sp-full}, but it is strongly recommended that your build host run the same version as the {sle-bci-full} image you will use for your container.
+It is strongly recommended that your build host run the same operating system and version as the {sle-bci-full} you will use for your container image.
+//
++
+The build host used in the development of this guide is {sles-full} {sles-version} {sles-sp-full}.
 
-* has the Containers, Desktop Applications, and Development Tools {sles-full} {sles-docs-modules}[modules enabled].
-+
+. Containers, Desktop Applications, and Development Tools modules
 //
-You can easily enable these
++
+Enable these {sles-full} {sles-docs-modules}[modules]:
 +
 [source, console, subs="attributes+"]
 ----
@@ -254,56 +264,70 @@ SP={sles-sp}
 sudo SUSEConnect -p sle-module-containers/$\{VER\}.$\{SP\}/x86_64
 sudo SUSEConnect -p sle-module-desktop-applications/$\{VER\}.$\{SP\}/x86_64
 sudo SUSEConnect -p sle-module-development-tools/$\{VER\}.$\{SP\}/x86_64
-sudo SUSEConnect -p sle-module-NVIDIA-compute/$\{VER\}/x86_64
 ----
++
+[NOTE]
+====
+Be sure to update the `VER` and `SP` variables with the {sles} version and service pack that you are using.
+====
 
-* has Podman is installed
+. Podman
+//
++
+{suse-container-docs}#container-podman[Podman] is the Pod Manager Tool that is a daemonless container engine for managing {oci-url}[Open Container Initiative (OCI)] containers.
+//
++
+Install Podman:
 +
 [source, console]
 ----
 sudo zypper install podman
 ----
 
-* has git installed
+. Git
+//
+{git-url}[Git] is a free and open source, distributed version control system that simplifies access to and management of source code.
+//
++
+Install core Git tools:
 +
 [source, console]
 ----
 sudo zypper install git-core
 ----
 
-
-* has access to SUSE Container Images
+. Access to SUSE Container Images
 //
 +
-Ensure that your build host can access and download base container images from the {sle-bci-registry}[SUSE container registry].
+Verify that your build host can access and download base container images from the {sle-bci-registry}[SUSE container registry].
 
 --
 
 * Kubernetes cluster
 //
 +
-Your Kubernetes cluster must have worker nodes that are equipped and configured with Data Center class {nvidia-org} GPUs.
-
-Be sure that the Containers Module and {nvidia-org} Compute Module are enabled on the worker nodes of your Kubernetes cluster.
+Your Kubernetes cluster must have worker nodes that are equipped and configured with {nvidia-dc-url}[Data Center class {nvidia-org} GPUs].
++
+--
+. Enable the Containers Module and {nvidia-org} Compute Module on all worker nodes by logging in to each one and executing the following commands:
++
+[source, console, subs="attributes+"]
+----
+VER={sles-version}
+SP={sles-sp}
+sudo SUSEConnect -p sle-module-containers/$\{VER\}.$\{SP\}/x86_64
+sudo SUSEConnect -p sle-module-NVIDIA-compute/$\{VER\}/x86_64
+----
 +
 [NOTE]
 ====
-Change the variable SLE15_SP_VERSION in the following command to match the service pack release of your {sles-full} Kubernetes worker nodes.
+Be sure to update the `VER` and `SP` variables with the {sles} version and service pack that you are using.
 ====
+
+. {sles-full} {nvidia-org} software packages
 //
 +
-[source, console]
-----
-export SLE15_SP_VERSION=5
-sudo SUSEConnect -p sle-module-containers/15.${SLE15_SP_VERSION}/x86_64
-sudo SUSEConnect -p sle-module-desktop-applications/15.${SLE15_SP_VERSION}/x86_64
-sudo SUSEConnect -p sle-module-development-tools/15.${SLE15_SP_VERSION}/x86_64
-sudo SUSEConnect -p sle-module-NVIDIA-compute/15/x86_64
-----
-
-* You have installed the required {sles-full} {nvidia-org} software packages on each Kubernetes worker node that is configured with an {nvidia-org} GPU.
-You can use the following commands to install the appropriate software.
-//
+Install required {nvidia-org} software packages on each node:
 +
 [source, console]
 ----
@@ -315,39 +339,37 @@ sudo zypper install \
   sle-module-NVIDIA-compute-release
 ----
 
-* Podman is installed on the build host and at least one of the {nvidia-org} GPU equipped Kubernetes worker nodes.
-You can use the following command to install Podman.
+. Podman and Git
 //
++
+Install Podman and Git on at least one of the worker nodes:
 +
 [source, console]
 ----
 sudo zypper install podman
-----
-
-* The git utility is installed on the build host. 
-You can use the following command to install git.
-//
-+
-[source, console]
-----
 sudo zypper install git-core
 ----
 
-* You will leverage the security focused Kubernetes distribution, {rke2-full}, developed by SUSE.
-
-
-* You have access to a container image registry that is available to the build host AND the target Kubernetes cluster. 
-This will allow the {nvidia-drv} to be deployed across all Kubernetes worker nodes that have {nvidia-org} GPUs, when installing the {nvidia-op} Helm chart.
+. {rke2-full} ({rke2})
 //
 +
-[NOTE]
+{rke2-docs}[{rke2}] is the security focused Kubernetes distribution developed by SUSE.
++
+Ensure your worker nodes are part of an {rke2} cluster.
+You can {rke2-docs}/install/quickstart[deploy] {rke2} on worker nodes manually or use {rancher-docs-rke2}[Rancher by SUSE] to spin up and configure the cluster.
+
+--
+
+* Access to a container image registry from the build host and from the {rke2} cluster.
+//
++
+Using a container registry streamlines deployment of your GPU-enabled container across all Kubernetes worker nodes.
+//
++
+[TIP]
 ====
-The container registry does not need to support authentication, but should be configured with a valid TLS certificate.
+The container registry does not need to support authentication, but it should be configured with a valid TLS certificate.
 ====
-
-
-
-
 
 
 == Technical overview
@@ -370,7 +392,7 @@ The container registry does not need to support authentication, but should be co
 // https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#vmware-vsphere-with-tanzu
 // https://docs.nvidia.com/grid/12.0/index.html
 
-The process of building the OCI compliant {nvidia-drv} container image using {sle-bci} and deploying it to an {rke2} cluster will leverage the following primary components:
+The process of building an OCI compliant container image with the {nvidia-drv} using {sle-bci} and deploying it to an {rke2} cluster will leverage the following primary components:
 //
 +
 
