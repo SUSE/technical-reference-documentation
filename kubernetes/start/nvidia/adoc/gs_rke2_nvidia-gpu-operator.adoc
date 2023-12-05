@@ -113,6 +113,8 @@ include::./common_docinfo_vars.adoc[]
 :rancher-kubectl-url: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  
 :rke2-cluster-access-url: https://docs.rke2.io/cluster_access
 :podman-docs: https://docs.podman.io/en/latest/markdown
+:kubectl-docs-install: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+:helm-docs-quickstart: https://helm.sh/docs/intro/quickstart/
 
 
 :title: Creating and Deploying {nvidia-org} GPU Enabled Containers
@@ -293,6 +295,7 @@ sudo zypper install podman
 
 . Git
 //
++
 {git-url}[Git] is a free and open source, distributed version control system that simplifies access to and management of source code.
 //
 +
@@ -302,6 +305,23 @@ Install core Git tools:
 ----
 sudo zypper install git-core
 ----
+
+. Kubectl
+//
++
+The Kubernetes command line tool, `kubectl`, allows you to communicate with a Kubernetes cluster's control plane to deploy applications, inspect and manage cluster resources, and more.
+//
++
+{kubectl-docs-install}[Install and set up Kubectl] on your build host.
+
+. Helm
+//
++
+Helm helps you manage Kubernetes applications.
+Using Helm charts, you can define,  install, and upgrade complex Kubernetes applications.
+//
++
+{helm-docs-quickstart}[Install and set up Helm] on your build host.
 
 . Access to SUSE Container Images
 //
@@ -712,6 +732,8 @@ If any modules fail to unload, reboot the node.
 
 == Deploy to a Kubernetes cluster
 
+
+
 [NOTE] 
 ====
 The preferred method for installing the {nvidia-op} is with the Helm Kubernetes package manager.
@@ -724,7 +746,7 @@ See these documents for more information: {rancher-kubectl-url} and {rke2-cluste
 
 In addition, if the container build host is a different system than the one being used to perform the Helm install, the /tmp/.build-variables.sh file will need to be created on the second system. 
 Return to Setting up your environnment in the proceeding procedure before continuing.
-//Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
+
 ====
 
 . Add the {nvidia-org} helm software repository:
