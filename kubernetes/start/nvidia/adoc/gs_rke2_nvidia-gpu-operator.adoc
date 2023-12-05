@@ -112,8 +112,7 @@ include::./common_docinfo_vars.adoc[]
 
 :rancher-kubectl-url: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  
 :rke2-cluster-access-url: https://docs.rke2.io/cluster_access
-:podman-login-url: https://docs.podman.io/en/latest/markdown/podman-login.1.html
-
+:podman-docs: https://docs.podman.io/en/latest/markdown
 
 
 :title: Creating and Deploying {nvidia-org} GPU Enabled Containers
@@ -477,7 +476,7 @@ CUDA_VERSION=${CUDA_VERSION}" && echo
 +
 [source, console, subs="attributes+"]
 ----
-git clone {nvidia-drv-gitlab-url} && cd driver/{nvidia-gitlab-drv-dir}
+git clone {nvidia-gitlab-drv-url} && cd driver/{nvidia-gitlab-drv-dir}
 ----
 
 . Locate the file, `Dockerfile`, and update it to reflect your build requirements.
@@ -536,6 +535,8 @@ ${REGISTRY}/nvidia-sle${SLE_VERSION}sp${SLE_SP}-${DRIVER_VERSION}:${DRIVER_VERSI
 ----
 
 .. Watch the build output for errors, warnings, and failures.
+//
++
 You can safely ignore errors and warnings that don't stop the build process.
 
 .. Verify that the build process finishes successfully.
@@ -562,215 +563,154 @@ for X in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${X}
 +
 [IMPORTANT] 
 ====
-If the target container registry requires authentication, use the `podman login` command to successfully authenticate before continuing.
-See {podman-login-url} for more information.
+If the target container registry requires authentication, use the {podman-docs}/podman-login.1.html[Podman's `login` command] to successfully authenticate before continuing.
 ====
+
+.. {podman-docs}/podman-tag.1.html[Add a tag] to the image that will be used when deploying the image to a Kubernetes cluster.
 +
 [source, console]
 ----
-## Tag the image with the format that Helm will need when deploying on Kubernetes
-sudo podman tag ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
-## Push the image (with both tags) to the container registry
-sudo podman push ${REGISTRY}/nvidia-sle15sp${SLE15_SP_VERSION}-${DRIVER_VERSION}:${DRIVER_VERSION} &&
-sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
+sudo podman tag ${REGISTRY}/nvidia-sle${SLE_VERSION}sp${SLE_SP}-${DRIVER_VERSION}:${DRIVER_VERSION} ${REGISTRY}/driver:${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
 ----
-//
-+
-.. Verify the image is saved in the registry, and remotely available:
-//
-+
-[NOTE] 
-====
-If any of the following variables are not set correctly, press `CTRL+C` and return to <<Setting up your environment>> in this process before continuing.
-====
-//
+
+.. {podman-docs}/podman-push.1.html[Push] the image with both tags.
 +
 [source, console]
 ----
-sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
+sudo podman push ${REGISTRY}/nvidia-sle${SLE_VERSION}sp${SLE_SP}-${DRIVER_VERSION}:${DRIVER_VERSION} &&
+sudo podman push ${REGISTRY}/driver:${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
 ----
+
+.. Verify the image is saved in the registry, and remotely available.
++
+[source, console]
+----
+sudo podman search --list-tags ${REGISTRY}/driver:${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
+----
+
+. (optional) Validate the container image without Kubernetes.
 //
 +
-. Validate the container image
-//
-+
-[NOTE] 
-====
-This step is optional and requires running the newly created {nvidia-drv} container locally with `Podman`, outside of the Kubernetes context. 
-This can be done on a {sle-bci-version} host configured with the same kind of {nvidia-org} GPU the container was created for, or on a Kubernetes worker node that is configured with an {nvidia-org} GPU.
-====
-//
-+
-.. Open a command line session to the host or Kubernetes worker node on which you will test the container image.
-//
-+
-.. Create the `/run/nvidia` directory, if it does not yet exist:
-//
+To validate the container outside the context of Kubernetes, use the worker node on which you installed Podman and Git.
+
+.. Open a terminal session to the worker node you will use for testing.
+
+.. Create the `/run/nvidia` directory, if it does not yet exist.
 +
 [source, console]
 ----
 sudo mkdir -p /run/nvidia
 ----
-//
-+
-.. Run the {nvidia-drv} container locally:
-//
-+
-[NOTE] 
-====
-If any of the following variables are not set correctly, press `CTRL+C` and return to <<Setting up your environment>> in this process before continuing.
-====
-//
-+
-[console]
-----
-## Validate the variables before using them in the subsequent command
-echo && \
-echo "
-REGISTRY=${REGISTRY}
-SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && \
-  echo && \
-  read -n1 -p "Press CTRL+C to cancel, otherwise press ENTER" BAILOUT
 
-## Run the container image 
+.. Copy your `/tmp/build-variables.sh` file to the node.
+
+.. Source the `/tmp/build-variables.sh` file to set your environment variables.
++
+[source, console]
+----
+source /tmp/build-variables.sh
+----
+
+.. Run the {nvidia-drv} container locally.
++
+[source, console]
+----
 sudo podman run -d \
-  --name driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} \
+  --name driver.${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP} \
   --privileged \
   --pid=host \
   -v /run/nvidia:/run/nvidia:shared \
   -v /var/log:/var/log \
   --restart=unless-stopped \
-  ${REGISTRY}/driver:${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION}
+  ${REGISTRY}/driver:${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
 ----
-//
-+
-.. Verify the container is running:
-//
+
+.. Confirm that the container is running.
 +
 [source, console]
 ----
 sudo podman ps -a
 ----
-//
 +
-... The container's `STATUS` field should show that it is "Up" and the amount of time it has been up should increment with repeated runs of the command.
-//
-+
-.. Monitor the deployment of the {nvidia-drv}:
-//
-+
-[NOTE] 
-====
-If any of the following variables are not set correctly, press `CTRL+C` and return to <<Setting up your environment>> in this process before continuing.
-====
-//
-+
-[source, console]
-----
-## Validate the variables before using them in the subsequent command
-echo &&
-echo "
-REGISTRY=${REGISTRY}
-SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
-
-## Review the standard output of the running container
-sudo podman logs -f driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
-----
-//
-+
-.. The deployment process is complete when the following message is shown:
-//
-+
-[listing]
-====
-Mounting {nvidia-org} driver rootfs...
-Done, now waiting for signal
-====
-//
-+
-.. Press `CTRL+C` to close the log viewing session
-//
-+
-.. Ensure the {nvidia-org} kernel modules have been loaded:
-//
-+
-[source, console]
-----
-sudo lsmod | grep nvidia
-----
-//
-+
-... You should see modules such as `nvidia`, `nvidia_modeset`, and `nvidia_uvm`
-//
-+
-.. Verify the `nvidia-smi` utility can communicate withe the GPU:
-//
-+
-[NOTE] 
-====
-If any of the following variables are not set correctly, press `CTRL+C` and return to <<Setting up your environment>> in this process before continuing.
-====
-//
-+
-[source, console]
-----
-## Validate the variables before using them in the subsequent command
-echo &&
-echo "
-REGISTRY=${REGISTRY}
-SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && \
-
-## Verify the nvidia-smi utility can communicate with the GPU
-sudo podman exec -it driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} nvidia-smi
-----
-//
-+
-.. When ready to move forward, stop and remove the Podman container:
-//
-+
-[NOTE] 
-====
-If any of the following variables are not set correctly, press `CTRL+C` and return to <<Setting up your environment>> in this process before continuing.
-====
-//
-+
-[source, console]
-----
-## Validate the variables before using them in the subsequent command
-echo &&
-echo "
-SLE15_SP_VERSION=${SLE15_SP_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
-
-## Stop and remove the container instance
-sudo podman stop driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} &&
-sudo podman rm driver.${DRIVER_VERSION}-sles15.${SLE15_SP_VERSION} 
-----
-//
-+
-.. Before continuing to the Kubernetes deployment procedure, ensure the {nvidia-org} kernel modules are not loaded on any of the {nvidia-org} GPU equipped Kubernetes worker nodes:
-//
-+
-[source, console]
-----
-sudo lsmod | grep nvidia
-----
-//
-+
-... You should receive no output.
-//+
 [NOTE]
 ====
-If you see any modules containing the name `nvidia`, use the command `sudo modprobe -r <module name>` to unload them. 
+The container's `STATUS` should show "Up" and the amount of time it has been up should increment with repeated runs of the command.
+====
+
+.. Monitor the deployment of the {nvidia-drv} by reviewing the standard output of the running container.
++
+[source, console]
+----
+sudo podman logs -f driver.${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
+----
+
+.. Verify that the deployment process completes successfully.
+//
++
+You should see the following message in the output:
++
+[listing]
+----
+Mounting {nvidia-org} driver rootfs...
+Done, now waiting for signal
+----
+
+.. Close the log viewing session by pressing `CTRL+C`.
+
+.. Check that the {nvidia-org} kernel modules have been loaded.
++
+[source, console]
+----
+sudo lsmod | grep nvidia
+----
++
+You should see the `nvidia`, `nvidia_modeset`, and `nvidia_uvm` kernel modules.
+
+.. Verify the `nvidia-smi` utility can communicate with the GPU.
++
+[source, console]
+----
+sudo podman exec -it \
+     driver.${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP} nvidia-smi
+----
+
+.. When ready to move forward, stop and remove the container.
++
+[source, console]
+----
+sudo podman stop driver.${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP} &&
+sudo podman rm driver.${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
+----
+
+. Before continuing, make sure that the {nvidia-org} kernel modules are not loaded on any of the Kubernetes worker nodes.
+
+.. Log into each node and list loaded {nvidia-org} kernel modules.
++
+[source, console]
+----
+sudo lsmod | grep nvidia
+----
++
+[TIP]
+====
+If no {nvidia-org} modules are loaded, the output of the command should be empty.
+====
+
+.. Unload any modules containing 'nvidia'.
++
+[source, console]
+----
+sudo modprobe -r <module-name>
+----
+where `<module-name>` is the name of the kernel module displayed by the `lsmod` command.
++
+[NOTE]
+====
 If any modules fail to unload, reboot the node.
 ====
 
 
 == Deploy to a Kubernetes cluster
-
 
 [NOTE] 
 ====
@@ -783,7 +723,7 @@ The following steps must be run from a Linux system that has the kubectl and Hel
 See these documents for more information: {rancher-kubectl-url} and {rke2-cluster-access-url}.
 
 In addition, if the container build host is a different system than the one being used to perform the Helm install, the /tmp/.build-variables.sh file will need to be created on the second system. 
-Return to <<Setting up your environnment>> in the proceeding procedure before continuing.
+Return to Setting up your environnment in the proceeding procedure before continuing.
 //Return to <<step_1, Step 1>> in the proceeding procedure before continuing.
 ====
 
@@ -802,7 +742,7 @@ helm repo update
 +
 [NOTE]
 ====
-If any of the following variables are not set correctly, press `CTRL+C` and return to <<Setting up your environment>> in the proceeding procedure before continuing.
+If any of the following variables are not set correctly, press `CTRL+C` and return to Setting up your environment in the proceeding procedure before continuing.
 ====
 //
 +
