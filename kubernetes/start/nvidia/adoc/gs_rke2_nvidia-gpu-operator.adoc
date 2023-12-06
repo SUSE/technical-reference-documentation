@@ -63,27 +63,29 @@ include::./common_docinfo_vars.adoc[]
 :sles-sp: 5
 :sles-sp-full: SP{sles-sp}
 :sles-url: https://www.suse.com/products/server/
-:sles-docs: https://documentation.suse.com/sles/{sles-version}-{sles-sp-full}
-:sles-docs-modules: {sles-docs}/single-html/SLES-modules/#sec-modules-install
+:sles-docs: https://documentation.suse.com/sles/{sles-version}-{sles-sp-full}/
+:sles-docs-modules: {sles-docs}single-html/SLES-modules/#sec-modules-install
 
 :sle-bci: SLE BCI
 :sle-bci-full: SUSE Linux Enterprise Base Container Images
 :sle-bci-version: {sles-version {sles-sp-full}
-:sle-bci-registry: https://registry.suse.com
-:sle-bci-url: {sle-bci-registry}/bci/bci-base-{sles-version}sp{sles-sp}/index.html
+:sle-bci-registry: https://registry.suse.com/
+:sle-bci-url: {sle-bci-registry}bci/bci-base-{sles-version}sp{sles-sp}/index.html
 
 :golang-version: 1.21
 :golang-base: 121
-:sle-bci-golang-url: {sle-bci-registry}/bci/golang{golang-base}
+:sle-bci-golang-url: {sle-bci-registry}bci/golang{golang-base}
 
 :scc-full: SUSE Customer Center
-:scc-url: https://scc.suse.com
+:scc-url: https://scc.suse.com/
 
 :suse-container-docs: https://documentation.suse.com/container/all/single-html/Container-guide/
 
+:rancher-full: Rancher by SUSE
 :rancher-url: https://www.suse.com/solutions/enterprise-container-management/#rancher-product
-:rancher-docs: https://ranchermanager.docs.rancher.com
-:rancher-docs-rke2: {rancher-docs}/pages-for-subheaders/launch-kubernetes-with-rancher#rke2
+:rancher-docs: https://ranchermanager.docs.rancher.com/
+:rancher-docs-rke2: {rancher-docs}pages-for-subheaders/launch-kubernetes-with-rancher#rke2
+:rancher-kubectl-url: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/
 
 :rmt: RMT
 :rmt-docs: {sles-docs}/single-html/SLES-rmt/
@@ -96,31 +98,31 @@ include::./common_docinfo_vars.adoc[]
 :nvidia-drv-url: https://www.nvidia.com/download/index.aspx
 :nvidia-op: {nvidia-org} GPU Operator
 :nvidia-op-version: v23.6.1
-:nvidia-op-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html
+:nvidia-op-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/
 :nvidia-op-platforms-url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html
 :nvidia-cuda: {nvidia-org} CUDA Toolkit
 :nvidia-cuda-url: https://developer.nvidia.com/cuda-toolkit
 :nvidia-cuda-version: 12.2.2
 :nvidia-helm-url: https://helm.ngc.nvidia.com/nvidia
 :nvidia-gitlab-url: https://gitlab.com/nvidia
-:nvidia-gitlab-drv-url: {nvidia-gitlab-url}/container-images/driver
+:nvidia-gitlab-drv-url: {nvidia-gitlab-url}/container-images/driver/
 :nvidia-gitlab-drv-dir: sle{sles-version}
 :nvidia-license-image-registry: docker.io
 
 
 //:build-variables-file: /tmp/.build-variables.sh
 
-:rancher-kubectl-url: https://www.suse.com/c/rancher_blog/how-to-manage-kubernetes-with-kubectl/  
-:rke2-cluster-access-url: https://docs.rke2.io/cluster_access
-:podman-docs: https://docs.podman.io/en/latest/markdown
-:kubectl-docs-install: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
-:helm-docs-quickstart: https://helm.sh/docs/intro/quickstart/
+:rke2-cluster-access-url: https://docs.rke2.io/cluster_access/
+:podman-docs: https://docs.podman.io/en/latest/markdown/
+:kubectl-docs: https://kubernetes.io/docs/
+:helm-docs: https://helm.sh/docs/
+:kubernetes-docs: https://kubernetes.io/docs/
 
 
 :title: Creating and Deploying {nvidia-org} GPU Enabled Containers
 :subtitle: Create {nvidia-org} GPU-enabled containers with {sles-full} and deploy them on {rke2-full}
 :usecase: enable GPU acceleration for containerized workloads
-:executive_summary: This guide describes a process for building {nvidia-drv} enabled container images with {sle-bci-full} and deploying these containers with the {nvidia-op} to {rke2-full} clusters.
+:executive_summary: Build {nvidia-drv} enabled container images with {sle-bci-full} and deploy these containers with the {nvidia-op} to {rke2-full} clusters.
 :description: Create and deploy {nvidia-org} GPU-enabled containers with {sles-full} and {rke2-full}
 :description-short: GPU-enabled containers with SUSE
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -138,10 +140,10 @@ include::./common_docinfo_vars.adoc[]
 :contrib1_surname: Oxenham
 :contrib1_jobtitle: Senior Director of Field PM & Engineering - Edge
 :contrib1_orgname: SUSE
-//:author2_firstname: first (given) name
-//:author2_surname: surname
-//:author2_jobtitle: job title
-//:author2_orgname: organization affiliation
+:editor1_firstname: Terry
+:editor1_surname: Smith
+:editor1_jobtitle: Director of Global Partner Solutions
+:editor1_orgname: SUSE
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -177,7 +179,7 @@ In this guide, you learn how to:
 {sle-bci-full} ({sle-bci}) are a trusted choice for organizations with stringent security requirements, providing unparalleled security certifications (including Common Criteria, FIPS, and EAL) and enhanced supportability even when operating heterogeneous software stacks.
 
 
-== Scope
+=== Scope
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Specify what this guide covers in no more than 2 sentences.
@@ -191,7 +193,7 @@ This guide covers the following:
 
 * publishing the image to a container image registry
 
-* deploying the container image with the {nvidia-op} Helm chart to a {rke2} cluster
+* deploying the container image with the {nvidia-op} Helm chart to a {rke2-full} cluster
 
 * verifying the container deployment
 
@@ -218,7 +220,10 @@ To be successful, you need a foundational understanding of Podman or Docker, Kub
 
 === Acknowledgements
 
-This guide builds on the work by {contrib1_firstname} {contrib1_surname}, {contrib1_orgname} {contrib1_jobtitle}.
+The author would like to acknowledge contributions to this guide by:
+
+* {contrib1_firstname} {contrib1_surname}, {contrib1_orgname}, {contrib1_jobtitle}
+* {editor1_firstname} {editor1_surname}, {editor1_orgname}, {editor1_jobtitle}
 
 
 == Prerequisites
@@ -251,20 +256,24 @@ Your build host should have the following:
 This guide is developed on a build host running {sles-full} {sles-version} {sles-sp-full}.
 //
 +
-It is strongly recommended that your build host run the same operating system and version as the {sle-bci-full} you will use for your container image.
+Although not required, it is recommended that your build host's operating system match the version and service pack of the {sle-bci-full} you will use for the foundation of your container images.
 You can find available images at the {sle-bci-registry}[SUSE Container Images Registry].
 +
 [IMPORTANT]
 ====
-In this guide, you leverage the {sle-bci} Go development image, as this base image already includes the Go development tools.
+You have the choice of several base images from SUSE.
+For this guide, you will use the {sle-bci} Go language development image.
 Be sure to note the available Go version, as this is needed during the build process.
 Go {golang-version} is used in this guide, but updated images are made available frequently.
 ====
 
-. Containers, Desktop Applications, and Development Tools modules
+. {sles-full} modules
 //
 +
-Enable these {sles-full} {sles-docs-modules}[modules]:
+Modules and extenions provide additional functionality to your {sles-full} system.
+//
++
+Enable the Containers, Desktop Applications, and Development Tools {sles-docs-modules}[modules]:
 +
 [source, console, subs="attributes+"]
 ----
@@ -283,7 +292,7 @@ Be sure to update the `VER` and `SP` variables with the {sles} version and servi
 . Podman
 //
 +
-{suse-container-docs}#container-podman[Podman] is the Pod Manager Tool that is a daemonless container engine for managing {oci-url}[Open Container Initiative (OCI)] containers.
+{suse-container-docs}#container-podman[Podman] (or Pod Manager Tool) is a daemonless container engine for managing {oci-url}[Open Container Initiative (OCI)] containers.
 //
 +
 Install Podman:
@@ -312,21 +321,29 @@ sudo zypper install git-core
 The Kubernetes command line tool, `kubectl`, allows you to communicate with a Kubernetes cluster's control plane to deploy applications, inspect and manage cluster resources, and more.
 //
 +
-{kubectl-docs-install}[Install and set up Kubectl] on your build host.
+{kubectl-docs}tasks/tools/install-kubectl-linux/[Install and set up Kubectl] on your build host.
+//
++
+Learn more about {rancher-kubectl-url}[How to Manage Kubernetes with Kubectl].
 
 . Helm
 //
 +
 Helm helps you manage Kubernetes applications.
-Using Helm charts, you can define,  install, and upgrade complex Kubernetes applications.
+With Helm charts, you can define,  install, and upgrade complex Kubernetes applications.
 //
 +
-{helm-docs-quickstart}[Install and set up Helm] on your build host.
+{helm-docs}intro/quickstart/[Install and set up Helm] on your build host.
++
+[NOTE]
+====
+You do not need to install Kubectl or Helm if you plan to deploy your container to your Kubernetes cluster from a system other than your build host.
+====
 
 . Access to SUSE Container Images
 //
 +
-Verify that your build host can access and download base container images from the {sle-bci-registry}[SUSE container registry].
+Verify that your build host can access and download base container images from the {sle-bci-registry}[SUSE Container Images Registry].
 
 --
 
@@ -336,7 +353,10 @@ Verify that your build host can access and download base container images from t
 Your Kubernetes cluster must have worker nodes that are equipped and configured with {nvidia-dc-url}[Data Center class {nvidia-org} GPUs].
 +
 --
-. Enable the Containers Module and {nvidia-org} Compute Module on all worker nodes by logging in to each one and executing the following commands:
+. Containers and {nvidia-org} Compute modules
+//
++
+Enable the Containers module and {nvidia-org} Compute module on each worker node.
 +
 [source, console, subs="attributes+"]
 ----
@@ -351,10 +371,10 @@ sudo SUSEConnect -p sle-module-NVIDIA-compute/$\{VER\}/x86_64
 Be sure to update the `VER` and `SP` variables with the {sles} version and service pack that you are using.
 ====
 
-. {sles-full} {nvidia-org} software packages
+. {nvidia-org} software
 //
 +
-Install required {nvidia-org} software packages on each node:
+Install required {nvidia-org} software packages on each node.
 +
 [source, console]
 ----
@@ -369,12 +389,11 @@ sudo zypper install \
 . Podman and Git
 //
 +
-Install Podman and Git on at least one of the worker nodes:
+Install Podman and Git on at least one of the worker nodes.
 +
 [source, console]
 ----
-sudo zypper install podman
-sudo zypper install git-core
+sudo zypper install podman git-core
 ----
 
 . {rke2-full} ({rke2})
@@ -383,7 +402,7 @@ sudo zypper install git-core
 {rke2-docs}[{rke2}] is the security focused Kubernetes distribution developed by SUSE.
 +
 Ensure your worker nodes are part of an {rke2} cluster.
-You can {rke2-docs}/install/quickstart[deploy] {rke2} on worker nodes manually or use {rancher-docs-rke2}[Rancher by SUSE] to spin up and configure the cluster.
+You can {rke2-docs}install/quickstart[deploy] {rke2} on worker nodes manually or use {rancher-docs-rke2}[Rancher by SUSE] to spin up and configure the cluster.
 
 --
 
@@ -391,6 +410,8 @@ You can {rke2-docs}/install/quickstart[deploy] {rke2} on worker nodes manually o
 //
 +
 Using a container registry streamlines deployment of your GPU-enabled container across all Kubernetes worker nodes.
+This can be a public or a private registry, on-premises or hosted remotely.
+But you must be able to push your container images to the registry from your build host and retrieve them on your cluster.
 +
 [TIP]
 ====
@@ -400,7 +421,7 @@ The container registry does not need to support authentication, but it should be
 
 == Setting up your environment
 
-Certain information is needed multiple times throughout the build process.
+Certain information is needed multiple times throughout the build process and even deployment process.
 This information can be stored in environment variables and recalled as needed, helping you to streamline commands, avoid errors, and maintain consistency.
 
 [IMPORTANT]
@@ -428,21 +449,27 @@ EOF
 . Edit the `/tmp/build-variables.sh` file to supply appropriate values for your project.
 +
 --
-REGISTRY:: URL of the registry where the new container image is to be saved
+* `REGISTRY`: URL of the registry where the new container image is to be saved
 
-SLE_VERSION:: {sle-bci-full} version
+* `SLE_VERSION`: {sle-bci-full} version
 
-SLE_SP:: {sle-bci-full} service pack number
+* `SLE_SP`: {sle-bci-full} service pack number
 
-GOLANG_VERSION: the version of Go installed in your base container image.
+* `GOLANG_VERSION`: The version of Go in the {sle-bci-registry}#bci-lang[{sle-bci} Go development container image] you are using for your project
 
-DRIVER_VERSION:: {nvidia-drv} version
-You can find the latest "Data Center Driver for Linux x64" version for your GPU at {nvidia-drv-url}.
+* `DRIVER_VERSION`: {nvidia-drv} version
+//
++
+Find the latest "Data Center Driver for Linux x64" version for your GPU at {nvidia-drv-url}[{nvidia-org} Driver Downloads].
 
-OPERATOR_VERSION:: {nvidia-op} version
-You can find the associated {nvidia-op} version at {nvidia-op-url}.
+* `OPERATOR_VERSION`: {nvidia-op} version
+//
++
+Find the associated {nvidia-op-url}platform-support.html[{nvidia-op}] version.
 
-CUDA_VERSION:: the {nvidia-org} CUDA version appropriate for the selected {nvidia-drv}
+* `CUDA_VERSION`: the {nvidia-org} CUDA version appropriate for the selected {nvidia-drv}
+//
++
 The CUDA version is listed under "Software Versions" when you find your driver version at {nvidia-drv-url}.
 
 --
@@ -470,7 +497,7 @@ source /tmp/build-variables.sh
 [IMPORTANT]
 ====
 These variables are lost when you disconnect from your terminal session.
-To recreate them, simple source the build-variables file again.
+To recreate them, simply source the build-variables file again.
 ====
 
 
@@ -583,17 +610,17 @@ for X in $(sudo podman images | awk '/none/ {print$3}'); do sudo podman rmi ${X}
 +
 [IMPORTANT] 
 ====
-If the target container registry requires authentication, use the {podman-docs}/podman-login.1.html[Podman's `login` command] to successfully authenticate before continuing.
+If the target container registry requires authentication, use the {podman-docs}podman-login.1.html[Podman's `login` command] to successfully authenticate before continuing.
 ====
 
-.. {podman-docs}/podman-tag.1.html[Add a tag] to the image that will be used when deploying the image to a Kubernetes cluster.
+.. {podman-docs}podman-tag.1.html[Add a tag] to the image that will be used when deploying the image to a Kubernetes cluster.
 +
 [source, console]
 ----
 sudo podman tag ${REGISTRY}/nvidia-sle${SLE_VERSION}sp${SLE_SP}-${DRIVER_VERSION}:${DRIVER_VERSION} ${REGISTRY}/driver:${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
 ----
 
-.. {podman-docs}/podman-push.1.html[Push] the image with both tags.
+.. {podman-docs}podman-push.1.html[Push] the image with both tags.
 +
 [source, console]
 ----
@@ -702,7 +729,32 @@ sudo podman stop driver.${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP} &&
 sudo podman rm driver.${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
 ----
 
-. Before continuing, make sure that the {nvidia-org} kernel modules are not loaded on any of the Kubernetes worker nodes.
+
+
+== Deploy to a Kubernetes cluster
+
+Kubernetes provides access to special hardware, such as GPUs, network adapters, and other devices through the {kubernetes-docs}concepts/extend-kubernetes/compute-storage-net/device-plugins/[device plugin framework].
+Configuring and managing these resources involves multiple software components, including drivers, libraries, and container runtimes.
+This can be difficult and prone to error.
+The {nvidia-op} helps overcome these difficulties using the Kubernetes operator framework to automate management of {nvidia-org} software components.
+
+The preferred method for installing the {nvidia-op} is with the {helm-docs}[Helm] Kubernetes package manager.
+Learn more about {rancher-kubectl-url}[How to Manage Kubernetes with Kubectl].
+
+In addition to Helm and Kubectl, you also need the {kubernetes-docs}concepts/configuration/organize-cluster-access-kubeconfig/[kubeconfig file] for your target Kubernetes cluster.
+If you are using {rancher-full} to manage your cluster, you can use the {rancher-docs}how-to-guides/new-user-guides/manage-clusters/access-clusters/use-kubectl-and-kubeconfig[Kubectl Shell within the Rancher UI or download the kubeconfig file] of your cluster for use on your build host or other Linux system.
+
+[NOTE]
+====
+If you are using a system other than your build host to deploy your container, be sure you have:
+
+* Kubectl and Helm
+* the kubeconfig file for your cluster
+* the `/tmp/build-variables.sh` file from <<Setting up your environment>>
+====
+
+
+. Before starting your deployment, make sure that the {nvidia-org} kernel modules are not loaded on any of the Kubernetes worker nodes.
 
 .. Log into each node and list loaded {nvidia-org} kernel modules.
 +
@@ -730,65 +782,35 @@ If any modules fail to unload, reboot the node.
 ====
 
 
-== Deploy to a Kubernetes cluster
+. Log into your build host or the system you are using to manage deployment to your cluster.
 
+. Make sure your environment variables are set.
 
-
-[NOTE] 
-====
-The preferred method for installing the {nvidia-op} is with the Helm Kubernetes package manager.
-====
-
-[IMPORTANT] 
-====
-The following steps must be run from a Linux system that has the kubectl and Helm (version 3) utilities, as well as the KUBECONFIG file for the target Kubernetes cluster available to it. 
-See these documents for more information: {rancher-kubectl-url} and {rke2-cluster-access-url}.
-
-In addition, if the container build host is a different system than the one being used to perform the Helm install, the /tmp/.build-variables.sh file will need to be created on the second system. 
-Return to Setting up your environnment in the proceeding procedure before continuing.
-
-====
-
-. Add the {nvidia-org} helm software repository:
-//
+. Add the {nvidia-org} helm software repository.
 +
-[console, subs="attributes+"]
+[source, console, subs="attributes+"]
 ----
 helm repo add {nvidia-helm-url}
 helm repo update
 ----
-//
-+
-. Deploy the {nvidia-op} with Helm:
-//
-+
-[NOTE]
-====
-If any of the following variables are not set correctly, press `CTRL+C` and return to Setting up your environment in the proceeding procedure before continuing.
-====
-//
+
+. Verify that you are targeting the correct cluster.
 +
 [source, console]
 ----
-## Verify the selected cluster before deploying
 echo &&
-echo "Cluster name: $(kubectl config current-context)" && 
-echo "" && 
-kubectl get nodes -o wide && 
-echo "" && 
-read -n1 -p "Is this the target Kubernetes cluster for the Helm chart? (y/n) " YESNO && 
-echo "" && 
-[ ${YESNO} != y ] && { echo "Exiting."; echo ""; exit; } || echo "" && 
+echo "Cluster name: $(kubectl config current-context)" &&
+echo "" &&
+kubectl get nodes -o wide &&
+echo ""
+----
++
+If this is not the correct cluster, check that you have properly set up your kubeconfig file.
 
-## Validate the variables before using them in the subsequent command
-echo &&
-echo "
-REGISTRY=${REGISTRY}
-SLE15_SP_VERSION=${SLE15_SP_VERSION}
-OPERATOR_VERSION=${OPERATOR_VERSION}
-DRIVER_VERSION=${DRIVER_VERSION}" && echo && read -n1 -p "Press CTRL+C now if these variables are NOT correct, otherwise press Enter" BAILOUT && 
-
-## Deploy the Helm chart
+. Deploy the {nvidia-op} with Helm.
++
+[source, console]
+----
 helm install -n gpu-operator \
   --generate-name \
   --wait \
@@ -807,21 +829,17 @@ helm install -n gpu-operator \
   --set toolkit.env[3].name=CONTAINERD_SET_AS_DEFAULT \
   --set-string toolkit.env[3].value=true
 ----
-//
-+
-. Verify the {nvidia-op}, {nvidia-drv} and associated elements have been deployed correctly with the command: 
-//
+
+. Verify the {nvidia-op}, {nvidia-drv}, and associated elements have been deployed correctly.
 +
 [source, console]
 ----
 kubectl get pods -n gpu-operator
 ----
-//
 +
-.. The output should be similar to the following:
-//
+You should see output similar to the following:
 +
-[source, console]
+[listing]
 ----
 NAME                                                          READY   STATUS      RESTARTS   AGE
 
@@ -855,44 +873,22 @@ nvidia-operator-validator-bwx99                               1/1     Running   
 ----
 
 
-
 == Validation
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Illustrate functionality with a demonstration.
-// Begin with a description or outline of the demonstration.
-// Provide clear steps (in ordered lists) for the reader to follow.
-// Typical demonstration flow is:
-// 1. Prepare the environment for the demonstration.
-//    This should be minimal, such as downloading some data to use.
-//    If this requires more than a couple steps, consider putting it
-//    in a subsection.
-// 2. Perform the demonstration.
-//    Be careful not to overuse screenshots.
-// 3. Verify.
-//    This may be interwoven into performing the demonstration.
-//
-// As with Installation, leverage ordered lists, code blocks,
-// admonitions, and screenshots.
-//
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-[NOTE]
-====
 The {nvidia-op} Helm chart provides two pods that validate the state of the installed software.
-====
 
-. Validate the state of the {nvidia-op} software:
-//
+. Validate the state of the {nvidia-op} software.
 +
 [source, console]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-operator-validator
 ----
-//
 +
-.. The output should be similar to:
-//
+The output should be similar to:
 +
 [listing]
 ====
@@ -900,19 +896,15 @@ Defaulted container "nvidia-operator-validator" out of: nvidia-operator-validato
 
 *all validations are successful*
 ====
-//
-+
-. Validate the state of the {nvidia-cuda} software:
-//
+
+. Validate the state of the {nvidia-cuda} software.
 +
 [source, console]
 ----
 kubectl logs -n gpu-operator -l app=nvidia-cuda-validator
 ----
-//
 +
-.. The output should be similar to the following:
-//
+The output should be similar to:
 +
 [listing]
 ====
@@ -920,10 +912,8 @@ Defaulted container "nvidia-cuda-validator" out of: nvidia-cuda-validator, cuda-
 
 *cuda workload validation is successful*
 ====
-//
-+
-. To validate that the {nvidia-drv} is communicating with the GPU, you can run this command to view the statics of the Kubernetes workers that are configured with GPUs:
-//
+
+. Validate that the {nvidia-drv} is communicating with the GPU.
 +
 [source, console]
 ----
@@ -936,12 +926,12 @@ do echo ${EACH}; done)" \
 -n gpu-operator \
 nvidia-smi
 ----
-//
 +
-[NOTE]
+[TIP]
 ====
-This command can also be used to verify which application processes are running on the {nvidia-org} GPUs, and how many resources are being consumed.
+This command can also be used to verify which application processes are running on the {nvidia-org} GPUs and how many resources are being consumed.
 ====
+
 
 == Summary
 
