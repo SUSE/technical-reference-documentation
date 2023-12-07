@@ -5,20 +5,6 @@ include::./common_docinfo_vars.adoc[]
 // General comments
 // Keep in mind that this is a "getting started" guide and the
 //   audience that you are trying to reach.
-// Leverage ASCIIDoc features to make this document readable and usable:
-//   - Text highlights (follow SUSE style guides)
-//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
-//   - Code blocks
-//   - Lists (ordered and unordered, as appropriate)
-//   - Links (to other resources)
-//   - Images
-//     - Place image files under the ./media directory tree
-//       (e.g., ./media/src/svg, ./media/src/png)
-//     - Format preference: svg > png > jpg
-//     - Consolidate images wherever possible
-//       (i.e., don't use two images when one conveys the message)
-//   - Use sections and subsections to organize and group related
-//     steps.
 // 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -43,7 +29,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT REVISION DATE
 //-
-:revision-date: 2023-12-04
+:revision-date: 2023-12-07
 :docdate: {revision-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -119,8 +105,8 @@ include::./common_docinfo_vars.adoc[]
 :kubernetes-docs: https://kubernetes.io/docs/
 
 
-:title: Creating and Deploying {nvidia-org} GPU Enabled Containers
-:subtitle: Create {nvidia-org} GPU-enabled containers with {sles-full} and deploy them on {rke2-full}
+:title: {nvidia-drv} and {nvidia-op} with SUSE
+:subtitle: Creating and deploying {nvidia-org} GPU-enabled containers with {sle-bci-full} and {rke2-full}
 :usecase: enable GPU acceleration for containerized workloads
 :executive_summary: Build {nvidia-drv} enabled container images with {sle-bci-full} and deploy these containers with the {nvidia-op} to {rke2-full} clusters.
 :description: Create and deploy {nvidia-org} GPU-enabled containers with {sles-full} and {rke2-full}
@@ -168,13 +154,15 @@ include::./common_docinfo_vars.adoc[]
 // This is could be the same as the executive summary.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Graphical Processor Units (GPUs) provide unique capabilities for accelerating a broad spectrum of workloads.
-These workloads are increasingly being deployed in containers on Kubernetes clusters.
+Graphics Processing Units (GPUs) provide unique capabilities for accelerating a broad spectrum of workloads, such as artificial intelligence and machine learning, scientific and engineering simulations, and many more.
+Developing and deploying these workloads in containers on Kubernetes clusters offers potential for improved portability, scale, and efficiency.
+However, GPU resources are not automatically visible or accessible to workloads running in containers.
+
 In this guide, you learn how to:
 
-. create OCI-compliant container images with {sle-bci-full} that contain the {nvidia-drv}
+* create OCI-compliant container images that include the {nvidia-drv} using {sle-bci-full}
 
-. deploy a GPU-enabled container image on {rke2-full} with the {nvidia-op}
+* deploy a GPU-enabled container image on {rke2-full} with the {nvidia-op}
 
 {sle-bci-full} ({sle-bci}) are a trusted choice for organizations with stringent security requirements, providing unparalleled security certifications (including Common Criteria, FIPS, and EAL) and enhanced supportability even when operating heterogeneous software stacks.
 
@@ -261,10 +249,10 @@ You can find available images at the {sle-bci-registry}[SUSE Container Images Re
 +
 [IMPORTANT]
 ====
-You have the choice of several base images from SUSE.
-For this guide, you will use the {sle-bci} Go language development image.
-Be sure to note the available Go version, as this is needed during the build process.
-Go {golang-version} is used in this guide, but updated images are made available frequently.
+You have the choice of several base container images from SUSE.
+This guide uses the {sle-bci} Go {golang-version} development container image available at the time of writing.
+Be sure to note the version of the Go language in the base container image you choose.
+You need this during the build process.
 ====
 
 . {sles-full} modules
@@ -470,7 +458,7 @@ Find the associated {nvidia-op-url}platform-support.html[{nvidia-op}] version.
 * `CUDA_VERSION`: the {nvidia-org} CUDA version appropriate for the selected {nvidia-drv}
 //
 +
-The CUDA version is listed under "Software Versions" when you find your driver version at {nvidia-drv-url}.
+The CUDA version is listed under "Software Versions" when you find your driver version at {nvidia-drv-url}[{nvidia-org} Driver Downloads].
 
 --
 +
@@ -891,11 +879,11 @@ kubectl logs -n gpu-operator -l app=nvidia-operator-validator
 The output should be similar to:
 +
 [listing]
-====
+----
 Defaulted container "nvidia-operator-validator" out of: nvidia-operator-validator, driver-validation (init), toolkit-validation (init), cuda-validation (init), plugin-validation (init)
 
-*all validations are successful*
-====
+all validations are successful
+----
 
 . Validate the state of the {nvidia-cuda} software.
 +
@@ -942,18 +930,22 @@ This command can also be used to verify which application processes are running 
 // - Next steps (unordered list of 2-4 further learning resources)
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-// In this guide, you learned ...
+Graphics Processing Units (GPUs) have become an essential technology of the modern era, accelerating time to insight and expanding capabilities.
+GPUs have had dramatic impacts in artificial intelligence, machine learning, scientific and engineering simulation, and other high-performance computing applications.
+Equally dramatic have been the impacts of container technologies, reshaping how applications are developed, deployed, and managed.
+Bringing these two technologies together offers many benefits, including faster development, improved application portability, easier scaling, and streamlined administration.
 
-This guide has effectively steered the creation of OCI compliant container images leveraging the {sle-bci-full} and incorporating the {nvidia-drv}.
-Furthermore, it has provided coherent instructions for validating the functionality of the container image and the seamless deployment of the image within a Kubernetes cluster, specifically {rke2}.
+In this guide, you learned how to:
 
-This integrated solution is aimed at affording containerized applications GPU-acceleration, while avoiding the need to manage additional software on each GPU equipped node.
-The strategic choice of SUSE's {sle-bci-full} as the foundation for this integration underscores an organization's commitment to security, certifications, and supportability.
+* build OCI-compliant container images with the {nvidia-drv} on {sle-bci-full}
 
-Organizations with exacting security requirements depend on {sles-full}'s numerous certifications such as Common Criteria, FIPS, and EAL.
-Additionally, SUSE's commitment to providing robust support for heterogeneous software stacks guarantees customer's the freedom to design their IT landscape to suit their unique business challenges. 
+* deploy your GPU-enabled containers with {nvidia-op} on {rke2-full} clusters
 
-A pivotal point to underscore is the indispensability of a Kubernetes cluster, preferably {rke2}, that provides full {nvidia-org} GPU support and the requisite {nvidia-op} to fully harness GPU resources when deploying GPU intensive workloads.
+
+The strategic choice of {sle-bci-full} as the foundation for this integration underscores a commitment to security and supportability.
+Organizations with exacting security requirements depend on the numerous certifications of {sles-full}, including Common Criteria, FIPS, and EAL.
+This is enhanced with the choice of a security focused Kubernetes distribution, such as {rke2-full}
+And, with SUSE's commitment to providing robust support for heterogeneous software stacks, customers are empowered with the freedom to design their IT landscapes to suit their unique challenges without compromising on security, capability, or performance.
 
 
 
