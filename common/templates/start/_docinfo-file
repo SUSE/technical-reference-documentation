@@ -8,16 +8,23 @@
 </dm:docmanager>
 
 <!-- Note to author/editor
-     Attributes used here (enclosed in curly braces).
-     General variables are defined in common_docinfo_vars.adoc.
-     Variable specific to this document (such as the title) are
-     defined with the main content in the adoc file.
-     See comments below for additional options.
+     - This docinfo.xml file uses attributes/variables to minimize the
+       need for edits.
+     - Attributes/variables are referenced here with curly braces
+       (e.g., {title}).
+     - General variables are defined in common_docinfo_vars.adoc.
+     - Document-specific variables are defined in your adoc file.
+     - Sections you may need to edit include:
+       - 'component metadata': if additional SUSE components need to
+         be highlighted
+       - 'author metadata': if additional authors should be listed
+         on the cover page
+       - 'cover logo images': if a different cover page logo is
+         required
 -->
 
 
 <!-- document organization metadata
-     Do NOT modify this section
      <orgname>Technical Reference Documentation</orgname>
 -->
 <meta name="series">{trd}</meta>
@@ -29,77 +36,105 @@
 <subtitle>{subtitle}</subtitle>
 
 
-<!-- platform and product metadata
-     Replicate for additional platforms.
-     Define platform2, etc. in adoc file.
+<!-- document revision date -->
+<meta name="updated">{revision-date}</meta>
+
+
+<!-- descriptions -->
+<meta name="description" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description}</meta>
+<meta name="social-desc" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description-short}</meta>
+
+
+<!-- SUSE component metadata
+     Replicate and follow the pattern to list additional SUSE components.
+     Variables are defined in the adoc file.
+
+     '<productname>' references the short name of the SUSE component.
+     '<platform>' references the full/long name of the SUSE component.
 -->
-<productname>{product1}</productname>
-<meta name="platform">{product1_full}</meta>
+<meta name="productname">
+  <productname version="{scomp1-version}">{scomp1}</productname>
+</meta>
+<meta name="platform">{scomp1-full}</meta>
+
+
+<!-- Partner metadata
+     Replicate and follow the pattern to identify partners
+     featured in the solution.
+     '<techpartner>' references the name of the partner.
+-->
+<meta name="techpartner">
+  <phrase>{pcomp1-provider}</phrase>
+</meta>
 
 
 <!-- author metadata
      Replicate author tag structure inside this authorgroup
      for additional authors.
-     Use editor and othercredit tag groups for additional contributors.
-     Update variables in adoc file.
+     Be sure to create/update appropriate variables in adoc file.
+     NOTE: Editors and other contributors can be acknowledged in
+     an acknowledgement section in the adoc file.
 -->
 <authorgroup>
   <author>
     <personname>
-      <firstname>{author1_firstname}</firstname>
-      <surname>{author1_surname}</surname>
+      <firstname>{author1-firstname}</firstname>
+      <surname>{author1-surname}</surname>
     </personname>
     <affiliation>
-      <jobtitle>{author1_jobtitle}</jobtitle>
-      <orgname>{author1_orgname}</orgname>
+      <jobtitle>{author1-jobtitle}</jobtitle>
+      <orgname>{author1-orgname}</orgname>
     </affiliation>
   </author>
 </authorgroup>
 
+
 <!-- cover logo images
      Specify the image or images to use on the document cover.
 
-     The default logo (`common/images/src/svg/suse.svg`) is the
-     official SUSE chameleon with 'SUSE' printed to its right.
-     The logo is designed for light backgrounds.
-     When you run the setup script, a symbolic link to this image
-     file is created in your project's `media/src/svg` directory.
-
-     NOTE: Two image objects are used to accommodate different
+     NOTE: Two image objects are defined to accommodate different
            width requirements for HTML ('role="html"') and for
            PDF ('role="fo"').
-           Always use '5em' for for PDF and '152px' for HTML.
+           The default uses '5em' for for PDF and '152px' for HTML.
+
+     - The default logo (`common/images/src/svg/suse.svg`) is the
+       official SUSE chameleon with 'SUSE' printed to its right.
+       - The logo is designed for light backgrounds.
+       - When you run the setup script, a symbolic link to this image
+         file is created in your project's `media/src/svg` directory.
+
      
-     To display multiple logos on the document cover:
+     - To display multiple logos on the document cover:
 
-     1. (preferred) Use an existing, approved logo lock-up SVG image.
-        a. Find the existing image file in `common/images/src/svg`.
-        b. Create a symbolic link to the image file in your project's
-           `media/src/svg` directory.
-        c. Update the 'fileref' attributes with the link target.
+       1. (preferred) Use an existing, approved logo lock-up SVG image.
+          a. Find the existing image file in `common/images/src/svg`.
+          b. Create a symbolic link to the image file in your project's
+             `media/src/svg` directory.
+          c. Update the 'fileref' attributes with the link target.
 
-     2. Create a single SVG image file with required logos.
-        a. Create a single logo lock-up image complying with brand
-           guidelines and approved by all parties.
-           Be sure to trim whitespace from all sides.
-        b. Place the file in the `common/images/src/svg` directory.
-        c. Create a symbolic link to the image file in your project's
-           `media/src/svg` directory.
-        d. Update the 'fileref' attributes with the new file name.
+       2. Create a single SVG image file with required logos.
+          a. Create a single logo lock-up image complying with brand
+             guidelines and approved by all parties.
+             Be sure to trim whitespace from all sides.
+          b. Place the file in the `common/images/src/svg` directory.
+          c. Create a symbolic link to the image file in your project's
+             `media/src/svg` directory.
+          d. Update the 'fileref' attributes with the new file name.
 
-     3. Use multiple, separate SVG logo image files.
-        a. Obtain an additional, approved logo (preferrably as an SVG file).
-        b. Trim extraneous whitespace from the top, bottom, and sides.
-           Very slim or very high logos may need some whitespace padding to
-           the fit in line with other logos.
-           If you need help, contact Jana Jaeger <jana.jaeger@suse.com>.
-        c. Place the file in the `common/images/src/svg` directory.
-        d. Create a symbolic link to the image file in your project's
-           `media/src/svg` directory.
-        e. Create a copy of the existing mediaobject section just before
-           the closing </cover> tag.
-        f. Update the 'fileref' attributes in the new mediaobject with
-           the new file name.
+       3. Use multiple, separate SVG logo image files.
+          a. Obtain an additional, approved logo (preferrably as an
+             SVG file).
+          b. Trim extraneous whitespace from the top, bottom, and sides.
+             Very slim or very high logos may need some whitespace padding
+             to fit in line with other logos.
+             If you need help, contact Jana Jaeger <jana.jaeger@suse.com>.
+          c. Place the file in the `common/images/src/svg` directory.
+          d. Create a symbolic link to the image file in your project's
+             `media/src/svg` directory.
+          e. Create a copy of the existing mediaobject section just before
+             the closing </cover> tag.
+          f. Update the 'fileref' attributes in the new mediaobject with
+             the new file name.
 
 -->
 <cover role="logos">
@@ -118,7 +153,7 @@
 -->
 <abstract role="executivesummary">
   <title>Summary</title>
-  <para>{executive_summary}</para>
+  <para>{executive-summary}</para>
 </abstract>
 
 

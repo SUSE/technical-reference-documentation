@@ -2,6 +2,8 @@
 DRAFT=yes
 ROLE="trd"
 #PROFROLE="trd"
+# Set revision document date (yyyy-mm-dd)
+ADOC_ATTRIBUTES+=" --attribute docdate=yyyy-mm-dd"
 
 ## -------------------------------
 ## Doc Config File for DAPS
@@ -33,15 +35,9 @@ DOCBOOK5_RNG_URI="http://docbook.org/xml/5.2/rng/docbookxi.rnc"
 ADOC_ATTRIBUTES="--attribute env-daps=1"
 
 ##
-# Attributes
+# Additional attributes
 ##
 
 # BP = suggestions/considerations above default settings
-ADOC_ATTRIBUTES+=" --attribute BP=1"
-
-# Uncomment line below for SUSE One Partner Solution Stack
-#ADOC_ATTRIBUTES+=" --attribute PSS=1"
-
-# Set document date (yyyy-mm-dd)
-ADOC_ATTRIBUTES+=" --attribute docdate=yyyy-mm-dd"
+# ADOC_ATTRIBUTES+=" --attribute BP=1"
 
