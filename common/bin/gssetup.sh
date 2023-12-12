@@ -27,7 +27,7 @@ echo "  -    'linux/start' directory (as appropriate)"
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
 echo "Are you ready to proceed?"
-read -p "Press ENTER to continue or CTRL-C to cancel."
+read -p "Press ENTER to continue or CTRL+C to cancel."
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -103,7 +103,7 @@ do
   suseprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
   # validate SUSE product
   case $suseprod in
-    'sles' | 'slessap' | 'slehpc' | 'slemicro' | 'slelp' | 'sleha' | 'suma')
+    'sles' | 'slessap' | 'slehpc' | 'slemicro' | 'slelp' | 'sleha' | 'slebci' | 'slert' | 'suma')
       break
     ;;
     'rancher' | 'rke' | 'rke2' | 'k3s' | 'longhorn' | 'neuvector' | 'harvester')
@@ -122,7 +122,7 @@ do
       echo "  -   sles, slehpc, slemicro, suma,"
       echo "  -   rancher, rke2, rke, k3s, longhorn,"
       echo "  -   neuvector, harvester"
-      echo "  - Please try again or press CTRL-C to quit."
+      echo "  - Please try again or press CTRL+C to quit."
       echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     ;;
   esac
@@ -142,13 +142,14 @@ do
     echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     echo "  - Invalid input."
     echo "  - Partner name cannot be blank."
-    echo "  - Please try again or press CTRL-C to quit."
+    echo "  - Please try again or press CTRL+C to quit."
     echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   fi
 done
 
 
 # get Name of the Primary Partner's product
+echo
 echo "Please enter the primary partner's product name."
 read -p ">> Primary partner's product name : " response
 if [ -n "$response" ]; then
@@ -211,7 +212,7 @@ echo
 # confirm user is ready to proceed
 ##
 
-read -p ">> Press ENTER to create document structure or CTRL-C to cancel."
+read -p ">> Press ENTER to create document structure or CTRL+C to cancel."
 echo
 
 
