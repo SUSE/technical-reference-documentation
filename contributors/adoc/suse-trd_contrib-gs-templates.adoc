@@ -340,7 +340,7 @@ List technical partners (those companies or organizations) supplying components 
 [listing, xml]
 ----
 <meta name="techpartner">
-  <techpartner>{pcomp1-provider}</techpartner>
+  <phrase>{pcomp1-provider}</phrase>
 </meta>
 ----
 
@@ -404,7 +404,7 @@ You must have documented approval from the partner before using the logo and the
 
 
 
-===== *Main AsciiDoc (asciidoc) content file*
+===== Main AsciiDoc (asciidoc) content file
 
 The text of your document is contained in one or more https://asciidoc.org/[AsciiDoc] (adoc) files, located in the `adoc` subdirectory.
 For a getting started guide, you typically put all your content in a single adoc file (`gs_rancher_tuxy-penguin.adoc` in the example).
@@ -417,183 +417,258 @@ If you choose to split your document, you will need to use the AsciiDoc https://
 ====
 
 
-===== Document attributes and variables
+*Document attributes and variables*
 
 https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes/[Document attributes] are name-value pairs you declare in your adoc file.
 Attributes enable you to configure the AsciiDoc processor, declare document metadata, and define reusable content that you can reference elsewhere within the document like variables in a programming language.
 
-You define an attribute with an entry in the form of:
+You define an attribute with the following pattern:
 
 [listing, asciidoc]
 ----
- :name_of_attribute: value of attribute
+:name-of-attribute: value of attribute
 ----
 
 * The attribute name is preceded and followed by a colon (:).
-The {product1} style uses only lowercase letters, numbers, and underscores.
+Attribute names should begin with a letter and may include numbers, hyphens, and underscores.
 
-* The attribute value is any text up to a new line character.
+* The value of the attribute can include any text up to a new line character.
 +
-[NOTE]
+[TIP]
 ====
 There must be a space between the closing colon of the attribute name and the first character of the value text.
 ====
 
 
-The getting started guide adoc template includes a 'Variables & Attributes' section to help you define required attributes and allow you to define custom ones. 
+The adoc template provides a guide for defining your document attributes and variables.
 
-
+Some attributes are required, such as:
 [listing, asciidoc]
 ----
-
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- // organization - do NOT modify
- // -
- :trd: Technical Reference Documentation <1>
- :type: Getting Started <2>
-
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ORGANIZATION
+//   Do NOT modify this section.
+// -
+:trd: Technical Reference Documentation <1>
+:type: Getting Started <2>
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ----
-
 <1> Declares this document as part of SUSE Technical Reference Documentation.
-
 <2> Declares this document to be a getting started guide.
 
+You also specify the document revision date in a variable:
+[listing, asciidoc]
+----
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION DATE
+//-
+:revision-date: YYYY-MM-DD <1>
+:docdate: {revision-date} <2>
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+----
+<1> Be sure to enter the date you revised the document in the specified format.
+<2> The `docdate` attribute, which is used by some processes, simply references the value of the `revision-date` attribute.
 
+
+Your document title and subtitle are defined with:
+[listing, asciidoc]
+----
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLE AND SUBTITLE
+:title: (<75 characters) Your Guide Title
+:subtitle: (<75 characters) Your Guide Subtitle
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+----
+See <<Document title and subtitle>> for additional guidance.
+
+
+You also define document attributes for the technical components featured in your guide.
+This allows you to define product names, versions, website URLs, and more, then reference these throughout your guide to reduce typing, ensure consistency, and minimize errors.
 
 [listing, asciidoc]
 ----
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
 
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- // document
- // -
-  :title: Title <1>
-  :subtitle: Subtitle <2>
+:comp1-provider: SUSE <1>
+:comp1: component 1 short name <2>
+:comp1-full: component 1 long name <3>
+:comp1-version: component 1 relevant versions <4>
+:comp1-website: component 1 product website URL <5>
+:comp1-docs: component 1 product documentation URL <6>
 
+:comp2-provider: component 2 provider name <7>
+:comp2: component 2 short name
+:comp2-full: component 2 full name
+:comp2-version: component 2 relevant versions
+:comp2-website: component  product website URL
+:comp2-docs: component 2 product documentation URL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ----
+<1> Identify the company or organization providing the component.
+<2> Provide an official short name for referring to the component.
+SUSE products have official short names, such as SLES, SUMa, Rancher, and so on.
+Other providers may have official short names.
+Be sure to verify for proper branding.
+<3> Provide the official full name of the component product.
+Some SUSE products include: SUSE Linux Enterprise Server, SUSE Manager, Rancher Prime by SUSE, NeuVector Prime by SUSE, and so on.
+<4> Provide the relevant version or versions of the component.
+Guides are developed with a specific version, such as '15 SP5' for SLES or '2.7.9' for Rancher.
+However, the guide may be applicable to multiple versions of the component.
+This should be indicated whenever possible, either by listing all relevant versions ('15 SP4, 15 SP5', '2.7.8, 2.7.9') or by indicating a range ('15 SP4+', '2.7.X').
+<5> Provide a product (or project) website URL (for example, 'https://www.suse.com/products/server/').
+By setting the URL in a document attribute, you can easily update it in one place, if needed, and reference it throughout your document.
+<6> Provide the URL to the component's technical documentation.
+<7> Replicate the attribute declarations for each of the major components.
 
-<1> Your title should be written in title case (see <<AsciiDoc>>).
-It should consist of a few words that identify the contents of the document.
 
-<2> Your subtitle should provide further clarification to the document contents.
-
-
+Document desriptions express the purpose, value, and contents of your guide.
 
 [listing, asciidoc]
 ----
- :product1: Primary SUSE product/platform short name (abbreviation) <1>
- :product1_full: Primary SUSE product/platform full name
- :product1_version: Primary SUSE product/platform relevant version or versions
- :product1_url: Primary SUSE product/platform URL (without the protocol)
- :product2: Secondary product short name <2>
- :product2_full: Secondary product full name
- :product2_url: Secondary product URL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT DESCRIPTIONS
 
+:usecase: (<55 characters) use case <1>
+
+:description: (<150 characters) description <2>
+
+:description-short: (<55 characters) social media description <3>
+
+:executive-summary: (<300 characters) brief summary <4>
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ----
-
-<1> Identifies the primary SUSE product or platform first.
-Include attributes for:
-+
-* the official short name or abbreviation (SLES, SUMa, Rancher, etc.)
-* the official full name (SUSE Linux Enterprise Server, SUSE Manager, Rancher by SUSE)
-* the relevant version or versions (15, 15 SP4+, 2.7, 2.7+)
-* the product/platform website URL without the protocol (www.suse.com/products/server/)
-
-<2> Identifies additional products by SUSE, partners, foundations, projects, etc.
+<1> Provide a brief statement of the use case addressed by your guide, such as "database-as-a-service" or "Kubernetes multi-tenancy".
+<2> Give a brief description of the guide.
+This can reference `usecase` or other attributes you have already defined.
+<3> Shorten the description so that it might be used in a social media post.
+<4> Provide an executive summary of your guide.
+The executive summary is the only one of these descriptions that is automatically printed in the published document.
 
 
+Identify yourself and other authors.
+For each include first and last names, job title, affiliation (company, organization, project, etc.).
+For additional authors, you must also update the contents of the `<authorgroup></authorgroup>` section of the docinfo file for the authors to be listed.
 
 [listing, asciidoc]
 ----
-
- :usecase: Use case featured in this document <1>
-
- :executive_summary: One sentence summary of the document <2>
-
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+:author1-firstname: first (given) name <1>
+:author1-surname: surname <2>
+:author1-jobtitle: job title <3>
+:author1-orgname: organization affiliation <4>
+//:author2-firstname: first (given) name <5>
+//:author2-surname: surname
+//:author2-jobtitle: job title
+//:author2-orgname: organization affiliation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ----
 
-<1> Provides a text snippet identifying the use case.
-This should be brief and high level.
-Some examples include: Database-as-a-Service, edge analytics in healthcare, and Kubernetes-native object storage.
-
-<2> Provides an executive summary of the document in one sentence.
-Your executive summary should inform the reader's expectations for the document.
-You can even use previously defined attributes.
-For example, "This document outlines basic steps for using the \{product2_full} to implement \{usecase} on \{product1_full}."
-This attribute is referenced in your docinfo file and appears after the cover page in your rendered document.
-
-
-[listing, asciidoc]
-----
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- // contributor
- // specify information about authors, editors, and others here,
- // then update docinfo file as appropriate
- // -
- :author1_firstname: first (given) name <1>
- :author1_surname: surname
- :author1_jobtitle: job title
- :author1_orgname: organization affiliation
- //:author2_firstname: first (given) name <2>
- //:author2_surname: surname
- //:author2_jobtitle: job title
- //:author2_orgname: organization affiliation
-----
-
-<1> Provides information about the primary author of the document.
-This includes:
-+
-* first or given name
-* surname or family name
-* job title
-* affiliation (company, agency, foundation, project, etc.)
-
-<2> You can define additional authors by repeating the pattern for the first author.
-You also must add an `<author>`...`</author>` group to your docinfo file and reference the appropriate document attribute for each additional author.
-
-[NOTE]
+[TIP]
 ====
-You can also define editors and other contributors in the same way, except you use `<editor>`...`</editor>` and `<othercredit>`...`<othercredit>` tags in your docinfo file.
+To identify other contributors and editors, use the same format for the variable names, but replace 'author' with 'contrib' or 'editor'.
+It is common to mention contributors and editors in an "Acknolwedgements" section of your guide.
 ====
 
-You conclude this section of your main adoc file with any custom variables you wish to define.
+
+Document attributes can be incredibly useful for maintaining consistency, reducing errors, and saving a little typing.
+A portion of this part of the guide is available for you to define any additional attributes you need.
 
 [listing, asciidoc]
 ----
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS
+//   Define any additional variables here for use within the document.
+// -
 
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- // miscellaneous
- // define any additional variables here for use within the document
- // -
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ----
 
 
-===== Content
+===== Contents
 
-After defining document attributes and variables, you can begin developing your content.
-The template provided by the `gssetup.sh` script provides an outline for a general getting started guide.
-Additional guidance is included as comments (lines prefixed with a double backslash, `\\` ).
+After defining document attributes, you can begin developing your content.
+The adoc template generated by the `gssetup.sh` script provides an outline for a general getting started guide.
+You will find that the template is copiously documented with guidance and suggestions.
 
-A general structure for a getting started guide includes these sections:
+In general a getting started guide is structured as follows:
 
-* *Introduction*: introduction to the concept and purpose of the guide.
-** *Motivation*: why this guide is needed
-** *Scope*: what the guide covers
-** *Audience*: who can benefit from the guide and what skills are required
-** *Acknowledgements* (optional): who else contributed to this guide but is not listed as an author
+* *Title page*
+//
++
+In addition to title and subtitle, products and authors are also listed.
 
-* *Prerequisites*: minimum requirements needed by the reader to follow the actions detailed in the guide - link to resources and references
+* *Disclaimer page*
+//
++
+The disclaimer is provided, along with the title, subtitle, revision date, and the executive summary.
 
-* *Technical overview*: technical description of the solution - include architecture and other diagrams
+* *Contents*
+//
++
+A table of contents is created from the top-level sections of your document.
 
-* *Installation*: step-by-step guide for installation
+* *Introduction*
++
+--
+The first actual contents of your guide is an introduction that briefly but clearly describes:
 
-* *Configuration* (optional): additional steps beyond installation required to render a functional solution
+* what the solution is, including the participating providers and products
+* the motivation, purpose, or use case is being addressed
+--
++
+The Introduction contains a few important subsections:
 
-* *Demonstration* or *Validation*: step-by-step demonstration or validation of the featured function or use case
+** *Scope*
+//
++
+This is a clear list or statement of what the guide covers and (sometimes) what it does not cover.
 
-* *Summary*: brief review of the solution, what was covered, and suggestions for next steps
+** *Audience*
+//
++
+Identify who would be most interested or helped by the information provided.
+This intended audience is typically by industry standard roles, such as systems administrator, cloud-native developer, infrastructure architect.
+You should list the knowledge and skills the reader should have to successfully follow the guide.
 
-This general structure can be adapted to fit a the particular solution or use case.
+** *Acknowledgements*
+//
++
+Acknowledge others who contributed to the development of the guide.
 
 
+* *Prerequisites*
+//
++
+List the resources the reader will need in order to follow the procedures detailed in the guide.
+You typically use an unordered list for these resources.
+For each, include product name, versions, link to product website, and any other information to help the reader set up the environment.
+
+* *Procedure*
+//
++
+Your guide should detail the procedure the reader should follow to prepare, install, configure, and validate the components of the solution.
+Each of these phases can be rendered into its own section, such as:
++
+--
+* Setting up your environment
+* Installing the components
+* Configuring and tuning your installation
+* Validating your deployment
+--
++
+[TIP]
+====
+Dividing a complex series of steps into subsections can make it easier for the reader to follow.
+For example, an 'Installing the solution' section might have subsections for installing each component.
+====
+
+
+* *Summary*
+//
++
+Briefly review the solution, motivation, and what was covered in the guide.
+You may also consider offering suggested next steps for the reader to continue the learning journey.
