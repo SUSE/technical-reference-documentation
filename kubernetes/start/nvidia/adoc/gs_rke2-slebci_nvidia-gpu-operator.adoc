@@ -719,7 +719,7 @@ sudo podman rm driver.${DRIVER_VERSION}-sles${SLE_VERSION}.${SLE_SP}
 
 
 
-== Deploy to a Kubernetes cluster
+== Deploying to a Kubernetes cluster
 
 Kubernetes provides access to special hardware, such as GPUs, network adapters, and other devices through the {kubernetes-docs}concepts/extend-kubernetes/compute-storage-net/device-plugins/[device plugin framework].
 Configuring and managing these resources involves multiple software components, including drivers, libraries, and container runtimes.
@@ -865,7 +865,7 @@ nvidia-operator-validator-bwx99                               1/1     Running   
 ----
 
 
-== Validation
+== Validating the state of software
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Illustrate functionality with a demonstration.
@@ -926,7 +926,7 @@ This command can also be used to verify which application processes are running 
 +
 The output should be similar to the `nvidia-smi` output when validating the {nvidia-drv} container image functionality through Podman.
 
-== Cleanup
+== Cleaning up
 
 After completing this procedure, remove the `/tmp/build-variables.sh` and the /tmp/Dockerfile.orig files from the build host and any Kubernetes worker nodes. 
 
