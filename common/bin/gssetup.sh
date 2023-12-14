@@ -7,6 +7,45 @@
 ##
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+# global variables
+##
+SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slemicro', 'slelp', 'slert', 'sleha', 'suma', 'rancher', 'neuvector', 'harvester', 'rke', 'rke2', 'k3s', 'longhorn')
+
+
+
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+# Functions
+##
+
+suselist() {
+# display list of SUSE products and abbreviations
+
+echo
+echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "Abbrev.   | Product"
+echo "- - - - - | - - - -- - - - - - - - - - - - - - - - - - - - - - -"
+echo "sles      | SUSE Linux Enterprise Server"
+echo "slessap   | SUSE Linux Enterprise Server for SAP Applications"
+echo "slehpc    | SUSE Linux Enterprise High Performance Computing"
+echo "slemicro  | SUSE Linux Enterprise Micro"
+echo "slelp     | SUSE Linux Enterprise Live Patching"
+echo "slert     | SUSE Linux Enterprise Real Time"
+echo "sleha     | SUSE Linux Enterprise for High Availability Extension"
+echo "suma      | SUSE Manager"
+echo "rancher   | Rancher Prime by SUSE"
+echo "neuvector | NeuVector Prime by SUSE"
+echo "harvester | Harvester by SUSE"
+echo "rke       | Rancher Kubernetes Engine"
+echo "rke2      | Rancher Kubernetes Engine 2"
+echo "k3s       | K3s by SUSE"
+echo "longhorn  | Longhorn by SUSE"
+echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo
+
+}
+
+
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # Display banner
 ##
 echo
@@ -96,34 +135,63 @@ echo
 
 
 # get primary SUSE product
-echo "Please enter the primary SUSE product name"
-echo "(e.g., 'rancher', 'neuvector', 'sles', 'slemicro', 'suma', etc.)"
-while read -p ">> Primary SUSE product name : " response
+suseprods=""
+echo "Please identify the featured SUSE products by"
+echo "entering one product abbreviation at a time."
+echo "Examples: 'sles', 'slemicro', 'rancher', 'neuvector'"
+echo "When done, press ENTER with no value."
+echo "  Additional options:"
+echo "    'list': display a list of accepted abbreviations."
+echo "    'clear': clear the product list and start over."
+echo "  Press CTRL+C to cancel and exit the script."
+echo
+while read -p ">> SUSE product : " response
 do
-  suseprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
-  # validate SUSE product
-  case $suseprod in
-    'sles' | 'slessap' | 'slehpc' | 'slemicro' | 'slelp' | 'sleha' | 'slebci' | 'slert' | 'suma')
+  resp=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
+  # validate input
+  case $resp in
+    '')
+      echo
+      echo "Current featured SUSE products: ${suseprods}"
+      echo
       break
     ;;
-    'rancher' | 'rke' | 'rke2' | 'k3s' | 'longhorn' | 'neuvector' | 'harvester')
+    'list')
+      suselist
+      echo
+      echo "Current featured SUSE products: ${suseprods}"
+      echo
+    ;;
+    '')
+      # no more products entered
+      echo
+      echo "Current featured SUSE products: ${suseprods}"
+      echo
       break
     ;;
-    'q' | 'quit')
-      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-      echo "  - Quitting ... nothing done."
-      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-      exit 3
+    'clear')
+      # clear the product list to start over
+      suseprods=""
+      echo
+      echo "Current featured SUSE products: NONE"
+      echo
     ;;
     *)
-      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-      echo "  - Invalid input."
-      echo "  - Valid options include:"
-      echo "  -   sles, slehpc, slemicro, suma,"
-      echo "  -   rancher, rke2, rke, k3s, longhorn,"
-      echo "  -   neuvector, harvester"
-      echo "  - Please try again or press CTRL+C to quit."
-      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+      if [[ "${SUSEPRODUCTS[*]}" =~ "${resp}" ]]; then
+	if [[ "${suseprods}" = "" ]]; then
+	  suseprods="${resp}"
+	else
+          suseprods="${suseprods}-${resp}"
+	fi
+      else
+        echo
+        echo "Invalid input."
+	echo "Enter a SUSE product abbreviation, 'list', or leave blank."
+	echo "Press CTRL+C to cancel and exit the script."
+	echo
+      fi
+      echo "SUSE products: ${suseprods}"
+      echo
     ;;
   esac
 done
@@ -179,7 +247,7 @@ fi
 # build base filename
 ##
 
-documentbase="gs_${suseprod}_${partnername}${partnerprod}${usecase}"
+documentbase="gs_${suseprods}_${partnername}${partnerprod}${usecase}"
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -298,6 +366,7 @@ echo
 # - Terry Smith <terry.smith@suse.com>
 # - Bryan Gartner <bryan.gartner@suse.com>
 # Revisions:
+# - 20231214: Updated SUSE product list, added support for multiple products
 # - 20230907: Simplified paths; added more checks; clarified prompts
 # - 20221213: Removed underscore prefix from generated DC file
 # - 20220824: Migrated to common/bin; implemented run location test
