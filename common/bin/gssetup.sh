@@ -9,7 +9,7 @@
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # global variables
 ##
-SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slemicro', 'slelp', 'slert', 'sleha', 'suma', 'rancher', 'neuvector', 'harvester', 'rke', 'rke2', 'k3s', 'longhorn')
+SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slemicro', 'slelp', 'slert', 'sleha', 'slebci', 'suma', 'rancher', 'neuvector', 'harvester', 'rke', 'rke2', 'k3s', 'longhorn')
 
 
 
@@ -31,6 +31,7 @@ echo "slemicro  | SUSE Linux Enterprise Micro"
 echo "slelp     | SUSE Linux Enterprise Live Patching"
 echo "slert     | SUSE Linux Enterprise Real Time"
 echo "sleha     | SUSE Linux Enterprise for High Availability Extension"
+echo "slebci    | SUSE Linux Enterprise Base Container Images"
 echo "suma      | SUSE Manager"
 echo "rancher   | Rancher Prime by SUSE"
 echo "neuvector | NeuVector Prime by SUSE"
@@ -136,14 +137,19 @@ echo
 
 # get primary SUSE product
 suseprods=""
-echo "Please identify the featured SUSE products by"
-echo "entering one product abbreviation at a time."
-echo "Examples: 'sles', 'slemicro', 'rancher', 'neuvector'"
-echo "When done, press ENTER with no value."
-echo "  Additional options:"
-echo "    'list': display a list of accepted abbreviations."
-echo "    'clear': clear the product list and start over."
-echo "  Press CTRL+C to cancel and exit the script."
+echo "- - - - - -"
+echo "- Identify the featured SUSE products by entering"
+echo "- one product abbreviation at a time."
+echo "- When done, press ENTER with no value."
+echo "-"
+echo "- TIP: Start at the top of the software stack."
+echo "-      For example: 'rancher' then 'rke2' then 'sles'"
+echo "-"
+echo "- Additional options:"
+echo "-   'list': display accepted abbreviations."
+echo "-   'clear': clear the product list and start over."
+echo "-   Press CTRL+C to cancel and exit the script."
+echo "- - - - - -"
 echo
 while read -p ">> SUSE product : " response
 do
@@ -152,20 +158,20 @@ do
   case $resp in
     '')
       echo
-      echo "Current featured SUSE products: ${suseprods}"
+      echo "Featured SUSE products: \"${suseprods}\""
       echo
       break
     ;;
     'list')
       suselist
       echo
-      echo "Current featured SUSE products: ${suseprods}"
+      echo "Featured SUSE products: \"${suseprods}\""
       echo
     ;;
     '')
       # no more products entered
       echo
-      echo "Current featured SUSE products: ${suseprods}"
+      echo "Featured SUSE products: \"${suseprods}\""
       echo
       break
     ;;
@@ -173,7 +179,7 @@ do
       # clear the product list to start over
       suseprods=""
       echo
-      echo "Current featured SUSE products: NONE"
+      echo "Featured SUSE products: \"${suseprods}\""
       echo
     ;;
     *)
@@ -185,12 +191,15 @@ do
 	fi
       else
         echo
-        echo "Invalid input."
-	echo "Enter a SUSE product abbreviation, 'list', or leave blank."
-	echo "Press CTRL+C to cancel and exit the script."
+        echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+        echo "  - Invalid input."
+	echo "  - Enter a SUSE product abbreviation, 'list', or leave blank."
+	echo "  - Press CTRL+C to cancel and exit the script."
+        echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 	echo
       fi
-      echo "SUSE products: ${suseprods}"
+      echo
+      echo "Featured SUSE products: \"${suseprods}\""
       echo
     ;;
   esac
@@ -198,10 +207,15 @@ done
 
 # get Name of the Primary Partner
 echo
-echo "Please enter the name of the primary partner."
-echo "Multiple partners and partner products can be featured"
-echo "in a guide, but one should be selected as primary."
-while read -p ">> Name of primary partner or project : " response
+echo "- - - - - -"
+echo "- Enter the name of the primary partner."
+echo "-"
+echo "- TIP: Select one partner whose product is at the top"
+echo "-      of the software stack and provides the key"
+echo "-      functionality for the featured use case."
+echo "- - - - - -"
+echo
+while read -p ">> Primary partner : " response
 do
   partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
   if [ -n "$partnername" ]; then
@@ -209,38 +223,60 @@ do
   else
     echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     echo "  - Invalid input."
-    echo "  - Partner name cannot be blank."
-    echo "  - Please try again or press CTRL+C to quit."
+    echo "  - Primary partner cannot be blank."
+    echo "  - Press CTRL+C to cancel and exit the script."
     echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   fi
 done
-
+echo "Primary partner: \"${partnername}\""
+echo
 
 # get Name of the Primary Partner's product
 echo
-echo "Please enter the primary partner's product name."
-read -p ">> Primary partner's product name : " response
+echo "- - - - - -"
+echo "- Enter the name of the primary partner's product."
+echo "-"
+echo "-   TIP: If the primary partner and the product"
+echo "-        share the same name, you can leave the"
+echo "-        partner product blank to avoid repetition."
+echo "-"
+echo "- - - - - -"
+echo
+read -p ">> Primary partner's product : " response
 if [ -n "$response" ]; then
   partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )"
 else
   # allow the partner product name to be left blank
   partnerprod=""
 fi
+echo "Primary partner product: \"${partnerprod}\""
+echo
 
 # get Use Case or other text
 echo
-echo "Sometimes a solution with the same components can address"
-echo "more than one use case."
-echo "If you need to distinguish this guide from an existing one,"
-echo "you can provide up to 20 characters here that will be added"
-echo "to the file names."
-echo "In most cases, you should leave this blank by just pressing ENTER."
+echo "- - - - - -"
+echo "- OPTIONAL"
+echo "-"
+echo "- If a solution can address multiple use cases,"
+echo "- it may be useful to create a separate guide to"
+echo "- address unique concerns of each use case."
+echo "- Since the product stack is insufficient to distinguish"
+echo "- each guide, some additional text can be added to the"
+echo "- file name."
+echo "-"
+echo "-   TIP: It is preferable to leave this blank."
+echo "-        If needed, use fewer than 20 characters for the"
+echo "-        additional text."
+echo "- - - - - -"
+echo
 read -p ">> Distinctive text : " response
 if [ -n "$response" ]; then
   usecase="_$( echo ${response} | tr '[:upper:]' '[:lower:]' | tr ' ' '-' )"
 else
   usecase=""
 fi
+echo "Distinctive text: \"${usecase}\""
+echo
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -251,7 +287,7 @@ documentbase="gs_${suseprods}_${partnername}${partnerprod}${usecase}"
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
-# display plan
+# display plan and get user confirmation
 ##
 
 echo
@@ -274,18 +310,12 @@ echo "  -"
 echo "  - NOTE: Several symbolic links will also be created."
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
-
-
-## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
-# confirm user is ready to proceed
-##
-
 read -p ">> Press ENTER to create document structure or CTRL+C to cancel."
 echo
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
-# setup structure, common elements
+# create structure
 ##
 
 # create primary directory if it does not already exist
@@ -300,10 +330,8 @@ else
   echo "  - 'DC-${documentbase}' could not be created in"
   echo "  - '${partnername}'."
   echo "  -"
-  echo "  - Make sure that"
-  echo "  - 'DC-${documentbase}'"
-  echo "  - does not already exist."
-  echo "  - If it does, re-run this script with different input."
+  echo "  - If 'DC-${documentbase}' already exists,"
+  echo "  - re-run this script with different input."
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo
   exit 4
@@ -351,7 +379,7 @@ fi
 ##
 echo
 echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
-echo "= Your new workspace has been set up."
+echo "= Workspace for your new guide has been set up."
 echo "="
 echo "= Access your workspace in:"
 echo "=   ${category}/start/${partnername}"
