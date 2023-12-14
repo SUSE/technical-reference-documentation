@@ -212,7 +212,7 @@ To be successful, you need a foundational understanding of Podman or Docker, Kub
 
 === Acknowledgements
 
-The author would like to acknowledge contributions to this guide by:
+The author wants to acknowledge contributions to this guide by:
 
 * {contrib1_firstname} {contrib1_surname}, {contrib1_orgname}, {contrib1_jobtitle}
 * {contrib2_firstname} {contrib2_surname}, {contrib2_orgname}, {contrib2_jobtitle}
@@ -422,7 +422,7 @@ This information can be stored in environment variables and recalled as needed, 
 Run all commands on your build host.
 ====
 
-. Log into your build host.
+. Log in to your build host.
 
 . Create the `/tmp/build-variables.sh` file.
 +
@@ -572,7 +572,7 @@ ${REGISTRY}/nvidia-sle${SLE_VERSION}sp${SLE_SP}-${DRIVER_VERSION}:${DRIVER_VERSI
 .. Watch the build output for errors, warnings, and failures.
 //
 +
-You can safely ignore errors and warnings that don't stop the build process.
+You can safely ignore errors and warnings that do not stop the build process.
 
 .. Verify that the build process finishes successfully.
 //
@@ -748,7 +748,7 @@ The kubeconfig file gives the rights (in many cases administrator level) to make
 
 . Before starting your deployment, make sure that the {nvidia-org} kernel modules are not loaded on any of the Kubernetes worker nodes.
 
-.. Log into each node and list loaded {nvidia-org} kernel modules.
+.. Log in to each node and list loaded {nvidia-org} kernel modules.
 +
 [source, console]
 ----
@@ -774,7 +774,7 @@ If any modules fail to unload, reboot the node.
 ====
 
 
-. Log into your build host or the system you are using to manage deployment to your cluster.
+. Log in to your build host or the system you are using to manage deployment to your cluster.
 
 . Make sure your environment variables are set.
 
@@ -955,8 +955,8 @@ In this guide, you learned how to:
 
 The strategic choice of {sle-bci-full} as the foundation for this integration underscores a commitment to security and supportability.
 Organizations with exacting security requirements depend on the numerous certifications of {sles-full}, including Common Criteria, FIPS, and EAL.
-This is enhanced with the choice of a security focused Kubernetes distribution, such as {rke2-full}
-And, with SUSE's commitment to providing robust support for heterogeneous software stacks, customers are empowered with the freedom to design their IT landscapes to suit their unique challenges without compromising on security, capability, or performance.
+This is enhanced with the choice of a security focused Kubernetes distribution, such as {rke2-full}.
+With SUSE's commitment to providing robust support for heterogeneous software stacks, customers can design their IT landscapes to suit their unique challenges without compromising on security, capability, or performance.
 
 
 
