@@ -1,0 +1,114 @@
+<!-- https://tdg.docbook.org/tdg/5.2/info -->
+
+<dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+    <dm:bugtracker>
+        <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
+	<!--  <dm:product>{title}</dm:product> -->
+    </dm:bugtracker>
+</dm:docmanager>
+
+<!-- Note to author/editor
+     Attributes used here (enclosed in curly braces).
+     General variables are defined in common_docinfo_vars.adoc.
+     Variable specific to this document (such as the title) are
+     defined with the main content in the adoc file.
+     See comments below for additional options.
+-->
+
+
+<!-- document organization metadata
+     Do NOT modify this section
+     <orgname>Technical Reference Documentation</orgname>
+-->
+<meta name="series">{trd}</meta>
+<meta name="type">{type}</meta>
+
+
+<!-- document title and subtitle -->
+<title>{title}</title>
+<subtitle>{subtitle}</subtitle>
+
+<!-- document revision date -->
+<meta name="updated">{revision-date}</meta>
+
+<!-- descriptions -->
+<meta name="description" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description}</meta>
+<meta name="social-desc" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description-short}</meta>
+
+<!-- SUSE component metadata
+     Replicate and follow the pattern to list additional SUSE components.
+     Variables are defined in the adoc file.
+
+     '<productname>' references the short name of the SUSE component.
+     '<platform>' references the full/long name of the SUSE component.
+-->
+<meta name="productname">
+  <productname version="{sle-bci-version}+">{sle-bci}</productname>
+  <productname version="{sles-version}+">{sles}</productname>
+  <productname version="{rke2-version}+">{rke2}</productname>
+</meta>
+<meta name="platform">{sle-bci-full}</meta>
+<meta name="platform">{sles-full}</meta>
+<meta name="platform">{rke2-full}</meta>
+
+
+<!-- Partner metadata
+     Identify technical partners (businesses or organizations)
+     supplying components featured in the guide.
+     Replicate the pattern to identify additional partners.
+<meta name="techpartner">
+  <techpartner>{nvidia-org}</techpartner>
+</meta>
+-->
+
+
+<!-- author metadata
+     Replicate author tag structure inside this authorgroup
+     for additional authors.
+     Use editor and othercredit tag groups for additional contributors.
+     Update variables in adoc file.
+-->
+<authorgroup>
+  <author>
+    <personname>
+      <firstname>{author1_firstname}</firstname>
+      <surname>{author1_surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author1_jobtitle}</jobtitle>
+      <orgname>{author1_orgname}</orgname>
+    </affiliation>
+  </author>
+</authorgroup>
+
+<!-- cover logo images
+     Specify the image or images to use on the document cover.
+-->
+<cover role="logos">
+  <mediaobject>
+    <imageobject role="fo">
+      <imagedata fileref="suse.svg" width="5em"/>
+    </imageobject>
+    <imageobject role="html">
+      <imagedata fileref="suse.svg" width="152px"/>
+    </imageobject>
+  </mediaobject>
+</cover>
+
+<!-- brief abstract for document
+     Update with an enticing summary.
+-->
+<abstract role="executivesummary">
+  <title>Summary</title>
+  <para>{executive_summary}</para>
+</abstract>
+
+
+<!-- disclaimer
+     Do NOT edit
+-->
+<abstract>
+  <title>Disclaimer</title>
+  <para>{disclaimer}</para>
+</abstract>
+

@@ -1,0 +1,352 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// General comments
+// Keep in mind that this is a "getting started" guide and the
+//   audience that you are trying to reach.
+// Leverage ASCIIDoc features to make this document readable and usable:
+//   - Text highlights (follow SUSE style guides)
+//   - Admonitions (i.e., NOTE, TIP, IMPORTANT, CAUTION, WARNING)
+//   - Code blocks
+//   - Lists (ordered and unordered, as appropriate)
+//   - Links (to other resources)
+//   - Images
+//     - Place image files under the ./media directory tree
+//       (e.g., ./media/src/svg, ./media/src/png)
+//     - Format preference: svg > png > jpg
+//     - Consolidate images wherever possible
+//       (i.e., don't use two images when one conveys the message)
+//   - Use sections and subsections to organize and group related
+//     steps.
+// 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Document attributes and variables
+//
+// NOTES:
+// 1. Update variables below and adjust docbook file accordingly.
+// 2. Comment out any variables/attributes not used.
+// 3. Follow the pattern to include additional variables.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// organization - do NOT modify
+// -
+:trd: Technical Reference Documentation
+:type: Getting Started
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// document
+// -
+:title: Title
+:subtitle: Subtitle
+
+:product1: Primary SUSE product/platform short name (abbreviation)
+:product1_full: Primary SUSE product/platform full name
+:product1_version: Primary SUSE product/platform relevant version or versions
+:product1_url: Primary SUSE product/platform URL (without the protocol)
+:product2: Secondary product short name
+:product2_full: Secondary product full name
+:product2_url: Secondary product URL
+
+:usecase: A few words to identify high level use case (e.g., Database-as-a-Service, edge analytics in healthcare, Kubernetes-native object storage)
+
+:executive_summary: A brief statement of what this document provides (e.g., This document provides a brief introduction to implementing {usecase} with {product2_full} and {product1_full}.)
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// contributor
+// specify information about authors, editors, and others here,
+// then update docinfo file as appropriate
+// -
+:author1_firstname: first (given) name
+:author1_surname: surname
+:author1_jobtitle: job title
+:author1_orgname: organization affiliation
+//:author2_firstname: first (given) name
+//:author2_surname: surname
+//:author2_jobtitle: job title
+//:author2_orgname: organization affiliation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// miscellaneous
+// define any additional variables here for use within the document
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+= {title}: {subtitle}
+
+= Interacting with the Rancher Prime API Server Using Linux Curl Commands
+
+The Rancher Prime user interface (UI) provides a clean and intuitive experience for Kuberentes administrators, users, and developers to access an extensive array of features that are often only available to the most experienced Kubernetes experts. While the Rancher UI is excellent for common day-to-day tasks, like all graphical User interfaces, it is arguably not best suited for automating tasks at significant scale.
+
+Fortunately, every bit of the Rancher UI functionality is available through direct calls to the Rancher API server. One only needs to provide authentication and a properly formated Linux `curl` command to unlock this potential.
+
+The intended audience for this paper is anyone who is new to the art of constructing these API calls. This paper will only reference the most readily available tools. Very likely these methods will be less efficient for experienced developers, but hopefully will serve as a starting point for a much richer, wider journey in interacting with publicly available API services.
+
+Public, or simply widely accessible, APIs (Application Programming Interfaces) open up a world of retrieving data and automating tasks that simply cannot be made available through normal command line or graphical interfaces. They allow us to access and interact with a huge number of web services in ways that we can define ourselves. In this guide, we'll explore how to capture API calls, reformat them for our needs, and run them against the Rancher Prime API server using Linux `curl` commands. 
+
+== Prerequisites
+
+Before we dig into the specifics of interacting with the Rancher API server, let's ensure you have everything you need:
+
+1. *Linux Environment*: This guide assumes you have access to a Linux-based operating system. This can be a cloud instance, Virtual Machine, or even the Cygwin (https://www.cygwin.com) command line for Windows. This environment must have network to the Rancher Prime server instance.
+
+2. *Command Line*: You'll need to be able to run Linux commands. This can be on a Linux console or terminal application.
+
+3. *`curl` Installed*: Ensure the `curl` command is installed in your Linux command line environment by running `curl --version` in your console or terminal. If not, install it using your system's package manager.
+
+4. *Web Browser*: You'll need access to a web browser that has network access the Rancher Prime Server user interface.
+
+5. *Rancher Prime Server*: Ensure you have access to an instance of the Rancher Prime server. This also be installed in a data-center environment, on a cloud instance, or Virtual Machine. Often, installing the Rancher Prime server on a public cloud instance with a publicly routable IP address provides the easiest access to the server.
+
+6. *Rancher Prime Server Bearer Token*: The captured API calls will use the temporary bearer token of the Rancher user that is logged into the user interface, which will expire after a set amount of time. It is recommended to create a longer-lasting bearer token using the following instructions:
+- Log into the Rancher user interface as a user with sufficient privileges to perform the required API calls
+- Click on the User icon in the top right of the screen, then select `Account & API Keys`
+- Click `Create API Key`
+- Provide a description such as `Rancher automation through curl API calls`
+- Keep `Scope` as "No Scope"
+- Set `Automatically expire` to a value that meets your organization's security needs. For the purposes of this paper, selecting `A month from now` will work fine
+- Click `Create`
+- Be sure to keep a copy of the "Bearer Token" someplace safe for future use. It will never be viewable again in the Rancher UI
+`token-4ws6s:bmmbfk85wgw7wgbgvb8xbzdpbfprn54sz8rdjjvvj996pm8lnj2gk5`
+
+== Technical Overview
+
+`curl` is a versatile command-line tool that allows you to make HTTP requests to various web services. It supports multiple protocols and is incredibly flexible. To interact with the Rancher Prime API server using `curl`, you need to understand the basic structure of a `curl` command:
+
+[source,bash]
+----
+curl [OPTIONS] URL
+----
+
+Here's a breakdown of the key components:
+
+* `OPTIONS`: These are various flags and options that modify the behavior of the `curl` command. You can use them to set headers, handle different HTTP methods, and more.
+
+* `URL`: This is the API endpoint you want to access. It can be an HTTP or HTTPS URL specific to the Rancher Prime API server.
+
+* In the next section we will capture the curl command through the Rancher Prime server user interface. This captured command will include an extensive group of options. Many of them are specific to the web browser. They can be left in for `curl` command operations, or removed for cleaner commands.
+
+== Demonstration
+
+Let's put theory into practice by capturing the API call for creating a sample request to the Rancher Prime API server. In this example, we'll retrieve information about clusters. We'll also learn how to capture the Network XHR output using a web browser's "Inspect" function to use with `curl` commands.
+
+1. Open your web browser (Google Chrome seems to format the `curl` commands better than most browsers).
+
+2. Navigate to the Rancher Prime web interface and log in.
+
+3. Once logged in, open the browser's developer tools by pressing `F12` or right-clicking on the page and selecting "Inspect" from the context menu.
+
+4. In the developer tools (top pane), go to the "Network" tab.
+
+5. Now, perform the action in the Rancher Prime interface that triggers the API request you want to capture. For example, if you want to fetch cluster information, navigate to the clusters page within Rancher Prime.
+
+6. As you perform the action, you'll see network requests appearing in the "Network" tab. Look for the XHR (XMLHttpRequest) requests, which typically represent API calls.
+
+7. Select the XHR request that corresponds to the API call you want to capture.
+
+8. In the details pane, go to the "Headers" tab and copy the `Authorization` header value. This contains the authentication token required for the API request.
+
+image::screenshot3.png[]
+(screenshot)
+
+9. You can also copy the URL of the XHR request, which represents the API endpoint you are interacting with.
+
+Now that you have captured the necessary information, you can use it with `curl` to replicate the API request in the terminal:
+
+[source,bash]
+----
+curl -H "Authorization: Bearer <YOUR_AUTH_TOKEN>" "<API_ENDPOINT_URL>"
+----
+
+Replace `<YOUR_AUTH_TOKEN>` with the copied authorization token and `<API_ENDPOINT_URL>` with the captured API endpoint URL.
+
+image::screenshot4.png[]
+(screenshot)
+
+== Summary
+
+Congratulations! You've learned how to capture the Network XHR output using a web browser's "Inspect" function and use it with `curl` commands to interact with the Rancher Prime API server. This approach allows you to replicate and automate interactions with the API, making it easier to integrate Rancher Prime with other tools and systems.
+
+Remember to keep your authentication tokens secure and follow best practices when working with APIs. Happy API exploration on Rancher Prime!
+
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a brief statement (1-4 sentences) of the purpose of the guide.
+// This is could be the same as the executive summary.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+=== Motivation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a motivation for the document in 2-4 sentences to identify:
+//   - what the document is about
+//   - why it may be of interest to the reader (e.g., a use case)
+//   - what products are being highlighted
+// Include an approved SUSE | Partner logo lock-up if possible
+// Include any additional, relevant details
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+=== Scope
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Specify what this guide covers in no more than 2 sentences.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This guide will help you take the first steps to ...
+
+
+=== Audience
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify for whom this document is intended, perhaps with:
+//   - topics of interests (e.g., machine learning, security, etc.)
+//   - job roles (e.g., developer, administrator, platform architect, etc.)
+//   - required skills
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This document is intended for ...
+
+
+== Prerequisites
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify minimum requirements (prerequisites) the reader
+// would need in order to follow the steps of this guide.
+// - Link to existing resources whenever possible.
+// - Keep this section brief but elaborate as needed.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+== Technical overview
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a technical overview of the solution.
+// - Identify components.
+// - Describe how the components fit together.
+//   Leverage diagrams as appropriate, including (but not limited to):
+//   - component architecture
+//   - data flow diagram
+//   - workflow diagram
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+== Installation
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Detail the steps of the installation procedure.
+// The reader should be able to copy and paste commands to
+// a local environment or follow along locally with screenshots.
+// Include one or more verification steps to validate installation.
+//
+// Leverage:
+// - Ordered lists
+// - Code blocks
+// - Screenshots
+// - Admonitions
+//
+// If multiple installation methods are to be detailed, then
+// - Create a summary list here
+// - Detail each method in its own subsection.
+//
+// NOTE: For solutions involving SUSE Rancher, it is preferred
+//       to detail two installation methods:
+//       - Through the Rancher Apps Catalog with appropriate
+//         screenshots and SUSE branding.
+//       - A more manual approach (e.g., on the command-line).
+//
+// Complex configuration procedures may be broken out into one or more
+// Configuration sections.
+// These may be subsections of Installation or separate sections at
+// the same level as Installation.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+== Demonstration
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Illustrate functionality with a demonstration.
+// Begin with a description or outline of the demonstration.
+// Provide clear steps (in ordered lists) for the reader to follow.
+// Typical demonstration flow is:
+// 1. Prepare the environment for the demonstration.
+//    This should be minimal, such as downloading some data to use.
+//    If this requires more than a couple steps, consider putting it
+//    in a subsection.
+// 2. Perform the demonstration.
+//    Be careful not to overuse screenshots.
+// 3. Verify.
+//    This may be interwoven into performing the demonstration.
+//
+// As with Installation, leverage ordered lists, code blocks,
+// admonitions, and screenshots.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+== Summary
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize:
+// - Motivation (1 sentence)
+// - What was covered (1-2 sentences)
+// - Next steps (unordered list of 2-4 further learning resources)
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+In this guide, you learned ...
+
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
