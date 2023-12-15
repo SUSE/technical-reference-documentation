@@ -565,7 +565,8 @@ If providing a series of element selections, separate each element with the grea
 
 === Links
 
-Create links (or hyperlinks) to other addressable resources in AsciiDoc.
+AsciiDoc hyperlinks, allowing you to provide direct links to external, addressable resources.
+
 A link consists of two parts:
 
 target::
@@ -577,8 +578,9 @@ This is the text you wish the reader to see (typically in place of the URI) and 
 
 The AsciiDoc processor detects common URL protocols, including HTTP, HTTPS, FTP, IRC, and MAILTO.
 That is, if you include a URL (such as https://documentation.suse.com/) in your text, it will be rendered as a link with the URL itself as the link text.
+However, the preference is to use custom link text in place of the URL.
 
-To use a custom link text, append it to the URL as an attribute.
+To use a custom link text, append it to the URL enclosed in square brackets (`[` and `]`).
 That is,
 
 [source, asciidoc]
@@ -588,7 +590,8 @@ That is,
 
 ....
 
-For example:
+
+Consider this example:
 
 [source, asciidoc]
 ....
@@ -597,6 +600,10 @@ For example:
 
 ....
 
+When rendered, it appears as:
+====
+Visit https://documentation.suse.com/[SUSE Documentation] to continue your learning journey.
+====
 
 
 === Images
@@ -649,5 +656,21 @@ Thus, to display the image, `media/src/svg/my-tuxy-architecture.svg` at 75 perce
  image::my-tuxy-architecture.svg[Tuxy Architecture, scaledwidth="75%", align="center"]
 
 ....
+
+
+=== Blocks and continuations
+
+Block elements (or blocks) are discrete chunks of content that form the basic structure of an AsciiDoc document.
+An obvious example of a block element is a source code block.
+Other examples include paragraphs, lists, image macros, tables, and sections.
+The document itself is even considered a block.
+
+Blocks are defined using some form of line-oriented syntax.
+Paragraphs, for example, are a contiguous set of lines of text.
+Code blocks are enclosed in matching delimiter lines (typically, four hyphens).
+List items are preceded by a prefix character (such as an asterisk or period) and continue until a blank line is reached.
+
+
+
 
 
