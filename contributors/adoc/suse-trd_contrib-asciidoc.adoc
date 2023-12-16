@@ -660,17 +660,78 @@ Thus, to display the image, `media/src/svg/my-tuxy-architecture.svg` at 75 perce
 
 === Blocks and continuations
 
-Block elements (or blocks) are discrete chunks of content that form the basic structure of an AsciiDoc document.
-An obvious example of a block element is a source code block.
-Other examples include paragraphs, lists, image macros, tables, and sections.
-The document itself is even considered a block.
+Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of an AsciiDoc document.
 
-Blocks are defined using some form of line-oriented syntax.
-Paragraphs, for example, are a contiguous set of lines of text.
-Code blocks are enclosed in matching delimiter lines (typically, four hyphens).
-List items are preceded by a prefix character (such as an asterisk or period) and continue until a blank line is reached.
+The most common type of block is a paragraph, which is a contiguous set of lines of text, bounded by one or more blank lines.
+Sections, lists, and tables are also types of blocks.
+And, obviously, block image macros, listing blocks, code blocks, and admonitions are as well.
 
+[TIP]
+====
+Blocks should always be bounded by an empty line (or document boundary), except when "attached" using list continuation.
+====
 
+{asciidoc-docs}lists/continuation/#list-continuation[List continuation] (explicitly denoted by a plus symbol (`+`) by itself on the line between two blocks) can be used to join two adjacent blocks together.
+The most common use for this is to allow a list item to contain one or more blocks, ensuring alignment of elements.
 
+Consider the example AsciiDoc code below.
 
+[source, asciidoc]
+....
 
+ . Verify that `kernel-default` has been installed.
+ +
+ [source, console]
+ ----
+ sudo zypper se kernel-default
+ ----
+ +
+ [IMPORTANT]
+ ====
+ After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
+ ====
+
+ . Reboot each node to enable the `kernel-default` kernel.
+
+ [TIP]
+ ====
+ Learn more about the `zypper` command:
+
+ [source, console]
+ ----
+ man zypper
+ ----
+ ====
+
+....
+
+Rendered, this code looks like:
+
+. Verify that `kernel-default` has been installed.
++
+[source, console]
+----
+sudo zypper se kernel-default
+----
++
+[IMPORTANT]
+====
+After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
+====
+
+ . Reboot each node to enable the `kernel-default` kernel.
+
+[TIP]
+====
+Learn more about the `zypper` command:
+
+[source, console]
+----
+man zypper
+----
+====
+
+Notice that the code block and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
+As a bonus, there is a source code block inside and properly aligned with `TIP` admonition.
+
+By understanding blocks and continuation, you can create complex and beautifully rendered documents.
