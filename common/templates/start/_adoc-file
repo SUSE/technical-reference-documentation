@@ -35,6 +35,7 @@ include::./common_docinfo_vars.adoc[]
 // DOCUMENT REVISION DATE
 //-
 :revision-date: YYYY-MM-DD
+:docdate: {revision-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -59,8 +60,7 @@ include::./common_docinfo_vars.adoc[]
 //   version upgrades, URL changes, etc.
 //
 //   Variable names follow a simple pattern:
-//   - for SUSE components: scompX[-MODIFIER]
-//   - for partner/project components: pcompX[-MODIFIER]
+//   - compX[-MODIFIER]
 //   where:
 //   - X is an integer starting from 1 for the primary component,
 //     2 for a secondary component, and so on.
@@ -80,24 +80,20 @@ include::./common_docinfo_vars.adoc[]
 //   You can create additional modifiers as needed.
 //  
 // -
-// SUSE Components
-// -
-:scomp1-provider: SUSE
-:scomp1: SUSE component 1 - short name
-:scomp1-full: SUSE component 1 - long name
-:scomp1-version: SUSE component 1 - relevant versions
-:scomp1-website: SUSE component 1 - product website URL
-:scomp1-docs: SUSE component 1 - product documentation URL
 
-// -
-// Partner/Project Components
-// -
-:pcomp1-provider: Partner/Project component 1 - provider name
-:pcomp1: Partner/Project component 1 - short name
-:pcomp1-full: Partner/Project component 1 - full name
-:pcomp1-version: Partner/Project component 1 - relevant versions
-:pcomp1-website: Partner/Project component 1 - product website URL
-:pcomp1-docs: Partner/Project component 1 - product documentation URL
+:comp1-provider: SUSE
+:comp1: component 1 short name
+:comp1-full: component 1 long name
+:comp1-version: component 1 relevant versions
+:comp1-website: component 1 product website URL
+:comp1-docs: component 1 product documentation URL
+
+:comp2-provider: component 2 provider name
+:comp2: component 2 short name
+:comp2-full: component 2 full name
+:comp2-version: component 2 relevant versions
+:comp2-website: component  product website URL
+:comp2-docs: component 2 product documentation URL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -225,94 +221,42 @@ Any acknowledgements you would like to make
 // Identify minimum requirements (prerequisites) the reader
 // would need in order to follow the steps of this guide.
 // - Use an unordered list.
+// - Use proper product names.
+// - Identify product versions.
 // - Link to existing resources whenever possible.
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-To complete the steps illustrated in this guide, you need the following resources:
-
-* Prerequisite 1
-
-* Prerequisite 2
 
 
 
-
-== Overview
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide an overview of the solution and the processes detailed
-// in this guide.
-// - Identify components
-// - Describe how the components fit together
-// - Leverage diagrams as appropriate, including (but not limited to):
-//   - component architecture
-//   - data flow diagram
-//   - workflow diagram
-// - Summarize the major steps the reader will perform
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-An overview of this guide
-
-
-
-
-== Installation
-
+== Procedure
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Detail the steps of the installation procedure.
-// - The reader should be able to copy and paste commands to
-//   a local environment or follow along locally with screenshots.
-// - Be sure tp include verifications that the reader can use to
-//   validate that major steps were performed correctly.
+// Replace 'Procedure' with one or more appropriate sections, such as:
+// - 'Setting up the environment'
+// - 'Installing the components'
+// - 'Configuring and tuning'
+// - 'Validating the deployment'
+// You may find it useful to organize complex procedures into
+// subsections.
 //
-// - Make use of:
-//   - Ordered lists
-//   - Code blocks
-//   - Screenshots
-//   - Admonitions
+// - As appropriate, make use of:
+//   - Ordered lists for steps
+//   - Code blocks for source code and console commands
+//     Readers should be able to use copy and paste to leverage
+//     commands and code in their environments
+//   - Listing blocks for output
+//   - Screenshots and diagrams
+//   - Admonitions (notes, tips, warnings, etc.)
 //
-// - If multiple installation methods are to be detailed, then
-//   - Create a summary list here.
-//   - Detail each method in a subsection.
-//
-//   NOTE: For solutions involving SUSE Rancher, it is preferred
-//         to highlight installation through the Rancher Apps Catalog
-//         with appropriate screenshots and SUSE branding.
-//         Alternatively or additionally, installation via the
-//         command line can be documented.
-//
-// - Complex installations may be broken into one or more subsections.
-//
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Installation procedures
-
-
-
-
-== Demonstration
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Illustrate functionality of the solution for a use case.
-//
-// NOTE: This demonstration text could be used to script a
-//       demonstration video.
-//
-// - Typical demonstration flow is:
-//   1. Outline the demonstration.
-//   2. Prepare the environment.
-//      This should be minimal, such as downloading some data to use.
-//   3. Perform the demonstration.
-//   4. Do not overuse screenshots.
-//   5. Clean up the environment.
-//
-// - Make use of ordered lists, code blocks, admonitions, and screenshots.
+// NOTE: Always include some validation or verification in your guide.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-Demonstration or validation procedures
+
+
 
 
 
@@ -320,12 +264,14 @@ Demonstration or validation procedures
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Summarize:
-// - Motivation for the guide (1 sentence)
-// - What was covered (1-2 sentences)
-// - Next steps (unordered list of 2-4 further learning resources)
+// - Solution description
+// - Motivation for the guide
+// - What was done
+// - Suggested next steps for the learning journey
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Summary of this guide
+
+
 
 
 

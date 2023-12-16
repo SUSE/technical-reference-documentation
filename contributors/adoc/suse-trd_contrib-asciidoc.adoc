@@ -47,7 +47,7 @@ The following sections address specific aspects of document structure and text s
 === Document attributes and variables
 
 
-https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes/[Document attributes] are name-value pairs that you can use to configure the AsciiDoc processor, define document metadata, and create reusable content.
+{asciidoc-docs}attributes/document-attributes/[Document attributes] are name-value pairs that you can use to configure the AsciiDoc processor, define document metadata, and create reusable content.
 Think of document attributes as document-scoped variables.
 Document attributes can be defined anywhere in your document and used from that point forward.
 
@@ -60,20 +60,17 @@ The definition of a document attribute takes the form:
  :name-of-an-attribute: value of the attribute
 ----
 
+Once defined, you can reference your document attributes in your text by surrounding the attribute name with curly braces ( `{` and `}` ).
+
 For example:
 [source, asciidoc]
 ----
- :title: Edge Analytics in Finance
- :product1: Rancher
-----
-
-You reference a document attribute in your text by its name surrounded in curly braces ( `{` and `}` ).
-For example:
-[source, asciidoc]
-----
-
- This document provides guidance for deploying {product2} on {product1} to enable {usecase}.
-
+ :comp1-full: Rancher Prime by SUSE
+ :comp1-website: https://www.suse.com/solutions/enterprise-container-management/#rancher-product
+ :comp2-full: Kubeflow
+ :kubeflow_website: https://www.kubeflow.org/
+ :title: Deploy {comp2-full} with {comp1-full}
+ :executive-summary: Learn how to deploy {comp2-website}[{comp2-full}] to a cluster managed by {comp1-website}[comp1-full}.
 ----
 
 
@@ -145,7 +142,7 @@ This is short text, prefixed by a section marker that indicates the section leve
 Section markers are two or more equal signs ( `==`, `===`, and so on).
 
 [source, asciidoc]
-....
+----
 
  == Section title level 1
 
@@ -153,12 +150,23 @@ Section markers are two or more equal signs ( `==`, `===`, and so on).
 
  ==== Section title level 3
 
-....
+----
 
 
 Guidance for section titles:
 
 * Choose a section title that clearly identifies what contents to expect.
+
+* If the section focuses on actions, begin wtih a verbal noun (gerund) or an imperative verb.
++
+For example:
++
+[source, asciidoc]
+----
+ == Preparing the cluster
+
+ == Prepare the cluster
+----
 
 * Use sentence case.
 //
@@ -174,7 +182,6 @@ That is, only the first word and proper nouns should be capitalized.
 +
 This means that a subsection title should never immediately follow section title without some intervening text.
 
-* Start instruction section titles with an imperative verb or a verbal noun (gerund).
 
 Consider this example:
 
@@ -222,7 +229,7 @@ is a series of items in no particular order and is sometimes called a bulleted l
 * Avoid creating more than three nest levels.
 +
 [source, asciidoc]
-....
+----
 
  * Security and compliance
 
@@ -238,7 +245,7 @@ is a series of items in no particular order and is sometimes called a bulleted l
 
  ** Broad hardware architecture support
 
-....
+----
 
 
 Ordered list::
@@ -252,7 +259,7 @@ The rendering engine will replace the period with an appropriate number or lette
 * Avoid creating more than three levels.
 +
 [source, asciidoc]
-....
+----
 
  . Verify target hardware support.
 
@@ -272,7 +279,7 @@ The rendering engine will replace the period with an appropriate number or lette
 
  . Reboot into new system.
 
-....
+----
 
 
 Description list::
@@ -370,9 +377,12 @@ The block admonition style provides more flexibility for the content, as illustr
 
 === Source code, commands, and output
 
-Content in listing blocks are rendered in a fixed-width font, making them ideal for source code, commands, and console output where spacing can be important.
+Technical guides often need to present source code, commands, and other console output.
+AsciiDoc provides listing blocks for these purposes, in which text is rendered with a fixed-width font and other features to present this special content.
 
-A basic listing block has the form:
+The basic listing block presents text verbatim.
+That is, text is rendered just as it is entered in terms of line and character spacing.
+The form of a listing block is:
 
 [source, asciidoc]
 ....
@@ -387,8 +397,7 @@ A basic listing block has the form:
 ....
 
 
-You can include a source code listing in your document with a source code block.
-This special type of listing block enables syntax highlighting, using color and text styles to highlight code structures (such as keyword, variables, constants, comments, and so on).
+A source code block is a special version of a listing block that enables syntax highlighting, using color and text styles to distinguish code structures (such as keywords, variables, constants, comments, and so on).
 
 To illustrate, review the following Python code snippet.
 
@@ -407,10 +416,9 @@ To illustrate, review the following Python code snippet.
  
  plt.plot(xpoints, ypoints)
  plt.show()
- ----  <2>
+ ----
 
 ....
-
 <1> `[source, python]` identifies this as a source code block and the source language as Python.
 Some common source language identifiers are: bash, c, html, python, sql, yaml, and xml.
 
@@ -422,8 +430,7 @@ As with ordinary listing blocks, line spacing is preserved.
 ====
 
 
-Commands entered on the command line are also handled with source code blocks.
-For commands, use `console` as the source language identifier.
+Commands entered on the command line are like source code, so they are handled with source code blocks but with `console` as the source language identifier.
 For example:
 
 [source, asciidoc]
@@ -436,7 +443,8 @@ For example:
 
 ....
 
-You can also reference a short command inline by delimiting it with the grave accent or back tick ( ``` ):
+
+Commands can also be included inline with other text by using grave accents (or back ticks) to enclose the command, as in:
 
 [source, asciidoc]
 ....
@@ -446,9 +454,77 @@ You can also reference a short command inline by delimiting it with the grave ac
 ....
 
 
-For the output of a command, use a simple listing block for output.
-This will render with a fixed-width font and preserve line spacing.
-For example:
+A helpful feature of AsciiDoc is that document attributes can be referenced inside your source code blocks.
+You do this with the `subs` option.
+Consider this example:
+
+[source, asciidoc]
+....
+
+ // attribute in your document
+ :myPath: /home/geeko/myproject/
+
+ // attribute referenced in source code block
+ [source, console, subs="attributes+"]
+ ----
+
+  tree {myPath}
+
+ ----
+
+....
+
+:myPath: /home/geeko/myproject/
+This renders as:
+[listing, subs="attributes+"]
+....
+tree {myPath}
+....
+:!myPath:
+
+[TIP]
+====
+Attribute substitution can be tricky.
+The AsciiDoc rendering engine has no way of knowing if curly braces enclosing text in your code should be treated literally or substituted with the value of a document attribute.
+
+In Bash, for instance, it is common to reference variables as `$\{myVariable\}`.
+It may be important for `$\{myVariable\}` to appear in your code as-is.
+However, if attribute substitutions are enabled, the rendering engine would try to find an attribute, named `myVariable`, and substitute its value.
+If there is no such attribute, the render would fail.
+
+One way to solve this is to not use the `subs="attributes+"` option.
+But, if you need some substitutions in your code block and not others, you can use {asciidoc-docs}subs/prevent/[escaping] to let the rendering engine know your intentions.
+Simply place a backslash (`\`) just before each of the curly braces.
+This lets the rendering engine know to treat the curly braces as literal characters and not as indication of an attribute reference.
+
+Here is an example:
+
+[source, asciidoc]
+....
+
+ :myPrompt: geeko@mangrove.lane:~/myproject:
+
+ [source, console, subs="attributes+"]
+ ----
+
+ {myPrompt} echo "My stored value is $\{myVariable\}."
+
+ ----
+
+....
+
+With `myPrompt` defined in your document, this code block would render as:
+
+:myPrompt: geeko@mangrove.lane:~/myproject:
+[source, console, subs="attributes+"]
+----
+{myPrompt} echo "My stored value is $\{myVariable\}."
+----
+:!myPrompt:
+
+====
+
+For command output, use a simple listing block.
 
 [source, asciidoc]
 ....
@@ -489,7 +565,8 @@ If providing a series of element selections, separate each element with the grea
 
 === Links
 
-Create links (or hyperlinks) to other addressable resources in AsciiDoc.
+AsciiDoc hyperlinks, allowing you to provide direct links to external, addressable resources.
+
 A link consists of two parts:
 
 target::
@@ -501,8 +578,9 @@ This is the text you wish the reader to see (typically in place of the URI) and 
 
 The AsciiDoc processor detects common URL protocols, including HTTP, HTTPS, FTP, IRC, and MAILTO.
 That is, if you include a URL (such as https://documentation.suse.com/) in your text, it will be rendered as a link with the URL itself as the link text.
+However, the preference is to use custom link text in place of the URL.
 
-To use a custom link text, append it to the URL as an attribute.
+To use a custom link text, append it to the URL enclosed in square brackets (`[` and `]`).
 That is,
 
 [source, asciidoc]
@@ -512,7 +590,8 @@ That is,
 
 ....
 
-For example:
+
+Consider this example:
 
 [source, asciidoc]
 ....
@@ -521,6 +600,10 @@ For example:
 
 ....
 
+When rendered, it appears as:
+====
+Visit https://documentation.suse.com/[SUSE Documentation] to continue your learning journey.
+====
 
 
 === Images
@@ -575,3 +658,80 @@ Thus, to display the image, `media/src/svg/my-tuxy-architecture.svg` at 75 perce
 ....
 
 
+=== Blocks and continuations
+
+Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of an AsciiDoc document.
+
+The most common type of block is a paragraph, which is a contiguous set of lines of text, bounded by one or more blank lines.
+Sections, lists, and tables are also types of blocks.
+And, obviously, block image macros, listing blocks, code blocks, and admonitions are as well.
+
+[TIP]
+====
+Blocks should always be bounded by an empty line (or document boundary), except when "attached" using list continuation.
+====
+
+{asciidoc-docs}lists/continuation/#list-continuation[List continuation] (explicitly denoted by a plus symbol (`+`) by itself on the line between two blocks) can be used to join two adjacent blocks together.
+The most common use for this is to allow a list item to contain one or more blocks, ensuring alignment of elements.
+
+Consider the example AsciiDoc code below.
+
+[source, asciidoc]
+....
+
+ . Verify that `kernel-default` has been installed.
+ +
+ [source, console]
+ ----
+ sudo zypper se kernel-default
+ ----
+ +
+ [IMPORTANT]
+ ====
+ After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
+ ====
+
+ . Reboot each node to enable the `kernel-default` kernel.
+
+ [TIP]
+ ====
+ Learn more about the `zypper` command:
+
+ [source, console]
+ ----
+ man zypper
+ ----
+ ====
+
+....
+
+Rendered, this code looks like:
+
+. Verify that `kernel-default` has been installed.
++
+[source, console]
+----
+sudo zypper se kernel-default
+----
++
+[IMPORTANT]
+====
+After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
+====
+
+ . Reboot each node to enable the `kernel-default` kernel.
+
+[TIP]
+====
+Learn more about the `zypper` command:
+
+[source, console]
+----
+man zypper
+----
+====
+
+Notice that the code block and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
+As a bonus, there is a source code block inside and properly aligned with `TIP` admonition.
+
+By understanding blocks and continuation, you can create complex and beautifully rendered documents.

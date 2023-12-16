@@ -7,6 +7,46 @@
 ##
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+# global variables
+##
+SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slemicro', 'slelp', 'slert', 'sleha', 'slebci', 'suma', 'rancher', 'neuvector', 'harvester', 'rke', 'rke2', 'k3s', 'longhorn')
+
+
+
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+# Functions
+##
+
+suselist() {
+# display list of SUSE products and abbreviations
+
+echo
+echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "Abbrev.   | Product"
+echo "- - - - - | - - - -- - - - - - - - - - - - - - - - - - - - - - -"
+echo "sles      | SUSE Linux Enterprise Server"
+echo "slessap   | SUSE Linux Enterprise Server for SAP Applications"
+echo "slehpc    | SUSE Linux Enterprise High Performance Computing"
+echo "slemicro  | SUSE Linux Enterprise Micro"
+echo "slelp     | SUSE Linux Enterprise Live Patching"
+echo "slert     | SUSE Linux Enterprise Real Time"
+echo "sleha     | SUSE Linux Enterprise for High Availability Extension"
+echo "slebci    | SUSE Linux Enterprise Base Container Images"
+echo "suma      | SUSE Manager"
+echo "rancher   | Rancher Prime by SUSE"
+echo "neuvector | NeuVector Prime by SUSE"
+echo "harvester | Harvester by SUSE"
+echo "rke       | Rancher Kubernetes Engine"
+echo "rke2      | Rancher Kubernetes Engine 2"
+echo "k3s       | K3s by SUSE"
+echo "longhorn  | Longhorn by SUSE"
+echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo
+
+}
+
+
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # Display banner
 ##
 echo
@@ -27,7 +67,7 @@ echo "  -    'linux/start' directory (as appropriate)"
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
 echo "Are you ready to proceed?"
-read -p "Press ENTER to continue or CTRL-C to cancel."
+read -p "Press ENTER to continue or CTRL+C to cancel."
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -96,44 +136,86 @@ echo
 
 
 # get primary SUSE product
-echo "Please enter the primary SUSE product name"
-echo "(e.g., 'rancher', 'neuvector', 'sles', 'slemicro', 'suma', etc.)"
-while read -p ">> Primary SUSE product name : " response
+suseprods=""
+echo "- - - - - -"
+echo "- Identify the featured SUSE products by entering"
+echo "- one product abbreviation at a time."
+echo "- When done, press ENTER with no value."
+echo "-"
+echo "- TIP: Start at the top of the software stack."
+echo "-      For example: 'rancher' then 'rke2' then 'sles'"
+echo "-"
+echo "- Additional options:"
+echo "-   'list': display accepted abbreviations."
+echo "-   'clear': clear the product list and start over."
+echo "-   Press CTRL+C to cancel and exit the script."
+echo "- - - - - -"
+echo
+while read -p ">> SUSE product : " response
 do
-  suseprod=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
-  # validate SUSE product
-  case $suseprod in
-    'sles' | 'slessap' | 'slehpc' | 'slemicro' | 'slelp' | 'sleha' | 'suma')
+  resp=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
+  # validate input
+  case $resp in
+    '')
+      echo
+      echo "Featured SUSE products: \"${suseprods}\""
+      echo
       break
     ;;
-    'rancher' | 'rke' | 'rke2' | 'k3s' | 'longhorn' | 'neuvector' | 'harvester')
+    'list')
+      suselist
+      echo
+      echo "Featured SUSE products: \"${suseprods}\""
+      echo
+    ;;
+    '')
+      # no more products entered
+      echo
+      echo "Featured SUSE products: \"${suseprods}\""
+      echo
       break
     ;;
-    'q' | 'quit')
-      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-      echo "  - Quitting ... nothing done."
-      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-      exit 3
+    'clear')
+      # clear the product list to start over
+      suseprods=""
+      echo
+      echo "Featured SUSE products: \"${suseprods}\""
+      echo
     ;;
     *)
-      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-      echo "  - Invalid input."
-      echo "  - Valid options include:"
-      echo "  -   sles, slehpc, slemicro, suma,"
-      echo "  -   rancher, rke2, rke, k3s, longhorn,"
-      echo "  -   neuvector, harvester"
-      echo "  - Please try again or press CTRL-C to quit."
-      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+      if [[ "${SUSEPRODUCTS[*]}" =~ "${resp}" ]]; then
+	if [[ "${suseprods}" = "" ]]; then
+	  suseprods="${resp}"
+	else
+          suseprods="${suseprods}-${resp}"
+	fi
+      else
+        echo
+        echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+        echo "  - Invalid input."
+	echo "  - Enter a SUSE product abbreviation, 'list', or leave blank."
+	echo "  - Press CTRL+C to cancel and exit the script."
+        echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+	echo
+      fi
+      echo
+      echo "Featured SUSE products: \"${suseprods}\""
+      echo
     ;;
   esac
 done
 
 # get Name of the Primary Partner
 echo
-echo "Please enter the name of the primary partner."
-echo "Multiple partners and partner products can be featured"
-echo "in a guide, but one should be selected as primary."
-while read -p ">> Name of primary partner or project : " response
+echo "- - - - - -"
+echo "- Enter the name of the primary partner."
+echo "-"
+echo "- TIP: Select one partner whose product is at the top"
+echo "-      of the software stack and provides the key"
+echo "-      functionality for the featured use case."
+echo "- - - - - -"
+echo
+while read -p ">> Primary partner : " response
 do
   partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
   if [ -n "$partnername" ]; then
@@ -141,48 +223,71 @@ do
   else
     echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     echo "  - Invalid input."
-    echo "  - Partner name cannot be blank."
-    echo "  - Please try again or press CTRL-C to quit."
+    echo "  - Primary partner cannot be blank."
+    echo "  - Press CTRL+C to cancel and exit the script."
     echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   fi
 done
-
+echo "Primary partner: \"${partnername}\""
+echo
 
 # get Name of the Primary Partner's product
-echo "Please enter the primary partner's product name."
-read -p ">> Primary partner's product name : " response
+echo
+echo "- - - - - -"
+echo "- Enter the name of the primary partner's product."
+echo "-"
+echo "-   TIP: If the primary partner and the product"
+echo "-        share the same name, you can leave the"
+echo "-        partner product blank to avoid repetition."
+echo "-"
+echo "- - - - - -"
+echo
+read -p ">> Primary partner's product : " response
 if [ -n "$response" ]; then
   partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )"
 else
   # allow the partner product name to be left blank
   partnerprod=""
 fi
+echo "Primary partner product: \"${partnerprod}\""
+echo
 
 # get Use Case or other text
 echo
-echo "Sometimes a solution with the same components can address"
-echo "more than one use case."
-echo "If you need to distinguish this guide from an existing one,"
-echo "you can provide up to 20 characters here that will be added"
-echo "to the file names."
-echo "In most cases, you should leave this blank by just pressing ENTER."
+echo "- - - - - -"
+echo "- OPTIONAL"
+echo "-"
+echo "- If a solution can address multiple use cases,"
+echo "- it may be useful to create a separate guide to"
+echo "- address unique concerns of each use case."
+echo "- Since the product stack is insufficient to distinguish"
+echo "- each guide, some additional text can be added to the"
+echo "- file name."
+echo "-"
+echo "-   TIP: It is preferable to leave this blank."
+echo "-        If needed, use fewer than 20 characters for the"
+echo "-        additional text."
+echo "- - - - - -"
+echo
 read -p ">> Distinctive text : " response
 if [ -n "$response" ]; then
   usecase="_$( echo ${response} | tr '[:upper:]' '[:lower:]' | tr ' ' '-' )"
 else
   usecase=""
 fi
+echo "Distinctive text: \"${usecase}\""
+echo
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # build base filename
 ##
 
-documentbase="gs_${suseprod}_${partnername}${partnerprod}${usecase}"
+documentbase="gs_${suseprods}_${partnername}${partnerprod}${usecase}"
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
-# display plan
+# display plan and get user confirmation
 ##
 
 echo
@@ -205,18 +310,12 @@ echo "  -"
 echo "  - NOTE: Several symbolic links will also be created."
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
-
-
-## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
-# confirm user is ready to proceed
-##
-
-read -p ">> Press ENTER to create document structure or CTRL-C to cancel."
+read -p ">> Press ENTER to create document structure or CTRL+C to cancel."
 echo
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
-# setup structure, common elements
+# create structure
 ##
 
 # create primary directory if it does not already exist
@@ -231,10 +330,8 @@ else
   echo "  - 'DC-${documentbase}' could not be created in"
   echo "  - '${partnername}'."
   echo "  -"
-  echo "  - Make sure that"
-  echo "  - 'DC-${documentbase}'"
-  echo "  - does not already exist."
-  echo "  - If it does, re-run this script with different input."
+  echo "  - If 'DC-${documentbase}' already exists,"
+  echo "  - re-run this script with different input."
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo
   exit 4
@@ -282,7 +379,7 @@ fi
 ##
 echo
 echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
-echo "= Your new workspace has been set up."
+echo "= Workspace for your new guide has been set up."
 echo "="
 echo "= Access your workspace in:"
 echo "=   ${category}/start/${partnername}"
@@ -297,6 +394,7 @@ echo
 # - Terry Smith <terry.smith@suse.com>
 # - Bryan Gartner <bryan.gartner@suse.com>
 # Revisions:
+# - 20231214: Updated SUSE product list, added support for multiple products
 # - 20230907: Simplified paths; added more checks; clarified prompts
 # - 20221213: Removed underscore prefix from generated DC file
 # - 20220824: Migrated to common/bin; implemented run location test
