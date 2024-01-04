@@ -41,6 +41,13 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION DATE
+//-
+:revision-date: 2024-01-03
+:docdate: {revision-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document
 // -
 :title: Confidential Computing with SUSE Linux Enterprise Base Container Images Using the IBM Hyper Protect Platform
@@ -50,10 +57,12 @@ include::./common_docinfo_vars.adoc[]
 :product1: SLE BCI
 :product1_full: SUSE Linux Enterprise Base Container Images
 :product1_url: https://www.suse.com/products/base-container-images/
+:product1_version: 15
 :product2: SLES
 :product2_full: SUSE Linux Enterprise Server on IBM Z and LinuxONE
 :product2_version: 15 SP5
 :product2_url: https://www.suse.com/products/systemz/
+:techpartner1: IBM
 :hpvs: IBM HPVS
 :hpvs_full: IBM Hyper Protect Virtual Servers
 :hpvs_url: https://www.ibm.com/products/hyper-protect-virtual-servers 
@@ -64,7 +73,10 @@ include::./common_docinfo_vars.adoc[]
 
 :usecase:  confidential computing with containers
 
+
 :executive_summary: Deploy a workload built with {product1_full} into a hybrid confidential computing environment using {hpvs_full}.
+:description: {executive_summary}
+:description-short: Confidential computing with {product1} and {hpvs}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -1002,7 +1014,7 @@ Access to a Linux on s390x instance is required to build the PayNow Node.js appl
 These steps will use `git` and `podman` to build and publish the OCI-compliant PayNow Node.js application container image.
 An option is to use an IBM Cloud virtual server instance (VSI) for VPC with a SUSE Linux Enterprise Server https://cloud.ibm.com/docs/vpc?topic=vpc-vsabout-images#vs-s390x-supported-os[s390x stock virtual server image] but any Linux distro on s390x with `git` and `podman` is sufficient.
 
-The https://registry.suse.com/bci/nodejs18/index.html[SLE BCI Node.js 18 Container Image] will be the base for the PayNow Node.js application container image.
+The https://registry.suse.com/categories/bci-lang[SLE BCI Language Container Image] for Node.js is used as base for the PayNow Node.js application container image.
 
 . Clone the Pay Now Web site sources.
 +
