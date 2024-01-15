@@ -28,14 +28,32 @@
 <title>{title}</title>
 <subtitle>{subtitle}</subtitle>
 
+<!-- document revision date -->
+<meta name="updated">{revision-date}</meta>
+
+<!-- descriptions -->
+<meta name="description" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description}</meta>
+<meta name="social-desc" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description-short}</meta>
+
 
 <!-- platform and product metadata
      Replicate for additional platforms.
      Define platform2, etc. in adoc file.
 -->
-<productname>{product1}</productname>
+<meta name="productname">
+	<productname version="{product1_version}">{product1}</productname>
+</meta>
 <meta name="platform">{product1_full}</meta>
 <meta name="platform">{product2_full}</meta>
+
+<!-- Partner metadata
+     Identify technical partners (businesses or organizations)
+     supplying components featured in the guide.
+     Replicate the pattern to identify additional partners.
+-->
+<meta name="techpartner">
+  <phrase>{techpartner1}</phrase>
+</meta>
 
 <!-- author metadata
      Replicate author tag structure inside this authorgroup
@@ -82,7 +100,7 @@
 -->
 <abstract role="executivesummary">
   <title>Summary</title>
-  <para>{executive_summary}.</para>
+  <para>{executive_summary}</para>
 </abstract>
 
 
