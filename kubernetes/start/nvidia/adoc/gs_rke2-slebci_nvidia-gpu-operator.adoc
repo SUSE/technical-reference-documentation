@@ -535,7 +535,7 @@ sed -i "/^FROM/ s/golang\:1\.../golang\:{golang-version}/" Dockerfile
 +
 [source, console, subs="attributes+"]
 ----
-sed -i '/^FROM/ s/suse\/sle${sles-version}/bci\/bci-base/' Dockerfile
+sed -i '/^FROM/ s/suse\/sle{sles-version}/bci\/bci-base/' Dockerfile
 ----
 
 .. Verify that the changes have been made correctly to `Dockerfile`.
