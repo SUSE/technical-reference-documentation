@@ -3,7 +3,7 @@
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
     <dm:bugtracker>
         <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
-	<!--  <dm:product>{title}</dm:product> -->
+        <dm:product>{title}</dm:product>
     </dm:bugtracker>
 </dm:docmanager>
 
@@ -27,33 +27,41 @@
 <!-- document organization metadata
      <orgname>Technical Reference Documentation</orgname>
 -->
-<meta name="series">{trd}</meta>
-<meta name="type">{type}</meta>
-
-
-<!-- document title and subtitle -->
-<title>{title}</title>
-<subtitle>{subtitle}</subtitle>
+<meta name="series" its:translate="no">{trd}</meta>
+<meta name="type" its:translate="no">{type}</meta>
 
 
 <!-- document revision date -->
 <meta name="updated">{revision-date}</meta>
 
 
+<!-- document title and subtitle -->
+<title its:translate="yes">{title}</title>
+<subtitle its:translate="yes">{subtitle}</subtitle>
+
+
 <!-- descriptions -->
-<meta name="description" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description}</meta>
-<meta name="social-desc" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description-short}</meta>
+<meta name="description" its:translate="yes">{description}</meta>
+<meta name="social-desc" its:translate="yes">{description-short}</meta>
 
 
-<!-- SUSE component metadata
-     Replicate and follow the pattern to list additional SUSE components.
-     Variables are defined in the adoc file.
-
-     '<productname>' references the short name of the SUSE component.
-     '<platform>' references the full/long name of the SUSE component.
+<!-- tasks
+Tasks are used for filtering in the SUSE Documentation portal.
+Add additional task phrase elements as needed.
 -->
-<meta name="productname">
-  <productname version="{comp1-version}">{comp1}</productname>
+<meta name="task" its:translate="no">
+    <phrase>{metatask1}</phrase>
+</meta>
+
+
+
+<!-- SUSE components
+     '<productname>' identifies the SUSE product and version.
+     '<platform>' identifies the SUSE product and will be deprecated.
+     Replicate for additional SUSE components.
+-->
+<meta name="productname" its:translate="no">
+  <productname version="{comp1-version}">{comp1-full}</productname>
 </meta>
 <meta name="platform">{comp1-full}</meta>
 
@@ -63,7 +71,7 @@
      supplying components featured in the guide.
      Replicate the pattern to identify additional partners.
 -->
-<meta name="techpartner">
+<meta name="techpartner" its:translate="no">
   <phrase>{comp2-provider}</phrase>
 </meta>
 
@@ -147,6 +155,18 @@
     </imageobject>
   </mediaobject>
 </cover>
+
+
+<!-- revision history
+<revhistory xml:id="rh-{article-id}">
+  <revision>
+    <date>{revision1-date}</date>
+    <revdescription>
+      <para>{revision1-description}</para>
+    </revdescription>
+  </revision>
+</revhistory>
+-->
 
 <!-- brief abstract for document
      Update with an enticing summary.
