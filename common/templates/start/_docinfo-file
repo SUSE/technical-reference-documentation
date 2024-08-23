@@ -8,46 +8,62 @@
 </dm:docmanager>
 
 <!-- Note to author/editor
-     - This docinfo.xml file uses attributes/variables to minimize the
-       need for edits.
-     - Attributes/variables are referenced here with curly braces
-       (e.g., {title}).
-     - General variables are defined in common_docinfo_vars.adoc.
-     - Document-specific variables are defined in your adoc file.
-     - Sections you may need to edit include:
-       - 'component metadata': if additional SUSE components need to
-         be highlighted
-       - 'author metadata': if additional authors should be listed
-         on the cover page
-       - 'cover logo images': if a different cover page logo is
-         required
+     - This docinfo XML file features metadata that helps identify
+       the contents of your document.
+     - It uses attributes/variables to minimize the number of edits
+       needed in this file.
+     - Attributes/variables are defined in your adoc file and
+       referenced here with curly braces (e.g., {title}).
+     - See the comments in this document for information on
+       metadata tags and potential edits.
+     - Find more details on attribute/variables in adoc file comments.
+
 -->
 
 
 <!-- document organization metadata
-     <orgname>Technical Reference Documentation</orgname>
+     Do NOT edit these metadata tags.
 -->
-<meta name="series" its:translate="no">{trd}</meta>
-<meta name="type" its:translate="no">{type}</meta>
+<meta name="series" its:translate="no">Technical References</meta>
+<meta name="type" its:translate="no">Getting Started</meta>
 
 
-<!-- document revision date -->
+<!-- document revision date
+     Do NOT edit this metadata tag.
+     Remember to update the value of {revision-date} in your adoc file.
+-->
 <meta name="updated">{revision-date}</meta>
 
 
-<!-- document title and subtitle -->
+<!-- document title and subtitle
+     Do NOT edit these metadata tags.
+     Be sure to set {title} and {subtitle} values in your adoc file.
+-->
 <title its:translate="yes">{title}</title>
 <subtitle its:translate="yes">{subtitle}</subtitle>
 
 
-<!-- descriptions -->
+<!-- descriptions
+     Do NOT edit these metadata tags.
+     Remember to set values for {description} and {description-social}
+     in your adoc file.
+     NOTE:
+       - {description} may be up to 150 characters
+       - {description-social} may be up to 55 characters
+-->
 <meta name="description" its:translate="yes">{description}</meta>
-<meta name="social-desc" its:translate="yes">{description-short}</meta>
+<meta name="social-desc" its:translate="yes">{description-social}</meta>
 
 
 <!-- tasks
-Tasks are used for filtering in the SUSE Documentation portal.
-Add additional task phrase elements as needed.
+     - Tasks are used for filtering in the SUSE Documentation portal.
+     - Tasks are predefined phrases, which you can learn more about
+       in the adoc file and in the contributors guide.
+     - Repeat the <phrase> element for additional tasks.
+       E.g.,
+         <phrase>{metatask1}</phrase>
+         <phrase>{metatask2}</phrase>
+     - Be sure {metataskX} variables are defined in your adoc file.
 -->
 <meta name="task" its:translate="no">
     <phrase>{metatask1}</phrase>
@@ -56,24 +72,53 @@ Add additional task phrase elements as needed.
 
 
 <!-- SUSE components
-     '<productname>' identifies the SUSE product and version.
-     '<platform>' identifies the SUSE product and will be deprecated.
-     Replicate for additional SUSE components.
+     - SUSE components are defined your adoc file.
+       E.g.,
+         :comp1-full: SUSE Linux Enterprise Server
+         :comp1-version1: 15 SP4
+         :comp1-version2: 15 SP5
+         :comp2-full: SUSE Rancher Prime
+         :comp2-version1: 3.1
+     - Use the template below to specify each SUSE component.
+       E.g.,
+         <meta name="productname" its:translate="no">
+           <productname version="{comp1-version1}">{comp1-full}</productname>
+           <productname version="{comp1-version2}">{comp1-full}</productname>
+           <productname version="{comp2-version1}">{comp2-full}</productname>
+         </meta>
 -->
 <meta name="productname" its:translate="no">
-  <productname version="{comp1-version}">{comp1-full}</productname>
+  <productname version="{comp1-version1}">{comp1-full}</productname>
 </meta>
-<meta name="platform">{comp1-full}</meta>
+
+<!-- SUSE product listing for Google Analytics
+     - For a single SUSE product, use the form:
+       <productname>{comp1-full}</productname>
+       <productnumber>{comp1-version1}</productnumber>
+     - For multiple SUSE products, use the form (on a single line):
+       <productname>{comp1-full} {comp1-version1},
+                    {comp2-full} {comp2-version2}, ...
+                    {compN-full} {compN-versionM}</productname>
+-->
+<productname>{comp1-full}</productname>
+<productnumber>{comp1-version1}</productnumber>
+
+
+
+<!-- SUSE platform
+     Identifies the primary SUSE component in a more text-friendly way.
+     For now, use the full component name and supported versions.
+     E.g., "SUSE Linux Enterprise Server for SAP Applications 12 and 15"
+     NOTE: This metadata tag will be deprecated in the next template release.
+-->
+<meta name="platform">{comp1-full} {comp1-version1}</meta>
 
 
 <!-- Partner metadata
-     Identify technical partners (businesses or organizations)
-     supplying components featured in the guide.
-     Replicate the pattern to identify additional partners.
+     Identify ONLY ONE technical partner (business or organization name)
+     supplying a component of the solution.
 -->
-<meta name="techpartner" its:translate="no">
-  <phrase>{comp2-provider}</phrase>
-</meta>
+<meta name="techpartner" its:translate="no">{comp2-provider}</meta>
 
 
 <!-- author metadata
