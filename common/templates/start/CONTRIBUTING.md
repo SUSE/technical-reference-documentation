@@ -10,6 +10,10 @@ to the SUSE Technical Reference Documentation.
 . Change to the `kubernetes/start` or `linux/start` directory (as appropriate).
 . Run `bin/gssetup.sh` and follow the prompts to create basic template files in a new subdirectory.
 . Enter the new subdirectory created for your project.
-. Edit `adoc/gs_{generated-project-name}.adoc` (see instructions in comments).
-. Edit `adoc/gs_{generated-project-name}-docinfo.xml` (see instructions in comments).
+. Edit as needed:
+  - `DC-gs_{generated-project-name}`
+  - `adoc/gs-{generated-project-name}_vars.adoc`
+  - `adoc/gs_{generated-project-name}.adoc`
+  - `adoc/gs_{generated-project-name}-docinfo.xml`
+. Upload media files under `media` by file type (e.g., `.svg`, `.png`).
 
