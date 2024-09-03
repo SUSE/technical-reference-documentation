@@ -43,7 +43,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT REVISION DATE
 //-
-:revision-date: 2024-01-11
+:revision-date: 2024-08-17
 :docdate: {revision-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -209,6 +209,7 @@ Contributions to the development of this guide by the following individuals is a
 
 === Revision history
 
+* 2024-08-17: Fix copy/paste error in rsyslog server.conf
 * 2024-01-11: Updated for Node.js 20
 * 2023-07-05: Initial publication
 
@@ -984,6 +985,13 @@ load="imtcp"
 StreamDriver.Name="gtls"
 StreamDriver.Mode="1"
 StreamDriver.Authmode="x509/certvalid"
+)
+
+# start up listener at port 6514
+input(
+type="imtcp"
+port="6514"
+ruleset="journal-output"
 )
 ----
 +
