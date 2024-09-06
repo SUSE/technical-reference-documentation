@@ -1,5 +1,7 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
+include::./_vars-file[]
+[#art-{article-id}]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // GENERAL COMMENTS
@@ -16,8 +18,8 @@ include::./common_docinfo_vars.adoc[]
 // DOCUMENT ATTRIBUTES AND VARIABLES
 //
 // NOTES:
-// 1. Define and use document attributes or variables in this file.
-// 2. Update the docinfo.xml file if needed.
+// 1. Define and use document attributes or variables in the vars file.
+// 2. Update the docinfo.xml file as needed.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -28,20 +30,6 @@ include::./common_docinfo_vars.adoc[]
 :revision-date: YYYY-MM-DD
 :docdate: {revision-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// DOCUMENT TITLE AND SUBTITLE
-//   Provide concise but descriptive title and subtitle.
-//   title - (<75 characters) concisely identify the guide.
-//           (e.g.: "Kubeflow with Rancher")
-//   subititle - (<75 characters) expound on the title.
-//               (e.g., "Deploying Kubeflow onto an RKE2 Cluster with Rancher")
-// -
-:title: (<75 characters) Your Guide Title
-:subtitle: (<75 characters) Your Guide Subtitle
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TECHNICAL COMPONENTS
@@ -89,10 +77,15 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// DOCUMENT DESCRIPTIONS
+// DOCUMENT TITLES AND DESCRIPTIONS
 //   Describe the guide by its purpose, use case, value.
 //
+// title - (<75 characters) concisely identify the guide.
+//         (e.g.: "Kubeflow with Rancher")
+// subititle - (<75 characters) expound on the title.
+//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with Rancher")
 // usecase: (<55 characters) key words or phrases that identify the
 //          use case of this guide
 //          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
@@ -110,6 +103,10 @@ include::./common_docinfo_vars.adoc[]
 //                            Rancher."
 //
 // -
+:title: (<75 characters) Your Guide Title
+
+:subtitle: (<75 characters) Your Guide Subtitle
+
 :usecase: (<55 characters) use case
 
 :description: (<150 characters) description

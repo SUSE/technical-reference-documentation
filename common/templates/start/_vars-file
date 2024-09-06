@@ -74,23 +74,29 @@
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// DOCUMENT REVISION DATE
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: unique-article-id
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
 //-
-:revision-date: YYYY-MM-DD
-:docdate: {revision-date}
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// DOCUMENT TITLE AND SUBTITLE
-//   Provide concise but descriptive title and subtitle.
-//   title - (<75 characters) concisely identify the guide.
-//           (e.g.: "Kubeflow with Rancher")
-//   subititle - (<75 characters) expound on the title.
-//               (e.g., "Deploying Kubeflow onto an RKE2 Cluster with Rancher")
-// -
-:title: (<75 characters) Your Guide Title
-:subtitle: (<75 characters) Your Guide Subtitle
+:rev1-date: YYYY-MM-DD
+:rev1-description: Original version
+:docdate: {rev1-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -140,9 +146,13 @@
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// DOCUMENT DESCRIPTIONS
+// DOCUMENT TITLES AND DESCRIPTIONS
 //   Describe the guide by its purpose, use case, value.
 //
+// title - (<75 characters) concisely identify the guide.
+//         (e.g.: "Kubeflow with Rancher")
+// subititle - (<75 characters) expound on the title.
+//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with Rancher")
 // usecase: (<55 characters) key words or phrases that identify the
 //          use case of this guide
 //          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
@@ -160,6 +170,10 @@
 //                            Rancher."
 //
 // -
+:title: (<75 characters) Your Guide Title
+
+:subtitle: (<75 characters) Your Guide Subtitle
+
 :usecase: (<55 characters) use case
 
 :description: (<150 characters) description
@@ -219,7 +233,7 @@
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// MISCELLANEOUS
+// MISCELLANEOUS ATTRIBUTES
 //   Define any additional variables here for use within the document.
 // -
 

@@ -13,7 +13,7 @@
      - It uses attributes/variables to minimize the number of edits
        needed in this file.
      - Attributes/variables are defined in your adoc file and
-       referenced here with curly braces (e.g., {title}).
+       referenced here with curly braces (e.g., 'title').
      - See the comments in this document for information on
        metadata tags and potential edits.
      - Find more details on attribute/variables in adoc file comments.
@@ -30,14 +30,14 @@
 
 <!-- document revision date
      Do NOT edit this metadata tag.
-     Remember to update the value of {revision-date} in your adoc file.
+     Remember to update the value of 'revision-date' in your adoc file.
 -->
 <meta name="updated">{revision-date}</meta>
 
 
 <!-- document title and subtitle
      Do NOT edit these metadata tags.
-     Be sure to set {title} and {subtitle} values in your adoc file.
+     Be sure to set 'title' and 'subtitle' values in your adoc file.
 -->
 <title its:translate="yes">{title}</title>
 <subtitle its:translate="yes">{subtitle}</subtitle>
@@ -45,11 +45,11 @@
 
 <!-- descriptions
      Do NOT edit these metadata tags.
-     Remember to set values for {description} and {description-social}
-     in your adoc file.
+     Remember to set values for 'description' and 'description-social'
+     in your vars file.
      NOTE:
-       - {description} may be up to 150 characters
-       - {description-social} may be up to 55 characters
+       - 'description' may be up to 150 characters
+       - 'description-social' may be up to 55 characters
 -->
 <meta name="description" its:translate="yes">{description}</meta>
 <meta name="social-desc" its:translate="yes">{description-social}</meta>
@@ -59,11 +59,8 @@
      - Tasks are used for filtering in the SUSE Documentation portal.
      - Tasks are predefined phrases, which you can learn more about
        in the adoc file and in the contributors guide.
-     - Repeat the <phrase> element for additional tasks.
-       E.g.,
-         <phrase>{metatask1}</phrase>
-         <phrase>{metatask2}</phrase>
-     - Be sure {metataskX} variables are defined in your adoc file.
+     - Repeat the 'phrase' element for additional tasks.
+     - Be sure 'metatask' variables are defined in your adoc file.
 -->
 <meta name="task" its:translate="no">
     <phrase>{metatask1}</phrase>
@@ -73,36 +70,22 @@
 
 <!-- SUSE components
      - SUSE components are defined your adoc file.
-       E.g.,
-         :comp1-full: SUSE Linux Enterprise Server
-         :comp1-version1: 15 SP4
-         :comp1-version2: 15 SP5
-         :comp2-full: SUSE Rancher Prime
-         :comp2-version1: 3.1
      - Use the template below to specify each SUSE component.
-       E.g.,
-         <meta name="productname" its:translate="no">
-           <productname version="{comp1-version1}">{comp1-full}</productname>
-           <productname version="{comp1-version2}">{comp1-full}</productname>
-           <productname version="{comp2-version1}">{comp2-full}</productname>
-         </meta>
 -->
 <meta name="productname" its:translate="no">
   <productname version="{comp1-version1}">{comp1-full}</productname>
 </meta>
 
 <!-- SUSE product listing for Google Analytics
-     - For a single SUSE product, use the form:
-       <productname>{comp1-full}</productname>
-       <productnumber>{comp1-version1}</productnumber>
-     - For multiple SUSE products, use the form (on a single line):
-       <productname>{comp1-full} {comp1-version1},
-                    {comp2-full} {comp2-version2}, ...
-                    {compN-full} {compN-versionM}</productname>
+     - For a single SUSE product, use a single set of
+       'productname' and 'productnumber' tag pairs.
+     - For multiple SUSE products, enclose a comma-delimited list
+       of product names and versions enclosed in a 'productname' tag pair.
+     - Do NOT use both forms.
 -->
 <productname>{comp1-full}</productname>
 <productnumber>{comp1-version1}</productnumber>
-
+<productname>{comp1-full} {comp1-version1}, {comp1-full} {comp1-version2}, {comp2-full} {comp2-version}</productname>
 
 
 <!-- SUSE platform
@@ -203,15 +186,22 @@
 
 
 <!-- revision history
-<revhistory xml:id="rh-{article-id}">
+     Provide a complete revision history in reverse chronological order
+     (most recent first).
+     Each revision must include the data and a brief description,
+     enclosed in 'date' and 'revdescription' tag pairs.
+     Define revision variables ('rev1-date', 'rev1-description',
+     'rev2-date', 'rev2-description', and so on) in the vars file.
+-->
+<revhistory xml:id="rh-art-{article-id}">
   <revision>
-    <date>{revision1-date}</date>
+    <date>{rev1-date}</date>
     <revdescription>
-      <para>{revision1-description}</para>
+      <para>{rev1-description}</para>
     </revdescription>
   </revision>
 </revhistory>
--->
+
 
 <!-- brief abstract for document
      Update with an enticing summary.
