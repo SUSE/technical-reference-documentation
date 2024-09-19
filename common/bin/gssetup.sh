@@ -9,7 +9,7 @@
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # global variables
 ##
-SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slemicro', 'slelp', 'slert', 'sleha', 'slebci', 'suma', 'rancher', 'neuvector', 'harvester', 'rke', 'rke2', 'k3s', 'longhorn')
+SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slmicro', 'slelp', 'slert', 'sleha', 'slebci', 'suma', 'rancher', 'neuvector', 'stackstate', 'harvester', 'rke', 'rke2', 'k3s', 'longhorn')
 
 
 
@@ -21,26 +21,27 @@ suselist() {
 # display list of SUSE products and abbreviations
 
 echo
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "Abbrev.   | Product"
-echo "- - - - - | - - - -- - - - - - - - - - - - - - - - - - - - - - -"
-echo "sles      | SUSE Linux Enterprise Server"
-echo "slessap   | SUSE Linux Enterprise Server for SAP Applications"
-echo "slehpc    | SUSE Linux Enterprise High Performance Computing"
-echo "slemicro  | SUSE Linux Enterprise Micro"
-echo "slelp     | SUSE Linux Enterprise Live Patching"
-echo "slert     | SUSE Linux Enterprise Real Time"
-echo "sleha     | SUSE Linux Enterprise for High Availability"
-echo "slebci    | SUSE Linux Enterprise Base Container Images"
-echo "suma      | SUSE Manager"
-echo "rancher   | Rancher Prime by SUSE"
-echo "neuvector | NeuVector Prime by SUSE"
-echo "harvester | Harvester by SUSE"
-echo "rke       | Rancher Kubernetes Engine"
-echo "rke2      | Rancher Kubernetes Engine 2"
-echo "k3s       | K3s by SUSE"
-echo "longhorn  | Longhorn by SUSE"
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "Abbrev.     | Product"
+echo "- - - - - - | - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "sles        | SUSE Linux Enterprise Server"
+echo "slessap     | SUSE Linux Enterprise Server for SAP Applications"
+echo "slehpc      | SUSE Linux Enterprise High Performance Computing"
+echo "slmicro     | SUSE Linux Micro"
+echo "slelp       | SUSE Linux Enterprise Live Patching"
+echo "slert       | SUSE Linux Enterprise Real Time"
+echo "sleha       | SUSE Linux Enterprise for High Availability"
+echo "slebci      | SUSE Linux Enterprise Base Container Images"
+echo "suma        | SUSE Manager"
+echo "rancher     | SUSE Rancher Prime"
+echo "neuvector   | SUSE NeuVector Prime"
+echo "harvester   | SUSE Harvester"
+echo "stackstate  | SUSE StackState"
+echo "rke         | Rancher Kubernetes Engine by SUSE"
+echo "rke2        | Rancher Kubernetes Engine 2 by SUSE"
+echo "k3s         | K3s by SUSE"
+echo "longhorn    | SUSE Longhorn"
+echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo
 
 }
@@ -301,6 +302,7 @@ echo "  -           ├── DC-${documentbase}"
 echo "  -           ├── adoc"
 echo "  -           │   ├── ${documentbase}.adoc"
 echo "  -           │   ├── ${documentbase}-docinfo.xml"
+echo "  -           │   └── ${documentbase}-vars.adoc"
 echo "  -           ├── images -> media"
 echo "  -           └── media"
 echo "  -               └── src"
@@ -321,7 +323,7 @@ echo
 # create primary directory if it does not already exist
 [ -d ${partnername} ] || mkdir ${partnername}
 
-# create DC- file
+# create DC file
 if [ ! -f "${partnername}/DC-${documentbase}" ]; then
   cp -n ${templatesroot}/_DC-file ${partnername}/DC-${documentbase}
 else
@@ -337,9 +339,6 @@ else
   exit 4
 fi
 
-# update adoc reference
-[ -f "${partnername}/DC-${documentbase}" ] && sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ${partnername}/DC-${documentbase}
-
 # create adoc directory if it does not already exist
 [ -d ${partnername}/adoc ] || mkdir -p ${partnername}/adoc
 
@@ -353,15 +352,20 @@ fi
 [ -L ${partnername}/adoc/common_docinfo_vars.adoc ] || \
   ln -sr ${commonroot}/adoc/common_docinfo_vars.adoc ${partnername}/adoc/
 
+# create docinfo.xml file
+[ -f "${partnername}/adoc/${documentbase}-docinfo.xml" ] || \
+  cp ${templatesroot}/_docinfo-file \
+     ${partnername}/adoc/${documentbase}-docinfo.xml
+
+# create vars file
+[ -f "${partnername}/adoc/${documentbase}-vars.adoc" ] || \
+  cp ${templatesroot}/_adoc-file \
+     ${partnername}/adoc/${documentbase}-vars.adoc
+
 # create .adoc file
 [ -f "${partnername}/adoc/${documentbase}.adoc" ] || \
   cp ${templatesroot}/_adoc-file \
      ${partnername}/adoc/${documentbase}.adoc
-
-# create -docinfo.xml file
-[ -f "${partnername}/adoc/${documentbase}-docinfo.xml" ] || \
-  cp ${templatesroot}/_docinfo-file \
-     ${partnername}/adoc/${documentbase}-docinfo.xml
 
 # create media directory structure
 [ -d ${partnername}/media/src/png ] || mkdir -p ${partnername}/media/src/png
@@ -372,6 +376,13 @@ fi
 # create images symlink
 [ -L ${partnername}/images ] || \
   ln -sr ${partnername}/media ${partnername}/images
+
+# update interdocument references
+# ensure adoc file includes correct vars file
+[ -f "${partnername}/adoc/${documentbase}.adoc" ] && sed -i "s/include::\.\/_vars-file\[\]/include::.\/${documentbase}-vars.adoc\[\]/g" ${partnername}/adoc/${documentbase}.adoc
+# ensure DC file references correct adoc file
+[ -f "${partnername}/DC-${documentbase}" ] && sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ${partnername}/DC-${documentbase}
+
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -394,6 +405,7 @@ echo
 # - Terry Smith <terry.smith@suse.com>
 # - Bryan Gartner <bryan.gartner@suse.com>
 # Revisions:
+# - 20240919: Added handling for separate vars file; updated product names
 # - 20231214: Updated SUSE product list, added support for multiple products
 # - 20230907: Simplified paths; added more checks; clarified prompts
 # - 20221213: Removed underscore prefix from generated DC file
