@@ -3,69 +3,105 @@
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
     <dm:bugtracker>
         <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
-	<!--  <dm:product>{title}</dm:product> -->
+        <dm:product>{title}</dm:product>
     </dm:bugtracker>
 </dm:docmanager>
 
 <!-- Note to author/editor
-     - This docinfo.xml file uses attributes/variables to minimize the
-       need for edits.
-     - Attributes/variables are referenced here with curly braces
-       (e.g., {title}).
-     - General variables are defined in common_docinfo_vars.adoc.
-     - Document-specific variables are defined in your adoc file.
-     - Sections you may need to edit include:
-       - 'component metadata': if additional SUSE components need to
-         be highlighted
-       - 'author metadata': if additional authors should be listed
-         on the cover page
-       - 'cover logo images': if a different cover page logo is
-         required
+     - This docinfo XML file features metadata that helps identify
+       the contents of your document.
+     - It uses attributes/variables to minimize the number of edits
+       needed in this file.
+     - Attributes/variables are defined in your adoc file and
+       referenced here with curly braces (e.g., 'title').
+     - See the comments in this document for information on
+       metadata tags and potential edits.
+     - Find more details on attribute/variables in adoc file comments.
+
 -->
 
 
 <!-- document organization metadata
-     <orgname>Technical Reference Documentation</orgname>
+     Do NOT edit these metadata tags.
 -->
-<meta name="series">{trd}</meta>
-<meta name="type">{type}</meta>
+<meta name="series">Technical References</meta>
+<meta name="type">Getting Started</meta>
 
 
-<!-- document title and subtitle -->
+<!-- document revision date
+     Do NOT edit this metadata tag.
+     Remember to update the value of 'revision-date' in your adoc file.
+-->
+<meta name="updated">{revision-date}</meta>
+
+
+<!-- document title and subtitle
+     Do NOT edit these metadata tags.
+     Be sure to set 'title' and 'subtitle' values in your adoc file.
+-->
 <title>{title}</title>
 <subtitle>{subtitle}</subtitle>
 
 
-<!-- document revision date -->
-<meta name="updated">{revision-date}</meta>
+<!-- descriptions
+     Do NOT edit these metadata tags.
+     Remember to set values for 'description' and 'description-social'
+     in your vars file.
+     NOTE:
+       - 'description' may be up to 150 characters
+       - 'description-social' may be up to 55 characters
+-->
+<meta name="description">{description}</meta>
+<meta name="social-desc">{description-social}</meta>
 
 
-<!-- descriptions -->
-<meta name="description" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description}</meta>
-<meta name="social-desc" xmlns:its="https://www.w3.org/2005/11/its" its:translate="yes">{description-short}</meta>
+<!-- tasks
+     - Tasks are used for filtering in the SUSE Documentation portal.
+     - Tasks are predefined phrases, which you can learn more about
+       in the adoc file and in the contributors guide.
+     - Repeat the 'phrase' element for additional tasks.
+     - Be sure 'metatask' variables are defined in your adoc file.
+-->
+<meta name="task">
+    <phrase>{metatask1}</phrase>
+</meta>
 
 
-<!-- SUSE component metadata
-     Replicate and follow the pattern to list additional SUSE components.
-     Variables are defined in the adoc file.
 
-     '<productname>' references the short name of the SUSE component.
-     '<platform>' references the full/long name of the SUSE component.
+<!-- SUSE components
+     - SUSE components are defined your adoc file.
+     - Use the template below to specify each SUSE component.
 -->
 <meta name="productname">
-  <productname version="{comp1-version}">{comp1}</productname>
+  <productname version="{comp1-version1}">{comp1-full}</productname>
 </meta>
-<meta name="platform">{comp1-full}</meta>
+
+<!-- SUSE product listing for Google Analytics
+     - For a single SUSE product, use a single set of
+       'productname' and 'productnumber' tag pairs.
+     - For multiple SUSE products, enclose a comma-delimited list
+       of product names and versions enclosed in a 'productname' tag pair.
+     - Do NOT use both forms.
+-->
+<productname>{comp1-full}</productname>
+<productnumber>{comp1-version1}</productnumber>
+<productname>{comp1-full} {comp1-version1}, {comp1-full} {comp1-version2}, {comp2-full} {comp2-version}</productname>
+
+
+<!-- SUSE platform
+     Identifies the primary SUSE component in a more text-friendly way.
+     For now, use the full component name and supported versions.
+     E.g., "SUSE Linux Enterprise Server for SAP Applications 12 and 15"
+     NOTE: This metadata tag will be deprecated in the next template release.
+-->
+<meta name="platform">{comp1-full} {comp1-version1}</meta>
 
 
 <!-- Partner metadata
-     Identify technical partners (businesses or organizations)
-     supplying components featured in the guide.
-     Replicate the pattern to identify additional partners.
+     Identify ONLY ONE technical partner (business or organization name)
+     supplying a component of the solution.
 -->
-<meta name="techpartner">
-  <phrase>{comp2-provider}</phrase>
-</meta>
+<meta name="techpartner">{comp2-provider}</meta>
 
 
 <!-- author metadata
@@ -147,6 +183,25 @@
     </imageobject>
   </mediaobject>
 </cover>
+
+
+<!-- revision history
+     Provide a complete revision history in reverse chronological order
+     (most recent first).
+     Each revision must include the data and a brief description,
+     enclosed in 'date' and 'revdescription' tag pairs.
+     Define revision variables ('rev1-date', 'rev1-description',
+     'rev2-date', 'rev2-description', and so on) in the vars file.
+-->
+<revhistory xml:id="rh-art-{article-id}">
+  <revision>
+    <date>{rev1-date}</date>
+    <revdescription>
+      <para>{rev1-description}</para>
+    </revdescription>
+  </revision>
+</revhistory>
+
 
 <!-- brief abstract for document
      Update with an enticing summary.

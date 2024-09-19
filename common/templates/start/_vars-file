@@ -1,16 +1,65 @@
-:docinfo:
-include::./common_docinfo_vars.adoc[]
-include::./_vars-file[]
-[#art-{article-id}]
-
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// GENERAL COMMENTS
-//   - See the SUSE TRD Contributors Guide for detailed guidance:
-//     https://documentation.suse.com/trd/contributors/single-html/suse-trd_contrib-guide/
-//   - Keep in mind that this is a "getting started" guide.
-//   - Write to the audience you are trying to reach.
-//   - Add or remove sections and subsections as needed.
-// 
+// SUSE Technical Reference Documentation
+// Getting Started Guide
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// GENERAL GUIDANCE
+//
+// See the Contributors Guide for more information:
+// https://documentation.suse.com/trd/contributors/single-html/suse-trd_contrib-guide/
+//
+// Some points to keep in mind include:
+// - This is a *getting started* guide and should illustrate a
+//   solution through simple steps that the reader can follow
+//   focused around a use case.
+// - Write to the audience you are trying to reach.
+// - Organize the guide as best fits the purpose.
+//   Typical organization includes the following sections:
+//   - Introduction - solution description, motivation, audience, needed skills
+//   - Prerequisites - technologies reader should have have in place
+//   - Installation - provide steps to perform installation of components
+//   - Configuration - provide steps for any post-installation configurations
+//   - Validation - provide steps to validate/demonstrate function
+//   - Summary - summarize what was covered and suggest additional learning
+// - Conform to the SUSE Documentation Style
+//   https://documentation.suse.com/style/current/single-html/docu_styleguide/index.html
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DIRECTORY & FILE STRUCTURE
+//
+// SUSE TRD getting started guides are built with multiple source files
+// that provide content, metadata, and structure.
+// These files are
+// Principal among these files are:
+// - Doc Config file:   Provides processing guidance, including
+//                      which stylesheet to use, document type,
+//                      draft status, name of the main AsciiDoc
+//                      content file, and more.
+//                      The is one DC file per guide and it is located
+//                      at the root of the project directory.
+//                      There is one DC file per guide.
+// - DocBook Info file: Provides metadata to describe the contents.
+//                      There is one DOCINFO file per guide and it is
+//                      located in the adoc subdirectory.
+// - ASCIIDoc files:    AsciiDoc is the lightweight, semantic markup
+//                      language designed for writing technical
+//                      content.
+//                      There is one main ADOC file per guide, which can
+//                      be accompanied by multiple ancillary ADOC files.
+//                      These file are located in the adoc subdirectory
+//                      and are merged ("included") during when the
+//                      document is rendered for publication.
+//                      Some additional ADOC files that are common to all
+//                      guides, including the GNU Free Documentation License
+//                      and the disclaimer, are located elsewhere and
+//                      "included" automatically by these templates.
+// - Media files:       Graphical content, such as diagrams, screenshots,
+//                      and logos can enhance your document.
+//                      Media files are stored under the media subdirectory
+//                      by image type.
+//                      Preferred image formats are:
+//                      - Scaled Vector Graphics (SVG)
+//                      - Portable Network Graphics (PNG)
+//
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
@@ -18,18 +67,38 @@ include::./_vars-file[]
 // DOCUMENT ATTRIBUTES AND VARIABLES
 //
 // NOTES:
-// 1. Define and use document attributes or variables in the vars file.
-// 2. Update the docinfo.xml file as needed.
+// 1. Define and use document attributes or variables in this file.
+// 2. Update the docinfo.xml file if needed.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// DOCUMENT REVISION DATE
-//-
-:revision-date: YYYY-MM-DD
-:docdate: {revision-date}
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: unique-article-id
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+//-
+:rev1-date: YYYY-MM-DD
+:rev1-description: Original version
+:docdate: {rev1-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TECHNICAL COMPONENTS
@@ -48,7 +117,7 @@ include::./_vars-file[]
 //   - EMPTY: If the modifier is missing, the variable contains
 //     a short name for the component (e.g., 'SLES', 'Rancher Prime')
 //   - -full: Long name of the component
-//     (e.g., 'SUSE Linux Enterprise Server', 'Rancher Prime by SUSE')
+//     (e.g., 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime')
 //   - -provider: Name of company or project providing the component
 //     (e.g., 'SUSE', 'HPE', 'Kubeflow', 'Veeam')
 //   - -version1: A relevant product version (e.g., '15', '15 SP5', '3.1.2')
@@ -58,9 +127,8 @@ include::./_vars-file[]
 //   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
 //
 //   You can create additional modifiers as needed.
-//  
+//
 // -
-
 :comp1-provider: SUSE
 :comp1: component 1 short name
 :comp1-full: component 1 long name
@@ -77,30 +145,29 @@ include::./_vars-file[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT TITLES AND DESCRIPTIONS
 //   Describe the guide by its purpose, use case, value.
 //
 // title - (<75 characters) concisely identify the guide.
-//         (e.g.: "Kubeflow with Rancher")
+//         (e.g.: "Kubeflow with SUSE Rancher Prime")
 // subititle - (<75 characters) expound on the title.
-//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with Rancher")
+//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with SUSE Rancher Prime")
 // usecase: (<55 characters) key words or phrases that identify the
 //          use case of this guide
 //          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
 //                 "Kubernetes-native object storage")
 // description: (<150 characters) brief description of what this guide
-//              provides (e.g.: "Deploy Kubeflow with Rancher Primer")
+//              provides (e.g.: "Deploy Kubeflow with SUSE Rancher Primer")
 // description-social: (<55 characters) condensed description suitable for
-//                     social media (e.g.: "Kubeflow with Rancher")
+//                     social media (e.g.: "Kubeflow with SUSE Rancher")
 // executive-summary: (<300 characters) brief summary of the guide that
 //                    appears near the beginning of the rendered document
 //                    (e.g.: "Kubeflow simplifies deployment of machine
 //                            learning (ML) workflows on Kubernetes clusters.
 //                            This document provides step-by-step guidance
 //                            for deploying Kubeflow on an RKE2 cluster with
-//                            Rancher."
+//                            SUSE Rancher Prime."
 //
 // -
 :title: (<75 characters) Your Guide Title
@@ -152,7 +219,9 @@ include::./_vars-file[]
 //   contributors here.
 //   Follow the pattern to provide fist name, surname, job title,
 //   and organization name for each contributor.
-//   NOTE: To list additional authors or others on the cover page,
+//   NOTE: Other contributors and editors are typically listed in
+//         an Acknowledgements section.
+//         To list additional authors or contributors on the cover page,
 //         you must edit the docinfo.xml file as well.
 // -
 :author1-firstname: first (given) name
@@ -166,153 +235,9 @@ include::./_vars-file[]
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// MISCELLANEOUS
+// MISCELLANEOUS ATTRIBUTES
 //   Define any additional variables here for use within the document.
 // -
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-= {title}: {subtitle}
-
-
-
-== Introduction
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a motivation for the document in 2-4 sentences to identify:
-//   - what the document is about
-//   - why it may be of interest to the reader
-//   - what products are being highlighted
-// Include an approved SUSE | Partner logo lock-up if possible
-// Include any additional, relevant details
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Your introduction and motivation for this guide
-
-
-
-=== Scope
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Specify what this guide covers in no more than 2 sentences.
-//   E.g., "You will learn how to ..."
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-The scope for your guide
-
-
-=== Audience
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify for whom this document is intended, perhaps with:
-//   - topics of interests (e.g., machine learning, security, etc.)
-//   - job roles (e.g., developer, administrator, platform architect, etc.)
-//   - required skills
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-The intended audience for your guide
-
-
-
-=== Acknowledgements
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Acknowledge contributors not listed as authors.
-// Something like:
-//   The authors wish to acknowledge the contributions of the following
-//   individuals:
-//   * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
-//   * {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
-// NOTE: If there are none, comment out this section.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Any acknowledgements you would like to make
-
-
-
-== Prerequisites
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify minimum requirements (prerequisites) the reader
-// would need in order to follow the steps of this guide.
-// - Use an unordered list.
-// - Use proper product names.
-// - Identify product versions.
-// - Link to existing resources whenever possible.
-// - Keep this section brief but elaborate as needed.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-
-
-== Procedure
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Detail the steps of the installation procedure.
-// Replace 'Procedure' with one or more appropriate sections, such as:
-// - 'Setting up the environment'
-// - 'Installing the components'
-// - 'Configuring and tuning'
-// - 'Validating the deployment'
-// You may find it useful to organize complex procedures into
-// subsections.
-//
-// - As appropriate, make use of:
-//   - Ordered lists for steps
-//   - Code blocks for source code and console commands
-//     Readers should be able to use copy and paste to leverage
-//     commands and code in their environments
-//   - Listing blocks for output
-//   - Screenshots and diagrams
-//   - Admonitions (notes, tips, warnings, etc.)
-//
-// NOTE: Always include some validation or verification in your guide.
-//
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-
-
-
-
-
-== Summary
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Summarize:
-// - Solution description
-// - Motivation for the guide
-// - What was done
-// - Suggested next steps for the learning journey
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-
-
-
-
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Do not modify below this break.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-++++
-<?pdfpagebreak?>
-++++
-
-
-:leveloffset: 0
-
-== Legal notice
-include::common_trd_legal_notice.adoc[]
-
-++++
-<?pdfpagebreak?>
-++++
-
-
-:leveloffset: 0
-include::common_gfdl1.2_i.adoc[]
-
-//end
