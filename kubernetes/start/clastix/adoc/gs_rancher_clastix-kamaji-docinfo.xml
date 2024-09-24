@@ -63,13 +63,24 @@
 
 
 
-<!-- SUSE components
-     - SUSE components are defined your adoc file.
+<!-- Technical components
+     - SUSE and third-party components are defined your adoc file.
      - Use the template below to specify each SUSE component.
 -->
 <meta name="productname">
   <productname version="{comp1-version1}">{comp1-full}</productname>
 </meta>
+
+
+<!-- SUSE product listing for Google Analytics
+     - For a single SUSE product, use a single set of
+       'productname' and 'productnumber' tag pairs.
+     - For multiple SUSE products, enclose a comma-delimited list
+       of product names and versions enclosed in a 'productname' tag pair.
+     - Do NOT use both forms.
+-->
+<productname>{comp1-full} {comp1-version1}, {comp2-full}</productname>
+
 
 
 <!-- SUSE platform
