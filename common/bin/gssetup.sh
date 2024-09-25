@@ -359,7 +359,7 @@ fi
 
 # create vars file
 [ -f "${partnername}/adoc/${documentbase}-vars.adoc" ] || \
-  cp ${templatesroot}/_adoc-file \
+  cp ${templatesroot}/_vars-file \
      ${partnername}/adoc/${documentbase}-vars.adoc
 
 # create .adoc file
@@ -381,7 +381,7 @@ fi
 # ensure adoc file includes correct vars file
 [ -f "${partnername}/adoc/${documentbase}.adoc" ] && sed -i "s/include::\.\/_vars-file\[\]/include::.\/${documentbase}-vars.adoc\[\]/g" ${partnername}/adoc/${documentbase}.adoc
 # ensure DC file references correct adoc file
-[ -f "${partnername}/DC-${documentbase}" ] && sed -i "s/MAIN=\"gs_suseprod_partner-partnerprod.adoc\"/MAIN=\"${documentbase}.adoc\"/g" ${partnername}/DC-${documentbase}
+[ -f "${partnername}/DC-${documentbase}" ] && sed -i "s/MAIN=\"_adoc-file\"/MAIN=\"${documentbase}.adoc\"/g" ${partnername}/DC-${documentbase}
 
 
 
