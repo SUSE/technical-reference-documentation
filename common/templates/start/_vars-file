@@ -6,7 +6,7 @@
 // DOCUMENT ATTRIBUTES AND VARIABLES
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// 1. Define and use document attributes or variables in this file.
+// 1. Define and use variables (document attributes) in this file.
 // 2. Develop content in the adoc file.
 // 3. Update the docinfo.xml file, if needed.
 // 4. Update DC file (at a minimum, deactivate DRAFT mode)
@@ -36,6 +36,7 @@
 //   :rev2-description: Fixed installation script typo
 //   :rev1-date: 2024-09-06
 //   :rev1-description: Original version
+// Set docdate to the most recent revision.
 //-
 :rev1-date: YYYY-MM-DD
 :rev1-description: Original version
@@ -58,14 +59,15 @@
 //   - -MODIFIER is text that identifies the stored information.
 //   Some -MODIFIER values include:
 //   - EMPTY: If the modifier is missing, the variable contains
-//     a short name for the component (e.g., 'SLES', 'Rancher Prime')
-//   - -full: Long name of the component
-//     (e.g., 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime')
+//     the name of the component
+//     E.g.: 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime',
+//           'Kubeflow', 'Veeam Kasten', 'SQL Server'
+//     NOTE: Be sure to use approved product names.
 //   - -provider: Name of company or project providing the component
-//     (e.g., 'SUSE', 'HPE', 'Kubeflow', 'Veeam')
-//   - -version1: A relevant product version (e.g., '15', '15 SP5', '3.1.2')
+//                (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//   - -version1: A relevant product version (e.g., '15 SP6', '3.1.2')
 //                Additional product versions must be listed separately
-//                (e.g., '-version2: 15 SP6')
+//                (e.g., '-version2: '2.9.5')
 //   - -website: Product website (e.g., https://www.suse.com/products/server/)
 //   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
 //
@@ -73,15 +75,13 @@
 //
 // -
 :comp1-provider: SUSE
-:comp1: component 1 short name
-:comp1-full: component 1 long name
+:comp1: component 1 name
 :comp1-version1: component 1 version
 :comp1-website: component 1 product website URL
 :comp1-docs: component 1 product documentation URL
 
 :comp2-provider: component 2 provider name
-:comp2: component 2 short name
-:comp2-full: component 2 full name
+:comp2: component 2 name
 :comp2-version1: component 2 relevant versions
 :comp2-website: component  product website URL
 :comp2-docs: component 2 product documentation URL
@@ -112,6 +112,12 @@
 //                            for deploying Kubeflow on an RKE2 cluster with
 //                            SUSE Rancher Prime."
 //
+// NOTE: You can reference component variables in titles.
+//       E.g., If you have the component variables:
+//             :comp1: SUSE Linux Enterprise Server
+//             :comp2: JupyterLab
+//             you can reference them to define new variables, like:
+//             :title: Simplify deployment of {comp2} with {comp1}
 // -
 :title: (<75 characters) Your Guide Title
 
