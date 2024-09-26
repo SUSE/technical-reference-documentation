@@ -1,0 +1,237 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Getting Started Guide
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use document attributes or variables in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: gs_sles_jupyter-jupyterlab_container
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+//-
+:rev4-date: 2024-09-26
+:rev4-description: Updated with new metadata, SLES 15 SP6, and Podman 5.2.2
+:rev3-date: 2024-02-22
+:rev3-description: Updated with SLES 15 SP5 and Podman 4.4.4
+:rev2-date: 2023-02-10
+:rev2-description: Updated with Podman 4.3.1
+:rev1-date: 2022-11-17
+:rev1-description: Original version
+:docdate: {rev4-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Variable names follow a simple pattern:
+//   - compX[-MODIFIER]
+//   where:
+//   - X is an integer starting from 1 for the primary component,
+//     2 for a secondary component, and so on.
+//   - -MODIFIER is text that identifies the stored information.
+//   Some -MODIFIER values include:
+//   - EMPTY: If the modifier is missing, the variable contains
+//     a short name for the component (e.g., 'SLES', 'Rancher Prime')
+//   - -full: Long name of the component
+//     (e.g., 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime')
+//   - -provider: Name of company or project providing the component
+//     (e.g., 'SUSE', 'HPE', 'Kubeflow', 'Veeam')
+//   - -version1: A relevant product version (e.g., '15', '15 SP5', '3.1.2')
+//                Additional product versions must be listed separately
+//                (e.g., '-version2: 15 SP6')
+//   - -website: Product website (e.g., https://www.suse.com/products/server/)
+//   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//
+//   You can create additional modifiers as needed.
+//
+// -
+:comp1-provider: SUSE
+:comp1: SUSE Linux Enterprise Server
+:comp1-full: SUSE Linux Enterprise Server
+:comp1-ver1: 15
+:comp1-sp1: 6
+:comp1-version1: {comp1-ver1} SP{comp1-sp1}
+:comp1-website: https://www.suse.com/products/server
+:comp1-docs: https://documentation.suse.com/sles/{comp1-ver1}-SP{comp1-sp1}/
+
+:comp2-provider: SUSE
+:comp2: SLE BCI
+:comp2-full: SUSE Linux Enterprise Base Container Images
+:comp2-version1: {comp1-version1}
+:comp2-website: https://www.suse.com/products/base-container-images
+:comp2-docs: https://documentation.suse.com/container/all/single-html/Container-guide
+:comp2-registry: https://registry.suse.com
+
+:comp3-provider: Project Jupyter
+:comp3: JupyterLab
+:comp3-full: JupyterLab
+:comp3-version1: 4.2.5
+:comp3-website: https://jupyter.org
+:comp3-docs: https://jupyterlab.readthedocs.io/en/latest/
+
+:comp4-provider: Python Software Foundation
+:comp4: Python
+:comp4-full: Python
+:comp4-version1: 3.12.6
+:comp4-website: https://www.python.org
+:comp4-docs: https://docs.python.org/3/
+
+:comp5-provider: Podman
+:comp5: Podman
+:comp5-full: Podman
+:comp5-version1: 4.9.5
+:comp5-website: https://podman.io
+:comp5-docs: https://docs.podman.io/en/latest/
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title - (<75 characters) concisely identify the guide.
+//         (e.g.: "Kubeflow with SUSE Rancher Prime")
+// subititle - (<75 characters) expound on the title.
+//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with SUSE Rancher Prime")
+// usecase: (<55 characters) key words or phrases that identify the
+//          use case of this guide
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) brief description of what this guide
+//              provides (e.g.: "Deploy Kubeflow with SUSE Rancher Primer")
+// description-social: (<55 characters) condensed description suitable for
+//                     social media (e.g.: "Kubeflow with SUSE Rancher")
+// executive-summary: (<300 characters) brief summary of the guide that
+//                    appears near the beginning of the rendered document
+//                    (e.g.: "Kubeflow simplifies deployment of machine
+//                            learning (ML) workflows on Kubernetes clusters.
+//                            This document provides step-by-step guidance
+//                            for deploying Kubeflow on an RKE2 cluster with
+//                            SUSE Rancher Prime."
+//
+// -
+:title: JupyterLab, Python, and Containers
+
+:subtitle: Accelerating Development with {comp2-full}
+
+:usecase: Accelerate data analytics, machine learning, and artificial intelligence development with containers
+
+:description: Deploy JupyterLab and Python with {comp2-full} and Podman for development and collaboration.
+
+:description-social: JupyterLab with {comp2-full}
+
+:executive-summary: Accelerate development and production in data analytics, machine learning, and artificial intelligence with {comp2-full} and JupyterLab.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//
+//   A task must be one of these supported values:
+//    Administration, Artificial Intelligence, Auditing, Authentication,
+//    Automation, Backup &amp; Recovery, Certification, Cloud,
+//    Clustering, Compliance, Configuration, Containerization,
+//    Container Management, Data Intelligence, Deployment, Design,
+//    Encryption, High Availability, Image Building, Implementation,
+//    Installation, Integration, Maintenance, Migration, Monitoring,
+//    Packaging, Security, Storage, Subscription Management,
+//    Troubleshooting, Upgrade &amp; Update, Virtualization,
+//    Vulnerability, Web
+//
+//  E.g.,
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: Installation
+:metatask2: Configuration
+:metatask3: Deployment
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//   Follow the pattern to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//   NOTE: Other contributors and editors are typically listed in
+//         an Acknowledgements section.
+//         To list additional authors or contributors on the cover page,
+//         you must edit the docinfo.xml file as well.
+// -
+:author1-firstname: Terry
+:author1-surname: Smith
+:author1-jobtitle: Director, Global Alliance Solutions
+:author1-orgname: SUSE
+:author2-firstname: Brian
+:author2-surname: Fromme
+:author2-jobtitle: Manager, Partner Alliances
+:author2-orgname: SUSE
+:other1-firstname: Dan
+:other1-surname: Čermák
+:other1-jobtitle: Software Engineer, Technology and Product
+:other1-orgname: SUSE
+:other2-firstname: Victor
+:other2-surname: Gregorio
+:other2-jobtitle: Senior Manager, Solution Architects
+:other2-orgname: SUSE
+:other3-firstname: Darragh
+:other3-surname: O'Reilly
+:other3-jobtitle: Senior Cloud Engineer
+:other3-orgname: SUSE
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+:opensuse: openSUSE Leap
+:opensuse-version1: 15.6
+:opensuse-website: https://www.opensuse.org/#Leap
+:pypi-full: Python Package Index
+:pypi-website: https://pypi.org/
+:rancher-website: https://rancher.com/
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
