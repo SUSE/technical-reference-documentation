@@ -4,32 +4,79 @@ Getting Started Guides - How to Contribute
 
 ## Introduction
 
-SUSE Technical Reference Documentation (SUSE TRD) is an open collection of high quality guidance for solutions that address real-world use cases with featured SUSE, partner, and community components.
-Documents are modular and rendered from multiple source files.
-These source files are freely available and open source licensed in the [GitHub repository](https://github.com/SUSE/technical-reference-documentation).
+[SUSE Technical Reference Documentation (SUSE TRD)](https://documentation.suse.com/trd-supported.html) is part of the [SUSE Documentation](https://documentation.suse.com/) ecosystem with the objective of providing well-structured, clear, and concise technical information that facilitates real-world problem-solving.
+SUSE TRD focuses on delivering practical guidance for combinations of SUSE, partner, and community technologies.
+Documentation is modular and rendered into various formats (such as HTML and PDF) from multiple source files, which are open source licensed and freely available in the [GitHub repository](https://github.com/SUSE/technical-reference-documentation).
 
+SUSE TRD features of four types of documentation:
 
-SUSE TRD consists of four types of documentation:
+- Getting Started Guide: an introduction to an approach that addresses a use case. featuring a combination of component technologies that includes step-by-step guidance for installation, configuration, and validation.
 
-- Getting Started Guide: an introduction to a solution to a use case and featuring a combination of component technologies that includes step-by-step guidance for installation, configuration, and validation.
-
-- Reference Implementation: an introductory architectural approach and basis for deployment of a solution that features the SUSE software portfolio.
+- Reference Implementation: an introductory architectural basis and approach for deployment of a solution that features the SUSE software portfolio.
 
 - Reference Configuration: a reference implementation with specific partner hardware and software components.
 
-- Enterprise Architecture: an architectural overview of solution from an enterprise landscape perspective.
-
-Community engagement with and contributions to SUSE TRD is highly encouraged, following an open source model.
-For quick fixes, use the `Report an issue` links in each of the HTML versions of the documentation published at the [SUSE Documentation portal](https://documentation.suse.com/trd-supported.html).
-For longer updates and new documentation, fork and clone the [GitHub repository](https://github.com/SUSE/technical-reference-documentation) and work locally with your favorite code editor.
+- Enterprise Architecture: an architectural overview of solution as part of an enterprise landscape.
 
 
-Detailed guidance for contributors can be found the [SUSE Technical Reference Documentation Contributors Guide](https://documentation.suse.com/trd/contributors/single-html/suse-trd_contrib-guide/).
+Community engagement is highly encouraged.
+Quick fixes, you can use the `Report an issue` links in each of the HTML versions of the documentation published at the [SUSE Documentation portal](https://documentation.suse.com/trd-supported.html).
+To contribute longer updates or new documentation, is is recommended to fork and clone the [GitHub repository](https://github.com/SUSE/technical-reference-documentation), so you can work locally with your favorite code editor.
+
+The remainder of this document provides guidance to authors of SUSE TRD Getting Started Guides.
 
 
 
-## General Guidance
+## Style
 
+Using a consistent writing style and formatting contributes to this mission.
+Writing style goes beyond the essential elements of spelling, grammar, and punctuation to include tone of voice, point of view, word choice, sentence and paragraph structure, and more.
+SUSE TRD conforms to the [SUSE Documentation Style Guide](https://documentation.suse.com/style/current/single-html/docu_styleguide/index.html), which helps maintain consistency throughout the ecosystem.
+
+
+As you develop and implement your content for a SUSE TRD getting started guide, keep these highlights in mind:
+
+- This is a *getting started* guide, not a dissertation.
+
+- Highlight a practical use case.
+
+- Feature a combination of SUSE and partner or community components.
+
+- Be clear, concise, and complete.
+
+- Use a conversational yet professional tone.
+
+- Use the active voice and the present tense.
+
+- Avoid contractions and abbreviations.
+
+- Address the reader in the second person (with the personal pronoun, "you").
+
+- Use inclusive language.
+
+- Follow [SUSE Brand Guidelines](https://brand.suse.com/)
+
+- Leverage [Search Engine Optimization](https://en.wikipedia.org/wiki/Search_engine_optimization) (SEO) practices, such as surfacing keywords in titles and metadata, to raise ranking by search engines and help others find your documentation.
+
+
+
+
+
+
+
+## Organization
+
+- Organize the guide as best fits the purpose.
+  Typical organization includes the following sections:
+  - Introduction - solution description, motivation, audience, needed skills
+  - Prerequisites - technologies reader should have have in place
+  - Installation - provide steps to perform installation of components
+  - Configuration - provide steps for any post-installation configurations
+  - Validation - provide steps to validate/demonstrate function
+  - Summary - summarize what was covered and suggest additional learning
+
+- Conform to the SUSE Documentation Style
+//   https://documentation.suse.com/style/current/single-html/docu_styleguide/index.html
 - Keep in mind that this is a *getting started* guide that illustrates a solution to a use case through simple steps the reader can follow.
 
 - Write to the audience you are trying to reach.
