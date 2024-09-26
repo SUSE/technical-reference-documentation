@@ -3,143 +3,235 @@
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
     <dm:bugtracker>
         <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
-	<!--  <dm:product>{title}</dm:product> -->
+        <dm:product>{title}</dm:product>
     </dm:bugtracker>
 </dm:docmanager>
 
 <!-- Note to author/editor
-     Attributes used here (enclosed in curly braces).
-     General variables are defined in common_docinfo_vars.adoc.
-     Variable specific to this document (such as the title) are
-     defined with the main content in the adoc file.
-     See comments below for additional options.
+     - This docinfo XML file features metadata that helps identify
+       the contents of your document.
+     - It uses attributes/variables to minimize the number of edits
+       needed in this file.
+     - Attributes/variables are defined in your adoc file and
+       referenced here with curly braces (e.g., 'title').
+     - See the comments in this document for information on
+       metadata tags and potential edits.
+     - Find more details on attribute/variables in adoc file comments.
+
 -->
 
 
 <!-- document organization metadata
-     Do NOT modify this section
-     <orgname>Technical Reference Documentation</orgname>
+     Do NOT edit these metadata tags.
 -->
-<meta name="series">{trd}</meta>
-<meta name="type">{type}</meta>
+<meta name="series">Technical References</meta>
+<meta name="type">Getting Started</meta>
 
 
-<!-- document title and subtitle -->
+<!-- document title and subtitle
+     Do NOT edit these metadata tags.
+     Be sure to set 'title' and 'subtitle' values in your adoc file.
+-->
 <title>{title}</title>
 <subtitle>{subtitle}</subtitle>
 
 
-<!-- platform and product metadata
-     Replicate for additional platforms.
-     Define platform2, etc. in adoc file.
+<!-- descriptions
+     Do NOT edit these metadata tags.
+     Remember to set values for 'description' and 'description-social'
+     in your vars file.
+     NOTE:
+       - 'description' may be up to 150 characters
+       - 'description-social' may be up to 55 characters
 -->
-<productname>{product1}</productname>
-<meta name="platform">{product1_full}</meta>
-<meta name="platform">{kamaji_full}</meta>
+<meta name="description">{description}</meta>
+<meta name="social-desc">{description-social}</meta>
+
+
+<!-- tasks
+     - Tasks are used for filtering in the SUSE Documentation portal.
+     - Tasks are predefined phrases, which you can learn more about
+       in the adoc file and in the contributors guide.
+     - Repeat the 'phrase' element for additional tasks.
+     - Be sure 'metatask' variables are defined in your adoc file.
+-->
+<meta name="task">
+    <phrase>{metatask1}</phrase>
+    <phrase>{metatask2}</phrase>
+    <phrase>{metatask3}</phrase>
+</meta>
+
+
+
+<!-- Technical components
+     - SUSE and third-party components are defined your adoc file.
+     - Use the template below to specify each SUSE component.
+-->
+<meta name="productname">
+  <productname version="{comp1-version1}">{comp1-full}</productname>
+  <productname version="{comp2-version1}">{comp2-full}</productname>
+</meta>
+
+
+<!-- SUSE product listing for Google Analytics
+     - For a single SUSE product, use a single set of
+       'productname' and 'productnumber' tag pairs.
+     - For multiple SUSE products, enclose a comma-delimited list
+       of product names and versions enclosed in a 'productname' tag pair.
+     - Do NOT use both forms.
+-->
+<productname>{comp1-full} {comp1-version1}, {comp2-full} {comp2-version1}</productname>
+
+
+
+<!-- Platform
+     Identifies the primary SUSE component in a more text-friendly way.
+     For now, use the full component name and supported versions.
+     E.g., "SUSE Linux Enterprise Server for SAP Applications 12 and 15"
+     NOTE: This metadata tag will be deprecated in the next template release.
+-->
+<meta name="platform">{comp1-full} {comp1-version1}</meta>
+<meta name="platform">{comp2-full} {comp2-version1}</meta>
+
+
+<!-- Partner metadata
+     Identify ONLY ONE technical partner (business or organization name)
+     supplying a component of the solution.
+-->
+<meta name="techpartner">{comp2-provider}</meta>
 
 
 <!-- author metadata
      Replicate author tag structure inside this authorgroup
      for additional authors.
-     Use editor and othercredit tag groups for additional contributors.
-     Update variables in adoc file.
+     Be sure to create/update appropriate variables in adoc file.
+     NOTE: Editors and other contributors can be acknowledged in
+     an acknowledgement section in the adoc file.
 -->
 <authorgroup>
   <author>
     <personname>
-      <firstname>{author1_firstname}</firstname>
-      <surname>{author1_surname}</surname>
+      <firstname>{author1-firstname}</firstname>
+      <surname>{author1-surname}</surname>
     </personname>
     <affiliation>
-      <jobtitle>{author1_jobtitle}</jobtitle>
-      <orgname>{author1_orgname}</orgname>
+      <jobtitle>{author1-jobtitle}</jobtitle>
+      <orgname>{author1-orgname}</orgname>
     </affiliation>
   </author>
   <author>
     <personname>
-      <firstname>{author2_firstname}</firstname>
-      <surname>{author2_surname}</surname>
+      <firstname>{author2-firstname}</firstname>
+      <surname>{author2-surname}</surname>
     </personname>
     <affiliation>
-      <jobtitle>{author2_jobtitle}</jobtitle>
-      <orgname>{author2_orgname}</orgname>
+      <jobtitle>{author2-jobtitle}</jobtitle>
+      <orgname>{author2-orgname}</orgname>
     </affiliation>
   </author>
   <author>
     <personname>
-      <firstname>{author3_firstname}</firstname>
-      <surname>{author3_surname}</surname>
+      <firstname>{author3-firstname}</firstname>
+      <surname>{author3-surname}</surname>
     </personname>
     <affiliation>
-      <jobtitle>{author3_jobtitle}</jobtitle>
-      <orgname>{author3_orgname}</orgname>
+      <jobtitle>{author3-jobtitle}</jobtitle>
+      <orgname>{author3-orgname}</orgname>
     </affiliation>
   </author>
 </authorgroup>
 
+
 <!-- cover logo images
      Specify the image or images to use on the document cover.
 
-     The default logo (`common/images/src/svg/suse.svg`) is the
-     official SUSE chameleon with 'SUSE' printed to its right.
-     The logo is designed for light backgrounds.
-     When you run the setup script, a symbolic link to this image
-     file is created in your project's `media/src/svg` directory.
-
-     NOTE: Two image objects are used to accommodate different
+     NOTE: Two image objects are defined to accommodate different
            width requirements for HTML ('role="html"') and for
            PDF ('role="fo"').
-           Always use '5em' for for PDF and '152px' for HTML.
+           The default uses '5em' for for PDF and '152px' for HTML.
+
+     - The default logo (`common/images/src/svg/suse.svg`) is the
+       official SUSE chameleon with 'SUSE' printed to its right.
+       - The logo is designed for light backgrounds.
+       - When you run the setup script, a symbolic link to this image
+         file is created in your project's `media/src/svg` directory.
+
      
-     To display multiple logos on the document cover:
+     - To display multiple logos on the document cover:
 
-     1. (preferred) Use an existing, approved logo lock-up SVG image.
-        a. Find the existing image file in `common/images/src/svg`.
-        b. Create a symbolic link to the image file in your project's
-           `media/src/svg` directory.
-        c. Update the 'fileref' attributes with the link target.
+       1. (preferred) Use an existing, approved logo lock-up SVG image.
+          a. Find the existing image file in `common/images/src/svg`.
+          b. Create a symbolic link to the image file in your project's
+             `media/src/svg` directory.
+          c. Update the 'fileref' attributes with the link target.
 
-     2. Create a single SVG image file with required logos.
-        a. Create a single logo lock-up image complying with brand
-           guidelines and approved by all parties.
-           Be sure to trim whitespace from all sides.
-        b. Place the file in the `common/images/src/svg` directory.
-        c. Create a symbolic link to the image file in your project's
-           `media/src/svg` directory.
-        d. Update the 'fileref' attributes with the new file name.
+       2. Create a single SVG image file with required logos.
+          a. Create a single logo lock-up image complying with brand
+             guidelines and approved by all parties.
+             Be sure to trim whitespace from all sides.
+          b. Place the file in the `common/images/src/svg` directory.
+          c. Create a symbolic link to the image file in your project's
+             `media/src/svg` directory.
+          d. Update the 'fileref' attributes with the new file name.
 
-     3. Use multiple, separate SVG logo image files.
-        a. Obtain an additional, approved logo (preferrably as an SVG file).
-        b. Trim extraneous whitespace from the top, bottom, and sides.
-           Very slim or very high logos may need some whitespace padding to
-           the fit in line with other logos.
-           If you need help, contact Jana Jaeger <jana.jaeger@suse.com>.
-        c. Place the file in the `common/images/src/svg` directory.
-        d. Create a symbolic link to the image file in your project's
-           `media/src/svg` directory.
-        e. Create a copy of the existing mediaobject section just before
-           the closing </cover> tag.
-        f. Update the 'fileref' attributes in the new mediaobject with
-           the new file name.
+       3. Use multiple, separate SVG logo image files.
+          a. Obtain an additional, approved logo (preferrably as an
+             SVG file).
+          b. Trim extraneous whitespace from the top, bottom, and sides.
+             Very slim or very high logos may need some whitespace padding
+             to fit in line with other logos.
+             If you need help, contact Jana Jaeger <jana.jaeger@suse.com>.
+          c. Place the file in the `common/images/src/svg` directory.
+          d. Create a symbolic link to the image file in your project's
+             `media/src/svg` directory.
+          e. Create a copy of the existing mediaobject section just before
+             the closing </cover> tag.
+          f. Update the 'fileref' attributes in the new mediaobject with
+             the new file name.
 
 -->
 <cover role="logos">
   <mediaobject>
     <imageobject role="fo">
-      <imagedata fileref="logo-lockup_suse+clastix_hor_lightbackground.svg" width="10em"/>
+      <imagedata fileref="suse.svg" width="5em"/>
     </imageobject>
     <imageobject role="html">
-      <imagedata fileref="logo-lockup_suse+clastix_hor_lightbackground.svg" width="152px"/>
+      <imagedata fileref="suse.svg" width="152px"/>
     </imageobject>
   </mediaobject>
 </cover>
+
+
+<!-- revision history
+     Provide a complete revision history in reverse chronological order
+     (most recent first).
+     Each revision must include the data and a brief description,
+     enclosed in 'date' and 'revdescription' tag pairs.
+     Define revision variables ('rev1-date', 'rev1-description',
+     'rev2-date', 'rev2-description', and so on) in the vars file.
+-->
+<revhistory xml:id="rh-art-{article-id}">
+  <revision>
+    <date>{rev2-date}</date>
+    <revdescription>
+      <para>{rev2-description}</para>
+    </revdescription>
+  </revision>
+  <revision>
+    <date>{rev1-date}</date>
+    <revdescription>
+      <para>{rev1-description}</para>
+    </revdescription>
+  </revision>
+</revhistory>
+
 
 <!-- brief abstract for document
      Update with an enticing summary.
 -->
 <abstract role="executivesummary">
   <title>Summary</title>
-  <para>{executive_summary}</para>
+  <para>{executive-summary}</para>
 </abstract>
 
 
