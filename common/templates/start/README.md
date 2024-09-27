@@ -61,36 +61,137 @@ As you develop and implement your content for a SUSE TRD getting started guide, 
 
 
 
+## Content Organization
+
+Your getting started guide should facilitate the reader's journey.
+Organize the contents into logical sections that mirror how you would approach and address a use case.
+Typical organization includes these sections:
+
+- Introduction: Ensure the reader knows what the guide is about, who it is for, etc.
+  Include the following subsections:
+    - Motivation: Describe the use case or challenge and motivation for the guide.
+    - Audience: Identify the intended audience and needed skills.
+    - Scope: Define specifically what is covered.
+    - Acknowledgements: Optionally, acknowledge the contributions of editors and others to the guide.
+- Prerequisites: Clearly identify all of the technologies the reader should have in place prior to following the steps of the guide.
+  Specify any special configuration steps and link to additional resources the reader may need to prepare the environment.
+- Installation: Provide clear, enumerated steps to perform installation of each component.
+  Divide long or complex installation procecedures into subsections.
+- Configuration: Provide clear, enumerated steps for any post-installation configurations.
+- Validation: Provide clear, enumerated steps to validate or demonstrate functionality relevant to the use case.
+- Summary: Summarize what was covered and suggest additional learning resources.
 
 
 
-## Organization
+## Process Overview
 
-- Organize the guide as best fits the purpose.
-  Typical organization includes the following sections:
-  - Introduction - solution description, motivation, audience, needed skills
-  - Prerequisites - technologies reader should have have in place
-  - Installation - provide steps to perform installation of components
-  - Configuration - provide steps for any post-installation configurations
-  - Validation - provide steps to validate/demonstrate function
-  - Summary - summarize what was covered and suggest additional learning
+The general contributor process is:
 
-- Conform to the SUSE Documentation Style
-//   https://documentation.suse.com/style/current/single-html/docu_styleguide/index.html
-- Keep in mind that this is a *getting started* guide that illustrates a solution to a use case through simple steps the reader can follow.
+. *Create your workspace*
 
-- Write to the audience you are trying to reach.
+. *Create your content*
 
-- Conform to the [SUSE Documentation Style](https://documentation.suse.com/style/current/single-html/docu_styleguide/index.html)
+. *Submit your documentation for review*
 
-- Organize the guide as best fits its intended purpose and audience.
-  Typical organization includes the following sections:
-  - Introduction: solution description, motivation, audience, needed skills
-  - Prerequisites: technologies reader should have have in place
-  - Installation: steps to perform installation of components
-  - Configuration: steps for any post-installation configuration
-  - Validation: steps to validate/demonstrate functionity
-  - Summary: quick review and suggestions for additional learning
+. *Celebrate when published!*
+
+
+
+
+### Create your workspace
+. Fork the repository into your own GitHub account.
+. Clone your fork to your local system.
+. Create a branch: `git branch myproject`.
+. Check out your new branch: `git checkout myproject`.
+. Change to the `kubernetes/start` or `linux/start` directory (depending on the focus of your documentation project).
+. Run `bin/gssetup.sh` and follow the prompts to create basic template files in a (new, if necessary) project subdirectory named for the primary partner.
+. Enter the project subdirectory.
+
+
+### Create your content
+. Develop your documentation by editing (as needed) the source files.
+  The primary files you will need to edit are:
+  - `DC-gs_{generated-project-name}`
+  - `adoc/gs-{generated-project-name}_vars.adoc`
+  - `adoc/gs_{generated-project-name}.adoc`
+  - `adoc/gs_{generated-project-name}-docinfo.xml`
+. Upload any needed media files to the appropriate subdirectory (e.g., `.svg`, `.png`) under `media` directory.
+. Use the [DocBook Authoring and Publishing Suite (DAPS)](https://opensuse.github.io/daps/), which is also available as a container with [Daps2Docker](https://github.com/openSUSE/daps2docker), to frequently render and check the appearance of your documentation.
+. Frequenctly, commit and push your edits to your GitHub clone.
+
+### Submit your documentation for review
+. Sync any updates of the upstream [GitHub repository](https://github.com/SUSE/technical-reference-documentation) to your fork and push these to your clone.
+. Submit a pull request (PR) to merge your branch into the main branch of the upstream repository.
+. Respond to questions, suggestions, and requests by the SUSE Documentation Team.
+. Wait for the documentation to be published to the [SUSE Documentation portal](https://documentation.suse.com/trd-supported.html).
+. Celebrate!
+
+
+
+## Repository Structure
+
+SUSE TRD source files are maintained in the [GitHub repository](https://github.com/SUSE/technical-reference-documentation).
+The repository consists of four top-level directories:
+
+- common: containing common content, scripts, and templates
+- contributors: containing source files for the contributors guide
+- kubernetes: containing solutions focused on Kubernetes technologies
+- linux: containing solutions focused on Linux technologies
+
+
+The primary source files for published documentation are in the 'kubernetes' and 'linux' directories, though this division may be eliminated in the future.
+These directories are further subdivided into:
+
+- enterprise: enterprise architectures
+- reference: reference implementations and reference configurations
+- start: getting started guides
+
+Getting started guides are organized by primary component providers (SUSE and third-parties, such as independent software vendors and open source projects).
+For example:
+
+```
+└── start
+    ├── kubeflow
+    ├── nvidia
+    ├── suse
+    └── veeam
+```
+
+
+All documentation with for a given primary component provider are stored in that directory.
+As a contributor, most of your focus is on source files that you create in one of these directories.
+
+NOTE: Source files for documentation where SUSE is the the only component provider are maintained in the 'suse' directory.
+
+
+Finally, within each provider directory you find the source files, arranged as follows:
+
+
+
+```
+├── adoc
+│   ├── common_docinfo_vars.adoc -> ../../../../common/adoc/common_docinfo_vars.adoc
+│   ├── common_gfdl1.2_i.adoc -> ../../../../common/adoc/common_gfdl1.2_i.adoc
+│   ├── common_sbp_legal_notice.adoc -> ../../../../common/adoc/common_sbp_legal_notice.adoc
+│   ├── common_trd_legal_notice.adoc -> ../../../../common/adoc/common_trd_legal_notice.adoc
+│   ├── gs_sles_jupyter-jupyterlab.adoc
+│   ├── gs_sles_jupyter-jupyterlab_container.adoc
+│   ├── gs_sles_jupyter-jupyterlab_container-docinfo.xml
+│   └── gs_sles_jupyter-jupyterlab-docinfo.xml
+├── DC-gs_sles_jupyter-jupyterlab
+├── DC-gs_sles_jupyter-jupyterlab_container
+├── images -> media
+└── media
+    └── src
+```
+-
+- DC-gs_{generated-project-name}
+- `adoc/gs-{generated-project-name}_vars.adoc`
+- `adoc/gs_{generated-project-name}.adoc`
+- `adoc/gs_{generated-project-name}-docinfo.xml`
+
+
+
 
 
 ## Process Overview
