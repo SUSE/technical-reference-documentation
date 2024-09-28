@@ -1,5 +1,7 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
+include::./gs_sles_jupyter-jupyterlab_container-vars.adoc[]
+[#art-{article-id}]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // General comments
@@ -36,33 +38,33 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // organization - do NOT modify
 // -
-:trd: Technical Reference Documentation
-:type: Getting Started
+//:trd: Technical Reference Documentation
+//:type: Getting Started
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // document and product
 // -
-:title: JupyterLab, Python, and Containers
-:subtitle: Developing with SUSE Linux Enterprise Base Container Images
-:product1: SLES
-:product1_full: SUSE Linux Enterprise Server
-:product1_ver_base: 15
-:product1_version: 15 SP5
-:product1_ver: 15.5
-:product1_version_min: 15 SP3
-:product1_url: https://www.suse.com/products/server
-:product2: SLE-BCI
-:product2_full: SUSE Linux Enterprise Base Container Images
-:product2_url: https://www.suse.com/products/base-container-images
-:product2_registry: https://registry.suse.com
-:productname: SLES 15
-:platform1: SUSE Linux Enterprise Server 15
-:platform2: SUSE Linux Enterprise Base Container Images
-:productname2: SLE BCI
-:servicepack: 5
-:usecase: Data analytics and machine learning development
-:executive_summary: Deploy Python and JupyterLab with SUSE Linux Enterprise base container images and Podman for development and collaboration.
+//:title: JupyterLab, Python, and Containers
+//:subtitle: Developing with SUSE Linux Enterprise Base Container Images
+
+//:product1: SLES
+//:product1_full: SUSE Linux Enterprise Server
+//:product1_ver_base: 15
+//:product1_version: 15 SP5
+//:product1_ver: 15.5
+//:product1_url: https://www.suse.com/products/server
+//:product2: SLE-BCI
+//:product2_full: SUSE Linux Enterprise Base Container Images
+//:product2_url: https://www.suse.com/products/base-container-images
+//:product2_registry: https://registry.suse.com
+//:productname: SLES 15
+//:platform1: SUSE Linux Enterprise Server 15
+//:platform2: SUSE Linux Enterprise Base Container Images
+//:productname2: SLE BCI
+//:servicepack: 5
+//:usecase: Data analytics and machine learning development
+//:executive_summary: Deploy Python and JupyterLab with SUSE Linux Enterprise base container images and Podman for development and collaboration.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -71,45 +73,45 @@ include::./common_docinfo_vars.adoc[]
 // specify information about authors, editors, and others here,
 // then update docinfo file as appropriate
 // -
-:author1_firstname: Brian
-:author1_surname: Fromme
-:author1_jobtitle: Alliance Solutions Architect
-:author1_orgname: SUSE
-:author2_firstname: Terry
-:author2_surname: Smith
-:author2_jobtitle: Global Partner Solutions Director
-:author2_orgname: SUSE
-:other1_firstname: Dan
-:other1_surname: Čermák
-:other1_jobtitle: Software Engineer
-:other1_orgname: SUSE
-:other2_firstname: Victor
-:other2_surname: Gregorio
-:other2_jobtitle: Senior Manager, Solution Architects
-:other2_orgname: SUSE
-:other3_firstname: Darragh
-:other3_surname: O'Reilly
-:other3_jobtitle: Senior Cloud Engineer
-:other3_orgname: SUSE
+//:author1-firstname: Brian
+//:author1-surname: Fromme
+//:author1-jobtitle: Alliance Solutions Architect
+//:author1-orgname: SUSE
+//:author2-firstname: Terry
+//:author2-surname: Smith
+//:author2-jobtitle: Global Partner Solutions Director
+//:author2-orgname: SUSE
+//:other1-firstname: Dan
+//:other1-surname: Čermák
+//:other1-jobtitle: Software Engineer
+//:other1-orgname: SUSE
+//:other2-firstname: Victor
+//:other2-surname: Gregorio
+//:other2-jobtitle: Senior Manager, Solution Architects
+//:other2-orgname: SUSE
+//:other3-firstname: Darragh
+//:other3-surname: O'Reilly
+//:other3-jobtitle: Senior Cloud Engineer
+//:other3-orgname: SUSE
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // define any additional variables here for use within the document
 // -
-:containerguide_url: https://documentation.suse.com/container/all/single-html/Container-guide
-:opensuse: openSUSE Leap
-:opensuse_version: 15.5
-:opensuse_url: https://www.opensuse.org/#Leap
-:jupyter_url: https://jupyter.org/
-:podman_ver: 4.4.4
-:podman_url: https://podman.io/
-:podman_docs: https://docs.podman.io/en/latest
-:python_ver: 3.11
-:python_url: https://www.python.org/
-:pypi_full: Python Package Index
-:pypi_url: https://pypi.org/
-:rancher_url: https://rancher.com/
+//:containerguide_url: https://documentation.suse.com/container/all/single-html/Container-guide
+//:opensuse: openSUSE Leap
+//:opensuse_version: 15.5
+//:opensuse_url: https://www.opensuse.org/#Leap
+//:jupyter_url: https://jupyter.org/
+//:podman_ver: 4.4.4
+//:podman_url: https://podman.io/
+//:podman_docs: https://docs.podman.io/en/latest
+//:python_ver: 3.11
+//:python_url: https://www.python.org/
+//:pypi_full: Python Package Index
+//:pypi_url: https://pypi.org/
+//:rancher_url: https://rancher.com/
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -135,7 +137,7 @@ Containers also enable massive scale, letting you run your applications everywhe
 
 === Scope
 
-This document illustrates how to containerize the popular Python development platform for data analytics and machine learning, JupyterLab, with Podman and {product2_full}.
+This document illustrates how to containerize the popular Python development platform for data analytics and machine learning, JupyterLab, with Podman and {comp2-full}.
 
 
 === Audience
@@ -148,9 +150,9 @@ To progress with this document, the reader should have basic Linux command line 
 
 The authors wish to thank the following individuals for their contributions to this guide:
 
-* {other1_firstname} {other1_surname}, {other1_jobtitle}, {other1_orgname}
-* {other2_firstname} {other2_surname}, {other2_jobtitle}, {other2_orgname}
-* {other3_firstname} {other3_surname}, {other3_jobtitle}, {other3_orgname}
+* {other1-firstname} {other1-surname}, {other1-jobtitle}, {other1-orgname}
+* {other2-firstname} {other2-surname}, {other2-jobtitle}, {other2-orgname}
+* {other3-firstname} {other3-surname}, {other3-jobtitle}, {other3-orgname}
 
 
 
@@ -162,7 +164,7 @@ Software applications are no longer monolithic executables.
 Instead, they are composed of many small, independent services that communicate over well-defined application programming interfaces (APIs).
 And containers are a key technology for implementing microservices architectures.
 
-{jupyter_url}[JupyterLab] is an interactive development environment that is popular among machine learning, data science, and other researchers and developers.
+{comp3-website}[JupyterLab] is an interactive development environment that is popular among machine learning, data science, and other researchers and developers.
 It is not built on a microservices architecture, so it may seem to be an unusual application to put into a container.
 However, containerizing JupyterLab with all required libraries can be a useful way to share a fully replicable experiment with other researchers.
 
@@ -171,9 +173,9 @@ However, containerizing JupyterLab with all required libraries can be a useful w
 
 In this guide, you learn how to:
 
-* set up {podman_url}[Podman] on {product1_url}[{product1_full}] ({product1}) to run containers as a non-privileged user.
+* set up {comp5-website}[Podman] on {comp1-website}[{comp1-full}] to run containers as a non-privileged user.
 
-* define and build a container image for a {jupyter_url}[JupyterLab] ML development environment.
+* define and build a container image for a {comp3-website}[JupyterLab] ML development environment.
 
 * run your JupyterLab container with access to files on your host system.
 
@@ -182,57 +184,59 @@ In this guide, you learn how to:
 
 === Software ecosystem
 
-. {product1_url}[{product1_full}]
+. {comp1-website}[{comp1-full}]
 //
 +
-This guide leverages {product1_full} {product1_version} as a host operating system for building and running containers.
-{product1_full} can be run on bare metal or in virtual machines to provide a stable, supportable Linux environment.
+This guide leverages {comp1-full} {comp1-version1} as a host operating system for building and running containers.
+{comp1-full} can be run on bare metal or in virtual machines to provide a stable, supportable Linux environment.
 +
 [NOTE]
 ====
-The steps detailed in this guide were developed and tested on {product1_full} {product1_version_min} through {product1_version}.
-Little to no modification should be required to follow this guide with newer versions of {product1_full} or corresponding versions of {opensuse_url}[{opensuse}].
+The steps detailed in this guide were developed and tested on {comp1-full} {comp1-version1}.
+Little to no modification should be required to follow this guide with newer versions of {comp1-full} or corresponding versions of {opensuse-website}[{opensuse}].
 ====
 
-. {product2_url}[{product2_full}] ({product2})
+. {comp2-website}[{comp2-full}] ({comp2})
 //
 +
 A base container image provides basic functionality, such as a stripped-down Linux operating system.
 It is onto a base container image that you layer your application components.
-{product2_full} are freely available, re-distributable, supported across many environments.
+{comp2-full} are freely available, re-distributable, supported across many environments.
 These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and on edge devices.
 +
 [TIP]
 ====
-SUSE maintains up-to-date, ready-to-use container images at {product2_registry}.
+SUSE maintains up-to-date, ready-to-use container images at {comp2-registry}.
 ====
 
-. {podman_url}[Podman]
+. {comp5-website}[{comp5-full}]
 //
 +
 Podman is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
 //
 +
-This guide uses Podman {podman_ver}.
+This guide uses Podman {comp5-version1}.
 
 
-. {python_url}[Python]
+. {comp4-website}[{comp4-full}]
 //
 +
 Python has become a popular programming ecosystem for ML developers for its simplicity, elegance, extensibility, cross-platform availability, and active, open source community of developers and users.
 With Python, ML developers have access to a vast collection of libraries, frameworks, and toolkits with which to build solutions to complex problems.
 //
 +
-This guide references Python {python_ver} but should work with minimal issues for other 3.x releases.
+This guide references Python {comp4-version1} but should work with minimal issues for other 3.x releases.
 
 
-. {jupyter_url}[JupyterLab] from Project Jupyter
+. {comp3-website}[JupyterLab] from Project Jupyter
 //
 +
 JupyterLab is a modular, interactive development environment with a Web interface that enables data scientists and developers to create and share computational documents, called notebooks.
 +
 image::jupyterlab_ui_001.png[JupyterLab UI, scaledwidth="75%", align="center"]
 +
+{comp3-full} {comp3-version1} is available at the time of publication.
+
 [TIP]
 ====
 See https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[Replicable Python Environments with JupyterLab and SUSE Linux Enterprise Server] for more details about working with Python and JupyterLab on SUSE Linux Enterprise Server.
@@ -241,7 +245,7 @@ See https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyter
 
 == Enabling Podman
 
-Podman, which is short for Pod Manager, is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
+{comp5-full}, which is short for Pod Manager, is a daemonless, open source tool for finding, building, managing, and running https://opencontainers.org/[Open Container Initiative] (OCI) containers on Linux systems.
 Podman is similar to other container engines, such as *Docker*, *CRI-O*, and *containerd*.
 It relies on an OCI-compliant container runtime (like _runc_, _crun_, _runv_, etc.) to interface with the operating system for creating the running containers.
 This means that running Podman containers is nearly indistinguishable from running those created by other common container engines.
@@ -249,13 +253,13 @@ You can also run Podman containers as an ordinary, non-privileged user, making i
 
 [TIP]
 ====
-See the {containerguide_url}[SUSE Container Guide] for a deeper discussion on containers and Podman with {product1_full}.
+See the {comp2-docs}[SUSE Container Guide] for a deeper discussion on containers and Podman with {comp1-full}.
 ====
 
 
 === Install Podman
 
-Podman is not installed by default in {product1_full}, but you can install it with these steps.
+Podman is not installed by default in {comp1-full}, but you can install it with these steps.
 
 . Enable SUSE Containers Module (a free add-on).
 +
@@ -264,14 +268,14 @@ Podman is not installed by default in {product1_full}, but you can install it wi
 sudo SUSEConnect -p sle-module-containers/RELEASE_VERSION/x86_64
 ----
 +
-Replace `_RELEASE_VERSION_` with the {product1_full} release you are using.
+Replace `_RELEASE_VERSION_` with the {comp1-full} release you are using.
 //
 +
-For example: If you are using {product1_full} {product1_version}, then you would use:
+For example: If you are using {comp1-full} {comp1-version1}, then you would use:
 +
 [source, console, subs="attributes+"]
 ----
-sudo SUSEConnect -p sle-module-containers/{product1_ver}/x86_64
+sudo SUSEConnect -p sle-module-containers/{comp1-ver1}.{comp1-sp1}/x86_64
 ----
 
 . Install Podman.
@@ -382,12 +386,12 @@ driver = "btrfs"
 
 === Grant access to your SUSE Customer Center credentials
 
-It is only necessary to grant your user access to your SUSE Customer Center (SCC) credentials if you intend to install RPM software packages from the official {product1_full} repositories.
+It is only necessary to grant your user access to your SUSE Customer Center (SCC) credentials if you intend to install RPM software packages from the official {comp1-full} repositories.
 
 
-In this guide, you use the latest {product2_full} Python container image as your base.
+In this guide, you use the latest {comp2-full} Python container image as your base.
 This container image already includes the official development and runtime components of a recent Python release, saving you from having to install them.
-All other software and libraries required for this guide can be installed from the {pypi_url}[{pypi_full}] with the `pip` command.
+All other software and libraries required for this guide can be installed from the {pypi-website}[{pypi-full}] with the `pip` command.
 Thus, you do not need to grant your user this access to follow this guide.
 
 If you choose to use a different base image or want to use other software packages, your user may require access to your SCC credentials.
@@ -408,7 +412,7 @@ This is because `/etc/SUSEConnect` and `/etc/zypp/credentials.d/SCCcredentials` 
 
 == Creating container images
 
-You build an application container image by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a {containerguide_url}/#cha-bci[base container image].
+You build an application container image by adding the application with the libraries and the other software it needs to run (its dependencies) as layers on top of a {comp2-docs}/#cha-bci[base container image].
 In this section, you create a container image for the JupyterLab Python development environment along with some useful Python packages for machine learning and data analysis.
 
 
@@ -435,16 +439,16 @@ Complex applications, like an ML model, can produce wildly different results or 
 Thus, it can be critical when building such applications to explicitly define all the software dependencies and their versions.
 
 Fortunately, it is quite easy to create https://documentation.suse.com/trd/linux/single-html/gs_sles_jupyter-jupyterlab/[replicable Python environments].
-Keys to this process are the `pip` Python package management tool, the {pypi_url}[{pypi_full}], and a list of required Python packages, usually in a file named `requirements.txt`.
+Keys to this process are the `pip` Python package management tool, the {pypi-website}[{pypi-full}], and a list of required Python packages, usually in a file named `requirements.txt`.
 
 Your `requirements.txt` file is a simple list of the names and versions of required packages.
 For example:
 
 [listing]
 ----
-matplotlib==3.6.2
-numpy==1.23.5
-pandas==1.5.2
+matplotlib==3.9.2
+numpy==2.1.1
+pandas==2.2.3
 ----
 
 Each package you specify may have several dependencies of its own, and you can explicitly list every package and its version in your `requirements.txt` file.
@@ -487,10 +491,10 @@ If you are familiar with the Docker container ecosystem, a Containerfile shares 
 After defining your application container in a Containerfile, you use another tool to execute the instructions and build the image.
 
 An important consideration for your container build is the base image.
-You can obtain container images from a variety of sources, including the {product2_registry}[SUSE container registry].
+You can obtain container images from a variety of sources, including the {comp2-registry}[SUSE container registry].
 
-{product2_full} are tested, certified, and enterprise-ready with up-to-date security patches.
-For this guide, you use the 'latest' Python container image, which, at the time of this writing, is built on {product1_full} {product1_version} and features Python {python_ver}.
+{comp2-full} are tested, certified, and enterprise-ready with up-to-date security patches.
+For this guide, you use the 'latest' Python container image, which, at the time of this writing, is built on {comp1-full} {comp1-version1} and features Python {comp4-version1}.
 
 When choosing a base container image, keep in mind the following considerations:
 
@@ -506,7 +510,7 @@ Are you able to use the image with your preferred software, tooling, and workflo
 Redistribution::
 Are you legally able to redistribute the custom application container images you build on it?
 
-Learn {containerguide_url}/#cha-bci[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
+Learn {comp2-docs}/#cha-bci[why SUSE Linux Enterprise base container images] offer the ideal foundation for your application containers.
 
 //
 
@@ -635,7 +639,7 @@ The first several digits of this unique identifier is shown in the 'IMAGE ID' co
 [TIP]
 ====
 You can also list images with the command `podman images`.
-Learn more about Podman commands at {podman_docs}/Commands.html.
+Learn more about Podman commands at {comp5-docs}Commands.html.
 ====
 
 
@@ -716,7 +720,7 @@ Use `:Z` to tell Podman to relabel file objects so that only the current contain
 --userns:: Set the user namespace mode for the container.
 With the release of Podman 4.3.0, you can use the `--userns=keep-id` option to map the UID and GID of the user inside the container to your UID and GID outside the container.
 This allows you to avoid ownership and permission issues when accessing files in mounted volumes.
-Further discussion of user namespace mapping can be found in the {podman_docs}/markdown/podman-run.1.html[Podman run documentation].
+Further discussion of user namespace mapping can be found in the {comp5-docs}markdown/podman-run.1.html[Podman run documentation].
 +
 [NOTE]
 ====
@@ -1067,7 +1071,7 @@ The base container image, 'registry.suse.com/bci/python', is not deleted.
 ====
 
 
-Podman provides many {podman_docs}/Commands.html[commands] to help you manage your containers and container images.
+Podman provides many {comp5-docs}Commands.html[commands] to help you manage your containers and container images.
 Some Podman commands also have synonyms that can save you a few keystrokes (for example, `podman rmi IMAGE-ID` is the same as `podman image rm IMAGE-ID`).
 
 
@@ -1087,8 +1091,8 @@ The recipient can use the received files and follow the same steps you used to c
 . Use an image archive.
 //
 +
-Use {podman_docs}/markdown/podman-save.1.html[podman image save] to save your container image and its parent layers to a TAR archive that you can share.
-The recipient of the TAR archive can load the image with {podman_docs}/markdown/podman-load.1.html[podman image load] and run it with `podman run`.
+Use {comp5-docs}markdown/podman-save.1.html[podman image save] to save your container image and its parent layers to a TAR archive that you can share.
+The recipient of the TAR archive can load the image with {comp5-docs}markdown/podman-load.1.html[podman image load] and run it with `podman run`.
 +
 [TIP]
 ====
@@ -1167,7 +1171,7 @@ It is a good idea to share your launch script or, at least, some guidance on the
 . Use a container registry.
 //
 +
-Podman provides the {podman_docs}/markdown/podman-push.1.html[podman push] command for publishing your container images to a registry and the {podman_docs}/markdown/podman-pull.1.html[podman pull] command for retrieving images from a registry.
+Podman provides the {comp5-docs}markdown/podman-push.1.html[podman push] command for publishing your container images to a registry and the {comp5-docs}markdown/podman-pull.1.html[podman pull] command for retrieving images from a registry.
 +
 ====
 A container registry hosts repositories for storing and accessing container images.
@@ -1195,7 +1199,7 @@ Container technologies accelerate innovation by enabling complex applications an
 Fast-developing fields, like machine learning, have benefited greatly from the use of container technologies.
 
 Modern, OCI-compliant containers are built in layers on top of a base image.
-{product2_full} provides a reliable, secure, supportable, and freely redistributable base image for your application containers.
+{comp2-full} provides a reliable, secure, supportable, and freely redistributable base image for your application containers.
 There are a variety of tools for building and managing containers.
 A simple but powerful container management tool is Podman.
 In this guide you used Podman to build a container image featuring JupyterLab, a Web-based Python development environment.
