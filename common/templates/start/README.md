@@ -118,18 +118,24 @@ Use this process to set up your workspace and generate templates for the require
 
 You develop your documentation content by editing (as needed) source files.
 The primary source files include:
-- `DC-gs_{generated-project-name}`
-- `adoc/gs-{generated-project-name}_vars.adoc`
-- `adoc/gs_{generated-project-name}.adoc`
-- `adoc/gs_{generated-project-name}-docinfo.xml`
+- Doc Config (DC) file (`DC-gs_{generated-project-name}`)
+  There is one DC file for each documentation deliverable in which you specify parameters that define the name of the main content file, the rendering stylesheet, and more.
+- Variables (vars) file (`adoc/gs-{generated-project-name}-vars.adoc`)
+  The vars file defines variables and document attributes that are used within the documentation.
+- Main content (adoc) file (`adoc/gs_{generated-project-name}.adoc`)
+  The adoc file contains the main contents of your documentation.
+  This content leverages variables defined in the vars file.
+- DocBook metadata (docinfo.xml) file (`adoc/gs_{generated-project-name}-docinfo.xml`)
+  The docinfo.xml file specifies metadata bout your documentation, including title, descriptions, authors, components, and so on.
+  Metadata values are defined as variables in the vars file.
 
-`adoc` files are plain text files with the [AsciiDoc markup language](https://asciidoc.org/).
-
-Use the [DocBook Authoring and Publishing Suite (DAPS)](https://opensuse.github.io/daps/), which is also available as a container with [Daps2Docker](https://github.com/openSUSE/daps2docker), to frequently render and check the appearance of your documentation.
+> :NOTE: `adoc` files are plain text files with the [AsciiDoc markup language](https://asciidoc.org/).
 
 
 Additionally, any media elements, such as diagrams and screenshots, should be copied into the `media` directory tree, with specific files sorted by type in appropriate subdirectories (e.g., `.svg`, `.png`).
 
+
+Use the [DocBook Authoring and Publishing Suite (DAPS)](https://opensuse.github.io/daps/), which is also available as a container with [Daps2Docker](https://github.com/openSUSE/daps2docker), to frequently render and check the appearance of your documentation.
 
 
 > :IMPORTANT: Commit and push your edits to your GitHub clone frequently.
