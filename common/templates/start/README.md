@@ -67,19 +67,19 @@ Your getting started guide should facilitate the reader's journey.
 Organize the contents into logical sections that mirror how you would approach and address a use case.
 Typical organization includes these sections:
 
-- Introduction: Ensure the reader knows what the guide is about, who it is for, etc.
-  Include the following subsections:
-    - Motivation: Describe the use case or challenge and motivation for the guide.
-    - Audience: Identify the intended audience and needed skills.
-    - Scope: Define specifically what is covered.
-    - Acknowledgements: Optionally, acknowledge the contributions of editors and others to the guide.
-- Prerequisites: Clearly identify all of the technologies the reader should have in place prior to following the steps of the guide.
-  Specify any special configuration steps and link to additional resources the reader may need to prepare the environment.
-- Installation: Provide clear, enumerated steps to perform installation of each component.
-  Divide long or complex installation procecedures into subsections.
-- Configuration: Provide clear, enumerated steps for any post-installation configurations.
-- Validation: Provide clear, enumerated steps to validate or demonstrate functionality relevant to the use case.
-- Summary: Summarize what was covered and suggest additional learning resources.
+1. Introduction: Ensure the reader knows what the guide is about, who it is for, etc.
+   Include the following subsections:
+   a. Motivation: Describe the use case or challenge and motivation for the guide.
+   b. Audience: Identify the intended audience and needed skills.
+   c. Scope: Define specifically what is covered.
+   d. Acknowledgements: Optionally, acknowledge the contributions of editors and others to the guide.
+2. Prerequisites: Clearly identify all of the technologies the reader should have in place prior to following the steps of the guide.
+   Specify any special configuration steps and link to additional resources the reader may need to prepare the environment.
+3. Installation: Provide clear, enumerated steps to perform installation of each component.
+   Divide long or complex installation procecedures into subsections.
+4. Configuration: Provide clear, enumerated steps for any post-installation configurations.
+5. Validation: Provide clear, enumerated steps to validate or demonstrate functionality relevant to the use case.
+6. Summary: Summarize what was covered and suggest additional learning resources.
 
 
 
@@ -87,13 +87,13 @@ Typical organization includes these sections:
 
 The general contributor process is:
 
-. *Create your workspace*
+1. *Create your workspace*
 
-. *Create your content*
+2. *Create your content*
 
-. *Submit your documentation for review*
+3. *Submit your documentation for review*
 
-. *Celebrate when published!*
+4. *Celebrate when published!*
 
 
 
@@ -109,7 +109,8 @@ The general contributor process is:
 
 
 ### Create your content
-. Develop your documentation by editing (as needed) the source files.
+
+Develop your documentation by editing (as needed) the source files.
   The primary files you will need to edit are:
   - `DC-gs_{generated-project-name}`
   - `adoc/gs-{generated-project-name}_vars.adoc`
