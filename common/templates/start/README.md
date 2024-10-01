@@ -99,26 +99,42 @@ The general contributor process is:
 
 
 ### Create your workspace
-. Fork the repository into your own GitHub account.
-. Clone your fork to your local system.
-. Create a branch: `git branch myproject`.
-. Check out your new branch: `git checkout myproject`.
-. Change to the `kubernetes/start` or `linux/start` directory (depending on the focus of your documentation project).
-. Run `bin/gssetup.sh` and follow the prompts to create basic template files in a (new, if necessary) project subdirectory named for the primary partner.
-. Enter the project subdirectory.
+
+You develop your documentation in your own workspace.
+This consists of a fork of the the SUSE TRD repository in your own GitHub account, a clone of this fork on your local computer system, and a Git branch to contain your edits.
+
+Use this process to set up your workspace and generate templates for the required files and links:
+
+1. Log into your own GitHub account and fork the [SUSE TRD upstream repository](https://github.com/SUSE/technical-reference-documentation).
+2. Clone your fork to your local system.
+3. Create a branch: `git branch myproject`.
+4. Check out your new branch: `git checkout myproject`.
+5. Change to the `kubernetes/start` or `linux/start` directory (depending on the focus of your documentation project).
+6. Run `bin/gssetup.sh` and follow the prompts to create basic template files in a (new, if necessary) project subdirectory named for the primary partner.
+7. Enter the project subdirectory.
 
 
 ### Create your content
 
-Develop your documentation by editing (as needed) the source files.
-  The primary files you will need to edit are:
-  - `DC-gs_{generated-project-name}`
-  - `adoc/gs-{generated-project-name}_vars.adoc`
-  - `adoc/gs_{generated-project-name}.adoc`
-  - `adoc/gs_{generated-project-name}-docinfo.xml`
-. Upload any needed media files to the appropriate subdirectory (e.g., `.svg`, `.png`) under `media` directory.
-. Use the [DocBook Authoring and Publishing Suite (DAPS)](https://opensuse.github.io/daps/), which is also available as a container with [Daps2Docker](https://github.com/openSUSE/daps2docker), to frequently render and check the appearance of your documentation.
-. Frequenctly, commit and push your edits to your GitHub clone.
+You develop your documentation content by editing (as needed) source files.
+The primary source files include:
+- `DC-gs_{generated-project-name}`
+- `adoc/gs-{generated-project-name}_vars.adoc`
+- `adoc/gs_{generated-project-name}.adoc`
+- `adoc/gs_{generated-project-name}-docinfo.xml`
+
+`adoc` files are plain text files with the [AsciiDoc markup language](https://asciidoc.org/).
+
+Use the [DocBook Authoring and Publishing Suite (DAPS)](https://opensuse.github.io/daps/), which is also available as a container with [Daps2Docker](https://github.com/openSUSE/daps2docker), to frequently render and check the appearance of your documentation.
+
+
+Additionally, any media elements, such as diagrams and screenshots, should be copied into the `media` directory tree, with specific files sorted by type in appropriate subdirectories (e.g., `.svg`, `.png`).
+
+
+
+> :IMPORTANT: Commit and push your edits to your GitHub clone frequently.
+
+
 
 ### Submit your documentation for review
 . Sync any updates of the upstream [GitHub repository](https://github.com/SUSE/technical-reference-documentation) to your fork and push these to your clone.
