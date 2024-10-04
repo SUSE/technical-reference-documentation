@@ -28,33 +28,35 @@ include::./gs_sles_jupyter-jupyterlab_container-vars.adoc[]
 
 == Introduction
 
-Modern software development reaps enormous benefits from being agile, open, and collaborative.
-The benefits and power of open source are illustrated in the domain of artificial intelligence and machine learning (AI/ML).
-The open source, AI/ML community has developed a vast and growing ecosystem of libraries, frameworks, and applications that powers innovation across many disciplines and use cases.
+Modern software development is largely agile, open, and collaborative.
+Fostering a healthy, open source community can deliver tremendous benefits.
+This is illustrated in today's innovative domain of artificial intelligence and machine learning (AI/ML).
 
-AI/ML applications can be complex, leveraging other software (libraries and frameworks) to supply needed structures and functions.
+The AI/ML developer community is diverse.
+Contributors from a broad spectrum of disciplines leverage and contribute to a vast and growing ecosystem of open source libraries, frameworks, and other tools.
+This resource enables them to expand capabilities and accelerate development to address real-world challenges and use cases.
 
+The rapid pace of innovation in AI/ML can also be challenging.
+Complex applications often rely on functions and structures located in multiple, rapidly changing libraries.
+As the underlying libraries change, the dependent applications can break or produce unexpected results.
+To attempt to address this, many AI/ML applications require specific lbirary versions.
+However, in multi-application and multi-user environments, it can be difficult or impossible to manage this software landscape through traditional methods.
 
-
-With such rapid innovation, it can be a challenge to
-
-AI/ML applications often rely on a
-
-Today, developers have access to container technologies that help overcome this challenge.
-Containers provide a convenient, lightweight way to package your application components with their dependencies while isolating these from other components and their dependencies.
+Today, developers have access to container technologies to help overcome this challenge.
+Containers provide a convenient, lightweight way to package applications and their dependencies while isolating these from other applications and their dependencies.
 Containers also enable massive scale, letting you run your applications everywhere they are needed - in the data center, in the cloud, and at the edge.
 
 
 
 === Scope
 
-This document illustrates how to containerize the popular Python development platform for data analytics and machine learning, JupyterLab, with {podman} and {bci-full}.
+This document illustrates how to containerize and deploy {jup}, the {python} development platform for data analytics and AI/ML, using {bci-full} and {podman}.
 
 
 === Audience
 
-This document is intended for data scientists, ML developers, operations teams, systems architects and others interested in learning more about container technologies.
-To progress with this document, the reader should have basic Linux command line skills and some knowledge of containers.
+This document is intended for AI/ML developers, researchers, operations teams, systems architects, and others interested in learning more about software development and deployment with container technologies.
+To progress with this document, the reader should have basic Linux command line skills and familiarity with container concepts.
 
 
 === Acknowledgements
