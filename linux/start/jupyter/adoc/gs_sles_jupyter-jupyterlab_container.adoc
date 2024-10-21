@@ -34,17 +34,25 @@ This is illustrated in today's innovative domain of artificial intelligence and 
 
 The AI/ML developer community is diverse.
 Contributors from a broad spectrum of disciplines leverage and contribute to a vast and growing ecosystem of open source libraries, frameworks, and other tools.
-This resource enables them to expand capabilities and accelerate development to address real-world challenges and use cases.
+This shared resource accelerates innovation, enabling developers to more quickly address real-world challenges and use cases.
 
 The rapid pace of innovation in AI/ML can also be challenging.
-Complex applications often rely on functions and structures located in multiple, rapidly changing libraries.
+Complex applications often rely on functions and structures found in multiple, rapidly changing libraries.
 As the underlying libraries change, the dependent applications can break or produce unexpected results.
-To attempt to address this, many AI/ML applications require specific lbirary versions.
-However, in multi-application and multi-user environments, it can be difficult or impossible to manage this software landscape through traditional methods.
+This means that many AI/ML applications have specific version requirements for the underlying libraries.
+In multi-application and multi-user environments, this can introduce significant challenges with version conflicts that are difficult or impossible to manage through traditional methods.
 
-Today, developers have access to container technologies to help overcome this challenge.
-Containers provide a convenient, lightweight way to package applications and their dependencies while isolating these from other applications and their dependencies.
-Containers also enable massive scale, letting you run your applications everywhere they are needed - in the data center, in the cloud, and at the edge.
+Today, developers have access to container technologies.
+Containers provide a convenient, lightweight way to package applications and their dependencies while isolating them from other applications and their dependencies.
+This makes containerized applications highly portable and scalable, letting you run your applications everywhere they are needed - in the data center, in the cloud, and at the edge.
+
+Building application containers starts with choosing a base container image.
+{bci-website}[{bci-full}] ({bci}) are tested, certified, and enterprise-ready.
+They offer offer a secure and compliant foundation for any development project, including optimized container images designed to furnish robust programming languge environments.
+
+{jup-website}[JupyterLab] by Project {jup-provider} is an interactive development environment that is popular with AI/ML, data science, and other researchers and developers.
+It is not built on a microservices architecture, so it may seem to be an unusual application to put into a container.
+However, containerizing JupyterLab with all required libraries can be both a useful illustration of the power of containerization and a convenient way to share a pre-configured development environment with other researchers.
 
 
 
@@ -70,19 +78,6 @@ The authors wish to thank the following individuals for their contributions to t
 
 
 == Overview
-
-
-Modern software development is agile, featuring microservices architectures.
-Software applications are no longer monolithic executables.
-Instead, they are composed of many small, independent services that communicate over well-defined application programming interfaces (APIs).
-And containers are a key technology for implementing microservices architectures.
-
-{jup-website}[JupyterLab] is an interactive development environment that is popular among machine learning, data science, and other researchers and developers.
-It is not built on a microservices architecture, so it may seem to be an unusual application to put into a container.
-However, containerizing JupyterLab with all required libraries can be a useful way to share a fully replicable experiment with other researchers.
-
-
-=== Goals
 
 In this guide, you learn how to:
 
