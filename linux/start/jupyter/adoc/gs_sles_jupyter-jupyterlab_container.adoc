@@ -48,7 +48,7 @@ This makes containerized applications highly portable and scalable, letting you 
 
 Building application containers starts with choosing a base container image.
 {bci-website}[{bci-full}] ({bci}) are tested, certified, and enterprise-ready.
-They offer offer a secure and compliant foundation for any development project, including optimized container images designed to furnish robust programming languge environments.
+They offer a secure and compliant foundation for any development project, including optimized container images designed to furnish robust programming languge environments.
 
 {jup-website}[JupyterLab] by Project {jup-provider} is an interactive development environment that is popular with AI/ML, data science, and other researchers and developers.
 It is not built on a microservices architecture, so it may seem to be an unusual application to put into a container.
@@ -107,14 +107,14 @@ Little to no modification should be required to follow this guide with newer ver
 . {bci-website}[{bci-full}] ({bci})
 //
 +
-A base container image provides basic functionality, such as a stripped-down Linux operating system.
-It is onto a base container image that you layer your application components.
-{bci-full} are freely available, re-distributable, supported across many environments.
-These images are designed to be a secure, flexible foundation for any containerized workload, including ML applications, that need to be deployed anywhere - in the data center, in the cloud, and on edge devices.
+A base container image is a foundational layer for your application container.
+It typically provides a stripped-down Linux operating system user space without the kernel.
+{bci-full} are freely available, redistributable, and designed to be a secure, flexible foundation onto which you can add your application components.
+{bci} development container images provide optimized programming language enviroments, such as Python, to provide needed components from a trusted source and improve application container build times.
 +
 [TIP]
 ====
-SUSE maintains up-to-date, ready-to-use container images at {bci-registry}.
+Ready-to-use container images are available in the {bci-registry}[SUSE Container Registry].
 ====
 
 . {podman-website}[{podman}]
