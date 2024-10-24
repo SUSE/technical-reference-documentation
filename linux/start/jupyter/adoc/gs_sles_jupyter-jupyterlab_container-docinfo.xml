@@ -68,9 +68,9 @@
      - Use the template below to specify each SUSE component.
 -->
 <meta name="productname">
-  <productname version="{comp1-version1}">{comp1-full}</productname>
-  <productname version="{comp2-version1}">{comp2-full}</productname>
-  <productname version="{comp3-version1}">{comp3-full}</productname>
+  <productname version="{sles-version1}">{sles}</productname>
+  <productname version="{bci-version1}">{bci-full}</productname>
+  <productname version="{jup-version1}">{jup}</productname>
 </meta>
 
 <!-- SUSE product listing for Google Analytics
@@ -80,7 +80,7 @@
        of product names and versions enclosed in a 'productname' tag pair.
      - Do NOT use both forms.
 -->
-<productname>{comp1-full} {comp1-version1}, {comp2-full} {comp2-version1}, {comp3-full} {comp3-version1}</productname>
+<productname>{sles} {sles-version1}, {bci-full} {bci-version1}, {jup} {jup-version1}</productname>
 
 
 <!-- Platform
@@ -89,15 +89,16 @@
      E.g., "SUSE Linux Enterprise Server for SAP Applications 12 and 15"
      NOTE: This metadata tag will be deprecated in the next template release.
 -->
-<meta name="platform">{comp1-full} {comp1-version1}</meta>
-<meta name="platform">{comp2-full} {comp2-version1}</meta>
+<meta name="platform">{sles} {sles-version1}</meta>
+<meta name="platform">{bci-full} {bci-version1}</meta>
+<meta name="platform">{jup} {jup-version1}</meta>
 
 
 <!-- Partner metadata
      Identify ONLY ONE technical partner (business or organization name)
      supplying a component of the solution.
 -->
-<meta name="techpartner">{comp3-provider}</meta>
+<meta name="techpartner">{jup-provider}</meta>
 
 
 <!-- author metadata

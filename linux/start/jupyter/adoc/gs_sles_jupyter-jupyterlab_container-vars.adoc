@@ -37,6 +37,8 @@
 //   :rev1-date: 2024-09-06
 //   :rev1-description: Original version
 //-
+:rev5-date: 2024-10-23
+:rev5-description: Updated use of variables
 :rev4-date: 2024-09-26
 :rev4-description: Updated with new metadata, SLES 15 SP6, and Podman 5.2.2
 :rev3-date: 2024-02-22
@@ -45,7 +47,7 @@
 :rev2-description: Updated with Podman 4.3.1
 :rev1-date: 2022-11-17
 :rev1-description: Original version
-:docdate: {rev4-date}
+:docdate: {rev5-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -78,43 +80,39 @@
 //   You can create additional modifiers as needed.
 //
 // -
-:comp1-provider: SUSE
-:comp1: SUSE Linux Enterprise Server
-:comp1-full: SUSE Linux Enterprise Server
-:comp1-ver1: 15
-:comp1-sp1: 6
-:comp1-version1: {comp1-ver1} SP{comp1-sp1}
-:comp1-website: https://www.suse.com/products/server
-:comp1-docs: https://documentation.suse.com/sles/{comp1-ver1}-SP{comp1-sp1}/
+:sles-provider: SUSE
+:sles: SUSE Linux Enterprise Server
+:sles-ver1: 15
+:sles-sp1: 6
+:sles-version1: {sles-ver1} SP{sles-sp1}
+:sles-website: https://www.suse.com/products/server
+:sles-docs: https://documentation.suse.com/sles/{sles-ver1}-SP{sles-sp1}/
 
-:comp2-provider: SUSE
-:comp2: SLE BCI
-:comp2-full: SUSE Linux Enterprise Base Container Images
-:comp2-version1: {comp1-version1}
-:comp2-website: https://www.suse.com/products/base-container-images
-:comp2-docs: https://documentation.suse.com/container/all/single-html/Container-guide
-:comp2-registry: https://registry.suse.com
+:bci-provider: SUSE
+:bci: SLE BCI
+:bci-full: SUSE Linux Enterprise Base Container Images
+:bci-version1: {sles-version1}
+:bci-website: https://www.suse.com/products/base-container-images
+:bci-docs: https://documentation.suse.com/container/all/single-html/Container-guide
+:bci-registry: https://registry.suse.com
 
-:comp3-provider: Project Jupyter
-:comp3: JupyterLab
-:comp3-full: JupyterLab
-:comp3-version1: 4.2.5
-:comp3-website: https://jupyter.org
-:comp3-docs: https://jupyterlab.readthedocs.io/en/latest/
+:jup-provider: Jupyter
+:jup: JupyterLab
+:jup-version1: 4.2.5
+:jup-website: https://jupyter.org
+:jup-docs: https://jupyterlab.readthedocs.io/en/latest/
 
-:comp4-provider: Python Software Foundation
-:comp4: Python
-:comp4-full: Python
-:comp4-version1: 3.12.6
-:comp4-website: https://www.python.org
-:comp4-docs: https://docs.python.org/3/
+:python-provider: Python Software Foundation
+:python: Python
+:python-version1: 3.12.6
+:python-website: https://www.python.org
+:python-docs: https://docs.python.org/3/
 
-:comp5-provider: Podman
-:comp5: Podman
-:comp5-full: Podman
-:comp5-version1: 4.9.5
-:comp5-website: https://podman.io
-:comp5-docs: https://docs.podman.io/en/latest/
+:podman-provider: Podman
+:podman: Podman
+:podman-version1: 4.9.5
+:podman-website: https://podman.io
+:podman-docs: https://docs.podman.io/en/latest/
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -143,17 +141,17 @@
 //                            SUSE Rancher Prime."
 //
 // -
-:title: JupyterLab, Python, and Containers
+:title: Accelerate AI/ML Development with {jup} and {bci-full}
 
-:subtitle: Accelerating Development with {comp2-full}
+:subtitle: Support Collaborative Development with Containers
 
-:usecase: Accelerate data analytics, machine learning, and artificial intelligence development with containers
+:usecase: Accelerate collaborative AI/ML development with {bci}
 
-:description: Deploy JupyterLab and Python with {comp2-full} and Podman for development and collaboration.
+:description: Deploy {jup} and {python} with {bci-full} and {podman} for development and collaboration
 
-:description-social: JupyterLab with {comp2-full}
+:description-social: Deploy {jup} with {bci-full}
 
-:executive-summary: Accelerate development and production in data analytics, machine learning, and artificial intelligence with {comp2-full} and JupyterLab.
+:executive-summary: Deploy {jup} and {python} with {podman} and {bci} for accelerated, collaborative development in data analytics, artificial intelligence, and machine learning.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
