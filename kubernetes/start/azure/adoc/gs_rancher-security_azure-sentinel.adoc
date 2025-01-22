@@ -37,7 +37,6 @@ include::./gs_rancher-security_azure-sentinel-vars.adoc[]
 
 Security is becoming increasingly important for users and administrators alike. Unfortunately, many tools have unique interfaces or interactions that make getting an overview of the environment more difficult. This guide introduces a solution for unifying the security approach by integrating SUSE Security with Microsoft Sentinel. Integrating SUSE Security with Microsoft Sentinel provides a comprehensive overview of the environment. It also enables new ways to interact with security using Microsoft Security Copilot.
 
-// TODO: clean this up so it's not a direct copy of the webiste
 https://www.suse.com/products/rancher/security/[SUSE Security] (formerly NeuVector) is a fully open source, zero trust container security platform. SUSE Security offers enhanced runtime security, advanced threat detection, and expanded compliance features. It continuously scans throughout the container lifecycle. It can remove security roadblocks. Bake in security policies at the start to maximize developer agility.
 
 https://azure.microsoft.com/en-us/products/microsoft-sentinel[Microsoft Sentinel] is a scalable, cloud-native security information and event management (SIEM) that delivers an intelligent and comprehensive solution for SIEM and security orchestration, automation, and response (SOAR). Microsoft Sentinel provides cyberthreat detection, investigation, response, and proactive hunting, with a bird's-eye view across your enterprise.
@@ -84,7 +83,7 @@ This guide is intended for System Administrators, SecOps, IT Operations, or anyo
 
 == Technical Overview
 
-To utilize SUSE Security data in Microsoft Sentinel, this guide outlines the steps to export data from SUSE Security into a Syslog server and then collecting it into an Azure Log Analytics Workspace. This data will then be used in Microsoft Sentinel. The following diagram provides a basic overview of the data flow. 
+This guide demonstrates how to integrate SUSE Security with Microsoft Sentinel. This is accomplished by exporting data from SUSE Security into a Syslog server and then collecting it into an Azure Log Analytics Workspace. This data will then be used in Microsoft Sentinel. The following diagram provides a basic overview of the data flow. 
 
 image::00-technical-diagram.png[scaledwidth="85%", align="center"] 
 
@@ -127,8 +126,6 @@ Getting started with integration SUSE Security and Microsoft Sentinel is fairly 
 // - Link to existing resources whenever possible.
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-// TODO: finalize requirements
 
 This guide aims to be comprehensive, but concise. To follow along, ensure you have the following: 
 
