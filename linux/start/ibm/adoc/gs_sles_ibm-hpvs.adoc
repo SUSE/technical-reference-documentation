@@ -43,7 +43,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT REVISION DATE
 //-
-:revision-date: 2024-08-17
+:revision-date: 2025-02-12
 :docdate: {revision-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -209,6 +209,7 @@ Contributions to the development of this guide by the following individuals is a
 
 === Revision history
 
+* 2025-02-12: Remove spaces in command to define and start the slebci-paynow-website VM
 * 2024-08-17: Fix copy/paste error in rsyslog server.conf
 * 2024-01-11: Updated for Node.js 20
 * 2023-07-05: Initial publication
@@ -1580,34 +1581,34 @@ You should see something like:
 [source, console]
 ----
 virt-install \
-  --name=slebci-paynow-website \
-  --osinfo ubuntu20.04 \
-  --memory=3815 \
-  --vcpus vcpu.placement=static,vcpus=2 \
-  --boot hd \
-  --cpu mode=host-model,check=partial \
-  --clock offset=utc \
-  --events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
-  --disk /var/lib/libvirt/images/slebci-paynow-website/\
-  ibm-hyper-protect-container-runtime-23.3.0.qcow2,driver.iommu=on,\
-  target.bus=virtio,\
+--name=slebci-paynow-website \
+--osinfo ubuntu20.04 \
+--memory=3815 \
+--vcpus vcpu.placement=static,vcpus=2 \
+--boot hd \
+--cpu mode=host-model,check=partial \
+--clock offset=utc \
+--events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
+--disk /var/lib/libvirt/images/slebci-paynow-website/\
+ibm-hyper-protect-container-runtime-23.3.0.qcow2,driver.iommu=on,\
+target.bus=virtio,\
 boot.order=1 \
-  --disk /var/lib/libvirt/images/slebci-paynow-website/\
-  slebci-paynow-website-data.qcow2,size=10,format=qcow2,cache=none,\
+--disk /var/lib/libvirt/images/slebci-paynow-website/\
+slebci-paynow-website-data.qcow2,size=10,format=qcow2,cache=none,\
 driver.discard=ignore,driver.iommu=on,target.bus=virtio \
-  --disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,\
-  format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
+--disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,\
+format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
 target.bus=virtio \
-  --controller type=pci,index=0,model=pci-root \
-  --network type=direct,source=eth0,source.mode=bridge,\
-  model.type=virtio,driver.name=vhost,driver.iommu=on,\
-  mac.address=<macaddress> \
-  --console pty,target.type=sclp,target.port=0 \
-  --audio id=1,type=none \
-  --memballoon none \
-  --panic s390 \
-  --channel none \
-  --rng none
+--controller type=pci,index=0,model=pci-root \
+--network type=direct,source=eth0,source.mode=bridge,\
+model.type=virtio,driver.name=vhost,driver.iommu=on,\
+mac.address=<macaddress> \
+--console pty,target.type=sclp,target.port=0 \
+--audio id=1,type=none \
+--memballoon none \
+--panic s390 \
+--channel none \
+--rng none
 ----
 +
 => where `<macaddress>` in this command is replaced with the MAC address you noted in the previous step.
