@@ -41,7 +41,8 @@ https://www.suse.com/products/rancher/security/[SUSE Security] (formerly NeuVect
 
 https://azure.microsoft.com/en-us/products/microsoft-sentinel[Microsoft Sentinel] is a scalable, cloud-native security information and event management (SIEM) that delivers an intelligent and comprehensive solution for SIEM and security orchestration, automation, and response (SOAR). Microsoft Sentinel provides cyberthreat detection, investigation, response, and proactive hunting, with a bird's-eye view across your enterprise.
 
-By combining these two best in class offerings it is possible to gain alerts and automatic responses to security alerts, intrusions, or other threats for workloads running in Azure be they VM or Kubernetes based.
+By combining these two best-in-class offerings, you can receive alerts and automatic responses to security threats, 
+including intrusions or other risks, for workloads running in Azure, whether VM or Kubernetes-based.
 
 
 === Scope
@@ -51,7 +52,8 @@ By combining these two best in class offerings it is possible to gain alerts and
 //   E.g., "You will learn how to ..."
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide will go through the process of deploying and configuring SUSE Security as well as configuring SUSE Security to export log data into Azure Log Analytics Workspace which can be used in Microsoft Sentinel for monitoring across an entire Azure domain.
+This guide will walk you through the process of deploying and configuring SUSE Security. It will also cover how to set up SUSE Security to export 
+log data into Azure Log Analytics Workspace, which can be used in Microsoft Sentinel for monitoring across your entire Azure domain.
 
 
 === Audience
@@ -63,7 +65,8 @@ This guide will go through the process of deploying and configuring SUSE Securit
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide is intended for System Administrators, SecOps, IT Operations, or anyone who is interested in creating a unified security view for an Azure environment across VM and Kubernetes based workloads.
+This guide is designed for System Administrators, SecOps, IT Operations, or anyone interested in creating a unified security view for an Azure environment, 
+encompassing both VM and Kubernetes-based workloads.
 
 
 // === Acknowledgements
@@ -107,7 +110,7 @@ Getting started with integration SUSE Security and Microsoft Sentinel is fairly 
 
 . Create a VM to act as a Syslog server
 
-. Create a Azure Log Analytics Workspace to store log data
+. Create an Azure Log Analytics Workspace to store log data
 
 . Configure the data from SUSE Security to flow into the Azure Log Analytics Workspace
 
@@ -259,19 +262,23 @@ The next tab, `Resources`, allows for the selection of the systems or data produ
 
 image::04-azure-data-collection-scope.png[scaledwidth="85%", align="center"]
 
-The next tab determines how Azure will attempt to collect data from the resources specified. Click _Add data source_ to open another sidebar. In the first tab of the sidebar change the Data source type dropdown to `Linux Syslog`. Then click _Next_ at the bottom.
+The next tab determines how Azure will attempt to collect data from the resources specified. Click _Add data source_ to open another sidebar. In the first tab of the sidebar, change the Data source type drop-down to `Linux Syslog`. Then click _Next_ at the bottom.
 
 image::05-azure-data-collection-source.png[scaledwidth="85%", align="center"]
 
-In the second tab, `Destination`, click _Add destination_. This will add a new entry to the list. For this entry change *Destination Type* to `Azure Monitor Logs`. Also change *Destination Details* to `demo-log-analytics` which is the name of the Log Analytics Workspace previously created. Click on _Add data source_ at the bottom, then _Review + Create_. This will show the rule being created and allow for verification that everything is correct. Once ready, click _Create_.
+In the second tab, `Destination`, click _Add destination_. This will add a new entry to the list. For this entry change *Destination Type* to `Azure Monitor Logs`. Also change *Destination Details* to `demo-log-analytics` which is the name of the Log Analytics Workspace previously created. Click _Add data source_ at the bottom, then _Review + Create_. This will show the rule being created and allow for verification that everything is correct. When ready, click _Create_.
 
 image::06-azure-data-collection-validation.png[scaledwidth="85%", align="center"]
 
-Once the deployment is complete, Log Analytics is ready to receive data from the Syslog server.
+When the deployment is complete, Log Analytics is ready to receive data from the Syslog server.
 
 ==== Syslog Server
 
-The syslog server is used as an intermediary between the SUSE Security platform and Azure Log Analytics Workspaces. SUSE Security can export data to a syslog server, but Log Analytics Workspaces cannot act as that server. To allow the VM to act as this server, the Rsyslog service must be configured to allow for remote connections. To accomplish this, SSH into the syslog-server VM created using the SSH key created during the VM creation process previously. They will be stored locally to where the command was run.
+The syslog server is used as an intermediary between the SUSE Security platform and Azure Log Analytics Workspaces. 
+SUSE Security can export data to a syslog server, but Log Analytics Workspaces cannot act as that server. 
+To allow the VM to act as this server, the Rsyslog service must be configured to allow for remote connections. 
+To accomplish this, connect via SSH to the syslog-server VM created using the SSH key created during the VM 
+creation process previously. They will be stored locally to where the command was run.
 
 After connecting to the system, edit the file `/etc/rsyslog.d/remote.conf` and add the following two lines.
 
@@ -289,7 +296,7 @@ The Syslog server is now ready to receive data from SUSE Security.
 
 ==== SUSE Security
 
-To install SUSE Security log in to the web UI for SUSE Rancher Prime and select the AKS cluster created at the start. 
+To install SUSE Security log in to the Web UI for SUSE Rancher Prime and select the AKS cluster created at the start. 
 
 TIP: For existing cluster, they must be imported into SUSE Rancher Prime to install SUSE Security. Refer to the https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-clusters-in-rancher-setup/register-existing-clusters[SUSE Rancher documentation] for guidance.
 
@@ -307,11 +314,11 @@ With the data pipeline in place it is now possible to configure Microsoft Sentin
 
 After it has deployed, in the left sidebar select _Analytics_. This section allows for custom queries to search the log data and either flag them or take action according to query definition. For this guide, the rule defined will not take any action, but will raise an incident for review. Consult the https://learn.microsoft.com/en-us/azure/sentinel/[Microsoft Sentinel documentation] or contact an Azure representative to learn more about Microsoft Sentinel.
 
-Click _Create_ near the top, then select _Scheduled Query rule_. In the template popup give the rule a descriptive name. The Severity dropdown is used to define the level of any incidents created by the rule. These can be used to take additional actions based on the severity level. When ready select _Next_ at the bottom.
+Click _Create_ near the top, then select _Scheduled Query rule_. In the template popup give the rule a descriptive name. The Severity drop-down menu is used to define the level of any incidents created by the rule. These can be used to take additional actions based on the severity level. When ready select _Next_ at the bottom.
 
 image::10-sentinel-rule-wizard.png[scaledwidth="85%", align="center"]
 
-The *Set rule logic* tab is where queries are defined to filter all of the log data stored in the Log Analytics Workspace. For now, here is an example query that will select any entry that is logged as either a Warning, Error, or Critical. Once it has selected those entries it will filter out unnecessary columns.
+The *Set rule logic* tab is where queries are defined to filter all of the log data stored in the Log Analytics Workspace. For now, here is an example query that will select any entry that is logged as either a Warning, Error, or Critical. When it has selected those entries, it will filter out unnecessary columns.
 
 [source, powershell]
 ----
@@ -396,7 +403,7 @@ Microsoft Security Copilot will allow for interacting with data through a tradit
 
 == Troubleshooting
 
-In the event that the system is not sending data as expected it is recommended to check the following locations.
+If the system is not sending data as expected, it is recommended to check the following locations.
 
 === Syslog Server
 
@@ -421,17 +428,29 @@ image::13-sentinel-validation.png[scaledwidth="85%", align="center"]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-This guide has shown how to take the data produced by SUSE Security and integrate it into Microsoft Sentinel to create a unified threat interface for an environment. This is accomplished by exporting the data from SUSE Security into an Azure Log Analytics Workspace which can be queried by Microsoft Sentinel as well as Microsoft Defender and Microsoft Security Copilot.
+This guide has shown how to take the data produced by SUSE Security and integrate it into Microsoft Sentinel to create 
+a unified threat interface for an environment. This is accomplished by exporting the data from SUSE Security 
+into an Azure Log Analytics Workspace which can be queried by Microsoft Sentinel and by Microsoft Defender 
+and Microsoft Security Copilot.
 
 image::14-resource-diagram.png[scaledwidth="85%", align="center"]
 
-The preceding network diagram illustrates this integration within a typical Azure environment. As shown, SUSE Security, deployed within an Azure Kubernetes cluster, forwards security logs to a dedicated Syslog server. This server then transmits the data to the Log Analytics Workspace, where it becomes accessible to Microsoft Sentinel and other security tools for analysis and response.
+The preceding network diagram illustrates this integration within a typical Azure environment. 
+As shown, SUSE Security, deployed within an Azure Kubernetes cluster, forwards security logs to a dedicated Syslog server. 
+This server then transmits the data to the Log Analytics Workspace, where it becomes accessible to Microsoft Sentinel 
+and other security tools for analysis and response.
 
-By centralizing security data in this manner, organizations can gain a comprehensive view of their security posture, enabling faster threat detection and response.  This unified approach streamlines security operations and strengthens defenses against increasingly sophisticated cyberattacks.
+By centralizing security data in this manner, organizations can gain a comprehensive view of their security posture, 
+enabling faster threat detection and response.  This unified approach streamlines security operations and strengthens 
+defenses against increasingly sophisticated cyberattacks.
 
-Modern environments generate vast amounts of log data, which can be overwhelming. Tools that simplify the parsing and analysis of this data are crucial for maintaining awareness and flexibility in security efforts. This ultimately contributes to the safety of our systems, environments, and customers.
+Modern environments generate vast amounts of log data, which can be overwhelming. Tools that simplify the parsing 
+and analysis of this data are crucial for maintaining awareness and flexibility in security efforts. 
+This ultimately contributes to the safety of our systems, environments, and customers.
 
-To learn more about integrating SUSE Security with Microsoft Sentinel, explore the detailed documentation available for https://open-docs.neuvector.com[SUSE Security] and https://learn.microsoft.com/azure/sentinel[Microsoft Sentinel]. For personalized assistance, contact your SUSE or Microsoft representative to discuss your specific needs and security objectives.
+To learn more about integrating SUSE Security with Microsoft Sentinel, explore the detailed documentation available 
+for https://open-docs.neuvector.com[SUSE Security] and https://learn.microsoft.com/azure/sentinel[Microsoft Sentinel]. 
+For personalized assistance, contact your SUSE or Microsoft representative to discuss your specific needs and security objectives.
 
 
 
