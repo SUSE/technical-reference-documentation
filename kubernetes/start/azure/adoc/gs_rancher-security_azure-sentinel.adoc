@@ -164,7 +164,7 @@ This guide aims to be comprehensive, but concise. To follow along, ensure you ha
 
 === Infrastructure
 
-In order to create this integration several resources need to be created in Azure. This includes an Azure Kubernetes (AKS) cluster where workloads will be running and a virtual machine (VM) to act as a Syslog server. An Azure Log Analytics Workspace and an instance of Microsoft Sentinel are needed for log data storage and processing. Additionally, one or more Security Compute Units (SCUs) are required to integrate Microsoft Sentinel further for use with Azure Security Copilot. 
+To create this integration, several resources need to be created in Azure. This includes an Azure Kubernetes (AKS) cluster where workloads will be running and a virtual machine (VM) to act as a Syslog server. An Azure Log Analytics Workspace and an instance of Microsoft Sentinel are needed for log data storage and processing. Additionally, one or more Security Compute Units (SCUs) are required to integrate Microsoft Sentinel further for use with Azure Security Copilot. 
 
 A separate Azure Resource Group is recommended to hold resources created throughout this guide. A new Resource Group can be created in the Azure Portal or through the Azure CLI. This guide will use the {azure_region_long} region in commands, however any region can be used.
 
@@ -262,7 +262,9 @@ The next tab, `Resources`, allows for the selection of the systems or data produ
 
 image::04-azure-data-collection-scope.png[scaledwidth="85%", align="center"]
 
-The next tab determines how Azure will attempt to collect data from the resources specified. Click _Add data source_ to open another sidebar. In the first tab of the sidebar, change the Data source type drop-down to `Linux Syslog`. Then click _Next_ at the bottom.
+The next tab determines how Azure will attempt to collect data from the resources specified. 
+Click _Add data source_ to open another sidebar. In the first tab of the sidebar, 
+change the Data source type to `Linux Syslog`. Then click _Next_ at the bottom.
 
 image::05-azure-data-collection-source.png[scaledwidth="85%", align="center"]
 
@@ -314,7 +316,7 @@ With the data pipeline in place it is now possible to configure Microsoft Sentin
 
 After it has deployed, in the left sidebar select _Analytics_. This section allows for custom queries to search the log data and either flag them or take action according to query definition. For this guide, the rule defined will not take any action, but will raise an incident for review. Consult the https://learn.microsoft.com/en-us/azure/sentinel/[Microsoft Sentinel documentation] or contact an Azure representative to learn more about Microsoft Sentinel.
 
-Click _Create_ near the top, then select _Scheduled Query rule_. In the template popup give the rule a descriptive name. The Severity drop-down menu is used to define the level of any incidents created by the rule. These can be used to take additional actions based on the severity level. When ready select _Next_ at the bottom.
+Click _Create_ near the top, then select _Scheduled Query rule_. In the template popup give the rule a descriptive name. The Severity drop-down selection is used to define the level of any incidents created by the rule. These can be used to take additional actions based on the severity level. When ready select _Next_ at the bottom.
 
 image::10-sentinel-rule-wizard.png[scaledwidth="85%", align="center"]
 
