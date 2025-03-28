@@ -9,7 +9,7 @@
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # global variables
 ##
-SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slmicro', 'slelp', 'slert', 'sleha', 'slebci', 'suma', 'rancher', 'neuvector', 'stackstate', 'harvester', 'rke', 'rke2', 'k3s', 'longhorn')
+SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slmicro', 'slelp', 'slert', 'sleha', 'slebci', 'smlm', 'rancher', 'sto', 'sec', 'obs', 'virt', 'rke', 'rke2', 'k3s')
 
 
 
@@ -32,15 +32,15 @@ echo "slelp       | SUSE Linux Enterprise Live Patching"
 echo "slert       | SUSE Linux Enterprise Real Time"
 echo "sleha       | SUSE Linux Enterprise for High Availability"
 echo "slebci      | SUSE Linux Enterprise Base Container Images"
-echo "suma        | SUSE Manager"
+echo "smlm        | SUSE Multi-Linux Manager Manager"
 echo "rancher     | SUSE Rancher Prime"
-echo "neuvector   | SUSE NeuVector Prime"
-echo "harvester   | SUSE Harvester"
-echo "stackstate  | SUSE StackState"
-echo "rke         | Rancher Kubernetes Engine by SUSE"
-echo "rke2        | Rancher Kubernetes Engine 2 by SUSE"
-echo "k3s         | K3s by SUSE"
-echo "longhorn    | SUSE Longhorn"
+echo "sec         | SUSE Security"
+echo "virt        | SUSE Virtualization"
+echo "obs         | SUSE Observability"
+echo "sto         | SUSE Storage"
+echo "rke         | Rancher Kubernetes Engine"
+echo "rke2        | Rancher Kubernetes Engine 2"
+echo "k3s         | K3s"
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo
 
