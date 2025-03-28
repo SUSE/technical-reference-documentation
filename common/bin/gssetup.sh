@@ -185,6 +185,20 @@ do
     ;;
     *)
       if [[ "${SUSEPRODUCTS[*]}" =~ "${resp}" ]]; then
+	case ${resp} in
+          'sto')
+            resp="storage"
+	  ;;
+          'virt')
+            resp="virtualization"
+	  ;;
+          'obs')
+            resp="observability"
+	  ;;
+          'sec')
+            resp="security"
+	  ;;
+	esac
 	if [[ "${suseprods}" = "" ]]; then
 	  suseprods="${resp}"
 	else
