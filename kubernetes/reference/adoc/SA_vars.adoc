@@ -1,11 +1,37 @@
+// adjust 
+:revision-date: 2Oct2024
+:style: trd
+:article-id: enterprise-container-management
+:rev2-description: Metadata update
+:rev2-date: 2024-10-18
+:comp3-full: 
+:comp3-version1:
+
+// General
+// - targeted metadata variables just begin with "m"
+
 :trd: Technical Reference Documentation
 
 :companyName: SUSE
 :portfolioName: Rancher
 :logo: suse.svg
 
+:mSeries: Technical Reference Documentation
+
+// beginning word type
+:mType: Reference
+
+// :subtitle: configured below in various spaces
+
+// covering the various kubernetes/reference documents
+ifdef::RA,RC,RI[]
+
+:mDescription: Enterprise Kubernetes 
+:mSocialDescr: (<55 characters) social media description
+
 :useCase: Enterprise Kubernetes
 
+// Include more variable files
 include::./CSP/SA_vars.adoc[]
 include::./IHV/SA_vars.adoc[]
 include::./ISV/SA_vars.adoc[]
@@ -16,129 +42,233 @@ ifdef::iSLEMicro[include::SUSE/SLE-Micro/SA_vars.adoc[]]
 ifdef::iSLES[include::SUSE/SLES/SA_vars.adoc[]]
 ifdef::iSUMa[include::SUSE/SUMa/SA_vars.adoc[]]
 
-ifdef::iHarvester[include::SUSE/Harvester/SA_vars.adoc[]]
-ifdef::iLonghorn[include::SUSE/Longhorn/SA_vars.adoc[]]
+ifdef::iNeuVector[include::SUSE/NeuVector/SA_vars.adoc[]]
 ifdef::iRancher[include::SUSE/Rancher/SA_vars.adoc[]]
 ifdef::iRKE1[include::SUSE/RKE1/SA_vars.adoc[]]
 ifdef::iRKE2[include::SUSE/RKE2/SA_vars.adoc[]]
 ifdef::iK3s[include::SUSE/K3s/SA_vars.adoc[]]
+ifdef::iLonghorn[include::SUSE/Longhorn/SA_vars.adoc[]]
+ifdef::iHarvester[include::SUSE/Harvester/SA_vars.adoc[]]
 
-ifdef::RA,RC,RI,GS[]
+// Augment for various document types
+ifdef::RA,RC,RI[]
 
+// Reference Configuration
 ifdef::RC[]
 :title: Layered Stack Deployment
-:type: Reference Configuration
+:subtitle: Integrated with
+:mType: {mType} Configuration
 endif::RC[]
 
+// Reference Implementation
 ifdef::RI[]
 :title: Introductory Deployment
-:type: Reference Implementation
 :subtitle: Basic Steps
+:mType: {mType} Implementation
+:mTechPartner: SUSE
+:rev1-date: 2022-03-28
+:rev1-description: Original contribution
 endif::RI[]
 
-ifdef::GS[]
-:title: Tutorial Instance
-:type: Getting Started
-// :subtitle: 
-endif::GS[]
-
+// Targeting Rancher
 ifdef::focusRancher[]
-:productname: {pn_Rancher} {pn_Rancher_Version}
+:mProductList: {pn_Rancher} {pn_Rancher_Version}
+:productname: {pn_Rancher}
+:mDescription: {mDescription} Management
+:comp1-full: {pn_Rancher}
+:comp1-version1: {pn_Rancher_Version}
+
 ifdef::RC[]
+
 :title: {title} of {pn_Rancher}
-ifdef::layerK3s[:productname: {pn_K3s} {pn_K3s_Version}, {productname}]
-ifdef::layerRKE1[:productname: {pn_RKE1} {pn_RKE1_Version}, {productname}]
-ifdef::layerRKE2[:productname: {pn_RKE2} {pn_RKE2_Version}, {productname}]
+
+// Various Layers
+ifdef::layerK3s[]
+:mProductList: {mProductList}, {pn_K3s} {pn_K3s_Version}
+:productname: {pn_K3s}, {productname}
+:mDescription: {mDescription} Lightweight IoT and Edge Distribution
+:comp2-full: {pn_K3s}
+:comp2-version1: {pn_K3s_Version}
+endif::layerK3s[]
+
+ifdef::layerRKE1[]
+:mProductList: {mProductList}, {pn_RKE1} {pn_RKE1_Version}
+:productname: {pn_RKE1}, {productname}
+:mDescription: {mDescription} Distribution
+:comp2-full: {pn_RKE1}
+:comp2-version1: {pn_RKE1_Version}
+endif::layerRKE1[]
+
+ifdef::layerRKE2[]
+:mProductList: {mProductList}, {pn_RKE2} {pn_RKE2_Version}
+:productname: {pn_RKE2}, {productname}
+:mDescription: Secure {mDescription} Distribution
+:comp2-full: {pn_RKE2}
+:comp2-version1: {pn_RKE2_Version}
+endif::layerRKE2[]
+
 endif::RC[]
+
 ifdef::RI[]
+
 :title: {title} of {pn_Rancher}
-ifdef::layerK3s[:productname: {pn_K3s} {pn_K3s_Version}, {productname}]
-ifdef::layerRKE1[:productname: {pn_RKE1} {pn_RKE1_Version}, {productname}]
-ifdef::layerRKE2[:productname: {pn_RKE2} {pn_RKE2_Version}, {productname}]
+
+ifdef::layerK3s[]
+:mProductList: {mProductList}, {pn_K3s} {pn_K3s_Version}
+:productname: {pn_K3s}, {productname}
+:mDescription: {mDescription} Lightweight IoT and Edge Distribution
+:layerK3s[:comp2-full: {pn_K3s}
+:layerK3s[:comp2-version1: {pn_K3s_Version}
+endif::layerK3s[]
+
+ifdef::layerRKE1[]
+:mProductList: {mProductList}, {pn_RKE1} {productname}
+:productname: {pn_RKE1} {pn_RKE1_Version}, {productname}
+:mDescription: {mDescription} Distribution
+:comp2-full: {pn_RKE1}
+:layerRKE1[:comp2-version1: {pn_RKE1_Version}
+endif::layerRKE1[]
+
+ifdef::layerRKE2[]
+:mProductList: {mProductList}, {pn_RKE2} {pn_RKE2_Version}
+:productname: {pn_RKE2}, {productname}
+:mDescription: Secure {mDescription} Distribution
+:comp2-full: {pn_RKE2}
+:comp2-version1: {pn_RKE2_Version}
+endif::layerRKE2[]
+
 endif::RI[]
-ifdef::GS[]
-:title: {title} of {pn_Rancher}
-endif::GS[]
 endif::focusRancher[]
 
+// Focusing on other Kubernetes products
 ifdef::focusK3s[]
-:productname: {pn_K3s} {pn_K3s_Version}
+:mProductList: {pn_K3s} {pn_K3s_Version}
+:productname: {pn_K3s}
+:mDescription: {mDescription} Lightweight IoT and Edge Distribution
+:comp1-full: {pn_K3s}
+:comp1-version1: {pn_K3s_Version}
 :title: {title} of {pn_K3s}
 endif::focusK3s[]
 
 ifdef::focusRKE1[]
-:productname: {pn_RKE1} {pn_RKE1_Version}
+:mProductList: {pn_RKE1} {pn_RKE1_Version}
+:productname: {pn_RKE1}
+:mDescription: {mDescription} Distribution
+:comp1-full: {pn_RKE1}
+:comp1-version1: {pn_RKE1_Version}
 :title: {title} of {pn_RKE1}
 endif::focusRKE1[]
 
 ifdef::focusRKE2[]
-:productname: {pn_RKE2} {pn_RKE2_Version}
+:mProductList: {pn_RKE2} {pn_RKE2_Version}
+:productname: {pn_RKE2}
+:mDescription: Secure {mDescription} Distribution
+:comp1-full: {pn_RKE2}
+:comp1-version1: {pn_RKE2_Version}
 :title: {title} of {pn_RKE2}
 endif::focusRKE2[]
 
-ifdef::layerSLEMicro[:productname: {pn_SLEMicro} {pn_SLEMicro_Version}, {productname}]
-ifdef::layerSLES[:productname: {pn_SLES} {pn_SLES_Version}, {productname}]
+// Focusing on other Linux products
+ifdef::layerSLEMicro[]
+:mProductList: {mProductList}, {pn_SLEMicro} {pn_SLEMicro_Version}
+:productname: {pn_SLEMicro}
+:mDescription: Ultra-reliable, immutable Linux operating system
+ifdef::focusRancher[]
+:comp3-full: {pn_SLEMicro}
+:comp3-version1: {pn_SLEMicro_Version}
+endif::focusRancher[]
+ifndef::focusRancher[]
+:comp2-full: {pn_SLEMicro}
+:comp2-version1: {pn_SLEMicro_Version}
+endif::focusRancher[]
+endif::layerSLEMicro[]
 
-endif::RA,RC,RI,GS[]
+ifdef::layerSLES[]
+:mProductList: {mProductList}, {pn_SLES} {pn_SLES_Version}
+:productname: {pn_SLES}
+:mDescription: The platform for your business-critical apps in any environment
+ifdef::focusRancher[]
+:comp3-full: {pn_SLES}
+:comp3-version1: {pn_SLES_Version}
+endif::focusRancher[]
+ifndef::focusRancher[]
+:comp2-full: {pn_SLES}
+:comp2-version1: {pn_SLES_Version}
+endif::focusRancher[]
+endif::layerSLES[]
 
+endif::RA,RC,RI[]
+
+// Including IHV Partner Layers
 ifdef::RC[]
-:subtitle: Integrated with
+
 ifdef::iIHV[]
 ifdef::IHV-Ampere[]
 :subtitle: {subtitle} {an_Ampere} (R) {familyAmpere-Altra} (R)
 :logo: {companyName}-{an_Ampere}.svg
+:mTechPartner: {an_Ampere}
+:rev1-date: 2023-08-29
+:rev1-description: Original contribution
 endif::IHV-Ampere[]
 ifdef::IHV-Cisco[]
 :subtitle: {subtitle} {vn_Cisco} (R)
 :logo: {companyName}-{vn_Cisco}.svg
+:mTechPartner: {vn_Cisco}
+:rev1-date: 2023-12-18
+:rev1-description: Original contribution
 endif::IHV-Cisco[]
 ifdef::IHV-Dell[]
 :subtitle: {subtitle} {vn_Dell} (R)
 :logo: {companyName}-{an_Dell}.svg
+:mTechPartner: {vn_Dell}
+:rev1-date: 2022-03-28
+:rev1-description: Original contribution
 endif::IHV-Dell[]
 ifdef::IHV-Fujitsu[]
 :subtitle: {subtitle} {vn_Fujitsu} (R)
 :logo: {companyName}-{an_Fujitsu}.svg
+:mTechPartner: {vn_Fujitsu}
 endif::IHV-Fujitsu[]
 ifdef::IHV-HPE[]
 :subtitle: {subtitle} {vn_HPE} (R)
 :logo: {companyName}-{an_HPE}.svg
+:mTechPartner: {vn_HPE}
+:rev1-date: 2022-04-06
+:rev1-description: Original contribution
 endif::IHV-HPE[]
 ifdef::IHV-HPQ[]
 :subtitle: {subtitle} {vn_HPQ} (R)
 :logo: {companyName}-{vn_HPQ}.svg
+:mTechPartner: {vn_HPQ}
+:rev1-date: 2022-09-15
+:rev1-description: Original contribution
 endif::IHV-HPQ[]
 ifdef::IHV-IBM[]
 :subtitle: {subtitle} {vn_IBM} (R)
 :logo: {companyName}-{an_IBM}.svg
+:mTechPartner: {vn_IBM}
 endif::IHV-IBM[]
 ifdef::IHV-LNVGY[]
 :subtitle: {subtitle} {vn_LNVGY} (R)
 :logo: {companyName}-{vn_LNVGY}.svg
+:mTechPartner: {vn_LNVGY}
+:rev1-date: 2022-12-22
+:rev1-description: Original contribution
 endif::IHV-LNVGY[]
 ifdef::IHV-SMCi[]
 :subtitle: {subtitle} {vn_SMCi} (R)
 :logo: {companyName}-{vn_SMCi}.svg
+:mTechPartner: {vn_SMCi}
+:rev1-date: 2022-03-28
+:rev1-description: Original contribution
 endif::IHV-SMCi[]
+
 endif::iIHV[]
 endif::RC[]
 
-////
-:author: TBD
-:authorEmail: TBD
-////
+// :preface: content with :disclaimer: in common_docinfo_vars.adoc
 
-:authorGHURL: https://github.com/SUSE/technical-reference-documentation
-
-:imagesdir: ../media/
-
-ifdef::env-github[]
-:imagesdir: {authorGHURL}/blob/main/media/
-endif::env-github[]
-
-
-ifdef::RA,RC,RI,GS[]
-
+ifdef::RA,RC,RI[]
 :preface: The purpose of this document is to provide an overview and procedure of implementing {companyName} (R)
 ifdef::iCSP,iIHV,iISV[:preface: {preface} and partner]
 :preface: {preface} offerings for
@@ -154,6 +284,18 @@ endif::focusRKE1[]
 ifdef::focusRKE2[]
 :preface: {preface} {pn_RKE2} ({an_RKE2}), a Kubernetes distribution that runs entirely within containers on bare-metal and virtualized nodes. {an_RKE2} solves the problem of installation complexity and the operation is both simplified and easily automated, while entirely accommodating the operating system and platform it is running on. Also being a hardened, FIPS-enabled version, it adopts a compliance-based approach toward security, targeting standard risk management frameworks and best practices with the goal of stronger defense for cloud-native applications.
 endif::focusRKE2[]
+endif::RA,RC,RI[]
 
-endif::RA,RC,RI,GS[]
+////
+:author: TBD
+:authorEmail: TBD
+////
+
+:authorGHURL: https://github.com/SUSE/technical-reference-documentation
+
+:imagesdir: ../media/
+
+ifdef::env-github[]
+:imagesdir: {authorGHURL}/blob/main/media/
+endif::env-github[]
 
