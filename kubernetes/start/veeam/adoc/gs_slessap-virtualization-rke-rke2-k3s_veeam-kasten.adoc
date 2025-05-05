@@ -37,8 +37,13 @@ include::./gs_slessap-virtualization-rke-rke2-k3s_veeam-kasten-vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Your introduction and motivation for this guide
+Organizations adopt cloud native practices, leveraging containers and Kubernetes, to gain advantages of efficiency, scale, and agility for their application workloads.  SUSE Rancher Prime is the enterprise, open source, cloud native management platform of choice, enabling organizations to unify and streamline management of their Kubernetes estates wherever they are - in their data centers, in the clouds, and even at the edge.
 
+Monolithic, legacy applications can be difficult to modernize.  This means that enterprises often need to separately maintain and manage traditional IT infrastructure for these applications while continuing their cloud native journeys.  The resulting inefficiency not only results in higher infrastructure and operational costs, they can slow modernization progress.
+
+SUSE and Veeam help enterprises unify their IT landscapes.
+
+With SUSE Virtualization enterprises get “day 1” and “day 2” management of VMs alongside containers in their cloud native estates.  This reduces operational overhead while giving organizations time to modernize legacy applications.  And, for business continuity, Veeam Kasten for Kubernetes provides backup, disaster recovery, mobility, and ransomware protection for both containers and VMs in this unified estate.
 
 
 === Scope
@@ -48,8 +53,9 @@ Your introduction and motivation for this guide
 //   E.g., "You will learn how to ..."
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The scope for your guide
-
+* Architectural Overview
+* Configuration and implementation procedure for deploying Kasten on SUSE Virtualization
+* Known limitations of Kasten with SUSE Virtualization
 
 === Audience
 
@@ -60,7 +66,7 @@ The scope for your guide
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The intended audience for your guide
+The intended audience for this document include solution and infrastructure architects, system administrators, platform engineers, virtualization administrators, and backup and recovery administrators.   A basic understanding of virtualization, Linux, and Kubernetes concepts and technologies is required to successfully follow and apply this guide.
 
 
 
@@ -92,8 +98,31 @@ Any acknowledgements you would like to make
 // - Keep this section brief but elaborate as needed.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+== Architecture
 
+image::veeam_kasten_arch.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="100%", align="center"]
 
+Veeam Kasten is deployed to the SUSE Virtualization cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten UI.  Once installed in the cluster, Kasten can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
+
+=== Components
+
+* SUSE Rancher Prime (v2.10.x or later) providing management of downstream clusters
+* Two or more physical Linux servers as worker nodes to host VMs with a
+* SUSE Linux Enterprise 6.1 is used for this guide.
+* Downstream RKE2 (v1.3.1 or later) cluster on the worker nodes
+* SUSE Virtualization (v1.4.1 or later) installed onto the RKE2 cluster and configured on each node
+* SUSE Storage …
+
+[NOTE]
+====
+Always check the current https://www.suse.com/suse-rancher/support-matrix/[product support matrices] to ensure proper choice of product versions.
+====
+
+=== Additional resources
+
+* A workstation you will use to connect to and administer the cluster environment
+* https://helm.sh[Helm] 3 Kubernetes package manager installed on your workstation
+* https://kubernetes.io/docs/reference/kubectl/[Kubectl] command line tool installed on your workstation for accessing the Kubernetes API
 
 == Procedure
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
