@@ -57,9 +57,11 @@ Together, SUSE and Veeam enable enterprises to reap the benefits of reduced infr
 //   E.g., "You will learn how to ..."
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-* Architectural Overview
-* Configuration and implementation procedure for deploying Kasten on SUSE Virtualization
-* Known limitations of Kasten with SUSE Virtualization
+For implementation of Veeam Kasten with SUSE Virtualization, this guide provides:
+* an architectural overview
+* step-by-step deployment and configuration instructions
+* review of known limitations
+
 
 === Audience
 
@@ -70,37 +72,10 @@ Together, SUSE and Veeam enable enterprises to reap the benefits of reduced infr
 //   - required skills
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The intended audience for this document include solution and infrastructure architects, system administrators, platform engineers, virtualization administrators, and backup and recovery administrators.   A basic understanding of virtualization, Linux, and Kubernetes concepts and technologies is required to successfully follow and apply this guide.
+The intended audience for this document includes solution and infrastructure architects, system administrators, platform engineers, virtualization administrators, and backup and recovery administrators.
+A basic understanding of virtualization, Linux, and Kubernetes concepts and technologies is required to successfully follow and apply this guide.
 
 
-
-=== Acknowledgements
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Acknowledge contributors not listed as authors.
-// Something like:
-//   The authors wish to acknowledge the contributions of the following
-//   individuals:
-//   * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
-//   * {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
-// NOTE: If there are none, comment out this section.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Any acknowledgements you would like to make
-
-
-
-== Prerequisites
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify minimum requirements (prerequisites) the reader
-// would need in order to follow the steps of this guide.
-// - Use an unordered list.
-// - Use proper product names.
-// - Identify product versions.
-// - Link to existing resources whenever possible.
-// - Keep this section brief but elaborate as needed.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 == Architecture
 
