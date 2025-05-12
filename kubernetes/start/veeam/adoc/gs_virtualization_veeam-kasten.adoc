@@ -58,6 +58,7 @@ Together, SUSE and Veeam enable enterprises to reap the benefits of reduced infr
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 For implementation of Veeam Kasten with SUSE Virtualization, this guide provides:
+
 * an architectural overview
 * step-by-step deployment and configuration instructions
 * review of known limitations
@@ -81,15 +82,27 @@ A basic understanding of virtualization, Linux, and Kubernetes concepts and tech
 
 image::veeam_kasten_arch.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="100%", align="center"]
 
-Veeam Kasten is deployed to the SUSE Virtualization cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten UI.  Once installed in the cluster, Kasten can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
+Veeam Kasten is deployed to the SUSE Virtualization cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten UI.
+Once installed in the cluster, Kasten can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
+
 
 === Components
 
-* SUSE Rancher Prime (v2.10.x or later) providing management of downstream clusters
-* Two or more physical Linux servers as worker nodes to host VMs with a SUSE Linux Enterprise 6.1 is used for this guide.
-* Downstream RKE2 (v1.3.1 or later) cluster on the worker nodes
-* SUSE Virtualization (v1.4.1 or later) installed onto the RKE2 cluster and configured on each node
-* SUSE Storage …
+Component technologies used in this guide include:
+
+* {comp2-website}[{comp2}] ({comp2-version1 or later}) providing data protection
+
+* {comp4-website}[{comp4}] ({comp4-version1} or later) providing management of downstream clusters
+
+* Two or more physical Linux servers as worker nodes to host VMs
+//
++
+For this guide, {comp3-website}[{comp3}] {comp3-version1} is used as the worker node operating system.
+
+* Downstream {comp5-website}[{comp5}] ({comp5-version1} or later) cluster on the worker nodes
+
+* {comp1-website}[{comp1}] ({comp1-version1} or later) installed onto the RKE2 cluster and configured on each node
+
 
 [NOTE]
 ====
