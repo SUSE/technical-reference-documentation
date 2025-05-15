@@ -706,7 +706,7 @@ To further validate:
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 ----
 
-. Open a Web browser on your workstation to `http://127.0.0.1:8080`
+. Open a Web browser on your workstation to `\http://127.0.0.1:8080`
 +
 [NOTE]
 ====
@@ -879,7 +879,7 @@ Proceed to the next section only after you have verified that you can connect to
 === Configure cert-manager with a Let's Encrypt staging certificate
 
 https://cert-manager.io/[*cert-manager*] is a powerful X.509 certificate controller
-r for Kubernetes workloads and can manage certificates from many public certificate issuers.
+for Kubernetes workloads and can manage certificates from many public certificate issuers.
 You can configure cert-manager for https://cert-manager.io/docs/configuration/acme/[Automated Certificate Management Environment (ACME)] issuers, like Let's Encrypt.
 Use the steps outlined below to configure cert-manager to use Let's Encrypt certificates validated through https://cert-manager.io/docs/configuration/acme/dns01/route53/[DNS-01 and AWS Route53].
 
@@ -901,7 +901,9 @@ export FQDN=""                     # such as "kubeflow.mycompany.com"
 export EMAIL_ADDR=""               # valid email address
 ----
 
-To avoid potential issues with rate limiting on issuing Let's Encrypt production TLS certificates, when initially creating the cert-manager Issuer, ensure the server:  https://acme-staging-v02  line is uncommented and the server: https://acme-v02  line is commented out. After verifying that the certificate can be issued correctly, we will reverse this to obtain the valid production certificate.
+To avoid potential issues with rate limiting on issuing Let's Encrypt production TLS certificates, 
+when initially creating the cert-manager Issuer, ensure the `server: \https://acme-staging-v02` line is uncommented 
+and the `server: \https://acme-v02` line is commented out. After verifying that the certificate can be issued correctly, we will reverse this to obtain the valid production certificate.
 
 * Create the cert-manager issuer file.
 +
