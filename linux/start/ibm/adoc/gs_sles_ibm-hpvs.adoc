@@ -43,7 +43,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT REVISION DATE
 //-
-:revision-date: 2025-02-12
+:revision-date: 2025-05-05
 :docdate: {revision-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -209,6 +209,7 @@ Contributions to the development of this guide by the following individuals is a
 
 === Revision history
 
+* 2025-05-05: Remove deprecated IBM Log Analysis and replace with IBM Cloud Logs
 * 2025-02-12: Remove spaces in command to define and start the slebci-paynow-website VM
 * 2024-08-17: Fix copy/paste error in rsyslog server.conf
 * 2024-01-11: Updated for Node.js 20
@@ -499,40 +500,62 @@ Do not close the browser window or tab.
 
 . Select __Navigation Menu__ > __Observability__ > __Logging__.
 
-. Click __Options__ > __Create__.
+. Click __Logging__ > __Instances__ > __Create__.
 
-. Complete the following in the IBM Log Analysis screen:
+. Complete the following in the Cloud Logs screen:
 
 .. In __Select a location__, select the same region that is used for your VPC.
 
 .. Under __Select a pricing plan__, select a plan.
 
-.. Under __Configure your resource__, set __Service name__ (for example, `IBM Log Analysis`).
+.. Under __Configure your resource__, set __Service name__ (for example, `Cloud Logs`).
 
 .. Click __I have read and agree to the following license agreements__.
 
 .. Click __Create__.
 
-. Click __Open dashboard__ in the IBM Log Analysis page.
+.. Wait until the provisioning is complete and the Cloud Logs page shows __Active__. 
 
-. Click __Install Instructions__ (the icon is a question mark inside a circle).
+. Click __Storage__ on the side menu in the Cloud Logs page.
 
-. Select __Add Log Sources__ > __Via Syslog__ side menu, then select `rsyslog`.
-
-. Make a note of the following items:
+.. Connect a __Data Bucket__ and a __Metrics Bucket__.
 +
---
-* The ingestion key in the __Your Ingestion key is:__ field.
+[NOTE]
+====
+Use https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-about-bucket[Configuring buckets for long term storage and search] as a guide for creating and connecting IBM Cloud Object Storage to store your IBM Cloud Logs data for long term storage and search.
+====
 
-* The host name.
+. Click __Overview__ on the side menu in the Cloud Logs page.
+
+.. Click __Manage__ for __Logs Routing__.
+
+.. Click __Set target__ for the location chosen above and select the Cloud Logs name that was created.
+
+. Select __Manage__ > __Access (IAM)__ in the dropdown menu in the middle of the IBM Cloud page.
 +
-. View the _/etc/rsyslog.d/22-logdna.conf_ configuration file.
-. Find the comment line, '# Send messages to LogDNA over TCP using the template'.
-. Locate the host name between `@@` and `:6514`.
+[NOTE]
+====
+Use https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-iam-assign-access&interface=ui[Granting access to IBM Cloud Logs] to assign access to IBM Cloud Logs.
+This guide uses an API key assigned to a service ID as the Access groups method used to assign access to IBM Cloud Logs.
+====
++
+.. Make a note of the API key that is created which will be used later.
 
---
+. Select __Navigation Menu__ > __Observability__ > __Logging__.
 
-.. Close the __Add Log Sources__ window.
+. Click __Logging__ > __Instances__.
+
+. Select the Cloud Logs instance just created.
+
+. Click __Overview__ on the side menu in the Cloud Logs page.
+
+.. Verify that the __Logs data store__, __Logs to metrics storage__ and __Logs Routing__ show a green checkmark with the word "Configured".
+
+. Click __Endpoints__ on the side menu in the Cloud Logs page.
+
+.. Make a note of the __Public ingress endpoint__ field which will be used later.
+
+. Click __Dashboard__ in the Cloud Logs page which will open a new browser window or tab.
 
 [IMPORTANT]
 ====
@@ -1291,12 +1314,13 @@ env: |
   type: env
   logging:
     logDNA:
+    logRouter:
       hostname: <hostname>
-      port: 6514
-      ingestionKey: <ingestionKey>
+      iamApiKey: <apikey>
+      port: 443
 ----
 +
-=> where <hostname> and <ingestionKey> were noted earlier.
+=> where <hostname> and <apikey> were noted earlier.
 +
 Use the following <<Setting up an `rsyslog` logging service for HPVS log information>> for on-premises deployments.
 +
@@ -1667,6 +1691,19 @@ image::paynow-website.png[PayNow UI, scaledwidth="75%", align="center"]
 +
 .. Verify that log information is displayed.
 +
+[TIP]
+====
+Do the following to minimize the log output displayed.
+====
++
+... Select the Navigation menu in the upper left of the window.
++
+... Select __Explore logs__ > __Logs__.
++
+... Click __Columns__ to manage the displayed columns.
++
+... Set the __In Use columns__ to __Timestamp__, ___HOSTNAME__ and __MESSAGE__.
+
 * Use the following to review the logs of the on-premises {hpvs_onprem} Container Runtime VM.
 +
 .. Log in to the `rsyslog` server with `ssh`.
