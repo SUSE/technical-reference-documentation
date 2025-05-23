@@ -86,16 +86,15 @@ Once installed in the cluster, Kasten can view all namespaces and resources and 
 
 Component technologies used in this guide include:
 
-//// GK:
-//// I don't see any instructions related to SUSE Rancher Prime.
-//// Should se just remove it?
-//// * {comp4-website}[{comp4}] ({comp4-version1} or later) providing management of downstream clusters
+// GK:
+// I don't see any instructions related to SUSE Rancher Prime.
+// Should se just remove it?
+// * {comp4-website}[{comp4}] ({comp4-version1} or later) providing management of downstream clusters
 
 // GK:
 // The host node OS does not come up in the instructions.
 // Should we remove the OS reference?
-* one or more physical Linux servers as worker nodes to host VMs
-//
+* One or more physical Linux servers as worker nodes to host VMs
 +
 For this guide, {comp3-website}[{comp3}] {comp3-version1} is used as the worker node operating system.
 
@@ -104,7 +103,7 @@ For this guide, {comp3-website}[{comp3}] {comp3-version1} is used as the worker 
 // downstream cluster.
 // However, we only really touch SUSE Virtualization.
 // Should we remove reference of the RKE2 downstream cluster?
-* Downstream {comp5-website}[{comp5}] ({comp5-version1} or later) cluster on the worker nodes
+// * Downstream {comp5-website}[{comp5}] ({comp5-version1} or later) cluster on the worker nodes
 
 // GK:
 // Looking at the installation methods in our SUSE Virtualization documentation,
@@ -130,6 +129,18 @@ Additional resources you will need to follow the steps in this guide include:
 * https://helm.sh[Helm] 3 Kubernetes package manager installed on your workstation
 
 * https://kubernetes.io/docs/reference/kubectl/[Kubectl] command line tool installed on your workstation for accessing the Kubernetes API
+
+== Prepare the environment
+
+Before installing Kasten K10 by Veeam, you must first prepare your infrastructure environment using {comp1}. 
+Follow these steps to ensure a reliable and supported deployment.
+
+* {comp1} Setup: 
+Ensure https://docs.harvesterhci.io/v1.5/install/index[{comp1}] is deployed and operational on your infrastructure.
+
+
+
+
 
 
 == Procedure
