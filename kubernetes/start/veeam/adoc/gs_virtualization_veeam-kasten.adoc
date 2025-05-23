@@ -138,9 +138,9 @@ Follow these steps to ensure a reliable and supported deployment.
 * {comp1} Setup: 
 Ensure https://docs.harvesterhci.io/v1.5/install/index[{comp1}] is deployed and operational on your infrastructure.
 
+* Create a virtual machine (VM) using {comp1} to host your Kubernetes cluster and applications.
 
-
-
+* Plan your backup target storage in advance and ensure credentials are ready if using S3-compatible object storage.
 
 
 == Procedure
@@ -176,19 +176,20 @@ Ensure https://docs.harvesterhci.io/v1.5/install/index[{comp1}] is deployed and 
 // GK:
 // It might be helpful to provide some guidance on how to log in.
 
-. After deploying a SUSE Virtualization cluster, navigate to the cluster and log in.
+. After deploying a {comp1} cluster, 
+log in to the https://docs.harvesterhci.io/v1.5/install/management-address[management IP] address and then navigate to the desired cluster.
 
-. Click Support at the bottom of the menu.
+. Click on _Support_ located at the bottom left of the navigation menu.
 +
 image::veeam_kasten_2_.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="50%", align="left"]
 +
 
-. Click Download the cluster's KubeConfig file to your workstation.
+. Select the _Download_ _KubeConfig_ option to save the cluster configration file to your workstation.
 +
 image::veeam_kasten_3_.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="50%", align="left"]
 +
 
-. Save the file in your local Kubernetes configuration folder (typically ~/.kube on Linux and MacOSX).
+. Place the downloaded file in the default Kubernetes config path. (typically ~/.kube on Linux and MacOSX). 
 +
 
 // GK:
@@ -198,7 +199,7 @@ image::veeam_kasten_3_.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="50%
 // GK:
 // Also, if this is the first time mentioning the RKE2 cluster, we might want to include an explanation.
 
-. Confirm connectivity to the SUSE Virtualization RKE2 cluster.
+. Open a command terminal on your workstation and confirm connectivity to the {comp1} RKE2 cluster using Kubernetes CLI command.
 +
 [source, bash]
 ----
@@ -212,7 +213,9 @@ kubectl get nodes
 // uses Longhorn for block storage and that by annotating it, Kasten will
 // be able to export block-mode disks.
 
-. Annotate the `harvester-longhorn` storage class so that Kasten can export block-mode disks.
+. {comp1} uses Longhorn as its default block storage solution. 
+To enable Kasten to export block-mode disks, annotate the `harvester-longhorn` storage class accordingly.
+
 +
 [source, bash]
 ----
@@ -221,7 +224,7 @@ k10.kasten.io/sc-supports-block-mode-exports=true
 ----
 +
 
-. Similarly, annotate the longhorn-snapshot ‘volumesnapshotclass’ so Kasten can use it to take storage snapshots.
+. Similarly, annotate the longhorn-snapshot `volumesnapshotclass` so Kasten can use it to take storage snapshots.
 +
 [source, bash]
 ----
@@ -230,7 +233,7 @@ k10.kasten.io/is-snapshot-class=true
 ----
 +
 
-. Add the Kasten repository to Helm.
+. Add the _kasten_ repository to Helm.
 +
 [source, bash]
 ----
@@ -270,15 +273,15 @@ watch ‘kubectl get pods -n kasten-io’
 // Is this the first mention of "SUSE Virtualization VIP"?
 // If so, define it or use a different phrase.
 
-. Using your web browser, enter the hostname or IP of the SUSE Virtualization VIP, and append ‘/k10/’ to the end of the URL.
+. Using your web browser, enter the hostname or management IP address of the {comp1}, and append ‘/k10/’ to the end of the URL.
 The Kasten dashboard should load and ask for a username and password.
-Enter ‘kasten’ and ‘Kasten/4u!’ if you did not change the htpasswd string in the Helm installation command, otherwise enter the username and password you configured.
+Enter `kasten` and `Kasten/4u!` if you did not change the htpasswd string in the Helm installation command, otherwise enter the username and password you configured.
 +
 image::veeam_kasten_11_.png[Veeam Kasten Dashboard, scaledwidth="85%", align="left"]
 +
 
 . Kasten can now be configured to send backups to an external source.
-To do so, navigate to Profiles > Location Profiles, choosing Add New and selecting the relevant storage provider and configuring authentication. Note that multiple location profiles can be defined, allowing administrators to send backup data to different locations depending on requirements, cost, etc.
+To do so, navigate to _Profiles_ > _Location_ _Profiles_, choosing Add New and selecting the relevant storage provider and configuring authentication. Note that multiple location profiles can be defined, allowing administrators to send backup data to different locations depending on requirements, cost, etc.
 +
 image::veeam_kasten_12_.png[Veeam Kasten Create Location Profile, scaledwidth="85%", align="left"]
 +
@@ -294,7 +297,10 @@ image::veeam_kasten_13_.png[Veeam Kasten Applications, scaledwidth="85%", align=
 image::veeam_kasten_14_.png[Veeam Kasten New Policy, scaledwidth="85%", align="left"]
 +
 
-
+[NOTE]
+====
+For a step-by-step visual walkthrough of creating backup policies in Kasten K10, refer to the demonstration video available here: https://youtu.be/c_mSNy6Q9RU
+====
 
 == Summary
 
