@@ -37,45 +37,30 @@ include::./gs_virtualization_veeam-kasten-vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Organizations adopt cloud native practices, leveraging containers and Kubernetes, to gain advantages of efficiency, scale, and agility for their application workloads.
-Looking to streamline management of their growing, cloud native estates, enterprises choose SUSE Rancher Prime.
-SUSE Rancher Prime is the open source, cloud native management platform that enables organizations to unify and streamline management of their Kubernetes estates wherever they are - in their data centers, in the clouds, and even at the edge.
+Enterprises embracing cloud native technologies, like containers and Kubernetes, seek efficiency, scale, and agility for their applications.
+To simplify management of their expanding cloud native estates, enterprises turn to SUSE Rancher Prime, the open source platform designed to unify and streamline Kubernetes management across diverse infrastructures - data centers, clouds, and the edge.
 
-Cloud native journeys are not all the same.
-Modernizing the application landscape can take significant time and effort.
-Organizations often need to maintain a traditional IT infrastructure to support monolithic, legacy applications.
-The result is higher infrastructure and operation costs, which may slow or derail modernization efforts.
+The transition to cloud native is often gradual.
+Developers and business units often need time to redesign legacy applications or adapt business practices.
+Organizations may find that they must concurrently maintain both cloud native and traditional IT infrastructure, leading to higher material and operational costs and hindering the modernization effort.
 
-Enterpises can address this challenge with SUSE Virtualization.
-By deploying SUSE Virtualization with SUSE Rancher Prime, enterprises gain "day 1" and "day 2" management of VMs alongside containers.
-This enables them to unify their IT estate and lower infrastructure and operational costs.
+SUSE Virtualization addresses this challenge by allowing enterprises to manage virtual machines (VMs) for legacy applications alongside containers within SUSE Rancher Prime.
+With unified management of containers and VMs, organizations can consolidate their IT estates, reduce costs, and continue their modernization journeys.
 
-An enterprise IT landscape is not complete without support for business continuity.
+Business continuity is also crucial for enterprise IT estates.
 Veeam Kasten for Kubernetes provides policy-driven backup, disaster recovery, application mobility, and ransomware protection for cloud native environments.
-When deployed with SUSE Virtualization, Veeam Kasten for Kubernetes delivers enterprise business continuity for both containers and VMs.
+Integrating Veeam Kasten with SUSE Virtualization extends its enterprise-grade business continuity to VMs as well.
 
-SUSE and Veeam enable enterprises to unify their IT environments, lowering infrastructure and operations costs while delivering on business continuity requirements.
+SUSE and Veeam together empower enterprises to unify their IT infrastructure estates, decrease operational costs, and ensure business continuity across both traditional and cloud native workloads.
 
 
 
 === Scope
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Specify what this guide covers in no more than 2 sentences.
-//   E.g., "You will learn how to ..."
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-This guide provides an architectural overview and steps for deployment and configuration of Veeam Kasten in a SUSE Virtualization environment.
+This guide provides an architectural overview and steps for deployment and configuration of Veeam Kasten for Kubernetes in a SUSE Virtualization environment.
 
 
 === Audience
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify for whom this document is intended, perhaps with:
-//   - topics of interests (e.g., machine learning, security, etc.)
-//   - job roles (e.g., developer, administrator, platform architect, etc.)
-//   - required skills
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 The intended audience for this document includes solution and infrastructure architects, system administrators, platform engineers, virtualization administrators, and backup and recovery administrators.
 A basic understanding of virtualization, Linux, and Kubernetes concepts and technologies is required to successfully follow and apply this guide.
@@ -86,38 +71,19 @@ A basic understanding of virtualization, Linux, and Kubernetes concepts and tech
 
 image::veeam_kasten_arch.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="100%", align="center"]
 
-Veeam Kasten is deployed to the SUSE Virtualization cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten UI.
-Once installed in the cluster, Kasten can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
+Veeam Kasten for Kubernetes is deployed to a SUSE Virtualization cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten user interface (UI).
+Once installed in the cluster, Veeam Kasten can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
 
 
 === Components
 
 Component technologies used in this guide include:
 
-// GK:
-// I don't see any instructions related to SUSE Rancher Prime.
-// Should se just remove it?
-// * {comp4-website}[{comp4}] ({comp4-version1} or later) providing management of downstream clusters
 
-// GK:
-// The host node OS does not come up in the instructions.
-// Should we remove the OS reference?
 * One or more physical Linux servers as worker nodes to host VMs
 +
 For this guide, {comp3-website}[{comp3}] {comp3-version1} is used as the worker node operating system.
 
-// GK:
-// If we had started with a SUSE Rancher [Prime] environment, we could talk about the
-// downstream cluster.
-// However, we only really touch SUSE Virtualization.
-// Should we remove reference of the RKE2 downstream cluster?
-// * Downstream {comp5-website}[{comp5}] ({comp5-version1} or later) cluster on the worker nodes
-
-// GK:
-// Looking at the installation methods in our SUSE Virtualization documentation,
-// would it not make sense to focus on, say, ISO installation?
-// If so, we could create a "Prepare the environment" section that outlines the
-// process and simply points to the existing documentation for detailed steps.
 * {comp1-website}[{comp1}] ({comp1-version1} or later) installed onto the RKE2 cluster and configured on each node
 
 * {comp2-website}[{comp2}] ({comp2-version1} or later}) providing data protection
@@ -138,17 +104,25 @@ Additional resources you will need to follow the steps in this guide include:
 
 * https://kubernetes.io/docs/reference/kubectl/[Kubectl] command line tool installed on your workstation for accessing the Kubernetes API
 
+
+
 == Prepare the environment
 
-Before installing Kasten K10 by Veeam, you must first prepare your infrastructure environment using {comp1}. 
-Follow these steps to ensure a reliable and supported deployment.
+Before installing Veeam Kasten, you must first prepare your SUSE Virtualization environment.
 
-* {comp1} Setup: 
-Ensure https://docs.harvesterhci.io/v1.5/install/index[{comp1}] is deployed and operational on your infrastructure.
+. Deploy {comp1}
+//
++
+Detailed guidance is provided in the {comp1-docs}[official documentation].
++
+[NOTE]
+====
+A single-node cluster is sufficient for this guide.
+====
 
-* Create a virtual machine (VM) using {comp1} to host your Kubernetes cluster and applications.
+. Create a virtual machine (VM) using {comp1} to host your Kubernetes cluster and applications.
 
-* Plan your backup target storage in advance and ensure credentials are ready if using S3-compatible object storage.
+. Plan your backup target storage in advance and ensure credentials are ready if using S3-compatible object storage.
 
 
 == Procedure
