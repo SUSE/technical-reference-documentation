@@ -71,7 +71,7 @@ A basic understanding of virtualization, Linux, and Kubernetes concepts and tech
 
 image::veeam_kasten_arch.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="100%", align="center"]
 
-:comp2 is deployed to a :comp1 cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten user interface (UI).
+:comp2 is deployed to a :comp1 cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the comp2-short user interface (UI).
 Once installed in the cluster, :comp2-short can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
 
 
@@ -86,7 +86,7 @@ For this guide, {comp3-website}[{comp3}] {comp3-version1} is used as the worker 
 
 * {comp1-website}[{comp1}] ({comp1-version1} or later) installed onto the RKE2 cluster and configured on each node
 
-* {comp2-website}[{comp2}] ({comp2-version1} or later}) providing data protection
+* {comp2-website}[{comp2}] ({comp2-version1} or later) providing data protection
 
 [NOTE]
 ====
@@ -192,11 +192,11 @@ kubectl get nodes
 // GK:
 // This appears to be the first mention of the harvester-longhorn storage class.
 // It might be good to have a little explanation here that SUSE Virtualization
-// uses Longhorn for block storage and that by annotating it, Kasten will
+// uses Longhorn for block storage and that by annotating it, comp2-short will
 // be able to export block-mode disks.
 
 . {comp1} uses Longhorn as its default block storage solution. 
-To enable Kasten to export block-mode disks, annotate the `harvester-longhorn` storage class accordingly.
+To enable comp2-short to export block-mode disks, annotate the `harvester-longhorn` storage class accordingly.
 
 +
 [source, bash]
@@ -206,7 +206,7 @@ k10.kasten.io/sc-supports-block-mode-exports=true
 ----
 +
 
-. Similarly, annotate the longhorn-snapshot `volumesnapshotclass` so Kasten can use it to take storage snapshots.
+. Similarly, annotate the longhorn-snapshot `volumesnapshotclass` so comp2-short can use it to take storage snapshots.
 +
 [source, bash]
 ----
@@ -223,7 +223,7 @@ helm repo add kasten https://charts.kasten.io
 ----
 +
 
-. Install Kasten via Helm.
+. Install comp2-short via Helm.
 +
 [source, bash]
 ----
@@ -238,12 +238,12 @@ helm install k10 kasten/k10 \
 +
 [NOTE]
 ====
-This will install Kasten with basic authentication, with a username of ‘kasten’ and password ‘Kasten/4u!’.
+This will install comp2-short with basic authentication, with a username of ‘kasten’ and password ‘Kasten/4u!’.
 If you wish to use a different username and password, you can do so by generating a different htpasswd string and replacing the string in the command above.
 ====
 +
 
-. Watch the Kasten pods and wait for all to have a status of RUNNING.
+. Watch the comp2-short pods and wait for all to have a status of RUNNING.
 +
 [source, bash]
 ----
@@ -256,13 +256,13 @@ watch ‘kubectl get pods -n kasten-io’
 // If so, define it or use a different phrase.
 
 . Using your web browser, enter the hostname or management IP address of the {comp1}, and append ‘/k10/’ to the end of the URL.
-The Kasten dashboard should load and ask for a username and password.
+The comp2-short dashboard should load and ask for a username and password.
 Enter `kasten` and `Kasten/4u!` if you did not change the htpasswd string in the Helm installation command, otherwise enter the username and password you configured.
 +
 image::veeam_kasten_11_.png[Veeam Kasten Dashboard, scaledwidth="85%", align="left"]
 +
 
-. Kasten can now be configured to send backups to an external source.
+. comp2-short can now be configured to send backups to an external source.
 To do so, navigate to _Profiles_ > _Location_ _Profiles_, choosing Add New and selecting the relevant storage provider and configuring authentication. Note that multiple location profiles can be defined, allowing administrators to send backup data to different locations depending on requirements, cost, etc.
 +
 image::veeam_kasten_12_.png[Veeam Kasten Create Location Profile, scaledwidth="85%", align="left"]
@@ -281,7 +281,7 @@ image::veeam_kasten_14_.png[Veeam Kasten New Policy, scaledwidth="85%", align="l
 
 [NOTE]
 ====
-For a step-by-step visual walkthrough of creating backup policies in Kasten K10, refer to the demonstration video available here: https://youtu.be/c_mSNy6Q9RU
+For a step-by-step visual walkthrough of creating backup policies in comp2-short K10, refer to the demonstration video available here: https://youtu.be/c_mSNy6Q9RU
 ====
 
 == Summary
