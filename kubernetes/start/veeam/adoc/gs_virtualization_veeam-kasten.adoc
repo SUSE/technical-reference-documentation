@@ -38,26 +38,26 @@ include::./gs_virtualization_veeam-kasten-vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Enterprises embracing cloud native technologies, like containers and Kubernetes, seek efficiency, scale, and agility for their applications.
-To simplify management of their expanding cloud native estates, enterprises turn to SUSE Rancher Prime, the open source platform designed to unify and streamline Kubernetes management across diverse infrastructures - data centers, clouds, and the edge.
+To simplify management of their expanding cloud native estates, enterprises turn to {comp4}, the open source platform designed to unify and streamline Kubernetes management across diverse infrastructures - data centers, clouds, and the edge.
 
 The transition to cloud native is often gradual.
 Developers and business units often need time to redesign legacy applications or adapt business practices.
 Organizations may find that they must concurrently maintain both cloud native and traditional IT infrastructure, leading to higher material and operational costs and hindering the modernization effort.
 
-SUSE Virtualization addresses this challenge by allowing enterprises to manage virtual machines (VMs) for legacy applications alongside containers within SUSE Rancher Prime.
+{comp4} addresses this challenge by allowing enterprises to manage virtual machines (VMs) for legacy applications alongside containers within {comp4}.
 With unified management of containers and VMs, organizations can consolidate their IT estates, reduce costs, and continue their modernization journeys.
 
 Business continuity is also crucial for enterprise IT estates.
-Veeam Kasten for Kubernetes provides policy-driven backup, disaster recovery, application mobility, and ransomware protection for cloud native environments.
-Integrating Veeam Kasten with SUSE Virtualization extends its enterprise-grade business continuity to VMs as well.
+{comp2} provides policy-driven backup, disaster recovery, application mobility, and ransomware protection for cloud native environments.
+Integrating {comp2-short} with {comp4} extends its enterprise-grade business continuity to VMs as well.
 
-SUSE and Veeam together empower enterprises to unify their IT infrastructure estates, decrease operational costs, and ensure business continuity across both traditional and cloud native workloads.
+{comp1-provider} and {comp2-provider} together empower enterprises to unify their IT infrastructure estates, decrease operational costs, and ensure business continuity across both traditional and cloud native workloads.
 
 
 
 === Scope
 
-This guide provides an architectural overview and steps for deployment and configuration of Veeam Kasten for Kubernetes in a SUSE Virtualization environment.
+This guide provides an architectural overview and steps for deployment and configuration of {comp2} in a {comp1} environment.
 
 
 === Audience
@@ -71,8 +71,8 @@ A basic understanding of virtualization, Linux, and Kubernetes concepts and tech
 
 image::veeam_kasten_arch.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="100%", align="center"]
 
-Veeam Kasten for Kubernetes is deployed to a SUSE Virtualization cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten user interface (UI).
-Once installed in the cluster, Veeam Kasten can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
+{comp2} is deployed to a {comp1} cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the {comp2-short} user interface (UI).
+Once installed in the cluster, {comp2-short} can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
 
 
 === Components
@@ -86,7 +86,10 @@ For this guide, {comp3-website}[{comp3}] {comp3-version1} is used as the worker 
 
 * {comp1-website}[{comp1}] ({comp1-version1} or later) installed onto the RKE2 cluster and configured on each node
 
-* {comp2-website}[{comp2}] ({comp2-version1} or later}) providing data protection
+* {comp2-website}[{comp2}] ({comp2-version1} or later) providing data protection
+
+* Backups are configured to be stored in an Amazon S3 bucket, ensuring offsite data availability and durability.
+
 
 [NOTE]
 ====
@@ -100,7 +103,7 @@ Additional resources you will need to follow the steps in this guide include:
 
 * A workstation you will use to connect to and administer the cluster environment
 
-* https://helm.sh[Helm] 3 Kubernetes package manager installed on your workstation
+* https://helm.sh[Helm] v3 Kubernetes package manager installed on your workstation
 
 * https://kubernetes.io/docs/reference/kubectl/[Kubectl] command line tool installed on your workstation for accessing the Kubernetes API
 
@@ -108,9 +111,9 @@ Additional resources you will need to follow the steps in this guide include:
 
 == Prepare the environment
 
-Before installing Veeam Kasten, you must first prepare your SUSE Virtualization environment.
+Before installing {comp2-short}, you must first prepare your {comp1} environment.
 
-. Deploy {comp1}
+. Deploy {comp1}.
 //
 +
 Detailed guidance is provided in the {comp1-docs}[official documentation].
@@ -120,7 +123,7 @@ Detailed guidance is provided in the {comp1-docs}[official documentation].
 A single-node cluster is sufficient for this guide.
 ====
 
-. Create a virtual machine (VM) using {comp1} to host your Kubernetes cluster and applications.
+. Create a https://documentation.suse.com/cloudnative/virtualization/v1.5/en/virtual-machines/create-vm.html[virtual machine]  (VM) using {comp1} to host your Kubernetes cluster and applications.
 
 . Plan your backup target storage in advance and ensure credentials are ready if using S3-compatible object storage.
 
@@ -159,9 +162,9 @@ A single-node cluster is sufficient for this guide.
 // It might be helpful to provide some guidance on how to log in.
 
 . After deploying a {comp1} cluster, 
-log in to the https://docs.harvesterhci.io/v1.5/install/management-address[management IP] address and then navigate to the desired cluster.
+log in to the https://documentation.suse.com/cloudnative/virtualization/v1.5/en/installation-setup/management-address.html[management IP] address and then navigate to the desired cluster.
 
-. Click on _Support_ located at the bottom left of the navigation menu.
+. Click _Support_ located at the bottom left of the navigation menu.
 +
 image::veeam_kasten_2_.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="50%", align="left"]
 +
@@ -171,7 +174,7 @@ image::veeam_kasten_2_.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="50%
 image::veeam_kasten_3_.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="50%", align="left"]
 +
 
-. Place the downloaded file in the default Kubernetes config path. (typically ~/.kube on Linux and MacOSX). 
+. Place the downloaded file in the default Kubernetes config path(typically ~/.kube on Linux and MacOSX). 
 +
 
 // GK:
@@ -192,11 +195,11 @@ kubectl get nodes
 // GK:
 // This appears to be the first mention of the harvester-longhorn storage class.
 // It might be good to have a little explanation here that SUSE Virtualization
-// uses Longhorn for block storage and that by annotating it, Kasten will
+// uses Longhorn for block storage and that by annotating it, {comp2-short} will
 // be able to export block-mode disks.
 
-. {comp1} uses Longhorn as its default block storage solution. 
-To enable Kasten to export block-mode disks, annotate the `harvester-longhorn` storage class accordingly.
+. {comp1} uses SUSE Storage, which is built on Longhorn as its default block storage solution. 
+To enable {comp2-short} to export block-mode disks, annotate the `harvester-longhorn` storage class accordingly.
 
 +
 [source, bash]
@@ -206,7 +209,7 @@ k10.kasten.io/sc-supports-block-mode-exports=true
 ----
 +
 
-. Similarly, annotate the longhorn-snapshot `volumesnapshotclass` so Kasten can use it to take storage snapshots.
+. Similarly, annotate the longhorn-snapshot `volumesnapshotclass` so {comp2-short} can use it to take storage snapshots.
 +
 [source, bash]
 ----
@@ -223,7 +226,7 @@ helm repo add kasten https://charts.kasten.io
 ----
 +
 
-. Install Kasten via Helm.
+. Install {comp2-short} via Helm.
 +
 [source, bash]
 ----
@@ -238,16 +241,16 @@ helm install k10 kasten/k10 \
 +
 [NOTE]
 ====
-This will install Kasten with basic authentication, with a username of ‘kasten’ and password ‘Kasten/4u!’.
+This will install {comp2-short} with basic authentication, with a username of ‘kasten’ and password ‘Kasten/4u!’.
 If you wish to use a different username and password, you can do so by generating a different htpasswd string and replacing the string in the command above.
 ====
 +
 
-. Watch the Kasten pods and wait for all to have a status of RUNNING.
+. Watch the {comp2-short} pods and wait for all to have a status of RUNNING.
 +
 [source, bash]
 ----
-watch ‘kubectl get pods -n kasten-io’
+watch 'kubectl get pods -n kasten-io'
 ----
 +
 
@@ -255,21 +258,26 @@ watch ‘kubectl get pods -n kasten-io’
 // Is this the first mention of "SUSE Virtualization VIP"?
 // If so, define it or use a different phrase.
 
-. Using your web browser, enter the hostname or management IP address of the {comp1}, and append ‘/k10/’ to the end of the URL.
-The Kasten dashboard should load and ask for a username and password.
-Enter `kasten` and `Kasten/4u!` if you did not change the htpasswd string in the Helm installation command, otherwise enter the username and password you configured.
+. Using your Web browser, enter the hostname or management IP address of the {comp1}, and append ‘/k10/’ to the end of the URL.
+The {comp2-short} dashboard should load and ask for a username and password.
+Enter ‘kasten’ and ‘Kasten/4u!’ if you did not change the htpasswd string in the Helm installation command, otherwise enter the username and password you configured.
 +
 image::veeam_kasten_11_.png[Veeam Kasten Dashboard, scaledwidth="85%", align="left"]
 +
 
-. Kasten can now be configured to send backups to an external source.
-To do so, navigate to _Profiles_ > _Location_ _Profiles_, choosing Add New and selecting the relevant storage provider and configuring authentication. Note that multiple location profiles can be defined, allowing administrators to send backup data to different locations depending on requirements, cost, etc.
+. {comp2-short} can now be configured to send backups to an external source.
+To do so, navigate to _Profiles_ > _Location_ _Profiles_, choosing _Add_ _New_ and selecting the relevant storage provider and configuring authentication. 
++
+[NOTE]
+====
+The multiple location profiles can be defined, allowing administrators to send backup data to different locations depending on requirements, cost, etc.
+====
 +
 image::veeam_kasten_12_.png[Veeam Kasten Create Location Profile, scaledwidth="85%", align="left"]
 +
 
 . Backup policies can now be configured to protect workloads.
-To do so, navigate to Applications, click the menu to the right of a namespace you wish to protect, and select Create Policy.
+To do so, navigate to _Applications_, click the menu to the right of a namespace you wish to protect, and select _Create_ _Policy_.
 +
 image::veeam_kasten_13_.png[Veeam Kasten Applications, scaledwidth="85%", align="left"]
 +
@@ -281,7 +289,7 @@ image::veeam_kasten_14_.png[Veeam Kasten New Policy, scaledwidth="85%", align="l
 
 [NOTE]
 ====
-For a step-by-step visual walkthrough of creating backup policies in Kasten K10, refer to the demonstration video available here: https://youtu.be/c_mSNy6Q9RU
+For a step-by-step visual walkthrough of creating backup policies in {comp2-short} K10, refer to the demonstration video available here: https://youtu.be/c_mSNy6Q9RU.
 ====
 
 == Summary
