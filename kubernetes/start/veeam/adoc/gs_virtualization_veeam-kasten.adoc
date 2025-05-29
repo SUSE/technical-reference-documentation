@@ -38,26 +38,26 @@ include::./gs_virtualization_veeam-kasten-vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Enterprises embracing cloud native technologies, like containers and Kubernetes, seek efficiency, scale, and agility for their applications.
-To simplify management of their expanding cloud native estates, enterprises turn to SUSE Rancher Prime, the open source platform designed to unify and streamline Kubernetes management across diverse infrastructures - data centers, clouds, and the edge.
+To simplify management of their expanding cloud native estates, enterprises turn to {comp4}, the open source platform designed to unify and streamline Kubernetes management across diverse infrastructures - data centers, clouds, and the edge.
 
 The transition to cloud native is often gradual.
 Developers and business units often need time to redesign legacy applications or adapt business practices.
 Organizations may find that they must concurrently maintain both cloud native and traditional IT infrastructure, leading to higher material and operational costs and hindering the modernization effort.
 
-SUSE Virtualization addresses this challenge by allowing enterprises to manage virtual machines (VMs) for legacy applications alongside containers within SUSE Rancher Prime.
+{comp4} addresses this challenge by allowing enterprises to manage virtual machines (VMs) for legacy applications alongside containers within {comp4}.
 With unified management of containers and VMs, organizations can consolidate their IT estates, reduce costs, and continue their modernization journeys.
 
 Business continuity is also crucial for enterprise IT estates.
-Veeam Kasten for Kubernetes provides policy-driven backup, disaster recovery, application mobility, and ransomware protection for cloud native environments.
-Integrating Veeam Kasten with SUSE Virtualization extends its enterprise-grade business continuity to VMs as well.
+:comp2 provides policy-driven backup, disaster recovery, application mobility, and ransomware protection for cloud native environments.
+Integrating :comp2-short with {comp4} extends its enterprise-grade business continuity to VMs as well.
 
-SUSE and Veeam together empower enterprises to unify their IT infrastructure estates, decrease operational costs, and ensure business continuity across both traditional and cloud native workloads.
+:comp1-provider and :comp2-provider together empower enterprises to unify their IT infrastructure estates, decrease operational costs, and ensure business continuity across both traditional and cloud native workloads.
 
 
 
 === Scope
 
-This guide provides an architectural overview and steps for deployment and configuration of Veeam Kasten for Kubernetes in a SUSE Virtualization environment.
+This guide provides an architectural overview and steps for deployment and configuration of :comp2 in a :comp1 environment.
 
 
 === Audience
@@ -71,8 +71,8 @@ A basic understanding of virtualization, Linux, and Kubernetes concepts and tech
 
 image::veeam_kasten_arch.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="100%", align="center"]
 
-Veeam Kasten for Kubernetes is deployed to a SUSE Virtualization cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten user interface (UI).
-Once installed in the cluster, Veeam Kasten can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
+:comp2 is deployed to a :comp1 cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the Kasten user interface (UI).
+Once installed in the cluster, :comp2-short can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
 
 
 === Components
@@ -108,7 +108,7 @@ Additional resources you will need to follow the steps in this guide include:
 
 == Prepare the environment
 
-Before installing Veeam Kasten, you must first prepare your SUSE Virtualization environment.
+Before installing :comp2-short, you must first prepare your :comp1 environment.
 
 . Deploy {comp1}
 //
