@@ -9,7 +9,7 @@
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # global variables
 ##
-SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slmicro', 'slelp', 'slert', 'sleha', 'slebci', 'smlm', 'rancher', 'sto', 'sec', 'obs', 'virt', 'rke', 'rke2', 'k3s')
+SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slmicro', 'slelp', 'slert', 'sleha', 'slebci', 'smlm', 'rancher', 'sto', 'sec', 'obs', 'virt', 'ai', 'rke', 'rke2', 'k3s')
 
 
 
@@ -38,6 +38,7 @@ echo "sec         | SUSE Security"
 echo "virt        | SUSE Virtualization"
 echo "obs         | SUSE Observability"
 echo "sto         | SUSE Storage"
+echo "ai          | SUSE AI"
 echo "rke         | Rancher Kubernetes Engine"
 echo "rke2        | Rancher Kubernetes Engine 2"
 echo "k3s         | K3s"
