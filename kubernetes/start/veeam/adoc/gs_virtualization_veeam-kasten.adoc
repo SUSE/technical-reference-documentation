@@ -38,11 +38,13 @@ include::./gs_virtualization_veeam-kasten-vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Enterprises embracing cloud native technologies, like containers and Kubernetes, seek efficiency, scale, and agility for their applications.
-To simplify management of their expanding cloud native estates, enterprises turn to {comp4}, the open source platform designed to unify and streamline Kubernetes management across diverse infrastructures - data centers, clouds, and the edge.
+They neet to simplify management of their expanding cloud native estates. Thus, they turn to {comp4}, the open source platform designed 
+to unify and streamline Kubernetes management across diverse infrastructures - data centers, clouds, and the edge.
 
 The transition to cloud native is often gradual.
 Developers and business units often need time to redesign legacy applications or adapt business practices.
-Organizations may find that they must concurrently maintain both cloud native and traditional IT infrastructure, leading to higher material and operational costs and hindering the modernization effort.
+Organizations may find that they must concurrently maintain both cloud native and traditional IT infrastructure.
+This situation often leads to higher material and operational costs and hindering the modernization effort.
 
 {comp4} addresses this challenge by allowing enterprises to manage virtual machines (VMs) for legacy applications alongside containers within {comp4}.
 With unified management of containers and VMs, organizations can consolidate their IT estates, reduce costs, and continue their modernization journeys.
@@ -69,10 +71,10 @@ A basic understanding of virtualization, Linux, and Kubernetes concepts and tech
 
 == Architecture
 
-image::veeam_kasten_arch.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="100%", align="center"]
+image::veeam_kasten_arch.png[title="Architecture Overview", scaledwidth="100%", align="center"]
 
-{comp2} is deployed to a {comp1} cluster, using the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the {comp2-short} user interface (UI).
-Once installed in the cluster, {comp2-short} can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
+{comp2} is deployed to a {comp1} cluster. It uses the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the {comp2-short} user interface (UI).
+When installed in the cluster, {comp2-short} can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
 
 
 === Components
@@ -166,15 +168,15 @@ log in to the https://documentation.suse.com/cloudnative/virtualization/v1.5/en/
 
 . Click _Support_ located at the bottom left of the navigation menu.
 +
-image::veeam_kasten_2_.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="50%", align="left"]
+image::veeam_kasten_2_.png[title="SUSE Virtualization Cluster Dashboard", scaledwidth="50%", align="left"]
 +
 
 . Select the _Download_ _KubeConfig_ option to save the cluster configration file to your workstation.
 +
-image::veeam_kasten_3_.png[Rancher by SUSE and Kasten by Veeam, scaledwidth="50%", align="left"]
+image::veeam_kasten_3_.png[title="Save Cluster Configuration File", scaledwidth="50%", align="left"]
 +
 
-. Place the downloaded file in the default Kubernetes config path(typically ~/.kube on Linux and MacOSX). 
+. Place the downloaded file in the default Kubernetes configuration path(typically ~/.kube on Linux and MacOSX). 
 +
 
 // GK:
@@ -241,8 +243,8 @@ helm install k10 kasten/k10 \
 +
 [NOTE]
 ====
-This will install {comp2-short} with basic authentication, with a username of ‘kasten’ and password ‘Kasten/4u!’.
-If you wish to use a different username and password, you can do so by generating a different htpasswd string and replacing the string in the command above.
+This will install {comp2-short} with basic authentication, with a user name of ‘kasten’ and password ‘Kasten/4u!’.
+If you want to use a different user name and password, do so by generating a different htpasswd string and replacing the string in the command above.
 ====
 +
 
@@ -258,11 +260,11 @@ watch 'kubectl get pods -n kasten-io'
 // Is this the first mention of "SUSE Virtualization VIP"?
 // If so, define it or use a different phrase.
 
-. Using your Web browser, enter the hostname or management IP address of the {comp1}, and append ‘/k10/’ to the end of the URL.
-The {comp2-short} dashboard should load and ask for a username and password.
-Enter ‘kasten’ and ‘Kasten/4u!’ if you did not change the htpasswd string in the Helm installation command, otherwise enter the username and password you configured.
+. Using your Web browser, enter the host name or management IP address of the {comp1}, and append ‘/k10/’ to the end of the URL.
+The {comp2-short} dashboard should load and ask for a user name and password.
+Enter ‘kasten’ and ‘Kasten/4u!’ if you did not change the htpasswd string in the Helm installation command, otherwise enter the user name and password you configured.
 +
-image::veeam_kasten_11_.png[Veeam Kasten Dashboard, scaledwidth="85%", align="left"]
+image::veeam_kasten_11_.png[title="Veeam Kasten Dashboard", scaledwidth="85%", align="left"]
 +
 
 . {comp2-short} can now be configured to send backups to an external source.
@@ -273,23 +275,25 @@ To do so, navigate to _Profiles_ > _Location_ _Profiles_, choosing _Add_ _New_ a
 The multiple location profiles can be defined, allowing administrators to send backup data to different locations depending on requirements, cost, etc.
 ====
 +
-image::veeam_kasten_12_.png[Veeam Kasten Create Location Profile, scaledwidth="85%", align="left"]
+image::veeam_kasten_12_.png[title="Veeam Kasten Create Location Profile", scaledwidth="85%", align="left"]
 +
 
 . Backup policies can now be configured to protect workloads.
-To do so, navigate to _Applications_, click the menu to the right of a namespace you wish to protect, and select _Create_ _Policy_.
+To do so, navigate to _Applications_, click the menu to the right of a namespace you want to protect, and select _Create_ _Policy_.
 +
-image::veeam_kasten_13_.png[Veeam Kasten Applications, scaledwidth="85%", align="left"]
+image::veeam_kasten_13_.png[title="Veeam Kasten Applications", scaledwidth="85%", align="left"]
 +
 
 . The backup policy can now be defined, including scheduling and frequency, the retention schedule, and where to export backup data.
 +
-image::veeam_kasten_14_.png[Veeam Kasten New Policy, scaledwidth="85%", align="left"]
+image::veeam_kasten_14_.png[title="Veeam Kasten New Policy", scaledwidth="85%", align="left"]
 +
 
 [NOTE]
 ====
-Watch this https://youtu.be/CrkbHHzdvv4?si=a66O8u_ROXSpMeQ9[step-by-step visual walkthrough] of deploying {comp2-short} for Kubernetes into a {comp1} environment, creating a backup policy, and performing a backup and restoration of a VM.
+This https://youtu.be/CrkbHHzdvv4?si=a66O8u_ROXSpMeQ9[step-by-step visual walkthrough] demonstrates how to deploy
+{comp2-short} for Kubernetes into a {comp1} environment. It also shows how to create a backup policy, and perform a backup 
+and restoration of a VM.
 ====
 
 == Summary
@@ -306,7 +310,7 @@ Organizations can struggle to manage VMs for their legacy applications while try
 {comp1} helps address this problem by delivering a cloud-native approach to VMs deployment and management.
 Easily integrated with {comp4}, {comp1} enables organizations to unify their VM and container environments, reducing infrastructure and operational overhead.
 
-{comp2} supports with both {comp1} and {comp4}, providing backup, restore, disaster recovery, and ransomware protection for an organization's workloads in VMs and containers.
+{comp2} supports both {comp1} and {comp4}, providing backup, restore, disaster recovery, and ransomware protection for an organization's workloads in VMs and containers.
 {comp2} is simple to deploy and configure, and it can be protecting workloads in a matter of minutes.
 
 
@@ -320,7 +324,6 @@ Easily integrated with {comp4}, {comp1} enables organizations to unify their VM 
 <?pdfpagebreak?>
 ++++
 
-
 :leveloffset: 0
 
 == Legal notice
@@ -329,7 +332,6 @@ include::common_trd_legal_notice.adoc[]
 ++++
 <?pdfpagebreak?>
 ++++
-
 
 :leveloffset: 0
 include::common_gfdl1.2_i.adoc[]
