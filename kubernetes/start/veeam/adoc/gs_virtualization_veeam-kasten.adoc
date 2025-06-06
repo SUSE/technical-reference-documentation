@@ -1,0 +1,339 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+include::./gs_virtualization_veeam-kasten-vars.adoc[]
+[#art-{article-id}]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Getting Started Guide
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define variables (document attributes) in the vars file.
+// 2. Develop content and reference variables in the adoc file.
+// 3. Update the docinfo.xml file as needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+= {title}: {subtitle}
+
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a motivation for the document in 2-4 sentences to identify:
+//   - what the document is about
+//   - why it may be of interest to the reader
+//   - what products are being highlighted
+// Include an approved SUSE | Partner logo lock-up if possible
+// Include any additional, relevant details
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Enterprises embracing cloud native technologies, like containers and Kubernetes, seek efficiency, scale, and agility for their applications.
+They neet to simplify management of their expanding cloud native estates. Thus, they turn to {comp4}, the open source platform designed 
+to unify and streamline Kubernetes management across diverse infrastructures - data centers, clouds, and the edge.
+
+The transition to cloud native is often gradual.
+Developers and business units often need time to redesign legacy applications or adapt business practices.
+Organizations may find that they must concurrently maintain both cloud native and traditional IT infrastructure.
+This situation often leads to higher material and operational costs and hindering the modernization effort.
+
+{comp4} addresses this challenge by allowing enterprises to manage virtual machines (VMs) for legacy applications alongside containers within {comp4}.
+With unified management of containers and VMs, organizations can consolidate their IT estates, reduce costs, and continue their modernization journeys.
+
+Business continuity is also crucial for enterprise IT estates.
+{comp2} provides policy-driven backup, disaster recovery, application mobility, and ransomware protection for cloud native environments.
+Integrating {comp2-short} with {comp4} extends its enterprise-grade business continuity to VMs as well.
+
+{comp1-provider} and {comp2-provider} together empower enterprises to unify their IT infrastructure estates, decrease operational costs, and ensure business continuity across both traditional and cloud native workloads.
+
+
+
+=== Scope
+
+This guide provides an architectural overview and steps for deployment and configuration of {comp2} in a {comp1} environment.
+
+
+=== Audience
+
+The intended audience for this document includes solution and infrastructure architects, system administrators, platform engineers, virtualization administrators, and backup and recovery administrators.
+A basic understanding of virtualization, Linux, and Kubernetes concepts and technologies is required to successfully follow and apply this guide.
+
+
+
+== Architecture
+
+image::veeam_kasten_arch.png[title="Architecture Overview", scaledwidth="100%", align="center"]
+
+{comp2} is deployed to a {comp1} cluster. It uses the underlying RKE2 Kubernetes cluster for the control plane, and includes NGNIX ingress to serve the {comp2-short} user interface (UI).
+When installed in the cluster, {comp2-short} can view all namespaces and resources and administrators can create backup policies for namespaces or individual VMs.
+
+
+=== Components
+
+Component technologies used in this guide include:
+
+
+* One or more physical Linux servers as worker nodes to host VMs
++
+For this guide, {comp3-website}[{comp3}] {comp3-version1} is used as the worker node operating system.
+
+* {comp1-website}[{comp1}] ({comp1-version1} or later) installed onto the RKE2 cluster and configured on each node
+
+* {comp2-website}[{comp2}] ({comp2-version1} or later) providing data protection
+
+* Backups are configured to be stored in an Amazon S3 bucket, ensuring offsite data availability and durability.
+
+
+[NOTE]
+====
+Always check the current https://www.suse.com/suse-rancher/support-matrix/[product support matrices] to ensure proper choice of product versions.
+====
+
+
+=== Additional resources
+
+Additional resources you will need to follow the steps in this guide include:
+
+* A workstation you will use to connect to and administer the cluster environment
+
+* https://helm.sh[Helm] v3 Kubernetes package manager installed on your workstation
+
+* https://kubernetes.io/docs/reference/kubectl/[Kubectl] command line tool installed on your workstation for accessing the Kubernetes API
+
+
+
+== Prepare the environment
+
+Before installing {comp2-short}, you must first prepare your {comp1} environment.
+
+. Deploy {comp1}.
+//
++
+Detailed guidance is provided in the {comp1-docs}[official documentation].
++
+[NOTE]
+====
+A single-node cluster is sufficient for this guide.
+====
+
+. Create a https://documentation.suse.com/cloudnative/virtualization/v1.5/en/virtual-machines/create-vm.html[virtual machine]  (VM) using {comp1} to host your Kubernetes cluster and applications.
+
+. Plan your backup target storage in advance and ensure credentials are ready if using S3-compatible object storage.
+
+
+== Procedure
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Detail the steps of the installation procedure.
+// Replace 'Procedure' with one or more appropriate sections, such as:
+// - 'Setting up the environment'
+// - 'Installing the components'
+// - 'Configuring and tuning'
+// - 'Validating the deployment'
+// You may find it useful to organize complex procedures into
+// subsections.
+//
+// - As appropriate, make use of:
+//   - Ordered lists for steps
+//   - Code blocks for source code and console commands
+//     Readers should be able to use copy and paste to leverage
+//     commands and code in their environments
+//   - Listing blocks for output
+//   - Screenshots and diagrams
+//   - Admonitions (notes, tips, warnings, etc.)
+//
+// NOTE: Always include some validation or verification in your guide.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// GK:
+// Would it make sense to include a brief "Prepare your environment" section
+// that outlines installation of SUSE Virtualization, linking to the existing
+// documentation?
+
+// GK:
+// It might be helpful to provide some guidance on how to log in.
+
+. After deploying a {comp1} cluster, 
+log in to the https://documentation.suse.com/cloudnative/virtualization/v1.5/en/installation-setup/management-address.html[management IP] address and then navigate to the desired cluster.
+
+. Click _Support_ located at the bottom left of the navigation menu.
++
+image::veeam_kasten_2_.png[title="SUSE Virtualization Cluster Dashboard", scaledwidth="50%", align="left"]
++
+
+. Select the _Download_ _KubeConfig_ option to save the cluster configration file to your workstation.
++
+image::veeam_kasten_3_.png[title="Save Cluster Configuration File", scaledwidth="50%", align="left"]
++
+
+. Place the downloaded file in the default Kubernetes configuration path(typically ~/.kube on Linux and MacOSX). 
++
+
+// GK:
+// Presumably, the CLI commands below are executed in a terminal on the workstation.
+// We should insert a step here to say, "Open a command terminal on your workstation."
++
+// GK:
+// Also, if this is the first time mentioning the RKE2 cluster, we might want to include an explanation.
+
+. Open a command terminal on your workstation and confirm connectivity to the {comp1} RKE2 cluster using Kubernetes CLI command.
++
+[source, bash]
+----
+kubectl get nodes
+----
++
+
+// GK:
+// This appears to be the first mention of the harvester-longhorn storage class.
+// It might be good to have a little explanation here that SUSE Virtualization
+// uses Longhorn for block storage and that by annotating it, {comp2-short} will
+// be able to export block-mode disks.
+
+. {comp1} uses SUSE Storage, which is built on Longhorn as its default block storage solution. 
+To enable {comp2-short} to export block-mode disks, annotate the `harvester-longhorn` storage class accordingly.
+
++
+[source, bash]
+----
+kubectl annotate storageclass harvester-longhorn \
+k10.kasten.io/sc-supports-block-mode-exports=true
+----
++
+
+. Similarly, annotate the longhorn-snapshot `volumesnapshotclass` so {comp2-short} can use it to take storage snapshots.
++
+[source, bash]
+----
+kubectl annotate volumesnapshotclass longhorn-snapshot \
+k10.kasten.io/is-snapshot-class=true
+----
++
+
+. Add the _kasten_ repository to Helm.
++
+[source, bash]
+----
+helm repo add kasten https://charts.kasten.io
+----
++
+
+. Install {comp2-short} via Helm.
++
+[source, bash]
+----
+helm install k10 kasten/k10 \
+--namespace 'kasten-io' \
+--create-namespace \
+--set "ingress.create=true" \
+--set-string "ingress.class=nginx" \
+--set "auth.basicAuth.enabled=true" \
+--set-string "auth.basicAuth.htpasswd=kasten:{SHA}3ddV7KLvFY/54nJZFXKfZHzF78k="
+----
++
+[NOTE]
+====
+This will install {comp2-short} with basic authentication, with a user name of ‘kasten’ and password ‘Kasten/4u!’.
+If you want to use a different user name and password, do so by generating a different htpasswd string and replacing the string in the command above.
+====
++
+
+. Watch the {comp2-short} pods and wait for all to have a status of RUNNING.
++
+[source, bash]
+----
+watch 'kubectl get pods -n kasten-io'
+----
++
+
+// GK:
+// Is this the first mention of "SUSE Virtualization VIP"?
+// If so, define it or use a different phrase.
+
+. Using your Web browser, enter the host name or management IP address of the {comp1}, and append ‘/k10/’ to the end of the URL.
+The {comp2-short} dashboard should load and ask for a user name and password.
+Enter ‘kasten’ and ‘Kasten/4u!’ if you did not change the htpasswd string in the Helm installation command, otherwise enter the user name and password you configured.
++
+image::veeam_kasten_11_.png[title="Veeam Kasten Dashboard", scaledwidth="85%", align="left"]
++
+
+. {comp2-short} can now be configured to send backups to an external source.
+To do so, navigate to _Profiles_ > _Location_ _Profiles_, choosing _Add_ _New_ and selecting the relevant storage provider and configuring authentication. 
++
+[NOTE]
+====
+The multiple location profiles can be defined, allowing administrators to send backup data to different locations depending on requirements, cost, etc.
+====
++
+image::veeam_kasten_12_.png[title="Veeam Kasten Create Location Profile", scaledwidth="85%", align="left"]
++
+
+. Backup policies can now be configured to protect workloads.
+To do so, navigate to _Applications_, click the menu to the right of a namespace you want to protect, and select _Create_ _Policy_.
++
+image::veeam_kasten_13_.png[title="Veeam Kasten Applications", scaledwidth="85%", align="left"]
++
+
+. The backup policy can now be defined, including scheduling and frequency, the retention schedule, and where to export backup data.
++
+image::veeam_kasten_14_.png[title="Veeam Kasten New Policy", scaledwidth="85%", align="left"]
++
+
+[NOTE]
+====
+This https://youtu.be/CrkbHHzdvv4?si=a66O8u_ROXSpMeQ9[step-by-step visual walkthrough] demonstrates how to deploy
+{comp2-short} for Kubernetes into a {comp1} environment. It also shows how to create a backup policy, and perform a backup 
+and restoration of a VM.
+====
+
+== Summary
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize:
+// - Solution description
+// - Motivation for the guide
+// - What was done
+// - Suggested next steps for the learning journey
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Organizations can struggle to manage VMs for their legacy applications while trying to modernize to cloud-native technologies, such as containers and Kubernetes.
+{comp1} helps address this problem by delivering a cloud-native approach to VMs deployment and management.
+Easily integrated with {comp4}, {comp1} enables organizations to unify their VM and container environments, reducing infrastructure and operational overhead.
+
+{comp2} supports both {comp1} and {comp4}, providing backup, restore, disaster recovery, and ransomware protection for an organization's workloads in VMs and containers.
+{comp2} is simple to deploy and configure, and it can be protecting workloads in a matter of minutes.
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end

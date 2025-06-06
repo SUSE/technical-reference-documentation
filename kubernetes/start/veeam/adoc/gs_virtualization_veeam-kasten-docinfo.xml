@@ -25,7 +25,7 @@
 <!-- document organization metadata
      Do NOT edit these metadata tags.
 -->
-<meta name="series">Technical Reference Documentation</meta>
+<meta name="series">Technical References</meta>
 <meta name="type">Getting Started</meta>
 
 
@@ -38,29 +38,31 @@
 
 <!-- descriptions
      Do NOT edit these metadata tags.
-
+-->
 <meta name="description">{description}</meta>
 <meta name="social-desc">{description-social}</meta>
--->
+
 
 <!-- tasks
      - Tasks are predefined phrases that are used for filtering which documentation is displayed
        in the SUSE Documentation portal.
      - Repeat the 'phrase' element for each additional task.
      - Be sure required variables ('metatask1', 'metatask2', etc.) are defined in your vars file.
-
+-->
 <meta name="task">
     <phrase>{metatask1}</phrase>
 </meta>
--->
+
 
 
 <!-- Technical components
      - Use the template below to specify each component by name and version.
      - Multiple versions of the same component must be listed separately.
 -->
-<productname version="{comp1-version1}">{comp1}</productname>
-<productname version="{comp2-version1}">{comp2}</productname>
+<meta name="productname">
+  <productname version="{comp1-version1}">{comp1}</productname>
+  <productname version="{comp2-version1}">{comp2}</productname>
+</meta>
 
 
 <!-- Component listings for Google Analytics
@@ -82,9 +84,9 @@
 <!-- Partner metadata
      Identify ONLY ONE technical partner (business or organization name)
      supplying a primary component of the solution.
-
-<meta name="techpartner">{comp2-provider}</meta>
 -->
+<meta name="techpartner">{comp2-provider}</meta>
+
 
 <!-- author metadata
      - For additional authors, replicate author tag structure inside the authorgroup.
@@ -102,6 +104,26 @@
       <orgname>{author1-orgname}</orgname>
     </affiliation>
   </author>
+  <author>
+    <personname>
+      <firstname>{author2-firstname}</firstname>
+      <surname>{author2-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author2-jobtitle}</jobtitle>
+      <orgname>{author2-orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author3-firstname}</firstname>
+      <surname>{author3-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author3-jobtitle}</jobtitle>
+      <orgname>{author3-orgname}</orgname>
+    </affiliation>
+  </author>
 </authorgroup>
 
 
@@ -117,16 +139,16 @@
        official SUSE chameleon with 'SUSE' printed to its right.
      - The logo is designed for light backgrounds.
      - When you run the setup script, a symbolic link to this image
-       file is created in your project's `images/src/svg` directory.
+       file is created in your project's `media/src/svg` directory.
      - Make no changes below if you wish to use this image.
      
      - To display alternative logo (including an approved logo lock-up)
        on the document cover:
        - If the desired SVG image is located in `common/images/src/svg`,
          create a symbolic link to it in your project's
-         `images/src/svg` directory.
+         `media/src/svg` directory.
        - If you have a new SVG image, copy it to your project's
-         `images/src/svg` directory.
+         `media/src/svg` directory.
          IMPORTANT: Trim extraneous whitespace from all sides of your image.
        - Update 'fileref' in the tags below with the appropriate filename.
 
@@ -135,7 +157,6 @@
        the appropriate files.
        This is not preferred, as it can introduce alignment issues.
 -->
-<!--
 <cover role="logos">
   <mediaobject>
     <imageobject role="fo">
@@ -147,7 +168,7 @@
     <textobject><phrase>SUSE logo</phrase></textobject>
   </mediaobject>
 </cover>
--->
+
 
 <!-- revision history
      - Provide a complete revision history in reverse chronological order
@@ -181,4 +202,3 @@
   <title>Disclaimer</title>
   <para>{disclaimer}</para>
 </abstract>
-
