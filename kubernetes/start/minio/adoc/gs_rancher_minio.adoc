@@ -169,9 +169,8 @@ In general, the process is as follows:
 
 == Prerequisites
 
-This guide assumes that you have access to an existing Kubernetes cluster managed by https://rancher.com/docs/rancher/v2.6/en/overview/[SUSE Rancher].
-Deploying or importing Kubernetes clusters is covered elsewhere.
-A good place to start getting more details is the https://rancher.com/docs/rancher/v2.6/en/[Rancher documentation].
+This guide assumes that you have access to an existing Kubernetes cluster managed by SUSE Rancher Prime.
+A good place to start getting more details is the https://documentation.suse.com/cloudnative/rancher-manager/latest/en/about-rancher/what-is-rancher.html[Rancher documentation].
 
 
 image::rancher_minio_architecture_distributed_001.png[Distributed architecture, scaledwidth="75%", align="center"]
@@ -217,7 +216,7 @@ MinIO implements https://docs.min.io/minio/baremetal/concepts/erasure-coding.htm
 
 == Create persistent volumes
 
-Before proceeding, review the concepts of persistent volumes (PVs), persistent volume claims (PVCs), and storage classes in the https://rancher.com/docs/rancher/v2.6/en/cluster-admin/volumes-and-storage/how-storage-works/[Rancher documentation].
+Before proceeding, review the concepts of persistent volumes (PVs), persistent volume claims (PVCs), and storage classes in the https://documentation.suse.com/cloudnative/rancher-manager/latest/en/cluster-admin/manage-clusters/persistent-storage/about-persistent-storage.html[Rancher documentation].
 
 [TIP]
 ====
@@ -554,7 +553,7 @@ where <KUSTOMIZATION> is the path to the directory containing the 'kustomization
 
 Each Kubernetes cluster has its own internal network within which pods and services can communicate.
 Applications deployed within the same cluster can connect to the MinIO tenant over this network.
-Clients external to the Kubernetes cluster require use of special network components, like https://rancher.com/docs/rancher/v2.6/en/k8s-in-rancher/load-balancers-and-ingress/[ingress controllers and load balancers].
+Clients external to the Kubernetes cluster require use of special network components, like https://documentation.suse.com/cloudnative/rancher-manager/latest/en/cluster-admin/kubernetes-resources/load-balancer-and-ingress-controller/load-balancer-and-ingress-controller.html[ingress controllers and load balancers].
 Depending on your Kubernetes cluster configuration, MinIO services can automatically request and obtain an external IP address from a cluster load balancer.
 
 
