@@ -101,7 +101,7 @@ This project, resulting in the {otherproduct1}, is part of the 2022 https://summ
 Google Summer of Code contributors are paired with mentors from open source organizations, such as https://suse.com/[SUSE]. They learn from these experienced open source developers, gain exposure to real-world software development techniques, and write code for real-world challenges.
 This project was developed under mentorship of Bryan Gartner, Ann Davis, and Brian Fromme of https://suse.com/[SUSE].
 
-This document reviews the approach, implementation, and deployment of this ML-based, Cancer Predicition System, designed to assist medical professionals in early screening.
+This document reviews the approach, implementation, and deployment of this ML-based, Cancer Prediction System, designed to assist medical professionals in early screening.
 
 
 
@@ -141,7 +141,7 @@ To get the most out of this guide, you should have basic familiarity with the Li
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-Cancer Predicition System is an ML-based application stack with the goal to assist in cancer risk assessment by predicting the likelihood of developing a cancer prior to occurence of the disease.
+Cancer Prediction System is an ML-based application stack with the goal to assist in cancer risk assessment by predicting the likelihood of developing a cancer prior to occurrence of the disease.
 The image below illustrates the general architecture of the {otherproduct1}.
 
 image::edge-analytics_healthcare_architecture.png[Cancer Prediction System Architecture, align="center", scaledwidth="80%"]
@@ -248,9 +248,9 @@ git clone https://github.com/abhi-bhatra/ct_image_scanning.git
 
 
 
-== Prepare the Kubernetes cluster
+== Preparing the Kubernetes cluster
 
-=== Access the Rancher environment
+=== Accessing the Rancher environment
 
 It is assumed that you already have access to deploy applications to a Kubernetes cluster.
 If you need to set up your cluster environment, these references may help:
@@ -270,9 +270,9 @@ When you are ready, log in to the Rancher UI with your Web browser.
 image::edge-analytics_healthcare_rancher_portal.png[Rancher Portal, align="center", scaledwidth="80%"]
 
 
-=== Install Longhorn
+=== Installing Longhorn
 
-Before proceeding, review the concepts of persistent volumes, persistent volume claims (PVCs), and storage classes in the https://rancher.com/docs/rancher/v2.6/en/cluster-admin/volumes-and-storage/how-storage-works/[Rancher documentation].
+Before proceeding, review the concepts of persistent volumes, persistent volume claims (PVCs), and storage classes in the https://documentation.suse.com/cloudnative/rancher-manager/latest/en/cluster-admin/manage-clusters/persistent-storage/manage-persistent-storage.html[Rancher documentation].
 
 https://longhorn.io/[Longhorn] is a lightweight distributed block storage solution for Kubernetes that is easy to use, self-healing, and highly available.
 With Longhorn, you can:
@@ -311,7 +311,7 @@ helm install longhorn/longhorn -name longhorn -namespace longhorn-system
 ----
 
 
-After successfull installation, you can use the Longhorn Dashboard to manage and monitor the cluster's Longhorn volumes.
+After successful installation, you can use the Longhorn Dashboard to manage and monitor the cluster's Longhorn volumes.
 Access the Longhorn Dashboard through the Rancher UI.
 
 . In the Rancher UI, select the cluster where Longhorn is installed.
@@ -325,7 +325,7 @@ image::edge-analytics_healthcare_longhorn_dashboard.png[Longhorn Dashboard, scal
 
 
 
-=== Provision persistent storage
+=== Provisioning persistent storage
 
 You can provision persistent storage for your applications with `kubectl` or by using the Longhorn UI.
 See the https://longhorn.io/docs/1.3.1/volumes-and-nodes/create-volumes/[Longhorn documentation] for additional details.
@@ -393,15 +393,15 @@ image::edge-analytics_healthcare_persistent-volumes.png[PVC, scaledwidth="85%", 
 
 
 
-=== Install Kubeflow Pipelines
+=== Installing Kubeflow Pipelines
 
-The Kubeflow project provides a straightforward way to deploy and automate ML workflows on Kubernetes, making it simple, portable, and scalabe.
+The Kubeflow project provides a straightforward way to deploy and automate ML workflows on Kubernetes, making it simple, portable, and scalable.
 Anywhere you are running Kubernetes, you should be able to run Kubeflow.
 The https://www.kubeflow.org/docs/started/[Kubeflow documentation] provides detailed instructions to install Kubeflow on Kubernetes for production deployments.
 
 Typically, Kubeflow is installed into a large production environment, where it can rely on shared services, like https://istio.io/[Istio] service mesh.
 For this guide, you can use https://www.kubeflow.org/docs/components/pipelines/v1/installation/standalone-deployment/[Kubeflow Pipelines].
-This stand-alone implementation of Kubeflow does not dependend on other services, providing a simpler installation process.
+This stand-alone implementation of Kubeflow does not depend on other services, providing a simpler installation process.
 
 [NOTE]
 ====
@@ -472,7 +472,7 @@ image::edge-analytics_healthcare_kubeflow_1.png[Kubeflow Pipelines dashboard, sc
 
 
 
-== Download the data
+== Downloading data
 
 image::edge-analytics_healthcare_dataset.jpg[Dataset, scaledwidth="85%", align="center"]
 
@@ -536,7 +536,7 @@ This is further processed for use in the machine learning model.
 * dataset-classification: Contains a separate dataset, where all the DICOM images are classified as chest and non-chest.
 Only chest DICOM images are used for this model, so non-chest images must be filtered out.
 
-* dataset-prediciton: Contains all the images separated into train, test, and validation subsets.
+* dataset-prediction: Contains all the images separated into train, test, and validation subsets.
 Each image is labeled as 'cancer' or 'non-cancer'.
 
 . Now apply the dataset deployment manifests to download and extract the dataset into the data volume on your cluster.
@@ -635,7 +635,7 @@ It is quite common to retrain CNNs on new data, including updated labels for mis
 The {otherproduct1} allows for retraining and automates the process with Kubeflow Pipelines.
 
 
-== Deploy the applications
+== Deploying the applications
 
 {otherproduct1} is built on top of https://flask.palletsprojects.com/[Flask], a lightweight Web application framework.
 You can find the code under `application` inside your project directory, which you created earlier by cloning the project repository.
@@ -679,7 +679,7 @@ The solution contains two separate applications: one for the doctor (under `doct
 ----
 
 
-=== Deploy and access the Lab Technician Interface
+=== Deploying and accessing the Lab Technician Interface
 
 The Lab Technician Interface is responsible for getting DICOM image as input.
 The person (radiologist, lab technician, physician) can read all the information associated with the DICOM image and alter information, such as _contrast_, _brightness_, or _angle of rotation_.
@@ -708,7 +708,7 @@ kubectl apply -k .
 ----
 
 
-=== Deploy the Doctor's Dashboard
+=== Deploying the Doctor's Dashboard
 
 The Doctor's Dashboard lets a doctor access reports sent by a lab technician, along with the {otherproduct1}'s cancer prediction.
 
@@ -724,7 +724,7 @@ kubectl apply -k .
 ----
 
 
-=== Verify installation
+=== Verifying installation
 
 After you perform the above installations, validate that the {otherproduct1} is installed and running.
 
@@ -771,7 +771,7 @@ replicaset.apps/labtech-app-6c54f58874   1         1         1       21s
 
 
 
-=== Configure external access
+=== Configuring external access
 
 The final step in configuring the {otherproduct1} is to enable external access.
 
