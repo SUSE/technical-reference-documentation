@@ -48,7 +48,7 @@ This makes containerized applications highly portable and scalable, letting you 
 
 Building application containers starts with choosing a base container image.
 {bci-website}[{bci-full}] ({bci}) are tested, certified, and enterprise-ready.
-They offer a secure and compliant foundation for any development project, including optimized container images designed to furnish robust programming languge environments.
+They offer a secure and compliant foundation for any development project, including optimized container images designed to furnish robust programming language environments.
 
 {jup-website}[JupyterLab] by Project {jup-provider} is an interactive development environment that is popular with AI/ML, data science, and other researchers and developers.
 It is not built on a microservices architecture, so it may seem to be an unusual application to put into a container.
@@ -110,7 +110,7 @@ Little to no modification should be required to follow this guide with newer ver
 A base container image is a foundational layer for your application container.
 It typically provides a stripped-down Linux operating system user space without the kernel.
 {bci-full} are freely available, redistributable, and designed to be a secure, flexible foundation onto which you can add your application components.
-{bci} development container images provide optimized programming language enviroments, such as Python, to provide needed components from a trusted source and improve application container build times.
+{bci} development container images provide optimized programming language environments, such as Python, to provide needed components from a trusted source and improve application container build times.
 +
 [TIP]
 ====
@@ -458,7 +458,7 @@ WORKDIR /home/jupyter
 # copy requirements file into working directory and set ownership
 COPY --chown=1000:1000 requirements.txt .
 
-# install JuypterLab
+# install JupyterLab
 RUN set -euxo pipefail; \
     pip install --upgrade pip; \
     pip install -r requirements.txt; \

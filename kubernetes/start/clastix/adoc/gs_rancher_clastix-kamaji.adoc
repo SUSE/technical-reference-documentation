@@ -274,7 +274,7 @@ In addition, {comp2-provider} has created a {comp1} UI Extension.
 {comp1} UI Extensions allow users, developers, partners, and customers to extend and enhance the {comp1} UI.
 
 
-=== Install the {comp2} Operator
+=== Installing the {comp2} Operator
 
 Install the {comp2} Operator and default datastore with the {comp1} Apps chart.
 
@@ -300,7 +300,7 @@ image::clastix-kamaji_02_kamaji-namespace.png[Kamaji Rancher Chart - Namespace, 
 
 
 
-=== Install the {comp2} Console
+=== Installing the {comp2} Console
 
 Install the {comp2} Console through the {comp1} Apps chart.
 
@@ -334,7 +334,7 @@ image::clastix-kamaji_05_kamaji-console-ingress.png[Kamaji Console Rancher Chart
 .. Finish the installation by clicking __Install__.
 
 
-=== Verify installation of {comp2} Operator and {comp2} Console
+=== Verifying installation of {comp2} Operator and {comp2} Console
 
 Verify that the {comp2} Operator and {comp2} Console are installed.
 
@@ -348,7 +348,7 @@ image::clastix-kamaji_06_verify-apps.png[Installed Kamaji Apps, scaledwidth="85%
 
 
 
-=== Install Kamaji UI Extension for {comp1}
+=== Installing Kamaji UI Extension for {comp1}
 
 {comp1-docs}integrations-in-rancher/rancher-extensions[{comp1} UI Extensions] allow users, developers, partners, and customers to extend and enhance the {comp1} UI.
 Examples of built-in {comp2} extensions are Fleet, Explorer, and Harvester.
@@ -393,13 +393,13 @@ image::clastix-kamaji_10_extension-menu.png[Rancher Extensions - Multitenancy Ma
 
 
 
-== Provision a tenant cluster
+== Provisioning a tenant cluster
 
 With the {comp2} Operator, the {comp2} Console, and the {comp2} Extension deployed to your {comp2} Admin Cluster, you are ready to provision tenant (downstream) clusters.
 
 
 
-=== Deploy a tenant control plane
+=== Deploying a tenant control plane
 
 The first step to provision a tenant cluster is to create a tenant control plane (TCP) in the {comp2} Admin Cluster.
 
@@ -481,7 +481,7 @@ image::clastix-kamaji_14_tcp-sample.png[Tenant Control Plane overview, scaledwid
 
 
 
-=== Prepare worker nodes
+=== Preparing worker nodes
 
 Be sure the bare metal or virtual machines you use as your worker nodes have the following components installed:
 
@@ -502,7 +502,7 @@ The https://github.com/clastix/yaki/tree/master[nodesetup.sh script] can automat
 
 
 
-=== Join worker nodes
+=== Joining worker nodes
 
 The tenant control plane is made of pods running in the {comp2} Admin Cluster.
 At this point, the tenant cluster has no worker nodes.
@@ -559,7 +559,7 @@ See https://github.com/clastix/yaki/tree/master[yaki nodesetup.sh script], which
 
 
 
-=== Install the Cluster Network Interface
+=== Installing the Cluster Network Interface
 
 Your tenant cluster also needs a {comp1-docs}faq/container-network-interface-providers[Container Network Interface (CNI)] plugin.
 The CNI plugin enables seamless communication and connectivity between containers and external networks.
@@ -598,7 +598,7 @@ image::clastix-kamaji_15_console-tenant-nodes-visible.png[Tenant Nodes in the Ka
 
 
 
-== Import the tenant cluster into {comp1}
+== Importing the tenant cluster into {comp1}
 
 Bring your tenant clusters into {comp1} for unified management and oversight of your Kubernetes landscape.
 

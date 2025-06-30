@@ -510,7 +510,7 @@ image::rancher_minio_ui-tenant-002.png[scaledwidth="85%", align="center"]
 
 === Deploy a tenant with the MinIO Kubernetes Plugin
 
-The MinIO Kubernetes Plugin supports creating tenants directly or outputing a YAML file for further customization.
+The MinIO Kubernetes Plugin supports creating tenants directly, or outputting a YAML file for further customization.
 
 For example, the following command creates a MinIO tenant, named 'minio-tenant-1', with four nodes with four drives each, a capacity of 16 TiB, and using the 'directpv-min-io' storage class:
 
@@ -668,7 +668,7 @@ The S3A connector allows read/write directly to S3 buckets, and advances in the 
 MinIO recommends using at least Spark 3.2.x and later with the corresponding 'hadoop-aws' library to access the most recent improvements to the S3A connector.
 
 MinIO can act as the primary object storage resource for your AI/ML workloads, supporting migration from legacy HDFS onto your Kubernetes deployment.
-The MinIO Operator ensures a Kubernetes-native experience for deploying and managing MinIO tenants in support of AI/ML, in comparison to HDFS which has no native extensions and requires significant manual work to implement in a Kuberbetes context.
+The MinIO Operator ensures a Kubernetes-native experience for deploying and managing MinIO tenants in support of AI/ML, in comparison to HDFS which has no native extensions and requires significant manual work to implement in a Kubernetes context.
 
 To connect Spark to a MinIO tenant, the S3A connector requires the following minimum settings:
 
