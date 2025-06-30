@@ -209,7 +209,7 @@ For example, deploying a tenant with 16 drives requires 18 persistent volumes.
 [TIP]
 ====
 Be sure drives are provisioned in JBOD (_Just a Bunch of Disks_) mode with no RAID, ZFS pooling, or other redundancy, resiliency, or tooling layers.
-MinIO implements https://docs.min.io/minio/baremetal/concepts/erasure-coding.html[erasure coding] to provide object-level healing and resiliency with less overhead than adjacent technologies, such as RAID or replication.
+MinIO implements https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html[erasure coding] to provide object-level healing and resiliency with less overhead than adjacent technologies, such as RAID or replication.
 ====
 
 
@@ -232,7 +232,7 @@ Kubernetes must bind each generated PVC to a PV with matching storage class for 
 
 https://min.io/directpv[MinIO DirectPV] is a CSI driver that manages locally attached storage and automatically provisions PVs to match incoming PVCs from stateful applications.
 It is designed to be lightweight and scalable to tens of thousands of drives.
-For those clusters where DirectPV cannot be used, local PVs can be https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant.html[manually provisioned].
+For those clusters where DirectPV cannot be used, local PVs can be https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-minio-tenant.html[manually provisioned].
 
 
 DirectPV is installed with https://krew.sigs.k8s.io/[Krew], the plugin manager for the `kubectl` command.
@@ -425,7 +425,7 @@ Additional options can be passed with this command to customize these and other 
 
 [TIP]
 ====
-Explore https://docs.min.io/minio/k8s/reference/minio-kubectl-plugin.html[MinIO Kubernetes Plugin documentation] for more information on options and capabilities.
+Explore https://min.io/docs/minio/kubernetes/upstream/reference/kubectl-minio-plugin/kubectl-minio-init.html[MinIO Kubernetes Plugin documentation] for more information on options and capabilities.
 ====
  
 
@@ -503,7 +503,7 @@ Choose one of the three methods detailed next.
 . Click the _Create Tenant +_ button.
 
 . Follow the prompts to create and customize your tenant.
-See https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant.html[Deploy a MinIO tenant] for additional details.
+See https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-minio-tenant.html[Deploy a MinIO tenant] for additional details.
 +
 image::rancher_minio_ui-tenant-002.png[scaledwidth="85%", align="center"]
 
@@ -524,7 +524,7 @@ kubectl minio tenant create minio-tenant-1   	\
   --namespace           	minio-tenant-1
 ----
 
-See the https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant-using-commandline.html[MinIO documentation] for more details.
+See the https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-minio-tenant.html[MinIO documentation] for more details.
 
 
 
@@ -693,7 +693,7 @@ If both the MinIO Tenant and ingress operate without TLS, set 'spark.hadoop.fs.s
 
 The 's3a.access.key' and 's3a.secret.key' should correspond to a user on the MinIO tenant.
 You can create users as part of deploying the tenant.
-Use the MinIO Console to create additional users or connect the https://docs.min.io/minio/baremetal/reference/minio-mc-admin/mc-admin-user.html[MinIO Client (`mc`)] to the tenant to perform IAM operations.
+Use the MinIO Console to create additional users or connect the https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-user.html[MinIO Client (`mc`)] to the tenant to perform IAM operations.
 
 MinIO has published examples of using Spark 3.2.x with PySpark against a MinIO deployment.
 You can find these and other examples in the https://github.com/minio/training[MinIO Training Repository] to guide your own testing and evaluation of Spark or other applications which implement S3A in connection with MinIO.
