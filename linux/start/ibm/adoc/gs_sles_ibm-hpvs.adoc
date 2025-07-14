@@ -43,7 +43,7 @@ include::./common_docinfo_vars.adoc[]
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT REVISION DATE
 //-
-:revision-date: 2025-05-05
+:revision-date: 2025-07-10
 :docdate: {revision-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -209,6 +209,7 @@ Contributions to the development of this guide by the following individuals is a
 
 === Revision history
 
+* 2025-07-10: Add how to use with hardware accelerated crypto devices
 * 2025-05-05: Remove deprecated IBM Log Analysis and replace with IBM Cloud Logs
 * 2025-02-12: Remove spaces in command to define and start the slebci-paynow-website VM
 * 2024-08-17: Fix copy/paste error in rsyslog server.conf
@@ -244,6 +245,11 @@ The following high level infrastructure prerequisites are needed to use {hpvs_on
 * Feature Code 115 Secure Execution for Linux
 
 * Logical partition (LPAR) running {product2_full} {product2_version}
+
+* If hardware accelerated crypto passthrough will be used
+** https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-crypto-passthrough#hpcr_prerequisites[IBM z16 or IBM LinuxONE 4] is required
+** The Host Key Document (HKD) for the IBM Z or IBM LinuxONE server which was obtained in an earlier step.
+** One or more https://www.ibm.com/docs/en/linux-on-systems?topic=execution-crypto-express-adapters#lxse_ap_pass__title__2[supported and properly configured IBM Crypto Express adapters]
 //
 +
 {product2} will provide the IBM Secure Execution enabled Kernel-based Virtual Machine (KVM) host.
@@ -372,6 +378,7 @@ a|
 * <<Enabling Secure Execution capabilities on the KVM host>>
 * <<Downloading the HPCR image>>
 * <<Setting up an `rsyslog` logging service for HPVS log information>>
+* <<Prepare IBM Crypto Express adapters and domains to be passed into a containerized workload>>
 
 |===
 
@@ -387,6 +394,7 @@ a|
 * <<Building a container image>>
 * <<Publishing the container image to a registry>>
 * <<Defining the contract>>
+* <<Adding IBM Crypto Express adapters and domains to the contract>>
 
 |===
 
@@ -404,6 +412,7 @@ a|
 a|
 
 * <<On-premises deployment>>
+* <<Adding IBM Crypto Express adapters and domains to the deployment>>
 
 |===
 
@@ -1030,6 +1039,79 @@ systemctl enable --now rsyslog
 systemctl status rsyslog
 ----
 
+==== Prepare IBM Crypto Express adapters and domains to be passed into a containerized workload
+
+The Crypto Passthrough capability enables Hardware Security Modules (HSM) to be available to the IBM Hyper Protect Container Runtime (HPCR) where the containerized workload will run. A https://youtu.be/f7iQ-1dE9Ag?feature=shared[video] is available which explains crypto passthrough with a demonstration application built on a SUSE Linux Enterprise Base Container image.
+
+To enable virtual cryptographic adapters to be passed through, specific domains also referred to as AP queues must have an association request created.
+
+[IMPORTANT]
+====
+The domain associations that are created following these steps do not persist after a reboot of the KVM host. For information about creating a persistent association, see https://www.ibm.com/docs/en/linux-on-systems?topic=through-ap-queues[Preparing pass-through devices for cryptographic adapter resources].
+====
+
+. Use `lszcrypt -V` to review the Crypto Express cards and domains that are available to be associated.
++
+[NOTE]
+====
+The card `00` and the domain `0032` are used in this documentation.
+====
++
+[source, console]
+----
+CARD.DOM TYPE  MODE        STATUS     REQUESTS  PENDING HWTYPE QDEPTH FUNCTIONS  DRIVER
+--------------------------------------------------------------------------------------------
+00       CEX8P EP11-Coproc online            3        0     14     08 -----XN-F- cex4card
+00.0032  CEX8P EP11-Coproc online            3        0     14     08 -----XN-F- cex4queue
+----
+
+. Make note of the Master Key Verification Pattern (mkvp) which will be used in following sections. [[note-mkvp]]
++
+[source, console]
+----
+cat /sys/devices/ap/card00/00.0032/mkvps
+----
+
+. Release the domains from the direct control by the host operating system.
++
+[source, console]
+----
+echo 0x0 > /sys/bus/ap/apmask
+echo 0x0 > /sys/bus/ap/aqmask
+----
++
+[NOTE]
+====
+This releases all domains from host control.  For information about handling domains more selectively, see https://www.ibm.com/docs/en/linuxonibm/com.ibm.linux.z.lkdd/lkdd_t_crypto_wrk_mask.html[Freeing AP queues for KVM guests].
+====
+
+. Load the virtual function IO adapater ap kernel module.
++
+[source, console]
+----
+modprobe vfio_ap
+----
+
+. Execute the following commands to associate the domain as a _vfio_ap_ controlled device.
++
+[source, console]
+----
+uuid=$(uuidgen)
+echo ${uuid} > /sys/devices/vfio_ap/matrix/mdev_supported_types/vfio_ap-passthrough/create
+echo 0x00 > /sys/devices/vfio_ap/matrix/${uuid}/assign_adapter
+echo 0x0032 > /sys/devices/vfio_ap/matrix/${uuid}/assign_domain
+----
+
+. Verify the card and domain are controlled by _vfio_ap_.
++
+[source, console]
+----
+CARD.DOM TYPE  MODE        STATUS     REQUESTS  PENDING HWTYPE QDEPTH FUNCTIONS  DRIVER
+--------------------------------------------------------------------------------------------
+00       CEX8P EP11-Coproc online            4        0     14     08 -----XN-F- cex4card
+00.0032  CEX8P EP11-Coproc assigned          -        -     14     08 -----XN-F- vfio_ap
+----
+
 
 == Building, publishing, and defining
 
@@ -1440,9 +1522,9 @@ The base64 data for the archive item is truncated.
 [source, yaml]
 ----
 env: |                                                                                                                                                                                       
-  type: env                                                                                                                                                                                  
-  logging:                                                                                                                                                                                   
-    syslog:                                                                                                                                                                                  
+  type: env
+  logging:
+    syslog:
       hostname: 10.161.159.11
       port: 6514
       server: "-----BEGIN CERTIFICATE-----\nMIIE9TCCAt0CFGXTURlEXHPvfkrSMq6u8Okeo3NrMA0GC...0qex34LGN3kYw==\n-----END CERTIFICATE-----\n"
@@ -1452,6 +1534,82 @@ workload: |
   type: workload
   compose:
     archive: H4sIAAAAAAAAA+3UzW7bMAwHcJ/zFELucahP2gYG7LjjXkG2mNRoXQdWtrZvP6XBsCyHboeuW7H/
+----
+
+==== Adding IBM Crypto Express adapters and domains to the contract
+
+[IMPORTANT]
+====
+The https://www.ibm.com/docs/en/hpvs/2.2.x?topic=servers-crypto-passthrough#hpcr_sample_crypto_passthrough_contract[IBM Crypto Passthrough documentation] provides options - `secret` and `pvsecret` - to pass the crypto device details within the contract. This demo is using the `secret` option, for simplification. The HPCR bootstrap will transparently execute the `pvsecret` using IBM validated and curated code.  Using the `pvsecret` option requires additional effort by a relying party persona. Using `pvsecret` provides additional security because the attestation request and result are created and validated by the relying party rather than by IBM provided bootstrap code.
+====
+
+. Add one or more _index_ sections in the _crypto-pt_ section to the _env_ section in the contract.
++
+[source, yaml]
+----
+env: |
+  type: env
+    crypto-pt:
+    lock: true
+    index-<num>:
+      type: secret
+      domain-id: "<card>.<domain>"
+      secret: <base64 encoded secret>
+      mkvp: <master key verification pattern>
+----
++
+=> where _lock:_ is `true`.
++
+=> where <num> in _index-<num>:_ must start at 1 and must increase in sequence for each domain-id passed via the contract. For example, 1, 2, 3, and so on.
++
+=> where _type:_ is `secret`.
++
+=> where _domain-id:_ is the '<card>.<domain>' of the device being passed.
++
+=> where _secret:_ can be generated with `dd if=/dev/random bs=32 count=1 2> /dev/null | base64`.
++
+=> where _mkvp:_ was noted in the <<note-mkvp>> step.
+
+. Add one or more _HKD-<model>-<plant><serial>_ sections in the _host-attestation_ section to the _env_ section in the contract.
++
+[source, yaml]
+----
+env: |
+  type: env
+   host-attestation:
+    HKD-<model>-<plant><serial>:
+      description:<Description of HKD>
+      host-key-doc: <A base64 encoded Host Key Document>
+----
++
+=> where <model>, <plant> and <serial> in _HKD-<model>-<plant><serial>:_ follows the naming convention of the download HKD file.
++
+=> where _description: is a description of the HKD.
++
+=> where _host-key-doc:_ can be generated with `IFS=$'\n'; echo -n \"; for line in $(cat <path to downloaded HKD document> | base64); do echo -n $line"\n"; done; echo \"`
+
+An example of the _env_ section of the contract with only the _crypto-pt_ and _host-attestation_ sections     is provided below.
+
+[NOTE]
+====
+The base64 encoded HKD for `host-key-doc` is truncated.
+====
+
+[source, yaml]
+----
+env: |
+  type: env
+  crypto-pt:
+    lock: true
+    index-1:
+      type: secret
+      domain-id: "00.0032"
+      secret: A2tDsMCzwSxr09bCvxSzjtd02SkhKFl99KXtvIJKgHM=
+      mkvp: 0xbb3cf1db618294d05e9fd4d51572fe2de8409044f96ea1519bf9417500000000
+  host-attestation:
+    HKD-3931-0271CC8:
+      description: zt14
+      host-key-doc: "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlGSmpDQ0F3NmdBd0lCQWdJSlVVSG...NCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0NCg==\n"
 ----
 
 
@@ -1465,9 +1623,6 @@ Proceed to either <<Cloud deployment>> or <<On-premises deployment>>.
 
 For this guide, you use the IBM Cloud Web Console to perform the deployment.
 It is also possible to perform a deployment using the IBM Cloud CLI or Terraform.
-
-
-==== Deploying the workload
 
 Follow these steps to deploy your confidential container workload on IBM Cloud Hyper Protect Virtual Servers for VPC.
 
@@ -1520,8 +1675,6 @@ VSI has started successfully.
 === On-premises deployment
 
 An on-premises deployment will prepared and started via the CLI on the KVM host.
-
-==== Deploying the workload
 
 . Make a directory to store the disk image and other files for the HPCR.
 +
@@ -1600,7 +1753,7 @@ You should see something like:
 
 . Use the generated MAC address to define a host entry with a static IP address in your DHCP server.
 
-. Define and start the `slebci-paynow-website` VM.
+. Define and start the `slebci-paynow-website` VM. [[define-start-vm]]
 +
 [source, console]
 ----
@@ -1635,7 +1788,79 @@ mac.address=<macaddress> \
 --rng none
 ----
 +
-=> where `<macaddress>` in this command is replaced with the MAC address you noted in the previous step.
+=> where `<macaddress>` in this command is replaced with the MAC address you noted.
+
+. The VM console will be displayed and the HPCR VM will boot.
+//
++
+Watch for the following in the console as the instance is being started:
++
+[listing]
+----
+VSI has started successfully.
+----
++
+[NOTE]
+====
+Press `Ctrl + ]` keys to disconnect from the VM console.
+====
+
+
+==== Adding IBM Crypto Express adapters and domains to the deployment
+
+[NOTE]
+====
+The IBM Hyper Protect Container Runtime (HPCR) version used at the time of this writing is ibm-hyper-protect-container-runtime-25.1.0.
+====
+
+. Follow all of the steps in the previous section returning here when you get to the <<define-start-vm>> step.
+
+. Determine and make note of the name of the crypto domain node device.
++
+[source, console]
+----
+virsh nodedev-list | grep $(echo ${uuid} | tr - _)
+----
+
+. Define and start the `slebci-paynow-website` VM.
++
+[source, console]
+----
+virt-install \
+--name=slebci-paynow-website \
+--osinfo ubuntu20.04 \
+--memory=3815 \
+--vcpus vcpu.placement=static,vcpus=2 \
+--boot hd \
+--cpu mode=host-model,check=partial \
+--clock offset=utc \
+--events on_poweroff=destroy,on_reboot=restart,on_crash=destroy \
+--disk /var/lib/libvirt/images/slebci-paynow-website/\
+ibm-hyper-protect-container-runtime-23.3.0.qcow2,driver.iommu=on,\
+target.bus=virtio,\
+boot.order=1 \
+--disk /var/lib/libvirt/images/slebci-paynow-website/\
+slebci-paynow-website-data.qcow2,size=10,format=qcow2,cache=none,\
+driver.discard=ignore,driver.iommu=on,target.bus=virtio \
+--disk /var/lib/libvirt/images/slebci-paynow-website/init-disk,\
+format=raw,cache=none,driver.discard=ignore,driver.iommu=on,\
+target.bus=virtio \
+--controller type=pci,index=0,model=pci-root \
+--network type=direct,source=eth0,source.mode=bridge,\
+model.type=virtio,driver.name=vhost,driver.iommu=on,\
+mac.address=<macaddress> \
+--console pty,target.type=sclp,target.port=0 \
+--audio id=1,type=none \
+--memballoon none \
+--panic s390 \
+--channel none \
+--rng none \
+--hostdev <mdev-matrix>
+----
++
+=> where `<macaddress>` in this command is replaced with the MAC address you noted.
++
+=> where `<mdev-matrix>` in this command is replaced with the crypto domain node device name you noted.
 
 . The VM console will be displayed and the HPCR VM will boot.
 //
