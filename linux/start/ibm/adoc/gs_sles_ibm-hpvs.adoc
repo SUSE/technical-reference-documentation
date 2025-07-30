@@ -540,7 +540,7 @@ Use https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-about-bucket[Configur
 
 .. Click __Set target__ for the location chosen above and select the Cloud Logs name that was created.
 
-. Select __Manage__ > __Access (IAM)__ in the dropdown menu in the middle of the IBM Cloud page.
+. Select __Manage__ > __Access (IAM)__ in the drop-down box in the middle of the IBM Cloud page.
 +
 [NOTE]
 ====
@@ -554,7 +554,7 @@ This guide uses an API key assigned to a service ID as the Access groups method 
 
 . Click __Logging__ > __Instances__.
 
-. Select the Cloud Logs instance just created.
+. Select the Cloud Logs instance created.
 
 . Click __Overview__ on the side menu in the Cloud Logs page.
 
@@ -574,7 +574,7 @@ Do not close the browser window or tab.
 
 === On-premises preparation
 
-To simplify the preparation, the information and steps provided in following sections are consolidated from multiple documentation sources.  Links to the each documentation source is provided.
+To simplify the preparation, the information and steps provided in following sections are consolidated from multiple documentation sources. Links to each documentation source are provided.
 
 ==== Verifying required hardware and enabling IBM Secure Execution technology
 
@@ -661,16 +661,19 @@ systemctl enable --now libvirtd.service
 ====
 A networking choice should be considered at this time.
 
-The https://www.ibm.com/docs/en/linux-on-systems?topic=recommendations-kvm-host-networking-configuration-choices[KVM Host Networking Configuration Choices] in the IBM documentation provides a detailed list of networking choices and pros and cons.
+The https://www.ibm.com/docs/en/linux-on-systems?topic=recommendations-kvm-host-networking-configuration-choices[KVM Host Networking Configuration Choices] 
+in the IBM documentation provides a detailed list of networking choices and pros and cons.
 
 * Using a Linux bridge with NAT for KVM guests
 * Using a Linux bridge (without NAT) for KVM guests
 * Using an Open vSwitch bridge with KVM guests
 * Using the MacVTap driver with KVM guests
 
-Confirm prerequisites like https://www.ibm.com/docs/en/linux-on-systems?topic=choices-osa-interface-traffic-forwarding[OSA interface traffic forwarding] are met for your choice of networking.
+Confirm prerequisites like https://www.ibm.com/docs/en/linux-on-systems?topic=choices-osa-interface-traffic-forwarding[OSA interface traffic forwarding] 
+are met for your choice of networking.
 
-This getting started guide will use the https://www.ibm.com/docs/en/linux-on-systems?topic=choices-using-macvtap-driver[MacVTap driver] in Bridge mode with the `eth0` interface.  
+This getting started guide will use the https://www.ibm.com/docs/en/linux-on-systems?topic=choices-using-macvtap-driver[MacVTap driver] 
+in Bridge mode with the `eth0` interface.  
 No prerequisites are required using MacVTap but it is important to review the `MacVTap isolation / limitations` section.
 
 An external DHCP server is required to provide networking information for the VMs using MacVTAP.
@@ -726,18 +729,18 @@ Verify if an IBM HPCR fix pack is available from https://www.ibm.com/support/fix
 . Verify the integrity and decompress the download following steps 5 - 6 of the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-downloading-hyper-protect-container-runtime-image#procedure[procedure].
 
 . Make a note of location and file name of `qcow2` HPCR image[[note-hpcr-image-location]].
-For example, _ibm-hyper-protect-container-runtime-23.3.0.qcow2_ is the file name which is located in the _/opt/hpvs-hpcr/IBM-HPVS-OnPrem-v2.1.4-EN-Trial/images_.
+For example, `ibm-hyper-protect-container-runtime-23.3.0.qcow2` is the file name which is located in directory `/opt/hpvs-hpcr/IBM-HPVS-OnPrem-v2.1.4-EN-Trial/images`.
 
 ==== Setting up an `rsyslog` logging service for HPVS log information
 
-With the release of SLES 15 SP5, Minimal VM images for IBM Z and LinuxONE systems can be downloaded from https://www.suse.com/download/sles/[suse.com].
-Two KVM `qcow2` image file options are available - kvm and Cloud.
+With the release of SUSE Linux Enterprise Server 15 SP5, Minimal VM images for IBM Z and LinuxONE systems can be downloaded from https://www.suse.com/download/sles/[suse.com].
+Two KVM `qcow2` image file options are available: _kvm_ and _Cloud_.
 The file name of the `qcow2` image files will include either _kvm_ or _Cloud_ for differentiation.
 
 * The _kvm_ image file will prompt during firstboot for information to customize items like host name and networking information.
-* The _Cloud_ image file uses cloud-init to customize the host name and networking information.
+* The _Cloud_ image file uses `cloud-init` to customize the host name and networking information.
 
-You can choose to manually install SLES with the installation media or use a pre-built SLES image file from SUSE.
+You can choose to manually install SUSE Linux Enterprise Server with the installation media or use a pre-built SLES image file from SUSE.
 
 [NOTE]
 ====
@@ -751,11 +754,11 @@ This guide will provide the steps to use the _Cloud_ image to deploy an `rsyslog
 mkdir /var/lib/libvirt/images/rsyslog
 ----
 
-. Download the _SLES 15 SP5 Minimal VM Cloud qcow2_ image file at https://www.suse.com/download/sles/[suse.com].
-Place the file in the _/var/lib/libvirt/images/rsyslog_ directory.
-Name the file _rsyslog.qcow2_.
+. Download the `SLES 15 SP5 Minimal VM Cloud qcow2` image file at https://www.suse.com/download/sles/[suse.com].
+Place the file in the `/var/lib/libvirt/images/rsyslog` directory.
+Name the file `rsyslog.qcow2`.
 
-. Create the following required cloud-init files.
+. Create the following required `cloud-init` files.
 
 .. _vi /var/lib/libvirt/images/rsyslog/meta-data_
 +
@@ -869,7 +872,7 @@ rsyslog login:
 Press `Ctrl + ]` keys to disconnect from the VM console.
 ====
 
-. Log in to the VM via SSH as the `sles` user from another system using the private portion of the SSH key defined above.
+. Log in to the VM via SSH as the _sles_ user from another system using the private portion of the SSH key defined above.
 
 . Register and fully patch SLES.
 
@@ -1028,10 +1031,10 @@ ruleset="journal-output"
 )
 ----
 +
-=> where logging information will be written to _/var/log/hpcr.log_.
+=> where logging information will be written to `/var/log/hpcr.log`.
 Comment out this line and uncomment the line above to write log information to the journal.
 
-. Enable, start and verify that the `rsyslog` service is `running`.
+. Enable, start and verify that the `rsyslog` service is running.
 +
 [source, console]
 ----
@@ -1041,13 +1044,17 @@ systemctl status rsyslog
 
 ==== Prepare IBM Crypto Express adapters and domains to be passed into a containerized workload
 
-The Crypto Passthrough capability enables Hardware Security Modules (HSM) to be available to the IBM Hyper Protect Container Runtime (HPCR) where the containerized workload will run. A https://youtu.be/f7iQ-1dE9Ag?feature=shared[video] is available which explains crypto passthrough with a demonstration application built on a SUSE Linux Enterprise Base Container image.
+The Crypto Passthrough capability enables Hardware Security Modules (HSM) to be available to the IBM Hyper Protect Container Runtime (HPCR) 
+where the containerized workload will run. A https://youtu.be/f7iQ-1dE9Ag?feature=shared[video] is available which explains crypto passthrough 
+with a demonstration application built on a SUSE Linux Enterprise Base Container image.
 
-To enable virtual cryptographic adapters to be passed through, specific domains also referred to as AP queues must have an association request created.
+To enable virtual cryptographic adapters to be passed through, specific domains also referred to as AP queues must have an 
+association request created.
 
 [IMPORTANT]
 ====
-The domain associations that are created following these steps do not persist after a reboot of the KVM host. For information about creating a persistent association, see https://www.ibm.com/docs/en/linux-on-systems?topic=through-ap-queues[Preparing pass-through devices for cryptographic adapter resources].
+The domain associations that are created following these steps do not persist after a reboot of the KVM host. 
+For information about creating a persistent association, see https://www.ibm.com/docs/en/linux-on-systems?topic=through-ap-queues[Preparing pass-through devices for cryptographic adapter resources].
 ====
 
 . Use `lszcrypt -V` to review the Crypto Express cards and domains that are available to be associated.
@@ -1082,7 +1089,8 @@ echo 0x0 > /sys/bus/ap/aqmask
 +
 [NOTE]
 ====
-This releases all domains from host control.  For information about handling domains more selectively, see https://www.ibm.com/docs/en/linuxonibm/com.ibm.linux.z.lkdd/lkdd_t_crypto_wrk_mask.html[Freeing AP queues for KVM guests].
+This releases all domains from host control. For information about handling domains more selectively, 
+see https://www.ibm.com/docs/en/linuxonibm/com.ibm.linux.z.lkdd/lkdd_t_crypto_wrk_mask.html[Freeing AP queues for KVM guests].
 ====
 
 . Load the virtual function IO adapater ap kernel module.
@@ -1092,7 +1100,7 @@ This releases all domains from host control.  For information about handling dom
 modprobe vfio_ap
 ----
 
-. Execute the following commands to associate the domain as a _vfio_ap_ controlled device.
+. Execute the following commands to associate the domain as a `vfio_ap` controlled device.
 +
 [source, console]
 ----
@@ -1102,7 +1110,7 @@ echo 0x00 > /sys/devices/vfio_ap/matrix/${uuid}/assign_adapter
 echo 0x0032 > /sys/devices/vfio_ap/matrix/${uuid}/assign_domain
 ----
 
-. Verify the card and domain are controlled by _vfio_ap_.
+. Verify the card and domain are controlled by `vfio_ap`.
 +
 [source, console]
 ----
@@ -1115,26 +1123,29 @@ CARD.DOM TYPE  MODE        STATUS     REQUESTS  PENDING HWTYPE QDEPTH FUNCTIONS 
 
 == Building, publishing, and defining
 
-In this section you prepare a workload container image, publish the container image to a registry, and define the IBM Hyper Protect Services contract that will be used during deployment.
-The steps in this section are the same for cloud and on-premises deployments.
+In this section, you prepare a workload container image, publish the container image to a registry, and define the IBM Hyper Protect Services contract that will be used during deployment.
+The steps outlined here are the same for cloud and on-premises deployments.
 
-You will use the https://cloud.ibm.com/docs/vpc?topic=vpc-financial-transaction-confidential-computing-on-hyper-protect-virtual-server-for-vpc[PayNow Node.js application], which has been already built on a SLE BCI container image and published to a container registry.
-The steps are also available if you want to build the PayNow Node.js application on a SLE BCI container.
+You will use the https://cloud.ibm.com/docs/vpc?topic=vpc-financial-transaction-confidential-computing-on-hyper-protect-virtual-server-for-vpc[`PayNow Node.js` application], 
+which has been already built on a SLE BCI container image and published to a container registry.
+The steps are also available if you want to build the `PayNow Node.js` application on a SLE BCI container.
 
 See https://mediacenter.ibm.com/media/Confidential+Computing+for+a+financial+transaction+using+Hyper+Protect+Virtual+Server+for+VPC/1_vv3j2oo6[confidential computing in action].
-In this demonstration, the PayNow Node.js application shows a financial transaction running without confidential computing and with confidential computing.
+In this demonstration, the `PayNow Node.js` application shows a financial transaction running without confidential computing and with confidential computing.
 
 === Building a container image
 
 Building one or more application container images is a necessary step.
-The PayNow Node.js application container image has already been built on a SLE BCI container and published to a container registry.
-You can go to <<Defining the contract>> to use the PayNow Node.js application container image or follow the steps below to build your own image of the PayNow Node.js application.
+The `PayNow Node.js` application container image has already been built on a SLE BCI container and published to a container registry.
+You can go to <<Defining the contract>> to use the `PayNow Node.js` application container image or follow the steps below to build your own image of the `PayNow Node.js` application.
 
-Access to a Linux on s390x instance is required to build the PayNow Node.js application container image.
-These steps will use `git` and `podman` to build and publish the OCI-compliant PayNow Node.js application container image.
-An option is to use an IBM Cloud virtual server instance (VSI) for VPC with a SUSE Linux Enterprise Server https://cloud.ibm.com/docs/vpc?topic=vpc-vsabout-images#vs-s390x-supported-os[s390x stock virtual server image] but any Linux distro on s390x with `git` and `podman` is sufficient.
+Access to a Linux on s390x instance is required to build the `PayNow Node.js` application container image.
+These steps will use `git` and `podman` to build and publish the OCI-compliant `PayNow Node.js` application container image.
+An option is to use an IBM Cloud virtual server instance (VSI) for VPC with a SUSE Linux Enterprise Server https://cloud.ibm.com/docs/vpc?topic=vpc-vsabout-images#vs-s390x-supported-os[s390x stock virtual server image]
+but any Linux distribution on s390x with `git` and `podman` is sufficient.
 
-The https://registry.suse.com/repositories/bci-nodejs22?arch=s390x[SLE BCI Language Container Images] for Node.js development is used as base for the PayNow Node.js application container image.
+The https://registry.suse.com/repositories/bci-nodejs22?arch=s390x[SLE BCI Language Container Images] for `Node.js` 
+development is used as base for the `PayNow Node.js` application container image.
 
 . Clone the Pay Now Web site sources.
 +
@@ -1145,7 +1156,7 @@ cd paynow-website
 git checkout slebci-paynow-website
 ----
 
-. Build the PayNow Node.js application container image.
+. Build the `PayNow Node.js` application container image.
 +
 [source, console]
 ----
@@ -1182,7 +1193,7 @@ CONTAINER ID  IMAGE                                   COMMAND               CREA
 6628a61d4e8c  localhost/slebci-paynow-website:latest  /bin/sh -c npm st...  6 seconds ago  Up 5 seconds ago  0.0.0.0:8443->8443/tcp  paynow-website
 ----
 
-. Stop the running PayNow Node.js application container
+. Stop the running `PayNow Node.js` application container
 +
 [source, console]
 ----
@@ -1200,14 +1211,15 @@ You will see similar output.
 === Publishing the container image to a registry
 
 Publishing one or more application container images is a necessary step.
-The PayNow Node.js application container image has already been built on a SLE BCI container and published to a container registry.
-You can go to <<Defining the contract>> to use the PayNow Node.js application container image or follow the steps below to publish your own image of the PayNow Node.js application.
+The `PayNow Node.js` application container image has already been built on a SLE BCI container and published to a container registry.
+You can go to <<Defining the contract>> to use the `PayNow Node.js` application container image or follow the steps below 
+to publish your own image of the `PayNow Node.js` application.
 
-Access to the same Linux on s390x instance that built the PayNow Node.js application container image is required to publish the image.
-These steps will use `podman` to publish the OCI-compliant PayNow Node.js application container image.
+Access to the same Linux on s390x instance that built the `PayNow Node.js` application container image is required to publish the image.
+These steps will use `podman` to publish the OCI-compliant `PayNow Node.js` application container image.
 A properly configured GitHub account is required to publish the image to your https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry[GitHub Container registry].
 
-. Tag the PayNow Node.js application container image to your GitHub account.
+. Tag the `PayNow Node.js` application container image to your GitHub account.
 +
 [source, console]
 ----
@@ -1220,7 +1232,7 @@ ghcr.io/<github user>/slebci-paynow-website:latest
 Replace _<github user>_ with your personal GitHub user name.
 ====
 
-. Log in to the GitHub Container registry.
+. Log in to the GitHub container registry.
 +
 [source, console]
 ----
@@ -1237,7 +1249,7 @@ Replace _<github user>_ with your personal GitHub user name.
 Replace _<github token>_ with your personal GitHub access token.
 ====
 
-. Push the PayNow Node.js application container image.
+. Push the `PayNow Node.js` application container image.
 +
 [source, console]
 ----
@@ -1264,7 +1276,7 @@ Storing signatures
 Replace _<github user>_ with your personal GitHub user name.
 ====
 
-. Remove the PayNow Node.js application container image.
+. Remove the `PayNow Node.js` application container image.
 +
 [source, console]
 ----
@@ -1278,7 +1290,7 @@ You will see similar output.
 Untagged: ghcr.io/mfriesenegger/slebci-paynow-website:latest
 ----
 
-. Confirm that the PayNow Node.js application container image can be pulled from your GitHub Container registry.
+. Confirm that the `PayNow Node.js` application container image can be pulled from your GitHub Container Registry.
 +
 [source, console]
 ----
@@ -1353,7 +1365,7 @@ services:
 Verify the https://github.com/users/mfriesenegger/packages/container/package/slebci-paynow-website[SHA256 digest] of the prebuilt image.
 ====
 +
-Or use the following if the PayNow Node.js application container image was built by you and published in your GitHub Container registry.
+Or use the following if the `PayNow Node.js` application container image was built by you and published in your GitHub Container registry.
 +
 [source, yaml]
 ----
@@ -1369,7 +1381,7 @@ services:
 ====
 Replace _<github user>_ with your personal GitHub user name.
 
-Replace _<github digest>_ with the digest information for the in published in your GitHub Container registry.
+Replace _<github digest>_ with the digest information for the in published in your GitHub Container Registry.
 ====
 
 . Create a base64 encoded TAR archive [[base64-encoded-archive]].
@@ -1456,7 +1468,7 @@ The certificate and key output generated by the commands above will be copied an
 
 .. Add the workload configuration to the contract.
 +
-Use the following if using the pre-built PayNow Node.js application container image.
+Use the following if using the pre-built `PayNow Node.js` application container image.
 +
 [source, yaml]
 ----
@@ -1468,7 +1480,7 @@ workload: |
 +
 => where <archive> was created in the *Create a base64 encoded TAR archive* <<base64-encoded-archive>> step.
 +
-Or use the following if the PayNow Node.js application container image was built by you and published in your GitHub Container registry.
+Or use the following if the `PayNow Node.js` application container image was built by you and published in your GitHub Container Registry.
 +
 [source, yaml]
 ----
@@ -1588,7 +1600,7 @@ env: |
 +
 => where _host-key-doc:_ can be generated with `IFS=$'\n'; echo -n \"; for line in $(cat <path to downloaded HKD document> | base64); do echo -n $line"\n"; done; echo \"`
 
-An example of the _env_ section of the contract with only the _crypto-pt_ and _host-attestation_ sections     is provided below.
+An example of the _env_ section of the contract with only the _crypto-pt_ and _host-attestation_ sections is provided below.
 
 [NOTE]
 ====
@@ -1687,7 +1699,7 @@ mkdir /var/lib/libvirt/images/slebci-paynow-website
 
 . Create the cloud configuration files and init-disk ISO.
 
-.. Create the _meta-data_ file in the directory created above.
+.. Create the `meta-data` file in the directory created above.
 //
 +
 For example:
@@ -1704,7 +1716,7 @@ Add the following line to the file:
 local-hostname: slebci-paynow-website
 ----
 
-.. Create the _vendor-data_ file in the same directory.
+.. Create the `vendor-data` file in the same directory.
 +
 For example:
 +
@@ -1713,7 +1725,7 @@ For example:
 vi /var/lib/libvirt/images/slebci-paynow-website/vendor-data
 ----
 +
-Add the following contents to the _vendor-data_ file:
+Add the following contents to the `vendor-data` file:
 +
 [listing]
 ----
@@ -1722,7 +1734,7 @@ users:
 - default
 ----
 
-.. Copy the _slebci-paynow-website-contract.yml_ contract file from the local system to the _/var/lib/libvirt/images/slebci-paynow-website/user-data_ file on the KVM host.
+.. Copy the `slebci-paynow-website-contract.yml` contract file from the local system to the `/var/lib/libvirt/images/slebci-paynow-website/user-data` file on the KVM host.
 
 .. Create the `init-disk` ISO image.
 +
@@ -1810,7 +1822,7 @@ Press `Ctrl + ]` keys to disconnect from the VM console.
 
 [NOTE]
 ====
-The IBM Hyper Protect Container Runtime (HPCR) version used at the time of this writing is ibm-hyper-protect-container-runtime-25.1.0.
+The IBM Hyper Protect Container Runtime (HPCR) version used at the time of this writing is `ibm-hyper-protect-container-runtime-25.1.0`.
 ====
 
 . Follow all of the steps in the previous section returning here when you get to the <<define-start-vm>> step.
@@ -1996,7 +2008,7 @@ Follow the steps below to access the encrypted attestation document and verify t
 .. Add `volumes` section to your Docker Compose file.
 //
 +
-For example, if you are using the pre-built PayNow Node.js application container image, update your `docker-compose.yml` as follows:
+For example, if you are using the pre-built `PayNow Node.js` application container image, update your `docker-compose.yml` as follows:
 +
 [source, yaml]
 ----
@@ -2138,7 +2150,7 @@ Continue your learning journey with the following additional resources:
 
 * Accelerate Application Development with Open, Secure Containers with https://www.suse.com/products/base-container-images/[{product1_full}].
 
-* Build a trusted PayNow Website container on {product1_full} using https://cloud.ibm.com/docs/vpc?topic=vpc-about-hpsb[{hpp} Secure Build].
+* Build a trusted PayNow Web site container on {product1_full} using https://cloud.ibm.com/docs/vpc?topic=vpc-about-hpsb[{hpp} Secure Build].
 
 * Deploy multiple containers using the https://www.ibm.com/docs/en/hpvs/2.1.x?topic=notes-whats-new-in-version-215#deploying-multiple-containers[play] subsection, which explains a new HPCR capability that was recently added for https://cloud.ibm.com/docs/vpc?topic=vpc-about-contract_se#hpcr_contract_play[IBM Cloud] and https://www.ibm.com/docs/en/hpvs/2.1.x?topic=servers-about-contract#hpcr_contract_play[on-premises] deployments.
 
