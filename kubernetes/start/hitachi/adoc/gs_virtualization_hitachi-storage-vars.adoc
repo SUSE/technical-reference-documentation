@@ -74,17 +74,23 @@
 //   You can create additional modifiers as needed.
 //
 // -
-:comp1-provider: SUSE
-:comp1: SUSE Virtualization
-:comp1-version1: 1.5
-:comp1-website: https://www.suse.com/products/rancher/virtualization/
-:comp1-docs: https://documentation.suse.com/cloudnative/virtualization/v1.5/en/installation-setup/methods/iso-install.html
+:svirt-provider: SUSE
+:svirt: SUSE Virtualization
+:svirt-version1: 1.5
+:svirt-website: https://www.suse.com/products/rancher/virtualization/
+:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/v1.5/en/installation-setup/methods/iso-install.html
 
-:comp2-provider: Hitachi Vantara
-:comp2: Hitachi VSP Storage
-:comp2-version1: 
-:comp2-website: https://www.hitachivantara.com/
-:comp2-docs: https://www.hitachivantara.com/en-in/products/storage-platforms
+:hitachivsp-provider: Hitachi Vantara
+:hitachivsp: Hitachi VSP Storage
+:hitachivsp-version1:
+:hitachivsp-website: https://www.hitachivantara.com/
+:hitachivsp-docs: https://www.hitachivantara.com/en-in/products/storage-platforms
+
+:hspc-provider: {hitachivsp-provider}
+:hspc: Hitachi Storage Plug-in for Containers
+
+:hspcsi-provider: {hitachivsp-provider}
+:hspcsi: HSPC CSI
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -114,22 +120,22 @@
 //
 // NOTE: You can reference component variables in titles.
 //       E.g., If you have the component variables:
-//             :comp1: SUSE Linux Enterprise Server
-//             :comp2: JupyterLab
+//             :svirt: SUSE Linux Enterprise Server
+//             :hitachivsp: JupyterLab
 //             you can reference them to define new variables, like:
-//             :title: Simplify deployment of {comp2} with {comp1}
+//             :title: Simplify deployment of {hitachivsp} with {svirt}
 // -
-:title: Deployment Guide 
+:title: SUSE Virtualization with Hitachi VSP Storage
 
-:subtitle: Adding Hitachi VSP Storage to SUSE Virtualization
+:subtitle: Deploy SUSE Virtualization and Hitachi VSP Storage for cloud native virtualization infrastructure
 
-:usecase: 
+:usecase: cloud native virtualization infrastructure
 
-:description:
+:description: Guidance for integrating SUSE Virtualization and Hitachi storage platforms to enable modern, enterprise, cloud native virtualization infrastructure.
 
-:description-social:
+:description-social: Integration and deployment guide for SUSE Virtualization and Hitachi storage
 
-:executive-summary: This document describes the procedure for integrating Hitachi VSP storage into SUSE Virtualization using the Hitachi Storage Plug‑in for Containers (HSPC CSI driver). It covers prerequisites, multipath configuration, CSI operator installation, and the creation of Kubernetes resources (Secret, StorageClass, PVC, SnapshotClass). Validation steps using mix of both CLI and Harvester UI are included. This guide is intended for SUSE users adding Hitachi storage to their Suse Virtualizaion.
+:executive-summary: This guide describes how to integrate Hitachi Storage with SUSE Virtualization using the Hitachi Storage Plug‑in for Containers (HSPC CSI driver). It covers prerequisites, multipath configuration, CSI operator installation, and the creation of Kubernetes resources (Secret, StorageClass, PVC, SnapshotClass), along with validation steps using both CLI and the SUSE Virtualization UI. This guide is intended for platform engineers, systems administrators, and others who design, deploy, and manage enterprise, cloud native, and virtualization infrastructure.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -157,7 +163,9 @@
 //    :metatask2: Installation
 //    :metatask3: Deployment
 // -
-:metatask1: task
+:metatask1: Integration
+:metatask2: Storage
+:metatask3: Deployment
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
