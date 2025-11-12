@@ -21,6 +21,14 @@ include::./gs_virtualization_hitachi-storage-vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+// JI: This is a good start.
+// JI: Be sure to put yourself in the perspective of your reader, who may not have your skill level.
+// JI: For example, if you provide a sample YAML file, be sure to tell the reader what to do with it.
+// JI: I have started making some edits and including comments like this one to guide you on your next steps.
+// JI: Be sure to review the vars file.
+// JI: You will see several new variables that you should reference in this document;
+// JI: for example, see 'svirt' and 'hitachivsp-long'.
+
 
 = {title}: {subtitle}
 
@@ -28,171 +36,114 @@ include::./gs_virtualization_hitachi-storage-vars.adoc[]
 
 == Introduction
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a motivation for the document in 2-4 sentences to identify:
-//   - what the document is about
-//   - why it may be of interest to the reader
-//   - what products are being highlighted
-// Include an approved SUSE | Partner logo lock-up if possible
-// Include any additional, relevant details
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 As organizations evolve toward modernized hybrid infrastructures, unified virtualization and enterprise storage become critical for reliability, scalability, and efficiency.
-SUSE Virtualization, powered by SUSE Virtualization and Kubernetes, provides a robust foundation for running both virtual machines and containerized workloads on a single platform.
+SUSE Virtualization, built on Harvester and powered by Kubernetes, provides a robust foundation for running both virtual machines and containerized workloads on a single platform.
+When deployed with {hitachivsp-long} ({hitachivsp}), enterprises can access data management, high performance storage, and data protection for mission-critical workloads.
 
-To enhance enterprise-grade data management, Hitachi Virtual Storage Platform (VSP) with the Hitachi Storage Plug-in for Containers (HSPC) delivers high performance, data protection, and seamless integration.
-This guide describes how to deploy and configure Hitachi VSP with SUSE Virtualization using the HSPC CSI driver. It covers setup, configuration, and validation, enabling consistent, performant storage services for mission-critical workloads.
+This document provides technical guidance for integrating {hitachivsp} with {svirt}.
+
 
 
 
 === Scope
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Specify what this guide covers in no more than 2 sentences.
-//   E.g., "You will learn how to ..."
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-This document provides detailed instructions for integrating Hitachi VSP Storage with SUSE Virtualization clusters using the HSPC CSI Operator.
-It includes steps for configuring multipath I/O, installing the HSPC Operator, creating Kubernetes resources (Secret, StorageClass, PVC, SnapshotClass), and validating the deployment using SUSE Virtualization UI and CLI.
+This guide provides detailed instructions for integrating {hitachivsp-long} with {svirt} clusters.
+It includes steps for configuring multipath I/O, installing the {hspc-long}, creating Kubernetes resources (secrets, StorageClass, PVC, SnapshotClass), and validating the deployment using SUSE Virtualization UI and CLI.
 
 
 === Audience
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify for whom this document is intended, perhaps with:
-//   - topics of interests (e.g., machine learning, security, etc.)
-//   - job roles (e.g., developer, administrator, platform architect, etc.)
-//   - required skills
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+This guide is intended for platform teams, systems and storage administrators, and DevOps engineers supporting modern virtualization, featuring {svirt} and {hitachivsp-long}.
 
-This guide is intended for:
-
-System administrators and DevOps engineers deploying SUSE Virtualization clusters.
-
-Storage administrators integrating Hitachi enterprise storage.
-
-Platform teams maintaining CSI-based storage provisioning for Kubernetes and SUSE Virtualization.
-
-Basic familiarity with Kubernetes, SUSE Virtualization, and storage networking concepts (iSCSI or FC) is assumed.
+The reader should have basic familiarity with the Linux, Kubernetes, storage networking protocols (iSCSI or FC), {svirt}, and {hitachivsp-long}.
 
 
 
 === Acknowledgements
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Acknowledge contributors not listed as authors.
-// Something like:
-//   The authors wish to acknowledge the contributions of the following
-//   individuals:
-//   * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
-//   * {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
-// NOTE: If there are none, comment out this section.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+The authors acknowledge contributions from Hitachi Vantara engineering teams for validation and joint testing of the HSPC CSI integration with {svirt}.
 
 
-The authors acknowledge contributions from Hitachi Vantara engineering teams for validation and joint testing of the HSPC CSI integration with SUSE Virtualization.
+
+== Overview
+
+// JI: Use this section to provide a brief, a component-level architecture.
+// JI: I refocused this section on three, key components.
+// JI: The others (e.g., multipathd, secrets, and storageclass) should be noted when they are configured.
+// JI: Insert an architecture diagram at the top of this section
+// JI: See the SUSE Virtualization + Portworx + Pure Storage FlashArray whitepaper for an example
 
 
-== Prerequisites
+The integrated solution architecture brings together {svirt} as the cloud native virtualization with {hitachivsp-long} as the enterprise storage back-end.
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify minimum requirements (prerequisites) the reader
-// would need in order to follow the steps of this guide.
-// - Use an unordered list.
-// - Use proper product names.
-// - Identify product versions.
-// - Link to existing resources whenever possible.
-// - Keep this section brief but elaborate as needed.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+{empty} +
+Key elements of this solution include:
 
-SUSE Virtualization Cluster (v1.5.1 or later) must be operational.
+SUSE Virtualization::
+{svirt-website}[{svirt}] provides Kubernetes-native virtual machine and container management.
+This guide is valid for {svirt} {svirt-version1} and later.
 
-Hitachi VSP Storage Array (supported model such as VSP 5500 or later).
+{hitachivsp-long}::
+{hitachivsp-website}[{hitachivsp}] provides enterprise storage for backing container and virtual machine workloads.
+Supported platforms include Hitachi VSP, VSP One Block as well as VSP One SDS in Azure, AWS, and GCP public clouds.
 
-Network Connectivity between SUSE Virtualization nodes and Hitachi storage array (iSCSI or FC).
-
-Administrative Access to both SUSE Virtualization (UI + CLI) and Hitachi Storage Management interface.
-
-HSPC CSI Operator available from Hitachi GitHub Repository.
+{hspc-long} ({hspc})::
+{hspc-website}[{hspc}] provides integration between {hitachivsp} and {svirt}, enabling you to create and utilize Hitachi storage volumes for stateful container applications and virtual machines.
 
 
-== Procedure
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Detail the steps of the installation procedure.
-// Replace 'Procedure' with one or more appropriate sections, such as:
-// - 'Setting up the environment'
-// - 'Installing the components'
-// - 'Configuring and tuning'
-// - 'Validating the deployment'
-// You may find it useful to organize complex procedures into
-// subsections.
+{empty} +
+In general, the integration works as follows:
+
+. {hspc} receives a PersistentVolumeClaim (PVC) request.
+
+. {hspc} calls the Hitachi REST/API to provision a logical volume on the configured pool.
+
+. {hitachivsp} array exposes the LUN via iSCSI or FC and attaches the volume to the {svirt} node where the workload (container pod or VM) runs.
+
+
+{empty} +
+The following design considerations are recommended:
+
+* Use at least three controller/worker nodes for production-grade availability.
+
+* Use dedicated a dedicated storage network.
+
+//JI: This should be part of the multipathd installation and configuration steps in the "Prepare the environment" section:
+//JI: Ensure the {svirt-docs-multipathd}[multipath] configuration matches your SAN fabric (ALUA settings for FC and appropriate path checker for iSCSI).
+
+
+
+// JI: I think we can separate the procedure into sections, with the first being about preparation.
+== Prepare the environment
+
+This section provides detailed steps required to prepare your environment for the integration.
+
+// JI: We do not explicitly number steps, the rendering engine will do this based on the order of full and number of stops ('.').
+. Install {svirt}.
+// JI: Describe HA deployment, provide links to hardware and network requirements, link to installation instructions.
+
+
+. Configure multipathd on all SUSE Virtualization worker nodes.
 //
-// - As appropriate, make use of:
-//   - Ordered lists for steps
-//   - Code blocks for source code and console commands
-//     Readers should be able to use copy and paste to leverage
-//     commands and code in their environments
-//   - Listing blocks for output
-//   - Screenshots and diagrams
-//   - Admonitions (notes, tips, warnings, etc.)
-//
-// NOTE: Always include some validation or verification in your guide.
-//
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
++
+The multipathd service provides redundant I/O paths (iSCSI or Fibre Channel) from {svirt} worker nodes to {hitachivsp} to ensure high availability and fail-over.
 
+// JI: It may be helpful to add a step to tell the reader to log into each node.
 
+.. Enable and start {svirt-docs-multipathd}[multipathd].
++
+[source, console]
+----
+systemctl enable multipathd
+systemctl start multipathd
+systemctl status multipathd
+----
 
-The integration architecture brings together SUSE Virtualization (SUSE Virtualization) for compute and orchestration
-with Hitachi VSP as the enterprise storage backend via the HSPC CSI driver. Key components and interactions:
-
-• SUSE Virtualization (Kubernetes + KVM): Hosts virtual machines (VMs) and provides Kubernetes orchestration for CSI drivers.
-
-• HSPC CSI Driver: Runs as controller and node components to communicate with Hitachi VSP and perform dynamic
-  provisioning, attach/detach, and snapshot operations.
-
-• Multipathd: Provides redundant I/O paths (iSCSI or Fibre Channel) from SUSE Virtualization worker nodes to Hitachi VSP
-  to ensure high availability and failover.
-
-• Secrets & StorageClass: Kubernetes Secret stores credentials; StorageClass configures pool and CSI parameters.
-
-Data flow summary:
-
-1. The HSPC CSI Controller receives a PersistentVolumeClaim (PVC) request.
-
-2. The CSI controller calls the Hitachi REST/API to provision a logical volume on the configured pool.
-
-3. The Hitachi array exposes the LUN via iSCSI/FC and the SUSE Virtualization node uses multipathd to present redundant
-   paths to that LUN.
-
-4. The CSI Node plugin attaches the volume to the node where the workload (pod or VM) runs.
-
-Design considerations:
-
-- Use at least three controller/worker nodes for production-grade availability where possible.
-
-- Ensure multipath configuration matches your SAN fabric (ALUA settings for FC, appropriate path checker for iSCSI).
-
-- Use dedicated networks for storage traffic when possible (separate VLANs or NICs).
-
-    The integration architecture combines SUSE Virtualization (SUSE Virtualization) for compute and orchestration with the Hitachi HSPC CSI driver for enterprise-grade storage provisioning. Multipath I/O ensures redundancy and performance. Major steps include enabling multipath, deploying the HSPC Operator, creating Kubernetes resources, and validating with SUSE Virtualization.
-
-
-Preparation and Installation
-
-Procedure Steps
-This section provides step-by-step commands and YAML examples required to perform the integration.
-
-Step 1 — Configure Multipath on all SUSE Virtualization worker nodes
-
-1. Enable and start multipathd:
-
-   
-   systemctl enable multipathd
-   systemctl start multipathd
-   systemctl status multipathd
-   
-2. Sample /etc/multipath.conf configuration (adjust vendor/product rules to match your array):
-
+// JI: Each numbered step should be an action.  What does the reader do with this file?
+.. Sample /etc/multipath.conf configuration (adjust vendor/product rules to match your array):
++
+[source, json]
+----
    defaults {
        user_friendly_names yes
        find_multipaths yes
@@ -209,23 +160,28 @@ Step 1 — Configure Multipath on all SUSE Virtualization worker nodes
            no_path_retry 10
        }
    }
+----
 
-3. Reboot nodes if required so kernel/udev picks up changed rules.
+.. Restart all nodes.
 
-Step 2 — Install HSPC CSI Operator
+// JI: This would be step 3 of preparing the environment.
+. Install {hspc-long}
 
-1. Clone operator repository and change directory:
+// JI: This is a substep of "Install {hspc-long}"
+// JI: Follow this pattern with remaining steps.
+.. Clone operator repository and change directory:
 
    git clone https://github.com/hitachi-vantara/csi-operator-hitachi
 
    cd csi-operator-hitachi/hspc/<version>/operator
-   
-2. Create operator namespace and deploy:
+
+.. Create operator namespace and deploy.
    
    kubectl apply -f hspc-operator-namespace.yaml
    kubectl apply -f hspc-operator.yaml
    kubectl -n hspc-operator-system get deploy
-   
+
+// JI: We never say, "Step X".
 Step 3 — Deploy HSPC instance
 
     1. Customize hspc_v1_hspc.yaml with your namespace and settings, then apply:
@@ -259,6 +215,7 @@ Step 4 — Create Secret with Hitachi credentials
      password: <base64-password>
    
 2. Apply via CLI or SUSE Virtualization UI.
+
 
 Step 5 — Create StorageClass
 
