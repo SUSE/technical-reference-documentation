@@ -76,7 +76,11 @@ The authors acknowledge contributions from Hitachi Vantara engineering teams for
 
 The integrated solution architecture brings together {svirt} as the cloud native virtualization with {hitachivsp-long} as the enterprise storage back-end.
 
-{empty} +
+//{empty} +
+
+// Architecture diagram
+image::SUSE-Virt-Hitachi.png[Architecture diagram, scaledwidth="85%", align="center"]
+
 Key elements of this solution include:
 
 SUSE Virtualization::
@@ -119,34 +123,37 @@ The following design considerations are recommended:
 This section provides detailed steps required to prepare your environment for the integration.
 
 // JI: We do not explicitly number steps, the rendering engine will do this based on the order of full and number of stops ('.').
-. Install {svirt}.
+. Install {svirt}::
++
+Access the {svirt} {svirt-docs}[documentation] for detailed technical information, including Hardware and Network Requirements and {svirt-docs-iso}[installation guidance].  This guide references {svirt} {svirt-version1} and later.
++
 // JI: Describe HA deployment, provide links to hardware and network requirements, link to installation instructions.
 
 
 . Configure multipathd on all SUSE Virtualization worker nodes.
-//
 +
 The multipathd service provides redundant I/O paths (iSCSI or Fibre Channel) from {svirt} worker nodes to {hitachivsp} to ensure high availability and fail-over.
-
++
 // JI: It may be helpful to add a step to tell the reader to log into each node.
-
 .. Enable and start {svirt-docs-multipathd}[multipathd].
+
 +
 [source, console]
 ----
+Login on all the theree nodes of {svirt} and apply below commands to start and enable multipathd service.
 systemctl enable multipathd
 systemctl start multipathd
 systemctl status multipathd
 ----
-
 // JI: Each numbered step should be an action.  What does the reader do with this file?
+
 .. Sample /etc/multipath.conf configuration (adjust vendor/product rules to match your array):
 +
 [source, json]
 ----
    defaults {
        user_friendly_names yes
-       find_multipaths yes
+       find_multipaths yes: 
    }
    devices {
        device {
@@ -164,45 +171,51 @@ systemctl status multipathd
 
 .. Restart all nodes.
 
-// JI: This would be step 3 of preparing the environment.
-. Install {hspc-long}
-
-// JI: This is a substep of "Install {hspc-long}"
-// JI: Follow this pattern with remaining steps.
-.. Clone operator repository and change directory:
-
+. Install {hspc-long}.
+.. Clone operator repository and change directory.
++
+[source, json]
+----
    git clone https://github.com/hitachi-vantara/csi-operator-hitachi
-
    cd csi-operator-hitachi/hspc/<version>/operator
-
+----   
 .. Create operator namespace and deploy.
-   
++
+[source, json]
+----   
    kubectl apply -f hspc-operator-namespace.yaml
    kubectl apply -f hspc-operator.yaml
    kubectl -n hspc-operator-system get deploy
+----
 
-// JI: We never say, "Step X".
-Step 3 — Deploy HSPC instance
 
-    1. Customize hspc_v1_hspc.yaml with your namespace and settings, then apply:
-   
-   apiVersion: csi.hitachi.com/v1
+. Deploy HSPC instance.
++
+.. Customize hspc_v1_hspc.yaml with your namespace and settings, then apply
++
+[source, json]
+----
+   apiVersion: csi.hitachi.com/v1 
    kind: HSPC
    metadata:
      name: hspc
      namespace: vspone
    spec: {}
-   
+----
 
-
++
+[source, json]
+----
    kubectl apply -f hspc_v1_hspc_vspone.yaml
 
-   kubectl -n vspone get hspc
-   
-Step 4 — Create Secret with Hitachi credentials
+   kubectl get hspc -n vspone
+----   
+. Create Secret with Hitachi credentials.
 
-1. Encode credentials to base64 and create secret YAML (example uses placeholders):
-   
+.. Encode credentials to base64 and create secret YAML (example uses placeholders):
++
+[source, json]
+----
    apiVersion: v1
    kind: Secret
    metadata:
@@ -213,15 +226,17 @@ Step 4 — Create Secret with Hitachi credentials
      url: <base64-url>
      user: <base64-username>
      password: <base64-password>
-   
-2. Apply via CLI or SUSE Virtualization UI.
+
+----
+.. Apply via CLI or SUSE Virtualization UI.
 
 
-Step 5 — Create StorageClass
+. Create StorageClass
 
-1. Example StorageClass YAML:
-
-   
+.. Example StorageClass YAML:
++
+[source, json]
+----
    apiVersion: storage.k8s.io/v1
    kind: StorageClass
    metadata:
@@ -232,14 +247,17 @@ Step 5 — Create StorageClass
    parameters:
      poolID: "<pool-id>"
      csi.storage.k8s.io/provisioner-secret-name: secret-vsp-112
-     csi.storage.k8s.io/provisioner-secret-namespace: vspone
-   
+     csi.storage.k8s.io/provisioner-secret-namespace: vspone   
+----
 
-2. Apply with kubectl apply -f storageclass.yaml
+.. Apply with kubectl apply -f storageclass.yaml
 
-Step 6 — Create PVC and Validate
+. Create PVC and Validate
 
-1. PVC YAML example (50Gi):
+.. PVC YAML example (50Gi):
++
+[source, json]
+----
 
    apiVersion: v1
    kind: PersistentVolumeClaim
@@ -253,62 +271,121 @@ Step 6 — Create PVC and Validate
        requests:
          storage: 50Gi
      storageClassName: vsp-5500-112-sc-iscsi
-   
-2. Verify PVC and PV binding:
+----
+
+.. Verify PVC and PV binding:
    
    kubectl get pvc -n vspone
 
    kubectl get pv
 
-Step 7 — Optional Test Pod
+. Optional Test Pod
 
-1. Apply the test pod YAML to validate mount and I/O.
+.. Apply the test pod YAML to validate mount and I/O.
++
+[source, json]
+----
 
-Step 8 — Enable and Test Snapshots
+   apiVersion: v1
+   kind: Pod
+   metadata:
+   name: hitachi-test-pod
+   namespace: vspone
+   spec:
+   restartPolicy: Never
+   containers:
+   - name: app
+      image: busybox
+      command: ['sh', '-c', 'echo Hello Hitachi VSP > /data/out.txt && sleep 3600']
+      volumeMounts:
+      - mountPath: /data
+         name: hitachi-vol          
+   volumes:
+   - name: hitachi-vol
+      persistentVolumeClaim:
+         claimName: hitachi-pvc-50g 
+----
 
-1. Create VolumeSnapshotClass as shown earlier and apply.
+. Enable and Test Snapshots
 
-2. Create a VolumeSnapshot resource referencing the PVC and verify:
+.. Create VolumeSnapshotClass.
+
++
+[source, json]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: hitachi-snapclass
+driver: hspc.csi.hitachi.com
+deletionPolicy: Delete   
+parameters:
+  poolID: "2"
+  csi.storage.k8s.io/snapshotter-secret-name: secret-vsp-112
+  csi.storage.k8s.io/snapshotter-secret-namespace: vspone
+----
+
++
+[source, json]
+----
+kubectl apply -f hitachi-snapclass.yaml
+----
+.
+.. Create a VolumeSnapshot resource referencing the PVC and verify:
++
+[source, json]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: hitachi-snap-example
+  namespace: vspone
+spec:
+  volumeSnapshotClassName: hitachi-snapclass
+  source:
+    persistentVolumeClaimName: hitachi-pvc-50g
+----
+
++
+[source, json]
+----
+kubectl apply -f hitachi-snap-example.yaml
+kubectl -n vspone get volumesnapshot
+----
+.
 
 
-   kubectl apply -f hitachi-snap-example.yaml
+. Configure SUSE Virtualization CSI Settings for Snapshots
 
-   kubectl -n vspone get volumesnapshot
+.. In SUSE Virtualization UI: Advanced → Settings → csi-driver-config → Edit
 
-Step 9 — Configure SUSE Virtualization CSI Settings for Snapshots
+.. Add Provisioner: hspc.csi.hitachi.com and Volume Snapshot Class Name: `hitachi-snapclass`
 
-1. In SUSE Virtualization UI: Advanced → Settings → csi-driver-config → Edit
+. Validate with a VM in SUSE Virtualization
 
-2. Add Provisioner: hspc.csi.hitachi.com and Volume Snapshot Class Name: `hitachi-snapclass`
+.. Create or edit a VM in SUSE Virtualization and choose the Hitachi StorageClass when adding disks.
 
-Step 10 — Validate with a VM in SUSE Virtualization
+.. Power on the VM and verify the guest OS sees the attached disk and that I/O works.
 
-1. Create or edit a VM in SUSE Virtualization and choose the Hitachi StorageClass when adding disks.
+== Troubleshooting tips:
 
-2. Power on the VM and verify the guest OS sees the attached disk and that I/O works.
+. If PV remains in Pending state, check HSPC controller logs and CSI driver pods for errors.
 
-Troubleshooting tips:
+. Use `multipath -ll` on nodes to verify paths and LUN presentation.
 
-- If PV remains in Pending state, check HSPC controller logs and CSI driver pods for errors.
+. Confirm base64-encoded credentials are correct and the Hitachi REST endpoint is reachable.
 
-- Use `multipath -ll` on nodes to verify paths and LUN presentation.
+. Configure multipath on all SUSE Virtualization nodes.
 
-- Confirm base64-encoded credentials are correct and the Hitachi REST endpoint is reachable.
+. Install the HSPC Operator from the Hitachi repository.
 
+. Create the HSPC instance in Kubernetes.
 
-1. Configure multipath on all SUSE Virtualization nodes.
+. Create a Secret with Hitachi VSP credentials.
 
-2. Install the HSPC Operator from the Hitachi repository.
+. Create the StorageClass for dynamic provisioning.
 
-3. Create the HSPC instance in Kubernetes.
-
-4. Create a Secret with Hitachi VSP credentials.
-
-5. Create the StorageClass for dynamic provisioning.
-
-6. Create and validate PVC and snapshots.
-
-
+. Create and validate PVC and snapshots.
 
 
 == Summary
