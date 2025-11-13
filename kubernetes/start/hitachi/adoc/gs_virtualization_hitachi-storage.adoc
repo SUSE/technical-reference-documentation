@@ -168,8 +168,13 @@ systemctl status multipathd
        }
    }
 ----
+.. Once file /etc/multipath.conf created, restart multipathd service.
++
+[source, console]
+----
+systemctl restart multipathd
+----
 
-.. Restart all nodes.
 
 . Install {hspc-long}.
 .. Clone operator repository and change directory.
@@ -191,7 +196,7 @@ systemctl status multipathd
 
 . Deploy HSPC instance.
 +
-.. Customize hspc_v1_hspc.yaml with your namespace and settings, then apply
+.. Customize hspc_v1_hspc.yaml with your namespace and settings, then apply.
 +
 [source, json]
 ----
@@ -202,17 +207,16 @@ systemctl status multipathd
      namespace: vspone
    spec: {}
 ----
-
 +
 [source, json]
 ----
    kubectl apply -f hspc_v1_hspc_vspone.yaml
-
    kubectl get hspc -n vspone
 ----   
+
 . Create Secret with Hitachi credentials.
 
-.. Encode credentials to base64 and create secret YAML (example uses placeholders):
+.. Encode credentials to base64 and create secret YAML (example uses placeholders).
 +
 [source, json]
 ----
@@ -318,7 +322,7 @@ kind: VolumeSnapshotClass
 metadata:
   name: hitachi-snapclass
 driver: hspc.csi.hitachi.com
-deletionPolicy: Delete   
+deletionPolicy: Delete 
 parameters:
   poolID: "2"
   csi.storage.k8s.io/snapshotter-secret-name: secret-vsp-112
@@ -331,7 +335,7 @@ parameters:
 kubectl apply -f hitachi-snapclass.yaml
 ----
 .
-.. Create a VolumeSnapshot resource referencing the PVC and verify:
+.. Create a VolumeSnapshot resource referencing the PVC and verify.
 +
 [source, json]
 ----
@@ -345,7 +349,6 @@ spec:
   source:
     persistentVolumeClaimName: hitachi-pvc-50g
 ----
-
 +
 [source, json]
 ----
@@ -355,19 +358,19 @@ kubectl -n vspone get volumesnapshot
 .
 
 
-. Configure SUSE Virtualization CSI Settings for Snapshots
+. Configure SUSE Virtualization CSI Settings for Snapshots.
 
 .. In SUSE Virtualization UI: Advanced → Settings → csi-driver-config → Edit
 
 .. Add Provisioner: hspc.csi.hitachi.com and Volume Snapshot Class Name: `hitachi-snapclass`
 
-. Validate with a VM in SUSE Virtualization
+. Validate with a VM in SUSE Virtualization.
 
 .. Create or edit a VM in SUSE Virtualization and choose the Hitachi StorageClass when adding disks.
 
 .. Power on the VM and verify the guest OS sees the attached disk and that I/O works.
 
-== Troubleshooting tips:
+== Troubleshooting tips
 
 . If PV remains in Pending state, check HSPC controller logs and CSI driver pods for errors.
 
