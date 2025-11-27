@@ -37,7 +37,7 @@ include::./gs_virtualization_hitachi-storage-vars.adoc[]
 == Introduction
 
 As organizations evolve toward modernized hybrid infrastructures, unified virtualization and enterprise storage become critical for reliability, scalability, and efficiency.
-SUSE Virtualization, built on Harvester and powered by Kubernetes, provides a robust foundation for running both virtual machines and containerized workloads on a single platform.
+{svirt}, built on {svirt} and powered by Kubernetes, provides a robust foundation for running both virtual machines and containerized workloads on a single platform.
 When deployed with {hitachivsp-long} ({hitachivsp}), enterprises can access data management, high performance storage, and data protection for mission-critical workloads.
 
 This document provides technical guidance for integrating {hitachivsp} with {svirt}.
@@ -48,7 +48,7 @@ This document provides technical guidance for integrating {hitachivsp} with {svi
 === Scope
 
 This guide provides detailed instructions for integrating {hitachivsp-long} with {svirt} clusters.
-It includes steps for configuring multipath I/O, installing the {hspc-long}, creating Kubernetes resources (secrets, StorageClass, PVC, SnapshotClass), and validating the deployment using SUSE Virtualization UI and CLI.
+It includes steps for configuring multipath I/O, installing the {hspc-long}, creating Kubernetes resources (secrets, StorageClass, PVC, SnapshotClass), and validating the deployment using {svirt} UI and CLI.
 
 
 === Audience
@@ -84,8 +84,33 @@ image::SUSE-Virt-Hitachi.png[Architecture diagram, scaledwidth="85%", align="cen
 Key elements of this solution include:
 
 SUSE Virtualization::
-{svirt-website}[{svirt}] provides Kubernetes-native virtual machine and container management.
+{svirt-website}[{svirt}] delivers a fully integrated, cloud-native virtualization platform built on modern Kubernetes technologies. It simplifies VM lifecycle management, enhances platform resiliency, and provides a secure foundation for enterprise workloads. {svirt} brings the advantages of container orchestration into traditional virtualization environments, enabling organizations to modernize infrastructure without complexity.
+
+Key Benefits are,
+{empty} +
+* High Availability (HA)
+{empty} +
+High Availability in {svirt} is grounded in a combination of Kubernetes-native resilience and enterprise storage capabilities. RKE2 provides an HA control plane and manages cluster health, automatically restarting or relocating workloads if nodes become unresponsive. When paired with Hitachi VSP storage using multipath I/O, VM disks remain accessible across multiple storage paths, protecting against network, node, or controller failures. This multi-layered HA architecture ensures uninterrupted operations for critical applications.
+
+* Enhanced Security
++
+Built on SLE Micro OS, {svirt} uses an immutable filesystem, transactional updates, and minimal footprint security principles. This significantly reduces the attack surface. Integrated Kubernetes security mechanisms—including role-based access control, hardened RKE2, and kernel-level controls—protect workloads from misconfigurations and intrusions.
+
+* RKE2 Enterprise Kubernetes
++
+RKE2 provides a secure-by-default Kubernetes distribution with enterprise lifecycle management. {svirt} uses RKE2 as the control plane, enabling robust orchestration, consistent upgrades, and strong compliance with industry standards.
+
+* {svirt} UI
++
+The {svirt} dashboard offers an intuitive, centralized interface for managing VMs, networks, storage, and snapshots. Administrators can create, clone, and migrate virtual machines without requiring deep Kubernetes knowledge, improving team productivity.
+
+* External Storage Compatibility
++
+{svirt}’s CSI-based design enables seamless integration with enterprise SANs like Hitachi VSP. This allows virtual machines to boot directly from external storage, ensuring high-performance data access, centralized storage management, and advanced storage features such as snapshots, replication, and compression.
+
 This guide is valid for {svirt} {svirt-version1} and later.
+
+{empty} +
 
 {hitachivsp-long}::
 {hitachivsp-website}[{hitachivsp}] provides enterprise storage for backing container and virtual machine workloads.
@@ -119,7 +144,7 @@ The following design considerations are recommended:
 
 // JI: I think we can separate the procedure into sections, with the first being about preparation.
 == Prepare the environment
-
+Create or edit a VM in SUSE Virtualization and choose the Hitachi Stora
 This section provides detailed steps required to prepare your environment for the integration.
 
 // JI: We do not explicitly number steps, the rendering engine will do this based on the order of full and number of stops ('.').
@@ -137,7 +162,7 @@ The multipathd service provides redundant I/O paths (iSCSI or Fibre Channel) fro
 // JI: It may be helpful to add a step to tell the reader to log into each node.
 .. Enable and start {svirt-docs-multipathd}[multipathd].
 +
-Login on all the theree nodes of {svirt} and apply below commands to start and enable multipathd service.
+Log in to all three nodes of {svirt} and run the following commands to start and enable the multipathd service on all three nodes.
 +
 [source, console]
 ----
@@ -145,16 +170,15 @@ systemctl enable multipathd
 systemctl start multipathd
 systemctl status multipathd
 ----
-// JI: Each numbered step should be an action.  What does the reader do with this file?
 
 .. Sample /etc/multipath.conf configuration (adjust vendor/product rules to match your array):
 +
-[source, json]
+[source, yaml]
 ----
    defaults {
        user_friendly_names yes
        find_multipaths yes: 
-   }
+   }lgin
    devices {
        device {
            vendor "HITACHI"
@@ -176,17 +200,17 @@ systemctl restart multipathd
 ----
 
 
-. Install {hspc-long}.
+. Install {hspc-long}. do all below steps on any one of the master node of {svirt} cluster
 .. Clone operator repository and change directory.
 +
-[source, json]
+[source, yaml]
 ----
    git clone https://github.com/hitachi-vantara/csi-operator-hitachi
    cd csi-operator-hitachi/hspc/<version>/operator
 ----   
 .. Create operator namespace and deploy.
 +
-[source, json]
+[source, yaml]
 ----   
    kubectl apply -f hspc-operator-namespace.yaml
    kubectl apply -f hspc-operator.yaml
@@ -196,9 +220,9 @@ systemctl restart multipathd
 
 . Deploy HSPC instance.
 +
-.. Customize hspc_v1_hspc.yaml with your namespace and settings, then apply.
+.. Customize hspc_v1_hspc_vspone.yaml with your namespace and settings, then apply with Kubectl.
 +
-[source, json]
+[source, yaml]
 ----
    apiVersion: csi.hitachi.com/v1 
    kind: HSPC
@@ -208,7 +232,7 @@ systemctl restart multipathd
    spec: {}
 ----
 +
-[source, json]
+[source, yaml]
 ----
    kubectl apply -f hspc_v1_hspc_vspone.yaml
    kubectl get hspc -n vspone
@@ -218,13 +242,13 @@ systemctl restart multipathd
 
 .. Encode credentials to base64 and create secret YAML (example uses placeholders).
 +
-[source, json]
+[source, yaml]
 ----
    apiVersion: v1
    kind: Secret
    metadata:
      name: secret-vsp-112
-     namespace: vspone
+     namespace: vsponevia CLI or SUSE Virtualization UI.
    type: Opaque
    data:
      url: <base64-url>
@@ -239,7 +263,7 @@ systemctl restart multipathd
 
 .. Example StorageClass YAML:
 +
-[source, json]
+[source, yaml]
 ----
    apiVersion: storage.k8s.io/v1
    kind: StorageClass
@@ -260,7 +284,7 @@ systemctl restart multipathd
 
 .. PVC YAML example (50Gi):
 +
-[source, json]
+[source, yaml]
 ----
 
    apiVersion: v1
@@ -287,7 +311,7 @@ systemctl restart multipathd
 
 .. Apply the test pod YAML to validate mount and I/O.
 +
-[source, json]
+[source, yaml]
 ----
 
    apiVersion: v1
@@ -315,7 +339,7 @@ systemctl restart multipathd
 .. Create VolumeSnapshotClass.
 
 +
-[source, json]
+[source, yaml]
 ----
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotClass
@@ -330,14 +354,14 @@ parameters:
 ----
 
 +
-[source, json]
+[source, yaml]
 ----
 kubectl apply -f hitachi-snapclass.yaml
 ----
 .
 .. Create a VolumeSnapshot resource referencing the PVC and verify.
 +
-[source, json]
+[source, yaml]
 ----
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
@@ -350,7 +374,7 @@ spec:
     persistentVolumeClaimName: hitachi-pvc-50g
 ----
 +
-[source, json]
+[source, yaml]
 ----
 kubectl apply -f hitachi-snap-example.yaml
 kubectl -n vspone get volumesnapshot
@@ -368,7 +392,11 @@ kubectl -n vspone get volumesnapshot
 
 .. Create or edit a VM in SUSE Virtualization and choose the Hitachi StorageClass when adding disks.
 
+image::hitachi-disks.png[Architecture diagram, scaledwidth="85%", align="center"]
+
 .. Power on the VM and verify the guest OS sees the attached disk and that I/O works.
+
+image::hitachi-vm-running.png[Architecture diagram, scaledwidth="85%", align="center"]
 
 == Troubleshooting tips
 
