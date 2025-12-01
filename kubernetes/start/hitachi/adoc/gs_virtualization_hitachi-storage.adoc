@@ -240,7 +240,7 @@ systemctl restart multipathd
 
 . Create Secret with Hitachi credentials.
 
-.. Encode credentials to base64 and create secret YAML (example uses placeholders).
+.. Encode credentials to base64 and create secret YAML .
 +
 [source, yaml]
 ----
@@ -261,7 +261,7 @@ systemctl restart multipathd
 
 . Create StorageClass
 
-.. Example StorageClass YAML:
+.. StorageClass YAML:
 +
 [source, yaml]
 ----
@@ -282,7 +282,7 @@ systemctl restart multipathd
 
 . Create PVC and Validate
 
-.. PVC YAML example (50Gi):
+.. PVC YAML (50Gi):
 +
 [source, yaml]
 ----
@@ -356,9 +356,10 @@ parameters:
 +
 [source, yaml]
 ----
+
 kubectl apply -f hitachi-snapclass.yaml
 ----
-.
+
 .. Create a VolumeSnapshot resource referencing the PVC and verify.
 +
 [source, yaml]
@@ -366,7 +367,7 @@ kubectl apply -f hitachi-snapclass.yaml
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
-  name: hitachi-snap-example
+  name: hitachi-snap
   namespace: vspone
 spec:
   volumeSnapshotClassName: hitachi-snapclass
@@ -376,10 +377,9 @@ spec:
 +
 [source, yaml]
 ----
-kubectl apply -f hitachi-snap-example.yaml
+kubectl apply -f hitachi-snap.yaml
 kubectl -n vspone get volumesnapshot
 ----
-.
 
 
 . Configure SUSE Virtualization CSI Settings for Snapshots.
