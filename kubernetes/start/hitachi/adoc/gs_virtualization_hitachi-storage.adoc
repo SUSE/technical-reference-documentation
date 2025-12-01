@@ -88,8 +88,9 @@ SUSE Virtualization::
 
 Key Benefits are,
 {empty} +
+
 * High Availability (HA)
-{empty} +
++
 High Availability in {svirt} is grounded in a combination of Kubernetes-native resilience and enterprise storage capabilities. RKE2 provides an HA control plane and manages cluster health, automatically restarting or relocating workloads if nodes become unresponsive. When paired with Hitachi VSP storage using multipath I/O, VM disks remain accessible across multiple storage paths, protecting against network, node, or controller failures. This multi-layered HA architecture ensures uninterrupted operations for critical applications.
 
 * Enhanced Security
@@ -171,7 +172,7 @@ systemctl start multipathd
 systemctl status multipathd
 ----
 
-.. Sample /etc/multipath.conf configuration (adjust vendor/product rules to match your array):
+.. create multipath.conf file at path /etc/multipath.conf (adjust vendor/product rules to match your array):
 +
 [source, yaml]
 ----
@@ -240,7 +241,7 @@ systemctl restart multipathd
 
 . Create Secret with Hitachi credentials.
 
-.. Encode credentials to base64 and create secret YAML .
+.. Encode credentials to base64 and create secret using secret-vsp-112.yaml .
 +
 [source, yaml]
 ----
@@ -256,7 +257,11 @@ systemctl restart multipathd
      password: <base64-password>
 
 ----
-.. Apply via CLI or SUSE Virtualization UI.
+.. use Kubectl command to create secret 
+
+
+    kubectl apply -f secret-vsp-112.yaml
+
 
 
 . Create StorageClass
@@ -278,7 +283,9 @@ systemctl restart multipathd
      csi.storage.k8s.io/provisioner-secret-namespace: vspone   
 ----
 
-.. Apply with kubectl apply -f storageclass.yaml
+.. use Kubectl command to create StorageClass
+
+    kubectl apply -f storageclass.yaml
 
 . Create PVC and Validate
 
@@ -332,54 +339,52 @@ systemctl restart multipathd
    - name: hitachi-vol
       persistentVolumeClaim:
          claimName: hitachi-pvc-50g 
+
 ----
 
 . Enable and Test Snapshots
 
 .. Create VolumeSnapshotClass.
-
-+
-[source, yaml]
-----
-apiVersion: snapshot.storage.k8s.io/v1
-kind: VolumeSnapshotClass
-metadata:
-  name: hitachi-snapclass
-driver: hspc.csi.hitachi.com
-deletionPolicy: Delete 
-parameters:
-  poolID: "2"
-  csi.storage.k8s.io/snapshotter-secret-name: secret-vsp-112
-  csi.storage.k8s.io/snapshotter-secret-namespace: vspone
-----
-
 +
 [source, yaml]
 ----
 
-kubectl apply -f hitachi-snapclass.yaml
+    apiVersion: snapshot.storage.k8s.io/v1
+    kind: VolumeSnapshotClass
+    metadata:
+      name: hitachi-snapclass
+    driver: hspc.csi.hitachi.com
+    deletionPolicy: Delete 
+    parameters:
+      poolID: "2"
+      csi.storage.k8s.io/snapshotter-secret-name: secret-vsp-112
+      csi.storage.k8s.io/snapshotter-secret-namespace: vspone
+
 ----
+
+
+    kubectl apply -f hitachi-snapclass.yaml
 
 .. Create a VolumeSnapshot resource referencing the PVC and verify.
 +
 [source, yaml]
 ----
-apiVersion: snapshot.storage.k8s.io/v1
-kind: VolumeSnapshot
-metadata:
-  name: hitachi-snap
-  namespace: vspone
-spec:
-  volumeSnapshotClassName: hitachi-snapclass
-  source:
-    persistentVolumeClaimName: hitachi-pvc-50g
+
+    apiVersion: snapshot.storage.k8s.io/v1
+    kind: VolumeSnapshot
+    metadata:
+      name: hitachi-snap
+      namespace: vspone
+    spec:
+      volumeSnapshotClassName: hitachi-snapclass
+      source:
+        persistentVolumeClaimName: hitachi-pvc-50g
+
 ----
-+
-[source, yaml]
-----
-kubectl apply -f hitachi-snap.yaml
-kubectl -n vspone get volumesnapshot
-----
+
+    kubectl apply -f hitachi-snap.yaml
+    kubectl -n vspone get volumesnapshot
+
 
 
 . Configure SUSE Virtualization CSI Settings for Snapshots.
@@ -389,14 +394,16 @@ kubectl -n vspone get volumesnapshot
 .. Add Provisioner: hspc.csi.hitachi.com and Volume Snapshot Class Name: `hitachi-snapclass`
 
 . Validate with a VM in SUSE Virtualization.
-
 .. Create or edit a VM in SUSE Virtualization and choose the Hitachi StorageClass when adding disks.
 
 image::hitachi-disks.png[Architecture diagram, scaledwidth="85%", align="center"]
 
-.. Power on the VM and verify the guest OS sees the attached disk and that I/O works.
+Power on the VM and verify the guest OS sees the attached disk and that I/O works.
 
 image::hitachi-vm-running.png[Architecture diagram, scaledwidth="85%", align="center"]
+
+
+
 
 == Troubleshooting tips
 
@@ -430,7 +437,7 @@ image::hitachi-vm-running.png[Architecture diagram, scaledwidth="85%", align="ce
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-This guide provided a detailed procedure for integrating Hitachi VSP Storage with SUSE Virtualization using the HSPC CSI Operator. The integration delivers enterprise-grade reliability, dynamic storage provisioning, and snapshot capabilities, enabling consistent storage services across workloads.
+This guide provided a detailed procedure for integrating Hitachi VSP Storage with SUSE Virtualization using the HSPC CSI Operator. The integration delivers enterprise-grade reliability, dynamic storage provisioning, and snapshot capabilities, enabling consistent storage services across workloads. get more information about {hspc-website}[{hspc}] 
 
 
 
