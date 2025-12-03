@@ -177,16 +177,23 @@ Be sure vendor and product rules match your array.
 ----
 defaults {
     user_friendly_names yes
-    find_multipaths yes 
+    find_multipaths yes
+
+}
+
+blacklist {
 }
 
 devices {
     device {
-        vendor "HITACHI"
+        vendor "(HITACHI|HP)"
         product "OPEN-.*"
         path_grouping_policy "multibus"
         path_checker "tur"
+        features "0"
         failback immediate
+        features "0"
+        hardware_handler "0"
         prio "const"
         rr_weight uniform
         no_path_retry 10
@@ -204,7 +211,7 @@ systemctl restart multipathd
 . Install {hspc-long}.
 //
 +
-The following steps can be performed on any one of the {svirt} cluster nodes.
+The following steps can be performed on any one of master node of the {svirt} cluster.
 
 .. Clone operator repository and change directory.
 +
@@ -220,8 +227,16 @@ cd csi-operator-hitachi/hspc/<version>/operator
 ----   
 kubectl apply -f hspc-operator-namespace.yaml
 kubectl apply -f hspc-operator.yaml
-kubectl -n hspc-operator-system get deploy
 ----
+
+.. Verify the deployments in hspc-operator-system
++
+[source, console]
+----
+kubectl get deployment -n hspc-operator-system
+----
++
+image::verify-hspc-operator.png[Architecture diagram, scaledwidth="90%", align="left"]
 
 
 . Deploy the HSPC instance.
@@ -239,11 +254,16 @@ spec: {}
 ----
 
 .. Create the operator namespace.
++
 [source, yaml]
 ----
 kubectl apply -f hspc_v1_hspc_vspone.yaml
 kubectl get hspc -n vspone
 ----   
+
+.. Verify hspc pods and operator controller status
++
+image::hspc-instance.png[Architecture diagram, scaledwidth="90%", align="left"]
 
 
 . Create Secret with Hitachi credentials.
@@ -301,12 +321,16 @@ parameters:
 kubectl apply -f storageclass.yaml
 ----
 
+.. Verify the StorageClass.
++
+image::validate-sc.png[Architecture diagram, scaledwidth="90%", align="left"]
+
 . Create a PersistentVolumeClaim (PVC).
 
 .. Define a PVC.
 //
 +
-Specify the storage capacity, such as 50GiB, as follows:
+Create 'hitachi-pvc-50g.yaml', Specify the storage capacity such as 50GiB, as follows:
 +
 [source, yaml]
 ----
@@ -325,8 +349,11 @@ Specify the storage capacity, such as 50GiB, as follows:
 ----
 
 .. Activate the PVC.
-
-
++
+[source, console]
+----
+kubectl apply -f hitachi-pvc-50g.yaml
+----
 
 .. Verify the PVC binding.
 +
@@ -334,20 +361,13 @@ Specify the storage capacity, such as 50GiB, as follows:
 ----
 kubectl get pvc -n vspone
 ----
-
-
-.. Verify the PV binding.
 +
-[source, console]
-----
-kubectl get pv
-----
-
+image::validate-pvc.png[Architecture diagram, scaledwidth="90%", align="center"]
 
 
 . Optional Test Pod
 
-.. Apply the test pod YAML to validate mount and I/O.
+.. Create 'pod.yaml' to validate mount and I/O.
 +
 [source, yaml]
 ----
@@ -371,9 +391,26 @@ volumes:
       claimName: hitachi-pvc-50g 
 ----
 
+.. Activate the pod.
++
+[source, console]
+----
+kubectl apply -f pod.yaml
+----
+
+.. Verify the pod.
++
+[source, console]
+----
+kubectl get pods -n vspone
+----
++
+image::validate-pod.png[Architecture diagram, scaledwidth="80%", align="center"]
+
+
 . Enable and Test Snapshots.
 
-.. Define a VolumeSnapshotClass in `hitachi-snapclass.yaml`.
+.. Define a VolumeSnapshotClass in `volumesnapshotclass-hspc.yaml`.
 +
 [source, yaml]
 ----
@@ -396,6 +433,16 @@ parameters:
 kubectl apply -f hitachi-snapclass.yaml
 ----
 
+.. Verify the VolumeSnapshotClass.
++
+[source, console]
+----
+kubectl get VolumeSnapshotClass
+----
++
+image::validate-vol-snapshot.png[Architecture diagram, scaledwidth="80%", align="left"]
+
+
 .. Create a VolumeSnapshot resource referencing the PVC and verify.
 +
 [source, yaml]
@@ -403,7 +450,7 @@ kubectl apply -f hitachi-snapclass.yaml
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
-  name: hitachi-snap
+  name: hitachi-snap-example
   namespace: vspone
 spec:
   volumeSnapshotClassName: hitachi-snapclass
@@ -415,7 +462,7 @@ spec:
 +
 [source, console]
 ----
-kubectl apply -f hitachi-snap.yaml
+kubectl apply -f hitachi-snap-example.yaml
 ----
 
 .. Verify the VolumeSnapshot.
@@ -424,6 +471,8 @@ kubectl apply -f hitachi-snap.yaml
 ----
 kubectl -n vspone get volumesnapshot
 ----
++
+image::verify-snapshot.png[Architecture diagram, scaledwidth="120%", align="center"]
 
 
 . Configure SUSE Virtualization CSI Settings for Snapshots.
@@ -440,22 +489,27 @@ kubectl -n vspone get volumesnapshot
 
 .. Save the changes.
 
++
+image::hspc-snapshot-mapping.png[Architecture diagram, scaledwidth="100%", align="left"]
+
 . Validate with a VM in SUSE Virtualization.
 
 .. Create or edit a VM in SUSE Virtualization and choose the Hitachi StorageClass when adding disks.
 +
-image::hitachi-disks.png[Architecture diagram, scaledwidth="85%", align="center"]
+image::hitachi-disks.png[Architecture diagram, scaledwidth="100%", align="left"]
 
 .. Power on the VM and verify the guest OS sees the attached disk and that I/O works.
 +
-image::hitachi-vm-running.png[Architecture diagram, scaledwidth="85%", align="center"]
+image::hitachi-vm-running.png[Architecture diagram, scaledwidth="100%", align="left"]
 
 
 
 
 == Troubleshooting tips
 
-. If PV remains in Pending state, check HSPC controller logs and CSI driver pods for errors.
+* If PV remains in Pending state
+
+. check HSPC controller logs and CSI driver pods for errors.
 
 . Use `multipath -ll` on nodes to verify paths and LUN are present.
 
