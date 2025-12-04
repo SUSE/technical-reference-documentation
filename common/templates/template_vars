@@ -1,0 +1,192 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Getting Started Guide
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: unique-article-id
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+//-
+:rev1-date: YYYY-MM-DD
+:rev1-description: Original version
+:docdate: {rev1-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Variable names follow a simple pattern:
+//   - compX[-MODIFIER]
+//   where:
+//   - X is an integer starting from 1 for the primary component,
+//     2 for a secondary component, and so on.
+//   - -MODIFIER is text that identifies the stored information.
+//   Some -MODIFIER values include:
+//   - EMPTY: If the modifier is missing, the variable contains
+//     the name of the component
+//     E.g.: 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime',
+//           'Kubeflow', 'Veeam Kasten', 'SQL Server'
+//     NOTE: Be sure to use approved product names.
+//   - -provider: Name of company or project providing the component
+//                (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//   - -version1: A relevant product version (e.g., '15 SP6', '3.1.2')
+//                Additional product versions must be listed separately
+//                (e.g., '-version2: '2.9.5')
+//   - -website: Product website (e.g., https://www.suse.com/products/server/)
+//   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//
+//   You can create additional modifiers as needed.
+//
+// -
+:comp1-provider: SUSE
+:comp1: component 1 name
+:comp1-version1: component 1 version
+:comp1-website: component 1 product website URL
+:comp1-docs: component 1 product documentation URL
+
+:comp2-provider: component 2 provider name
+:comp2: component 2 name
+:comp2-version1: component 2 relevant versions
+:comp2-website: component  product website URL
+:comp2-docs: component 2 product documentation URL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title - (<75 characters) concisely identify the guide.
+//         (e.g.: "Kubeflow with SUSE Rancher Prime")
+// subititle - (<75 characters) expound on the title.
+//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with SUSE Rancher Prime")
+// usecase: (<55 characters) key words or phrases that identify the
+//          use case of this guide
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) brief description of what this guide
+//              provides (e.g.: "Deploy Kubeflow with SUSE Rancher Primer")
+// description-social: (<55 characters) condensed description suitable for
+//                     social media (e.g.: "Kubeflow with SUSE Rancher")
+// executive-summary: (<300 characters) brief summary of the guide that
+//                    appears near the beginning of the rendered document
+//                    (e.g.: "Kubeflow simplifies deployment of machine
+//                            learning (ML) workflows on Kubernetes clusters.
+//                            This document provides step-by-step guidance
+//                            for deploying Kubeflow on an RKE2 cluster with
+//                            SUSE Rancher Prime."
+//
+// NOTE: You can reference component variables in titles.
+//       E.g., If you have the component variables:
+//             :comp1: SUSE Linux Enterprise Server
+//             :comp2: JupyterLab
+//             you can reference them to define new variables, like:
+//             :title: Simplify deployment of {comp2} with {comp1}
+// -
+:title: (<75 characters) Your Guide Title
+
+:subtitle: (<75 characters) Your Guide Subtitle
+
+:usecase: (<55 characters) use case
+
+:description: (<150 characters) description
+
+:description-social: (<55 characters) social media description
+
+:executive-summary: (<300 characters) brief summary
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//
+//   A task must be one of these supported values:
+//    Administration, Artificial Intelligence, Auditing, Authentication,
+//    Automation, Backup &amp; Recovery, Certification, Cloud,
+//    Clustering, Compliance, Configuration, Containerization,
+//    Container Management, Data Intelligence, Deployment, Design,
+//    Encryption, High Availability, Image Building, Implementation,
+//    Installation, Integration, Maintenance, Migration, Monitoring,
+//    Packaging, Security, Storage, Subscription Management,
+//    Troubleshooting, Upgrade &amp; Update, Virtualization,
+//    Vulnerability, Web
+//
+//  E.g.,
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: task
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//   Follow the pattern to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//   NOTE: Other contributors and editors are typically listed in
+//         an Acknowledgements section.
+//         To list additional authors or contributors on the cover page,
+//         you must edit the docinfo.xml file as well.
+// -
+:author1-firstname: first (given) name
+:author1-surname: surname
+:author1-jobtitle: job title
+:author1-orgname: organization affiliation
+//:author2-firstname: first (given) name
+//:contrib1-firstname: first (given) name
+//:editor1-firstname: first (given) name
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
