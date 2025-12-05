@@ -65,7 +65,7 @@ Add content here
 
 
 
-=== Acknowledgements
+=== Acknowledgments
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Acknowledge contributors not listed as authors.
@@ -126,7 +126,7 @@ As illustrated in the figure above, the key components of the solution are:
   ** Compute Platform 2 - Role / function
 
 
-These components are described more fully in the sections below.
+Each of these components is described more fully in the sections below.
 
 
 
@@ -207,27 +207,31 @@ Add content here
 This section provides practical guidance for deploying a functional proof-of-concept implementation of the solution with additional considerations for scaling to production.
 
 
-The layered deployment stack is represented in the following figure:
 // Provide a representation of the solution as a layered deployment stack.
 // See https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rancher-k3s-sles_hpe-proliant-synergy/id-deployment.html#id-deployment-overview
 //image::solution-name_deployment-stack.png[title="Solution name: Deployment", scaledwidth="90%", align="center"]
 
 
-Details for each layer, from bottom to top, are provided in the following sections.
+For deployment purposes, the solution can be illustrated as a layered stack.  The deployment process then consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications).  The following sections provide guidance for deploying each layer of the solution.
 
 
-=== Compute - Component 1
+
+=== Compute platform deployment
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Create a section like this for each compute platform component.
 // Provide step-by-step guidance for preparing and deploying the
-// compute platform component.
-// Use the appropriate compute platform component variable in the section
-// header, such that, on rendering, the header includes the proper name.
-// E.g., If {compute1} is defined as 'ABC Server', then the header would
-//       appear as ‘Compute - ABC Server’.
+// compute platform.
+// Use subsections (level three, ====) for layer components, if needed.
+// For example, you could use a ‘ABC Server deployment’ subsection
+// and a separate ‘XYZ Storage deployment’ subsection.
+// If you do use subsections, be sure to detail Preparation,
+// Process, and Considerations in each.
+// Remember to use the defined variables for product names,
+// websites, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+The compute platform provides a foundational layer ...
+Add content here
 
 
 *Preparation*
@@ -235,6 +239,7 @@ Details for each layer, from bottom to top, are provided in the following sectio
 // Provide step-by-step guidance for preparing the compute platform component.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Add content here
 
 
 
@@ -243,6 +248,7 @@ Details for each layer, from bottom to top, are provided in the following sectio
 // Provide step-by-step guidance for preparing the compute platform component.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Add content here
 
 
 *Considerations*
@@ -250,26 +256,36 @@ Details for each layer, from bottom to top, are provided in the following sectio
 // Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Add content here
 
 
 
-=== Software - Component 1
+=== Software
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Create a section like this for each software component.
-// Provide step-by-step guidance for preparing and deploying the
-// software component.
-// Use the appropriate compute platform component variable in the section
-// header, such that, on rendering, the header includes the proper name.
-// E.g., If {software1} is defined as 'SUSE Linux Micro', then
-//       the header would appear as ‘Software - SUSE Linux Micro’.
+// As with the Compute platform, provide step-by-step guidance for
+// preparing and deploying the Software.
+// Solutions almost always have multiple Software components deployed
+// as layers.
+// So, use of subsections is likely.
+// The heading for each subsection should reflect the layer (product)
+// being deployed; for example, ‘SUSE Rancher Prime deployment’.
+// Remember to use the defined variables for product names,
+// websites, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The following sections provide deployment guidance for each software layer.
+
+
+==== Software product deployment
+
 
 *Preparation*
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide step-by-step guidance for preparing the software component.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Add content here
 
 
 *Process*
@@ -277,6 +293,7 @@ Details for each layer, from bottom to top, are provided in the following sectio
 // Provide step-by-step guidance for preparing the softwware component.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Add content here
 
 
 *Considerations*
@@ -284,13 +301,23 @@ Details for each layer, from bottom to top, are provided in the following sectio
 // Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Add content here
+
+
 
 
 == Validation
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide validation steps for testing that the solution deployment
 // was successful and configured properly.
+// This can consist of commands to run (and the expected output),
+// screenshots, etc.
+// Remember to represent this as an ordered list.
+// Use subsections only if necessary.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Add content here
+
 
 
 
@@ -303,7 +330,7 @@ Details for each layer, from bottom to top, are provided in the following sectio
 // - Suggested next steps for the learning journey
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
+Add content here
 
 
 
@@ -314,7 +341,7 @@ Details for each layer, from bottom to top, are provided in the following sectio
 // Answers are contained in open blocks associated with each question.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-* Question 1?
+. Question 1?
 +
 --
 Answer paragraph 1.
@@ -364,11 +391,17 @@ The following sections provide additional information and resources.
 
 === Compute platform bill of materials
 
+Add content here
+
 
 === Software bill of materials
 
+Add content here
+
 
 === Benchmark results
+
+Add content here
 
 
 
