@@ -64,7 +64,7 @@ echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "  - Before proceeding make sure you have:"
 echo "  - 1. created a local branch: \`git branch myproject\`"
 echo "  - 2. checked out your new branch: \`git checkout myproject\`"
-echo "  - 3. changed to the 'rc' directory"
+echo "  - 3. changed to the 'references' directory"
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo 
 echo "Are you ready to proceed?"
