@@ -104,14 +104,14 @@ if [[ "${currentbranch}" == "main" ]]; then
 fi
 
 
-# Verify present working directory is correct for a getting started guide
-if [[ ! $PWD =~ rc$ ]] && [[ ! $PWD =~ rc$ ]]; then
+# Verify present working directory is correct for a reference configuration
+if [[ ! $PWD =~ reference$ ]] && [[ ! $PWD =~ reference$ ]]; then
   echo
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo "  - Your current working directory is:"
   echo "  - '$PWD'"
   echo "  -"
-  echo "  - Be sure you change to the 'rc' directory,"
+  echo "  - Be sure you change to the 'reference' directory,"
   echo "  - then execute this script again."
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo
