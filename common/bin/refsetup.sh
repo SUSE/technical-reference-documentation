@@ -276,52 +276,59 @@ do
   esac
 done
 
-# get Name of the Primary Partner
-echo
-echo "- - - - - -"
-echo "- Enter the name of the primary partner."
-echo "-"
-echo "- TIP: Select one partner whose product is at the top"
-echo "-      of the software stack and provides the key"
-echo "-      functionality for the featured use case."
-echo "- - - - - -"
-echo
-while read -p ">> Primary partner : " response
-do
-  partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
-  if [ -n "$partnername" ]; then
-    break
-  else
-    echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-    echo "  - Invalid input."
-    echo "  - Primary partner cannot be blank."
-    echo "  - Press CTRL+C to cancel and exit the script."
-    echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-  fi
-done
-echo "Primary partner: \"${partnername}\""
-echo
+if [[ $doctype =~ ^(rc|gs) ]]; then
+  # get Name of the Primary Partner
+  echo
+  echo "- - - - - -"
+  echo "- Enter the name of the primary partner."
+  echo "-"
+  echo "- TIP: Select one partner whose product is at the top"
+  echo "-      of the software stack and provides the key"
+  echo "-      functionality for the featured use case."
+  echo "- - - - - -"
+  echo
+  while read -p ">> Primary partner : " response
+  do
+    partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
+    if [ -n "$partnername" ]; then
+      break
+    else
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+      echo "  - Invalid input."
+      echo "  - Primary partner cannot be blank."
+      echo "  - Press CTRL+C to cancel and exit the script."
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+    fi
+  done
+  echo "Primary partner: \"${partnername}\""
+  echo
 
-# get Name of the Primary Partner's product
-echo
-echo "- - - - - -"
-echo "- Enter the name of the primary partner's product."
-echo "-"
-echo "-   TIP: If the primary partner and the product"
-echo "-        share the same name, you can leave the"
-echo "-        partner product blank to avoid repetition."
-echo "-"
-echo "- - - - - -"
-echo
-read -p ">> Primary partner's product : " response
-if [ -n "$response" ]; then
-  partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )"
+  # set destination directory name
+  destdir=${partnername}
+  
+  # get Name of the Primary Partner's product
+  echo
+  echo "- - - - - -"
+  echo "- Enter the name of the primary partner's product."
+  echo "-"
+  echo "-   TIP: If the primary partner and the product"
+  echo "-        share the same name, you can leave the"
+  echo "-        partner product blank to avoid repetition."
+  echo "-"
+  echo "- - - - - -"
+  echo
+  read -p ">> Primary partner's product : " response
+  if [ -n "$response" ]; then
+    partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )"
+  else
+    # allow the partner product name to be left blank
+    partnerprod=""
+  fi
+  echo "Primary partner product: \"${partnerprod}\""
+  echo
 else
-  # allow the partner product name to be left blank
-  partnerprod=""
+  destdir="suse"
 fi
-echo "Primary partner product: \"${partnerprod}\""
-echo
 
 # get Use Case or other text
 echo
@@ -351,7 +358,11 @@ echo
 # build base filename
 ##
 
-documentbase="${doctype}_${suseprods}_${partnername}${partnerprod}${usecase}"
+if [[ $doctype =~ ^(rc|gs) ]]; then
+  documentbase="${doctype}_${suseprods}_${partnername}${partnerprod}${usecase}"
+else
+  documentbase="${doctype}_${suseprods}${usecase}"
+fi
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -363,7 +374,7 @@ echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "  - Preparing to create the following structure:"
 echo "  -"
 echo "  -   references"
-echo "  -   └── ${partnername}"
+echo "  -   └── ${destdir}"
 echo "  -       ├── DC-${documentbase}"
 echo "  -       ├── adoc"
 echo "  -       │   ├── ${documentbase}.adoc"
@@ -387,16 +398,16 @@ echo
 ##
 
 # create primary directory if it does not already exist
-[ -d ${partnername} ] || mkdir ${partnername}
+[ -d ${destdir} ] || mkdir ${destdir}
 
 # create DC file
-if [ ! -f "${partnername}/DC-${documentbase}" ]; then
-  cp -n ${templatesroot}/template_DC ${partnername}/DC-${documentbase}
+if [ ! -f "${destdir}/DC-${documentbase}" ]; then
+  cp -n ${templatesroot}/template_DC ${destdir}/DC-${documentbase}
 else
   echo
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo "  - 'DC-${documentbase}' could not be created in"
-  echo "  - '${partnername}'."
+  echo "  - '${destdir}'."
   echo "  -"
   echo "  - If 'DC-${documentbase}' already exists,"
   echo "  - re-run this script with different input."
@@ -406,48 +417,48 @@ else
 fi
 
 # create adoc directory if it does not already exist
-[ -d ${partnername}/adoc ] || mkdir -p ${partnername}/adoc
+[ -d ${destdir}/adoc ] || mkdir -p ${destdir}/adoc
 
 # create symlinks to common files
-[ -L ${partnername}/adoc/common_gfdl1.2_i.adoc ] || \
-  ln -sr ${commonroot}/adoc/common_gfdl1.2_i.adoc ${partnername}/adoc/
-[ -L ${partnername}/adoc/common_sbp_legal_notice.adoc ] || \
-  ln -sr ${commonroot}/adoc/common_sbp_legal_notice.adoc ${partnername}/adoc/
-[ -L ${partnername}/adoc/common_trd_legal_notice.adoc ] || \
-  ln -sr ${commonroot}/adoc/common_trd_legal_notice.adoc ${partnername}/adoc/
-[ -L ${partnername}/adoc/common_docinfo_vars.adoc ] || \
-  ln -sr ${commonroot}/adoc/common_docinfo_vars.adoc ${partnername}/adoc/
+[ -L ${destdir}/adoc/common_gfdl1.2_i.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_gfdl1.2_i.adoc ${destdir}/adoc/
+[ -L ${destdir}/adoc/common_sbp_legal_notice.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_sbp_legal_notice.adoc ${destdir}/adoc/
+[ -L ${destdir}/adoc/common_trd_legal_notice.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_trd_legal_notice.adoc ${destdir}/adoc/
+[ -L ${destdir}/adoc/common_docinfo_vars.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_docinfo_vars.adoc ${destdir}/adoc/
 
 # create docinfo.xml file
-[ -f "${partnername}/adoc/${documentbase}-docinfo.xml" ] || \
+[ -f "${destdir}/adoc/${documentbase}-docinfo.xml" ] || \
   cp ${templatesroot}/template_docinfo \
-     ${partnername}/adoc/${documentbase}-docinfo.xml
+     ${destdir}/adoc/${documentbase}-docinfo.xml
 
 # create vars file
-[ -f "${partnername}/adoc/${documentbase}-vars.adoc" ] || \
+[ -f "${destdir}/adoc/${documentbase}-vars.adoc" ] || \
   cp ${templatesroot}/template_vars \
-     ${partnername}/adoc/${documentbase}-vars.adoc
+     ${destdir}/adoc/${documentbase}-vars.adoc
 
 # create main file
-[ -f "${partnername}/adoc/${documentbase}.adoc" ] || \
+[ -f "${destdir}/adoc/${documentbase}.adoc" ] || \
   cp ${templatesroot}/template_main-${doctype} \
-     ${partnername}/adoc/${documentbase}.adoc
+     ${destdir}/adoc/${documentbase}.adoc
 
 # create media directory structure
-[ -d ${partnername}/media/src/png ] || mkdir -p ${partnername}/media/src/png
-[ -d ${partnername}/media/src/svg ] || mkdir -p ${partnername}/media/src/svg
+[ -d ${destdir}/media/src/png ] || mkdir -p ${destdir}/media/src/png
+[ -d ${destdir}/media/src/svg ] || mkdir -p ${destdir}/media/src/svg
 # create symlink to logo
-[ -L ${partnername}/media/src/svg/suse.svg ] || \
-  ln -sr ${commonroot}/images/src/svg/suse.svg ${partnername}/media/src/svg/
+[ -L ${destdir}/media/src/svg/suse.svg ] || \
+  ln -sr ${commonroot}/images/src/svg/suse.svg ${destdir}/media/src/svg/
 # create images symlink
-[ -L ${partnername}/images ] || \
-  ln -sr ${partnername}/media ${partnername}/images
+[ -L ${destdir}/images ] || \
+  ln -sr ${destdir}/media ${destdir}/images
 
 # update interdocument references
 # ensure adoc file includes correct vars file
-[ -f "${partnername}/adoc/${documentbase}.adoc" ] && sed -i "s/include::\.\/template_vars\[\]/include::.\/${documentbase}-vars.adoc\[\]/g" ${partnername}/adoc/${documentbase}.adoc
+[ -f "${destdir}/adoc/${documentbase}.adoc" ] && sed -i "s/include::\.\/template_vars\[\]/include::.\/${documentbase}-vars.adoc\[\]/g" ${destdir}/adoc/${documentbase}.adoc
 # ensure DC file references correct adoc file
-[ -f "${partnername}/DC-${documentbase}" ] && sed -i "s/MAIN=\"template_main\"/MAIN=\"${documentbase}.adoc\"/g" ${partnername}/DC-${documentbase}
+[ -f "${destdir}/DC-${documentbase}" ] && sed -i "s/MAIN=\"template_main\"/MAIN=\"${documentbase}.adoc\"/g" ${destdir}/DC-${documentbase}
 
 
 
@@ -459,7 +470,7 @@ echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo "= Workspace for your new guide has been set up."
 echo "="
 echo "= Access your workspace in:"
-echo "=   references/${partnername}"
+echo "=   references/${destdir}"
 echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo
 

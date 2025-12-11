@@ -5,7 +5,12 @@ include::./template_vars[]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // SUSE Technical Reference Documentation
-// Reference Configuration
+// Reference Implementation
+// The objective of this guide is to provide an opinionated technical
+// architecture for a layered solution involving multiple SUSE components.
+// For a solution that also involves partner components, use the
+// SUSE Technical Reference Documentation: Reference Configuration rc)
+// template.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 // DOCUMENT ATTRIBUTES AND VARIABLES
@@ -106,7 +111,10 @@ Add content here
 == Architectural overview
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide an architecture diagram that illustrates the solution and its
-// core software and compute platform (hardware or cloud) components.
+// core SUSE software components along with a generalized compute
+// platform (hardware and/or cloud).
+// Follow SUSE Brand guidelines (https://brand.suse.com/brand-identity)
+// for product naming.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 // Update below the file name and title for architecture diagram (PNG or SVG).
@@ -117,8 +125,8 @@ As illustrated in the figure above, the key components of the solution are:
 
 * Software
 
-  ** Software Component 1 - Role / function
-  ** Software Component 2 - Role / function
+  ** SUSE Software Component 1 - Role / function
+  ** SUSE Software Component 2 - Role / function
 
 * Compute platform
 
@@ -126,23 +134,21 @@ As illustrated in the figure above, the key components of the solution are:
   ** Compute Platform 2 - Role / function
 
 
-Each of these components is described more fully in the sections below.
+These components are described more fully in the sections below.
 
 
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Starting with the software at the top of the solution stack,
-// provide detailed descriptions of each component.
+// Starting with the software at the top of the solution stack, provide
+// detailed descriptions of each component.
 // Provide relevant details about the component, including
 // role / function, recommended versions, sizings, deployment
-// configurations (to be detailed later), etc.
+// configurations (to be detailed further in the deployment section), etc.
 // Use diagrams, as needed, and appropriate links to existing resources
 // to provide more context and details.
-// Be sure to reference variables defined in the vars file to simplify
-// future updates of the document.
-//   This variables can include the component name (very useful for long
-//   names), supported versions, URLs of its product and documentation
-//   websites, etc.
+// Variables should be referenced to ensure consistency and easy updating
+// of component names, supported versions, URLs of product and
+// documentation websites, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
@@ -208,54 +214,28 @@ This section provides practical guidance for deploying a functional proof-of-con
 
 
 // Provide a representation of the solution as a layered deployment stack.
-// See https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rancher-k3s-sles_hpe-proliant-synergy/id-deployment.html#id-deployment-overview
+// https://documentation.suse.com/trd/suse/html/kubernetes_ri_rancher-k3s-slemicro/id-deployment.html#id-deployment-overview 
 //image::solution-name_deployment-stack.png[title="Solution name: Deployment", scaledwidth="90%", align="center"]
 
+Add image here
 
-For deployment purposes, the solution can be illustrated as a layered stack.  The deployment process then consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications).  The following sections provide guidance for deploying each layer of the solution.
+For deployment purposes, the solution can be illustrated as a layered stack.
+The deployment process consists of installing and configuring each layer of this stack, from bottom to top.
+The following sections provide guidance for deploying each layer of the solution.
 
 
 
 === Compute platform deployment
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing and deploying the
-// compute platform.
-// Use subsections (level three, ====) for layer components, if needed.
-// For example, you could use a ‘ABC Server deployment’ subsection
-// and a separate ‘XYZ Storage deployment’ subsection.
-// If you do use subsections, be sure to detail Preparation,
-// Process, and Considerations in each.
+// Provide considerations for the deployment of the compute platform.
+// Use subsections (level three, ====), if needed, for different on-premises
+// and cloud guidance.
 // Remember to use the defined variables for product names,
 // websites, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The compute platform provides a foundational layer ...
-Add content here
-
-
-*Preparation*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-
-*Process*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-*Considerations*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
+The compute platform ...
 Add content here
 
 
@@ -263,13 +243,11 @@ Add content here
 === Software
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// As with the Compute platform, provide step-by-step guidance for
-// preparing and deploying the Software.
-// Solutions almost always have multiple Software components deployed
-// as layers.
-// So, use of subsections is likely.
-// The heading for each subsection should reflect the layer (product)
-// being deployed; for example, ‘SUSE Rancher Prime deployment’.
+// Provide step-by-step guidance for preparing and deploying the
+// Software, layer by layer, along with additional any considerations.
+// Use a subsection (heading three, ====) for each layer.
+// For example,
+// ==== SUSE Rancher Prime deployment
 // Remember to use the defined variables for product names,
 // websites, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -277,7 +255,7 @@ Add content here
 The following sections provide deployment guidance for each software layer.
 
 
-==== Software product deployment
+==== Software Product deployment
 
 
 *Preparation*
@@ -298,7 +276,8 @@ Add content here
 
 *Considerations*
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
+// Note any considerations for deployment not covered above,
+// such as automation, storage expansion, future scaling, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Add content here
@@ -391,17 +370,12 @@ Definition
 The following sections provide additional information and resources.
 
 
-=== Compute platform bill of materials
-
-Add content here
-
-
 === Software bill of materials
 
 Add content here
 
 
-=== Benchmark results
+=== Additional content
 
 Add content here
 
