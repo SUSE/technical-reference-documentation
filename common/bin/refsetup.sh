@@ -460,6 +460,7 @@ fi
 # ensure DC file references correct adoc file
 [ -f "${destdir}/DC-${documentbase}" ] && sed -i "s/MAIN=\"template_main\"/MAIN=\"${documentbase}.adoc\"/g" ${destdir}/DC-${documentbase}
 
+# update docinfo file to the correct document type
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
