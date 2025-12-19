@@ -9,7 +9,7 @@
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 # global variables
 ##
-SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slmicro', 'slelp', 'slert', 'sleha', 'slebci', 'smlm', 'rancher', 'sto', 'sec', 'obs', 'virt', 'ai', 'rke', 'rke2', 'k3s')
+SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slmicro', 'slelp', 'slert', 'sleha', 'slebci', 'smlm', 'rancher', 'sto', 'sec', 'obs', 'virt', 'edge', 'telco', 'ai', 'rke', 'rke2', 'k3s')
 
 
 
@@ -66,6 +66,8 @@ echo "virt        | SUSE Virtualization"
 echo "obs         | SUSE Observability"
 echo "sto         | SUSE Storage"
 echo "ai          | SUSE AI"
+echo "edge        | SUSE Edge"
+echo "telco       | SUSE Telco"
 echo "rke         | Rancher Kubernetes Engine"
 echo "rke2        | Rancher Kubernetes Engine 2"
 echo "k3s         | K3s"
@@ -201,7 +203,7 @@ echo "-     the top of the software stack."
 echo "-     For example: 'rancher' then 'rke2' then 'sles'"
 echo "-"
 echo "- Additional options:"
-echo "-   'list': display accepted abbreviations."
+echo "-   'help': display accepted abbreviations."
 echo "-   'clear': clear the product list and start over."
 echo "-   Press CTRL+C to cancel and exit the script."
 echo "- - - - - -"
@@ -218,7 +220,7 @@ do
       echo
       break
     ;;
-    'list')
+    'help')
       suselist
       echo
       echo "Featured SUSE products: \"${suseprods}\""
@@ -263,7 +265,7 @@ do
         echo
         echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
         echo "  - Invalid input."
-        echo "  - Enter a SUSE product abbreviation, 'list',"
+        echo "  - Enter a SUSE product abbreviation, 'help',"
         echo "  -   or leave blank to proceed to the next step."
         echo "  - Press CTRL+C to cancel and exit this script."
         echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
@@ -359,7 +361,7 @@ echo
 ##
 
 if [[ $doctype =~ ^(rc|gs) ]]; then
-  documentbase="${doctype}_${suseprods}_${partnername}${partnerprod}${usecase}"
+  documentbase="${doctype}_suse-${suseprods}_${partnername}${partnerprod}${usecase}"
 else
   documentbase="${doctype}_${suseprods}${usecase}"
 fi
@@ -482,5 +484,6 @@ echo
 # Contributors:
 # - Terry Smith <terry.smith@suse.com>
 # Revisions:
+# - 20251218: Added SUSE Edge and SUSE Telco support
 # - 20251208: Added document type selector
 # - 20251204: Copied gssetup.sh to refsetup.sh and modified
