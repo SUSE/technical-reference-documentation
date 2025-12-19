@@ -1,6 +1,5 @@
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // SUSE Technical Reference Documentation
-// Getting Started Guide
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 // DOCUMENT ATTRIBUTES AND VARIABLES
@@ -11,8 +10,6 @@
 // 3. Update the docinfo.xml file, if needed.
 // 4. Update DC file (at a minimum, deactivate DRAFT mode)
 //
-// For further guidance, see
-//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
@@ -47,32 +44,50 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TECHNICAL COMPONENTS
 //   Identify the technical components featured in the guide.
-//   Use variables to store information about the solution components.
+//   Use variables to store information about the solution components,
+//   such as full product names, versions, websites, documentation
+//   URLs, and so on.
 //   This makes it much easier to update the document for future
 //   version upgrades, URL changes, etc.
 //
-//   Variable names follow a simple pattern:
-//   - compX[-MODIFIER]
+//   Each component can have a series of variables that follow a
+//   simple pattern:
+//     compX[-MODIFIER]
 //   where:
-//   - X is an integer starting from 1 for the primary component,
-//     2 for a secondary component, and so on.
-//   - -MODIFIER is text that identifies the stored information.
-//   Some -MODIFIER values include:
-//   - EMPTY: If the modifier is missing, the variable contains
-//     the name of the component
-//     E.g.: 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime',
-//           'Kubeflow', 'Veeam Kasten', 'SQL Server'
-//     NOTE: Be sure to use approved product names.
-//   - -provider: Name of company or project providing the component
-//                (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
-//   - -version1: A relevant product version (e.g., '15 SP6', '3.1.2')
-//                Additional product versions must be listed separately
-//                (e.g., '-version2: '2.9.5')
-//   - -website: Product website (e.g., https://www.suse.com/products/server/)
-//   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//     - compX is a short name for the component.
+//       You can use something generic, such as:
+//         'comp3', 'os', 'server', 'gpu', and so on.
+//       Or, you can use a more specific variable name, such as:
+//         'sles', 'rancher', 'portworx', 'powerflex', etc.
+//     - -MODIFIER is text that identifies the stored information.
+//       Some -MODIFIER values include:
+//         -provider: Name of company or project providing the component
+//            (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//         -version1: The relevant product version referenced in
+//            the document (e.g., '15 SP7', '3.2.4', 'v1.7.1')
+//            If additional product versions are called out in the
+//            document, record them in separate variables
+//            (e.g., '-version2', '-version3')
+//            NOTE: Documents are often created around a single version
+//                  with sufficient certainty that certain later versions
+//                  will work.
+//                  This can be called out with text like,
+//                  "{comp1-version1} and later."
+//     - -website: Product website (e.g., https://www.suse.com/products/server/)
+//     - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//              It can also be useful to form variables for specific sections in
+//              a component's documentation.
+//              For example, you could link to the section for creating a VM
+//              in SUSE Virtualization with:
+//              :svirt-docs-createvm: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/virtual-machines/create-vm.html
 //
-//   You can create additional modifiers as needed.
+//   Create your own modifiers to fit your needs.
 //
+// IMPORTANT: The 'comp1', 'comp2' examples provided here are also
+//            used in the docinfo file.
+//            If you use different variable names or additional
+//            components in your solution, you will need to edit
+//            the docinfo file to reflect this.
 // -
 :comp1-provider: SUSE
 :comp1: component 1 name
