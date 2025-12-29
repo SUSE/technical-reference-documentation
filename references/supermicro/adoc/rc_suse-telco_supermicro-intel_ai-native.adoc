@@ -93,7 +93,7 @@ The following individuals contributed to the creation of this document:
 Add content here
 
 
-=== Business problem
+== Business problem
 
 Telecommunications operators today face an unprecedented convergence of pressures that legacy infrastructure was never designed to handle. Traffic volumes are exploding, driven by nationwide 5G rollout, massive IoT deployments, ultra-high-definition video streaming, private 5G networks, and enterprise edge services. At the same time, service-level agreements have become far more stringent with sub-millisecond end-to-end latency and microsecond-level jitter now mandatory for ORAN fronthaul/midhaul transport, Ultra-Reliable Low-Latency Communication (URLLC), industrial automation, and Extended Reality (XR) applications.
 
@@ -105,7 +105,7 @@ At the same time, regulators and enterprises are imposing stricter requirements 
 
 
 
-=== The Solution
+== The Solution
 
 The combination of Intel® Xeon® 6 SoC based telco-optimized systems by Supermicro and the SUSE Telco Cloud stack directly addresses every dimension of these challenges with a single, fully integrated platform that is ready for massive scale-out today.
 
@@ -138,13 +138,37 @@ Supply-chain risk is minimized through Supermicro’s Tier-1 scale and regional 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 // Update below the file name and title for architecture diagram (PNG or SVG).
-//image::solution-name_architecture-diagram.png[title="Solution name", scaledwidth="90%", align="center"]
-
-
-        Intel® Xeon® 6 SoC overview
+//image::media/src/png/intelxeon6SoCoverview1.png[title="Intel Xeon 6 SoC overview", scaledwidth="90%", align="center"]
 
 
 
+//Need to place images
+Intel® Xeon® 6 SoC overview
+
+image::media/src/png/intelxeon6SoCoverview1.png[align="center",width=90%]
+
+image::media/src/png/IntelXeon6SoCoverview-2.png[align="center",width=90%]
+
+Supermicro SYS-112D-42C-FN8P front view
+
+image::media/src/png/Supermicro-system-front-view.png[align="center",width=90%]
+
+Supermicro SYS-112D-42C-FN8P  back view
+
+image::media/src/png/Supermicrosystembackview.png[align="center",width=90%]
+
+//Need to place images
+SUSE Telco Cloud Architecture
+
+image::media/src/png/SUSE-Telco-Cloud-Architecture.png[align="center",width=90%]
+
+//Need to place images
+vRAN performance
+
+image::media/src/png/vRAN-Performance.png[align="center",width=90%]
+
+
+//Need to place images
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Starting with the software at the top of the solution stack,
 // provide detailed descriptions of each component.
@@ -161,77 +185,1073 @@ Supply-chain risk is minimized through Supermicro’s Tier-1 scale and regional 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+The Intel Xeon 6 SoC provides outstanding energy-efficient performance across networking use cases, including vRAN deployments. The platform’s P-cores are optimized for high throughput and low latency, with built-in acceleration for packet and signal processing, load balancing and AI. Building on that foundation, Intel vRAN Boost integrates vRAN acceleration directly into the SoC. Using the O-RAN Acceleration Abstraction Layer standardized DPDK interface, independent software vendors and software developers can easily optimize their vRAN software stacks for vRAN Boost hardware acceleration. The standardized interface makes it easier to move from one generation of Intel vRAN Boost to the next. Intel vRAN Boost is sized to ensure ample headroom even in the most intense use-cases and with the highest core count options, allowing future software optimizations to further increase server capacity without worrying about hitting acceleration limits.
 
-=== Software Component 1
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide details about each software component in its own subsection.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+== Hardware and Networking Infrastructure
+[%unbreakable]
+[cols="1,3",options="header"]
+|===
+2+|*Supermicro Compact Telco Edge Server* +
+*SYS-112D-42C-FN8P*
 
-Add content here
+|*CPU*
+|Intel® Xeon® 6 SoC 6726P-B +
+42-core processor with Intel QAT and Intel vRAN Accelerator
 
+|*Networking*
+|Integrated Intel E830 +
+8 SFP28 25 GbE LAN ports +
+1 RJ45 1 GbE LAN port (IPMI)
 
+|*Form factor*
+|1U short-depth server (43 × 437 × 399 mm)
 
-=== Compute Component 1
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide details about each compute component in its own subsection.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+|*Power*
+|Redundant 800W Platinum-level power supplies +
+AC or DC options available
+|===
 
-Add content here
+== Deployment Prerequisites and Requirements
 
+ . Hardware
 
+There are some specific constraints related to the downstream cluster server hardware and networking:
 
-== Deployment overview
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide detailed steps the reader should follow to set up an
-// environment described in this guide.
-// - Link to other resources (such as the SUSE Rancher documentation)
-//   to provide context and details rather than duplicating everything
-//   in this document.
-// - Ordered lists to organize and present procedural steps.
-// - Use code blocks for source code and console commands.
-//   Commands:
-//     [source, console]
-//     ----
-//     systemctl enable multipathd
-//     ----
-//   Source code:
-//     [source, yaml]
-//     ----
-//     network:
-//       version: 1
-//       config:
-//         - type: physical
-//           name: eth0
-//           subnets:
-//         - type: dhcp
-//     ----
-//   - Always include example command output in a listing box.
-//      [listing]
-//      ----
-//      Type   | # |     | Cleanup | Description           | Userdata
-//      -------+---+ ... +---------+-----------------------+--------------
-//      single | 0 |     |         | current               |
-//      single | 1 |     | number  | first root filesystem |
-//      ----
-//   - Include relevant screenshots with annotations as needed for clarity.
-//   - Use admonitions (notes, tips, warnings, etc.) to provide additional
-//     context, exceptions, etc.
-//
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Management cluster
 
-This section provides practical guidance for deploying a functional proof-of-concept implementation of the solution with additional considerations for scaling to production.
+ * Must have network connectivity to the target server management/BMC API
+
+ * Must have network connectivity to the target server control plane network
+
+ * For multi-node management clusters, an additional reserved IP address is required
+Hosts to be controlled
+
+ * Must support out-of-band management via Redfish, iDRAC or iLO interfaces
+
+ * Must support deployment via virtual media (PXE is not currently supported)
+
+ * Must have network connectivity to the management cluster for access to the Metal3 provisioning APIs
 
 
-// Provide a representation of the solution as a layered deployment stack.
-// See https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rancher-k3s-sles_hpe-proliant-synergy/id-deployment.html#id-deployment-overview
-//image::solution-name_deployment-stack.png[title="Solution name: Deployment", scaledwidth="90%", align="center"]
+Some tools are required, these can be installed either on the management cluster, or on a host which can access it.
+
+ * Kubectl, Helm and Clusterctl
+
+ * A container runtime such as Podman or Rancher Desktop
+
+The SL-Micro.x86_64-6.1-Base-GM.raw OS image file must be downloaded from the SUSE Customer Center or the SUSE Download page.
+
+== Edge Image Builder
+
+=== What is Edge Image Builder
+
+The need for easily auditable, reproducible, and customized base images becomes paramount to the long-term stability and maintainability of the environment. Edge Image Builder (EIB), one of the components of SUSE Telco Cloud, helps mitigate these concerns by providing a mechanism to customize SL Micro base images to include all of the configurations and workload artifacts needed by telco deployments. EIB is an open source project that enables the simplified and quick configuration of customized SUSE Linux Micro images for a variety of scenarios. The resulting image contains all of the configuration and binary artifacts (RPMs, container images, etc.) necessary to provision the node at first boot, providing true zero-touch provisioning even in the case of low-bandwidth connections and air-gapped scenarios. A single image can be reused across multiple nodes, including advanced situations such as deploying HA Kubernetes clusters and individualized network configuration per node. By leveraging a declarative, YAML-based definition format, EIB easily fits into existing GitOps and CI/CD pipelines, generating reproducible images with full accountability of their contents.
+
+=== EIB Config
+
+==== Management Cluster EIB Definition
+
+The following steps are required to generate the EIB .iso image for the mgmt cluster:
+
+ . Generate the folder structure with the following content in the eib-image folder following
+the structure and files content described in official docs:
+
+ ....
+base-images
+custom
+├── files
+│   ├── basic-setup.sh
+│   ├── metal3.sh
+│   ├── mgmt-stack-setup.service
+│   └── rancher.sh
+└── scripts
+    ├── 02-tmpfs-cni.sh
+    ├── 99-alias.sh
+    └── 99-mgmt-setup.sh
+kubernetes
+├── config
+│   └── server.yaml
+├── helm
+│   └── values
+│       ├── certmanager.yaml
+│       ├── longhorn.yaml
+│       ├── metal3.yaml
+│       ├── neuvector.yaml
+│       └── rancher.yaml
+└── manifests
+    └── neuvector-namespace.yaml
+mgmt-cluster-34-61-defaultNet.yaml
+network
+└── mgmt-cluster-network.yaml
+ ....
+
+ . Add your KIWI iso image (output from kiwi process) as a base-image in the base-
+images folder. To do that you can follow the steps in the [full guide instructions in official docs](https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html)
+
+ . Replace from the original documentation the following placeholders with the values:
+
+.. In kubernetes/helm/values/metal3.yaml file, change the ironicIP with your mgmt
+   cluster IP address (e.g., 172.30.8.11)
+.. In kubernetes/helm/values/rancher.yaml file, change the hostname with your mgmt
+   cluster IP address (e.g., 172.30.8.11)
+.. In network/mgmt-cluster-network.yaml file, change the network settings according
+   to your environment (e.g., 172.30.8.11, netmask, gateway, dns and mac):
+
+ ....
+routes:
+  config:
+    - destination: 0.0.0.0/0
+      metric: 100
+      next-hop-address: 172.30.0.1
+      next-hop-interface: eth0
+      table-id: 254
+dns-resolver:
+  config:
+    server:
+      - 8.8.8.8
+interfaces:
+  - name: eth0
+    type: ethernet
+    state: up
+    mac-address: 3C:EC:EF:C0:4E:56
+    ipv4:
+      address:
+        - ip: 172.30.8.11
+          prefix-length: 20
+          dhcp: false
+          enabled: true
+    ipv6:
+      enabled: false
+ ....
+
+ . Modify the eib/mgmt-cluster-34-61-defaultNet.yaml file to change the following:
+
+ ----
+- ${ROOT_PASSWORD} - The root password for the management cluster. This could be
+generated using `openssl passwd -6 PASSWORD` and replacing PASSWORD with the desired
+password, and then replacing the value in the file. The final Rancher password will be
+configured based on the file `custom/files/basic-setup.sh`.
+- ${SCC_REGISTRATION_CODE} - The registration code for the SUSE Customer Center for the
+SLE Micro product. This could be obtained from the SUSE Customer Center and replacing
+the value in the file.
+ ----
+
+ . Build the eib image using the following command:
 
 
-For deployment purposes, the solution can be illustrated as a layered stack.  The deployment process then consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications).  The following sections provide guidance for deploying each layer of the solution.
+ ----
+$ sudo podman run --rm --privileged -it -v $PWD:/eib \
+registry.suse.com/edge/3.4/edge-image-builder:1.3.0 \
+build --definition-file mgmt-cluster-34-61-defaultNet.yaml
+SELinux is enabled in the Kubernetes configuration. The necessary RPM packages will be
+downloaded.
+Downloading file: rancher-public.key 100% |
+SUSE Telco Cloud … * (<75 characters) Your Guide Title
+the value in the file.
+██████████████████████████████████████████████████████████████████████████|
+(2.4/2.4 kB, 17 MB/s)
+Setting up Podman API listener...
+Pulling selected Helm charts... 100% |
+███████████████████████████████████████████████████████████████████████████|
+(8/8, 3 it/s)
+Generating image customization components...
+Identifier ................... [SUCCESS]
+Custom Files ................. [SUCCESS]
+Time ......................... [SKIPPED]
+Network ...................... [SUCCESS]
+Groups ....................... [SKIPPED]
+Users ........................ [SUCCESS]
+Proxy ........................ [SKIPPED]
+Resolving package dependencies...
+Rpm .......................... [SUCCESS]
+Os Files ..................... [SKIPPED]
+Systemd ...................... [SKIPPED]
+Fips ......................... [SKIPPED]
+Elemental .................... [SKIPPED]
+Suma ......................... [SKIPPED]
+Populating Embedded Artifact Registry... 100% |
+████████████████████████████████████████████████████████████████████████████|
+(19/19, 21 it/min)
+Embedded Artifact Registry ... [SUCCESS]
+Keymap ....................... [SUCCESS]
+Configuring Kubernetes component...
+Downloading file: rke2_installer.sh
+Downloading file: rke2-images-core.linux-amd64.tar.zst 100% |
+███████████████████████████████████████████████████████████████████████████████████████|
+(701/701 MB, 82 MB/s)
+Downloading file: rke2-images-calico.linux-amd64.tar.zst 100% |
+████████████████████████████████████████████████████████████████████████████████████|
+(362/362 MB, 470 MB/s)
+Downloading file: rke2-images-multus.linux-amd64.tar.zst 100% |
+█████████████████████████████████████████████████████████████████████████████████████|
+(39/39 MB, 468 MB/s)
+Downloading file: sha256sum-amd64.txt 100% |
+█████████████████████████████████████████████████████████████████████████████████|
+(4.3/4.3 kB, 32 MB/s)
+Kubernetes ................... [SUCCESS]
+Certificates ................. [SKIPPED]
+Cleanup ...................... [SKIPPED]
+Building ISO image...
+Kernel Params ................ [SKIPPED]
+Build complete, the image can be found at: eib-mgmt-cluster-x86_64-image-61-34.iso
+ ----
+
+=== Downstream Cluster EIB definition:
+
+The following steps are required to generate the EIB .raw file for downstream clusters:
+
+ . The folder `eib-edge-34-61` contains all the necessary files to generate the EIB image for downstream clusters with some telco packages and performance scripts. You can get a copy of the content of files using the following link from SUSE Telco Cloud official docs: https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html#[Automated Provisioning – SUSE Telco Cloud Official Docs].
+
+ ....
+.
+|-- base-images
+|   `-- SL-Micro.x86_64-6.1-Base-RT-Kiwi.raw
+|-- custom
+|   |-- files
+|   |   |-- performance-settings.sh
+|   |   `-- sriov-auto-filler.sh
+|   `-- scripts
+|       |-- 01-fix-growfs.sh
+|       |-- 02-tmpfs-cni.sh
+|       |-- 03-performance.sh
+|       `-- 04-sriov.sh
+|-- edge-cluster.yaml
+`-- network
+    `-- configure-network.sh
+
+ ....
+
+ . Add your KIWI iso image (output from kiwi process) as a base-image in the base-images folder. To do that you can follow the steps in the [full guide instructions in official docs](https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html)
+
+ . From the configuration file `edge-cluster.yaml` you can see the packages and scripts that will be included in the image. You will need to modify the following parameters according to your environment:
 
 
+- encryptedPassword: Password for the root user in the image (you can generate it using `openssl passwd -6`)
+- sccRegistrationCode: SCC registration code to register the system (if you have one)
 
-=== Compute platform deployment
+
+ . Build the eib image using the following command:
+
+
+ ----
+$ sudo podman run --rm --privileged -it -v $PWD:/eib \
+registry.suse.com/edge/3.4/edge-image-builder:1.3.0 \
+build --definition-file edge-cluster.yaml
+ ----
+
+. The output should be something like this:
+
+ ----
+Setting up Podman API listener...
+Generating image customization components...
+Identifier ................... [SUCCESS]
+Custom Files ................. [SUCCESS]
+Time ......................... [SKIPPED]
+Network ...................... [SUCCESS]
+Groups ....................... [SKIPPED]
+Users ........................ [SUCCESS]
+Proxy ........................ [SKIPPED]
+Resolving package dependencies...
+Rpm .......................... [SUCCESS]
+Os Files ..................... [SKIPPED]
+Systemd ...................... [SUCCESS]
+Fips ......................... [SKIPPED]
+Elemental .................... [SKIPPED]
+Suma ......................... [SKIPPED]
+Embedded Artifact Registry ... [SKIPPED]
+Keymap ....................... [SUCCESS]
+Kubernetes ................... [SKIPPED]
+Certificates ................. [SKIPPED]
+Cleanup ...................... [SUCCESS]
+Building RAW image...
+Kernel Params ................ [SUCCESS]
+Build complete, the image can be found at: eibimage-34-61-rt-telco.raw
+ ----
+
+== Deployment Details
+ . Recommended Deployment Patterns
+    .. vRAN Consolidation Nodes
+        *** Use Intel® Xeon® 6 SoC to migrate from accelerator-heavy architectures to single-socket
+    .. Edge AI + Network Services Nodes
+        *** Deploy compact nodes at MEC sites for RAN intelligence, telemetry analysis, and enterprise edge computing.
+ . Deployment Checklist for Telco Operators
+
+    .. Performance & Sizing
+        *** Profile RAN, Core, and Edge workloads (packet rate, concurrency, inference rate)
+        *** Select Intel® Xeon® 6 SoC 6 SKUs based on core density and memory requirements
+        *** Validate CPU-only acceleration options for vRAN
+    .. Ecosystem & Integration
+        *** Use OEM-validated RAN and Core blueprints
+        *** Verify compatibility with cloud-native orchestration stacks (K8s, CNF frameworks)
+        *** Validate DPDK, vRAN Boost and AI acceleration paths
+    .. Power & Thermal Design
+        *** Update site power budgets for higher consolidation ratios
+        *** Plan airflow and thermal envelopes for high-density edge PoPs
+    .. Security & Compliance
+        *** Enable hardware security features and confidential computing
+        *** Map regulatory requirements for data protection and sovereignty
+    .. Operational Deployment
+        *** Verify telemetry and observability frameworks
+        *** Test failover, redundancy and RAN real-time behaviour
+        *** Align lifecycle refresh with OEM roadmaps]
+
+=== SUSE Telco Cloud Direct Network provisioning
+
+==== Intro
+Directed network provisioning (https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html) is a feature that allows you to automate the provisioning of downstream clusters. This feature is useful when you have many downstream clusters to provision, and you want to automate the process.
+
+==== Cluster API & SUSE Telco Cloud
+Cluster API (CAPI)(https://documentation.suse.com/suse-edge/3.4/html/edge/quickstart-metal3.html#id-high-level-architecture-2) enables management of infrastructure resources across multiple infrastructure providers via broadly adopted vendor-neutral APIs.
+
+==== Management Cluster Deployment
+
+ - Load the Management cluster EIB .iso generated previously in the Supermicro BMC:
+
+image::media/src/png/8.1.3-load-management-cluster.png[align="center",width=90%]
+
+ - Boot the server from Virtual Media CD
+
+image::media/src/png/8.1.3-boot-1.png[align="center",width=90%]
+
+image::media/src/png/8.1.3-boot-2.png[align="center",width=90%]
+
+ - The installation will start automatically without any manual interaction. After having the operating system installed, the system will start configuring all parameters from the operating system as well as the RKE2 cluster with all helm charts required. No manual interaction is required to install the management cluster:
+
+image::media/src/png/8.1.3-installation-1.png[align="center",width=90%]
+
+image::media/src/png/8.1.3-installation-2.png[align="center",width=90%]
+
+image::media/src/png/8.1.3-installation-3.png[align="center",width=90%]
+
+image::media/src/png/8.1.3-installation-4.png[align="center",width=90%]
+
+ - The system is ready and the management cluster has been installed properly. Kubeconfig is already loaded by default with the user provided in EIB definition file so we can double check cluster is ready:
+----
+mgmt-cluster-network:~ # k get nodes
+NAME                   STATUS   ROLES                       AGE   VERSION
+mgmt-cluster-network   Ready    control-plane,etcd,master   37s   v1.33.3+rke2r1
+----
+ - Rancher also is available and we can double check it. To get access to the Rancher UI, open a web browser and navigate to `https://rancher-172.30.8.11.sslip.io:8443/dashboard/home` and use the credentials configured in the file `custom/files/basic-setup.sh  (RANCHER_FINALPASSWORD)` during the EIB process showed before:
+
+image::media/src/png/8.1.3-rancher-ui-1.png[align="center",width=90%]
+
+image::media/src/png/8.1.3-rancher-ui-2.png[align="center",width=90%]
+
+==== Downstream Cluster Deployment (CAPI + Metal3)
+To deploy the downstream cluster, we need to create some manifests files from the management cluster already deployed (also could be done with RancherUI) in order to define the BaremetalHost object (bmh.yaml file) and the provision file (capi.yaml) to deploy the operating system and provision the RKE2 cluster automatically from the management cluster. To deploy the downstream cluster, it is necessary to create several manifest files from the already deployed management cluster (alternatively, this can be accomplished via the Rancher UI). These files include the BaremetalHost object definition (bmh.yaml) and the provision file (capi.yaml), which are required to deploy the operating system and automatically provision the RKE2 cluster from the management cluster.
+
+ - Create the BaremetalHost file (bmh.yaml) replacing the BMC username/password as well as the MAC address and BMC IP in the URL:
+
+----
+ apiVersion: v1
+kind: Secret
+metadata:
+  name: lab-sm1-credentials
+type: Opaque
+data:
+  username: <<< user in base64 >>>
+  password: <<< password in base64 >>>
+---
+apiVersion: metal3.io/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: lab-sm1
+  labels:
+    cluster-role: control-plane
+spec:
+  online: true
+  bootMACAddress: 7C:C2:55:ED:67:7A
+  rootDeviceHints:
+    deviceName: /dev/nvme0n1
+  bmc:
+    address: redfish-virtualmedia://172.30.8.2/redfish/v1/Systems/1/
+    disableCertificateVerification: true
+    credentialsName: lab-sm1-credentials
+----
+ - Apply the manifests using kubectl (alternatively it could be applied using Rancher UI):The manifests should be applied utilizing kubectl (an alternative method is to apply them via the Rancher UI):
+
+....
+kubectl apply -f manifests-examples/bmh.yaml
+....
+
+ - Inspection starts to retrieve all hardware information from the server to fill the baremetal host object in RKE2:
+....
+mgmt-cluster-network:~ # kubectl get bmh
+NAME      STATE        CONSUMER   ONLINE   ERROR   AGE
+lab-sm1   inspecting              true             11s
+....
+
+ - The full server information is now available:
+....
+ apiVersion: v1
+items:
+- apiVersion: metal3.io/v1alpha1
+  kind: BareMetalHost
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"metal3.io/v1alpha1","kind":"BareMetalHost","metadata":{"annotations":{},"labels":{"cluster-role":"control-plane"},"name":"lab-sm1","namespace":"default"},"spec":{"bmc":{"address":"redfish-virtualmedia://172.30.8.2/redfish/v1/Systems/1/","credentialsName":"lab-sm1-credentials","disableCertificateVerification":true},"bootMACAddress":"7C:C2:55:ED:67:7A","online":true,"rootDeviceHints":{"deviceName":"/dev/nvme0n1"}}}
+    creationTimestamp: "2025-10-06T10:30:55Z"
+    finalizers:
+    - baremetalhost.metal3.io
+    generation: 2
+    labels:
+      cluster-role: control-plane
+    name: lab-sm1
+    namespace: default
+    resourceVersion: "2475116"
+    uid: c693353a-f933-4d68-9b4c-2e04571e9075
+  spec:
+    architecture: x86_64
+    automatedCleaningMode: metadata
+    bmc:
+      address: redfish-virtualmedia://172.30.8.2/redfish/v1/Systems/1/
+      credentialsName: lab-sm1-credentials
+      disableCertificateVerification: true
+    bootMACAddress: 7C:C2:55:ED:67:7A
+    online: true
+    rootDeviceHints:
+      deviceName: /dev/nvme0n1
+  status:
+    errorCount: 0
+    errorMessage: ""
+    goodCredentials:
+      credentials:
+        name: lab-sm1-credentials
+        namespace: default
+      credentialsVersion: "2469066"
+    hardware:
+      cpu:
+        arch: x86_64
+        clockMegahertz: 3500
+        count: 84
+        flags:
+        - 3dnowprefetch
+        - abm
+        - acpi
+        - adx
+        - aes
+        - amx_bf16
+        - amx_int8
+        - amx_tile
+        - aperfmperf
+        - apic
+        - arat
+        - arch_capabilities
+        - arch_lbr
+        - arch_perfmon
+        - art
+        - avx
+        - avx2
+        - avx512_bf16
+        - avx512_bitalg
+        - avx512_fp16
+        - avx512_vbmi2
+        - avx512_vnni
+        - avx512_vpopcntdq
+        - avx512bw
+        - avx512cd
+        - avx512dq
+        - avx512f
+        - avx512ifma
+        - avx512vbmi
+        - avx512vl
+        - avx_vnni
+        - bmi1
+        - bmi2
+        - bts
+        - bus_lock_detect
+        - cat_l2
+        - cat_l3
+        - cdp_l2
+        - cdp_l3
+        - cldemote
+        - clflush
+        - clflushopt
+        - clwb
+        - cmov
+        - constant_tsc
+        - cpuid
+        - cpuid_fault
+        - cqm
+        - cqm_llc
+        - cqm_mbm_local
+        - cqm_mbm_total
+        - cqm_occup_llc
+        - cx16
+        - cx8
+        - dca
+        - de
+        - ds_cpl
+        - dtes64
+        - dtherm
+        - dts
+        - enqcmd
+        - epb
+        - ept
+        - ept_ad
+        - erms
+        - est
+        - f16c
+        - flexpriority
+        - flush_l1d
+        - fma
+        - fpu
+        - fsgsbase
+        - fsrm
+        - fxsr
+        - gfni
+        - hle
+        - ht
+        - hwp
+        - hwp_act_window
+        - hwp_epp
+        - hwp_pkg_req
+        - ibpb
+        - ibrs
+        - ibrs_enhanced
+        - ibt
+        - ida
+        - intel_ppin
+        - intel_pt
+        - invpcid
+        - la57
+        - lahf_lm
+        - lm
+        - mba
+        - mca
+        - mce
+        - md_clear
+        - mmx
+        - monitor
+        - movbe
+        - movdir64b
+        - movdiri
+        - msr
+        - mtrr
+        - nonstop_tsc
+        - nopl
+        - nx
+        - ospke
+        - pae
+        - pat
+        - pbe
+        - pcid
+        - pclmulqdq
+        - pconfig
+        - pdcm
+        - pdpe1gb
+        - pebs
+        - pge
+        - pku
+        - pln
+        - pni
+        - popcnt
+        - pse
+        - pse36
+        - pts
+        - rdpid
+        - rdrand
+        - rdseed
+        - rdt_a
+        - rdtscp
+        - rep_good
+        - rtm
+        - sdbg
+        - sep
+        - serialize
+        - sha_ni
+        - smap
+        - smep
+        - smx
+        - split_lock_detect
+        - ss
+        - ssbd
+        - sse
+        - sse2
+        - sse4_1
+        - sse4_2
+        - ssse3
+        - stibp
+        - syscall
+        - tm
+        - tm2
+        - tme
+        - tpr_shadow
+        - tsc
+        - tsc_adjust
+        - tsc_deadline_timer
+        - tsc_known_freq
+        - tsxldtrk
+        - umip
+        - user_shstk
+        - vaes
+        - vme
+        - vmx
+        - vnmi
+        - vpclmulqdq
+        - vpid
+        - waitpkg
+        - wbnoinvd
+        - x2apic
+        - xgetbv1
+        - xsave
+        - xsavec
+        - xsaveopt
+        - xsaves
+        - xtopology
+        - xtpr
+        model: GENUINE INTEL(R) XEON(R)
+      firmware:
+        bios:
+          date: 06/18/2025
+          vendor: American Megatrends International, LLC.
+          version: T20250618140143
+      hostname: suse-wl1.shared.i14y-lab.com
+      nics:
+      - mac: 7c:c2:55:ed:60:17
+        model: 0x8086 0x579e
+        name: eno7np1
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:18
+        model: 0x8086 0x579e
+        name: eno8np2
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:19
+        model: 0x8086 0x579e
+        name: eno9np3
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:12
+        model: 0x8086 0x579e
+        name: eno2np0
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:13
+        model: 0x8086 0x579e
+        name: eno3np1
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:14
+        model: 0x8086 0x579e
+        name: eno4np2
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:15
+        model: 0x8086 0x579e
+        name: eno5np3
+        speedGbps: 25
+      - ip: 172.30.8.12
+        mac: 7c:c2:55:ed:5f:38
+        model: 0x8086 0x1533
+        name: eno1
+        speedGbps: 1
+      - ip: fe80::3163:b4a6:5840:3b6f%eno1
+        mac: 7c:c2:55:ed:5f:38
+        model: 0x8086 0x1533
+        name: eno1
+        speedGbps: 1
+      - mac: 7c:c2:55:ed:60:16
+        model: 0x8086 0x579e
+        name: eno6np0
+        speedGbps: 25
+      ramMebibytes: 262144
+      storage:
+      - alternateNames:
+        - /dev/nvme1n1
+        - /dev/disk/by-path/pci-0000:b4:00.0-nvme-1
+        model: SAMSUNG MZQL2960HCJR-00A07
+        name: /dev/disk/by-path/pci-0000:b4:00.0-nvme-1
+        serialNumber: S64FNS0X801971
+        sizeBytes: 960197124096
+        type: NVME
+        wwn: eui.36344630588019710025385300000001
+      - alternateNames:
+        - /dev/nvme0n1
+        - /dev/disk/by-path/pci-0000:b5:00.0-nvme-1
+        model: SAMSUNG MZQL2960HCJR-00A07
+        name: /dev/disk/by-path/pci-0000:b5:00.0-nvme-1
+        serialNumber: S64FNS0X801972
+        sizeBytes: 960197124096
+        type: NVME
+        wwn: eui.36344630588019720025385300000001
+      systemVendor:
+        manufacturer: Supermicro
+        productName: SYS-112D-42C-FN8P (To be filled by O.E.M.)
+        serialNumber: S956463X5705960
+    hardwareProfile: unknown
+    lastUpdated: "2025-10-06T10:41:19Z"
+    operationHistory:
+      deprovision:
+        end: null
+        start: null
+      inspect:
+        end: "2025-10-06T10:41:19Z"
+        start: "2025-10-06T10:31:06Z"
+      provision:
+        end: null
+        start: null
+      register:
+        end: "2025-10-06T10:31:06Z"
+        start: "2025-10-06T10:30:55Z"
+    operationalStatus: OK
+    poweredOn: true
+    provisioning:
+      ID: a031479c-ffde-4cea-8fdb-334fc5e85f67
+      bootMode: UEFI
+      image:
+        url: ""
+      rootDeviceHints:
+        deviceName: /dev/nvme0n1
+      state: available
+    triedCredentials:
+      credentials:
+        name: lab-sm1-credentials
+        namespace: default
+      credentialsVersion: "2469066"
+kind: List
+metadata:
+  resourceVersion: ""
+....
+
+ - Same info is represented now in Rancher UI:
+
+image::media/src/png/8.1.4-rancher-ui-1.png[align="center",width=90%]
+
+image::media/src/png/8.1.4-rancher-ui-2.png[align="center",width=90%]
+
+ - Apply the capi manifests (capi.yaml) to provision the host with the operating system, RKE2 cluster as well as all Telco capabilities like kernel args, sriov, cpuisolation, etc.
+
+ ----
+ apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: multinode-cluster
+  namespace: default
+  labels:
+    cluster-api.cattle.io/rancher-auto-import: "true"
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 192.168.0.0/18
+    services:
+      cidrBlocks:
+        - 10.96.0.0/12
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: RKE2ControlPlane
+    name: multinode-cluster
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: Metal3Cluster
+    name: multinode-cluster
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3Cluster
+metadata:
+  name: multinode-cluster
+  namespace: default
+spec:
+  controlPlaneEndpoint:
+    host: 172.30.8.12
+    port: 6443
+  noCloudProvider: true
+
+----
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: RKE2ControlPlane
+metadata:
+  name: multinode-cluster
+  namespace: default
+spec:
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: Metal3MachineTemplate
+    name: multinode-cluster-controlplane
+  replicas: 1
+  version: v1.33.3+rke2r1
+  rolloutStrategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxSurge: 0
+  registrationMethod: "control-plane-endpoint"
+  serverConfig:
+    cni: calico
+    cniMultusEnable: true
+  agentConfig:
+    format: ignition
+    additionalUserData:
+      config: |
+        variant: fcos
+        version: 1.4.0
+        kernel_arguments:
+          should_exist:
+            - intel_iommu=on
+            - iommu=pt
+            - idle=poll
+            - mce=off
+            - hugepagesz=1G hugepages=40
+            - hugepagesz=2M hugepages=0
+            - default_hugepagesz=1G
+            - irqaffinity=0-5
+            - isolcpus=domain,nohz,managed_irq,6-41
+            - nohz_full=16-41
+            - rcu_nocbs=16-41
+            - rcu_nocb_poll
+            - nosoftlockup
+            - nowatchdog
+            - nohz=on
+            - nmi_watchdog=0
+            - skew_tick=1
+            - quiet
+            - rcupdate.rcu_cpu_stall_suppress=1
+            - rcupdate.rcu_expedited=1
+            - rcupdate.rcu_normal_after_boot=1
+            - rcupdate.rcu_task_stall_timeout=0
+            - rcutree.kthread_prio=99
+        systemd:
+          units:
+            - name: rke2-preinstall.service
+              enabled: true
+              contents: |
+                [Unit]
+                Description=rke2-preinstall
+                Wants=network-online.target
+                Before=rke2-install.service
+                ConditionPathExists=!/run/cluster-api/bootstrap-success.complete
+                [Service]
+                Type=oneshot
+                User=root
+                ExecStartPre=/bin/sh -c "mount -L config-2 /mnt"
+                ExecStart=/bin/sh -c "sed -i \"s/BAREMETALHOST_UUID/$(jq -r .uuid /mnt/openstack/latest/meta_data.json)/\" /etc/rancher/rke2/config.yaml"
+                ExecStart=/bin/sh -c "echo \"node-name: $(jq -r .name /mnt/openstack/latest/meta_data.json)\" >> /etc/rancher/rke2/config.yaml"
+                ExecStartPost=/bin/sh -c "umount /mnt"
+                [Install]
+                WantedBy=multi-user.target
+            - name: cpu-partitioning.service
+              enabled: true
+              contents: |
+                [Unit]
+                Description=cpu-partitioning
+                Wants=network-online.target
+                After=network.target network-online.target
+                [Service]
+                Type=oneshot
+                User=root
+                ExecStart=/bin/sh -c "echo isolated_cores=6-41 > /etc/tuned/cpu-partitioning-variables.conf"
+                ExecStartPost=/bin/sh -c "tuned-adm profile cpu-partitioning"
+                ExecStartPost=/bin/sh -c "systemctl enable tuned.service"
+                [Install]
+                WantedBy=multi-user.target
+            - name: performance-settings.service
+              enabled: true
+              contents: |
+                [Unit]
+                Description=performance-settings
+                Wants=network-online.target
+                After=network.target network-online.target cpu-partitioning.service
+                [Service]
+                Type=oneshot
+                User=root
+                ExecStart=/bin/sh -c "/opt/performance-settings/performance-settings.sh"
+                [Install]
+                WantedBy=multi-user.target
+    kubelet:
+      extraArgs:
+        - provider-id=metal3://BAREMETALHOST_UUID
+    nodeName: "Node-multinode-cluster"
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3MachineTemplate
+metadata:
+  name: multinode-cluster-controlplane
+  namespace: default
+spec:
+  template:
+    spec:
+      dataTemplate:
+        name: multinode-cluster-controlplane-template
+      hostSelector:
+        matchLabels:
+          cluster-role: control-plane
+      image:
+        checksum: http://172.30.4.28/eibimage-34-61-rt-telco.raw.sha256
+        checksumType: sha256
+        format: raw
+        url: http://172.30.4.28/eibimage-34-61-rt-telco.raw
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3DataTemplate
+metadata:
+  name: multinode-cluster-controlplane-template
+  namespace: default
+spec:
+  clusterName: multinode-cluster
+  metaData:
+    objectNames:
+      - key: name
+        object: machine
+      - key: local-hostname
+        object: machine
+      - key: local_hostname
+        object: machine
+## Workers
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  labels:
+    cluster.x-k8s.io/cluster-name: multinode-cluster
+  name: multinode-cluster-workers
+  namespace: default
+spec:
+  clusterName: multinode-cluster
+  replicas: 1
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: multinode-cluster
+  template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/cluster-name: multinode-cluster
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: RKE2ConfigTemplate
+          name: multinode-cluster-workers
+      clusterName: multinode-cluster
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: Metal3MachineTemplate
+        name: multinode-cluster-workers
+      nodeDrainTimeout: 0s
+      version: v1.33.3+rke2r1
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: RKE2ConfigTemplate
+metadata:
+  name: multinode-cluster-workers
+  namespace: default
+spec:
+  template:
+    spec:
+      agentConfig:
+        format: ignition
+        kubelet:
+          extraArgs:
+            - provider-id=metal3://BAREMETALHOST_UUID
+        nodeName: "Node-multinode-cluster-worker"
+        additionalUserData:
+          config: |
+            variant: fcos
+            version: 1.4.0
+            kernel_arguments:
+              should_exist:
+                - intel_iommu=on
+                - iommu=pt
+                - idle=poll
+                - mce=off
+                - hugepagesz=1G hugepages=40
+                - hugepagesz=2M hugepages=0
+                - default_hugepagesz=1G
+                - irqaffinity=0-5
+                - isolcpus=domain,nohz,managed_irq,6-41
+                - nohz_full=16-41
+                - rcu_nocbs=16-41
+                - rcu_nocb_poll
+                - nosoftlockup
+                - nowatchdog
+                - nohz=on
+                - nmi_watchdog=0
+                - skew_tick=1
+                - quiet
+                - rcupdate.rcu_cpu_stall_suppress=1
+                - rcupdate.rcu_expedited=1
+                - rcupdate.rcu_normal_after_boot=1
+                - rcupdate.rcu_task_stall_timeout=0
+                - rcutree.kthread_prio=99
+            systemd:
+              units:
+                - name: rke2-preinstall.service
+                  enabled: true
+                  contents: |
+                    [Unit]
+                    Description=rke2-preinstall
+                    Wants=network-online.target
+                    Before=rke2-install.service
+                    ConditionPathExists=!/run/cluster-api/bootstrap-success.complete
+                    [Service]
+                    Type=oneshot
+                    User=root
+                    ExecStartPre=/bin/sh -c "mount -L config-2 /mnt"
+                    ExecStart=/bin/sh -c "sed -i \"s/BAREMETALHOST_UUID/$(jq -r .uuid /mnt/openstack/latest/meta_data.json)/\" /etc/rancher/rke2/config.yaml"
+                    ExecStart=/bin/sh -c "echo \"node-name: $(jq -r .name /mnt/openstack/latest/meta_data.json)\" >> /etc/rancher/rke2/config.yaml"
+                    ExecStartPost=/bin/sh -c "umount /mnt"
+                    [Install]
+                    WantedBy=multi-user.target
+                - name: cpu-partitioning.service
+                  enabled: true
+                  contents: |
+                    [Unit]
+                    Description=cpu-partitioning
+                    Wants=network-online.target
+                    After=network.target network-online.target
+                    [Service]
+                    Type=oneshot
+                    User=root
+                    ExecStart=/bin/sh -c "echo isolated_cores=6-41 > /etc/tuned/cpu-partitioning-variables.conf"
+                    ExecStartPost=/bin/sh -c "tuned-adm profile cpu-partitioning"
+                    ExecStartPost=/bin/sh -c "systemctl enable tuned.service"
+                    [Install]
+                    WantedBy=multi-user.target
+                - name: performance-settings.service
+                  enabled: true
+                  contents: |
+                    [Unit]
+                    Description=performance-settings
+                    Wants=network-online.target
+                    After=network.target network-online.target cpu-partitioning.service
+                    [Service]
+                    Type=oneshot
+                    User=root
+                    ExecStart=/bin/sh -c "/opt/performance-settings/performance-settings.sh"
+                    [Install]
+                    WantedBy=multi-user.target
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3MachineTemplate
+metadata:
+  name: multinode-cluster-workers
+  namespace: default
+spec:
+  template:
+    spec:
+      dataTemplate:
+        name: multinode-cluster-workers-template
+      hostSelector:
+        matchLabels:
+          cluster-role: worker
+      image:
+        checksum: http://172.30.4.28/eibimage-34-61-rt-telco.raw.sha256
+        checksumType: sha256
+        format: raw
+        url: http://172.30.4.28/eibimage-34-61-rt-telco.raw
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3DataTemplate
+metadata:
+  name: multinode-cluster-workers-template
+  namespace: default
+spec:
+  clusterName: multinode-cluster
+  metaData:
+    objectNames:
+      - key: name
+        object: machine
+      - key: local-hostname
+        object: machine
+      - key: local_hostname
+        object: machine
+
+----
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide step-by-step guidance for preparing and deploying the
@@ -245,97 +1265,89 @@ For deployment purposes, the solution can be illustrated as a layered stack.  Th
 // websites, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The compute platform provides a foundational layer ...
-Add content here
+ - Once applied the capi.yaml file in the management cluster to provision the downstream cluster the provision will start:
 
+----
+  mgmt-cluster-network:~ # k get bmh
+NAME      STATE          CONSUMER                               ONLINE   ERROR   AGE
+lab-sm1   provisioning   multinode-cluster-controlplane-kf8lg   true             21h
+lab-sm2   available                                             true             17h
+mgmt-cluster-network:~ #
+mgmt-cluster-network:~ # k get bmh
+NAME      STATE         CONSUMER                               ONLINE   ERROR   AGE
+lab-sm1   provisioned   multinode-cluster-controlplane-97266   true             38m
+lab-sm2   available                                            true             30m
+mgmt-cluster-network:~ # k get bmh
+NAME      STATE         CONSUMER                                ONLINE   ERROR   AGE
+lab-sm1   provisioned   multinode-cluster-controlplane-97266    true             49m
+lab-sm2   provisioned   multinode-cluster-workers-dxhgg-54cq4   true             41m
 
-*Preparation*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+----
 
-Add content here
+ - Finally nodes are ready and getting into the downstream cluster you will see the nodes up and ready:
 
+----
+suse-wl1:~ # k get nodes
+NAME                                    STATUS   ROLES                       AGE   VERSION
+multinode-cluster-t4rwk                 Ready    control-plane,etcd,master   12m   v1.33.3+rke2r1
+multinode-cluster-workers-dxhgg-54cq4   Ready    <none>                      45s   v1.33.3+rke2r1
+----
+ - Also, the same info is available now in Rancher UI:
 
+image::media/src/png/8.1.4-rancher-ui-3.png[align="center",width=90%]
 
-*Process*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+image::media/src/png/8.1.4-rancher-ui-4.png[align="center",width=90%]
 
-Add content here
+== Performance Testing
 
+=== Intro
 
-*Considerations*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+We are conducting performance tests to measure the CPU latency in scheduling new tasks on both isolated and housekeeping cores. We utilize a Real-Time application, which is a simulator, to replicate specific workloads per CPU during defined time periods. By configuring a JSON file, we can simulate a particular CPU load percentage and use cycletest to measure the latency associated with scheduling tasks concurrently. Cycletest quantifies the latency before and after the task scheduling, subsequently generating a plot based on a resulting histogram.cat
 
-Add content here
+=== CPU Performance
 
+Based on the following configurations:
 
+ - Kernel args showed in the capi.yaml file
+ - Huge pages showed in the capi.yaml file
+ - CPU Isolation showed in the capi.yaml file
+ - Performance settings scripts showed in the capi.yaml and official documentation (https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html#add-telco)
+ - CPU load 95% isolated cores
+----
+$ cat sut-info
+   Static hostname: (unset)
+Transient hostname: suse-wl2.shared.i14y-lab.com
+         Icon name: computer-server
+           Chassis: server 🖳
+        Machine ID: f0a7cf72a88948968d537e0d471c4656
+           Boot ID: f2391ee36fcb4caf89508b9be07ca940
+  Operating System: SUSE Linux Micro 6.1
+       CPE OS Name: cpe:/o:suse:sl-micro:6.1
+            Kernel: Linux 6.4.0-30-rt
+      Architecture: x86-64
+   Hardware Vendor: Supermicro
+    Hardware Model: SYS-112D-42C-FN8P
+  Firmware Version: 1.0
+     Firmware Date: Mon 2025-08-25
+      Firmware Age: 1month 2w 1d
+----
 
-=== Software
+ - Time slot: 7200
+ - Measuring with the following command:
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// As with the Compute platform, provide step-by-step guidance for
-// preparing and deploying the Software.
-// Solutions almost always have multiple Software components deployed
-// as layers.
-// So, use of subsections is likely.
-// The heading for each subsection should reflect the layer (product)
-// being deployed; for example, ‘SUSE Rancher Prime deployment’.
-// Remember to use the defined variables for product names,
-// websites, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+----
+cyclictest -F /tmp/cyclictest-monitor.pipe -p98 -t36 --affinity=6-41 --mainaffinity=1 :--interval=1000 --histogram=60 --spike=10 --duration=7200 --quiet
+----
 
-The following sections provide deployment guidance for each software layer.
+The results are a measure of latency <= 5 us:
 
+image::media/src/png/9.2-latency-plot.png[align="center",width=90%]
 
-==== Software product deployment
+== Conclusions and Next Steps
 
+The combination of SUSE Telco Cloud, Intel® Xeon® 6 SoC, and Supermicro telco-optimized servers delivers a future-proof, CPU-only telco-optimized cloud platform that delivers uncompromised performance, radical simplicity, genuine sustainability, and investment protection at scale while dramatically reducing power, physical space, and TCO. Together, we enable operators to stop compromising and start transforming.
 
-*Preparation*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the software component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-*Process*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the softwware component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-*Considerations*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-
-
-== Validation
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide validation steps for testing that the solution deployment
-// was successful and configured properly.
-// This could entail a list of specific checks (e.g., commands and
-// expected output), running an automated tool for performing these
-// checks, or implementing a functional demonstration.
-// Include commands, output, and screenshots, as needed.
-// Remember to represent steps as an ordered list.
-// Use subsections if needed for clarity.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
+To move forward with transforming your network, please contact your SUSE, Intel, and Supermicro account teams to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs. For technical deep dives, you can access the SUSE Telco Cloud deployment documentation (https://documentation.suse.com/suse-edge/3.4/html/edge/atip.html), review Intel’s resources on the Xeon® 6 Processors Networking and Edge(https://www.intel.com/content/www/us/en/products/details/processors/xeon/edge.html), the Platform and Performance Advantages to Accelerate vRAN Deployments(https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf), and the Leadership AI and Networking Solutions with Xeon 6 Processors(https://www.intc.com/news-events/press-releases/detail/1728/intel-unveils-leadership-ai-and-networking-solutions-with), and examine the Supermicro specifications for the link:{sys112D-website}[`{sys112D}`] and {sys212D-website}[`{sys212D}`] systems.
 
 
 == Summary
