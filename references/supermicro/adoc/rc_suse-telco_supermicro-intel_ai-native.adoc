@@ -114,6 +114,7 @@ At the foundation sits the Intel® Xeon® 6 SoC, a purpose-built processor famil
 Supermicro’s 1U link:{sys112D-website}[`{sys112D}`] and 2U {sys212D-website}[`{sys212D}`] systems turn these silicon advantages into deployable reality. Outdoor-rated and air-cooled compact designs with redundant Titanium power supplies fit perfectly into constrained edge sites. The integrated E830 NIC delivers nanosecond-accurate Precision Time Protocol (PTP) and SyncE synchronization essential for vRAN and ORAN deployments. The 1U system is already an official {oran-doc}[{oran}].
 
 SUSE completes the solution with SUSE Telco Cloud - a hardened, modular, cloud-native software stack specifically designed to meet the strict demands of the telecommunications industry, enabling operators to host both VNFs and CNFs on the same platform. Built on {sle-website}[`{sle}`], {rke2-website}[`{rke2}`], and {rancher-website}[`{suserancherprime}`], the platform provides a secure, carrier-grade foundation for 5G, fixed access, OSS/BSS, and edge infrastructure. It’s built entirely on open source and has been rigorously validated to deliver reliable performance at scale. Its AI-ready, disaggregated architecture supports zero-touch automation and the flexibility to integrate best-of-breed network functions efficiently and sustainably.
+
 SUSE Telco Cloud offers automated lifecycle management for infrastructure components, support for multi-cloud and edge deployments with consistent operations, and enhanced observability through integrated monitoring tools. Furthermore, it ensures security at scale, from OS hardening to container scanning, while its foundation in open standards and ecosystem support effectively prevents vendor lock-in. A key differentiator is SUSE’s robust edge computing capabilities, as SUSE Telco Cloud is optimized for constrained environments, enabling telcos to deploy CNFs and VNFs in remote or decentralized locations with minimal overhead - a flexibility essential for new 5G-powered services like smart city infrastructure and industrial IoT. The solution also facilitates zero-touch provisioning and seamless orchestration at the edge, which dramatically reduces operational complexity and deployment times. Ultimately, with its modular, open architecture, SUSE Telco Cloud allows operators to unlock efficiencies in the core, deploy innovative services at the edge, and adapt rapidly to future market demands.
 
 By uniting Intel’s fully-integrated vRAN Boost and AI acceleration, Supermicro’s rugged edge-system engineering and global supply-chain excellence, and SUSE’s zero-touch, GitOps-driven telco cloud stack, this solution delivers a true single-box, CPU-only telco cloud node that simultaneously replaces the legacy BBU, external L1 accelerator (FPGA/in-line card), SmartNIC, timing card, and discrete AI inference appliances. Under a 95% CPU load on the isolated cores, the platform successfully achieved a measure of latency of sub 5µs. This achievement demonstrates that the consolidated, CPU-only architecture powered by Intel® Xeon® 6 SoC and orchestrated by SUSE Telco Cloud can deliver the guaranteed, deterministic, low-latency performance required for the most demanding 5G and ORAN use cases.
@@ -143,27 +144,26 @@ Supply-chain risk is minimized through Supermicro’s Tier-1 scale and regional 
 
 
 //Need to place images
-Intel® Xeon® 6 SoC overview
+`Intel Xeon 6 SoC overview`:
 
 image::media/src/png/intelxeon6SoCoverview1.png[align="center",width=90%]
 
 image::media/src/png/IntelXeon6SoCoverview-2.png[align="center",width=90%]
 
-Supermicro SYS-112D-42C-FN8P front view
+`Supermicro SYS-112D-42C-FN8P front/back view`:
 
 image::media/src/png/Supermicro-system-front-view.png[align="center",width=90%]
 
-Supermicro SYS-112D-42C-FN8P  back view
-
 image::media/src/png/Supermicrosystembackview.png[align="center",width=90%]
+For more information, see https://www.supermicro.com/de/products/system/iot/1u/sys-112d-42c-fn8p[SYS-112D-42C-FN8P]
 
-//Need to place images
-SUSE Telco Cloud Architecture
+`SUSE Telco Cloud Architecture`:
 
 image::media/src/png/SUSE-Telco-Cloud-Architecture.png[align="center",width=90%]
+For more information, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-architecture.html[SUSE Telco Cloud Architecture] documentation.
 
-//Need to place images
-vRAN performance
+`vRAN performance`:
+
 
 image::media/src/png/vRAN-Performance.png[align="center",width=90%]
 
@@ -213,7 +213,7 @@ AC or DC options available
 
 == Deployment Prerequisites and Requirements
 
- . Hardware
+=== Hardware
 
 There are some specific constraints related to the downstream cluster server hardware and networking:
 
@@ -232,20 +232,38 @@ Hosts to be controlled
 
  * Must have network connectivity to the management cluster for access to the Metal3 provisioning APIs
 
+For more information, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-hardware documentation.
+
 
 Some tools are required, these can be installed either on the management cluster, or on a host which can access it.
 
- * Kubectl, Helm and Clusterctl
+ * https://kubernetes.io/docs/reference/kubectl/kubectl/[Kubectl], https://helm.sh/[Helm] and https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl[Clusterctl]
 
  * A container runtime such as Podman or Rancher Desktop
 
-The SL-Micro.x86_64-6.1-Base-GM.raw OS image file must be downloaded from the SUSE Customer Center or the SUSE Download page.
+The SL-Micro.x86_64-6.1-Base-GM.raw OS image file must be downloaded from https://scc.suse.com/[SUSE Customer Center] or the https://www.suse.com/download/sle-micro/[SUSE Download page].
+
+=== Network
+
+Follow the official SUSE Edge Telco guidelines and recommendations described in the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-network[SUSE Edge ATIP Network Requirements].
+
+=== Ports
+
+For details on port requirements, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-port-requirements[SUSE Edge ATIP Port Requirements] section of the official SUSE Edge Telco documentation.
+
+=== Services (DHCP,DNS,etc)
+
+For details on supported services such as DHCP, DNS, and others, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-services-dhcp-dns-etc[SUSE Edge ATIP DHCP/DNS/Services Requirements] section of the official SUSE Edge Telco documentation.
+
+=== Disabling systemd services
+
+For information on disabling unnecessary systemd services, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-disabling-systemd-services[SUSE Edge ATIP Disabling Systemd Services] section of the official SUSE Edge Telco documentation.
 
 == Edge Image Builder
 
 === What is Edge Image Builder
 
-The need for easily auditable, reproducible, and customized base images becomes paramount to the long-term stability and maintainability of the environment. Edge Image Builder (EIB), one of the components of SUSE Telco Cloud, helps mitigate these concerns by providing a mechanism to customize SL Micro base images to include all of the configurations and workload artifacts needed by telco deployments. EIB is an open source project that enables the simplified and quick configuration of customized SUSE Linux Micro images for a variety of scenarios. The resulting image contains all of the configuration and binary artifacts (RPMs, container images, etc.) necessary to provision the node at first boot, providing true zero-touch provisioning even in the case of low-bandwidth connections and air-gapped scenarios. A single image can be reused across multiple nodes, including advanced situations such as deploying HA Kubernetes clusters and individualized network configuration per node. By leveraging a declarative, YAML-based definition format, EIB easily fits into existing GitOps and CI/CD pipelines, generating reproducible images with full accountability of their contents.
+The need for easily auditable, reproducible, and customized base images becomes paramount to the long-term stability and maintainability of the environment. https://documentation.suse.com/suse-edge/3.3/html/edge/components-eib.html[Edge Image Builder (EIB)], one of the components of SUSE Telco Cloud, helps mitigate these concerns by providing a mechanism to customize SL Micro base images to include all of the configurations and workload artifacts needed by telco deployments. https://github.com/suse-edge/edge-image-builder[EIB is an open source project] that enables the simplified and quick configuration of customized SUSE Linux Micro images for a variety of scenarios. The resulting image contains all of the configuration and binary artifacts (RPMs, container images, etc.) necessary to provision the node at first boot, providing true zero-touch provisioning even in the case of low-bandwidth connections and air-gapped scenarios. A single image can be reused across multiple nodes, including advanced situations such as deploying HA Kubernetes clusters and individualized network configuration per node. By leveraging a declarative, YAML-based definition format, EIB easily fits into existing GitOps and CI/CD pipelines, generating reproducible images with full accountability of their contents.
 
 === EIB Config
 
@@ -254,7 +272,7 @@ The need for easily auditable, reproducible, and customized base images becomes 
 The following steps are required to generate the EIB .iso image for the mgmt cluster:
 
  . Generate the folder structure with the following content in the eib-image folder following
-the structure and files content described in official docs:
+the structure and files content described in https://documentation.suse.com/suse-edge/3.4/html/edge/atip-management-cluster.html#[official docs]:
 
  ....
 base-images
@@ -286,7 +304,7 @@ network
  ....
 
  . Add your KIWI iso image (output from kiwi process) as a base-image in the base-
-images folder. To do that you can follow the steps in the [full guide instructions in official docs](https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html)
+images folder. To do that you can follow the steps in the https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html[full guide instructions in official docs]
 
  . Replace from the original documentation the following placeholders with the values:
 
@@ -377,7 +395,7 @@ Keymap ....................... [SUCCESS]
 Configuring Kubernetes component...
 Downloading file: rke2_installer.sh
 Downloading file: rke2-images-core.linux-amd64.tar.zst 100% |
-███████████████████████████████████████████████████████████████████████████████████████|
+███████████████████████████████████████████████████████████████████████████████████|
 (701/701 MB, 82 MB/s)
 Downloading file: rke2-images-calico.linux-amd64.tar.zst 100% |
 ████████████████████████████████████████████████████████████████████████████████████|
@@ -400,7 +418,7 @@ Build complete, the image can be found at: eib-mgmt-cluster-x86_64-image-61-34.i
 
 The following steps are required to generate the EIB .raw file for downstream clusters:
 
- . The folder `eib-edge-34-61` contains all the necessary files to generate the EIB image for downstream clusters with some telco packages and performance scripts. You can get a copy of the content of files using the following link from SUSE Telco Cloud official docs: https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html#[Automated Provisioning – SUSE Telco Cloud Official Docs].
+ . The folder `eib-edge-34-61` contains all the necessary files to generate the EIB image for downstream clusters with some telco packages and performance scripts. You can get a copy of the content of files using the following link from SUSE Telco Cloud official docs: https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html# [Automated Provisioning – SUSE Telco Cloud Official Docs].
 
  ....
 .
@@ -421,9 +439,9 @@ The following steps are required to generate the EIB .raw file for downstream cl
 
  ....
 
- . Add your KIWI iso image (output from kiwi process) as a base-image in the base-images folder. To do that you can follow the steps in the [full guide instructions in official docs](https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html)
+ . Add your KIWI iso image (output from kiwi process) as a base-image in the base-images folder. To do that you can follow the steps in the https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html[full guide instructions in official docs]
 
- . From the configuration file `edge-cluster.yaml` you can see the packages and scripts that will be included in the image. You will need to modify the following parameters according to your environment:
+ . From the configuration file *edge-cluster.yaml* you can see the packages and scripts that will be included in the image. You will need to modify the following parameters according to your environment:
 
 
 - encryptedPassword: Password for the root user in the image (you can generate it using `openssl passwd -6`)
@@ -498,10 +516,10 @@ Build complete, the image can be found at: eibimage-34-61-rt-telco.raw
 === SUSE Telco Cloud Direct Network provisioning
 
 ==== Intro
-Directed network provisioning (https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html) is a feature that allows you to automate the provisioning of downstream clusters. This feature is useful when you have many downstream clusters to provision, and you want to automate the process.
+https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html[Directed network provisioning] is a feature that allows you to automate the provisioning of downstream clusters. This feature is useful when you have many downstream clusters to provision, and you want to automate the process.
 
 ==== Cluster API & SUSE Telco Cloud
-Cluster API (CAPI)(https://documentation.suse.com/suse-edge/3.4/html/edge/quickstart-metal3.html#id-high-level-architecture-2) enables management of infrastructure resources across multiple infrastructure providers via broadly adopted vendor-neutral APIs.
+https://documentation.suse.com/suse-edge/3.4/html/edge/quickstart-metal3.html#id-high-level-architecture-2[Cluster API (CAPI)] enables management of infrastructure resources across multiple infrastructure providers via broadly adopted vendor-neutral APIs.
 
 ==== Management Cluster Deployment
 
