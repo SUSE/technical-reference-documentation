@@ -21,14 +21,6 @@ include::./gs_virtualization_hitachi-storage-vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-// JI: This is a good start.
-// JI: Be sure to put yourself in the perspective of your reader, who may not have your skill level.
-// JI: For example, if you provide a sample YAML file, be sure to tell the reader what to do with it.
-// JI: I have started making some edits and including comments like this one to guide you on your next steps.
-// JI: Be sure to review the vars file.
-// JI: You will see several new variables that you should reference in this document;
-// JI: for example, see 'svirt' and 'hitachivsp-long'.
-
 
 = {title}: {subtitle}
 
@@ -37,11 +29,10 @@ include::./gs_virtualization_hitachi-storage-vars.adoc[]
 == Introduction
 
 As organizations evolve toward modernized hybrid infrastructures, unified virtualization and enterprise storage become critical for reliability, scalability, and efficiency.
-{svirt}, built on {svirt} and powered by Kubernetes, provides a robust foundation for running both virtual machines and containerized workloads on a single platform.
-When deployed with {hitachivsp-long} ({hitachivsp}), enterprises can access data management, high performance storage, and data protection for mission-critical workloads.
+{svirt-website}[{svirt}], built on Harvester and powered by Kubernetes, provides a robust foundation for running both virtual machines and containerized workloads on a single platform.
+When deployed with {hitachivsp-website}[{hitachivsp-long}] ({hitachivsp}), enterprises can access data management, high performance storage, and data protection for mission-critical workloads.
 
 This document provides technical guidance for integrating {hitachivsp} with {svirt}.
-
 
 
 
@@ -51,68 +42,85 @@ This guide provides detailed instructions for integrating {hitachivsp-long} with
 It includes steps for configuring multipath I/O, installing the {hspc-long}, creating Kubernetes resources (secrets, StorageClass, PVC, SnapshotClass), and validating the deployment using {svirt} UI and CLI.
 
 
+
 === Audience
 
 This guide is intended for platform teams, systems and storage administrators, and DevOps engineers supporting modern virtualization, featuring {svirt} and {hitachivsp-long}.
 
-The reader should have basic familiarity with the Linux, Kubernetes, storage networking protocols (iSCSI or FC), {svirt}, and {hitachivsp-long}.
+The reader should have basic familiarity with Linux, Kubernetes, storage networking protocols ({iscsi-website}[{iscsi}] or {fc-website}[{fc}]), {svirt}, and {hitachivsp-long}.
 
 
 
-=== Acknowledgements
+=== Acknowledgments
 
-The authors acknowledge contributions from Hitachi Vantara engineering teams for validation and joint testing of the HSPC CSI integration with {svirt}.
+The authors acknowledge contributions from {hitachivsp-provider} engineering teams for validation and joint testing of the {hspc-long} integration with {svirt}.
 
 
 
 == Overview
 
-// JI: Use this section to provide a brief, a component-level architecture.
-// JI: I refocused this section on three, key components.
-// JI: The others (e.g., multipathd, secrets, and storageclass) should be noted when they are configured.
-// JI: Insert an architecture diagram at the top of this section
-// JI: See the SUSE Virtualization + Portworx + Pure Storage FlashArray whitepaper for an example
-
-
 The integrated solution architecture brings together {svirt} as the cloud native virtualization with {hitachivsp-long} as the enterprise storage back-end.
 
-//{empty} +
 
 // Architecture diagram
-image::SUSE-Virt-Hitachi.png[Architecture diagram, scaledwidth="85%", align="center"]
+image::SUSE-Virt-Hitachi.png[title="General implementation architecture", scaledwidth="85%", align="center"]
 
+{empty} +
 Key elements of this solution include:
 
 SUSE Virtualization::
-{svirt-website}[{svirt}] delivers a fully integrated, cloud-native virtualization platform built on modern Kubernetes technologies. It simplifies VM lifecycle management, enhances platform resiliency, and provides a secure foundation for enterprise workloads. {svirt} brings the advantages of container orchestration into traditional virtualization environments, enabling organizations to modernize infrastructure without complexity.
-
-Key benefits include:
-{empty} +
-
-* High Availability (HA)
+{svirt-website}[{svirt}] delivers a fully integrated, cloud-native virtualization platform built on modern Kubernetes technologies.
+It simplifies VM lifecycle management, enhances platform resiliency, and provides a secure foundation for enterprise workloads.
+{svirt} brings the advantages of container orchestration into traditional virtualization environments, enabling organizations to modernize infrastructure without complexity.
 +
-High Availability in {svirt} is grounded in a combination of Kubernetes-native resilience and enterprise storage capabilities. RKE2 provides an HA control plane and manages cluster health, automatically restarting or relocating workloads if nodes become unresponsive. When paired with Hitachi VSP storage using multipath I/O, VM disks remain accessible across multiple storage paths, protecting against network, node, or controller failures. This multi-layered HA architecture ensures uninterrupted operations for critical applications.
+--
+
+{empty} +
+Key {svirt} features include:
+
+* High Availability
++
+High Availability (HA) in {svirt} is grounded in a combination of Kubernetes-native resilience and enterprise storage capabilities.
+{rke2-website}[{rke2-long} ({rke2})] provides an HA control plane and manages cluster health, automatically restarting or relocating workloads if nodes become unresponsive.
+When paired with storage using multipath I/O, VM disks remain accessible across multiple storage paths, protecting against network, node, and controller failures.
+This ensures uninterrupted operations for critical applications.
 
 * Enhanced Security
+//
 +
-Built on SLE Micro OS, {svirt} uses an immutable filesystem, transactional updates, and minimal footprint security principles. This significantly reduces the attack surface. Integrated Kubernetes security mechanisms—including role-based access control, hardened RKE2, and kernel-level controls—protect workloads from misconfigurations and intrusions.
+{svirt} is a secure, pre-hardened appliance.
+//
++
+At its foundation is {slmicro-website}[{slmicro-long} ({slmicro})], the lightweight, enterprise, real-time Linux operating system, and {rke2-website}[{rke2-long} ({rke2})], the secure-by-default Kubernetes distribution.
+{slmicro}'s immutable filesystem, transactional updates with system rollbacks, and reduced attack surface, make it an ideal host for Kubernetes.
+{slmicro} is complemented by {rke2}, the secure-by-default Kubernetes distribution, which delivers the security-hardened control plane that enables robust orchestration while meeting strict government and industry compliance standards.
+//
++
+Additional security features of {svirt} include:
 
-* RKE2 Enterprise Kubernetes
-+
-RKE2 provides a secure-by-default Kubernetes distribution with enterprise lifecycle management. {svirt} uses RKE2 as the control plane, enabling robust orchestration, consistent upgrades, and strong compliance with industry standards.
+** advanced network security with microsegmentation, traffic isolation, and mutual TLS (mTLS) support
+** secure secrets management
+** support for volume encryption
+** role-based access control (RBAC) through SUSE Rancher Prime integration
+** air-gapped upgrades for use in highly regulated and secure facilities
 
 * {svirt} UI
 +
-The {svirt} dashboard offers an intuitive, centralized interface for managing VMs, networks, storage, and snapshots. Administrators can create, clone, and migrate virtual machines without requiring deep Kubernetes knowledge, improving team productivity.
+The {svirt} user interface reduces complexity and simplifies operations.
+It offers an intuitive, centralized dashboard for managing VMs, networks, storage, and snapshots.
+Administrators can easily create, clone, and migrate virtual machines without requiring deep Kubernetes knowledge.
 
 * External Storage Compatibility
 +
-{svirt}’s CSI-based design enables seamless integration with enterprise SANs like Hitachi VSP. This allows virtual machines to boot directly from external storage, ensuring high-performance data access, centralized storage management, and advanced storage features such as snapshots, replication, and compression.
+{svirt}’s CSI-based design enables seamless integration with enterprise SANs like Hitachi VSP.
+This allows virtual machines to boot directly from external storage, ensuring high-performance data access, centralized storage management, and advanced storage features such as snapshots, replication, and compression.
+
 
 This guide is valid for {svirt} {svirt-version1} and later.
+--
+
 
 {empty} +
-
 {hitachivsp-long}::
 {hitachivsp-website}[{hitachivsp}] provides enterprise storage for backing container and virtual machine workloads.
 Supported platforms include Hitachi VSP, VSP One Block as well as VSP One SDS in Azure, AWS, and GCP public clouds.
@@ -223,20 +231,20 @@ cd csi-operator-hitachi/hspc/<version>/operator
 
 .. Create operator namespace and deploy the operator.
 +
-[source, yaml]
+[source, console]
 ----   
 kubectl apply -f hspc-operator-namespace.yaml
 kubectl apply -f hspc-operator.yaml
 ----
 
-.. Verify the deployments in hspc-operator-system
+.. Verify the deployments in hspc-operator-system.
 +
 [source, console]
 ----
 kubectl get deployment -n hspc-operator-system
 ----
 +
-image::verify-hspc-operator.png[Architecture diagram, scaledwidth="90%", align="left"]
+image::verify-hspc-operator.png[hspc operator verification, scaledwidth="100%", align="left"]
 
 
 . Deploy the HSPC instance.
@@ -255,15 +263,20 @@ spec: {}
 
 .. Create the operator namespace.
 +
-[source, yaml]
+[source, console]
 ----
 kubectl apply -f hspc_v1_hspc_vspone.yaml
 kubectl get hspc -n vspone
 ----   
 
-.. Verify hspc pods and operator controller status
+.. Verify hspc pods and operator controller status.
 +
-image::hspc-instance.png[Architecture diagram, scaledwidth="90%", align="left"]
+[source, console]
+----
+kubectl -n vspone get hspc
+----
++
+image::hspc-instance.png[hspc pods and operator verification, scaledwidth="100%", align="left"]
 
 
 . Create Secret with Hitachi credentials.
@@ -323,7 +336,12 @@ kubectl apply -f storageclass.yaml
 
 .. Verify the StorageClass.
 +
-image::validate-sc.png[Architecture diagram, scaledwidth="90%", align="left"]
+[source, console]
+----
+kubectl get sc
+----
++
+image::validate-sc.png[StorageClass verification, scaledwidth="100%", align="left"]
 
 . Create a PersistentVolumeClaim (PVC).
 
@@ -362,7 +380,7 @@ kubectl apply -f hitachi-pvc-50g.yaml
 kubectl get pvc -n vspone
 ----
 +
-image::validate-pvc.png[Architecture diagram, scaledwidth="90%", align="center"]
+image::validate-pvc.png[PVC binding verification, scaledwidth="100%", align="left"]
 
 
 . Optional Test Pod
@@ -391,21 +409,21 @@ volumes:
       claimName: hitachi-pvc-50g 
 ----
 
-.. Activate the pod.
+.. Activate the test pod.
 +
 [source, console]
 ----
 kubectl apply -f pod.yaml
 ----
 
-.. Verify the pod.
+.. Verify that the test pod is running.
 +
 [source, console]
 ----
 kubectl get pods -n vspone
 ----
 +
-image::validate-pod.png[Architecture diagram, scaledwidth="80%", align="center"]
+image::validate-pod.png[Test pod verification, scaledwidth="80%", align="center"]
 
 
 . Enable and Test Snapshots.
@@ -440,7 +458,7 @@ kubectl apply -f hitachi-snapclass.yaml
 kubectl get VolumeSnapshotClass
 ----
 +
-image::validate-vol-snapshot.png[Architecture diagram, scaledwidth="80%", align="left"]
+image::validate-vol-snapshot.png[VolumeSnapshotClass verification, scaledwidth="100%", align="left"]
 
 
 .. Create a VolumeSnapshot resource referencing the PVC and verify.
@@ -472,10 +490,12 @@ kubectl apply -f hitachi-snap-example.yaml
 kubectl -n vspone get volumesnapshot
 ----
 +
-image::verify-snapshot.png[Architecture diagram, scaledwidth="120%", align="center"]
+image::verify-snapshot.png[Volumesnapshot verification, scaledwidth="100%", align="left"]
 
 
 . Configure SUSE Virtualization CSI Settings for Snapshots.
++
+image::hspc-snapshot-mapping.png[Configure CSI settings for snapshots, scaledwidth="100%", align="left"]
 
 .. In the SUSE Virtualization UI, select __Advanced__ → __Settings__ → __csi-driver-config__ → __Edit__.
 
@@ -489,8 +509,6 @@ image::verify-snapshot.png[Architecture diagram, scaledwidth="120%", align="cent
 
 .. Save the changes.
 
-+
-image::hspc-snapshot-mapping.png[Architecture diagram, scaledwidth="100%", align="left"]
 
 . Validate with a VM in SUSE Virtualization.
 
@@ -507,15 +525,16 @@ image::hitachi-vm-running.png[Architecture diagram, scaledwidth="100%", align="l
 
 == Troubleshooting tips
 
-* If PV remains in Pending state
+If PV remains in Pending state:
 
-. check HSPC controller logs and CSI driver pods for errors.
+. Check HSPC controller logs and CSI driver pods for errors.
+
+. Make sure multipathd is enabled on all SUSE Virtualization nodes.
 
 . Use `multipath -ll` on nodes to verify paths and LUN are present.
 
 . Confirm base64-encoded credentials are correct and the Hitachi REST endpoint is reachable.
 
-. Make sure multipath is enabled on all SUSE Virtualization nodes.
 
 
 
@@ -530,7 +549,9 @@ image::hitachi-vm-running.png[Architecture diagram, scaledwidth="100%", align="l
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-This guide provided a detailed procedure for integrating Hitachi VSP Storage with SUSE Virtualization using the HSPC CSI Operator. The integration delivers enterprise-grade reliability, dynamic storage provisioning, and snapshot capabilities, enabling consistent storage services across workloads. get more information about {hspc-website}[{hspc}] 
+This guide provides a detailed procedure for integrating {hitachivsp-website}[{hitachivsp-long}] with {svirt-website}[{hspc-long}] using the {hspc-website}[{hspc-long}].
+The integration enables consistent storage services across workloads by delivering enterprise-grade reliability, dynamic storage provisioning, and snapshot capabilities.
+
 
 
 
