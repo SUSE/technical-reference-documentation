@@ -22,7 +22,7 @@
 //   This is typically a series of words (often from the document title)
 //   separated by hyphens (-).
 //   (e.g., "rancher-kubflow-deployment")
-:article-id: suse-virt-hitachi-storage
+:article-id: suse-virt-hitachivsp-storage
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -38,7 +38,7 @@
 //   :rev1-description: Original version
 // Set docdate to the most recent revision.
 //-
-:rev1-date: 2026-01-31
+:rev1-date: 2026-01-23
 :rev1-description: Initial publication
 :docdate: {rev1-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -80,6 +80,7 @@
 :svirt-website: https://www.suse.com/products/rancher/virtualization/
 :svirt-docs-root: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/
 :svirt-docs: {svirt-docs-root}introduction/overview.html
+:svirt-docs-ha: {svirt-docs-root}introduction/deploy-ha-cluster.html
 :svirt-docs-iso: {svirt-docs-root}installation-setup/methods/iso-install.html
 :svirt-docs-multipathd: {svirt-docs-root}storage/csidriver.html#_2_multipath_support
 :svirt-docs-csi: {svirt-docs-root}storage/csidriver.html
@@ -110,6 +111,7 @@
 :hspc-provider: {hitachivsp-provider}
 :hspc: HSPC
 :hspc-long: Hitachi Storage Plug-in for Containers
+:hspc-version1: v3.16.1
 :hspc-website: https://www.hitachivantara.com/en-us/pdf/datasheet/storage-plug-in-for-containers-datasheet.pdf
 
 
@@ -223,11 +225,14 @@
 // -
 :fc-long: Fibre Channel
 :fc: FC
-:fc-website: https://en.wikipedia.org/wiki/Fibre_Channel
+:fc-wiki: https://en.wikipedia.org/wiki/Fibre_Channel
 
 :iscsi-long: Internet Small Computer Systems Interface
 :iscsi: iSCSI
-:iscsi-website: https://en.wikipedia.org/wiki/ISCSI
+:iscsi-wiki: https://en.wikipedia.org/wiki/ISCSI
 
+:suse-terms-root: https://documentation.suse.com/cloudnative/storage/latest/en/
+:suse-terms-storageclass: {suse-terms-root}introduction/terminology.html#_storageclass
+:suse-terms-pvc: {suse-terms-root}introduction/terminology.html#_persistentvolumeclaim
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

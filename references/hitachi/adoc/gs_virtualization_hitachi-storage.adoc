@@ -27,7 +27,7 @@ This document provides technical guidance for integrating {svirt} and {hitachivs
 === Scope
 
 This guide provides detailed instructions for integrating {hitachivsp-long} with {svirt} clusters.
-It includes steps for configuring multipath I/O, installing the {hspc-long}, creating Kubernetes resources (secrets, StorageClass, PVC, SnapshotClass), and validating the deployment using {svirt} UI and CLI.
+It includes steps for configuring multipath I/O, installing the {hspc-long}, creating Kubernetes resources (Secrets, StorageClass, PVC, SnapshotClass), and validating the deployment using {svirt} UI and CLI.
 
 
 
@@ -35,19 +35,19 @@ It includes steps for configuring multipath I/O, installing the {hspc-long}, cre
 
 This guide is intended for platform teams, systems and storage administrators, and DevOps engineers supporting modern virtualization, featuring {svirt} and {hitachivsp-long}.
 
-The reader should have basic familiarity with Linux, Kubernetes, storage networking protocols ({iscsi-website}[{iscsi}] or {fc-website}[{fc}]), {svirt}, and {hitachivsp-long}.
+The reader should have basic familiarity with Linux, Kubernetes, storage networking protocols ({iscsi-wiki}[{iscsi}] or {fc-wiki}[{fc}]), {svirt}, and {hitachivsp-long}.
 
 
 
 === Acknowledgments
 
-The authors acknowledge contributions from {hitachivsp-provider} engineering teams for validation and joint testing of the {hspc-long} integration with {svirt}.
+The author wishes to acknowledge contributions from {hitachivsp-provider} engineering teams for validation and joint testing of the {hspc-long} integration with {svirt}.
 
 
 
 == Overview
 
-The integrated solution architecture brings together {svirt} as the cloud native virtualization with {hitachivsp-long} as the enterprise storage back-end.
+In this guide, you learn how to enable {hitachivsp-long} to provide enterprise storage backing for virtual machines and containers in your {svirt} environment.
 
 
 // Architecture diagram
@@ -100,11 +100,11 @@ Administrators can easily create, clone, and migrate virtual machines without re
 
 * External Storage Compatibility
 +
-{svirt}’s {svirt-docs-csi}[CSI-based design] enables seamless integration with enterprise SANs like Hitachi VSP.
-This allows virtual machines to boot directly from external storage, ensuring high-performance data access, centralized storage management, and advanced storage features such as snapshots, replication, and compression.
+{svirt} enables seamless integration with enterprise SANs like Hitachi VSP through {svirt-docs-csi}[container storage interface (CSI)] drivers.
+Third-party storage integrations empower enterprises with choice, supporting centralized storage administration and a tailored storage experience for meeting business and technical requirements, including scaling, availability, performance, and data protection.
 
 
-This guide is valid for {svirt} {svirt-version1} and later.
+This guide references {svirt} {svirt-version1} and later.
 --
 
 
@@ -116,17 +116,15 @@ Supported platforms include Hitachi VSP, VSP One Block as well as VSP One SDS in
 
 {hspc-long} ({hspc})::
 {hspc-website}[{hspc}] is a {svirt-docs-csi}[CSI driver] that provides integration between {hitachivsp} and {svirt}, enabling you to create and utilize Hitachi storage volumes for stateful container applications and virtual machines.  Installation, configuration, and lifecycle management of the CSI driver is handled by the {hspc} CSI Operator.
+//
++
+This guide references {hspc} {hspc-version1} and later.
 
 
 
 {empty} +
-In general, the integration works as follows:
+After implementing this integration in your {svirt} environment, you will be able to deploy virtual machines and containers backed by {hitachivsp} storage.
 
-. {hspc} receives a PersistentVolumeClaim (PVC) request.
-
-. {hspc} calls the Hitachi REST/API to provision a logical volume on the configured pool.
-
-. {hitachivsp} array exposes the LUN via iSCSI or FC and attaches the volume to the {svirt} node where the workload (container pod or VM) runs.
 
 
 
@@ -135,13 +133,13 @@ In general, the integration works as follows:
 In this section you prepare your environment to use {hitachivsp} storage with {svirt}.
 
 Although you can deploy {svirt} in a single-node configuration, this is not recommended for production-grade environments where scalability, performance, and availability are important considerations.
-Production environments should feature at least three controller/worker nodes and a dedicated storage network.
+Production environments should feature {svirt-docs-ha}[at least three controller/worker nodes] and a dedicated storage network.
 
 
 . If you have not already done so, install {svirt}.
 //
 +
-You can access the {svirt} {svirt-docs}[documentation] for {svirt-docs-iso}[step-by-step installation guidance], hardware and network requirements, and further technical details.
+You can access the {svirt-docs}[{svirt} documentation] for step-by-step installation guidance, hardware and network requirements, and further technical details.
 +
 [TIP]
 ====
@@ -152,7 +150,7 @@ This guide is developed with {svirt} {svirt-version1}, but you should always use
 . Configure multipathd on all SUSE Virtualization worker nodes.
 //
 +
-The {svirt-docs-multipathd}[multipathd] service provides redundant I/O paths (iSCSI or Fibre Channel) from {svirt} worker nodes to {hitachivsp} to ensure high availability and fail-over.
+The {svirt-docs-multipathd}[multipathd] service provides redundant I/O paths ({iscsi-wiki}[iSCSI] or {fc-wiki}[Fibre Channel]) from {svirt} worker nodes to {hitachivsp} to ensure high availability and fail-over.
 To configure and start multipathd, you must log into each {svirt} node and perform the following operations on the command line:
 
 .. Enable and start multipathd.
@@ -208,9 +206,7 @@ systemctl restart multipathd
 
 == Implement the integration
 
-
-
-Integration of {hitachivsp} involves deployment of the {hspc} driver into your {svirt} environment.
+Integration of {hitachivsp} involves deployment of the {hspc} CSI driver into your {svirt} environment.
 This process is described in the following sections.
 
 [NOTE]
@@ -223,13 +219,15 @@ You can perform the steps described here on any of the {svirt} nodes.
 
 
 
-. Clone operator repository and change directory.
+. Clone the {hspc} CSI Operator repository and change directory.
 +
 [source, console]
 ----
 git clone https://github.com/hitachi-vantara/csi-operator-hitachi
 cd csi-operator-hitachi/hspc/<version>/operator
-----   
+----
++
+Be sure to replace `<version>` in the above command with the desired, available version.
 
 . Create the operator namespace.
 +
@@ -245,7 +243,7 @@ kubectl apply -f hspc-operator-namespace.yaml
 kubectl apply -f hspc-operator.yaml
 ----
 
-. Verify the operator deployment.
+. Verify deployment of the operator.
 +
 [source, console]
 ----
@@ -260,7 +258,10 @@ image::verify-hspc-operator.png[hspc operator verification, scaledwidth="100%", 
 
 Deploy the {hspc} pods and operator controller.
 
-. Customize the file, `hspc_v1_hspc_vspone.yaml`, with your namespace and settings.
+. Customize the file, `hspc_v1_hspc.yaml`, with your namespace and settings.
+//
++
+For example, you can set the namespace to `vspone` as follows:
 +
 [source, yaml]
 ----
@@ -276,7 +277,7 @@ spec: {}
 +
 [source, console]
 ----
-kubectl apply -f hspc_v1_hspc_vspone.yaml
+kubectl apply -f hspc_v1_hspc.yaml
 ----   
 
 . Verify {hspc} pods and operator controller status.
@@ -292,12 +293,11 @@ image::hspc-instance.png[hspc pods and operator verification, scaledwidth="100%"
 
 
 
-=== Create a Secret with {hitachivsp} credentials
+=== Define a Kubernetes Secret with {hitachivsp} credentials
 
-Provide your {hitachivsp} credentials to the {svirt} environment as follows.
+For authentication, you need to provide your {hitachivsp} credentials as a Kubernetes Secret.
 
-
-. Encode credentials to base64 and define the secret in `secret-vsp-112.yaml`.
+. Encode credentials to base64 and define the Secret in `secret-vsp-112.yaml`.
 +
 [source, yaml]
 ----
@@ -313,7 +313,7 @@ data:
   password: <base64-password>
 ----
 
-. Create the secret.
+. Create the Secret.
 +
 [source, console]
 ----
@@ -324,8 +324,7 @@ kubectl apply -f secret-vsp-112.yaml
 
 === Create the StorageClass
 
-
-This provides a {hspc} CSI StorageClass that can be used for PersistentVolumeClaims.
+This provides a {hspc} CSI {suse-terms-storageclass}[StorageClass] that can be used for {suse-terms-pvc}[PersistentVolumeClaims].
 
 . Modify the StorageClass YAML.
 +
@@ -363,7 +362,7 @@ image::validate-sc.png[StorageClass verification, scaledwidth="100%", align="lef
 
 === Create a PersistentVolumeClaim (PVC)
 
-. Create `hitachi-pvc-50g.yaml`, specifying the storage capacity such as 50GiB, as follows:
+. Create the file, `hitachi-pvc-50g.yaml` to specify the desired storage capacity, such as 50GiB, as follows:
 +
 [source, yaml]
 ----
@@ -381,14 +380,14 @@ spec:
   storageClassName: vsp-5500-112-sc-iscsi
 ----
 
-.. Activate the PVC.
+. Activate the PVC.
 +
 [source, console]
 ----
 kubectl apply -f hitachi-pvc-50g.yaml
 ----
 
-.. Verify the PVC binding.
+. Verify the PVC binding.
 +
 [source, console]
 ----
@@ -408,7 +407,7 @@ This test only verifies PVC provisioning and I/O pathing.
 In {svirt} volumes are attached directly to virtual machines.
 ====
 
-. Create 'pod.yaml' to validate mount and I/O.
+. Create the file, `pod.yaml`, to validate mount and I/O.
 +
 [source, yaml]
 ----
@@ -454,7 +453,7 @@ image::validate-pod.png[Test pod verification, scaledwidth="80%", align="center"
 In this section, you enable snapshots to be stored on {hitachivsp} storage.
 
 
-. Define a VolumeSnapshotClass in `volumesnapshotclass-hspc.yaml`.
+. Define a VolumeSnapshotClass in the file, `volumesnapshotclass-hspc.yaml`.
 +
 [source, yaml]
 ----
@@ -487,7 +486,7 @@ kubectl get VolumeSnapshotClass
 image::validate-vol-snapshot.png[VolumeSnapshotClass verification, scaledwidth="100%", align="left"]
 
 
-. Define a VolumeSnapshot resource referencing the PVC.
+. Define a VolumeSnapshot resource referencing the PVC in the file, `hitachi-snap-example.yaml`.
 +
 [source, yaml]
 ----
@@ -575,7 +574,7 @@ If PV remains in Pending state:
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-This guide provides a detailed procedure for integrating {hitachivsp-website}[{hitachivsp-long}] with {svirt-website}[{hspc-long}] using the {hspc-website}[{hspc-long}].
+This guide demonstrates the process for integrating {hitachivsp-website}[{hitachivsp-long}] with {svirt-website}[{svirt}] using the {hspc-website}[{hspc-long}].
 The integration enables consistent storage services across workloads by delivering enterprise-grade reliability, dynamic storage provisioning, and snapshot capabilities.
 
 
