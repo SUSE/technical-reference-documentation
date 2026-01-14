@@ -1,6 +1,5 @@
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // SUSE Technical Reference Documentation
-// Getting Started Guide
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 // DOCUMENT ATTRIBUTES AND VARIABLES
@@ -11,8 +10,6 @@
 // 3. Update the docinfo.xml file, if needed.
 // 4. Update DC file (at a minimum, deactivate DRAFT mode)
 //
-// For further guidance, see
-//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
@@ -47,40 +44,62 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TECHNICAL COMPONENTS
 //   Identify the technical components featured in the guide.
-//   Use variables to store information about the solution components.
+//   Use variables to store information about the solution components,
+//   such as full product names, versions, websites, documentation
+//   URLs, and so on.
 //   This makes it much easier to update the document for future
 //   version upgrades, URL changes, etc.
 //
-//   Variable names follow a simple pattern:
-//   - compX[-MODIFIER]
+//   Each component can have a series of variables that follow a
+//   simple pattern:
+//     compX[-MODIFIER]
 //   where:
-//   - X is an integer starting from 1 for the primary component,
-//     2 for a secondary component, and so on.
-//   - -MODIFIER is text that identifies the stored information.
-//   Some -MODIFIER values include:
-//   - EMPTY: If the modifier is missing, the variable contains
-//     the name of the component
-//     E.g.: 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime',
-//           'Kubeflow', 'Veeam Kasten', 'SQL Server'
-//     NOTE: Be sure to use approved product names.
-//   - -provider: Name of company or project providing the component
-//                (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
-//   - -version1: A relevant product version (e.g., '15 SP6', '3.1.2')
-//                Additional product versions must be listed separately
-//                (e.g., '-version2: '2.9.5')
-//   - -website: Product website (e.g., https://www.suse.com/products/server/)
-//   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//     compX is a short name for the component.
+//       You can use something generic, such as:
+//       'comp3', 'os', 'server', 'gpu', and so on.
+//       Or, you can use a more specific variable name, such as:
+//       'sles', 'rancher', 'portworx', 'powerflex', etc.
+//     -MODIFIER is text that identifies the stored information.
+//       Some MODIFIER values include:
+//         - provider: Name of company or project providing the component
+//             (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//         - long: The full name of the product.
+//             (e.g., 'SUSE Rancher Prime', 'Portworx Enterprise by Pure Storage')
+//         - version1: The relevant product version referenced in
+//             the document (e.g., '15 SP7', '3.2.4', 'v1.7.1')
+//             If additional product versions are called out in the
+//             document, record them in separate variables
+//             (e.g., '-version2', '-version3')
+//             NOTE: Documents are often created around a single version
+//                   with sufficient certainty that certain later versions
+//                   will work.
+//                   This can be called out with text like,
+//                   "{comp1-version1} and later."
+//         - website: Product website (e.g., https://www.suse.com/products/server/)
+//         - docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//             It can also be useful to form variables for specific sections in
+//             a component's documentation.
+//             For example, you could link to the section for creating a VM
+//             in SUSE Virtualization with:
+//             :svirt-docs-createvm: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/virtual-machines/create-vm.html
 //
-//   You can create additional modifiers as needed.
+//   You can create your own modifiers to fit your needs.
 //
+// IMPORTANT: The 'comp1', 'comp2' examples provided here are also
+//            used in the docinfo file.
+//            If you use different variable names or additional
+//            components in your solution, you will need to edit
+//            the docinfo file to reflect this.
 // -
 :comp1-provider: SUSE
-:comp1: component 1 name
+:comp1-long: official SUSE product name (e.g., SUSE Rancher Prime)
+:comp1: official SUSE product short name (e.g., SUSE Rancher)
 :comp1-version1: component 1 version
 :comp1-website: component 1 product website URL
 :comp1-docs: component 1 product documentation URL
 
 :comp2-provider: component 2 provider name
+:comp2-long: component 2 official product name
 :comp2: component 2 name
 :comp2-version1: component 2 relevant versions
 :comp2-website: component  product website URL
@@ -92,32 +111,35 @@
 // DOCUMENT TITLES AND DESCRIPTIONS
 //   Describe the guide by its purpose, use case, value.
 //
-// title - (<75 characters) concisely identify the guide.
-//         (e.g.: "Kubeflow with SUSE Rancher Prime")
-// subititle - (<75 characters) expound on the title.
-//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with SUSE Rancher Prime")
-// usecase: (<55 characters) key words or phrases that identify the
-//          use case of this guide
+// title: (<75 characters) Concisely identify the subject of the document.
+//         (e.g.: "Deploying Kubeflow with SUSE Rancher Prime")
+// subititle: (<75 characters) Expound on the subject of the document.
+//             (e.g., "Validated solution design for Telco-native AI")
+// usecase: (<55 characters) Identify the use case or purpose of the
+//          documented solution.
 //          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
 //                 "Kubernetes-native object storage")
-// description: (<150 characters) brief description of what this guide
-//              provides (e.g.: "Deploy Kubeflow with SUSE Rancher Primer")
-// description-social: (<55 characters) condensed description suitable for
-//                     social media (e.g.: "Kubeflow with SUSE Rancher")
-// executive-summary: (<300 characters) brief summary of the guide that
-//                    appears near the beginning of the rendered document
-//                    (e.g.: "Kubeflow simplifies deployment of machine
-//                            learning (ML) workflows on Kubernetes clusters.
-//                            This document provides step-by-step guidance
-//                            for deploying Kubeflow on an RKE2 cluster with
-//                            SUSE Rancher Prime."
+// description: (<150 characters) Give a brief description of what this
+//              document is about.
+// description-social: (<55 characters) Condense the description to be
+//                     suitable for social media.
+// executive-summary: (<300 characters) Provide a brief summary of the
+//                    the document, typically with business case and
+//                    technical components.
+//                    This text appears near the beginning of the rendered
+//                    document.
 //
-// NOTE: You can reference component variables in titles.
-//       E.g., If you have the component variables:
-//             :comp1: SUSE Linux Enterprise Server
-//             :comp2: JupyterLab
-//             you can reference them to define new variables, like:
-//             :title: Simplify deployment of {comp2} with {comp1}
+// TIP: You can reference defined variables when defining new variables.
+//      For example:
+//        Say that you have defined above these component variables:
+//          :comp1-long : SUSE Linux Enterprise Server
+//          :comp2-long: JupyterLab
+//        Then, you could reference them when you define the title
+//        variable like this:
+//          :title: Simplify deployment of {comp2-long} with {comp1-long}
+//        When rendered, the variables will be expanded and the title
+//        will appear as:
+//          "Simplify deployment of JupyterLab with SUSE Linux Enterprise Server"
 // -
 :title: (<75 characters) Your Guide Title
 
@@ -140,19 +162,21 @@
 //
 //   Tasks are used to for filtering documents in the
 //     SUSE Documentation portal.
+//   Typically, no more than three tasks defined per
+//     document.
 //
-//   A task must be one of these supported values:
-//    Administration, Artificial Intelligence, Auditing, Authentication,
-//    Automation, Backup &amp; Recovery, Certification, Cloud,
-//    Clustering, Compliance, Configuration, Containerization,
-//    Container Management, Data Intelligence, Deployment, Design,
-//    Encryption, High Availability, Image Building, Implementation,
-//    Installation, Integration, Maintenance, Migration, Monitoring,
-//    Packaging, Security, Storage, Subscription Management,
-//    Troubleshooting, Upgrade &amp; Update, Virtualization,
-//    Vulnerability, Web
+//   Tasks must be one of these supported values:
+//     Administration, Artificial Intelligence, Auditing, Authentication,
+//     Automation, Backup &amp; Recovery, Certification, Cloud,
+//     Clustering, Compliance, Configuration, Containerization,
+//     Container Management, Data Intelligence, Deployment, Design,
+//     Encryption, High Availability, Image Building, Implementation,
+//     Installation, Integration, Maintenance, Migration, Monitoring,
+//     Packaging, Security, Storage, Subscription Management,
+//     Troubleshooting, Upgrade &amp; Update, Virtualization,
+//     Vulnerability, Web
 //
-//  E.g.,
+//   For example:
 //    :metatask1: Configuration
 //    :metatask2: Installation
 //    :metatask3: Deployment
@@ -166,12 +190,14 @@
 // CONTRIBUTORS
 //   Specify information about authors, editors, and other
 //   contributors here.
-//   Follow the pattern to provide fist name, surname, job title,
+//
+//   Follow the pattern below to provide fist name, surname, job title,
 //   and organization name for each contributor.
-//   NOTE: Other contributors and editors are typically listed in
-//         an Acknowledgements section.
-//         To list additional authors or contributors on the cover page,
-//         you must edit the docinfo.xml file as well.
+//
+//   TIP: Other contributors and editors are typically listed in
+//        an Acknowledgments section.
+//        To list additional authors or contributors on the cover page,
+//        you must edit the docinfo file, too.
 // -
 :author1-firstname: first (given) name
 :author1-surname: surname
