@@ -37,9 +37,11 @@ include::./rc_suse-telco_supermicro-intel_ai-native-vars.adoc[]
 // Include an approved SUSE | Partner logo lock-up if relevant/possible
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 Telecommunications operators are transforming their networks to support 5G-Advanced, ORAN, massive MEC scale-out, and AI-driven automation. These transformations demand infrastructure that simultaneously delivers extreme packet-processing performance, deterministic low latency, integrated AI acceleration, and dramatically lower power and space footprints.
 
-This reference architecture documents the successful validation of the SUSE Telco Cloud stack, built on SUSE Linux Micro and SUSE Rancher Prime, running on Supermicro systems powered by Intel Xeon 6 SoC processors, proving that a single-socket, CPU-only platform can replace legacy accelerator-heavy designs.
+This reference configuration documents the successful validation of the {stelco-long} stack, featuring {rancher-long}, running on a Supermicro {smss} powered by Intel® Xeon® 6 SoC processors, proving that a single-socket, CPU-only platform can replace legacy accelerator-heavy designs.
+
 
 
 === Scope
@@ -49,21 +51,20 @@ This reference architecture documents the successful validation of the SUSE Telc
 // E.g., "This document ..."
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document describes a validated reference architecture for deploying SUSE Telco Cloud on Supermicro telco edge systems powered by Intel Xeon 6 SoC processors. It covers the solution architecture, hardware and software components, deployment methodology, and performance validation for CPU-only, AI-ready telco edge and vRAN use cases.
+This document details a validated reference configuration for deploying {stelco-long} on Supermicro {smss} systems powered by {cpu-long} processors.
+It covers the solution architecture, hardware and software components, deployment methodology, and performance validation for CPU-only, AI-ready telco edge and vRAN use cases.
 
 
 === Audience
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify for whom this document is intended, perhaps with:
-//   - topics of interests (e.g., machine learning, security, etc.)
-//   - job roles (e.g., developer, administrator, platform architect, etc.)
-//   - required skills
-// E.g., "The intended audience for this guide includes ..."
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-This document is intended for telecommunications network architects, infrastructure and platform engineers, and operations teams responsible for designing, deploying, and managing 5G and AI-enabled telco edge infrastructure. It is also relevant for technical decision-makers evaluating platform modernization strategies, including IT and network leadership seeking to reduce infrastructure complexity, power consumption, and total cost of ownership.
+This reference configuration is intended for:
 
-In addition, this reference architecture is useful for system integrators, solution architects, and partners involved in designing or validating telco edge solutions based on SUSE Telco Cloud, Intel Xeon 6 SoC platforms, and Supermicro telco-optimized hardware.
+* telecommunications network architects, infrastructure and platform engineers, and operations teams responsible for designing, deploying, and managing 5G and AI-enabled telco edge infrastructure
+
+* technical decision-makers evaluating platform modernization strategies, including IT and network leadership seeking to reduce infrastructure complexity, power consumption, and total cost of ownership
+
+* system integrators, solution architects, and other partner organizations involved in designing or validating telco edge solutions
+
 
 === Acknowledgments
 
@@ -84,71 +85,108 @@ The following individuals contributed to the creation of this document:
 
 
 
-== Business aspect
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide high-level statement of the business value and challenges addressed.
-// Expand on these in the following sections.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+== Market challenge
 
-Add content here
+Telecommunications operators today face an *unprecedented convergence of pressures* that legacy
+infrastructure was never designed to handle.
+Traffic volumes are exploding, driven by nationwide 5G rollout, massive IoT deployments, ultra-high-definition video streaming, private 5G networks, and enterprise edge services.
+At the same time, service-level agreements have become far more stringent with *sub-millisecond end-to-end latency and microsecond-level jitter* now mandatory for ORAN fronthaul/midhaul transport, Ultra-Reliable Low-Latency Communication (URLLC), industrial automation, and Extended Reality (XR) applications.
 
+Compounding this is the *rapid integration of artificial intelligence* into every layer of the network.
+Modern RAN and core functions increasingly rely on embedded machine-learning models for dynamic beamforming, traffic prediction, interference management, anomaly detection, and closed-loop automation through RIC platforms.
+These AI-driven capabilities demand significant inferencing throughput directly at the edge, yet most existing deployments still depend on fixed-function RAN infrastructure defined before the AI boom.
 
-== Business problem
+*Power consumption, cooling capacity, and physical space* have emerged as hard limits at thousands of edge and far-edge sites.
+Rising energy prices and sustainability mandates are pushing OPEX ever higher, while the continued reliance on specialized appliances, external accelerators, and vendor-locked platforms *dramatically inflates both CAPEX and lifecycle management overhead*.
+Validation cycles lengthen, software updates become risky, and multi-vendor interoperability remains a constant friction point.
 
-Telecommunications operators today face an unprecedented convergence of pressures that legacy
-infrastructure was never designed to handle. Traffic volumes are exploding, driven by nationwide 5G rollout, massive IoT deployments, ultra-high-definition video streaming, private 5G networks, and enterprise edge services. At the same time, service-level agreements have become far more stringent with sub-millisecond end-to-end latency and microsecond-level jitter now mandatory for ORAN fronthaul/midhaul transport, Ultra-Reliable Low-Latency Communication (URLLC), industrial automation, and Extended Reality (XR) applications.
-
-Compounding this is the rapid integration of artificial intelligence into every layer of the network. Modern RAN and core functions increasingly rely on embedded machine-learning models for dynamic beamforming, traffic prediction, interference management, anomaly detection, and closed-loop automation through RIC platforms. These AI-driven capabilities demand significant inferencing throughput directly at the edge, yet most existing deployments still depend on fixed-function RAN infrastructure defined before the AI boom.
-
-Power consumption, cooling capacity, and physical space have emerged as hard limits at thousands of edge and far-edge sites. Rising energy prices and sustainability mandates are pushing OPEX ever higher, while the continued reliance on specialized appliances, external accelerators, and vendor-locked platforms dramatically inflates both CAPEX and lifecycle management overhead. Validation cycles lengthen, software updates become risky, and multi-vendor interoperability remains a constant friction point.
-
-At the same time, regulators and enterprises are imposing stricter requirements for data sovereignty, hardware-rooted confidential computing, and verifiable platform integrity. Operators must modernize at speed while simultaneously reducing cost, power, complexity, and risk - an equation that traditional architectures can no longer solve.
+At the same time, regulators and enterprises are imposing *stricter requirements for data sovereignty*, hardware-rooted confidential computing, and verifiable platform integrity.
+Operators must modernize at speed while simultaneously reducing cost, power, complexity, and risk - an equation that traditional architectures can no longer solve.
 
 
 
-== The Solution
+== Solution
 
-The combination of Intel Xeon 6 SoC based telco-optimized systems by Supermicro and the SUSE Telco Cloud stack directly addresses every dimension of these challenges with a single, fully integrated platform that is ready for massive scale-out today.
+The combination of {cpu} based telco-optimized systems by Supermicro and the {stelco} stack directly addresses every dimension of these challenges with a *single, fully integrated platform* that is *ready for massive scale-out* today.
 
-At the foundation sits the Intel Xeon 6 SoC, a purpose-built processor family that delivers up to 72 Performance-cores, enormous per-core caches for deterministic packet processing, and fully integrated Intel vRAN Boost.Native Intel AMX matrix extensions provide massive AI inferencing throughput without external accelerators, while on-die Intel QAT handles compression and cryptography at line rate. With up to 128 PCIe Gen5 lanes and CXL 2.0 readiness, the platform offers unmatched I/O flexibility and future-proof expansion.
+At the foundation sits the {cpu}, a purpose-built processor family that delivers up to 72 Performance-cores, enormous per-core caches for deterministic packet processing, and fully integrated Intel vRAN Boost.
+Native Intel AMX matrix extensions provide massive AI inferencing throughput without external accelerators, while on-die Intel QAT handles compression and cryptography at line rate.
+With up to 128 PCIe Gen5 lanes and CXL 2.0 readiness, the platform offers unmatched I/O flexibility and future-proof expansion.
 
-Supermicro’s 1U link:{sys112D-website}[`{sys112D}`] and 2U {sys212D-website}[`{sys212D}`] systems turn these silicon advantages into deployable reality. Outdoor-rated and air-cooled compact designs with redundant Titanium power supplies fit perfectly into constrained edge sites. The integrated E830 NIC delivers nanosecond-accurate Precision Time Protocol (PTP) and SyncE synchronization essential for vRAN and ORAN deployments. The 1U system is already an official {oran-doc}[{oran}].
+The 1U {smss112-website}[{smss112-long}] and 2U {smss212-website}[{smss212-long}] {smss} systems turn these silicon advantages into deployable reality.
+Outdoor-rated and air-cooled compact designs with redundant Titanium power supplies fit perfectly into constrained edge sites.
+The integrated E830 NIC delivers nanosecond-accurate Precision Time Protocol (PTP) and SyncE synchronization essential for vRAN and ORAN deployments.
+The 1U system is already an {oran-doc}[{oran}].
 
-SUSE completes the solution with SUSE Telco Cloud - a hardened, modular, cloud-native software stack specifically designed to meet the strict demands of the telecommunications industry, enabling operators to host both VNFs and CNFs on the same platform. Built on {sle-website}[`{sle}`], {rke2-website}[`{rke2}`], and {rancher-website}[`{suserancherprime}`], the platform provides a secure, carrier-grade foundation for 5G, fixed access, OSS/BSS, and edge infrastructure. It’s built entirely on open source and has been rigorously validated to deliver reliable performance at scale. Its AI-ready, disaggregated architecture supports zero-touch automation and the flexibility to integrate best-of-breed network functions efficiently and sustainably.
+SUSE completes the solution with {stelco}, the hardened, modular, cloud-native software stack specifically designed to meet the strict demands of the telecommunications industry by enabling operators to host both VNFs and CNFs on the same platform.
+Built on {slm-website}[{slm}], {rke2-website}[{rke2}], and {rancher-website}[{rancher}], the platform provides a secure, carrier-grade foundation for 5G, fixed access, OSS/BSS, and edge infrastructure.
+{stelco} is built entirely on open source and has been rigorously validated to deliver reliable performance at scale.
+Its AI-ready, disaggregated architecture supports zero-touch automation and the flexibility to integrate best-of-breed network functions efficiently and sustainably.
 
-SUSE Telco Cloud offers automated lifecycle management for infrastructure components, support for multi-cloud and edge deployments with consistent operations, and enhanced observability through integrated monitoring tools. Furthermore, it ensures security at scale, from OS hardening to container scanning, while its foundation in open standards and ecosystem support effectively prevents vendor lock-in. A key differentiator is SUSE’s robust edge computing capabilities, as SUSE Telco Cloud is optimized for constrained environments, enabling telcos to deploy CNFs and VNFs in remote or decentralized locations with minimal overhead - a flexibility essential for new 5G-powered services like smart city infrastructure and industrial IoT. The solution also facilitates zero-touch provisioning and seamless orchestration at the edge, which dramatically reduces operational complexity and deployment times. Ultimately, with its modular, open architecture, SUSE Telco Cloud allows operators to unlock efficiencies in the core, deploy innovative services at the edge, and adapt rapidly to future market demands.
+{stelco} offers automated lifecycle management for infrastructure components, support for multi-cloud and edge deployments with consistent operations, and enhanced observability through integrated monitoring tools.
+Furthermore, it ensures security at scale, from OS hardening to container scanning, while its foundation in open standards and ecosystem support effectively prevents vendor lock-in.
+A key differentiator is SUSE’s robust edge computing capabilities, as {stelco} is optimized for constrained environments, enabling telcos to deploy CNFs and VNFs in remote or decentralized locations with minimal overhead - a flexibility essential for new 5G-powered services like smart city infrastructure and industrial IoT.
+The solution also facilitates zero-touch provisioning and seamless orchestration at the edge, which dramatically reduces operational complexity and deployment times.
+Ultimately, with its modular, open architecture, {stelco} allows operators to unlock efficiencies in the core, deploy innovative services at the edge, and adapt rapidly to future market demands.
 
-By uniting Intel’s fully-integrated vRAN Boost and AI acceleration, Supermicro’s rugged edge-system engineering and global supply-chain excellence, and SUSE’s zero-touch, GitOps-driven telco cloud stack, this solution delivers a true single-box, CPU-only telco cloud node that simultaneously replaces the legacy BBU, external L1 accelerator (FPGA/in-line card), SmartNIC, timing card, and discrete AI inference appliances. Under a 95% CPU load on the isolated cores, the platform successfully achieved a measure of latency of sub 5µs. This achievement demonstrates that the consolidated, CPU-only architecture powered by Intel Xeon 6 SoC and orchestrated by SUSE Telco Cloud can deliver the guaranteed, deterministic, low-latency performance required for the most demanding 5G and ORAN use cases.
+By uniting Intel’s fully-integrated vRAN Boost and AI acceleration, Supermicro’s rugged edge-system engineering and global supply-chain excellence, and SUSE’s zero-touch, GitOps-driven telco cloud stack, this solution delivers a *true single-box, CPU-only telco cloud node* that simultaneously replaces the legacy BBU, external L1 accelerator (FPGA/in-line card), SmartNIC, timing card, and discrete AI inference appliances.
+Under a 95% CPU load on the isolated cores, the platform *successfully achieves a measure of latency of sub 5 µs*.
+This achievement demonstrates that this consolidated, CPU-only architecture in a single, outdoor-rated system can deliver the guaranteed, deterministic, low-latency performance required for the most demanding 5G and ORAN use cases that previously had to be spread across multiple devices.
 
-A single SYS-112D-42C-FN8P powered by Intel Xeon 6 SoC and running SUSE Telco Cloud now consolidates everything, previously spread across several separate devices, into one compact, outdoor-rated 1U system.
-Operators realize dramatic gains:
+With this, operators can realize {ref-vran-perf}[dramatic gains]:
 
- *  Up to 2.4x higher increase in RAN capacity vs previous generation per node1
+* Up to 2.4x higher increase in RAN capacity vs previous generation per node1
 
- *  Up to 70% lower power consumption, better performance per watt vs previous generation per site2
+* Up to 70% lower power consumption, better performance per watt vs previous generation per site2
 
- *  Up to 3.2x AI RAN inference performance per core[NP1]  gain vs previous generation3
-
-
-Supply-chain risk is minimized through Supermicro’s Tier-1 scale and regional manufacturing, while SUSE Telco Cloud enables fully automated, reproducible deployments across tens of thousands of sites with zero touch provisioning. The entire platform is open, disaggregated, and future-proof, supporting everything from today’s RAN deployments to tomorrow’s AI-native 6G edge networks.
+* Up to 3.2x AI RAN inference performance per core[NP1]  gain vs previous generation3
 
 
-== Architecture Concepts and Diagrams
+Moreover, the supply-chain risk is minimized through Supermicro’s Tier-1 scale and regional manufacturing, while {stelco} enables fully-automated, reproducible deployments across tens of thousands of sites with zero touch provisioning.
+The entire platform is open, disaggregated, and future-proof, supporting everything from today’s RAN deployments to tomorrow’s AI-native 6G edge networks.
 
-`Intel Xeon 6 SoC overview`:
 
-image::media/src/png/intelxeon6SoCoverview1.png[align="center",width=90%]
 
-image::media/src/png/IntelXeon6SoCoverview-2.png[align="center",width=90%]
+== Architecture concepts and diagrams
 
-`Supermicro SYS-112D-42C-FN8P front/back view`:
+=== {cpu-long} overview
 
-image::media/src/png/Supermicro-system-front-view.png[align="center",width=90%]
+The {cpu} with Performance-cores drives up throughput for network and edge use cases with high per-core performance and edge-optimized accelerators in a power-efficient architecture.
+{cpu} features are detailed in the figure below.
 
-image::media/src/png/Supermicrosystembackview.png[align="center",width=90%]
-For more information, see https://www.supermicro.com/de/products/system/iot/1u/sys-112d-42c-fn8p[SYS-112D-42C-FN8P]
+image::intelxeon6soc-overview-1.png[title="{cpu} features", {cpu} features, align="center",width=90%]
 
-`SUSE Telco Cloud Architecture`:
+By leveraging {cpu} processors, enterprises and network operators can scale up performance for AI and analytics workloads at the edge.
+Performance expectations are detailed in the following figure.
+
+image::intelxeon6soc-overview-2.png[title="{cpu} performance boosts", {cpu} performance boosts, align="center",width=90%]
+
+
+=== Supermicro {smss}
+
+The 1U {smss-long} is designed for telco edge applications.
+Its key features include:
+
+* {cpu}
+* Up to 4 DIMMs, supporting up to 512 GB DDR5-6400 RAM
+* Up to 2 PCIe 5.0 x16 FHHL slots
+* 8 SFP28 25 GbE LAN ports and 1 RJ45 GbE LAN port
+* 2 SMA for 1PPS (1 Input 1 Output)
+* 1 SMA for GNSS input with onboard GNSS module
+
+image::supermicro-112D-front.png[title="Supermicro {smss112-mode} front view", Supermicro {smss112-mode} front view, align="center",width=90%]
+
+
+Supermicro offers both 1U and 2U options.
+For more details, visit the product pages:
+
+* {smss112-website}[{smss112-long}]
+
+* {smss212-website}[{smss212-long}]
+
+
+
+=== SUSE Telco Cloud Architecture
 
 image::media/src/png/SUSE-Telco-Cloud-Architecture.png[align="center",width=90%]
 For more information, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-architecture.html[SUSE Telco Cloud Architecture] documentation.

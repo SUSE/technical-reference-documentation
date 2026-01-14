@@ -38,7 +38,7 @@
 //   :rev1-description: Original version
 // Set docdate to the most recent revision.
 //-
-:rev1-date: YYYY-MM-DD
+:rev1-date: 2026-01-31
 :rev1-description: Original version
 :docdate: {rev1-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -75,46 +75,59 @@
 //
 // -
 :stelco-provider: SUSE
+:stelco-long: SUSE® Telco Cloud
 :stelco: SUSE Telco Cloud
-:stelco-version1: 3.4
+:stelco-version1: v3.4
 :stelco-website: https://www.suse.com/products/edge-for-telco/
 :stelco-docs: https://documentation.suse.com/suse-edge/3.4/html/edge/
 :stelco-docs-arc: {stelco-docs}atip-architecture.html
 
-:superserver-provider: Supermicro
-:superserver112: Supermicro SuperServer SYS-112D-42C-FN8P
-//:supermicro-version1: component 2 relevant versions
-:supermicro-website: https://www.supermicro.com/de/products/system/iot/1u/sys-112d-42c-fn8p
-//:supermicro-docs: component 2 product documentation URL
+:smss-provider: Supermicro
+:smss: IoT SuperServer
 
-:superserver-provider: Supermicro
-:superserver212: Supermicro SuperServer SYS-212D-72C-FN8P
-//:supermicro-version1: component 2 relevant versions
-:supermicro-website: https://www.supermicro.com/en/products/system/iot/2u/sys-212d-72c-fn8p
-//:supermicro-docs: component 2 product documentation URL
+:smss112: SYS-112D-42C-FN8P
+:smss112-long: {smss-provider} {smss} {smss112-model}
+:smss112-website: https://www.supermicro.com/en/products/system/iot/1u/sys-112d-42c-fn8p
+
+:smss212: SYS-212D-72C-FN8P
+:smss212-long: {smss-provider} {smss} {smss212-model}
+:smss212-website: https://www.supermicro.com/en/products/system/iot/2u/sys-212d-72c-fn8p
 
 :cpu-provider: Intel
+:cpu-long: Intel® Xeon® 6 SoC
 :cpu: Intel Xeon 6 SoC
 :cpu-version1: 6726P-B
 :cpu-website: component  product website URL
 :cpu-docs: component 2 product documentation URL
 
 
-:sys112D: SYS-112D-42C-FN8P
-:sys112D-website: https://www.supermicro.com/en/products/system/iot/1u/sys-112d-42c-fn8p
+:slm: SUSE Linux Micro
+:slm-long: SUSE® Linux Micro
+:slm-website: https://www.suse.com/products/micro/
+:rke2: RKE2
+:rke2-website: https://documentation.suse.com/cloudnative/rke2/latest/en/introduction.html
+:k3s: K3s
+:k3s-website: https://www.suse.com/products/k3s/
+:rancher: SUSE Rancher Prime
+:rancher-long: SUSE® Rancher Prime
+:rancher-website: https://www.suse.com/products/rancher/
 
-:sys212D: SYS-212D-72C-FN8P
-:sys212D-website: https://www.supermicro.com/en/products/system/iot/2u/sys-212d-72c-fn8p
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
 
 :oran: official O-RAN Alliance hardware reference design for outdoor macrocells
 :oran-doc: https://www.google.com/url?q=https://specifications.o-ran.org/download?id%3D970&sa=D&source=docs&ust=1766740571306521&usg=AOvVaw0-klBTjBWajbwHxVWI7Rhu
 
-:sle: SUSE Linux Micro
-:sle-website: https://www.suse.com/products/micro/
-:rke2: RKE2
-:rke2-website: https://documentation.suse.com/cloudnative/rke2/
-:suserancherprime: SUSE Rancher Prime
-:rancher-website: https://www.suse.com/products/rancher/
+:ref-vran-perf: https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 
@@ -151,7 +164,7 @@
 // -
 :title: SUSE Telco Cloud on Intel Xeon 6 SoC-based Supermicro systems
 
-:subtitle: SUSE Telco Cloud on Intel Xeon 6 SoC-based Supermicro systems
+:subtitle: Validated reference design for high-density, low-latency, AI-ready telco edge deployments
 
 :usecase: (<55 characters) use case
 
@@ -187,7 +200,9 @@
 //    :metatask2: Installation
 //    :metatask3: Deployment
 // -
-:metatask1: task
+:metatask1: Design
+:metatask2: Implementation
+:metatask3: Integration
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -203,20 +218,16 @@
 //         To list additional authors or contributors on the cover page,
 //         you must edit the docinfo.xml file as well.
 // -
-:author1-firstname: first (given) name
-:author1-surname: surname
-:author1-jobtitle: job title
-:author1-orgname: organization affiliation
+:author1-firstname: Suresh
+:author1-surname: S
+:author1-jobtitle: Partner Solution Architect
+:author1-orgname: SUSE
+:editor1-firstname: Terry
+:editor1-surname: Smith
+:editor1-jobtitle: Ecosystem Solution Innovation Director
+:editor1-orgname: SUSE
 //:author2-firstname: first (given) name
 //:contrib1-firstname: first (given) name
 //:editor1-firstname: first (given) name
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// MISCELLANEOUS ATTRIBUTES
-//   Define any additional variables here for use within the document.
-// -
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
