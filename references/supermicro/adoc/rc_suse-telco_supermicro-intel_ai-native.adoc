@@ -309,56 +309,76 @@ For details on supported services such as DHCP, DNS, and others, see the {stelco
 
 === Disabling systemd services
 
-For information on disabling unnecessary systemd services, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-disabling-systemd-services[SUSE Edge ATIP Disabling Systemd Services] section of the official SUSE Edge Telco documentation.
+For Telco workloads, it is important to disable or configure some services running on the nodes to avoid impacts on workload performance.
+
+For information on disabling unnecessary systemd services, see the {stelco-docs-reqs}#id-disabling-systemd-services[{stelco} Disabling Systemd Services].
+
 
 == Edge Image Builder
 
-=== What is Edge Image Builder
+The need for easily auditable, reproducible, and customized base images becomes paramount to the long-term stability and maintainability of the environment.
+{stelco-docs-eib}[Edge Image Builder (EIB)], one of the components of {stelco}, helps mitigate these concerns by providing a simple and quick mechanism to customize {slm} base images for a variety of scenarios.
+EIB can produce an image that contains all of the configuration and workload artifacts (RPMs, container images, etc.) needed for telco deployments.
+Thus, EIB can enable true zero-touch provisioning, even in low-bandwidth connections and air-gapped environments.
+A single image can be reused across multiple nodes, including advanced situations such as deploying HA Kubernetes clusters and individualized network configurations per node.
+By leveraging a declarative, YAML-based definition format, EIB easily fits into existing GitOps and CI/CD pipelines, generating reproducible images with full accountability of their contents.
 
-The need for easily auditable, reproducible, and customized base images becomes paramount to the long-term stability and maintainability of the environment. https://documentation.suse.com/suse-edge/3.3/html/edge/components-eib.html[Edge Image Builder (EIB)], one of the components of SUSE Telco Cloud, helps mitigate these concerns by providing a mechanism to customize SL Micro base images to include all of the configurations and workload artifacts needed by telco deployments. https://github.com/suse-edge/edge-image-builder[EIB is an open source project] that enables the simplified and quick configuration of customized SUSE Linux Micro images for a variety of scenarios. The resulting image contains all of the configuration and binary artifacts (RPMs, container images, etc.) necessary to provision the node at first boot, providing true zero-touch provisioning even in the case of low-bandwidth connections and air-gapped scenarios. A single image can be reused across multiple nodes, including advanced situations such as deploying HA Kubernetes clusters and individualized network configuration per node. By leveraging a declarative, YAML-based definition format, EIB easily fits into existing GitOps and CI/CD pipelines, generating reproducible images with full accountability of their contents.
+EIB is an open source project.
+Visit the official {eib-repo}[EIB repository] for more information.
 
-=== EIB Config
 
-==== Management Cluster EIB Definition
+=== EIB configuration
 
-The following steps are required to generate the EIB .iso image for the mgmt cluster:
+==== Management cluster EIB definition
 
- . Generate the folder structure with the following content in the eib-image folder following
-the structure and files content described in https://documentation.suse.com/suse-edge/3.4/html/edge/atip-management-cluster.html#[official docs]:
+Follow the steps outlined in this section to generate the EIB ISO image for the management cluster.
+For further details, see {stelco-docs-mgmtcluster}[Setting up the management cluster].
 
- ....
-base-images
-custom
-├── files
-│   ├── basic-setup.sh
-│   ├── metal3.sh
-│   ├── mgmt-stack-setup.service
-│   └── rancher.sh
-└── scripts
-    ├── 02-tmpfs-cni.sh
-    ├── 99-alias.sh
-    └── 99-mgmt-setup.sh
-kubernetes
-├── config
-│   └── server.yaml
-├── helm
-│   └── values
-│       ├── certmanager.yaml
-│       ├── longhorn.yaml
-│       ├── metal3.yaml
-│       ├── neuvector.yaml
-│       └── rancher.yaml
-└── manifests
-    └── neuvector-namespace.yaml
-mgmt-cluster-34-61-defaultNet.yaml
-network
-└── mgmt-cluster-network.yaml
- ....
+. Generate the `eib-image` {stelco-docs-mgmtcluster}#mgmt-cluster-directory-structure[directory structure] as illustrated below.
++
+[listing]
+----
+.
+├── base-images
+├── custom
+│   ├── files
+│   │   ├── basic-setup.sh
+│   │   ├── metal3.sh
+│   │   ├── mgmt-stack-setup.service
+│   │   └── rancher.sh
+│   └── scripts
+│       ├── 02-tmpfs-cni.sh
+│       ├── 99-alias.sh
+│       └── 99-mgmt-setup.sh
+├── kubernetes
+│   ├── config
+│   │   └── server.yaml
+│   ├── helm
+│   │   └── values
+│   │       ├── certmanager.yaml
+│   │       ├── longhorn.yaml
+│   │       ├── metal3.yaml
+│   │       ├── neuvector.yaml
+│   │       └── rancher.yaml
+│   └── manifests
+│       └── neuvector-namespace.yaml
+├── mgmt-cluster-34-61-defaultNet.yaml
+└── network
+    └── mgmt-cluster-network.yaml
+----
++
+[NOTE]
+====
+The {slm-long} OS image must be downloaded from the {scc-website}[SUSE Customer Center] or {slm-downloads}[SUSE {slm} Downloads page], and it must be located under the `base-images` directory.
+====
 
- . Add your KIWI iso image (output from kiwi process) as a base-image in the base-
-images folder. To do that you can follow the steps in the https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html[full guide instructions in official docs]
+// This step is confusing, since this is the first mention of a KIWI ISO image and no real instructions on how to generate it.  It also begs the question of why the SL Micro image needed to be downloaded.  Clarify here is required.
+. Add your KIWI ISO image (output from {kiwing-docs}[KIWI]) as a base-image in the base-
+images folder.
+To do that you can follow the steps in the https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html[full guide instructions in official docs]
 
- . Replace from the original documentation the following placeholders with the values:
+
+. Replace from the original documentation the following placeholders with the values:
 
 .. In kubernetes/helm/values/metal3.yaml file, change the ironicIP with your mgmt
    cluster IP address (e.g., 172.30.8.11)
@@ -367,7 +387,8 @@ images folder. To do that you can follow the steps in the https://documentation.
 .. In network/mgmt-cluster-network.yaml file, change the network settings according
    to your environment (e.g., 172.30.8.11, netmask, gateway, dns and mac):
 
- ....
+[source, yaml]
+----
 routes:
   config:
     - destination: 0.0.0.0/0
@@ -392,9 +413,10 @@ interfaces:
           enabled: true
     ipv6:
       enabled: false
- ....
+----
 
- . Modify the eib/mgmt-cluster-34-61-defaultNet.yaml file to change the following:
+
+. Modify the eib/mgmt-cluster-34-61-defaultNet.yaml file to change the following:
 
  ----
 - ${ROOT_PASSWORD} - The root password for the management cluster. This could be
@@ -472,24 +494,24 @@ The following steps are required to generate the EIB .raw file for downstream cl
 
  . The folder `eib-edge-34-61` contains all the necessary files to generate the EIB image for downstream clusters with some telco packages and performance scripts. You can get a copy of the content of files using the following link from SUSE Telco Cloud official docs: https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html# [Automated Provisioning – SUSE Telco Cloud Official Docs].
 
- ....
+[listing]
+----
 .
-|-- base-images
-|   `-- SL-Micro.x86_64-6.1-Base-RT-Kiwi.raw
-|-- custom
-|   |-- files
-|   |   |-- performance-settings.sh
-|   |   `-- sriov-auto-filler.sh
-|   `-- scripts
-|       |-- 01-fix-growfs.sh
-|       |-- 02-tmpfs-cni.sh
-|       |-- 03-performance.sh
-|       `-- 04-sriov.sh
-|-- edge-cluster.yaml
-`-- network
-    `-- configure-network.sh
-
- ....
+├── base-images
+│   └── SL-Micro.x86_64-6.1-Base-RT-Kiwi.raw
+├── custom
+│   ├── files
+│   │   ├── performance-settings.sh
+│   │   └── sriov-auto-filler.sh
+│   └── scripts
+│       ├── 01-fix-growfs.sh
+│       ├── 02-tmpfs-cni.sh
+│       ├── 03-performance.sh
+│       └── 04-sriov.sh
+├── edge-cluster.yaml
+└── network
+    └── configure-network.sh
+----
 
  . Add your KIWI iso image (output from kiwi process) as a base-image in the base-images folder. To do that you can follow the steps in the https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html[full guide instructions in official docs]
 
