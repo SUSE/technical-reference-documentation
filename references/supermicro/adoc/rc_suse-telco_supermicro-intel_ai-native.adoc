@@ -78,10 +78,10 @@ This reference configuration is intended for:
 // NOTE: If there are none, comment out this section.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The following individuals contributed to the creation of this document:
+The authors wish to acknowledge the contributions of the following individuals to the creation of this document:
 
-* firstname surname, jobtitle, orgname
-* firstname surname, jobtitle, orgname
+* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+* {editor1-firstname} {editor1-surname}, {editor1-jobtitle}, {editor1-orgname}
 
 
 
@@ -135,11 +135,11 @@ This achievement demonstrates that this consolidated, CPU-only architecture in a
 
 With this, operators can realize {ref-vran-perf}[dramatic gains]:
 
-* Up to 2.4x higher increase in RAN capacity vs previous generation per node1
+* Up to 2.4x higher increase in RAN capacity vs previous generation per node
 
-* Up to 70% lower power consumption, better performance per watt vs previous generation per site2
+* Up to 70% lower power consumption, better performance per watt vs previous generation per site
 
-* Up to 3.2x AI RAN inference performance per core[NP1]  gain vs previous generation3
+* Up to 3.2x AI RAN inference performance per core[NP1]  gain vs previous generation
 
 
 Moreover, the supply-chain risk is minimized through Supermicro’s Tier-1 scale and regional manufacturing, while {stelco} enables fully-automated, reproducible deployments across tens of thousands of sites with zero touch provisioning.
@@ -147,11 +147,15 @@ The entire platform is open, disaggregated, and future-proof, supporting everyth
 
 
 
-== Architecture concepts and diagrams
+== Solution component overview
 
-=== {cpu-long} overview
+=== {cpu-long}
 
-The {cpu} with Performance-cores drives up throughput for network and edge use cases with high per-core performance and edge-optimized accelerators in a power-efficient architecture.
+//The {cpu} with Performance-cores drives up throughput for network and edge use cases with high per-core performance and edge-optimized accelerators in a power-efficient architecture.
+
+The {cpu} provides outstanding energy-efficient performance across networking use cases, including vRAN deployments.
+The Performance-cores (P-cores) are optimized for high throughput and low latency, with built-in acceleration for packet and signal processing, load balancing, and AI.
+
 {cpu} features are detailed in the figure below.
 
 image::intelxeon6soc-overview-1.png[title="{cpu} features", {cpu} features, align="center",width=90%]
@@ -162,69 +166,30 @@ Performance expectations are detailed in the following figure.
 image::intelxeon6soc-overview-2.png[title="{cpu} performance boosts", {cpu} performance boosts, align="center",width=90%]
 
 
-=== Supermicro {smss}
+Building on this foundation, Intel vRAN Boost integrates vRAN acceleration directly into the SoC.
+Intel vRAN Boost is sized to ensure ample headroom even in the most intense use-cases and with the highest core count options, allowing future software optimizations to further increase server capacity without worrying about hitting acceleration limits.
+And, independent software vendors and developers using the O-RAN Acceleration Abstraction Layer standardized DPDK interface can optimize their vRAN software stacks for vRAN Boost hardware acceleration and easily move from one generation of Intel vRAN Boost to the next.
 
-The 1U {smss-long} is designed for telco edge applications.
-Its key features include:
-
-* {cpu}
-* Up to 4 DIMMs, supporting up to 512 GB DDR5-6400 RAM
-* Up to 2 PCIe 5.0 x16 FHHL slots
-* 8 SFP28 25 GbE LAN ports and 1 RJ45 GbE LAN port
-* 2 SMA for 1PPS (1 Input 1 Output)
-* 1 SMA for GNSS input with onboard GNSS module
-
-image::supermicro-112D-front.png[title="Supermicro {smss112-mode} front view", Supermicro {smss112-mode} front view, align="center",width=90%]
+image::intelxeon6soc-vran-performance.png[title="{cpu} vRAN performance", {cpu} vRAN performance, align="center", width=90%]
 
 
-Supermicro offers both 1U and 2U options.
-For more details, visit the product pages:
+=== {smss-long}
 
-* {smss112-website}[{smss112-long}]
+The 1U {smss112-long} is designed for telco edge applications.
 
-* {smss212-website}[{smss212-long}]
-
+image::supermicro-112D-front.png[title="{smss112-long} front view", {smss112-long} front view, align="center", width=90%]
 
 
-=== SUSE Telco Cloud Architecture
+Key features are noted in the table below.
 
-image::media/src/png/SUSE-Telco-Cloud-Architecture.png[align="center",width=90%]
-For more information, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-architecture.html[SUSE Telco Cloud Architecture] documentation.
-
-`vRAN performance`:
-
-
-image::media/src/png/vRAN-Performance.png[align="center",width=90%]
-
-
-//Need to place images
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Starting with the software at the top of the solution stack,
-// provide detailed descriptions of each component.
-// Provide relevant details about the component, including
-// role / function, recommended versions, sizings, deployment
-// configurations (to be detailed later), etc.
-// Use diagrams, as needed, and appropriate links to existing resources
-// to provide more context and details.
-// Be sure to reference variables defined in the vars file to simplify
-// future updates of the document.
-//   This variables can include the component name (very useful for long
-//   names), supported versions, URLs of its product and documentation
-//   websites, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-The Intel Xeon 6 SoC provides outstanding energy-efficient performance across networking use cases, including vRAN deployments. The platform’s P-cores are optimized for high throughput and low latency, with built-in acceleration for packet and signal processing, load balancing and AI. Building on that foundation, Intel vRAN Boost integrates vRAN acceleration directly into the SoC. Using the O-RAN Acceleration Abstraction Layer standardized DPDK interface, independent software vendors and software developers can easily optimize their vRAN software stacks for vRAN Boost hardware acceleration. The standardized interface makes it easier to move from one generation of Intel vRAN Boost to the next. Intel vRAN Boost is sized to ensure ample headroom even in the most intense use-cases and with the highest core count options, allowing future software optimizations to further increase server capacity without worrying about hitting acceleration limits.
-
-== Hardware and Networking Infrastructure
+. {cpu-long} key features
 [%unbreakable]
 [cols="1,3",options="header"]
 |===
-2+|*Supermicro Compact Telco Edge Server* +
-*SYS-112D-42C-FN8P*
+2+|*{smss112-long}*
 
 |*CPU*
-|Intel® Xeon® 6 SoC 6726P-B +
+|{cpu-long} {cpu-version1} +
 42-core processor with Intel QAT and Intel vRAN Accelerator
 
 |*Networking*
@@ -240,49 +205,107 @@ The Intel Xeon 6 SoC provides outstanding energy-efficient performance across ne
 AC or DC options available
 |===
 
-== Deployment Prerequisites and Requirements
+
+{smss-provider} offers both 1U and 2U options.
+For more details, visit the product pages:
+
+* {smss112-website}[{smss112-long}]
+
+* {smss212-website}[{smss212-long}]
+
+
+
+=== {stelco-long}
+
+The {stelco} platform provides a validated, carrier-grade, cloud-native foundation that empowers telco enterprises with a disaggregated, AI-ready architecture that can sustainably scale infrastructures while seamlessly deploying GenAI, predictive AI, and latency-sensitive applications at the edge.
+
+image::suse-telco-cloud_architecture.png[title="{stelco} architecture", {stelco} architecture, align="center", width=90%]
+For more information, see the {stelco-docs-arch}[{stelco} Architecture].
+
+Key capabilities of {stelco} include:
+
+. Key {stelco} capabilities
+[%unbreakable]
+[cols="1,2"]
+|===
+|Capability |Strategic Value
+
+|Unified Management Plane
+|Centralized control and observability for Kubernetes clusters running on RKE2, K3s, and other CNCF-certified Kubernetes distributions, including AKS, EKS, and GKE.
+
+|Fleet GitOps Automation
+|Declarative management for thousands of clusters, preventing configuration drift.
+
+|Zero-Touch Provisioning
+|Automated deployment and lifecycle management for Telco-grade workloads across core, cloud, and far-edge environments
+
+|Edge Optimization
+|Lightweight K3s-based architecture and hardened SUSE Linux Micro operating system for consistency and high performance in resource-constrained or disconnected edge sites.
+
+|Policy-Driven Governance
+|Consistent compliance and security across multi-tenant telco environments.
+
+|Carrier Grade Security
+|FIPS 140-3 validated cryptography, CIS Benchmark compliance, and centralized RBAC/SSO to meet stringent Telco security standards
+|===
+
+
+
+== Deployment prerequisites and requirements
+
+Some specific considerations for {stelco} deployments are highlighted here.
+For further details, see {stelco-docs-reqs}[{stelco} requirements and assumptions].
+
 
 === Hardware
 
-There are some specific constraints related to the downstream cluster server hardware and networking:
+* *Management cluster*
 
-Management cluster
+** Must have network connectivity to the target server management/BMC API
 
- * Must have network connectivity to the target server management/BMC API
+** Must have network connectivity to the target server control plane network
 
- * Must have network connectivity to the target server control plane network
-
- * For multi-node management clusters, an additional reserved IP address is required
+** For multi-node management clusters, an additional reserved IP address is required
 Hosts to be controlled
 
- * Must support out-of-band management via Redfish, iDRAC or iLO interfaces
 
- * Must support deployment via virtual media (PXE is not currently supported)
+* *Hosts to be controlled*
 
- * Must have network connectivity to the management cluster for access to the Metal3 provisioning APIs
+** Must support out-of-band management via Redfish, iDRAC or iLO interfaces
 
-For more information, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-hardware documentation.
+** Must support deployment via virtual media (PXE is not currently supported)
+
+** Must have network connectivity to the management cluster for access to the Metal3 provisioning APIs
 
 
-Some tools are required, these can be installed either on the management cluster, or on a host which can access it.
+=== Software
 
- * https://kubernetes.io/docs/reference/kubectl/kubectl/[Kubectl], https://helm.sh/[Helm] and https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl[Clusterctl]
+Some tools are required, these can be installed either on the management cluster or on a host with access to the management cluster.
+These include:
 
- * A container runtime such as Podman or Rancher Desktop
+* {kubectl-website}[Kubectl]
+* {helm-website}[Helm]
+* {clusterctl-website}[Clusterctl]
+* A container runtime, such as {podman-website}[Podman] or {rancherdesktop-website}[Rancher Desktop]
 
-The SL-Micro.x86_64-6.1-Base-GM.raw OS image file must be downloaded from https://scc.suse.com/[SUSE Customer Center] or the https://www.suse.com/download/sle-micro/[SUSE Download page].
+Additionally, the {slm-long} OS image must be downloaded from the {scc-website}[SUSE Customer Center] or {slm-downloads}[SUSE {slm} Downloads page].
+At the time of publication, choose the `SL-Micro.x86_64-6.1-Base-GM.raw.xz` image file.
+
 
 === Network
 
-Follow the official SUSE Edge Telco guidelines and recommendations described in the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-network[SUSE Edge ATIP Network Requirements].
+Follow the official {stelco} guidelines and recommendations described in {stelco-docs-reqs}#id-network[{stelco} Network Requirements].
+
 
 === Ports
 
-For details on port requirements, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-port-requirements[SUSE Edge ATIP Port Requirements] section of the official SUSE Edge Telco documentation.
+For details on port requirements, see {stelco-docs-reqs}#id-port-requirements[{stelco} Port Requirements].
+
 
 === Services (DHCP,DNS,etc)
 
-For details on supported services such as DHCP, DNS, and others, see the https://documentation.suse.com/suse-edge/3.4/html/edge/atip-requirements.html#id-services-dhcp-dns-etc[SUSE Edge ATIP DHCP/DNS/Services Requirements] section of the official SUSE Edge Telco documentation.
+For details on supported services such as DHCP, DNS, and others, see the {stelco-docs-reqs}#id-services-dhcp-dns-etc[{stelco} Services (DHCP, DNS, etc.)].
+
 
 === Disabling systemd services
 
@@ -1394,7 +1417,7 @@ image::media/src/png/9.2-latency-plot.png[align="center",width=90%]
 
 The combination of SUSE Telco Cloud, Intel® Xeon® 6 SoC, and Supermicro telco-optimized servers delivers a future-proof, CPU-only telco-optimized cloud platform that delivers uncompromised performance, radical simplicity, genuine sustainability, and investment protection at scale while dramatically reducing power, physical space, and TCO. Together, we enable operators to stop compromising and start transforming.
 
-To move forward with transforming your network, please contact your SUSE, Intel, and Supermicro account teams to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs. For technical deep dives, you can access the SUSE Telco Cloud deployment documentation (https://documentation.suse.com/suse-edge/3.4/html/edge/atip.html), review Intel’s resources on the Xeon® 6 Processors Networking and Edge(https://www.intel.com/content/www/us/en/products/details/processors/xeon/edge.html), the Platform and Performance Advantages to Accelerate vRAN Deployments(https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf), and the Leadership AI and Networking Solutions with Xeon 6 Processors(https://www.intc.com/news-events/press-releases/detail/1728/intel-unveils-leadership-ai-and-networking-solutions-with), and examine the Supermicro specifications for the link:{sys112D-website}[`{sys112D}`] and {sys212D-website}[`{sys212D}`] systems.
+To move forward with transforming your network, please contact your SUSE, Intel, and Supermicro account teams to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs. For technical deep dives, you can access the SUSE Telco Cloud deployment documentation (https://documentation.suse.com/suse-edge/3.4/html/edge/atip.html), review Intel’s resources on the Xeon® 6 Processors Networking and Edge(https://www.intel.com/content/www/us/en/products/details/processors/xeon/edge.html), the Platform and Performance Advantages to Accelerate vRAN Deployments(https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf), and the Leadership AI and Networking Solutions with Xeon 6 Processors(https://www.intc.com/news-events/press-releases/detail/1728/intel-unveils-leadership-ai-and-networking-solutions-with), and examine the Supermicro specifications for the {smss112-website}[{smss112}] and {smss212-website}[{smss212}] systems.
 
 
 == Summary

@@ -1,6 +1,6 @@
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // SUSE Technical Reference Documentation
-// Getting Started Guide
+// Reference Configuration
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 // DOCUMENT ATTRIBUTES AND VARIABLES
@@ -80,17 +80,20 @@
 :stelco-version1: v3.4
 :stelco-website: https://www.suse.com/products/edge-for-telco/
 :stelco-docs: https://documentation.suse.com/suse-edge/3.4/html/edge/
-:stelco-docs-arc: {stelco-docs}atip-architecture.html
+:stelco-docs-arch: {stelco-docs}atip-architecture.html
+:stelco-docs-reqs: {stelco-docs}atip-requirements.html
 
-:smss-provider: Supermicro
+
+:smss-provider: SUPERMICRO
 :smss: IoT SuperServer
+:smss-long: {smss-provider}® {smss}
 
 :smss112: SYS-112D-42C-FN8P
-:smss112-long: {smss-provider} {smss} {smss112-model}
+:smss112-long: {smss-provider}® {smss} {smss112}
 :smss112-website: https://www.supermicro.com/en/products/system/iot/1u/sys-112d-42c-fn8p
 
 :smss212: SYS-212D-72C-FN8P
-:smss212-long: {smss-provider} {smss} {smss212-model}
+:smss212-long: {smss-provider}® {smss} {smss212}
 :smss212-website: https://www.supermicro.com/en/products/system/iot/2u/sys-212d-72c-fn8p
 
 :cpu-provider: Intel
@@ -103,15 +106,19 @@
 
 :slm: SUSE Linux Micro
 :slm-long: SUSE® Linux Micro
+:slm-version1: 6.1
 :slm-website: https://www.suse.com/products/micro/
+:slm-downloads: https://www.suse.com/download/sle-micro/
+
 :rke2: RKE2
 :rke2-website: https://documentation.suse.com/cloudnative/rke2/latest/en/introduction.html
+
 :k3s: K3s
 :k3s-website: https://www.suse.com/products/k3s/
+
 :rancher: SUSE Rancher Prime
 :rancher-long: SUSE® Rancher Prime
 :rancher-website: https://www.suse.com/products/rancher/
-
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -122,10 +129,20 @@
 //   Define any additional variables here for use within the document.
 // -
 
+:scc-website: https://scc.suse.com/
+
+
 :oran: official O-RAN Alliance hardware reference design for outdoor macrocells
 :oran-doc: https://www.google.com/url?q=https://specifications.o-ran.org/download?id%3D970&sa=D&source=docs&ust=1766740571306521&usg=AOvVaw0-klBTjBWajbwHxVWI7Rhu
 
 :ref-vran-perf: https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf
+
+:kubectl-website: https://kubernetes.io/docs/reference/kubectl/kubectl/
+:helm-website: https://helm.sh/
+:clusterctl-website: https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl
+:podman-website: https://podman.io/
+:rancherdesktop-website: https://rancherdesktop.io/
+
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -222,6 +239,30 @@
 :author1-surname: S
 :author1-jobtitle: Partner Solution Architect
 :author1-orgname: SUSE
+:author2-firstname: Alberto
+:author2-surname: Morgante
+:author2-jobtitle: Principal Telco Engineer
+:author2-orgname: SUSE
+:author3-firstname: Jonas
+:author3-surname: Arndt
+:author3-jobtitle: Senior Telco Engineer
+:author3-orgname: SUSE
+:author4-firstname: Tim
+:author4-surname: Irnich
+:author4-jobtitle: Senior Distinguished Telco Product Manager
+:author4-orgname: SUSE
+:author5-firstname: Michael
+:author5-surname: Holzerland
+:author5-jobtitle: EMEA Telco Lead
+:author5-orgname: Supermicro
+:author6-firstname: Niall
+:author6-surname: Power
+:author6-jobtitle: Solutions Architect and Intel FlexRAN Software PLM
+:author6-orgname: Intel
+:contrib1-firstname: Vesselin
+:contrib1-surname: Matev
+:contrib1-jobtitle: Partner Solutions Manager
+:contrib1-orgname: SUSE
 :editor1-firstname: Terry
 :editor1-surname: Smith
 :editor1-jobtitle: Ecosystem Solution Innovation Director
