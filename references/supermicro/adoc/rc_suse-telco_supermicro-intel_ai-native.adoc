@@ -375,16 +375,16 @@ The {slm-long} OS image must be downloaded from the {scc-website}[SUSE Customer 
 // This step is confusing, since this is the first mention of a KIWI ISO image and no real instructions on how to generate it.  It also begs the question of why the SL Micro image needed to be downloaded.  Clarify here is required.
 . Add your KIWI ISO image (output from {kiwing-docs}[KIWI]) as a base-image in the base-
 images folder.
-To do that you can follow the steps in the https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html[full guide instructions in official docs]
+To do that you can follow the steps in the {suse-linux-micro-image-with-kiwi}[full guide instructions in official docs]
 
 
 . Replace from the original documentation the following placeholders with the values:
 
-.. In kubernetes/helm/values/metal3.yaml file, change the ironicIP with your mgmt
+.. In *kubernetes/helm/values/metal3.yaml* file, change the ironicIP with your mgmt
    cluster IP address (e.g., 172.30.8.11)
-.. In kubernetes/helm/values/rancher.yaml file, change the hostname with your mgmt
+.. In *kubernetes/helm/values/rancher.yaml* file, change the hostname with your mgmt
    cluster IP address (e.g., 172.30.8.11)
-.. In network/mgmt-cluster-network.yaml file, change the network settings according
+.. In *network/mgmt-cluster-network.yaml* file, change the network settings according
    to your environment (e.g., 172.30.8.11, netmask, gateway, dns and mac):
 +
 [source, yaml]
@@ -419,9 +419,9 @@ interfaces:
 . Modify the eib/mgmt-cluster-34-61-defaultNet.yaml file to change the following:
 
 .. pass:[${ROOT_PASSWORD}] - The root password for the management cluster. This could be
-generated using `openssl passwd -6 PASSWORD` and replacing PASSWORD with the desired
+generated using *openssl passwd -6 PASSWORD* and replacing PASSWORD with the desired
 password, and then replacing the value in the file. The final Rancher password will be
-configured based on the file `custom/files/basic-setup.sh`.
+configured based on the file *custom/files/basic-setup.sh*.
 .. pass:[${SCC_REGISTRATION_CODE}] - The registration code for the SUSE Customer Center for the
 SLE Micro product. This could be obtained from the SUSE Customer Center and replacing
 the value in the file.
@@ -491,7 +491,8 @@ Build complete, the image can be found at: eib-mgmt-cluster-x86_64-image-61-34.i
 
 The following steps are required to generate the EIB .raw file for downstream clusters:
 
- . The folder `eib-edge-34-61` contains all the necessary files to generate the EIB image for downstream clusters with some telco packages and performance scripts. You can get a copy of the content of files using the following link from SUSE Telco Cloud official docs: https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html# [Automated Provisioning – SUSE Telco Cloud Official Docs].
+ . The folder *eib-edge-34-61* contains all the necessary files to generate the EIB image for downstream clusters with some telco packages and performance scripts.
+ You can get a copy of the content of files using the following link from SUSE Telco Cloud official docs: {suse-telco-automated} [Automated Provisioning – SUSE Telco Cloud Official Docs].
 +
 [listing]
 ----
@@ -512,13 +513,13 @@ The following steps are required to generate the EIB .raw file for downstream cl
     └── configure-network.sh
 ----
 
- . Add your KIWI iso image (output from kiwi process) as a base-image in the base-images folder. To do that you can follow the steps in the https://documentation.suse.com/suse-edge/3.4/html/edge/guides-kiwi-builder-images.html[full guide instructions in official docs]
+ . Add your KIWI iso image (output from kiwi process) as a base-image in the base-images folder. To do that you can follow the steps in the {suse-linux-micro-image-with-kiwi}[full guide instructions in official docs]
 
  . From the configuration file *edge-cluster.yaml* you can see the packages and scripts that will be included in the image. You will need to modify the following parameters according to your environment:
 
 
-- encryptedPassword: Password for the root user in the image (you can generate it using `openssl passwd -6`)
-- sccRegistrationCode: SCC registration code to register the system (if you have one)
+- *encryptedPassword*: Password for the root user in the image (you can generate it using *openssl passwd -6*)
+- *sccRegistrationCode*: SCC registration code to register the system (if you have one)
 
 
  . Build the eib image using the following command:
@@ -589,10 +590,11 @@ Build complete, the image can be found at: eibimage-34-61-rt-telco.raw
 === SUSE Telco Cloud Direct Network provisioning
 
 ==== Intro
-https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html[Directed network provisioning] is a feature that allows you to automate the provisioning of downstream clusters. This feature is useful when you have many downstream clusters to provision, and you want to automate the process.
+{suse-telco-automated}[Directed network provisioning] is a feature that allows you to automate the provisioning of downstream clusters.
+This feature is useful when you have many downstream clusters to provision, and you want to automate the process.
 
 ==== Cluster API & SUSE Telco Cloud
-https://documentation.suse.com/suse-edge/3.4/html/edge/quickstart-metal3.html#id-high-level-architecture-2[Cluster API (CAPI)] enables management of infrastructure resources across multiple infrastructure providers via broadly adopted vendor-neutral APIs.
+{suse-telco-high-level-arc}[Cluster API (CAPI)] enables management of infrastructure resources across multiple infrastructure providers via broadly adopted vendor-neutral APIs.
 
 ==== Management Cluster Deployment
 
@@ -606,7 +608,9 @@ image::media/src/png/8.1.3-boot-1.png[align="center",width=90%]
 
 image::media/src/png/8.1.3-boot-2.png[align="center",width=90%]
 
- - The installation will start automatically without any manual interaction. After having the operating system installed, the system will start configuring all parameters from the operating system as well as the RKE2 cluster with all helm charts required. No manual interaction is required to install the management cluster:
+ - The installation will start automatically without any manual interaction.
+ After having the operating system installed, the system will start configuring all parameters from the operating system as well as the RKE2 cluster with all helm charts required.
+ No manual interaction is required to install the management cluster:
 
 image::media/src/png/8.1.3-installation-1.png[align="center",width=90%]
 
@@ -616,21 +620,24 @@ image::media/src/png/8.1.3-installation-3.png[align="center",width=90%]
 
 image::media/src/png/8.1.3-installation-4.png[align="center",width=90%]
 
- - The system is ready and the management cluster has been installed properly. Kubeconfig is already loaded by default with the user provided in EIB definition file so we can double check cluster is ready:
+ - The system is ready and the management cluster has been installed properly.
+ Kubeconfig is already loaded by default with the user provided in EIB definition file so we can double check cluster is ready:
 +
 ----
 mgmt-cluster-network:~ # k get nodes
 NAME                   STATUS   ROLES                       AGE   VERSION
 mgmt-cluster-network   Ready    control-plane,etcd,master   37s   v1.33.3+rke2r1
 ----
- - Rancher also is available and we can double check it. To get access to the Rancher UI, open a web browser and navigate to `https://rancher-172.30.8.11.sslip.io:8443/dashboard/home` and use the credentials configured in the file `custom/files/basic-setup.sh  (RANCHER_FINALPASSWORD)` during the EIB process showed before:
+ - Rancher also is available and we can double check it. To get access to the Rancher UI, open a web browser and navigate to *https://rancher-172.30.8.11.sslip.io:8443/dashboard/home* and use the credentials configured in the file *custom/files/basic-setup.sh  (RANCHER_FINALPASSWORD)* during the EIB process showed before:
 
 image::media/src/png/8.1.3-rancher-ui-1.png[align="center",width=90%]
 
 image::media/src/png/8.1.3-rancher-ui-2.png[align="center",width=90%]
 
 ==== Downstream Cluster Deployment (CAPI + Metal3)
-To deploy the downstream cluster, we need to create some manifests files from the management cluster already deployed (also could be done with RancherUI) in order to define the BaremetalHost object (bmh.yaml file) and the provision file (capi.yaml) to deploy the operating system and provision the RKE2 cluster automatically from the management cluster. To deploy the downstream cluster, it is necessary to create several manifest files from the already deployed management cluster (alternatively, this can be accomplished via the Rancher UI). These files include the BaremetalHost object definition (bmh.yaml) and the provision file (capi.yaml), which are required to deploy the operating system and automatically provision the RKE2 cluster from the management cluster.
+To deploy the downstream cluster, we need to create some manifests files from the management cluster already deployed (also could be done with RancherUI) in order to define the BaremetalHost object (bmh.yaml file) and the provision file (capi.yaml) to deploy the operating system and provision the RKE2 cluster automatically from the management cluster.
+To deploy the downstream cluster, it is necessary to create several manifest files from the already deployed management cluster (alternatively, this can be accomplished via the Rancher UI).
+These files include the BaremetalHost object definition (bmh.yaml) and the provision file (capi.yaml), which are required to deploy the operating system and automatically provision the RKE2 cluster from the management cluster.
 
  - Create the BaremetalHost file (bmh.yaml) replacing the BMC username/password as well as the MAC address and BMC IP in the URL:
 +
@@ -1012,7 +1019,7 @@ image::media/src/png/8.1.4-rancher-ui-2.png[align="center",width=90%]
 
  - Apply the capi manifests (capi.yaml) to provision the host with the operating system, RKE2 cluster as well as all Telco capabilities like kernel args, sriov, cpuisolation, etc.
 +
- ----
+....
  apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
 metadata:
@@ -1345,7 +1352,7 @@ spec:
       - key: local_hostname
         object: machine
 
-----
+....
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide step-by-step guidance for preparing and deploying the
@@ -1361,7 +1368,7 @@ spec:
 
  - Once applied the capi.yaml file in the management cluster to provision the downstream cluster the provision will start:
 +
-----
+....
   mgmt-cluster-network:~ # k get bmh
 NAME      STATE          CONSUMER                               ONLINE   ERROR   AGE
 lab-sm1   provisioning   multinode-cluster-controlplane-kf8lg   true             21h
@@ -1376,16 +1383,16 @@ NAME      STATE         CONSUMER                                ONLINE   ERROR  
 lab-sm1   provisioned   multinode-cluster-controlplane-97266    true             49m
 lab-sm2   provisioned   multinode-cluster-workers-dxhgg-54cq4   true             41m
 
-----
+....
 
  - Finally nodes are ready and getting into the downstream cluster you will see the nodes up and ready:
 +
-----
+....
 suse-wl1:~ # k get nodes
 NAME                                    STATUS   ROLES                       AGE   VERSION
 multinode-cluster-t4rwk                 Ready    control-plane,etcd,master   12m   v1.33.3+rke2r1
 multinode-cluster-workers-dxhgg-54cq4   Ready    <none>                      45s   v1.33.3+rke2r1
-----
+....
  - Also, the same info is available now in Rancher UI:
 
 image::media/src/png/8.1.4-rancher-ui-3.png[align="center",width=90%]
@@ -1396,7 +1403,10 @@ image::media/src/png/8.1.4-rancher-ui-4.png[align="center",width=90%]
 
 === Intro
 
-We are conducting performance tests to measure the CPU latency in scheduling new tasks on both isolated and housekeeping cores. We utilize a Real-Time application, which is a simulator, to replicate specific workloads per CPU during defined time periods. By configuring a JSON file, we can simulate a particular CPU load percentage and use cycletest to measure the latency associated with scheduling tasks concurrently. Cycletest quantifies the latency before and after the task scheduling, subsequently generating a plot based on a resulting histogram.cat
+We are conducting performance tests to measure the CPU latency in scheduling new tasks on both isolated and housekeeping cores.
+We utilize a Real-Time application, which is a simulator, to replicate specific workloads per CPU during defined time periods.
+By configuring a JSON file, we can simulate a particular CPU load percentage and use cycletest to measure the latency associated with scheduling tasks concurrently.
+Cycletest quantifies the latency before and after the task scheduling, subsequently generating a plot based on a resulting histogram.cat
 
 === CPU Performance
 
@@ -1408,7 +1418,7 @@ Based on the following configurations:
  - Performance settings scripts showed in the capi.yaml and official documentation (https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html#add-telco)
  - CPU load 95% isolated cores
 +
-----
+....
 $ cat sut-info
    Static hostname: (unset)
 Transient hostname: suse-wl2.shared.i14y-lab.com
@@ -1425,7 +1435,7 @@ Transient hostname: suse-wl2.shared.i14y-lab.com
   Firmware Version: 1.0
      Firmware Date: Mon 2025-08-25
       Firmware Age: 1month 2w 1d
-----
+....
 
  - Time slot: 7200
  - Measuring with the following command:
@@ -1442,7 +1452,8 @@ image::media/src/png/9.2-latency-plot.png[align="center",width=90%]
 
 The combination of SUSE Telco Cloud, Intel® Xeon® 6 SoC, and Supermicro telco-optimized servers delivers a future-proof, CPU-only telco-optimized cloud platform that delivers uncompromised performance, radical simplicity, genuine sustainability, and investment protection at scale while dramatically reducing power, physical space, and TCO. Together, we enable operators to stop compromising and start transforming.
 
-To move forward with transforming your network, please contact your SUSE, Intel, and Supermicro account teams to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs. For technical deep dives, you can access the SUSE Telco Cloud deployment documentation (https://documentation.suse.com/suse-edge/3.4/html/edge/atip.html), review Intel’s resources on the Xeon® 6 Processors Networking and Edge(https://www.intel.com/content/www/us/en/products/details/processors/xeon/edge.html), the Platform and Performance Advantages to Accelerate vRAN Deployments(https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf), and the Leadership AI and Networking Solutions with Xeon 6 Processors(https://www.intc.com/news-events/press-releases/detail/1728/intel-unveils-leadership-ai-and-networking-solutions-with), and examine the Supermicro specifications for the {smss112-website}[{smss112}] and {smss212-website}[{smss212}] systems.
+To move forward with transforming your network, please contact your SUSE, Intel, and Supermicro account teams to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs.
+For technical deep dives, you can access the {suse-telco-web}[SUSE Telco Cloud deployment documentation], review Intel’s resources on the {xeon-processor-networking}[Xeon® 6 Processors Networking and Edge], the {vRAN-platform}[Platform and Performance Advantages to Accelerate vRAN Deployments], and the {intel-pressrelease}[Leadership AI and Networking Solutions with Xeon 6 Processors], and examine the Supermicro specifications for the {smss112-website}[{smss112}] and {smss212-website}[{smss212}] systems.
 
 
 == Summary
@@ -1454,7 +1465,8 @@ To move forward with transforming your network, please contact your SUSE, Intel,
 // - Suggested next steps for the learning journey
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This validated reference architecture confirms that SUSE Telco Cloud running on Supermicro telco-optimized systems powered by Intel Xeon 6 SoC processors can deliver a fully consolidated, CPU-only telco edge platform capable of supporting AI-native, low-latency 5G workloads at scale. The solution was validated to meet stringent telco requirements, demonstrating deterministic sub-5 microsecond latency under high CPU utilization while consolidating vRAN acceleration, AI inference, networking, timing, and security into a single-socket system.
+This validated reference architecture confirms that SUSE Telco Cloud running on Supermicro telco-optimized systems powered by Intel Xeon 6 SoC processors can deliver a fully consolidated, CPU-only telco edge platform capable of supporting AI-native, low-latency 5G workloads at scale.
+The solution was validated to meet stringent telco requirements, demonstrating deterministic sub-5 microsecond latency under high CPU utilization while consolidating vRAN acceleration, AI inference, networking, timing, and security into a single-socket system.
 
 By replacing legacy accelerator-heavy designs with an integrated architecture, operators can significantly improve RAN capacity, power efficiency, and AI inference performance while reducing physical footprint, deployment complexity, and operational risk. SUSE Telco Cloud provides a hardened, cloud-native foundation with zero-touch provisioning, consistent lifecycle management, and support for both VNFs and CNFs across core, edge, and far-edge environments.
 
@@ -1492,16 +1504,16 @@ Image
 
 
 
-== Glossary
+//== Glossary
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a glossary of key terms used in this document.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Term::
-Definition
+//Term::
+//Definition
 
-Term::
-Definition
+//Term::
+//Definition
 
 
 
@@ -1527,9 +1539,9 @@ Add content here
 Add content here
 
 
-=== Benchmark results
+//=== Benchmark results
 
-Add content here
+//Add content here
 
 
 
