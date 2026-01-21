@@ -369,23 +369,25 @@ For further details, see {stelco-docs-mgmtcluster}[Setting up the management clu
 +
 [NOTE]
 ====
-The {slm-long} OS image must be downloaded from the {scc-website}[SUSE Customer Center] or {slm-downloads}[SUSE {slm} Downloads page], and it must be located under the `base-images` directory.
+The {slm-long} OS image must be downloaded from the {scc-website}[{scc-long}] or {slm-downloads}[{slm} Downloads page], and it must be located under the `base-images` directory.
 ====
 
-// This step is confusing, since this is the first mention of a KIWI ISO image and no real instructions on how to generate it.  It also begs the question of why the SL Micro image needed to be downloaded.  Clarify here is required.
-. Add your KIWI ISO image (output from {kiwing-docs}[KIWI]) as a base-image in the base-
-images folder.
-To do that you can follow the steps in the {suse-linux-micro-image-with-kiwi}[full guide instructions in official docs]
+// This step is confusing, since this is the first mention of a KIWI ISO image and no real instructions on how to generate it.  It also begs the question of why the SL Micro image needed to be downloaded.  Clarification is needed here.
+. Add your {kiwi-docs}[{kiwi-long}] ISO image to the `base-images` directory.
+//
++
+For further guidance, see {stelco-docs-kiwi-builder}[Building updated SUSE Linux Micro images with {kiwi}]
 
+. Update the following files:
 
-. Replace from the original documentation the following placeholders with the values:
-
-.. In *kubernetes/helm/values/metal3.yaml* file, change the ironicIP with your mgmt
-   cluster IP address (e.g., 172.30.8.11)
-.. In *kubernetes/helm/values/rancher.yaml* file, change the hostname with your mgmt
-   cluster IP address (e.g., 172.30.8.11)
-.. In *network/mgmt-cluster-network.yaml* file, change the network settings according
-   to your environment (e.g., 172.30.8.11, netmask, gateway, dns and mac):
+.. In the `kubernetes/helm/values/metal3.yaml` file, change `ironicIP` to your mgmt
+   cluster IP address (e.g., 172.30.8.11).
+.. In the `kubernetes/helm/values/rancher.yaml` file, change `hostname` to your mgmt
+   cluster IP address (e.g., 172.30.8.11).
+.. In the `network/mgmt-cluster-network.yaml` file, update the network settings to match your environment.
+//
++
+For example:
 +
 [source, yaml]
 ----
@@ -416,24 +418,32 @@ interfaces:
 ----
 
 
-. Modify the eib/mgmt-cluster-34-61-defaultNet.yaml file to change the following:
+. Modify the `eib/mgmt-cluster-34-61-defaultNet.yaml` file as follows:
++
+--
+* pass:[${ROOT_PASSWORD}] - The root password for the management cluster
+//
++
+This can be generated with `openssl passwd -6 PASSWORD`, replacing `PASSWORD` with your desired
+password.
+The final {rancher-short} password will be configured from the file, `custom/files/basic-setup.sh`.
 
-.. pass:[${ROOT_PASSWORD}] - The root password for the management cluster. This could be
-generated using *openssl passwd -6 PASSWORD* and replacing PASSWORD with the desired
-password, and then replacing the value in the file. The final Rancher password will be
-configured based on the file *custom/files/basic-setup.sh*.
-.. pass:[${SCC_REGISTRATION_CODE}] - The registration code for the SUSE Customer Center for the
-SLE Micro product. This could be obtained from the SUSE Customer Center and replacing
-the value in the file.
+* pass:[${SCC_REGISTRATION_CODE}] - Your registration code for {slm-long} from the {scc-website}[{scc-long}]
+--
 
-
- . Build the eib image using the following command:
-
-
- ----
-$ sudo podman run --rm --privileged -it -v $PWD:/eib \
+. Build the eib image.
++
+[source, console]
+----
+podman run --rm --privileged -it -v $PWD:/eib \
 registry.suse.com/edge/3.4/edge-image-builder:1.3.0 \
 build --definition-file mgmt-cluster-34-61-defaultNet.yaml
+----
++
+You should see the output like the following as the eib image is built:
++
+[listing]
+----
 SELinux is enabled in the Kubernetes configuration. The necessary RPM packages will be
 downloaded.
 Downloading file: rancher-public.key 100% |
@@ -485,14 +495,17 @@ Cleanup ...................... [SKIPPED]
 Building ISO image...
 Kernel Params ................ [SKIPPED]
 Build complete, the image can be found at: eib-mgmt-cluster-x86_64-image-61-34.iso
- ----
+----
 
-=== Downstream Cluster EIB definition:
 
-The following steps are required to generate the EIB .raw file for downstream clusters:
+=== Downstream Cluster EIB definition
 
- . The folder *eib-edge-34-61* contains all the necessary files to generate the EIB image for downstream clusters with some telco packages and performance scripts.
- You can get a copy of the content of files using the following link from SUSE Telco Cloud official docs: {suse-telco-automated} [Automated Provisioning – SUSE Telco Cloud Official Docs].
+The following steps are required to generate the EIB RAW image for downstream clusters.
+
+. The folder `eib-edge-34-61` contains all the necessary files to generate the EIB RAW image for downstream clusters with some telco packages and performance scripts.
+//
++
+You can get a copy of the file contents at {stelco-docs-automated}[Fully automated directed network provisioning].
 +
 [listing]
 ----
@@ -513,27 +526,31 @@ The following steps are required to generate the EIB .raw file for downstream cl
     └── configure-network.sh
 ----
 
- . Add your KIWI iso image (output from kiwi process) as a base-image in the base-images folder. To do that you can follow the steps in the {suse-linux-micro-image-with-kiwi}[full guide instructions in official docs]
+. Add your {kiwi} ISO image (output from kiwi process) as a base-image in the `base-images` folder. To do that you can follow the steps in the {suse-linux-micro-image-with-kiwi}[full guide instructions in official docs].
 
- . From the configuration file *edge-cluster.yaml* you can see the packages and scripts that will be included in the image. You will need to modify the following parameters according to your environment:
-
-
-- *encryptedPassword*: Password for the root user in the image (you can generate it using *openssl passwd -6*)
-- *sccRegistrationCode*: SCC registration code to register the system (if you have one)
-
-
- . Build the eib image using the following command:
-
+. From the configuration file, `edge-cluster.yaml`, you can see the packages and scripts that will be included in the image.
+//
+Modify the following parameters according to your environment:
 +
- ----
-$ sudo podman run --rm --privileged -it -v $PWD:/eib \
+--
+* *encryptedPassword* - Password for the root user in the image (you can generate it using `openssl passwd -6`)
+
+* *sccRegistrationCode* - Your {scc} registration code to register the system
+--
+
+. Build the EIB image.
++
+[source, console]
+----
+podman run --rm --privileged -it -v $PWD:/eib \
 registry.suse.com/edge/3.4/edge-image-builder:1.3.0 \
 build --definition-file edge-cluster.yaml
- ----
-
-. The output should be something like this:
+----
 +
- ----
+The output should be similar to:
++
+[listing]
+----
 Setting up Podman API listener...
 Generating image customization components...
 Identifier ................... [SUCCESS]
@@ -558,91 +575,121 @@ Cleanup ...................... [SUCCESS]
 Building RAW image...
 Kernel Params ................ [SUCCESS]
 Build complete, the image can be found at: eibimage-34-61-rt-telco.raw
- ----
+----
+
 
 == Deployment Details
- . Recommended Deployment Patterns
-    .. vRAN Consolidation Nodes
-        *** Use Intel® Xeon® 6 SoC to migrate from accelerator-heavy architectures to single-socket
-    .. Edge AI + Network Services Nodes
-        *** Deploy compact nodes at MEC sites for RAN intelligence, telemetry analysis, and enterprise edge computing.
- . Deployment Checklist for Telco Operators
 
-    .. Performance & Sizing
-        *** Profile RAN, Core, and Edge workloads (packet rate, concurrency, inference rate)
-        *** Select Intel® Xeon® 6 SoC 6 SKUs based on core density and memory requirements
-        *** Validate CPU-only acceleration options for vRAN
-    .. Ecosystem & Integration
-        *** Use OEM-validated RAN and Core blueprints
-        *** Verify compatibility with cloud-native orchestration stacks (K8s, CNF frameworks)
-        *** Validate DPDK, vRAN Boost and AI acceleration paths
-    .. Power & Thermal Design
-        *** Update site power budgets for higher consolidation ratios
-        *** Plan airflow and thermal envelopes for high-density edge PoPs
-    .. Security & Compliance
-        *** Enable hardware security features and confidential computing
-        *** Map regulatory requirements for data protection and sovereignty
-    .. Operational Deployment
-        *** Verify telemetry and observability frameworks
-        *** Test failover, redundancy and RAN real-time behaviour
-        *** Align lifecycle refresh with OEM roadmaps]
+Recommended deployment patterns include:
 
-=== SUSE Telco Cloud Direct Network provisioning
-
-==== Intro
-{suse-telco-automated}[Directed network provisioning] is a feature that allows you to automate the provisioning of downstream clusters.
-This feature is useful when you have many downstream clusters to provision, and you want to automate the process.
-
-==== Cluster API & SUSE Telco Cloud
-{suse-telco-high-level-arc}[Cluster API (CAPI)] enables management of infrastructure resources across multiple infrastructure providers via broadly adopted vendor-neutral APIs.
-
-==== Management Cluster Deployment
-
- - Load the Management cluster EIB .iso generated previously in the Supermicro BMC:
-
-image::media/src/png/8.1.3-load-management-cluster.png[align="center",width=90%]
-
- - Boot the server from Virtual Media CD
-
-image::media/src/png/8.1.3-boot-1.png[align="center",width=90%]
-
-image::media/src/png/8.1.3-boot-2.png[align="center",width=90%]
-
- - The installation will start automatically without any manual interaction.
- After having the operating system installed, the system will start configuring all parameters from the operating system as well as the RKE2 cluster with all helm charts required.
- No manual interaction is required to install the management cluster:
-
-image::media/src/png/8.1.3-installation-1.png[align="center",width=90%]
-
-image::media/src/png/8.1.3-installation-2.png[align="center",width=90%]
-
-image::media/src/png/8.1.3-installation-3.png[align="center",width=90%]
-
-image::media/src/png/8.1.3-installation-4.png[align="center",width=90%]
-
- - The system is ready and the management cluster has been installed properly.
- Kubeconfig is already loaded by default with the user provided in EIB definition file so we can double check cluster is ready:
+* vRAN Consolidation Nodes
+//
 +
+Use {cpu-long} to migrate from accelerator-heavy architectures to single-socket
+
+* Edge AI + Network Services Nodes
+//
++
+Deploy compact nodes at MEC sites for RAN intelligence, telemetry analysis, and enterprise edge computing.
+
+
+The following is a deployment checklist for telco operators:
+
+* Performance and sizing
+** Profile RAN, Core, and Edge workloads (packet rate, concurrency, inference rate)
+** Select {cpu-long} SKUs based on core density and memory requirements
+** Validate CPU-only acceleration options for vRAN
+
+* Ecosystem and integration
+** Use OEM-validated RAN and Core blueprints
+** Verify compatibility with cloud-native orchestration stacks (K8s, CNF frameworks)
+** Validate DPDK, vRAN Boost and AI acceleration paths
+
+* Power and thermal design
+** Update site power budgets for higher consolidation ratios
+** Plan airflow and thermal envelopes for high-density edge PoPs
+
+* Security and compliance
+** Enable hardware security features and confidential computing
+** Map regulatory requirements for data protection and sovereignty
+
+* Operational deployment
+** Verify telemetry and observability frameworks
+** Test fail-over, redundancy and RAN real-time behavior
+** Align lifecycle refresh with OEM roadmaps
+
+
+=== SUSE Telco Cloud direct network provisioning
+
+{stelco-docs-automated}[Directed network provisioning] is a feature that allows you to automate the provisioning of downstream clusters.
+This is a useful feature when you have many downstream clusters to provision and want to automate the process.
+{metal3-website}[{metal3}] is an open-source project that provides tools for managing bare-metal infrastructure in Kubernetes.
+With its {capi-website}[{capi-long} ({capi})] integrations, {metal3} is able to manage infrastructure resources across many infrastructure providers via broadly adopted vendor-neutral APIs.
+
+
+==== Management cluster deployment
+
+The process of deploying the management cluster is outlined here.
+
+. Load the Management cluster EIB ISO generated previously in the {smss-provider} BMC.
++
+image::8.1.3-load-management-cluster.png[Load the management cluster EIB ISO, align="center", width=90%]
+
+. Boot the server from Virtual Media CD.
++
+image::8.1.3-boot-1.png[Power on the server, align="center", width=90%]
++
+image::8.1.3-boot-2.png[Boot the ISO image, align="center", width=90%]
+
+. The installation starts automatically without any manual interaction.
+After installing the operating system, the system starts configuring all parameters for the operating system and RKE2 cluster with all required Helm charts.
+This process is illustrated in the following screenshots.
++
+image::8.1.3-installation-1.png[Booting the installer, align="center",width=90%]
++
+image::8.1.3-installation-2.png[Loading the {slm} RAW image, align="center",width=90%]
++
+image::8.1.3-installation-3.png[Installing components, align="center", width=90%]
++
+image::8.1.3-installation-4.png[Completing the installation, align="center", width=90%]
+
+. At this stage, the system is ready and the management cluster has been installed properly.
+Kubeconfig is loaded with the user provided in EIB definition file by default.
+Verify that the cluster is ready.
++
+[source, console]
 ----
-mgmt-cluster-network:~ # k get nodes
+kubectl get nodes
+----
++
+The output should appear as follows:
+[listing]
+----
 NAME                   STATUS   ROLES                       AGE   VERSION
 mgmt-cluster-network   Ready    control-plane,etcd,master   37s   v1.33.3+rke2r1
 ----
- - Rancher also is available and we can double check it. To get access to the Rancher UI, open a web browser and navigate to *https://rancher-172.30.8.11.sslip.io:8443/dashboard/home* and use the credentials configured in the file *custom/files/basic-setup.sh  (RANCHER_FINALPASSWORD)* during the EIB process showed before:
 
-image::media/src/png/8.1.3-rancher-ui-1.png[align="center",width=90%]
+. Verify that {rancher} is available.
 
-image::media/src/png/8.1.3-rancher-ui-2.png[align="center",width=90%]
+.. Access the {rancher} UI by open your Web browser to https://rancher-172.30.8.11.sslip.io:8443/.
 
-==== Downstream Cluster Deployment (CAPI + Metal3)
-To deploy the downstream cluster, we need to create some manifests files from the management cluster already deployed (also could be done with RancherUI) in order to define the BaremetalHost object (bmh.yaml file) and the provision file (capi.yaml) to deploy the operating system and provision the RKE2 cluster automatically from the management cluster.
-To deploy the downstream cluster, it is necessary to create several manifest files from the already deployed management cluster (alternatively, this can be accomplished via the Rancher UI).
-These files include the BaremetalHost object definition (bmh.yaml) and the provision file (capi.yaml), which are required to deploy the operating system and automatically provision the RKE2 cluster from the management cluster.
-
- - Create the BaremetalHost file (bmh.yaml) replacing the BMC username/password as well as the MAC address and BMC IP in the URL:
+.. Log in with the credentials configured in the file, `custom/files/basic-setup.sh`,  during the EIB process.
 +
+image::8.1.3-rancher-ui-1.png[{rancher} UI login screen, align="center", width=90%]
++
+image::8.1.3-rancher-ui-2.png[{rancher} UI dashboard, align="center", width=90%]
+
+
+==== Downstream cluster deployment
+
+To deploy the downstream cluster (provision the operating system and RKE2 cluster automatically), you need to create manifest files from the management cluster.
+These files include the BaremetalHost definition file (`bmh.yaml`) and the provision file (`capi.yaml`).
+
+. Create the BaremetalHost definition file (`bmh.yaml`) as shown below.
++
+[source, yaml]
 ----
- apiVersion: v1
+apiVersion: v1
 kind: Secret
 metadata:
   name: lab-sm1-credentials
@@ -667,7 +714,8 @@ spec:
     disableCertificateVerification: true
     credentialsName: lab-sm1-credentials
 ----
- - Apply the manifests using kubectl (alternatively it could be applied using Rancher UI):The manifests should be applied utilizing kubectl (an alternative method is to apply them via the Rancher UI):
+
+. Apply the manifests using kubectl (alternatively it could be applied using Rancher UI):The manifests should be applied utilizing kubectl (an alternative method is to apply them via the Rancher UI):
 +
 ....
 kubectl apply -f manifests-examples/bmh.yaml
