@@ -386,7 +386,7 @@ To do that you can follow the steps in the https://documentation.suse.com/suse-e
    cluster IP address (e.g., 172.30.8.11)
 .. In network/mgmt-cluster-network.yaml file, change the network settings according
    to your environment (e.g., 172.30.8.11, netmask, gateway, dns and mac):
-
++
 [source, yaml]
 ----
 routes:
@@ -418,15 +418,14 @@ interfaces:
 
 . Modify the eib/mgmt-cluster-34-61-defaultNet.yaml file to change the following:
 
- ----
-- ${ROOT_PASSWORD} - The root password for the management cluster. This could be
+.. pass:[${ROOT_PASSWORD}] - The root password for the management cluster. This could be
 generated using `openssl passwd -6 PASSWORD` and replacing PASSWORD with the desired
 password, and then replacing the value in the file. The final Rancher password will be
 configured based on the file `custom/files/basic-setup.sh`.
-- ${SCC_REGISTRATION_CODE} - The registration code for the SUSE Customer Center for the
+.. pass:[${SCC_REGISTRATION_CODE}] - The registration code for the SUSE Customer Center for the
 SLE Micro product. This could be obtained from the SUSE Customer Center and replacing
 the value in the file.
- ----
+
 
  . Build the eib image using the following command:
 
@@ -444,7 +443,7 @@ the value in the file.
 (2.4/2.4 kB, 17 MB/s)
 Setting up Podman API listener...
 Pulling selected Helm charts... 100% |
-███████████████████████████████████████████████████████████████████████████|
+██████████████████████████████████████████████████████████████████████████|
 (8/8, 3 it/s)
 Generating image customization components...
 Identifier ................... [SUCCESS]
@@ -462,23 +461,23 @@ Fips ......................... [SKIPPED]
 Elemental .................... [SKIPPED]
 Suma ......................... [SKIPPED]
 Populating Embedded Artifact Registry... 100% |
-████████████████████████████████████████████████████████████████████████████|
+███████████████████████████████████████████████████████████████████████████|
 (19/19, 21 it/min)
 Embedded Artifact Registry ... [SUCCESS]
 Keymap ....................... [SUCCESS]
 Configuring Kubernetes component...
 Downloading file: rke2_installer.sh
 Downloading file: rke2-images-core.linux-amd64.tar.zst 100% |
-███████████████████████████████████████████████████████████████████████████████████|
+████████████████████████████████████████████████████████████████████████████|
 (701/701 MB, 82 MB/s)
 Downloading file: rke2-images-calico.linux-amd64.tar.zst 100% |
-████████████████████████████████████████████████████████████████████████████████████|
+████████████████████████████████████████████████████████████████████████████|
 (362/362 MB, 470 MB/s)
 Downloading file: rke2-images-multus.linux-amd64.tar.zst 100% |
-█████████████████████████████████████████████████████████████████████████████████████|
+████████████████████████████████████████████████████████████████████████████|
 (39/39 MB, 468 MB/s)
 Downloading file: sha256sum-amd64.txt 100% |
-█████████████████████████████████████████████████████████████████████████████████|
+████████████████████████████████████████████████████████████████████████████|
 (4.3/4.3 kB, 32 MB/s)
 Kubernetes ................... [SUCCESS]
 Certificates ................. [SKIPPED]
@@ -493,7 +492,7 @@ Build complete, the image can be found at: eib-mgmt-cluster-x86_64-image-61-34.i
 The following steps are required to generate the EIB .raw file for downstream clusters:
 
  . The folder `eib-edge-34-61` contains all the necessary files to generate the EIB image for downstream clusters with some telco packages and performance scripts. You can get a copy of the content of files using the following link from SUSE Telco Cloud official docs: https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html# [Automated Provisioning – SUSE Telco Cloud Official Docs].
-
++
 [listing]
 ----
 .
@@ -524,7 +523,7 @@ The following steps are required to generate the EIB .raw file for downstream cl
 
  . Build the eib image using the following command:
 
-
++
  ----
 $ sudo podman run --rm --privileged -it -v $PWD:/eib \
 registry.suse.com/edge/3.4/edge-image-builder:1.3.0 \
@@ -532,7 +531,7 @@ build --definition-file edge-cluster.yaml
  ----
 
 . The output should be something like this:
-
++
  ----
 Setting up Podman API listener...
 Generating image customization components...
@@ -618,6 +617,7 @@ image::media/src/png/8.1.3-installation-3.png[align="center",width=90%]
 image::media/src/png/8.1.3-installation-4.png[align="center",width=90%]
 
  - The system is ready and the management cluster has been installed properly. Kubeconfig is already loaded by default with the user provided in EIB definition file so we can double check cluster is ready:
++
 ----
 mgmt-cluster-network:~ # k get nodes
 NAME                   STATUS   ROLES                       AGE   VERSION
@@ -633,7 +633,7 @@ image::media/src/png/8.1.3-rancher-ui-2.png[align="center",width=90%]
 To deploy the downstream cluster, we need to create some manifests files from the management cluster already deployed (also could be done with RancherUI) in order to define the BaremetalHost object (bmh.yaml file) and the provision file (capi.yaml) to deploy the operating system and provision the RKE2 cluster automatically from the management cluster. To deploy the downstream cluster, it is necessary to create several manifest files from the already deployed management cluster (alternatively, this can be accomplished via the Rancher UI). These files include the BaremetalHost object definition (bmh.yaml) and the provision file (capi.yaml), which are required to deploy the operating system and automatically provision the RKE2 cluster from the management cluster.
 
  - Create the BaremetalHost file (bmh.yaml) replacing the BMC username/password as well as the MAC address and BMC IP in the URL:
-
++
 ----
  apiVersion: v1
 kind: Secret
@@ -661,12 +661,13 @@ spec:
     credentialsName: lab-sm1-credentials
 ----
  - Apply the manifests using kubectl (alternatively it could be applied using Rancher UI):The manifests should be applied utilizing kubectl (an alternative method is to apply them via the Rancher UI):
-
++
 ....
 kubectl apply -f manifests-examples/bmh.yaml
 ....
 
  - Inspection starts to retrieve all hardware information from the server to fill the baremetal host object in RKE2:
++
 ....
 mgmt-cluster-network:~ # kubectl get bmh
 NAME      STATE        CONSUMER   ONLINE   ERROR   AGE
@@ -674,6 +675,7 @@ lab-sm1   inspecting              true             11s
 ....
 
  - The full server information is now available:
++
 ....
  apiVersion: v1
 items:
@@ -1009,7 +1011,7 @@ image::media/src/png/8.1.4-rancher-ui-1.png[align="center",width=90%]
 image::media/src/png/8.1.4-rancher-ui-2.png[align="center",width=90%]
 
  - Apply the capi manifests (capi.yaml) to provision the host with the operating system, RKE2 cluster as well as all Telco capabilities like kernel args, sriov, cpuisolation, etc.
-
++
  ----
  apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
@@ -1045,7 +1047,7 @@ spec:
     host: 172.30.8.12
     port: 6443
   noCloudProvider: true
-
++
 ----
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: RKE2ControlPlane
@@ -1358,7 +1360,7 @@ spec:
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
  - Once applied the capi.yaml file in the management cluster to provision the downstream cluster the provision will start:
-
++
 ----
   mgmt-cluster-network:~ # k get bmh
 NAME      STATE          CONSUMER                               ONLINE   ERROR   AGE
@@ -1377,7 +1379,7 @@ lab-sm2   provisioned   multinode-cluster-workers-dxhgg-54cq4   true            
 ----
 
  - Finally nodes are ready and getting into the downstream cluster you will see the nodes up and ready:
-
++
 ----
 suse-wl1:~ # k get nodes
 NAME                                    STATUS   ROLES                       AGE   VERSION
@@ -1405,6 +1407,7 @@ Based on the following configurations:
  - CPU Isolation showed in the capi.yaml file
  - Performance settings scripts showed in the capi.yaml and official documentation (https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html#add-telco)
  - CPU load 95% isolated cores
++
 ----
 $ cat sut-info
    Static hostname: (unset)
@@ -1426,7 +1429,7 @@ Transient hostname: suse-wl2.shared.i14y-lab.com
 
  - Time slot: 7200
  - Measuring with the following command:
-
++
 ----
 cyclictest -F /tmp/cyclictest-monitor.pipe -p98 -t36 --affinity=6-41 --mainaffinity=1 :--interval=1000 --histogram=60 --spike=10 --duration=7200 --quiet
 ----
