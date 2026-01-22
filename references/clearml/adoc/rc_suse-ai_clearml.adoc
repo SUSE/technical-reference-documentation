@@ -244,13 +244,113 @@ Each of these components is described more fully in the sections below.
 
 
 
-=== Software Component 1
+=== ClearML
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide details about each software component in its own subsection.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
+ClearML provides the AI infrastructure management and workload orchestration capabilities required to manage AI training, building and inferencing lifecycle. It integrates with SUSE AI to deliver infrastructure optimization, resource allocation, experiment tracking, pipeline orchestration, and model governance on top of the Kubernetes platform.
 
+Within this reference configuration, ClearML is responsible for:
+
+* Tracking experiments, pipelines metrics, parameters, and models
+* Managing datasets and data lineage
+* Built-in multi-tenancy and Billing
+* Optimizing infrastructure with dynamic fractional GPUs and ClearML’s unified-memory-technology
+* Defining resource quotas, over-quotas, priorities and spillovers
+
+ClearML operates as the primary interface for AI builders, while relying on SUSE AI for secure and scalable workload execution.
+
+=== SUSE AI
+
+SUSE AI provides the enterprise-grade foundation for running AI and machine learning workloads on Kubernetes. It delivers a validated, supported platform that enables consistent execution of AI workloads across environments.
+
+In this reference configuration, SUSE AI is responsible for:
+
+* Providing a Kubernetes-native environment optimized for AI workloads
+* Enabling consistent deployment of training and inference workloads
+* Supporting GPU-enabled workloads where required
+* Integrating with container management, security, and observability services
+
+SUSE AI serves as the control plane and execution environment for all machine learning workloads described in this architecture.
+
+=== SUSE Rancher Prime
+
+SUSE Rancher Prime provides centralized management and lifecycle control for Kubernetes clusters used by the MLOps platform.
+
+In this architecture, SUSE Rancher Prime is used to:
+
+* Provision and manage Kubernetes clusters across environments
+* Enforce consistent cluster configuration and access control
+* Provide centralized visibility into cluster health and resource utilization
+* Support multi-cluster and multi-tenant operations
+
+SUSE Rancher Prime enables platform teams to operate the MLOps infrastructure at scale while maintaining consistency and governance.
+
+=== SUSE Kubernetes Engine (RKE2)
+
+RKE2 provides the secure, enterprise-ready Kubernetes distribution used to run all platform services and machine learning workloads in this architecture. It delivers a CNCF-compliant Kubernetes environment that is hardened by default and suitable for regulated and enterprise environments.
+
+In this reference configuration, RKE2 is responsible for:
+
+* Providing the Kubernetes orchestration layer for SUSE AI and ClearML
+* Running platform services, training jobs, and inference workloads
+* Enforcing Kubernetes-native scheduling, networking, and resource isolation
+* Supporting GPU-enabled workloads where required
+* Integrating with SUSE Rancher Prime for centralized lifecycle management
+
+RKE2 forms the foundational orchestration layer for the MLOps platform and enables consistent workload execution across on-premises, hybrid, and multi-cloud environments.
+
+=== SUSE Storage
+
+SUSE Storage, powered by Longhorn, provides distributed, cloud-native persistent storage for the MLOps platform. It delivers highly available and resilient storage that supports stateful platform services and machine learning workloads running on Kubernetes.
+
+* In this reference configuration, SUSE Storage (Longhorn) is responsible for:
+* Storing ClearML metadata, artifacts, and logs
+* Providing persistent volumes for platform and MLOps services
+* Supporting data replication and high availability
+* Enabling snapshotting and backup of critical platform data
+
+SUSE Storage is deployed on RKE2 clusters and backed by local or network-attached disks. It provides consistent, Kubernetes-native storage that supports performance, durability, and operational requirements across environments.
+
+=== SUSE Security
+
+SUSE Security, powered by NeuVector, provides container and runtime security for the MLOps platform.
+
+In this architecture, SUSE Security is used to:
+
+* Perform vulnerability scanning of container images
+* Enforce runtime security policies for AI workloads
+* Monitor network traffic between platform components
+* Provide real-time threat detection and response
+
+SUSE Security ensures that machine learning workloads and supporting services operate within enterprise security and compliance requirements.
+
+=== SUSE Private Registry
+
+SUSE Private Registry provides a secure container image registry for storing and distributing container images used by the platform.
+
+* In this reference configuration, SUSE Private Registry is used to:
+* Store base images for training and inference workloads
+* Manage versioned application and model images
+* Integrate with vulnerability scanning and access controls
+* Support secure image promotion across environments
+
+Using a centralized registry helps ensure consistency and traceability across development, testing, and production workflows.
+
+=== SUSE Linux Enterprise Server 
+
+SUSE Linux Enterprise Server (SLES) provides the secure, stable, and enterprise-grade operating system foundation for the MLOps platform. It serves as the base operating system for Kubernetes control plane and worker nodes, as well as supporting infrastructure components used by SUSE AI and ClearML.
+
+In this reference configuration, SLES is responsible for:
+
+* Providing a hardened and supported Linux operating system for Kubernetes nodes
+* Ensuring compatibility with RKE2, container runtimes, and GPU drivers
+* Delivering long-term stability through enterprise lifecycle management and security updates
+* Supporting high-performance compute workloads, including GPU-accelerated training and inference
+* Enabling consistent operating system configuration across on-premises, cloud, and hybrid environments
+
+SLES underpins the reliability, security, and operational consistency of the entire AI platform, ensuring that Kubernetes, SUSE AI, and ClearML services run on a certified and enterprise-supported operating system foundation.
 
 
 === Compute Component 1
@@ -301,7 +401,21 @@ Add content here
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This section provides practical guidance for deploying a functional proof-of-concept implementation of the solution with additional considerations for scaling to production.
+
+This section provides a high-level overview of the deployment architecture and sequencing for the SUSE and ClearML reference configuration. It describes the major infrastructure and software layers that comprise the solution and explains how these layers are deployed together to form a functional platform for AI and MLOps workloads.
+
+The intent of this section is to establish a conceptual and architectural foundation for the detailed deployment procedures described later in this document. Installation commands, configuration parameters, and validation steps are intentionally deferred to subsequent sections.
+
+*Layered Deployment Model*
+
+For deployment purposes, the solution is represented as a layered stack, where each layer depends on the services provided by the layer below it. Deployment is performed in a bottom-up sequence, ensuring that each foundational capability is in place before higher-level services are introduced.
+
+[[ADD Stack Figure here]]
+
+
+
+
+
 
 
 // Provide a representation of the solution as a layered deployment stack.
