@@ -128,7 +128,7 @@ After implementing this integration in your {svirt} environment, you can deploy 
 
 
 
-== Prepare the {svirt} environment
+== Preparing the {svirt} environment
 
 In this section you prepare your environment to use {hitachivsp} storage with {svirt}.
 
@@ -204,7 +204,7 @@ systemctl restart multipathd
 
 
 
-== Implement the integration
+== Implementing the integration
 
 Integration of {hitachivsp} involves deployment of the {hspc} CSI driver into your {svirt} environment.
 This process is described in the following sections.
@@ -215,7 +215,7 @@ You can perform the steps described here on any of the {svirt} nodes.
 ====
 
 
-=== Install {hspc-long}
+=== Installing {hspc-long}
 
 
 
@@ -254,7 +254,7 @@ image::verify-hspc-operator.png[hspc operator verification, scaledwidth="100%", 
 
 
 
-=== Deploy the {hspc} instance
+=== Deploying the {hspc} instance
 
 Deploy the {hspc} pods and operator controller.
 
@@ -293,7 +293,7 @@ image::hspc-instance.png[hspc pods and operator verification, scaledwidth="100%"
 
 
 
-=== Define a Kubernetes Secret with {hitachivsp} credentials
+=== Defining a Kubernetes Secret with {hitachivsp} credentials
 
 For authentication, you need to provide your {hitachivsp} credentials as a Kubernetes Secret.
 
@@ -322,7 +322,7 @@ kubectl apply -f secret-vsp-112.yaml
 
 
 
-=== Create the StorageClass
+=== Creating the StorageClass
 
 This provides an {hspc} CSI {suse-terms-storageclass}[StorageClass] that can be used for {suse-terms-pvc}[PersistentVolumeClaims].
 
@@ -360,7 +360,7 @@ kubectl get sc
 image::validate-sc.png[StorageClass verification, scaledwidth="100%", align="left"]
 
 
-=== Create a PersistentVolumeClaim (PVC)
+=== Creating a PersistentVolumeClaim (PVC)
 
 . Create the file, `hitachi-pvc-50g.yaml` to specify the desired storage capacity, such as 50GiB, as follows:
 +
@@ -397,7 +397,7 @@ kubectl get pvc -n vspone
 image::validate-pvc.png[PVC binding verification, scaledwidth="100%", align="left"]
 
 
-=== Validate the configuration
+=== Validating the configuration
 
 Attach the PVC to a pod to verify that storage is accessible.
 
@@ -448,7 +448,7 @@ kubectl get pods -n vspone
 image::validate-pod.png[Test pod verification, scaledwidth="80%", align="center"]
 
 
-== Enable snapshots
+== Enabling snapshots
 
 In this section, you enable snapshots to be stored on {hitachivsp} storage.
 
@@ -536,7 +536,7 @@ image::hspc-snapshot-mapping.png[Configure CSI settings for snapshots, scaledwid
 
 
 
-== Validate {hitachivsp} storage with a VM in {svirt}
+== Validating {hitachivsp} storage with a VM in {svirt}
 
 . Create or edit a VM in {svirt} and choose the Hitachi StorageClass when adding disks.
 +
