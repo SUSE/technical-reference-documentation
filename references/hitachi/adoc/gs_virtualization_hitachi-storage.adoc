@@ -20,7 +20,7 @@ As organizations evolve toward modernized hybrid infrastructures, unified virtua
 {svirt-website}[{svirt}], built on Harvester and powered by Kubernetes, provides a robust foundation for running both virtual machines and containerized workloads on a single platform.
 When deployed with {hitachivsp-website}[{hitachivsp-long}] ({hitachivsp}), enterprises can access data management, high performance storage, and data protection for mission-critical workloads.
 
-This document provides technical guidance for integrating {svirt} and {hitachivsp} using the {hspc-long}.
+This document offers technical guidance for integrating {svirt} and {hitachivsp} using the {hspc-long}.
 
 
 
@@ -80,7 +80,7 @@ This ensures uninterrupted operations for critical applications.
 //
 +
 At its foundation is {slmicro-website}[{slmicro-long} ({slmicro})], the lightweight, enterprise, real-time Linux operating system, and {rke2-website}[{rke2-long} ({rke2})], the secure-by-default Kubernetes distribution.
-{slmicro}'s reduced attack surface, immutable filesystem, and transactional updates with system rollbacks make it an ideal host for Kubernetes.
+{slmicro}'s reduced attack surface, immutable file system, and transactional updates with system rollbacks make it an ideal host for Kubernetes.
 {slmicro} is complemented by {rke2}, the secure-by-default Kubernetes distribution, which delivers the security-hardened control plane that enables robust orchestration while meeting strict government and industry compliance standards.
 //
 +
@@ -115,7 +115,7 @@ This guide references {svirt} {svirt-version1} and later.
 Supported platforms include Hitachi VSP, VSP One Block as well as VSP One SDS in Azure, AWS, and GCP public clouds.
 
 {hspc-long} ({hspc})::
-{hspc-website}[{hspc}] is a {svirt-docs-csi}[CSI driver] that provides integration between {hitachivsp} and {svirt}, enabling you to create and utilize Hitachi storage volumes for stateful container applications and virtual machines.  Installation, configuration, and lifecycle management of the CSI driver is handled by the {hspc} CSI Operator.
+{hspc-website}[{hspc}] is a {svirt-docs-csi}[CSI driver] that provides integration between {hitachivsp} and {svirt}, enabling you to create and use Hitachi storage volumes for stateful container applications and virtual machines.  Installation, configuration, and lifecycle management of the CSI driver is handled by the {hspc} CSI Operator.
 //
 +
 This guide references {hspc} {hspc-version1} and later.
@@ -123,7 +123,7 @@ This guide references {hspc} {hspc-version1} and later.
 
 
 {empty} +
-After implementing this integration in your {svirt} environment, you will be able to deploy virtual machines and containers backed by {hitachivsp} storage.
+After implementing this integration in your {svirt} environment, you can deploy virtual machines and containers backed by {hitachivsp} storage.
 
 
 
@@ -151,7 +151,7 @@ This guide is developed with {svirt} {svirt-version1}, but you should always use
 //
 +
 The {svirt-docs-multipathd}[multipathd] service provides redundant I/O paths ({iscsi-wiki}[iSCSI] or {fc-wiki}[Fibre Channel]) from {svirt} worker nodes to {hitachivsp} to ensure high availability and fail-over.
-To configure and start multipathd, you must log into each {svirt} node and perform the following operations on the command line:
+To configure and start multipathd, you must log in to each {svirt} node and perform the following operations on the command line:
 
 .. Enable and start multipathd.
 +
@@ -324,7 +324,7 @@ kubectl apply -f secret-vsp-112.yaml
 
 === Create the StorageClass
 
-This provides a {hspc} CSI {suse-terms-storageclass}[StorageClass] that can be used for {suse-terms-pvc}[PersistentVolumeClaims].
+This provides an {hspc} CSI {suse-terms-storageclass}[StorageClass] that can be used for {suse-terms-pvc}[PersistentVolumeClaims].
 
 . Modify the StorageClass YAML.
 +
