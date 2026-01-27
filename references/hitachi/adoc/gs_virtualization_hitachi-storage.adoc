@@ -202,7 +202,62 @@ devices {
 systemctl restart multipathd
 ----
 
+.. To make the `/etc/multipath.conf` persistent after node restart, Create a CloudInit resource using `multipathd_hitachi.yaml` this will create `/etc/multipath.conf` on all nodes after restart.
+//
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: multipathd-hitachi
+spec:
+  contents: |
+    stages:
+      network:
+        - name: "Configure Hitachi multipath"
+          files:
+            - path: /etc/multipath.conf
+              permissions: 0644
+              content: |
+                defaults {
+                    user_friendly_names yes
+                    find_multipaths yes
+                }
 
+                blacklist {
+                }
+
+                devices {
+                    device {
+                        vendor "(HITACHI|HP)"
+                        product "OPEN-.*"
+                        path_grouping_policy "multibus"
+                        path_checker "tur"
+                        features "0"
+                        failback immediate
+                        hardware_handler "0"
+                        prio "const"
+                        rr_weight uniform
+                        no_path_retry 10
+                    }
+                }
+        - name: "Start multipathd service"
+          systemctl:
+            enable:
+              - multipathd
+            start:
+              - multipathd
+  filename: multipathd_hitachi.yaml
+  matchSelector: {}
+----
+
+.. Deploy CloudInit configuration with the following command.
++
+[source, console]
+----
+kubectl apply -f multipathd_hitachi.yaml
+----
 
 == Implementing the integration
 
