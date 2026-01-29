@@ -276,7 +276,7 @@ spec:
 kubectl apply -f 99-multipathd_hitachi.yaml
 ----
 
-... After deployment, verify that `99-multipathd_hitachi.yaml` has been copied to the `/oem` directory on each node.
+... After deployment, verify that `multipath.conf` has been copied to the `/etc` directory on each node.
 
 ... Reboot the nodes to ensure the CloudInit CRD takes full effect.
 
