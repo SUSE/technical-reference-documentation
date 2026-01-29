@@ -742,7 +742,14 @@ NAME      STATE        CONSUMER   ONLINE   ERROR   AGE
 lab-sm1   inspecting              true             11s
 ----
 
-* The full server information is now available:
+// * The full server information is now available:
+// +
+* The full Bare Metal Host configuration and hardware details can be retrieved using the following command:
++
+[source,console]
+----
+kubectl get bmh lab-sm1 -o yaml
+----
 +
 ....
  apiVersion: v1
@@ -752,7 +759,8 @@ items:
   metadata:
     annotations:
       kubectl.kubernetes.io/last-applied-configuration: |
-        {"apiVersion":"metal3.io/v1alpha1","kind":"BareMetalHost","metadata":{"annotations":{},"labels":{"cluster-role":"control-plane"},"name":"lab-sm1","namespace":"default"},"spec":{"bmc":{"address":"redfish-virtualmedia://172.30.8.2/redfish/v1/Systems/1/","credentialsName":"lab-sm1-credentials","disableCertificateVerification":true},"bootMACAddress":"7C:C2:55:ED:67:7A","online":true,"rootDeviceHints":{"deviceName":"/dev/nvme0n1"}}}
+        {"apiVersion":"metal3.io/v1alpha1","kind":"BareMetalHost","metadata":{"annotations":{},"labels":{"cluster-role":"control-plane"},"name":"lab-sm1","namespace":"default"},"spec":{"bmc":{"address":"redfish-virtualmedia://172.30.8.2/redfish/v1/Systems/1/","credentialsName":"lab-sm1-credentials","disableCertificateVerification":true},"bootMACAddress":"7C:C2:55:ED:67"
+        "online":true,"rootDeviceHints":{"deviceName":"/dev/nvme0n1"}}}
     creationTimestamp: "2025-10-06T10:30:55Z"
     finalizers:
     - baremetalhost.metal3.io
@@ -1094,34 +1102,95 @@ image::8.1.4-rancher-ui-2.png[title="{rancher} – HardwareData Details for Disc
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 * Once applied the capi.yaml file in the Management Cluster to provision the Downstream Cluster the provision will start:
+
+* To verify the Bare Metal Host (BMH) provisioning status, run:
 +
-....
-  mgmt-cluster-network:~ # k get bmh
+[source,console]
+----
+kubectl get bmh
+----
++
+[listing]
+----
 NAME      STATE          CONSUMER                               ONLINE   ERROR   AGE
 lab-sm1   provisioning   multinode-cluster-controlplane-kf8lg   true             21h
 lab-sm2   available                                             true             17h
-mgmt-cluster-network:~ #
-mgmt-cluster-network:~ # k get bmh
+----
+
+* Control plane host provisioned
++
+[source,console]
+
+----
+kubectl get bmh
+----
++
+[listing]
+----
 NAME      STATE         CONSUMER                               ONLINE   ERROR   AGE
 lab-sm1   provisioned   multinode-cluster-controlplane-97266   true             38m
 lab-sm2   available                                            true             30m
-mgmt-cluster-network:~ # k get bmh
+----
+
+* All hosts provisioned
++
+[source,console]
+----
+kubectl get bmh
+----
++
+
+[listing]
+----
 NAME      STATE         CONSUMER                                ONLINE   ERROR   AGE
 lab-sm1   provisioned   multinode-cluster-controlplane-97266    true             49m
 lab-sm2   provisioned   multinode-cluster-workers-dxhgg-54cq4   true             41m
+----
 
-....
+// ....
+//
+//
+//   mgmt-cluster-network:~ # k get bmh
+// NAME      STATE          CONSUMER                               ONLINE   ERROR   AGE
+// lab-sm1   provisioning   multinode-cluster-controlplane-kf8lg   true             21h
+// lab-sm2   available                                             true             17h
+// mgmt-cluster-network:~ #
+// mgmt-cluster-network:~ # k get bmh
+// NAME      STATE         CONSUMER                               ONLINE   ERROR   AGE
+// lab-sm1   provisioned   multinode-cluster-controlplane-97266   true             38m
+// lab-sm2   available                                            true             30m
+// mgmt-cluster-network:~ # k get bmh
+// NAME      STATE         CONSUMER                                ONLINE   ERROR   AGE
+// lab-sm1   provisioned   multinode-cluster-controlplane-97266    true             49m
+// lab-sm2   provisioned   multinode-cluster-workers-dxhgg-54cq4   true             41m
+//
+// ....
 
-* Finally nodes are ready and getting into the Downstream Cluster you will see the nodes up and ready:
+// * Finally nodes are ready and getting into the Downstream Cluster you will see the nodes up and ready:
+// +
+// ....
+// suse-wl1:~ # k get nodes
+// NAME                                    STATUS   ROLES                       AGE   VERSION
+// multinode-cluster-t4rwk                 Ready    control-plane,etcd,master   12m   v1.33.3+rke2r1
+// multinode-cluster-workers-dxhgg-54cq4   Ready    <none>                      45s   v1.33.3+rke2r1
+// ....
+
+* After provisioning completes, the nodes join the downstream cluster and transition to the *Ready* state. This can be verified using the following command:
 +
-....
-suse-wl1:~ # k get nodes
-NAME                                    STATUS   ROLES                       AGE   VERSION
-multinode-cluster-t4rwk                 Ready    control-plane,etcd,master   12m   v1.33.3+rke2r1
-multinode-cluster-workers-dxhgg-54cq4   Ready    <none>                      45s   v1.33.3+rke2r1
-....
+[source,console]
+----
+kubectl get nodes
+----
++
+[listing]
+----
+NAME                                    STATUS   ROLES                       AGE    VERSION
+multinode-cluster-t4rwk                 Ready    control-plane,etcd,master   12m    v1.33.3+rke2r1
+multinode-cluster-workers-dxhgg-54cq4   Ready    <none>                      45s    v1.33.3+rke2r1
+----
 
-* Also, the same info is available now in SUSE Rancher UI:
+
+* The same information is also available in the SUSE Rancher UI, as shown below:
 
 image::8.1.4-rancher-ui-3.png[title="{rancher} – Clusters Overview Showing Active Downstream Cluster", align="center", width=90%]
 
@@ -1141,13 +1210,14 @@ Cycletest quantifies the latency before and after the task scheduling, subsequen
 
 Based on the following configurations:
 
-* Kernel args showed in the capi.yaml file
-* Huge pages showed in the capi.yaml file
-* CPU Isolation showed in the capi.yaml file
-* Performance settings scripts showed in the capi.yaml and official documentation (https://documentation.suse.com/suse-edge/3.4/html/edge/atip-automated-provisioning.html#add-telco)
+* Kernel args showed in the `capi.yaml` file
+* Huge pages showed in the `capi.yaml` file
+* CPU Isolation showed in the `capi.yaml` file
+* Performance settings scripts showed in the `capi.yaml` and {stelco-docs-automated}[official documentation]
 * CPU load 95% isolated cores
 +
-....
+[listing]
+----
 $ cat sut-info
    Static hostname: (unset)
 Transient hostname: suse-wl2.shared.i14y-lab.com
@@ -1164,11 +1234,12 @@ Transient hostname: suse-wl2.shared.i14y-lab.com
   Firmware Version: 1.0
      Firmware Date: Mon 2025-08-25
       Firmware Age: 1month 2w 1d
-....
+----
 
 * Time slot: 7200
 * Measuring with the following command:
 +
+[source,console]
 ----
 cyclictest -F /tmp/cyclictest-monitor.pipe -p98 -t36 --affinity=6-41 --mainaffinity=1 :--interval=1000 --histogram=60 --spike=10 --duration=7200 --quiet
 ----
