@@ -41,7 +41,12 @@ The reader should have basic familiarity with Linux, Kubernetes, storage network
 
 === Acknowledgments
 
-The author wishes to acknowledge contributions from {hitachivsp-provider} engineering teams for validation and joint testing of the {hspc-long} integration with {svirt}.
+The author wishes to acknowledge contributions of the following colleagues:
+
+* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+* {editor1-firstname} {editor1-surname}, {editor1-jobtitle}, {editor1-orgname}
+
+Additionally, the author is grateful to the {hitachivsp-provider} engineering teams for validation and joint testing of the {hspc-long} integration with {svirt}.
 
 
 
@@ -151,9 +156,10 @@ This guide is developed with {svirt} {svirt-version1}, but you should always use
 //
 +
 The {svirt-docs-multipathd}[multipathd] service provides redundant I/O paths ({iscsi-wiki}[iSCSI] or {fc-wiki}[Fibre Channel]) from {svirt} worker nodes to {hitachivsp} to ensure high availability and fail-over.
-To configure and start multipathd, you must log in to each {svirt} node and perform the following operations on the command line:
 
-.. Enable and start multipathd.
+.. For testing, you can temporarily enable multipathd by logging in to each {svirt} node and performing the following operations on the command line:
+
+... Enable and start multipathd.
 +
 [source, console]
 ----
@@ -162,7 +168,7 @@ systemctl start multipathd
 systemctl status multipathd
 ----
 
-.. Create the file, `/etc/multipath.conf`.
+... Create the file, `/etc/multipath.conf`.
 //
 +
 Be sure vendor and product rules match your array.
@@ -195,12 +201,86 @@ devices {
 }
 ----
 
-.. With `/etc/multipath.conf` created, restart the `multipathd` service.
+... With `/etc/multipath.conf` created, restart the multipathd service.
 +
 [source, console]
 ----
 systemctl restart multipathd
 ----
+
+... Verify that multipathd is started on each node.
++
+[source, console]
+----
+systemctl status multipathd
+----
+
+
+.. To make these multipathd changes persistent across node reboots, you need to apply a CloudInit Custom Resource Definition (CRD).
+
+... Create the CloudInit CRD file, `99-multipathd_hitachi.yaml`, with content like the following:
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: multipathd-hitachi
+spec:
+  matchSelector:
+    harvesterhci.io/managed: "true"
+  filename: 99-multipathd_hitachi.yaml
+  contents: |
+    stages:
+      network:
+        - name: "Configure Hitachi multipath"
+          files:
+            - path: /etc/multipath.conf
+              permissions: 0644
+              content: |
+                defaults {
+                    user_friendly_names yes
+                    find_multipaths yes
+                }
+
+                blacklist {
+                }
+
+                devices {
+                    device {
+                        vendor "(HITACHI|HP)"
+                        product "OPEN-.*"
+                        path_grouping_policy "multibus"
+                        path_checker "tur"
+                        features "0"
+                        failback immediate
+                        hardware_handler "0"
+                        prio "const"
+                        rr_weight uniform
+                        no_path_retry 10
+                    }
+                }
+        - name: "Start multipathd service"
+          systemctl:
+            enable:
+              - multipathd
+            start:
+              - multipathd
+  paused: false
+----
+
+... Deploy the `99-multipathd_hitachi.yaml` CloudInit CRD.
++
+[source, console]
+----
+kubectl apply -f 99-multipathd_hitachi.yaml
+----
+
+... After deployment, verify that `multipath.conf` has been copied to the `/etc` directory on each node.
+
+... Reboot the nodes to ensure the CloudInit CRD takes full effect.
+
+... Verify that multipathd is started on each node.
 
 
 
