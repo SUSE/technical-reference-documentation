@@ -1,0 +1,238 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Getting Started Guide
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: suse-virt-hitachivsp-storage
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+//-
+:rev1-date: 2026-01-23
+:rev1-description: Initial publication
+:docdate: {rev1-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Variable names follow a simple pattern:
+//   - compX[-MODIFIER]
+//   where:
+//   - X is an integer starting from 1 for the primary component,
+//     2 for a secondary component, and so on.
+//   - -MODIFIER is text that identifies the stored information.
+//   Some -MODIFIER values include:
+//   - EMPTY: If the modifier is missing, the variable contains
+//     the name of the component
+//     E.g.: 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime',
+//           'Kubeflow', 'Veeam Kasten', 'SQL Server'
+//     NOTE: Be sure to use approved product names.
+//   - -provider: Name of company or project providing the component
+//                (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//   - -version1: A relevant product version (e.g., '15 SP6', '3.1.2')
+//                Additional product versions must be listed separately
+//                (e.g., '-version2: '2.9.5')
+//   - -website: Product website (e.g., https://www.suse.com/products/server/)
+//   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//
+//   You can create additional modifiers as needed.
+//
+// -
+:svirt-provider: SUSE
+:svirt: SUSE Virtualization
+:svirt-version1: v1.6
+:svirt-website: https://www.suse.com/products/rancher/virtualization/
+:svirt-docs-root: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/
+:svirt-docs: {svirt-docs-root}introduction/overview.html
+:svirt-docs-ha: {svirt-docs-root}introduction/deploy-ha-cluster.html
+:svirt-docs-iso: {svirt-docs-root}installation-setup/methods/iso-install.html
+:svirt-docs-multipathd: {svirt-docs-root}storage/csidriver.html#_2_multipath_support
+:svirt-docs-csi: {svirt-docs-root}storage/csidriver.html
+
+:slmicro-provider: SUSE
+:slmicro-long: SUSE Linux Micro
+:slmicro: SL Micro
+:slmicro-version1: 6.1
+:slmicro-website: https://www.suse.com/products/micro/
+:slmicro-docs: https://documentation.suse.com/sle-micro/6.2/
+
+:rke2-provider: SUSE
+:rke2-long: Rancher Kubernetes Engine 2
+:rke2-long-alt: RKE Government
+:rke2: RKE2
+:rke2-version1: 1.33
+:rke2-website: https://documentation.suse.com/cloudnative/rke2/latest/en/introduction.html
+:rke2-docs: https://documentation.suse.com/cloudnative/rke2/
+
+:hitachivsp-provider: Hitachi Vantara
+:hitachivsp: Hitachi VSP
+:hitachivsp-long: Hitachi Vantara Virtual Storage Platform One
+:hitachivsp-version1:
+:hitachivsp-website: https://www.hitachivantara.com/
+:hitachivsp-storage-website: https://www.hitachivantara.com/en-in/products/storage-platforms
+:hitachivsp-docs: https://docs.hitachivantara.com/
+
+:hspc-provider: {hitachivsp-provider}
+:hspc: HSPC
+:hspc-long: Hitachi Storage Plug-in for Containers
+:hspc-version1: v3.16.1
+:hspc-website: https://www.hitachivantara.com/en-us/pdf/datasheet/storage-plug-in-for-containers-datasheet.pdf
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title - (<75 characters) concisely identify the guide.
+//         (e.g.: "Kubeflow with SUSE Rancher Prime")
+// subititle - (<75 characters) expound on the title.
+//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with SUSE Rancher Prime")
+// usecase: (<55 characters) key words or phrases that identify the
+//          use case of this guide
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) brief description of what this guide
+//              provides (e.g.: "Deploy Kubeflow with SUSE Rancher Primer")
+// description-social: (<55 characters) condensed description suitable for
+//                     social media (e.g.: "Kubeflow with SUSE Rancher")
+// executive-summary: (<300 characters) brief summary of the guide that
+//                    appears near the beginning of the rendered document
+//                    (e.g.: "Kubeflow simplifies deployment of machine
+//                            learning (ML) workflows on Kubernetes clusters.
+//                            This document provides step-by-step guidance
+//                            for deploying Kubeflow on an RKE2 cluster with
+//                            SUSE Rancher Prime."
+//
+// NOTE: You can reference component variables in titles.
+//       E.g., If you have the component variables:
+//             :svirt: SUSE Linux Enterprise Server
+//             :hitachivsp: JupyterLab
+//             you can reference them to define new variables, like:
+//             :title: Simplify deployment of {hitachivsp} with {svirt}
+// -
+:title: SUSE Virtualization with Hitachi VSP Storage
+
+:subtitle: Deploy SUSE Virtualization and Hitachi VSP Storage for cloud native virtualization infrastructure
+
+:usecase: cloud native virtualization infrastructure
+
+:description: Guidance for integrating SUSE Virtualization and Hitachi storage platforms to enable modern, enterprise, cloud native virtualization infrastructure.
+
+:description-social: Integration and deployment guide for SUSE Virtualization and Hitachi storage
+
+:executive-summary: This guide describes how to integrate Hitachi Storage with SUSE Virtualization using the Hitachi Storage Plug‑in for Containers (HSPC CSI driver). It covers prerequisites, multipath configuration, CSI operator installation, and the creation of Kubernetes resources (Secret, StorageClass, PVC, SnapshotClass), along with validation steps using both CLI and the SUSE Virtualization UI. This guide is intended for platform engineers, systems administrators, and others who design, deploy, and manage enterprise, cloud native, and virtualization infrastructure.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//
+//   A task must be one of these supported values:
+//    Administration, Artificial Intelligence, Auditing, Authentication,
+//    Automation, Backup &amp; Recovery, Certification, Cloud,
+//    Clustering, Compliance, Configuration, Containerization,
+//    Container Management, Data Intelligence, Deployment, Design,
+//    Encryption, High Availability, Image Building, Implementation,
+//    Installation, Integration, Maintenance, Migration, Monitoring,
+//    Packaging, Security, Storage, Subscription Management,
+//    Troubleshooting, Upgrade &amp; Update, Virtualization,
+//    Vulnerability, Web
+//
+//  E.g.,
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: Integration
+:metatask2: Storage
+:metatask3: Deployment
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//   Follow the pattern to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//   NOTE: Other contributors and editors are typically listed in
+//         an Acknowledgements section.
+//         To list additional authors or contributors on the cover page,
+//         you must edit the docinfo.xml file as well.
+// -
+:author1-firstname: Jivaji
+:author1-surname: Ihare
+:author1-jobtitle: Solution Architect
+:author1-orgname: SUSE
+:editor1-firstname: Terry
+:editor1-surname: Smith
+:editor1-jobtitle: Director, Partner Ecosystem Innovations
+:editor1-orgname: SUSE
+//:author2-firstname: first (given) name
+//:contrib1-firstname: first (given) name
+//:editor1-firstname: first (given) name
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+:fc-long: Fibre Channel
+:fc: FC
+:fc-wiki: https://en.wikipedia.org/wiki/Fibre_Channel
+
+:iscsi-long: Internet Small Computer Systems Interface
+:iscsi: iSCSI
+:iscsi-wiki: https://en.wikipedia.org/wiki/ISCSI
+
+:suse-terms-root: https://documentation.suse.com/cloudnative/storage/latest/en/
+:suse-terms-storageclass: {suse-terms-root}introduction/terminology.html#_storageclass
+:suse-terms-pvc: {suse-terms-root}introduction/terminology.html#_persistentvolumeclaim
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
