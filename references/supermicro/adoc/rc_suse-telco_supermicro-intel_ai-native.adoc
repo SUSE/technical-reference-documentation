@@ -704,7 +704,7 @@ These files include the BareMetalHost definition file (`bmh.yaml`) and the Provi
 . Create a BaremetalHost definition file (`bmh.yaml`).
 +
 //
-For reference, see <<Example BareMetalHost definition file (bmh.yaml)>>.
+For reference, see <<Sample BareMetalHost definition file (bmh.yaml)>>.
 
 . Apply the manifests using kubectl (alternatively it could be applied using Rancher UI):The manifests should be applied utilizing kubectl (an alternative method is to apply them via the Rancher UI):
 +
@@ -733,7 +733,7 @@ lab-sm1   inspecting              true             11s
 kubectl get bmh lab-sm1 -o yaml
 ----
 +
-For reference, see <<Example BareMetalHost details>>.
+For reference, see <<Sample BareMetalHost details>>.
 
 
 . The same information is represented now in the {rancher} UI:
@@ -746,7 +746,7 @@ image::8.1.4-rancher-ui-2.png[title="{rancher} – Hardware Data Details for Dis
 This also applies Telco features, such as DPDK, SR-IOV, CPU isolation, huge pages, and kernel parameter tuning.
 //
 +
-See <<Example Provision file (capi.yaml)>> for reference.
+See <<Sample Provision file (capi.yaml)>> for reference.
 
 
 . Verify the BareMetalHost (BMH) provisioning status.
@@ -808,24 +808,18 @@ image::8.1.4-rancher-ui-4.png[title="{rancher} – Downstream Cluster Nodes in A
 In this section, you conduct performance tests on the cluster described in this document.
 to measure the CPU latency in scheduling new tasks on both isolated and housekeeping cores.
 You utilize a real-time application, which is a simulator, to replicate specific workloads per CPU during defined time periods.
-{json-perf-testing}[By configuring a JSON file], you can simulate a particular CPU load percentage and use `cyclictest` to measure the latency associated with scheduling tasks concurrently.
-`cyclictest` quantifies the latency before and after the task scheduling and can produce a histogram to visualize the results.
-For more information on cyclictest, see {sle-rt-hw-testing}[SLE RT Hardware Testing]
+{rt-testing-json}[By configuring a JSON file], you can simulate a particular CPU load percentage and use `cyclictest` to quantify the latency associated with scheduling tasks concurrently.
+`cyclictest` can also produce a histogram to visualize the results, as shown below.
+For more information about `cyclictest`, see {sle-rt-hw-testing}[SLE RT Hardware Testing].
 
+To provide illustrative, real-time performance, the authors deployed the reference configuration detailed in this document, including the telco tunings provided in the <<Sample Provision file (capi.yaml)>>) and using {smss112-long} hosts.
 
-With the reference configuration detailed in this document (including the Telco tunings shown in the <<Example Provision file (capi.yaml)>>) and providing a CPU load of 95 percent on isolated cores,
+[NOTE]
+====
+Host details provided by the `hostnamectl`:
 
-Based on the following configurations:
-
-* Kernel args showed in the Provision file (`capi.yaml`)
-* Huge pages showed in the `capi.yaml` file
-* CPU Isolation showed in the `capi.yaml` file
-* Performance settings scripts showed in the `capi.yaml` and {stelco-docs-automated}[official documentation]
-* CPU load 95% isolated cores
-+
 [listing]
 ----
-$ hostnamectl
    Static hostname: (unset)
 Transient hostname: suse-wl2.shared.i14y-lab.com
          Icon name: computer-server
@@ -842,18 +836,19 @@ Transient hostname: suse-wl2.shared.i14y-lab.com
      Firmware Date: Mon 2025-08-25
       Firmware Age: 1month 2w 1d
 ----
+====
 
-* Time slot: 7200
-* Measuring with the following command:
-+
+The authors applied a CPU load of 95 percent on isolated cores with a duration of 7200 seconds, using the command:
+
 [source,console]
 ----
 cyclictest -F /tmp/cyclictest-monitor.pipe -p98 -t36 --affinity=6-41 --mainaffinity=1 :--interval=1000 --histogram=60 --spike=10 --duration=7200 --quiet
 ----
 
-The plot below shows that latency remains below five microseconds for this test.
+This resulted in the plot below, where latency remains below five microseconds for the duration of the test.
 
 image::9.2-latency-plot.png[title="Real-Time CPU Latency Distribution", Real-Time CPU Latency Distribution, align="center", width=90%]
+
 
 
 == Conclusions and next steps
@@ -958,10 +953,10 @@ Add content here
 Add content here
 
 
-=== Example files and output
+=== Sample files and output
 
 
-==== Example BareMetalHost definition file (bmh.yaml)
+==== Sample BareMetalHost definition file (bmh.yaml)
 
 [source, yaml]
 ----
@@ -993,7 +988,7 @@ spec:
 
 
 
-==== Example BareMetalHost details
+==== Sample BareMetalHost details
 
 [source, yaml]
 ----
@@ -1326,7 +1321,7 @@ metadata:
 ----
 
 
-==== Example Provision file (capi.yaml)
+==== Sample Provision file (capi.yaml)
 
 [source, yaml]
 ----
