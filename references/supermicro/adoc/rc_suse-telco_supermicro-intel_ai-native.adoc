@@ -808,8 +808,9 @@ image::8.1.4-rancher-ui-4.png[title="{rancher} – Downstream Cluster Nodes in A
 In this section, you conduct performance tests on the cluster described in this document.
 to measure the CPU latency in scheduling new tasks on both isolated and housekeeping cores.
 You utilize a real-time application, which is a simulator, to replicate specific workloads per CPU during defined time periods.
-By configuring a JSON file, you can simulate a particular CPU load percentage and use `cyclictest` to measure the latency associated with scheduling tasks concurrently.
+{json-perf-testing}[By configuring a JSON file], you can simulate a particular CPU load percentage and use `cyclictest` to measure the latency associated with scheduling tasks concurrently.
 `cyclictest` quantifies the latency before and after the task scheduling and can produce a histogram to visualize the results.
+For more information on cyclictest, see {sle-rt-hw-testing}[SLE RT Hardware Testing]
 
 
 With the reference configuration detailed in this document (including the Telco tunings shown in the <<Example Provision file (capi.yaml)>>) and providing a CPU load of 95 percent on isolated cores,
@@ -824,7 +825,7 @@ Based on the following configurations:
 +
 [listing]
 ----
-$ cat sut-info
+$ hostnamectl
    Static hostname: (unset)
 Transient hostname: suse-wl2.shared.i14y-lab.com
          Icon name: computer-server
