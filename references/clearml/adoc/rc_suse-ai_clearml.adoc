@@ -1023,6 +1023,224 @@ helm upgrade --install suse-ai-deployer \
 
 === ClearML
 
+*add image here*
+
+*Preparation*
+
+1. *HW specification* - For product deployment, the ClearML recommends at least 3 nodes for the control plane, each provisioned with:
+  * 8 vCPUs
+  * 32 GB RAM
+  * 500 GB storage
+
+2. *Software Dependencies*
+  * Kubernetes
+  * Kubernetes >= 1.23.0-0
+  * Kubectl
+  * Helm
+
+3. *Networking*
+The following network components need to be provisioned to make the ClearML control plane accessible:
+
+* *Ingress Controller* An Ingress controller (e.g., nginx-ingress) is required. If exposing services externally, configure a LoadBalancer-capable solution (e.g. MetalLB).
+* *Port specification* The designated nodes for the ClearML control plane servers and workers should be able to communicate through HTTP/S: TCP ports 80 and 443.
+Any additional ports to be used in the deployment (i.e.  TCP sessions) should also be pre-configured (see Application Gateway installation).
+* *DNS Configuration* A domain with subdomain support is required (referred here-on as <BASE_DOMAIN>), ideally with trusted TLS certificates. All entries must be resolvable by the Ingress controller. Example subdomains:
+** Control plane servers:
+*** api.<BASE_DOMAIN>
+*** app.<BASE_DOMAIN>
+*** files.<BASE_DOMAIN>
+* Application Gateway:
+*** router.<BASE_DOMAIN>
+*** tcp-router.<BASE_DOMAIN> (optional, for TCP sessions)
+* [For Advanced usage] CNI preconfigured
+* [For Multi-tenant deployment] {cml-idp}[IdP] set up per tenant.
+
+4. *Storage*
+* A configured StorageClass and an accessible storage backend for the ClearML Control Plane.
+* A configured PVC(ReadWriteMany policy)  and PV for the ClearML workers.
+5. *ClearML Artifactories*
+To install the different ClearML components, credentials to ClearML’s artifact repositories are required, provided by the ClearML team:
+* Helm repository credentials (referenced from this point on as <HELM_REPO_TOKEN>)	
+* DockerHub registry credentials (referenced from this point on as <CLEARML_DOCKERHUB_TOKEN>)
+
+
+ClearML’s control plane uses these charts as dependencies
+
+|===
+| Name | Version | Repo
+
+| elasticsearch | 8.5.1 | https://helm.elastic.co
+| mongodb | 15.6.26 | oci://docker.io/bitnamicharts
+| redis | 17.8.3 | oci://docker.io/bitnamicharts
+|===
+
+
+
+*Deployment process*
+
+1. *Configuring Deployment Parameters*
+The installation procedure makes use of a tailored helm chart to deploy the ClearML control plane components.
+Deployment specific parameters are set through a custom clearml-values.override.yaml.
+
+2. *Baseline Configuration*
+Create a clearml-values.override.yaml file with the baseline ClearML service settings:
+Replace the below <BASE_DOMAIN> placeholders with the domain you’ve assigned  to the cluster's Ingress Controller. This will be the base domain for reaching your ClearML installation.
++
+[source, bash]
+----
+imageCredentials:
+  password: "<CLEARML_DOCKERHUB_TOKEN>"
+clearml:
+  cookieDomain: "<BASE_DOMAIN>"
+apiserver:
+  ingress:
+    enabled: true
+    hostName: "api.<BASE_DOMAIN>"
+  service:
+    type: ClusterIP
+fileserver:
+  ingress:
+    enabled: true
+    hostName: "files.<BASE_DOMAIN>"
+  service:
+    type: ClusterIP
+webserver:
+  ingress:
+    enabled: true
+    hostName: "app.<BASE_DOMAIN>"
+  service:
+    type: ClusterIP
+clearmlApplications:
+  enabled: true
+----
+
+3. *Multi-tenant configuration*
++
+Establish an initial supervisor tenant with a supervisor user. This user will have the authority to create and remove other tenants, and access information across all tenants.
++
+Update the clearml-values.override.yaml with the following values:
+Replace the below <SUPERVISOR_COMPANY_ID>, <SUPERVISOR_USER_KEY>, <SUPERVISOR_USER_SECRET> and <SUPERVISOR_USER_EMAIL> with desired values. The <SUPERVISOR_USER_KEY> and <SUPERVISOR_USER_SECRET> can be used to log in as the supervisor user from the ClearML Web UI via app.<BASE_DOMAIN>.
++
+Note that the <SUPERVISOR_USER_EMAIL> value must be explicitly quoted (e.g. "\"email@example.com\"").
++
+[source, yaml]
+----
+apiserver:
+  extraEnvs:
+    - name: CLEARML__services__organization__features__user_management_advanced
+      value: "true"
+    - name: CLEARML__services__workers__resource_usages__supervisor_company
+      value: "<SUPERVISOR_COMPANY_ID>"
+    - name: CLEARML__secure__credentials__supervisor__role
+      value: "system"
+    - name: CLEARML__secure__credentials__supervisor__allow_login
+      value: "true"
+    - name: CLEARML__secure__credentials__supervisor__user_key
+      value: "<SUPERVISOR_USER_KEY>"
+    - name: CLEARML__secure__credentials__supervisor__user_secret
+      value: "<SUPERVISOR_USER_SECRET>"
+    - name: CLEARML__secure__credentials__supervisor__sec_groups
+      value: "[\"users\", \"admins\", \"queue_admins\"]"
+    - name: CLEARML__secure__credentials__supervisor__email
+      value: "\"<SUPERVISOR_USER_EMAIL>\""
+    - name: CLEARML__apiserver__company__unique_names
+      value: "true"
+----
+
+4. *Setting up Helm*
++
+Add the ClearML Helm repository to your cluster:
++
+[source, bash]
+----
+helm repo add clearml-enterprise https://raw.githubusercontent.com/clearml/clearml-enterprise-helm-charts/gh-pages --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
+----
++
+Update the local repository:
++
+[source, bash]
+----
+helm repo update
+----
+
+5. Deploying the ClearML Control Plane
+Install the ClearML Enterprise Control Plane using the configuration in your clearml-values.override.yaml.
++
+[source, bash]
+----
+helm upgrade -i -n clearml clearml clearml-enterprise/clearml-enterprise --create-namespace -f clearml-values.override.yaml
+----
+
+6. Creating a Tenant
+  * Set up the environment for configuring the server via API:
+  The environment variables should match the values defined in the previous installation steps.
++
+[source, bash]
+----
+APISERVER_URL="https://api.<BASE_DOMAIN>"
+APISERVER_KEY="<SUPERVISOR_USER_KEY>"
+APISERVER_SECRET="<SUPERVISOR_USER_SECRET>"
+----
+* Create a tenant:
+Replace the below <TENANT_NAME> with a name for the new tenant
++
+[source, bash]
+----
+curl $APISERVER_URL/system.create_company \
+  -H "Content-Type: application/json" \
+  -u $APISERVER_KEY:$APISERVER_SECRET \
+  -d '{"name":"<TENANT_NAME>"}'
+----
+The API returns the new tenant ID (<COMPANY_ID>)
+* Validate tenant creation by listing existing tenants:
++
+[source, bash]
+----
+curl -u $APISERVER_KEY:$APISERVER_SECRET $APISERVER_URL/system.get_companies
+----
+* Create a utility administrator user for to facilitate tenant configuration:
+Replace the below <COMPANY_ID> with the value returned when creating the tenant.
+Replace the below <ADMIN_USER_NAME> and <ADMIN_USER_EMAIL> with suitable values.
++
+[source, bash]
+----
+curl $APISERVER_URL/auth.create_user \
+  -H "Content-Type: application/json" \
+  -u $APISERVER_KEY:$APISERVER_SECRET \
+  -d '{"name":"<ADMIN_USER_NAME>","company":"<COMPANY_ID>", \
+     "email":"<ADMIN_USER_EMAIL>","role":"admin","internal":"true"}'
+----
+* Create a utility API credentials for this administrator user:
++
+[source, bash]
+----
+curl $APISERVER_URL/auth.create_credentials \
+  -H "Content-Type: application/json" \
+  -H "X-Clearml-Impersonate-As: <USER_ID>" \
+  -u $APISERVER_KEY:$APISERVER_SECRET
+----
+The returned set of key and secret can be used for additional API configuration of the tenant.
+* Onboarding Users through an Identity Provider (SSO)
+ClearML supports a wide range of protocols and providers. In ClearML, each tenant is associated with its own IdP to authenticate and authorize access to the ClearML platform.
+Refer to ClearML’s {cml-idp}[online documentation] for further information on configuring each IdP
+* Verifying the installation of Control Plane
+To verify the ClearML control plane is up and running use a web browser to access (https://app.<BASE_DOMAIN>;).
+
+*image required*
+* Setting up Worker Nodes
+The ClearML Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to ClearML queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
+The Controller pod:
+* Pulls jobs from ClearML execution queues
+* Prepares a Kubernetes job based on the provided YAML template.
+* Inside each job pod, the ClearML Agent:
+** Installs the required environment for the task.
+** Executes and monitors the task process.
+** Logs task data to the ClearML Server
+
+*Prerequisites*
+In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated ClearML agent for each tenant (using a tenant admin’s API credentials).
+* A running ClearML Control plane
+* Each worker environment must be able to access the ClearML Server over the same network.
 
 
 
