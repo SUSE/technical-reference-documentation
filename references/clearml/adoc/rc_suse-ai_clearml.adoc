@@ -672,6 +672,357 @@ While logged in to the node, as root or with sudo privileges, install SUSE Ranch
 
 1. Install cert-manager
 
+* Set the following variable with the desired version of cert-manager
++
+[source,bash]
+----
+CERT_MANAGER_VERSION=""
+----
+
++
+[NOTE]
+At this time, the most current, supported version of cert-manager is v1.5.1
+
+** Create the cert-manager CRDs and apply the Helm Chart resource manifest
++
+[source,bash]
+----
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.crds.yaml
+
+# Add the Jetstack Helm repository
+helm repo add jetstack https://charts.jetstack.io
+
+# Update your local Helm chart repository cache
+helm repo update
+
+# Install the cert-manager Helm chart
+helm install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version ${CERT_MANAGER_VERSION}
+----
+
+
+** Check the progress of the installation, looking for all pods to be in running status:
++
+[source,bash]
+----
+kubectl get pods --namespace cert-manager
+----
+
+2. Add the SUSE Rancher helm chart repository:
++
+[source,bash]
+----
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+----
+
+3. Create a namespace for SUSE Rancher
++
+[source,bash]
+----
+kubectl create namespace cattle-system
+----
+
+4. Prepare to use the Helm Chart for SUSE Rancher:
+
+* Set the following variable to the host name of the SUSE Rancher server instance
++
+[source,bash]
+----
+HOSTNAME=""
+----
+
++
+[NOTE]
+This host name should be resolvable to an IP address of the K3s host, or a load balancer/proxy server that supports this installation of SUSE Rancher.
+
+* Set the following variable to the number of deployed K3s nodes planned to host the SUSE Rancher service
++
+[source,bash]
+----
+REPLICAS=""
+----
+
+* Set the following variable to the desired version of SUSE Rancher server instance
++
+[source,bash]
+----
+RANCHER_VERSION=""
+----
+
+* Install the SUSE Rancher Helm Chart
++
+[source,bash]
+----
+helm install rancher rancher-stable/rancher \
+  --namespace cattle-system \
+  --set hostname=${HOSTNAME} \
+  --set replicas=${REPLICAS} \
+  --version=${RANCHER_VERSION}
+----
+
+** Monitor the progress of the installation:
++
+[source,bash]
+----
+kubectl -n cattle-system rollout status deploy/rancher
+----
+
+5. (Optional) Create an SSH tunnel to access SUSE Rancher:
++
+[NOTE]
+This optional step is useful in cases where NAT routers and/or firewalls prevent the client Web browser from reaching the exposed SUSE Rancher server IP address and/or port. This step requires that a Linux host is accessible through SSH from the client system and that the Linux host can reach the exposed SUSE Rancher service. The SUSE Rancher host name should be resolvable to the appropriate IP address by the local workstation.
+
+* Create an SSH tunnel through the Linux host to the IP address of the SUSE Rancher server on the NodePort, as noted in Step 3:
++
+[source,bash]
+----
+ssh -N -D 8080 user@Linux-host
+----
+
+* On the local workstation Web browser, change the SOCKS Host settings to "127.0.0.1" and port "8080".
++
+[NOTE]
+This will route all traffic from this Web browser through the remote Linux host. Be sure to close the tunnel and revert the SOCKS Host settings when you are done.
+
+6. Connect to the SUSE Rancher Web UI:
+
+* On a client system, use a Web browser to connect to the SUSE Rancher service, from HTTPs.
+* Provide a new Admin password.
++
+[IMPORTANT]
+On the second configuration page, ensure the "Rancher Server URL" is set to the host name specified when installing the SUSE Rancher Helm Chart and the port is 443.
+
+*Deployment Consideration*
+
+To further optimize deployment factors, leverage the following practices
+
+1. *Availability* - In instances where a load balancer is used to access a RKE2 cluster, deploying two additional RKE2 cluster nodes, for a total of three, will automatically make SUSE Rancher highly available.
+2. *Security* - The basic deployment steps described above are for deploying SUSE Rancher with automatically generated, self-signed security certificates. Other options are to have SUSE Rancher create public certificates from Let’s Encrypt associated with a publicly resolvable host name for the SUSE Rancher server, or to provide preconfigured, private certificates.
+3. *Integrity* - This deployment of SUSE Rancher uses the RKE2 etcd key/value store to persist its data and configuration, which offers several advantages. With a multi-node cluster and this resiliency through replication, having to provide highly-available storage is not needed. In addition, backing up the RKE2 etcd store protects the cluster and the installation of SUSE Rancher and permits restoration of a given state.
+
+After this successful deployment of the SUSE Rancher solution, review the {rancher-manager-docs}[product documentation] for details on how downstream Kubernetes clusters can be deployed
+
+
+
+=== SUSE Storage
+
+SUSE Storage provides persistent, software-defined storage services for containerized and cloud-native workloads. In this solution stack, SUSE Storage is used to supply highly available, scalable persistent volumes for Kubernetes workloads managed by SUSE Rancher.
+
+*Preparation*
+
+Before deploying SUSE Storage, ensure the following {sstorage-requirements}[prerequisites] are met:
+
+* A running Kubernetes cluster deployed using SUSE Kubernetes Engine (RKE2) and managed by SUSE Rancher
+* Nodes designated for storage meet the minimum hardware requirements:
+
+** Sufficient local disks (HDD or SSD) dedicated exclusively to storage use
+** Network connectivity with low latency between storage nodes
+
+* Time synchronization (NTP) is enabled and consistent across all nodes
+
+* Firewall rules allow required inbound and outbound traffic for SUSE Storage components
+
+[NOTE]
+Storage devices intended for SUSE Storage must not contain existing partitions or file systems.
+
+[TIP]
+For production deployments, it is recommended to use three or more storage nodes to achieve quorum and high availability.
+
+
+*Deployment Process*
+The high-level steps for deploying SUSE Storage are as follows:
+
+1. Deploy SUSE Storage through the SUSE Rancher UI:
+* Log in to the SUSE Rancher Web UI
+* Navigate to Apps 
+* Select the supported SUSE Storage application (for example, SUSE Storage powered by Longhorn or Ceph, depending on the solution design)
+
+2. Configure the storage cluster:
+* Select the target Kubernetes cluster
+* Assign storage roles to appropriate worker nodes
+* Specify disk devices to be used for storage
+* Configure replication and fault-tolerance settings
+
+3. Install the SUSE Storage application:
+* Review and confirm the Helm chart configuration values
+* Deploy the application and monitor the installation progress
+
+4. Verify the deployment:
+* Ensure all storage-related pods are running
+* Confirm that storage pools and volumes are successfully created
+* Validate persistent volume provisioning through a test workload
+
+*Deployment Consideration*
+
+To optimize the storage layer, consider the following:
+
+1. *High Availability* - Deploy storage services across multiple nodes and failure domains to ensure resilience against node or disk failures.
+2. *Performance* - Select appropriate disk types (SSD vs HDD) and configure replication factors based on workload performance requirements.
+3. *Capacity Planning* - Monitor storage utilization and plan for future expansion by adding disks or nodes as needed.
+4. *Backup and Recovery* - Enable snapshotting and backup mechanisms to protect persistent data and allow recovery from failures.
+
+
+=== SUSE Security
+
+SUSE Security provides runtime container and Kubernetes security, vulnerability scanning, continuous compliance checks, and policy enforcement for applications running on Kubernetes. This section describes how to deploy SUSE Security using the Rancher UI in a reproducible, step-by-step way.
+
+*Preparation*
+
+Before deploying, confirm the following:
+
+* Managed Kubernetes cluster (e.g., RKE2) is registered in SUSE Rancher
+* The Rancher server and cluster nodes have network access to pull images (internet or private registry)
+* Cluster has sufficient CPU, memory, and network resources for security components
+* Kubernetes namespace cattle-neuvector-system will be used for SUSE Security
+
+[NOTE]
+If deploying SUSE Security with Rancher Extensions (Rancher Prime), the integration supports single sign-on and deeper UI features; for community editions, Apps & Marketplace or Helm install is typical. 
+
+*Deployment Process*
+
+1. Access Rancher Apps & Marketplace
+
+* Log in to the SUSE Rancher Web UI
+* In the left navigation, click Apps & Marketplace (sometimes shown as Apps)
+
+2. Select the SUSE Security Chart
+
+* In Charts, search for:
+** neuvector or
+** SUSE Security (This corresponds to the Neuvector-based deployment included with Rancher)
+
+* Click the Neuvector/SUSE Security chart to begin installation.
+
+3. Configure Installation Parameters
+
+* Choose the target Kubernetes cluster
+* Set the Namespace to:
++
+[source,bash]
+----
+ cattle-neuvector-system
+----
+* Customize values if needed (defaults are usually suitable for initial deployment)
+
+ Typical settings:
+ * Enable runtime security
+ * Enable admission control and vulnerability scanning
+ * Configure risk thresholds and policy defaults
++
+[TIP]
+You can enable policy templates such as CIS, PCI-DSS, or GDPR rules as part of the configuration, depending on your compliance needs.
+
+4.  Install the Security Components
+
+* Click Install
+* Monitor the deployment until all Neuvector/SUSE Security pods reach Running state
+
+** Go to Cluster → Workloads
+** Confirm status of pods under namespace cattle-neuvector-system
+
+
+*Verification*
+
+Once deployed:
+
+* Access the *SUSE Security dashboard* through Rancher (if UI extension enabled) or by using the exposed service endpoint
+* Verify:
+** Runtime scanning is active
+** Vulnerability and compliance policies are enforced
+** Admission control is blocking non-compliant deploys
+* Perform a test scan of a sample workload or an image using the policy engine
+
+
+*Deployment Consideration*
+
+1. *Integration* If using Rancher Prime with the SUSE Security UI extension, you can view security events, alerts, and dashboards directly in Rancher.
+2. *Admission Control* To enforce security policies at deploy time, ensure the admission controller is enabled and appropriate policies defined.
+3. *Resource Planning* Security scanning and monitoring components consume cluster resources; plan node sizing accordingly.
+4. *Compliance Reporting* Use CIS and custom policy templates to generate compliance reports for internal audits.
+
+
+=== SUSE AI
+
+SUSE AI provides a cloud-native, scalable AI platform for deploying GenAI workloads on Kubernetes. It consists of a collection of modular components (AI middleware, vector databases, inference engines, etc.) that can be installed individually or as a full stack using the SUSE Deployer meta-chart. SUSE AI integrates with SUSE Rancher and conforms to SUSE software entitlement and cluster requirements. 
+
+
+*Preparation*
+
+Ensure the following prerequisites are completed before deploying SUSE AI:
+
+1. Cluster readiness
+* A running Kubernetes cluster (such as SUSE Rancher Prime: RKE2) with all nodes registered in Rancher.
+* GPU-enabled Nodes with NVIDIA drivers and CUDA Installed along with Node Labels for AI workloads. (reference - https://documentation.suse.com/suse-ai/1.0/html/AI-requirements/index.html)
+
+2. Entitlement and access
+* A valid SUSE AI subscription/entitlement is in place.
+* Access to the SUSE Application Collection repository to fetch Helm charts and container images.
+
+3. Namespace
+* Create a dedicated Kubernetes namespace for SUSE AI workloads (e.g., suse-ai).
+
+4. Registry credentials
+* Create a Kubernetes secret for the SUSE Application Collection registry, using your entitlement credentials.
++
+[source,bash]
+----
+kubectl create namespace suse-ai
+kubectl create secret docker-registry application-collection \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<APPCO_USERNAME> \
+  --docker-password=<APPCO_USER_TOKEN> \
+  -n suse-ai
+----
+
+5. Helm registry access
+* Log in to the Helm OCI registry holding SUSE AI charts.
++
+[source,bash]
+----
+helm registry login dp.apps.rancher.io/charts \
+  -u <APPCO_USERNAME> -p <APPCO_USER_TOKEN>
+----
+
+6. cert-manager
+* Ensure cert-manager is installed on the cluster (required by certain AI components).
+
+
+*Deployment Process*
+
+Deploying SUSE AI involves installing each AI component (e.g., Ollama, Milvus, vLLM, Open WebUI, etc.) using the unified SUSE Deployer chart which orchestrates all components and dependencies in one step.
+
+1. Prepare override values
+* Create a custom-overrides.yaml file based on one of the {sai-templates}[SUSE-provided templates] (e.g., suse-gen-ai.yaml for production or suse-gen-ai-minimal.yaml for test).
+
+2. Install with Helm
+* Use Helm to install the SUSE Deployer chart with your override file:
++
+[source,bash]
+----
+helm upgrade --install suse-ai-deployer \
+  --namespace suse-ai \
+  --create-namespace \
+  --values ./custom-overrides.yaml \
+  oci://dp.apps.rancher.io/charts/suse-ai-deployer
+----
+
+3. Monitor progress
+* Watch the status of AI workloads and pods via kubectl get pods -n suse-ai until all are in a running state.
+
+
+*Deployment Consideration*
+
+1. *Entitlement and Registry Access* Access to the SUSE Application Collection registry is essential for pulling Helm charts and container images. Ensure credentials are current.
+2. *Order of Installation* Install components in dependency order: cert-manager first, then core AI services, then optional components such as PyTorch or GPU-based services.
+3. *Resource Planning* AI components (especially vector databases and inference workloads) can be resource intensive. Plan CPU, memory, storage, and GPU capacity accordingly.
+4. *Namespace Isolation* Use a dedicated Kubernetes namespace (e.g., suse-ai) to isolate SUSE AI workloads.
+5. *Monitoring & Logging* Integrate with SUSE Observability for metrics and logs to monitor performance and troubleshoot issues.
+
+
+=== ClearML
+
 
 
 
