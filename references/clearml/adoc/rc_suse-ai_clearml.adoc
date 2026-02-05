@@ -265,6 +265,7 @@ ClearML is responsible for:
 
 {cml} operates as the primary interface for AI builders, while relying on SUSE AI for secure and scalable workload execution.
 
+
 === {sai-long}
 
 *{sai}* provides the enterprise-grade foundation for running AI and machine learning workloads on Kubernetes.
@@ -310,50 +311,57 @@ It delivers a CNCF-compliant Kubernetes environment that is hardened by default 
 {rke2} forms the foundational orchestration layer for the platform and enables consistent workload execution across on-premises, hybrid, and multi-cloud environments.
 
 
-=== SUSE Storage
+=== {sstorage-long}
 
-*SUSE Storage*, powered by Longhorn, provides distributed, cloud-native persistent storage for the platform. It delivers highly available and resilient storage that supports stateful platform services and machine learning workloads running on Kubernetes.
+{sstorage}, powered by Longhorn, provides distributed, cloud-native persistent storage for the platform.
+It delivers highly available and resilient storage that supports stateful platform services and machine learning workloads running on Kubernetes.
 
-In this reference configuration, SUSE Storage (Longhorn) is responsible for:
+{sstorage} is responsible for:
 
 * Storing ClearML metadata, artifacts, and logs
 * Providing persistent volumes for platform and workloads
 * Supporting data replication and high availability
 * Enabling snapshotting and backup of critical platform data
 
-SUSE Storage is deployed on RKE2 clusters and backed by local or network-attached disks. It provides consistent, Kubernetes-native storage that supports performance, durability, and operational requirements across environments.
+{sstorage} is deployed on {rke2} clusters and backed by local or network-attached disks.
+It provides consistent, Kubernetes-native storage that supports performance, durability, and operational requirements across environments.
 
-=== SUSE Security
 
-*SUSE Security*, powered by NeuVector, provides container and runtime security for the MLOps platform.
+=== {ssecurity-long}
 
-In this architecture, SUSE Security is used to:
+{ssecurity}, powered by NeuVector, provides container and runtime security for the platform and workloads.
+
+{ssecurity} is used to:
 
 * Perform vulnerability scanning of container images
 * Enforce runtime security policies for AI workloads
 * Monitor network traffic between platform components
 * Provide real-time threat detection and response
 
-SUSE Security ensures that machine learning workloads and supporting services operate within enterprise security and compliance requirements.
+{ssecurity} ensures that machine learning workloads and supporting services operate within enterprise security and compliance requirements.
 
-=== SUSE Private Registry
 
-*SUSE Private Registry* provides a secure container image registry for storing and distributing container images used by the platform.
+=== {spr-long}
 
-In this reference configuration, SUSE Private Registry is used to:
+{spr} provides a secure container image registry for storing and distributing container images used by the platform.
 
-* Store base images for training and inference workloads
-* Manage versioned application and model images
-* Integrate with vulnerability scanning and access controls
-* Support secure image promotion across environments
+SUSE Private Registry is used for:
+
+* Storing base images for training and inference workloads
+* Managing versioned application and model images
+* Integrating with vulnerability scanning and access controls
+* Supporting secure image promotion across environments
 
 Using a centralized registry helps ensure consistency and traceability across development, testing, and production workflows.
 
-=== SUSE Linux Enterprise Server 
 
-*SUSE Linux Enterprise Server (SLES)* provides the secure, stable, and enterprise-grade operating system foundation for the platform. It serves as the base operating system for Kubernetes control plane and worker nodes, as well as supporting infrastructure components used by SUSE AI and ClearML.
+=== {sles-long}
 
-In this reference configuration, SLES is responsible for:
+{sles} ({sles-short}) provides the secure, stable, and enterprise-grade operating system foundation for the platform.
+It serves as the base operating system for Kubernetes control plane and worker nodes, as well as supporting infrastructure components used by {sai} and {cml}.
+
+
+{sles} is responsible for:
 
 * Providing a hardened and supported Linux operating system for Kubernetes nodes
 * Ensuring compatibility with RKE2, container runtimes, and GPU drivers
@@ -361,7 +369,7 @@ In this reference configuration, SLES is responsible for:
 * Supporting high-performance compute workloads, including GPU-accelerated training and inference
 * Enabling consistent operating system configuration across on-premises, cloud, and hybrid environments
 
-SLES underpins the reliability, security, and operational consistency of the entire AI platform, ensuring that Kubernetes, SUSE AI, and ClearML services run on a certified and enterprise-supported operating system foundation.
+{sles} underpins the reliability, security, and operational consistency of the entire AI platform, ensuring that Kubernetes, {sai}, and {cml} services run on a certified and enterprise-supported operating system foundation.
 
 
 === Compute platform details
@@ -412,17 +420,13 @@ Need to work on this.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-This section provides a high-level overview of the deployment architecture and sequencing for the SUSE and ClearML reference configuration. It describes the major infrastructure and software layers that comprise the solution and explains how these layers are deployed together to form a functional platform for AI workloads.
+This section provides a high-level overview of the deployment architecture and sequencing for the SUSE and {cml} solution.
+It describes the major infrastructure and software layers that comprise the solution and explains how these layers are deployed together to form a functional platform for AI workloads.
 
-For deployment purposes, the solution is represented as a *layered stack*, where each layer depends on the services provided by the layer below it. Deployment is performed in a *bottom-up sequence*, ensuring that each foundational capability is in place before higher-level services are introduced.
+For deployment purposes, the solution is represented as a layered stack, where each layer depends on the services provided by the layer below it.
+Deployment is performed in a bottom-up sequence, ensuring that each foundational capability is in place before higher-level services are introduced.
 
-image::suse-clearml-layer-diagram.png[title="Layered Diagram", SUSE AI and ClearML AI Layered Diagram, scaledwidth="100%", align="center"]
-
-
-// Provide a representation of the solution as a layered deployment stack.
-// See https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rancher-k3s-sles_hpe-proliant-synergy/id-deployment.html#id-deployment-overview
-//image::xyz.png[title="Solution name: Deployment", scaledwidth="90%", align="center"]
-
+image::suse-clearml-layer-diagram.png[title="{sai} and {cml} Layered Diagram", {sai} and {cml} Layered Diagram, scaledwidth="90%", align="center"]
 
 
 
@@ -431,13 +435,6 @@ image::suse-clearml-layer-diagram.png[title="Layered Diagram", SUSE AI and Clear
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide step-by-step guidance for preparing and deploying the
 // compute platform.
-// Use subsections (level three, ====) for layer components, if needed.
-// For example, you could use a ‘ABC Server deployment’ subsection
-// and a separate ‘XYZ Storage deployment’ subsection.
-// If you do use subsections, be sure to detail Preparation,
-// Process, and Considerations in each.
-// Remember to use the defined variables for product names,
-// websites, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Leveraging the enterprise grade functionality of the operating system mentioned in the previous section, many compute platforms can be the foundation of the deployment:
@@ -445,58 +442,42 @@ Leveraging the enterprise grade functionality of the operating system mentioned 
 * Virtual machines on supported hypervisors or hosted on cloud service providers
 * Physical, bare metal or single-board computers, either on-premises or hosted by cloud service providers
 
-[NOTE]
-====
-To complete self-testing of hardware with {suse-yes-certification-process}[SUSE YES Certified Process], you can download and install the respective SUSE operating system support-pack version of SUSE Linux Enterprise Server and the YES test suite. Then run the tests per the instructions in the test kit, fixing any problems encountered and when corrected, re-run all tests to obtain clean test results. Submit the test results into the SUSE Bulletin System (SBS) for audit, review and validation.
-====
-
 [TIP]
 ====
-Certified systems and hypervisors can be verified from {suse-yes-certified-bulletins}[SUSE YES Certified Bulletins] and then can be leveraged as supported nodes for this deployment, as long as the certification refers to the respective version of the underlying SUSE operating system required.
+Partnering with SUSE enables hardware providers to build and deliver solutions that help their customers reduce costs, manage complexity, and mitigate risk.
+The {suse-yes-certification-program}[SUSE YES Certification Program] enables this assurance by providing easily identifiable products that are certified compatible with SUSE technologies.
+End-users can know that both SUSE and participating partners will work together to support them when deploying certified solutions.
+
+Customers can be verify hardware certification by searching {suse-yes-certified-bulletins}[SUSE YES Certified Bulletins].
 ====
 
-// *Preparation*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-// Add content here
+=== {sles}
 
+The base software layer uses {sles-website}[SUSE Linux Enterprise Server].
 
-
-// *Process*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-// Add content here
-
-
-// *Considerations*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-// Add content here
-
-=== SUSE Linux Enterprise Server
-
-As the base software layer, use an enterprise-grade operating system, {sles-website}[SUSE Linux Enterprise Server].
 
 *Preparation*
 
 Ensure these services are in place and configured on each node to use:
 
 * Domain Name Service (DNS) - an external network-accessible service to map IP Addresses to host names
+
 * Network Time Protocol (NTP) - an external network-accessible service to obtain and synchronize system times to aid in time stamp consistency
+
 * Software Update Service - access to a network-based repository for software update packages. This can be accessed directly from each node through one of the following:
 
-  ** the {scc-website}[SUSE Customer Center] (SCC)
-  ** the organization’s {suse-manager}[SUSE Manager] infrastructure
-  ** a local server running an instance of {suse-repository-management-tool}[Repository Mirroring Tool] (RMT)
+** the {scc-website}[SUSE Customer Center] (SCC)
+
+** the organization’s {suse-manager}[SUSE Manager] infrastructure
+
+** a local server running an instance of {suse-repository-management-tool}[Repository Mirroring Tool] (RMT)
+
 
 [NOTE]
+====
 During the node’s installation, it can be pointed to the respective update service. This can also be accomplished post-installation with the command line tool, {suse-connect}[SUSEConnect].
+====
 
 
 *Deployment process*
