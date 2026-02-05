@@ -495,11 +495,9 @@ Ensure these services are in place and configured on each node to use:
   ** the organization’s {suse-manager}[SUSE Manager] infrastructure
   ** a local server running an instance of {suse-repository-management-tool}[Repository Mirroring Tool] (RMT)
 
-  +
-  [NOTE]
-  ===
-  During the node’s installation, it can be pointed to the respective update service. This can also be accomplished post-installation with the command line tool, {suse-connect}[SUSEConnect].
-  ===
+[NOTE]
+During the node’s installation, it can be pointed to the respective update service. This can also be accomplished post-installation with the command line tool, {suse-connect}[SUSEConnect].
+
 
 *Deployment process*
 
@@ -532,14 +530,13 @@ To further optimize deployment factors, leverage the following practices:
 ** the "Releases" on the {rancher-release}[Download] Web page.
 
 2. On the target node with a default installation of SUSE Linux Enterprise Server operating system, log in to the node either as root or as a user with sudo privileges and enable the required container runtime engine
-  
-  +
-  [source,bash]
-  ----
-  sudo SUSEConnect -p sle-module-containers/15.3/x86_64
-  sudo zypper refresh ; zypper install docker
-  sudo systemctl enable --now docker.service
-  ----
++
+[source,bash]
+----
+sudo SUSEConnect -p sle-module-containers/15.3/x86_64
+sudo zypper refresh ; zypper install docker
+sudo systemctl enable --now docker.service
+----
 
   Then validate the container runtime engine is working
 
@@ -1224,34 +1221,222 @@ curl $APISERVER_URL/auth.create_credentials \
   -u $APISERVER_KEY:$APISERVER_SECRET
 ----
 The returned set of key and secret can be used for additional API configuration of the tenant.
-* Onboarding Users through an Identity Provider (SSO)
+
+7. Onboarding Users through an Identity Provider (SSO)
 ClearML supports a wide range of protocols and providers. In ClearML, each tenant is associated with its own IdP to authenticate and authorize access to the ClearML platform.
 Refer to ClearML’s {cml-idp}[online documentation] for further information on configuring each IdP
-* Verifying the installation of Control Plane
-To verify the ClearML control plane is up and running use a web browser to access (https://app.<BASE_DOMAIN>;).
 
-*image required*
-* Setting up Worker Nodes
+8. Verifying the installation of Control Plane
+To verify the ClearML control plane is up and running use a web browser to access (https://app.<BASE_DOMAIN>;).
++
+image::clearml-login-screen.png[title="{cml} login screen",{cml} login screen , align="center", width=90%]
++
+9. Setting up Worker Nodes
++
 The ClearML Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to ClearML queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
 The Controller pod:
 * Pulls jobs from ClearML execution queues
 * Prepares a Kubernetes job based on the provided YAML template.
 * Inside each job pod, the ClearML Agent:
++
 ** Installs the required environment for the task.
 ** Executes and monitors the task process.
 ** Logs task data to the ClearML Server
-
++
 *Prerequisites*
++
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated ClearML agent for each tenant (using a tenant admin’s API credentials).
++
 * A running ClearML Control plane
-* Each worker environment must be able to access the ClearML Server over the same network.
+* Each worker environment must be able to access the {cml} Server over the same network.
++
+*Procedure*
++
+[Optional]NVIDIA GPU Operator
++
+When using Nvidia GPUs, users should configure the Nvidia GPU Operator according to recommended security settings, with ClearML’s overrides file.
++
+** Add the NVIDIA GPU Operator Helm repository:
++
+[source, bash]
+----
+helm repo add nvidia https://nvidia.github.io/gpu-operator
+----
++
+* Update the local repository:
++
+[source, bash] 
+----
+helm repo update
+----
+* Create a gpu-operator.override.yaml file with Nvidia GPU configuration settings:
+(These values were chosen to prevent unprivileged containers from bypassing the Kubernetes Device Plugin API):
++
+[source, bash] 
+----
+toolkit:
+  env:
+   - name: ACCEPT_NVIDIA_VISIBLE_DEVICES_ENVVAR_WHEN_UNPRIVILEGED
+     value: "false"
+   - name: ACCEPT_NVIDIA_VISIBLE_DEVICES_AS_VOLUME_MOUNTS
+     value: "true"
+devicePlugin:
+ env:
+   - name: PASS_DEVICE_SPECS
+     value: "true"
+   - name: FAIL_ON_INIT_ERROR
+     value: "true"
+   - name: DEVICE_LIST_STRATEGY # Use volume-mounts
+     value: volume-mounts
+   - name: DEVICE_ID_STRATEGY
+     value: uuid
+   - name: NVIDIA_VISIBLE_DEVICES
+     value: all
+   - name: NVIDIA_DRIVER_CAPABILITIES
+     value: all
+----
++
+* Install the Nvidia GPU Operator:
++
+[source, bash] 
+----
+helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace -f gpu-operator.override.yaml
+----
++
+{cml} supports various silicon vendors such as Nvidia, AMD and Intel. For detailed configuration instructions refer to {cml}’s online documentation.
++
+10. {cml} Agent Deployment
++
+* Add the {cml} Helm repository to your cluster:
++
+[source, bash] 
+----
+helm repo add clearml-enterprise https://raw.githubusercontent.com/clearml/clearml-enterprise-helm-charts/gh-pages --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
+----
++
+* Update the local repository:
++
+[source, bash] 
+----
+helm repo update
+----
++
+* Create a clearml-agent-values.override.yaml file with the agent settings:
++
+Replace the below <ACCESS_KEY> and <SECRET_KEY> with the tenant admin API credentials created in the control plane setup procedure.
+Set the <api|file|web>ServerUrlReference fields to match your ClearML Server URLs i.e.( https://api.<BASE_DOMAIN>)etc.
+Replace <MAX_AVAILABLE_GPUS> with the total number of GPUs made available to ClearML agents on this cluster
++
+[source, bash] 
+----
+imageCredentials:
+  password: "<CLEARML_DOCKERHUB_TOKEN>"
+clearml:
+  agentk8sglueKey: "<ACCESS_KEY>"
+  agentk8sglueSecret: "<SECRET_KEY>"
+agentk8sglue:
+  apiServerUrlReference: "<CLEARML_API_SERVER_REFERENCE>"
+  fileServerUrlReference: "<CLEARML_FILE_SERVER_REFERENCE>"
+  webServerUrlReference: "<CLEARML_WEB_SERVER_REFERENCE>"
+  createQueues: true
+  queues:
+    exampleQueue:
+      templateOverrides: {}
+      queueSettings: {}
+  dashboardReportMaxGpu: <MAX_AVAILABLE_GPUS>
+----
+For more advanced configurations, refer to ClearML’s online documentation
++
+* Install the ClearML Enterprise Agent:
++
+[source, bash] 
+----
+helm upgrade -i -n clearml-worker clearml-agent clearml-enterprise/clearml-enterprise-agent --create-namespace -f clearml-agent-values.override.yaml
+----
++
+*Verifying the installation of Control Node*
+To verify the ClearML Agent has been deployed to your cluster:
+Use a web browser to access( https://app.<BASE_DOMAIN>;)
+Log in as the initial administrator configured in the control plane setup procedure
+Go to the Orchestration > Queues page
+Verify configured queues appear in the Queues page
+
+11. Setting up an Application Gateways
+
+The Application Gateway enables access to AI workload applications (e.g. remote IDEs like VSCode and Jupyter, model API interface, etc.). It acts as a proxy, identifying ClearML Tasks running within its Kubernetes namespace and making them available for network access
+In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated ClearML Application Gateway  for each tenant (using a tenant admin’s API credentials)
+
+*Procedure*
+* Add the ClearML Helm repository to your cluster:
++
+[source, bash] 
+----
+helm repo add clearml-enterprise https://raw.githubusercontent.com/clearml/clearml-enterprise-helm-charts/gh-pages --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
+----
+* Update the local repository:
++
+[source, bash] 
+----
+helm repo update
+----
+* Create a clearml-app-gateway-values.override.yaml file with the agent settings in the following form (See configuration description below):
++
+[source, bash] 
+----
+imageCredentials:
+   password: "<CLEARML_DOCKERHUB_TOKEN>"
+clearml:
+  apiKey: "<ACCESS_KEY>"
+  apiSecret: "<SECRET_KEY>"
+  apiServerUrlReference: "<CLEARML_API_SERVER_REFERENCE>"
+  authCookieName: ""
+ingress:
+  enabled: true
+  hostName: ""
+tcpSession:
+  routerAddress: ""
+  service:
+    type: LoadBalancer
+  portRange:
+    start:
+    end:
+----
+Set the <apiServerUrlReference> field to match your 
++
+Configuration options:
+  * imageCredentials.password: ClearML DockerHub Access Token.
+  * clearml.apiKey and clearml.apiSecret: Tenant admin API credentials created in the control plane setup procedure.
+  * clearml.apiServerUrlReference: ClearML Server URL i.e.( https://api.<BASE_DOMAIN>;)
+  * clearml.authCookieName: Cookie used by the ClearML server to store the ClearML authentication cookie.
+  * ingress.hostName: Hostname of App Gateway used by the ingress controller to access it.
+  * tcpSession.routerAddress: The external App Gateway address (can be an IP, hostname, or load balancer address) depending on your network setup. Ensure this address is accessible for TCP connections.
+  * tcpSession.service.type: Service type used to expose TCP functionality, default is NodePort.
+  * tcpSession.portRange.start: Start port for the TCP Session feature.
+  * tcpSession.portRange.end: End port for the TCP Session feature.
+
+* *Install the ClearML Application Gateway:*
+
+Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (e.g. Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
+Replace <CHART_VERSION> - Version recommended by the ClearML Support Team.
++
+[source, bash] 
+----
+helm upgrade --install <RELEASE_NAME> -n clearml-worker clearml-enterprise/clearml-enterprise-app-gateway --version <CHART_VERSION> -f clearml-app-gateway-values.override.yaml
+----
+
+* Verifying the installation
+To verify the ClearML Agent has been deployed to your cluster:
+Use a web browser to access( https://app.<BASE_DOMAIN>;)
+Log in as the initial administrator configured in the control plane setup procedure
+Go to the Setting > Application Gateway > Routers page
+
+The deployed <RELEASE_NAME> router will appear in the list.
 
 
 
 
 
-
-=== Software
+// == Software
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // As with the Compute platform, provide step-by-step guidance for
@@ -1265,34 +1450,27 @@ In a multi-tenant deployment, tenant isolation is achieved by creating a dedicat
 // websites, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The following sections provide deployment guidance for each software layer.
+// The following sections provide deployment guidance for each software layer.
 
+// ==== Software product deployment
 
-==== Software product deployment
-
-
-*Preparation*
+// *Preparation*
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide step-by-step guidance for preparing the software component.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Add content here
 
-Add content here
-
-
-*Process*
+// *Process*
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide step-by-step guidance for preparing the softwware component.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Add content here
 
-Add content here
-
-
-*Considerations*
+// *Considerations*
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
+// Add content here
 
 
 
@@ -1309,8 +1487,11 @@ Add content here
 // Use subsections if needed for clarity.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
+image::clearml-validation1.png[{cml} AI Platform, scaledwidth="90%", align="center"]
 
+image::clearml-validation2.png[{cml} AI Platform, scaledwidth="90%", align="center"]
+
+image::clearml-validation-3.png[{cml} AI Platform , scaledwidth="90%", align="center"]
 
 
 
@@ -1334,14 +1515,36 @@ Add content here
 // Answers are contained in open blocks associated with each question.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-. Question 1?
+. Does {cml} support AMD accelerators?
 +
 --
-Answer paragraph 1.
-Answer paragraph 2.
-Image
+Yes! {cml} is a silicon agnostic platform and supports accelerators from Nvidia, AMD, Intel and others. {cml} also supports on Intel and arm CPUs.
 --
+. Any Examples for Training Models on top of {cml}?
++
+--
+Absolutely! You can find simple examples such as training an MNIST classifier with Pytorch {cml-pytorch}[here] or fine tune an LLM using managed Q&A dataset {cml-dataset}[here].
+For all examples check out ClearML {cml-example}[examples] in ClearML’s {cml-github}[github repository]
 
+image::clearml-faq-q2.png[{cml} AI Platform, scaledwidth=90%, align=center]
+--
+. Does ClearMl support serving Nvidia NIMs containers?
++
+--
+Yes, ClearML offers built-in deployment and management capabilities for Nvidia NIMs containers. It requires the NIMs application to be installed on the server.
+
+image::clearml-faq-q3.png[{cml} AI Platform, scaledwidth=90%, align=center]
+--
+. Is ClearML installed on-prem?
++
+--
+ClearML supports installing both on-prem as well as on Cloud instances
+--
+. Does ClearML support air-gapped deployments?
++
+--
+Yes, ClearML fully supports air-gapped deployments with no connection to the internet.
+--
 
 
 == References
