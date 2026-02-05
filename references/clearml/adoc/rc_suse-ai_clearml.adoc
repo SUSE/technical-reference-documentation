@@ -421,7 +421,7 @@ Need to work on this.
 
 
 This section provides a high-level overview of the deployment architecture and sequencing for the SUSE and {cml} solution.
-It describes the major infrastructure and software layers that comprise the solution and explains how these layers are deployed together to form a functional platform for AI workloads.
+It describes deployment considerations for the major compute platform and software layers to form a functional platform for AI workloads.
 
 For deployment purposes, the solution is represented as a layered stack, where each layer depends on the services provided by the layer below it.
 Deployment is performed in a bottom-up sequence, ensuring that each foundational capability is in place before higher-level services are introduced.
@@ -454,54 +454,38 @@ Customers can be verify hardware certification by searching {suse-yes-certified-
 
 === {sles}
 
-The base software layer uses {sles-website}[SUSE Linux Enterprise Server].
+At the base of the software stack is {sles-website}[{sles}].
+You can download {sles} as an ISO file or virtual machine image from {sles-download}[{sles} Downloads] or from the {scc-website}[SUSE Customer Center] (SCC).
+Be sure to select the appropriate, supported version of {sles} by reviewing the {rancher-support-matrix}[{rancher} support matrix].
+
+You will need to register your installed system with {scc-website}[SUSE Customer Center] to obtain software packages and patches.
+You can do this by configuring each node in one of the following ways:
+
+* to directly access the {scc-website}[SUSE Customer Center] (SCC) through an external network
+
+* to use your organization’s internal, {smlm-website}[SUSE Multi-Linux Manager] infrastructure
+
+* to leverage a local server running an instance of {suse-repository-management-tool}[SUSE Repository Mirroring Tool] (RMT)
+
+[TIP]
+====
+During OS installation, you can point each node to the respective update service.
+This can also be accomplished post-installation with the command line tool, {suse-connect}[SUSEConnect].
+====
+
+In production environments, you can optimize deployment and reduce manual interaction with unattended, automated deployments.
+See {sles-agma-installtion-guide}[Automated Installation Using Agama].
 
 
-*Preparation*
-
-Ensure these services are in place and configured on each node to use:
+Ensure these additional considerations are configured on each node:
 
 * Domain Name Service (DNS) - an external network-accessible service to map IP Addresses to host names
 
 * Network Time Protocol (NTP) - an external network-accessible service to obtain and synchronize system times to aid in time stamp consistency
 
-* Software Update Service - access to a network-based repository for software update packages. This can be accessed directly from each node through one of the following:
-
-** the {scc-website}[SUSE Customer Center] (SCC)
-
-** the organization’s {suse-manager}[SUSE Manager] infrastructure
-
-** a local server running an instance of {suse-repository-management-tool}[Repository Mirroring Tool] (RMT)
 
 
-[NOTE]
-====
-During the node’s installation, it can be pointed to the respective update service. This can also be accomplished post-installation with the command line tool, {suse-connect}[SUSEConnect].
-====
-
-
-*Deployment process*
-
-On the compute platform node, install the noted SUSE operating system, by following these steps:
-
-** Download the {sles-download}[SUSE Linux Enterprise Server] product (either for the ISO or Virtual Machine image).
-** Be sure to identify the appropriate, supported version of SUSE Linux Enterprise Server by reviewing the {rancher-support-matrix}[SUSE Rancher support matrix].
-** The installation process is described and can be performed with default values by following steps from the product documentation, see {sles-docs}[Installation Quick Start].
-
-[TIP]
-Adjust both the password and the local network addressing setup to comply with local environment guidelines and requirements.
-
-*Deployment considerations*
-
-To further optimize deployment factors, leverage the following practices:
-
-** Automation
-*** To reduce user intervention, unattended deployments of SUSE Linux Enterprise Server can be automated
-**** for ISO-based installations, by referring to the {sles-agma-installtion-guide}[Agama Installation Guide]
-
-
-
-=== SUSE Kubernetes Engine (RKE2)
+=== {rke2}
 
 *Preparation*
 
@@ -519,6 +503,7 @@ sudo SUSEConnect -p sle-module-containers/15.3/x86_64
 ----
 
 .. Refresh the cached package repository metadata.
++
 [source, console]
 ----
 sudo zypper refresh
