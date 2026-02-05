@@ -505,30 +505,48 @@ To further optimize deployment factors, leverage the following practices:
 
 *Preparation*
 
-1. Identify the appropriate, desired version of the Rancher Kubernetes Engine binary (for example vX.Y.Z) that includes the needed Kubernetes version by reviewing
+. Identify the appropriate, desired version of the {rke2} binary (for example vX.Y.Z) that includes the needed Kubernetes version by reviewing the "Rancher Kubernetes Engine Downstream Clusters" section of the {rancher-support-matrix}[SUSE Rancher support matrix].
 
-** the "Supported Rancher Kubernetes Engine Versions" associated with the respective {rancher-support-matrix}[SUSE Rancher version] from "Rancher Kubernetes Engine Downstream Clusters" section, or
-** the "Releases" on the {rancher-release}[Download] Web page.
+. Install and enable the required container runtime engine on the target node with a default installation of {sles}.
 
-2. On the target node with a default installation of SUSE Linux Enterprise Server operating system, log in to the node either as root or as a user with sudo privileges and enable the required container runtime engine
+.. Log in to the node either as root or as a user with sudo privileges.
+
+.. Enable the containers module.
 +
-[source,bash]
+[source, console]
 ----
 sudo SUSEConnect -p sle-module-containers/15.3/x86_64
-sudo zypper refresh ; zypper install docker
+----
+
+.. Refresh the cached package repository metadata.
+[source, console]
+----
+sudo zypper refresh
+----
+
+.. Install the container runtime engine.
++
+[source, console]
+----
+zypper install docker
+----
+
+.. Enable the runtime engine.
++
+[source, console]
+----
 sudo systemctl enable --now docker.service
 ----
 
-  Then validate the container runtime engine is working
+.. Validate that the container runtime engine is working.
++
+[source, console]
+----
+sudo systemctl status docker.service
+sudo docker ps --all
+----
 
-  +
-  [source,bash]
-  ---
-  sudo systemctl status docker.service
-  sudo docker ps --all
-  ---
-
-3. For the underlying operating system firewall service, either
+. For the underlying operating system firewall service, either
 
 ** enable and configure the necessary inbound {rancher-ports}[ports] or
 ** stop and completely disable the firewall service.
