@@ -483,9 +483,12 @@ Ensure these additional considerations are configured on each node:
 
 * Network Time Protocol (NTP) - an external network-accessible service to obtain and synchronize system times to aid in time stamp consistency
 
+* Ensure connectivity by configuring the firewall to allow necessary inbound {rancher-ports}[RKE2 ports] or, depending on your security compliance requirements, disable the firewall service.
+
 
 
 === {rke2}
+
 
 *Preparation*
 
@@ -528,13 +531,13 @@ sudo systemctl enable --now docker.service
 [source, console]
 ----
 sudo systemctl status docker.service
+----
++
+[source, console]
+----
 sudo docker ps --all
 ----
 
-. For the underlying operating system firewall service, either
-
-** enable and configure the necessary inbound {rancher-ports}[ports] or
-** stop and completely disable the firewall service.
 
 
 *Deployment Process*
@@ -542,7 +545,9 @@ sudo docker ps --all
 The primary steps for deploying this RKE2 are:
 
 [NOTE]
-Installing Rancher Kubernetes Engine requires a client system (i.e. admin workstation) that has been configured with kubectl.
+====
+Installing {rke2} requires a client system (an administrative workstation) that has been configured with kubectl.
+====
 
 1. Download the Rancher Kubernetes Engine binary according to the instructions on product {rancher-docs}[documentation] page, then follow the directions on that page, but with the following exceptions:
 
