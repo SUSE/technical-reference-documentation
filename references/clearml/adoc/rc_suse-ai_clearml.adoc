@@ -461,11 +461,11 @@ Be sure to select the appropriate, supported version of {sles} by reviewing the 
 You will need to register your installed system with {scc-website}[SUSE Customer Center] to obtain software packages and patches.
 You can do this by configuring each node in one of the following ways:
 
-* to directly access the {scc-website}[SUSE Customer Center] (SCC) through an external network
+. to directly access the {scc-website}[SUSE Customer Center] (SCC) through an external network
 
-* to use your organization’s internal, {smlm-website}[SUSE Multi-Linux Manager] infrastructure
+. to use your organization’s internal, {smlm-website}[SUSE Multi-Linux Manager] infrastructure
 
-* to leverage a local server running an instance of {suse-repository-management-tool}[SUSE Repository Mirroring Tool] (RMT)
+. to leverage a local server running an instance of {suse-repository-management-tool}[SUSE Repository Mirroring Tool] (RMT)
 
 [TIP]
 ====
@@ -479,15 +479,15 @@ See {sles-agma-installtion-guide}[Automated Installation Using Agama].
 
 Ensure these additional considerations are configured on each node:
 
-* Domain Name Service (DNS) - an external network-accessible service to map IP Addresses to host names
+. Domain Name Service (DNS) - an external network-accessible service to map IP Addresses to host names
 
-* Network Time Protocol (NTP) - an external network-accessible service to obtain and synchronize system times to aid in time stamp consistency
+. Network Time Protocol (NTP) - an external network-accessible service to obtain and synchronize system times to aid in time stamp consistency
 
-* Ensure connectivity by configuring the firewall to allow necessary inbound {rancher-ports}[RKE2 ports] or, depending on your security compliance requirements, disable the firewall service.
+. Ensure connectivity by configuring the firewall to allow necessary inbound {rancher-ports}[RKE2 ports] or, depending on your security compliance requirements, disable the firewall service.
 
 
 
-=== {rke2}
+=== {rke2-long}
 
 
 *Preparation*
@@ -502,7 +502,7 @@ Ensure these additional considerations are configured on each node:
 +
 [source, console]
 ----
-sudo SUSEConnect -p sle-module-containers/15.3/x86_64
+sudo SUSEConnect -p sle-module-containers/16/x86_64
 ----
 
 .. Refresh the cached package repository metadata.
@@ -512,30 +512,11 @@ sudo SUSEConnect -p sle-module-containers/15.3/x86_64
 sudo zypper refresh
 ----
 
-.. Install the container runtime engine.
+.. Install the base utilities
 +
 [source, console]
 ----
-zypper install docker
-----
-
-.. Enable the runtime engine.
-+
-[source, console]
-----
-sudo systemctl enable --now docker.service
-----
-
-.. Validate that the container runtime engine is working.
-+
-[source, console]
-----
-sudo systemctl status docker.service
-----
-+
-[source, console]
-----
-sudo docker ps --all
+zypper install -y curl tar
 ----
 
 
@@ -549,24 +530,26 @@ The primary steps for deploying this RKE2 are:
 Installing {rke2} requires a client system (an administrative workstation) that has been configured with kubectl.
 ====
 
-1. Download the Rancher Kubernetes Engine binary according to the instructions on product {rancher-docs}[documentation] page, then follow the directions on that page, but with the following exceptions:
+. Download the Rancher Kubernetes Engine binary according to the instructions on product {rancher-docs}[documentation] page, then follow the directions on that page, but with the following exceptions:
 
-2. Create the cluster.yml file with the command rke config
+. Create the cluster.yml file with the command rke config
 +
 [NOTE]
+====
 See product documentation for {rancher-example-yaml}[example-yamls] and {rancher-example-config}[config-options] for detailed examples and descriptions of the cluster.yml parameters.
+====
 +
-  ** It is recommended to create a unique SSH key for this Rancher Kubernetes Engine cluster with the command ssh-keygen
-  *** Provide the path to that key for the option "Cluster Level SSH Private Key Path"
-  ** The option "Number of Hosts" refers to the number of hosts to configure at this time
-  *** Additional hosts can be added very easily after Rancher Kubernetes Engine cluster creation
-  *** For this implementation it is recommended to configure one or three hosts
-  ** Give all hosts the roles of "Control Plane", "Worker", and "etcd"
-  ** Answer "n" for the option "Enable PodSecurityPolicy"
+.. It is recommended to create a unique SSH key for this Rancher Kubernetes Engine cluster with the command ssh-keygen
+... Provide the path to that key for the option "Cluster Level SSH Private Key Path"
+.. The option "Number of Hosts" refers to the number of hosts to configure at this time
+... Additional hosts can be added very easily after Rancher Kubernetes Engine cluster creation
+... For this implementation it is recommended to configure one or three hosts
+.. Give all hosts the roles of "Control Plane", "Worker", and "etcd"
+.. Answer "n" for the option "Enable PodSecurityPolicy"
 
-3. Update the cluster.yml file before continuing with the step "Deploying Kubernetes with RKE."
+. Update the cluster.yml file before continuing with the step "Deploying Kubernetes with RKE."
 
-4. If a load balancer has been deployed for the Rancher Kubernetes Engine control-plane nodes, update the cluster.yml file before deploying Rancher Kubernetes Engine to include the IP address or FQDN of the load balancer. The appropriate location is under authentication.sans. For example:
+. If a load balancer has been deployed for the Rancher Kubernetes Engine control-plane nodes, update the cluster.yml file before deploying Rancher Kubernetes Engine to include the IP address or FQDN of the load balancer. The appropriate location is under authentication.sans. For example:
 +
 [source,bash]
 ----
@@ -577,28 +560,29 @@ authentication:
   sans: ["${LB_IP_Host}"]
 ----
 
-5. Verify password-less SSH is available from the admin workstation to each of the cluster hosts as the user specified in the cluster.yml file
+. Verify password-less SSH is available from the admin workstation to each of the cluster hosts as the user specified in the cluster.yml file
 
-6. When ready to create the RKE cluster, execute:
+. When ready to create the RKE cluster, execute:
 +
 [source,bash]
 ----
 rke up
 ----
 
-7. After the rke up command completes, the RKE cluster will continue the Kubernetes installation process.
-
+. After the rke up command completes, the RKE cluster will continue the Kubernetes installation process.
++
 [TIP]
+====
 To monitor the progress of the RKE2 cluster installation:
-
-1. Export the variable KUBECONFIG to the absolute path name of the kube_config_cluster.yml file.
+====
+.. Export the variable KUBECONFIG to the absolute path name of the kube_config_cluster.yml file.
 +
 [source,bash]
 ----
 export KUBECONFIG=~/rke-cluster/kube_config_cluster.yml
 ----
 
-2. Run the command:
+.. Run the command:
 +
 [source,bash]
 ----
@@ -607,9 +591,7 @@ watch -c "kubectl get deployments -A"
 
 The cluster deployment is complete when elements of all the deployments show at least ‘1’ as ‘AVAILABLE’.
 
-
 Use CTRL+C to exit the watch loop after all deployment pods are running.
-
 
 To address {availability}[availability] and possible {scaling}[scaling] to a multiple node cluster, etcd is enabled instead of using the default SQLite datastore.
 
@@ -618,51 +600,46 @@ To address {availability}[availability] and possible {scaling}[scaling] to a mul
 
 To ensure a stable, secure, and scalable Rancher Kubernetes Engine (RKE/RKE2) deployment, consider the following aspects:
 
-1. *Availability* - For production deployments, use an odd number of control-plane/etcd nodes (minimum three) to maintain etcd quorum and prevent loss of cluster availability. When deploying multiple control-plane nodes, use an external load balancer to distribute traffic across the Kubernetes API servers.
-
-2. *Networking* - Ensure that all required Kubernetes, etcd, and container runtime ports are open between cluster nodes. Latency and packet loss between nodes—especially etcd members—can negatively impact cluster stability and performance.
-
-3. *etcd Data Protection* - etcd stores all Kubernetes cluster state and configuration. Enable regular etcd snapshots and store backups outside the cluster to support disaster recovery and cluster restoration.
-
-4. *Security* - Restrict SSH access to cluster nodes using key-based authentication only. Use least-privilege access for the SSH user specified in the cluster.yml file. Protect the generated kube_config_cluster.yml file, as it provides administrative access to the cluster.
-
-5. *Scalability* - Additional worker or control-plane nodes can be added to the cluster after initial deployment by updating the cluster.yml file and re-running the rke up command. Plan IP addressing, DNS, and load balancer capacity accordingly.
-
-6. *Certificate Management* - RKE automatically generates and manages Kubernetes certificates. If a load balancer or external endpoint is used, ensure all required IP addresses and FQDNs are included under authentication.sans in the cluster.yml file to avoid certificate validation issues.
-
-7. *Operating System Configuration* - Disable swap and ensure required kernel modules are loaded on all nodes. Apply consistent OS configuration across nodes to avoid unpredictable behavior.
-
-8. *Upgrade Strategy* - Before upgrading Kubernetes or RKE versions, review the supported version matrix and perform upgrades in a test environment. Back up etcd data prior to any upgrade operation.
-
-9. *Logging and Monitoring* - Plan for cluster-level monitoring and logging early in the deployment lifecycle to simplify troubleshooting and operational visibility.
+. *Availability* - For production deployments, use an odd number of control-plane/etcd nodes (minimum three) to maintain etcd quorum and prevent loss of cluster availability. When deploying multiple control-plane nodes, use an external load balancer to distribute traffic across the Kubernetes API servers.
+. *Networking* - Ensure that all required Kubernetes, etcd, and container runtime ports are open between cluster nodes. Latency and packet loss between nodes—especially etcd members—can negatively impact cluster stability and performance.
+. *etcd Data Protection* - etcd stores all Kubernetes cluster state and configuration. Enable regular etcd snapshots and store backups outside the cluster to support disaster recovery and cluster restoration.
+. *Security* - Restrict SSH access to cluster nodes using key-based authentication only. Use least-privilege access for the SSH user specified in the cluster.yml file. Protect the generated kube_config_cluster.yml file, as it provides administrative access to the cluster.
+. *Scalability* - Additional worker or control-plane nodes can be added to the cluster after initial deployment by updating the cluster.yml file and re-running the rke up command. Plan IP addressing, DNS, and load balancer capacity accordingly.
+. *Certificate Management* - RKE automatically generates and manages Kubernetes certificates. If a load balancer or external endpoint is used, ensure all required IP addresses and FQDNs are included under authentication.sans in the cluster.yml file to avoid certificate validation issues.
+. *Operating System Configuration* - Disable swap and ensure required kernel modules are loaded on all nodes. Apply consistent OS configuration across nodes to avoid unpredictable behavior.
+. *Upgrade Strategy* - Before upgrading Kubernetes or RKE versions, review the supported version matrix and perform upgrades in a test environment. Back up etcd data prior to any upgrade operation.
+. *Logging and Monitoring* - Plan for cluster-level monitoring and logging early in the deployment lifecycle to simplify troubleshooting and operational visibility.
 
 
 === SUSE Rancher Prime
 
 *Preparation*
 
-1. For the respective node’s firewall service, either
+. For the respective node’s firewall service, either
 
 * enable and configure the necessary inbound ports or
 * stop and completely disable the firewall service.
 
-2. Determine the desired SSL configuration for TLS termination
+. Determine the desired SSL configuration for TLS termination
+
 * Rancher-generated TLS certificate NOTE: This is the easiest way of installing SUSE Rancher with self-signed certificates.
 * Let’s Encrypt
 * Bring your own certificate
 
-3. Obtain a Helm binary matching the respective Kubernetes version for this SUSE Rancher implementation.
+. Obtain a Helm binary matching the respective Kubernetes version for this SUSE Rancher implementation.
 
 [NOTE]
+====
 Enable the respective kubeconfig setting for kubectl , K3s - /etc/rancher/k3s/k3s.yml, to be leveraged by helm command.
+====
 
 *Deployment Process*
 
 While logged in to the node, as root or with sudo privileges, install SUSE Rancher:
 
-1. Install cert-manager
+. Install cert-manager
 
-* Set the following variable with the desired version of cert-manager
+.. Set the following variable with the desired version of cert-manager
 +
 [source,bash]
 ----
@@ -671,9 +648,10 @@ CERT_MANAGER_VERSION=""
 
 +
 [NOTE]
+====
 At this time, the most current, supported version of cert-manager is v1.5.1
-
-** Create the cert-manager CRDs and apply the Helm Chart resource manifest
+====
+.. Create the cert-manager CRDs and apply the Helm Chart resource manifest
 +
 [source,bash]
 ----
@@ -693,30 +671,30 @@ helm install cert-manager jetstack/cert-manager \
 ----
 
 
-** Check the progress of the installation, looking for all pods to be in running status:
+.. Check the progress of the installation, looking for all pods to be in running status:
 +
 [source,bash]
 ----
 kubectl get pods --namespace cert-manager
 ----
 
-2. Add the SUSE Rancher helm chart repository:
+. Add the SUSE Rancher helm chart repository:
 +
 [source,bash]
 ----
 helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 ----
 
-3. Create a namespace for SUSE Rancher
+. Create a namespace for SUSE Rancher
 +
 [source,bash]
 ----
 kubectl create namespace cattle-system
 ----
 
-4. Prepare to use the Helm Chart for SUSE Rancher:
+. Prepare to use the Helm Chart for SUSE Rancher:
 
-* Set the following variable to the host name of the SUSE Rancher server instance
+.. Set the following variable to the host name of the SUSE Rancher server instance
 +
 [source,bash]
 ----
@@ -725,23 +703,24 @@ HOSTNAME=""
 
 +
 [NOTE]
+====
 This host name should be resolvable to an IP address of the K3s host, or a load balancer/proxy server that supports this installation of SUSE Rancher.
-
-* Set the following variable to the number of deployed K3s nodes planned to host the SUSE Rancher service
+====
+.. Set the following variable to the number of deployed K3s nodes planned to host the SUSE Rancher service
 +
 [source,bash]
 ----
 REPLICAS=""
 ----
 
-* Set the following variable to the desired version of SUSE Rancher server instance
+.. Set the following variable to the desired version of SUSE Rancher server instance
 +
 [source,bash]
 ----
 RANCHER_VERSION=""
 ----
 
-* Install the SUSE Rancher Helm Chart
+.. Install the SUSE Rancher Helm Chart
 +
 [source,bash]
 ----
@@ -752,37 +731,41 @@ helm install rancher rancher-stable/rancher \
   --version=${RANCHER_VERSION}
 ----
 
-** Monitor the progress of the installation:
+... Monitor the progress of the installation:
 +
 [source,bash]
 ----
 kubectl -n cattle-system rollout status deploy/rancher
 ----
 
-5. (Optional) Create an SSH tunnel to access SUSE Rancher:
+. (Optional) Create an SSH tunnel to access SUSE Rancher:
 +
 [NOTE]
+====
 This optional step is useful in cases where NAT routers and/or firewalls prevent the client Web browser from reaching the exposed SUSE Rancher server IP address and/or port. This step requires that a Linux host is accessible through SSH from the client system and that the Linux host can reach the exposed SUSE Rancher service. The SUSE Rancher host name should be resolvable to the appropriate IP address by the local workstation.
-
-* Create an SSH tunnel through the Linux host to the IP address of the SUSE Rancher server on the NodePort, as noted in Step 3:
+====
+.. Create an SSH tunnel through the Linux host to the IP address of the SUSE Rancher server on the NodePort, as noted in Step 3:
 +
 [source,bash]
 ----
 ssh -N -D 8080 user@Linux-host
 ----
 
-* On the local workstation Web browser, change the SOCKS Host settings to "127.0.0.1" and port "8080".
+.. On the local workstation Web browser, change the SOCKS Host settings to "127.0.0.1" and port "8080".
 +
 [NOTE]
+====
 This will route all traffic from this Web browser through the remote Linux host. Be sure to close the tunnel and revert the SOCKS Host settings when you are done.
+====
+. Connect to the SUSE Rancher Web UI:
 
-6. Connect to the SUSE Rancher Web UI:
-
-* On a client system, use a Web browser to connect to the SUSE Rancher service, from HTTPs.
-* Provide a new Admin password.
+.. On a client system, use a Web browser to connect to the SUSE Rancher service, from HTTPs.
+.. Provide a new Admin password.
 +
 [IMPORTANT]
+====
 On the second configuration page, ensure the "Rancher Server URL" is set to the host name specified when installing the SUSE Rancher Helm Chart and the port is 443.
+====
 
 *Deployment Consideration*
 
@@ -804,54 +787,58 @@ SUSE Storage provides persistent, software-defined storage services for containe
 
 Before deploying SUSE Storage, ensure the following {sstorage-requirements}[prerequisites] are met:
 
-* A running Kubernetes cluster deployed using SUSE Kubernetes Engine (RKE2) and managed by SUSE Rancher
-* Nodes designated for storage meet the minimum hardware requirements:
+. A running Kubernetes cluster deployed using SUSE Kubernetes Engine (RKE2) and managed by SUSE Rancher
+. Nodes designated for storage meet the minimum hardware requirements:
 
-** Sufficient local disks (HDD or SSD) dedicated exclusively to storage use
-** Network connectivity with low latency between storage nodes
+.. Sufficient local disks (HDD or SSD) dedicated exclusively to storage use
+.. Network connectivity with low latency between storage nodes
 
-* Time synchronization (NTP) is enabled and consistent across all nodes
+. Time synchronization (NTP) is enabled and consistent across all nodes
 
-* Firewall rules allow required inbound and outbound traffic for SUSE Storage components
+. Firewall rules allow required inbound and outbound traffic for SUSE Storage components
 
 [NOTE]
+====
 Storage devices intended for SUSE Storage must not contain existing partitions or file systems.
+====
 
 [TIP]
+====
 For production deployments, it is recommended to use three or more storage nodes to achieve quorum and high availability.
-
+====
 
 *Deployment Process*
 The high-level steps for deploying SUSE Storage are as follows:
 
-1. Deploy SUSE Storage through the SUSE Rancher UI:
-* Log in to the SUSE Rancher Web UI
-* Navigate to Apps 
-* Select the supported SUSE Storage application (for example, SUSE Storage powered by Longhorn or Ceph, depending on the solution design)
+. Deploy SUSE Storage through the SUSE Rancher UI:
 
-2. Configure the storage cluster:
-* Select the target Kubernetes cluster
-* Assign storage roles to appropriate worker nodes
-* Specify disk devices to be used for storage
-* Configure replication and fault-tolerance settings
+.. Log in to the SUSE Rancher Web UI
+.. Navigate to Apps 
+.. Select the supported SUSE Storage application (for example, SUSE Storage powered by Longhorn or Ceph, depending on the solution design)
 
-3. Install the SUSE Storage application:
-* Review and confirm the Helm chart configuration values
-* Deploy the application and monitor the installation progress
+. Configure the storage cluster:
+.. Select the target Kubernetes cluster
+.. Assign storage roles to appropriate worker nodes
+.. Specify disk devices to be used for storage
+.. Configure replication and fault-tolerance settings
 
-4. Verify the deployment:
-* Ensure all storage-related pods are running
-* Confirm that storage pools and volumes are successfully created
-* Validate persistent volume provisioning through a test workload
+. Install the SUSE Storage application:
+.. Review and confirm the Helm chart configuration values
+.. Deploy the application and monitor the installation progress
+
+. Verify the deployment:
+.. Ensure all storage-related pods are running
+.. Confirm that storage pools and volumes are successfully created
+.. Validate persistent volume provisioning through a test workload
 
 *Deployment Consideration*
 
 To optimize the storage layer, consider the following:
 
-1. *High Availability* - Deploy storage services across multiple nodes and failure domains to ensure resilience against node or disk failures.
-2. *Performance* - Select appropriate disk types (SSD vs HDD) and configure replication factors based on workload performance requirements.
-3. *Capacity Planning* - Monitor storage utilization and plan for future expansion by adding disks or nodes as needed.
-4. *Backup and Recovery* - Enable snapshotting and backup mechanisms to protect persistent data and allow recovery from failures.
+. *High Availability* - Deploy storage services across multiple nodes and failure domains to ensure resilience against node or disk failures.
+. *Performance* - Select appropriate disk types (SSD vs HDD) and configure replication factors based on workload performance requirements.
+. *Capacity Planning* - Monitor storage utilization and plan for future expansion by adding disks or nodes as needed.
+. *Backup and Recovery* - Enable snapshotting and backup mechanisms to protect persistent data and allow recovery from failures.
 
 
 === SUSE Security
@@ -862,75 +849,78 @@ SUSE Security provides runtime container and Kubernetes security, vulnerability 
 
 Before deploying, confirm the following:
 
-* Managed Kubernetes cluster (e.g., RKE2) is registered in SUSE Rancher
-* The Rancher server and cluster nodes have network access to pull images (internet or private registry)
-* Cluster has sufficient CPU, memory, and network resources for security components
-* Kubernetes namespace cattle-neuvector-system will be used for SUSE Security
+. Managed Kubernetes cluster (e.g., RKE2) is registered in SUSE Rancher
+. The Rancher server and cluster nodes have network access to pull images (internet or private registry)
+. Cluster has sufficient CPU, memory, and network resources for security components
+. Kubernetes namespace cattle-neuvector-system will be used for SUSE Security
 
 [NOTE]
+====
 If deploying SUSE Security with Rancher Extensions (Rancher Prime), the integration supports single sign-on and deeper UI features; for community editions, Apps & Marketplace or Helm install is typical. 
+====
 
 *Deployment Process*
 
-1. Access Rancher Apps & Marketplace
+. Access Rancher Apps & Marketplace
 
-* Log in to the SUSE Rancher Web UI
-* In the left navigation, click Apps & Marketplace (sometimes shown as Apps)
+.. Log in to the SUSE Rancher Web UI
+.. In the left navigation, click Apps & Marketplace (sometimes shown as Apps)
 
-2. Select the SUSE Security Chart
+. Select the SUSE Security Chart
 
-* In Charts, search for:
-** neuvector or
-** SUSE Security (This corresponds to the Neuvector-based deployment included with Rancher)
+.. In Charts, search for:
+... neuvector or
+... SUSE Security (This corresponds to the Neuvector-based deployment included with Rancher)
 
-* Click the Neuvector/SUSE Security chart to begin installation.
+.. Click the Neuvector/SUSE Security chart to begin installation.
 
-3. Configure Installation Parameters
+. Configure Installation Parameters
 
-* Choose the target Kubernetes cluster
-* Set the Namespace to:
+.. Choose the target Kubernetes cluster
+.. Set the Namespace to:
 +
 [source,bash]
 ----
  cattle-neuvector-system
 ----
-* Customize values if needed (defaults are usually suitable for initial deployment)
+.. Customize values if needed (defaults are usually suitable for initial deployment)
 
- Typical settings:
- * Enable runtime security
- * Enable admission control and vulnerability scanning
- * Configure risk thresholds and policy defaults
-+
+... Typical settings:
+.... Enable runtime security
+.... Enable admission control and vulnerability scanning
+.... Configure risk thresholds and policy defaults
+
 [TIP]
+====
 You can enable policy templates such as CIS, PCI-DSS, or GDPR rules as part of the configuration, depending on your compliance needs.
+====
+.  Install the Security Components
 
-4.  Install the Security Components
+.. Click Install
+.. Monitor the deployment until all Neuvector/SUSE Security pods reach Running state
 
-* Click Install
-* Monitor the deployment until all Neuvector/SUSE Security pods reach Running state
-
-** Go to Cluster → Workloads
-** Confirm status of pods under namespace cattle-neuvector-system
+... Go to Cluster → Workloads
+... Confirm status of pods under namespace cattle-neuvector-system
 
 
 *Verification*
 
 Once deployed:
 
-* Access the *SUSE Security dashboard* through Rancher (if UI extension enabled) or by using the exposed service endpoint
-* Verify:
-** Runtime scanning is active
-** Vulnerability and compliance policies are enforced
-** Admission control is blocking non-compliant deploys
-* Perform a test scan of a sample workload or an image using the policy engine
+. Access the *SUSE Security dashboard* through Rancher (if UI extension enabled) or by using the exposed service endpoint
+. Verify:
+.. Runtime scanning is active
+.. Vulnerability and compliance policies are enforced
+.. Admission control is blocking non-compliant deploys
+. Perform a test scan of a sample workload or an image using the policy engine
 
 
 *Deployment Consideration*
 
-1. *Integration* If using Rancher Prime with the SUSE Security UI extension, you can view security events, alerts, and dashboards directly in Rancher.
-2. *Admission Control* To enforce security policies at deploy time, ensure the admission controller is enabled and appropriate policies defined.
-3. *Resource Planning* Security scanning and monitoring components consume cluster resources; plan node sizing accordingly.
-4. *Compliance Reporting* Use CIS and custom policy templates to generate compliance reports for internal audits.
+. *Integration* If using Rancher Prime with the SUSE Security UI extension, you can view security events, alerts, and dashboards directly in Rancher.
+. *Admission Control* To enforce security policies at deploy time, ensure the admission controller is enabled and appropriate policies defined.
+. *Resource Planning* Security scanning and monitoring components consume cluster resources; plan node sizing accordingly.
+. *Compliance Reporting* Use CIS and custom policy templates to generate compliance reports for internal audits.
 
 
 === SUSE AI
@@ -942,19 +932,19 @@ SUSE AI provides a cloud-native, scalable AI platform for deploying GenAI worklo
 
 Ensure the following prerequisites are completed before deploying SUSE AI:
 
-1. Cluster readiness
-* A running Kubernetes cluster (such as SUSE Rancher Prime: RKE2) with all nodes registered in Rancher.
-* GPU-enabled Nodes with NVIDIA drivers and CUDA Installed along with Node Labels for AI workloads. (reference - https://documentation.suse.com/suse-ai/1.0/html/AI-requirements/index.html)
+. Cluster readiness
+.. A running Kubernetes cluster (such as SUSE Rancher Prime: RKE2) with all nodes registered in Rancher.
+.. GPU-enabled Nodes with NVIDIA drivers and CUDA Installed along with Node Labels for AI workloads. (reference - {sai-requirement}) 
 
-2. Entitlement and access
-* A valid SUSE AI subscription/entitlement is in place.
-* Access to the SUSE Application Collection repository to fetch Helm charts and container images.
+. Entitlement and access
+.. A valid SUSE AI subscription/entitlement is in place.
+.. Access to the SUSE Application Collection repository to fetch Helm charts and container images.
 
-3. Namespace
-* Create a dedicated Kubernetes namespace for SUSE AI workloads (e.g., suse-ai).
+. Namespace
+.. Create a dedicated Kubernetes namespace for SUSE AI workloads (e.g., suse-ai).
 
-4. Registry credentials
-* Create a Kubernetes secret for the SUSE Application Collection registry, using your entitlement credentials.
+. Registry credentials
+.. Create a Kubernetes secret for the SUSE Application Collection registry, using your entitlement credentials.
 +
 [source,bash]
 ----
@@ -966,8 +956,8 @@ kubectl create secret docker-registry application-collection \
   -n suse-ai
 ----
 
-5. Helm registry access
-* Log in to the Helm OCI registry holding SUSE AI charts.
+. Helm registry access
+.. Log in to the Helm OCI registry holding SUSE AI charts.
 +
 [source,bash]
 ----
@@ -975,19 +965,19 @@ helm registry login dp.apps.rancher.io/charts \
   -u <APPCO_USERNAME> -p <APPCO_USER_TOKEN>
 ----
 
-6. cert-manager
-* Ensure cert-manager is installed on the cluster (required by certain AI components).
+. cert-manager
+.. Ensure cert-manager is installed on the cluster (required by certain AI components).
 
 
 *Deployment Process*
 
 Deploying SUSE AI involves installing each AI component (e.g., Ollama, Milvus, vLLM, Open WebUI, etc.) using the unified SUSE Deployer chart which orchestrates all components and dependencies in one step.
 
-1. Prepare override values
-* Create a custom-overrides.yaml file based on one of the {sai-templates}[SUSE-provided templates] (e.g., suse-gen-ai.yaml for production or suse-gen-ai-minimal.yaml for test).
+. Prepare override values
+.. Create a custom-overrides.yaml file based on one of the {sai-templates}[SUSE-provided templates] (e.g., suse-gen-ai.yaml for production or suse-gen-ai-minimal.yaml for test).
 
-2. Install with Helm
-* Use Helm to install the SUSE Deployer chart with your override file:
+. Install with Helm
+.. Use Helm to install the SUSE Deployer chart with your override file:
 +
 [source,bash]
 ----
@@ -998,17 +988,17 @@ helm upgrade --install suse-ai-deployer \
   oci://dp.apps.rancher.io/charts/suse-ai-deployer
 ----
 
-3. Monitor progress
-* Watch the status of AI workloads and pods via kubectl get pods -n suse-ai until all are in a running state.
+. Monitor progress
+.. Watch the status of AI workloads and pods via kubectl get pods -n suse-ai until all are in a running state.
 
 
 *Deployment Consideration*
 
-1. *Entitlement and Registry Access* Access to the SUSE Application Collection registry is essential for pulling Helm charts and container images. Ensure credentials are current.
-2. *Order of Installation* Install components in dependency order: cert-manager first, then core AI services, then optional components such as PyTorch or GPU-based services.
-3. *Resource Planning* AI components (especially vector databases and inference workloads) can be resource intensive. Plan CPU, memory, storage, and GPU capacity accordingly.
-4. *Namespace Isolation* Use a dedicated Kubernetes namespace (e.g., suse-ai) to isolate SUSE AI workloads.
-5. *Monitoring & Logging* Integrate with SUSE Observability for metrics and logs to monitor performance and troubleshoot issues.
+. *Entitlement and Registry Access* Access to the SUSE Application Collection registry is essential for pulling Helm charts and container images. Ensure credentials are current.
+. *Order of Installation* Install components in dependency order: cert-manager first, then core AI services, then optional components such as PyTorch or GPU-based services.
+. *Resource Planning* AI components (especially vector databases and inference workloads) can be resource intensive. Plan CPU, memory, storage, and GPU capacity accordingly.
+. *Namespace Isolation* Use a dedicated Kubernetes namespace (e.g., suse-ai) to isolate SUSE AI workloads.
+. *Monitoring & Logging* Integrate with SUSE Observability for metrics and logs to monitor performance and troubleshoot issues.
 
 
 === ClearML
@@ -1017,41 +1007,42 @@ helm upgrade --install suse-ai-deployer \
 
 *Preparation*
 
-1. *HW specification* - For product deployment, the ClearML recommends at least 3 nodes for the control plane, each provisioned with:
-  * 8 vCPUs
-  * 32 GB RAM
-  * 500 GB storage
+. *HW specification* - For product deployment, the ClearML recommends at least 3 nodes for the control plane, each provisioned with:
+.. 8 vCPUs
+.. 32 GB RAM
+.. 500 GB storage
 
-2. *Software Dependencies*
-  * Kubernetes
-  * Kubernetes >= 1.23.0-0
-  * Kubectl
-  * Helm
+. *Software Dependencies*
+.. Kubernetes
+.. Kubernetes >= 1.23.0-0
+.. Kubectl
+.. Helm
 
-3. *Networking*
+. *Networking*
 The following network components need to be provisioned to make the ClearML control plane accessible:
 
-* *Ingress Controller* An Ingress controller (e.g., nginx-ingress) is required. If exposing services externally, configure a LoadBalancer-capable solution (e.g. MetalLB).
-* *Port specification* The designated nodes for the ClearML control plane servers and workers should be able to communicate through HTTP/S: TCP ports 80 and 443.
+.. *Ingress Controller* An Ingress controller (e.g., nginx-ingress) is required. If exposing services externally, configure a LoadBalancer-capable solution (e.g. MetalLB).
+.. *Port specification* The designated nodes for the ClearML control plane servers and workers should be able to communicate through HTTP/S: TCP ports 80 and 443.
 Any additional ports to be used in the deployment (i.e.  TCP sessions) should also be pre-configured (see Application Gateway installation).
-* *DNS Configuration* A domain with subdomain support is required (referred here-on as <BASE_DOMAIN>), ideally with trusted TLS certificates. All entries must be resolvable by the Ingress controller. Example subdomains:
-** Control plane servers:
-*** api.<BASE_DOMAIN>
-*** app.<BASE_DOMAIN>
-*** files.<BASE_DOMAIN>
-* Application Gateway:
-*** router.<BASE_DOMAIN>
-*** tcp-router.<BASE_DOMAIN> (optional, for TCP sessions)
-* [For Advanced usage] CNI preconfigured
-* [For Multi-tenant deployment] {cml-idp}[IdP] set up per tenant.
+.. *DNS Configuration* A domain with subdomain support is required (referred here-on as <BASE_DOMAIN>), ideally with trusted TLS certificates. All entries must be resolvable by the Ingress controller. Example subdomains:
+... Control plane servers:
+.... api.<BASE_DOMAIN>
+.... app.<BASE_DOMAIN>
+.... files.<BASE_DOMAIN>
+... Application Gateway:
+.... router.<BASE_DOMAIN>
+.... tcp-router.<BASE_DOMAIN> (optional, for TCP sessions)
+.. [For Advanced usage] CNI preconfigured
+.. [For Multi-tenant deployment] {cml-idp}[IdP] set up per tenant.
 
-4. *Storage*
-* A configured StorageClass and an accessible storage backend for the ClearML Control Plane.
-* A configured PVC(ReadWriteMany policy)  and PV for the ClearML workers.
-5. *ClearML Artifactories*
+. *Storage*
+.. A configured StorageClass and an accessible storage backend for the ClearML Control Plane.
+.. A configured PVC(ReadWriteMany policy)  and PV for the ClearML workers.
+
+. *ClearML Artifactories*
 To install the different ClearML components, credentials to ClearML’s artifact repositories are required, provided by the ClearML team:
-* Helm repository credentials (referenced from this point on as <HELM_REPO_TOKEN>)	
-* DockerHub registry credentials (referenced from this point on as <CLEARML_DOCKERHUB_TOKEN>)
+.. Helm repository credentials (referenced from this point on as <HELM_REPO_TOKEN>)	
+.. DockerHub registry credentials (referenced from this point on as <CLEARML_DOCKERHUB_TOKEN>)
 
 
 ClearML’s control plane uses these charts as dependencies
@@ -1068,11 +1059,11 @@ ClearML’s control plane uses these charts as dependencies
 
 *Deployment process*
 
-1. *Configuring Deployment Parameters*
+. *Configuring Deployment Parameters*
 The installation procedure makes use of a tailored helm chart to deploy the ClearML control plane components.
 Deployment specific parameters are set through a custom clearml-values.override.yaml.
 
-2. *Baseline Configuration*
+. *Baseline Configuration*
 Create a clearml-values.override.yaml file with the baseline ClearML service settings:
 Replace the below <BASE_DOMAIN> placeholders with the domain you’ve assigned  to the cluster's Ingress Controller. This will be the base domain for reaching your ClearML installation.
 +
@@ -1104,7 +1095,7 @@ clearmlApplications:
   enabled: true
 ----
 
-3. *Multi-tenant configuration*
+. *Multi-tenant configuration*
 +
 Establish an initial supervisor tenant with a supervisor user. This user will have the authority to create and remove other tenants, and access information across all tenants.
 +
@@ -1137,7 +1128,7 @@ apiserver:
       value: "true"
 ----
 
-4. *Setting up Helm*
+. *Setting up Helm*
 +
 Add the ClearML Helm repository to your cluster:
 +
@@ -1153,7 +1144,7 @@ Update the local repository:
 helm repo update
 ----
 
-5. Deploying the ClearML Control Plane
+. Deploying the ClearML Control Plane
 Install the ClearML Enterprise Control Plane using the configuration in your clearml-values.override.yaml.
 +
 [source, bash]
@@ -1161,8 +1152,8 @@ Install the ClearML Enterprise Control Plane using the configuration in your cle
 helm upgrade -i -n clearml clearml clearml-enterprise/clearml-enterprise --create-namespace -f clearml-values.override.yaml
 ----
 
-6. Creating a Tenant
-  * Set up the environment for configuring the server via API:
+. Creating a Tenant
+.. Set up the environment for configuring the server via API:
   The environment variables should match the values defined in the previous installation steps.
 +
 [source, bash]
@@ -1171,7 +1162,7 @@ APISERVER_URL="https://api.<BASE_DOMAIN>"
 APISERVER_KEY="<SUPERVISOR_USER_KEY>"
 APISERVER_SECRET="<SUPERVISOR_USER_SECRET>"
 ----
-* Create a tenant:
+.. Create a tenant:
 Replace the below <TENANT_NAME> with a name for the new tenant
 +
 [source, bash]
@@ -1182,13 +1173,13 @@ curl $APISERVER_URL/system.create_company \
   -d '{"name":"<TENANT_NAME>"}'
 ----
 The API returns the new tenant ID (<COMPANY_ID>)
-* Validate tenant creation by listing existing tenants:
+.. Validate tenant creation by listing existing tenants:
 +
 [source, bash]
 ----
 curl -u $APISERVER_KEY:$APISERVER_SECRET $APISERVER_URL/system.get_companies
 ----
-* Create a utility administrator user for to facilitate tenant configuration:
+.. Create a utility administrator user for to facilitate tenant configuration:
 Replace the below <COMPANY_ID> with the value returned when creating the tenant.
 Replace the below <ADMIN_USER_NAME> and <ADMIN_USER_EMAIL> with suitable values.
 +
@@ -1200,7 +1191,7 @@ curl $APISERVER_URL/auth.create_user \
   -d '{"name":"<ADMIN_USER_NAME>","company":"<COMPANY_ID>", \
      "email":"<ADMIN_USER_EMAIL>","role":"admin","internal":"true"}'
 ----
-* Create a utility API credentials for this administrator user:
+.. Create a utility API credentials for this administrator user:
 +
 [source, bash]
 ----
@@ -1211,54 +1202,55 @@ curl $APISERVER_URL/auth.create_credentials \
 ----
 The returned set of key and secret can be used for additional API configuration of the tenant.
 
-7. Onboarding Users through an Identity Provider (SSO)
+. Onboarding Users through an Identity Provider (SSO)
 ClearML supports a wide range of protocols and providers. In ClearML, each tenant is associated with its own IdP to authenticate and authorize access to the ClearML platform.
 Refer to ClearML’s {cml-idp}[online documentation] for further information on configuring each IdP
 
-8. Verifying the installation of Control Plane
+. Verifying the installation of Control Plane
 To verify the ClearML control plane is up and running use a web browser to access (https://app.<BASE_DOMAIN>;).
 +
 image::clearml-login-screen.png[title="{cml} login screen",{cml} login screen , align="center", width=90%]
 +
-9. Setting up Worker Nodes
+. Setting up Worker Nodes
 +
 The ClearML Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to ClearML queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
++
 The Controller pod:
-* Pulls jobs from ClearML execution queues
-* Prepares a Kubernetes job based on the provided YAML template.
-* Inside each job pod, the ClearML Agent:
-+
-** Installs the required environment for the task.
-** Executes and monitors the task process.
-** Logs task data to the ClearML Server
-+
-*Prerequisites*
-+
+
+.. Pulls jobs from ClearML execution queues
+.. Prepares a Kubernetes job based on the provided YAML template.
+.. Inside each job pod, the ClearML Agent:
+... Installs the required environment for the task.
+... Executes and monitors the task process.
+... Logs task data to the ClearML Server
+
+.. *Prerequisites*
+
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated ClearML agent for each tenant (using a tenant admin’s API credentials).
-+
-* A running ClearML Control plane
-* Each worker environment must be able to access the {cml} Server over the same network.
-+
+
+. A running ClearML Control plane
+. Each worker environment must be able to access the {cml} Server over the same network.
+
 *Procedure*
-+
+
 [Optional]NVIDIA GPU Operator
-+
+
 When using Nvidia GPUs, users should configure the Nvidia GPU Operator according to recommended security settings, with ClearML’s overrides file.
-+
-** Add the NVIDIA GPU Operator Helm repository:
+
+. Add the NVIDIA GPU Operator Helm repository:
 +
 [source, bash]
 ----
 helm repo add nvidia https://nvidia.github.io/gpu-operator
 ----
-+
-* Update the local repository:
+
+. Update the local repository:
 +
 [source, bash] 
 ----
 helm repo update
 ----
-* Create a gpu-operator.override.yaml file with Nvidia GPU configuration settings:
+. Create a gpu-operator.override.yaml file with Nvidia GPU configuration settings:
 (These values were chosen to prevent unprivileged containers from bypassing the Kubernetes Device Plugin API):
 +
 [source, bash] 
@@ -1284,8 +1276,8 @@ devicePlugin:
    - name: NVIDIA_DRIVER_CAPABILITIES
      value: all
 ----
-+
-* Install the Nvidia GPU Operator:
+
+. Install the Nvidia GPU Operator:
 +
 [source, bash] 
 ----
@@ -1294,7 +1286,7 @@ helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace
 +
 {cml} supports various silicon vendors such as Nvidia, AMD and Intel. For detailed configuration instructions refer to {cml}’s online documentation.
 +
-10. {cml} Agent Deployment
+. {cml} Agent Deployment
 +
 * Add the {cml} Helm repository to your cluster:
 +
@@ -1350,7 +1342,7 @@ Log in as the initial administrator configured in the control plane setup proced
 Go to the Orchestration > Queues page
 Verify configured queues appear in the Queues page
 
-11. Setting up an Application Gateways
+. Setting up an Application Gateways
 
 The Application Gateway enables access to AI workload applications (e.g. remote IDEs like VSCode and Jupyter, model API interface, etc.). It acts as a proxy, identifying ClearML Tasks running within its Kubernetes namespace and making them available for network access
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated ClearML Application Gateway  for each tenant (using a tenant admin’s API credentials)
