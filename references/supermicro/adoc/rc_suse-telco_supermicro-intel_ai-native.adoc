@@ -230,22 +230,22 @@ Key capabilities of {stelco} include:
 |Capability |Strategic Value
 
 |Unified Management Plane
-|Centralized control and observability for Kubernetes clusters running on RKE2, K3s, and other CNCF-certified Kubernetes distributions, including AKS, EKS, and GKE.
+|Centralized control and observability for Kubernetes clusters running on RKE2, K3s, and other CNCF-certified Kubernetes distributions, including AKS, EKS, and GKE
 
 |Fleet GitOps Automation
-|Declarative management for thousands of clusters, preventing configuration drift.
+|Declarative management for thousands of clusters, preventing configuration drift
 
 |Zero-Touch Provisioning
-|Automated deployment and lifecycle management for Telco-grade workloads across core, cloud, and far-edge environments
+|Automated deployment and lifecycle management for telco-grade workloads across core, cloud, and far-edge environments
 
 |Edge Optimization
-|Lightweight K3s-based architecture and hardened SUSE Linux Micro operating system for consistency and high performance in resource-constrained or disconnected edge sites.
+|Lightweight K3s-based architecture and hardened SUSE Linux Micro operating system for consistency and high performance in resource-constrained or disconnected edge sites
 
 |Policy-Driven Governance
-|Consistent compliance and security across multi-tenant telco environments.
+|Consistent compliance and security across multi-tenant telco environments
 
 |Carrier Grade Security
-|FIPS 140-3 validated cryptography, CIS Benchmark compliance, and centralized RBAC/SSO to meet stringent Telco security standards
+|FIPS 140-3 validated cryptography, CIS Benchmark compliance, and centralized RBAC/SSO to meet stringent telco security standards
 |===
 
 
@@ -256,39 +256,42 @@ See the {stelco-docs-atip}[{stelco} documentation] for more information.
 == Deployment prerequisites and requirements
 
 Some specific considerations for {stelco} deployments are highlighted here.
-For further details, see {stelco-docs-reqs}[{stelco} requirements and assumptions].
+For further details, see {stelco-docs-reqs}[{stelco}: Requirements & Assumptions].
 
 
 === Hardware
 
+Some hardware deployment considerations are listed below.
+
+
 * *Management Cluster*
 
-** Must have network connectivity to the target server management/BMC API
+** Must have network connectivity to the target server management/BMC API.
 
-** Must have network connectivity to the target server control plane network
+** Must have network connectivity to the target server control plane network.
 
-** For multi-node Management Clusters, an additional reserved IP address is required
-Hosts to be controlled
+** For multi-node Management Clusters, an additional reserved IP address is required.
 
 
 * *Managed hosts*
 
-** Must support out-of-band management via Redfish, iDRAC or iLO interfaces
+** Must support out-of-band management via Redfish, iDRAC, or iLO interfaces.
 
-** Must support deployment via virtual media (PXE is not currently supported)
+** Must support deployment via virtual media (PXE is not currently supported).
 
-** Must have network connectivity to the Management Cluster for access to the Metal3 provisioning APIs
+** Must have network connectivity to the Management Cluster for access to the Metal3 provisioning APIs.
 
 
 === Software
 
-Some tools are required, these can be installed either on the Management Cluster or on a host with access to the Management Cluster.
-These include:
+You will need some software tools to deploy and manage the environment.
+They can be installed either on the Management Cluster or on a host with access to the Management Cluster.
+They include:
 
 * {kubectl-website}[Kubectl]
 * {helm-website}[Helm]
 * {clusterctl-website}[Clusterctl]
-* A container runtime, such as {podman-website}[Podman] or {rancherdesktop-website}[Rancher Desktop]
+* Container runtime, such as {podman-website}[Podman] or {rancherdesktop-website}[Rancher Desktop]
 
 Additionally, the {slm-long} OS image must be downloaded from the {scc-website}[SUSE Customer Center] or {slm-downloads}[SUSE {slm} Downloads page].
 The selected image file at the time of publication is `SL-Micro.x86_64-6.1-Base-GM.raw.xz`.
@@ -296,32 +299,33 @@ The selected image file at the time of publication is `SL-Micro.x86_64-6.1-Base-
 
 === Network
 
-Follow the official {stelco} guidelines and recommendations described in {stelco-docs-reqs}#id-network[{stelco} Network Requirements].
+Follow the official {stelco} guidelines and recommendations described in {stelco-docs-reqs}#id-network[{stelco}: Network Requirements].
 
 
 === Ports
 
-For details on port requirements, see {stelco-docs-reqs}#id-port-requirements[{stelco} Port Requirements].
+For details on port requirements, see {stelco-docs-reqs}#id-port-requirements[{stelco}: Port Requirements].
 
 
 === Services
 
-For details on supported services, such as DHCP and DNS, see the {stelco-docs-reqs}#id-services-dhcp-dns-etc[{stelco} Services (DHCP, DNS, etc.)].
+For details on supported services, such as DHCP and DNS, see the {stelco-docs-reqs}#id-services-dhcp-dns-etc[{stelco}: Services (DHCP, DNS, etc.)].
 
+[IMPORTANT]
+====
+For telco workloads, it is important to disable or configure properly some of the services running on the nodes to avoid any impact on the workload performance running on the nodes.
 
-=== Disabling systemd services
+See {stelco-docs-reqs}#id-disabling-systemd-services[{stelco}: Disabling Systemd Services] for details.
+====
 
-For Telco workloads, it is important to disable or configure some services running on the nodes to avoid impacts on workload performance.
-
-For information on disabling unnecessary systemd services, see the {stelco-docs-reqs}#id-disabling-systemd-services[{stelco} Disabling Systemd Services].
 
 
 == Edge Image Builder
 
-The need for easily auditable, reproducible, and customized base images becomes paramount to the long-term stability and maintainability of the environment.
+For the long-term stability and maintainability of the environment, it is paramount to have easily auditable, reproducible, and customized base images.
 {stelco-docs-eib}[Edge Image Builder (EIB)], one of the components of {stelco}, helps mitigate these concerns by providing a simple and quick mechanism to customize {slm} base images for a variety of scenarios.
-EIB can produce an image that contains all of the configuration and workload artifacts (RPMs, container images, etc.) needed for telco deployments.
-Thus, EIB can enable true zero-touch provisioning, even in low-bandwidth connections and air-gapped environments.
+EIB can produce an image that contains all of the configuration and workload artifacts (such as, RPMs and container images) needed for telco deployments.
+EIB can enable true zero-touch provisioning, even in low-bandwidth connections and air-gapped environments.
 A single image can be reused across multiple nodes, including advanced situations such as deploying HA Kubernetes clusters and individualized network configurations per node.
 By leveraging a declarative, YAML-based definition format, EIB easily fits into existing GitOps and CI/CD pipelines, generating reproducible images with full accountability of their contents.
 
@@ -329,12 +333,10 @@ EIB is an open source project.
 Visit the official {eib-repo}[EIB repository] for more information.
 
 
-=== EIB configuration
-
-==== Management Cluster EIB definition
+=== Management Cluster EIB definition
 
 Follow the steps outlined in this section to generate the EIB ISO image for the Management Cluster.
-For further details, see {stelco-docs-mgmtcluster}[Setting up the Management Cluster].
+For further details, see {stelco-docs-mgmtcluster}[{stelco}: Setting up the Management Cluster].
 
 . Generate the `eib-image` {stelco-docs-mgmtcluster}#mgmt-cluster-directory-structure[directory structure] as illustrated below.
 //
@@ -384,13 +386,13 @@ The {slm-long} OS image must be downloaded from the {scc-website}[{scc-long}] or
 . Update the following files:
 
 .. In the `kubernetes/helm/values/metal3.yaml` file, change `ironicIP` to your mgmt
-   cluster IP address (e.g., 172.30.8.11).
+   cluster IP address (for example, 172.30.8.11).
 .. In the `kubernetes/helm/values/rancher.yaml` file, change `hostname` to your mgmt
-   cluster IP address (e.g., 172.30.8.11).
+   cluster IP address (for example, 172.30.8.11).
 .. In the `network/mgmt-cluster-network.yaml` file, update the network settings to match your environment.
 //
 +
-For example:
+See the example listing below:
 +
 [source, yaml]
 ----
@@ -422,9 +424,8 @@ interfaces:
 
 
 . Modify the `eib/mgmt-cluster-34-61-defaultNet.yaml` file as follows:
-+
---
-* For the *encryptedPassword* parameter, replace `$ROOT_PASSWORD` with the root password for your Management Cluster.
+
+.. For the *encryptedPassword* parameter, replace `$ROOT_PASSWORD` with the root password for your Management Cluster.
 +
 [TIP]
 ====
@@ -441,10 +442,10 @@ Be sure to replace `PASSWORD` with your desired password.
 The final {rancher-short} password will be configured from the file, `custom/files/basic-setup.sh`.
 ====
 
-* For the *sccRegistrationCode* parameter, replace `$SCC_REGISTRATION_CODE` with your registration code for {slm} from the {scc-website}[{scc-long}].
---
+.. For the *sccRegistrationCode* parameter, replace `$SCC_REGISTRATION_CODE` with your registration code for {slm} from the {scc-website}[{scc-long}].
 
-. Build the EIB image.
+
+. Build the EIB image using `podman`.
 +
 [source, console]
 ----
@@ -544,12 +545,10 @@ You can get a copy of the file contents in {stelco-docs-automated}[Fully automat
 . The configuration file, `edge-cluster.yaml`, details the packages and scripts that will be included in the image.
 //
 As with the Management Cluster, modify the following parameters in `edge-cluster.yaml` according to your environment:
-+
---
-* For the *encryptedPassword* parameter, replace `$ROOT_PASSWORD` with the root password for your Management Cluster.
 
-* For the *sccRegistrationCode* parameter, replace `$SCC_REGISTRATION_CODE` with your registration code for {slm} from the {scc-website}[{scc-long}].
---
+.. For the *encryptedPassword* parameter, replace `$ROOT_PASSWORD` with the root password for your Management Cluster.
+
+.. For the *sccRegistrationCode* parameter, replace `$SCC_REGISTRATION_CODE` with your registration code for {slm} from the {scc-website}[{scc-long}].
 
 . Build the EIB image.
 +
@@ -704,7 +703,7 @@ These files include the BareMetalHost definition file (`bmh.yaml`) and the Provi
 . Create a BaremetalHost definition file (`bmh.yaml`).
 +
 //
-For reference, see <<Sample BareMetalHost definition file (bmh.yaml)>>.
+For reference, see <<Sample BareMetalHost definition file (`bmh.yaml`)>>.
 
 . Apply the manifests using kubectl (alternatively it could be applied using Rancher UI):The manifests should be applied utilizing kubectl (an alternative method is to apply them via the Rancher UI):
 +
@@ -743,10 +742,10 @@ image::8.1.4-rancher-ui-1.png[title="{rancher} – Bare Metal Hosts Management V
 image::8.1.4-rancher-ui-2.png[title="{rancher} – Hardware Data Details for Discovered BareMetalHost", align="center", width=90%]
 
 . Apply the Provision file (`capi.yaml`) to provision the Downstream Cluster hosts with the operating system and RKE2 cluster.
-This also applies Telco features, such as DPDK, SR-IOV, CPU isolation, huge pages, and kernel parameter tuning.
+This also applies telco features, such as DPDK, SR-IOV, CPU isolation, huge pages, and kernel parameter tuning.
 //
 +
-See <<Sample Provision file (capi.yaml)>> for reference.
+See <<Sample Provision file (`capi.yaml`)>> for reference.
 
 
 . Verify the BareMetalHost (BMH) provisioning status.
@@ -805,18 +804,16 @@ image::8.1.4-rancher-ui-4.png[title="{rancher} – Downstream Cluster Nodes in A
 
 == Performance testing
 
-In this section, you conduct performance tests on the cluster described in this document.
-to measure the CPU latency in scheduling new tasks on both isolated and housekeeping cores.
-You utilize a real-time application, which is a simulator, to replicate specific workloads per CPU during defined time periods.
-{rt-testing-json}[By configuring a JSON file], you can simulate a particular CPU load percentage and use `cyclictest` to quantify the latency associated with scheduling tasks concurrently.
-`cyclictest` can also produce a histogram to visualize the results, as shown below.
-For more information about `cyclictest`, see {sle-rt-hw-testing}[SLE RT Hardware Testing].
+For performance testing, you can use a real-time simulator to replicate specific workloads per CPU during defined time periods.
+Then, measure CPU latency in scheduling new tasks on both isolated and housekeeping cores.
+You can use `cyclictest` (see {sle-rt-hw-testing}[SLE RT Hardware Testing]), along with a configured {rt-testing-json}[a JSON file] to simulate a particular CPU load percentage and quantify the latency associated with scheduling tasks concurrently.
+You an also use `cyclictest` to produce a histogram to visualize the results, as shown below.
 
-To provide illustrative, real-time performance, the authors deployed the reference configuration detailed in this document, including the telco tunings provided in the <<Sample Provision file (capi.yaml)>>) and using {smss112-long} hosts.
+For this document, the authors deployed the described reference configuration with the telco tunings provided in the <<Sample Provision file (`capi.yaml`)>>) and using {smss112-long} hosts.
 
 [NOTE]
 ====
-Host details provided by the `hostnamectl`:
+Host details provided by `hostnamectl`:
 
 [listing]
 ----
@@ -845,7 +842,7 @@ The authors applied a CPU load of 95 percent on isolated cores with a duration o
 cyclictest -F /tmp/cyclictest-monitor.pipe -p98 -t36 --affinity=6-41 --mainaffinity=1 :--interval=1000 --histogram=60 --spike=10 --duration=7200 --quiet
 ----
 
-This resulted in the plot below, where latency remains below five microseconds for the duration of the test.
+The results, plotted below, show that latency remains below five microseconds for the duration of the test.
 
 image::9.2-latency-plot.png[title="Real-Time CPU Latency Distribution", Real-Time CPU Latency Distribution, align="center", width=90%]
 
@@ -853,8 +850,11 @@ image::9.2-latency-plot.png[title="Real-Time CPU Latency Distribution", Real-Tim
 
 == Conclusions and next steps
 
-The combination of {stelco-long}, {cpu-long}, and {smss-long}s delivers a future-proof, CPU-only telco-optimized cloud platform that delivers uncompromised performance, radical simplicity, genuine sustainability, and investment protection at scale while dramatically reducing power, physical space, and TCO.
-Together, we enable operators to stop compromising and start transforming.
+This validated reference design illustrates that {stelco-long}, running on {smss-long}s and powered by {cpu-long} processors, can deliver a CPU-only, telco edge platform that meets stringent telco requirements and is capable of supporting AI-native, low-latency workloads at scale.
+By replacing legacy accelerator-heavy designs with an integrated architectures, operators can significantly improve RAN capacity, power efficiency, and AI inference performance while reducing physical footprint, deployment complexity, and operational risk.
+Moreover, {stelco} provides a hardened, cloud-native foundation with zero-touch provisioning, consistent lifecycle management, and support for both VNFs and CNFs across core, edge, and far-edge environments.
+
+Together, {stelco-provider}, {smss-provider}, and {cpu-provider} enable operators to stop compromising and modernize their networks, scale AI-driven services, and prepare for next-generation 5G-Advanced and 6G use cases while lowering total cost of ownership and improving sustainability.
 
 
 Continue your learning journey with these resources:
@@ -867,24 +867,6 @@ Continue your learning journey with these resources:
 
 
 To move forward with transforming your network, please contact your {stelco-provider}, {cpu-provider}, or {smss-provider} account team to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs.
-
-
-
-== Summary
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Summarize:
-// - Solution description
-// - Motivation for the solution
-// - What was covered in this document
-// - Suggested next steps for the learning journey
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-This validated reference architecture confirms that {stelco-long} running on {smss-long}s, powered by {cpu-long} processors can deliver a fully consolidated, CPU-only, telco edge platform capable of supporting AI-native, low-latency, 5G workloads at scale.
-The solution is validated to meet stringent telco requirements, demonstrating deterministic sub-5 microsecond latency under high CPU utilization while consolidating vRAN acceleration, AI inference, networking, timing, and security into a single-socket system.
-
-By replacing legacy accelerator-heavy designs with an integrated architecture, operators can significantly improve RAN capacity, power efficiency, and AI inference performance while reducing physical footprint, deployment complexity, and operational risk. SUSE Telco Cloud provides a hardened, cloud-native foundation with zero-touch provisioning, consistent lifecycle management, and support for both VNFs and CNFs across core, edge, and far-edge environments.
-
-Together, Intel, Supermicro, and SUSE deliver a future-proof telco platform that enables operators to modernize their networks, scale AI-driven services, and prepare for next-generation 5G-Advanced and 6G use cases while lowering total cost of ownership and improving sustainability.
 
 
 
@@ -939,16 +921,17 @@ The cloud-native platform supports containerized network functions and open, sof
 It delivers a validated, integrated platform that accelerates AI-enabled 5G deployment, supports new intelligent services, improves operational efficiency, and provides a future-ready foundation for telco innovation.
 --
 
-== References
+
+//== References
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a list of the references used in this document.
 // Use variables to simplify future updates, such as:
 // * {ref-url}[Reference title]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-* Reference 1
-* Reference 2
+//
+//
+//* Reference 1
+//* Reference 2
 
 
 
@@ -977,20 +960,20 @@ It delivers a validated, integrated platform that accelerates AI-enabled 5G depl
 The following sections provide additional information and resources.
 
 
-=== Compute platform bill of materials
+//=== Compute platform bill of materials
+//
+//Add content here
 
-Add content here
 
-
-=== Software bill of materials
-
-Add content here
+//=== Software bill of materials
+//
+//Add content here
 
 
 === Sample files and output
 
 
-==== Sample BareMetalHost definition file (bmh.yaml)
+==== Sample BareMetalHost definition file (`bmh.yaml`)
 
 [source, yaml]
 ----
@@ -1355,7 +1338,7 @@ metadata:
 ----
 
 
-==== Sample Provision file (capi.yaml)
+==== Sample Provision file (`capi.yaml`)
 
 [source, yaml]
 ----
