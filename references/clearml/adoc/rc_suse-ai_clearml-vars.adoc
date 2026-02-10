@@ -94,65 +94,83 @@
 
 // ---SUSE variables ------
 :sai-provider: SUSE
+:sai-brand: SUSE® AI
 :sai-long: SUSE AI
-:sai: SUSE AI
-:sai-version:
+:sai: {suse-long}
+:sai-version: 1.0
 :sai-website: https://www.suse.com/products/ai/
-:sai-docs: https://documentation.suse.com/suse-ai/1.0/
+:sai-docs: https://documentation.suse.com/suse-ai/{sai-version}/
 :sai-templates: {sai-docs}html/AI-deployment/index.html#ai-library-installing
-:sai-requirement: {sai-docs}html/AI-requirements/index.html
+:sai-reqs: {sai-docs}html/AI-requirements/index.html
 
 :scn-docs-root: https://documentation.suse.com/cloudnative/
 
+:rke2-provider: SUSE
+:rke2-brand: SUSE® Kubernetes Engine (RKE2)
+:rke2-long: SUSE RKE2
 :rke2: RKE2
-:rke2-long: SUSE® Kubernetes Engine (RKE2)
-:rke2-website: {scn-docs-root}rke2/latest/en/introduction.html
+:rke2-version:
+:rke2-docs-root: {scn-docs-root}rke2/latest/en/
+:rke2-docs-intro: {rke2-docs-root}introduction.html
+// SUSE does not have a proper product page for RKE2 at time of publication; use intro in docs
+:rke2-website: {rke2-docs-intro}
+:rke2-docs-reqs: {rke2-docs-root}install/requirements.html
+:rke2-docs-ports: {rke2-docs-root}install/requirements.html#_networking
 
-:rancher: SUSE Rancher Prime
-:rancher-long: SUSE® Rancher Prime
-:rancher-short: SUSE Rancher
-:rancher-website: https://www.suse.com/products/rancher/
-:rancher-doc: {scn-docs-root}rke2/latest/en/introduction.html
-:rancher-docs: https://rancher.com/docs/rke/latest/en/
-:rancher-support-matrix: https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/
-:rancher-release: https://github.com/rancher/rke/
-:rancher-ports: {rancher-docs}os/#ports
-:rancher-example-yaml: {rancher-docs}example-yamls/
-:rancher-example-config: {rancher-docs}config-options/
-:rancher-manager-docs: {scn-docs-root}rancher-manager/
+
+:srancher-provider: SUSE
+:srancher-brand: SUSE® Rancher Prime
+:srancher-long: SUSE Rancher Prime
+:srancher: SUSE Rancher
+:srancher-website: https://www.suse.com/products/rancher/
+:srancher-doc: {scn-docs-root}rancher-manager/
+:srancher-docs: https://rancher.com/docs/rke/latest/en/
+:srancher-support-matrix: https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/
+#:rancher-release: https://github.com/rancher/rke/
+#:rancher-ports: {rancher-docs}os/#ports
+#:rancher-example-yaml: {rancher-docs}example-yamls/
+#:rancher-example-config: {rancher-docs}config-options/
+:srancher-manager-docs: {scn-docs-root}rancher-manager/
 
 :sles-provide: SUSE
-:sles-long: SUSE® Linux Enterprise Server
-:sles: SUSE Linux Enterprise Server
-:sles-short: SLES
+:sles-brand: SUSE® Linux Enterprise Server
+:sles-long: SUSE Linux Enterprise Server
+:sles: {sles-long}
 :sles-version: 16
 :sles-website: https://www.suse.com/products/server/
-:sles-docs: https://documentation.suse.com/sles/15-SP7/single-html/SLES-installation/article-installation.html
+:sles-docs: https://documentation.suse.com/sles/16.0/
 :sles-download: https://www.suse.com/download/sles/
-:sles-agma-installtion-guide: https://documentation.suse.com/sles/16.0/html/SLES-x86-64-agama-automated-installation/
+:sles-docs-agma-auto: https://documentation.suse.com/sles/16.0/html/SLES-x86-64-agama-automated-installation/
 
 
 :sstorage-provider: SUSE
-:sstorage-long: SUSE® Storage
-:sstorage: SUSE Storage
+:sstorage-brand: SUSE® Storage
+:sstorage-long: SUSE Storage
+:sstorage: {sstorage-long}
 :sstorage-version:
 :sstorage-website: https://www.suse.com/products/rancher/storage/
 :sstorage-docs: {scn-docs-root}storage/
 :sstorage-requirements: {sstorage-docs}latest/en/installation-setup/requirements.html
 
 :ssecurity-provide: SUSE
-:ssecurity-long: SUSE® Security
-:ssecurity: SUSE Security
+:ssecurity-brand: SUSE® Security
+:ssecurity-long: SUSE Security
+:ssecurity: {ssecurity-long}
 :ssecurity-version:
 :ssecurity-website: https://www.suse.com/products/rancher/security/
 :ssecurity-docs: {scn-docs-root}security/
 
 :spr-provider: SUSE
-:spr-long: SUSE® Private Registry
-:spr: SUSE Private Registry
+:spr-brand: SUSE® Private Registry
+:spr-long: SUSE Private Registry
+:spr: {spr-long}
 :spr-docs: {scn-docs-root}/suse-private-registry/html/private-registry/
+:spr-docs-intro: {spr-docs}pr-introduction.html
+// SUSE does not have a product page at time of publication; use documentation intro
+:spr-website: {spr-docs-intro}
 
 
+:scc-brand: SUSE® Customer Center
 :scc-long: SUSE Customer Center
 :scc: SCC
 :scc-website: https://scc.suse.com/
@@ -160,9 +178,20 @@
 :suse-yes-certification-program: https://www.suse.com/product-certification/yes-certified/
 :suse-yes-certification-process: https://www.suse.com/partners/ihv/yes/yes-certified-process
 :suse-yes-certified-bulletins: https://www.suse.com/yessearch/
+
+:smlm-brand: SUSE® Multi-Linux Manager
+:smlm-long: SUSE Multi-Linux Manager
+:smlm: {smlm-long}
 :smlm-website: https://www.suse.com/products/multi-linux-manager/
-:suse-repository-management-tool: https://documentation.suse.com/sles/15-SP3/single-html/SLES-rmt/#book-rmt
-:suse-connect: https://www.suse.com/support/kb/doc/?id=000018564
+
+:srmt-brand: SUSE® Remote Mirroring Tool
+:srmt-long: SUSE Remote Mirroring Tool
+:srmt: RMT
+:srmt-docs: https://documentation.suse.com/sles/15-SP7/html/SLES-all/book-rmt.html
+// SUSE does not have a product page at time of publication; use documentation
+:srmt-website: {srmt-docs}
+:suseconnect-docs: https://documentation.suse.com/sles/15-SP7/html/SLES-all/cha-register-sle.html#sec-register-sle-system-suseconnect
+//:suseconnect-kb: https://www.suse.com/support/kb/doc/?id=000018564
 :scaling: https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rke1-sles_hpe-proliant-synergy/id-glossary.html#g-scaling
 :availability: https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rke1-sles_hpe-proliant-synergy/id-glossary.html#g-availability
 
@@ -173,8 +202,9 @@
 // ---- ClearML variables --------------
 
 :cml-provider: ClearML
+:cml-brand: ClearML
 :cml-long: ClearML
-:cml: ClearML
+:cml: {cml-long}
 :cml-version:
 :cml-website: https://clear.ml
 :cml-docs: component 2 product documentation URL

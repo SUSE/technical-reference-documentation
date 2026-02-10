@@ -37,7 +37,7 @@ include::./rc_suse-ai_clearml-vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document provides a Technical Reference Configuration for building an enterprise-grade AI compute and machine learning operations (MLOps) platform using {sai-long} integrated with {cml-long}.
+This document provides a Technical Reference Configuration for building an enterprise-grade AI compute and machine learning operations (MLOps) platform using {sai-brand} integrated with {cml-brand}.
 It describes an opinionated but flexible architecture designed to help organizations deploy, operate, and scale machine learning workloads in a *secure*, *consistent*, and *observable* manner across on-premises, cloud, and hybrid environments.
 
 As enterprises increasingly adopt artificial intelligence to drive business value, many face challenges in moving from isolated experimentation to reliable, repeatable production deployments.
@@ -72,7 +72,7 @@ This includes discussion of business context and value as well as technical arch
 This guide covers:
 
 * The business and technical drivers for adopting an AI infrastructure management platform
-* A reference architecture for SUSE AI and ClearML integration
+* A reference architecture for {sai} and {cml}integration
 * Core software and infrastructure components and their roles
 * Deployment considerations and validation guidance
 * Security, scalability, and observability best practices
@@ -82,7 +82,7 @@ This guide does not cover:
 * Detailed machine learning algorithms or data science workflows
 * Application-specific model tuning
 * Vendor-specific hardware performance benchmarking
-* Step-by-step installation instructions already documented by SUSE or ClearML
+* Step-by-step installation instructions already documented by {sai-provider} or {cml-provider}
 
 
 === Audience
@@ -218,27 +218,27 @@ The key components of the solution are:
 
 * *Software*
 
-** *ClearML* - Delivers AI infrastructure management capabilities that enable GPU optimization, AI workload orchestration and scheduling, policy-driven resource governance, and full lifecycle control of AI workloads and models.
+** *{cml-brand}* - Delivers AI infrastructure management capabilities that enable GPU optimization, AI workload orchestration and scheduling, policy-driven resource governance, and full lifecycle control of AI workloads and models.
 
-** *SUSE AI* - Provides the enterprise-grade Kubernetes foundation and runtime environment for AI and machine learning workloads.
+** *{sai-brand}* - Provides the enterprise-grade Kubernetes foundation and runtime environment for AI and machine learning workloads.
 
-** *SUSE Rancher Prime* - Enables centralized Kubernetes cluster management, access control, and lifecycle operations.
+** *{srancher-brand}* - Enables centralized Kubernetes cluster management, access control, and lifecycle operations.
 
-** *SUSE Security* - Provides container image scanning, runtime security, and network visibility.
+** *{ssecurity-brand}* - Provides container image scanning, runtime security, and network visibility.
 
-** *SUSE Private Registry* - Acts as the secure container image registry for training and inference workloads.
+** *{spr-brand}* - Acts as the secure container image registry for training and inference workloads.
 
-** *SUSE Storage* - Provides distributed, cloud-native persistent storage for platform services and AI workloads.
+** *{sstorage-brand}* - Provides distributed, cloud-native persistent storage for platform services and AI workloads.
 
-** *SUSE Kubernetes Engine (RKE2)* - Provide the secure Kubernetes orchestration layer to run platform services, training jobs, and inference workloads.
+** *{rke2-brand}* - Provide the secure Kubernetes orchestration layer to run platform services, training jobs, and inference workloads.
 
-** *SUSE Linux Enterprise Server* -  Provides the secure, stable, and enterprise-grade operating system foundation for Kubernetes nodes and supporting infrastructure. SLES delivers a hardened Linux environment with long-term support, integrated security updates, and certified compatibility with SUSE AI, RKE2, and GPU drivers, ensuring consistent and reliable operation of AI platform services and workloads.
+** *{sles-brand}* -  Provides the secure, stable, and enterprise-grade operating system foundation for Kubernetes nodes and supporting infrastructure. {sles} delivers a hardened Linux environment with long-term support, integrated security updates, and certified compatibility with {sai}, {rke2}, and GPU drivers, ensuring consistent and reliable operation of AI platform services and workloads.
 
 * *Compute platform*
 
 ** *Storage and Networking Services* - Support persistent storage, dataset access, artifact retention, and secure network connectivity.
 
-** *Underlying Infrastructure (On-Premises, including air-gapped, or Cloud)* - Supplies CPU, memory, optional GPU acceleration, networking, and physical or virtual storage.
+** *Underlying Infrastructure (on-premises, including air-gapped, or cloud)* - Supplies CPU, memory, optional GPU acceleration, networking, and physical or virtual storage.
 
 
 Each of these components is further described in the next sections.
@@ -250,12 +250,12 @@ Each of these components is further described in the next sections.
 This section describes the primary software components that compose the solution, including their roles in infrastructure and workload management.
 
 
-=== {cml}
+=== {cml-brand}
 
-*{cml-long}* provides the AI infrastructure management and workload orchestration capabilities required to manage the AI training, building, and inferencing lifecycle.
+*{cml}* provides the AI infrastructure management and workload orchestration capabilities required to manage the AI training, building, and inferencing lifecycle.
 It integrates with {sai} to deliver infrastructure optimization, resource allocation, experiment tracking, pipeline orchestration, and model governance on top of the Kubernetes platform.
 
-ClearML is responsible for:
+{cml} is responsible for:
 
 * Tracking experiments, pipelines metrics, parameters, and models
 * Managing datasets and data lineage
@@ -266,9 +266,9 @@ ClearML is responsible for:
 {cml} operates as the primary interface for AI builders, while relying on SUSE AI for secure and scalable workload execution.
 
 
-=== {sai-long}
+=== {sai-brand}
 
-*{sai}* provides the enterprise-grade foundation for running AI and machine learning workloads on Kubernetes.
+{sai-website}[{sai}}] provides the enterprise-grade foundation for running AI and machine learning workloads on Kubernetes.
 It delivers a validated, supported platform that enables consistent execution of AI workloads across environments.
 
 {sai} is responsible for:
@@ -281,23 +281,23 @@ It delivers a validated, supported platform that enables consistent execution of
 {sai} serves as the control plane and execution environment for all machine learning workloads described in this architecture.
 
 
-=== {rancher-long}
+=== {srancher-brand}
 
-*{rancher}* provides centralized management and lifecycle control for the Kubernetes clusters that host the platform and run the workloads.
+{srancher-website}[{srancher-long}] provides centralized management and lifecycle control for the Kubernetes clusters that host the platform and run the workloads.
 
-{rancher-short} is used to:
+{srancher} is used to:
 
 * Provision and manage Kubernetes clusters across environments
 * Enforce consistent cluster configuration and access control
 * Provide centralized visibility into cluster health and resource utilization
 * Support multi-cluster and multi-tenant operations
 
-{rancher} enables platform teams to operate infrastructure at scale while maintaining consistency and governance.
+{srancher} enables platform teams to operate infrastructure at scale while maintaining consistency and governance.
 
 
-=== {rke2-long}
+=== {rke2-brand}
 
-{rke2} provides the secure, enterprise-ready Kubernetes distribution used to run all platform services and machine learning workloads in this architecture.
+{rke2-website}[{rke2-long} ({rke2})] provides the secure, enterprise-ready Kubernetes distribution used to run all platform services and machine learning workloads in this architecture.
 It delivers a CNCF-compliant Kubernetes environment that is hardened by default and suitable for regulated and enterprise environments.
 
 {rke2} is responsible for:
@@ -306,19 +306,19 @@ It delivers a CNCF-compliant Kubernetes environment that is hardened by default 
 * Running platform services, training jobs, and inference workloads
 * Enforcing Kubernetes-native scheduling, networking, and resource isolation
 * Supporting GPU-enabled workloads where required
-* Integrating with {rancher} for centralized lifecycle management
+* Integrating with {srancher} for centralized lifecycle management
 
 {rke2} forms the foundational orchestration layer for the platform and enables consistent workload execution across on-premises, hybrid, and multi-cloud environments.
 
 
-=== {sstorage-long}
+=== {sstorage-brand}
 
-{sstorage}, powered by Longhorn, provides distributed, cloud-native persistent storage for the platform.
+{sstorage-long}, powered by Longhorn, provides distributed, cloud-native persistent storage for the platform.
 It delivers highly available and resilient storage that supports stateful platform services and machine learning workloads running on Kubernetes.
 
 {sstorage} is responsible for:
 
-* Storing ClearML metadata, artifacts, and logs
+* Storing {cml} metadata, artifacts, and logs
 * Providing persistent volumes for platform and workloads
 * Supporting data replication and high availability
 * Enabling snapshotting and backup of critical platform data
@@ -327,9 +327,9 @@ It delivers highly available and resilient storage that supports stateful platfo
 It provides consistent, Kubernetes-native storage that supports performance, durability, and operational requirements across environments.
 
 
-=== {ssecurity-long}
+=== {ssecurity-brand}
 
-{ssecurity}, powered by NeuVector, provides container and runtime security for the platform and workloads.
+{ssecurity-long}, powered by NeuVector, provides container and runtime security for the platform and workloads.
 
 {ssecurity} is used to:
 
@@ -341,11 +341,11 @@ It provides consistent, Kubernetes-native storage that supports performance, dur
 {ssecurity} ensures that machine learning workloads and supporting services operate within enterprise security and compliance requirements.
 
 
-=== {spr-long}
+=== {spr-brand}
 
-{spr} provides a secure container image registry for storing and distributing container images used by the platform.
+{spr-website}[{spr-long}] provides a secure container image registry for storing and distributing container images used by the platform.
 
-SUSE Private Registry is used for:
+{spr} is used for:
 
 * Storing base images for training and inference workloads
 * Managing versioned application and model images
@@ -355,16 +355,16 @@ SUSE Private Registry is used for:
 Using a centralized registry helps ensure consistency and traceability across development, testing, and production workflows.
 
 
-=== {sles-long}
+=== {sles-brand}
 
-{sles} ({sles-short}) provides the secure, stable, and enterprise-grade operating system foundation for the platform.
+{sles-website}[{sles-long}] provides the secure, stable, and enterprise-grade operating system foundation for the platform.
 It serves as the base operating system for Kubernetes control plane and worker nodes, as well as supporting infrastructure components used by {sai} and {cml}.
 
 
 {sles} is responsible for:
 
 * Providing a hardened and supported Linux operating system for Kubernetes nodes
-* Ensuring compatibility with RKE2, container runtimes, and GPU drivers
+* Ensuring compatibility with {rke2}, container runtimes, and GPU drivers
 * Delivering long-term stability through enterprise lifecycle management and security updates
 * Supporting high-performance compute workloads, including GPU-accelerated training and inference
 * Enabling consistent operating system configuration across on-premises, cloud, and hybrid environments
@@ -377,7 +377,8 @@ It serves as the base operating system for Kubernetes control plane and worker n
 // Provide details about each compute component in its own subsection.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Need to work on this.
+*--> Need to work on this. <--*
+*--> Call out a few key items from SAI reqs in documentation. <--*
 
 
 == Deployment 
@@ -420,7 +421,7 @@ Need to work on this.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-This section provides a high-level overview of the deployment architecture and sequencing for the SUSE and {cml} solution.
+This section provides a high-level overview for deploying {cml} into your {sai} environment.
 It describes deployment considerations for the major compute platform and software layers to form a functional platform for AI workloads.
 
 For deployment purposes, the solution is represented as a layered stack, where each layer depends on the services provided by the layer below it.
@@ -452,29 +453,29 @@ Customers can be verify hardware certification by searching {suse-yes-certified-
 ====
 
 
-=== {sles}
+=== {sles-long}
 
 At the base of the software stack is {sles-website}[{sles}].
-You can download {sles} as an ISO file or virtual machine image from {sles-download}[{sles} Downloads] or from the {scc-website}[SUSE Customer Center] (SCC).
-Be sure to select the appropriate, supported version of {sles} by reviewing the {rancher-support-matrix}[{rancher} support matrix].
+You can download {sles} as an ISO file or virtual machine image from {sles-download}[{sles} Downloads] or from the {scc-website}[{scc-long} ({scc})].
+Be sure to select the appropriate, supported version of {sles} by reviewing the {rancher-support-matrix}[{srancher} support matrix].
 
-You will need to register your installed system with {scc-website}[SUSE Customer Center] to obtain software packages and patches.
+You will need to register your installed system with {scc-website}[{scc-long}] to obtain software packages and patches.
 You can do this by configuring each node in one of the following ways:
 
-. to directly access the {scc-website}[SUSE Customer Center] (SCC) through an external network
+. to directly access the {scc-website}[{scc-long}] through an external network
 
-. to use your organization’s internal, {smlm-website}[SUSE Multi-Linux Manager] infrastructure
+. to use your organization’s internal, {smlm-website}[{smlm-brand}] infrastructure
 
-. to leverage a local server running an instance of {suse-repository-management-tool}[SUSE Repository Mirroring Tool] (RMT)
+. to leverage a local server running an instance of {srmt-website}[{srmt-long} ({srmt})]
 
 [TIP]
 ====
 During OS installation, you can point each node to the respective update service.
-This can also be accomplished post-installation with the command line tool, {suse-connect}[SUSEConnect].
+This can also be accomplished post-installation with the command line tool, {suseconnect-docs}[SUSEConnect].
 ====
 
 In production environments, you can optimize deployment and reduce manual interaction with unattended, automated deployments.
-See {sles-agma-installtion-guide}[Automated Installation Using Agama].
+See {sles-docs-agma-auto}[Automated Installation Using Agama].
 
 
 Ensure these additional considerations are configured on each node:
@@ -483,7 +484,7 @@ Ensure these additional considerations are configured on each node:
 
 . Network Time Protocol (NTP) - an external network-accessible service to obtain and synchronize system times to aid in time stamp consistency
 
-. Ensure connectivity by configuring the firewall to allow necessary inbound {rancher-ports}[RKE2 ports] or, depending on your security compliance requirements, disable the firewall service.
+. Ensure connectivity by configuring the firewall to allow necessary inbound {rke2-docs-ports}[RKE2 ports] or, depending on your security compliance requirements, disable the firewall service.
 
 
 
@@ -492,7 +493,12 @@ Ensure these additional considerations are configured on each node:
 
 *Preparation*
 
-. Identify the appropriate, desired version of the {rke2} binary (for example vX.Y.Z) that includes the needed Kubernetes version by reviewing the "Rancher Kubernetes Engine Downstream Clusters" section of the {rancher-support-matrix}[SUSE Rancher support matrix].
+[NOTE]
+====
+{rke2} installation requires a client system (an administrative workstation) that has been configured with `kubectl`.
+====
+
+. Identify the appropriate, desired version of the {rke2} binary (for example vX.Y.Z) that includes the needed Kubernetes version by reviewing the "Rancher Kubernetes Engine Downstream Clusters" section of the {srancher-support-matrix}[SUSE Rancher support matrix].
 
 . Install and enable the required container runtime engine on the target node with a default installation of {sles}.
 
@@ -523,16 +529,16 @@ zypper install -y curl tar
 
 *Deployment Process*
 
-The primary steps for deploying this RKE2 are:
+The primary steps for deploying {rke2} are:
 
-[NOTE]
-====
-Installing {rke2} requires a client system (an administrative workstation) that has been configured with kubectl.
-====
+. Download the {rke2} binary according to the instructions on product {rancher-doc}[documentation] page, then follow the directions on that page, but with the following exceptions:
 
-. Download the Rancher Kubernetes Engine binary according to the instructions on product {rancher-doc}[documentation] page, then follow the directions on that page, but with the following exceptions:
-
-. Create the cluster.yml file with the command rke config
+. Create the `cluster.yml` file with the command:
++
+[source, console]
+----
+rke config
+----
 +
 [NOTE]
 ====
