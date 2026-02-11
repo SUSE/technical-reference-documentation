@@ -496,14 +496,33 @@ Ensure these additional considerations are configured on each node:
 
 === {rke2-long}
 
+{rke2-long} provides the Kubernetes layer to host {srancher-long}.
+For a stable, secure, and scalable {rke2} deployment, consider the following:
 
-*Preparation*
+* *Version* - Identify the appropriate, supported version of {rke2} by reviewing the {srancher-support-matrix}[{srancher} Support Matrix].
 
-. Identify the appropriate, desired version of the {rke2} binary (for example vX.Y.Z) that includes the needed Kubernetes version by reviewing the "Rancher Kubernetes Engine Downstream Clusters" section of the {srancher-support-matrix}[{srancher} support matrix].
+* *Availability* - For production deployments, use an odd number of control plane / etcd nodes (minimum three) to maintain etcd quorum and prevent loss of cluster availability. When deploying multiple control-plane nodes, use an external load balancer to distribute traffic across the Kubernetes API servers.
+
+* *Networking* - Ensure that all required Kubernetes, etcd, and container runtime ports are open between cluster nodes. Latency and packet loss between nodes—especially etcd members—can negatively impact cluster stability and performance.
+
+* *etcd Data Protection* - etcd stores all Kubernetes cluster state and configuration. Enable regular etcd snapshots and store backups outside the cluster to support disaster recovery and cluster restoration.
+
+* *Security* - Restrict SSH access to cluster nodes using key-based authentication only. Use least-privilege access for the SSH user specified in the cluster.yml file. Protect the generated kube_config_cluster.yml file, as it provides administrative access to the cluster.
+
+* *Scalability* - Additional worker or control-plane nodes can be added to the cluster after initial deployment by updating the cluster.yml file and re-running the rke up command. Plan IP addressing, DNS, and load balancer capacity accordingly.
+
+* *Certificate Management* - RKE automatically generates and manages Kubernetes certificates. If a load balancer or external endpoint is used, ensure all required IP addresses and FQDNs are included under authentication.sans in the cluster.yml file to avoid certificate validation issues.
+
+* *Operating System Configuration* - Disable swap and ensure required kernel modules are loaded on all nodes. Apply consistent OS configuration across nodes to avoid unpredictable behavior.
+
+* *Upgrade Strategy* - Before upgrading Kubernetes or RKE versions, review the supported version matrix and perform upgrades in a test environment. Back up etcd data prior to any upgrade operation.
+
+* *Logging and Monitoring* - Plan for cluster-level monitoring and logging early in the deployment lifecycle to simplify troubleshooting and operational visibility.
+
 
 [NOTE]
 ====
-{rke2} installation requires a client system (an administrative workstation) that has been configured with `kubectl`.
+{rke2} installation requires a client system (an administrative workstation) that has been configured with {kubectl-website}[`kubectl` Utility].
 ====
 
 ////
@@ -534,221 +553,206 @@ zypper install -y curl tar
 ////
 
 
-*Deployment Process*
+The deployment process includes the major steps outlined below.
 
-The primary steps for deploying {rke2} are as follows:
+. Select your installation method.
+//
++
+{rke2} supports multiple installation methods, including tarball installation, RPM-based installation, and manual binary installation.
+The tarball installation method is recommended for most deployment scenarios due to its flexibility and consistency across environments.
+Refer to the official {rke2-install-methods}[{rke2} Installation Methods documentation] for details.
 
-. *Select the Installation Method* +
-{rke2} supports multiple installation methods, including tarball installation, RPM-based installation, and manual binary installation. +
-The tarball installation method is recommended for most deployment scenarios due to its flexibility and consistency across environments. +
-Refer to the official {rke2-install-methods}[{rke2} Installation Methods documentation] to select and execute the appropriate method.
+. Install {rke2} on the control plane nodes.
+//
++
+Install {rke2} on each server node by following the official guidance in {rke2-install-quickstart}[{rke2} Installation Quickstart].
 
-. *Install {rke2} on Server (Control-Plane) Nodes* +
-Install {rke2} on each server node by following the official {rke2-server-install}[Server Node Installation documentation]. +
-Ensure that the configuration aligns with the validated architecture defined in this Technical Reference Document. +
-For high-availability deployments, deploy a minimum of three server nodes to maintain etcd quorum.
+. Configure high availability by following guidance provided in {rke2-install-ha}[{rke2} Installation High Availability].
++
+[NOTE]
+====
+For multi-node control plane deployments, you will need to provision an external load balancer to distribute traffic across server nodes.
 
-. *Configure High Availability (If Applicable)* +
-For multi-node control-plane deployments, provision an external load balancer to distribute traffic across server nodes. +
 Ensure that the load balancer IP address or fully qualified domain name (FQDN) is included in the TLS Subject Alternative Name (SAN) configuration to prevent certificate validation issues.
-Refer to the official {rke2-high-availability}[{rke2} High Availability documentation].
+====
 
-. *Install Linux Worker Nodes (If Applicable)* +
-Install the {rke2} agent on Linux worker nodes by following the official {rke2-linux-agent-install}[Linux Agent (Worker) Node Installation documentation]. +
-Ensure that worker nodes meet all documented system requirements and can securely communicate with the server nodes.
-
-. *Install Windows Worker Nodes (If Applicable)* +
-If Windows workloads are required, install the {rke2} agent on Windows worker nodes using the official {rke2-windows-agent-install}[Windows Agent (Worker) Node Installation documentation]. +
-Verify version compatibility and networking prerequisites before joining the node to the cluster.
-
-
-
-*Deployment Consideration*
-
-To ensure a stable, secure, and scalable Rancher Kubernetes Engine (RKE/RKE2) deployment, consider the following aspects:
-
-. *Availability* - For production deployments, use an odd number of control-plane/etcd nodes (minimum three) to maintain etcd quorum and prevent loss of cluster availability. When deploying multiple control-plane nodes, use an external load balancer to distribute traffic across the Kubernetes API servers.
-. *Networking* - Ensure that all required Kubernetes, etcd, and container runtime ports are open between cluster nodes. Latency and packet loss between nodes—especially etcd members—can negatively impact cluster stability and performance.
-. *etcd Data Protection* - etcd stores all Kubernetes cluster state and configuration. Enable regular etcd snapshots and store backups outside the cluster to support disaster recovery and cluster restoration.
-. *Security* - Restrict SSH access to cluster nodes using key-based authentication only. Use least-privilege access for the SSH user specified in the cluster.yml file. Protect the generated kube_config_cluster.yml file, as it provides administrative access to the cluster.
-. *Scalability* - Additional worker or control-plane nodes can be added to the cluster after initial deployment by updating the cluster.yml file and re-running the rke up command. Plan IP addressing, DNS, and load balancer capacity accordingly.
-. *Certificate Management* - RKE automatically generates and manages Kubernetes certificates. If a load balancer or external endpoint is used, ensure all required IP addresses and FQDNs are included under authentication.sans in the cluster.yml file to avoid certificate validation issues.
-. *Operating System Configuration* - Disable swap and ensure required kernel modules are loaded on all nodes. Apply consistent OS configuration across nodes to avoid unpredictable behavior.
-. *Upgrade Strategy* - Before upgrading Kubernetes or RKE versions, review the supported version matrix and perform upgrades in a test environment. Back up etcd data prior to any upgrade operation.
-. *Logging and Monitoring* - Plan for cluster-level monitoring and logging early in the deployment lifecycle to simplify troubleshooting and operational visibility.
+. Install the appropriate agent on your worker nodes.
+//
++
+Instructions for installing the Linux or Windows Agent are provided in {rke2-install-quickstart}[{rke2} Installation Quickstart].
++
+[TIP]
+====
+Ensure that each worker node meets documented system requirements and can securely communicate with the server nodes.
+====
 
 
 === {srancher-long}
 
-==== Preparation
+Before installing {srancher-long} onto your {rke2} cluster, consider the following:
 
-. For the respective node’s firewall service, either enable and configure the necessary inbound ports or stop and disable the firewall service.
+* *Deployment Strategy* - Understand and select a {srancher-dep-strategy}[{srancher} Deployment Strategy] for your requirements.
 
-. Determine the desired SSL configuration for TLS termination.
-Options include:
-+
---
-* Use a {srancher}-generated (self-signed) TLS certificate.
-* Use a {letsencrypt-website}[Let’s Encrypt] certificate.
-* Bring your own certificate.
+* *Availability* - Deploy {srancher} to achieve your availability requirements.
+High availability, for example, can be achieved by deploying {srancher} on a highly available {rke2} cluster.
 
-. Obtain a Helm binary matching the respective Kubernetes version for this {srancher} implementation.
+* *Backup/Restore and Disaster Recovery* - Implement backup/restore and disaster recovery strategies to protect your infrastructure and workloads.
+This will include leveraging a distributed storage solution, such as {sstorage-long}, as well as third-party backup/restore and disaster recovery solutions certified for {srancher}.
 
-////
-[NOTE]
-====
-Enable the respective kubeconfig setting for kubectl, K3s - /etc/rancher/k3s/k3s.yml, to be leveraged by helm command.
-====
-////
+* *Network Handling and Security* - Ensure your network configuration can properly and securely handle incoming network traffic.
+A few recommendations include:
 
-
-==== Deployment process
-
-While logged in to the node, as root or with sudo privileges, install {srancher}:
-
-. Install cert-manager.
-
-.. Set the following variable with the desired version of {certmanager}.
-+
-[source, console]
-----
-CERT_MANAGER_VERSION=""
-----
+** DNS should resolve to a layer 4 load balancer.
+** The load balancer should forward port TCP/80 and TCP/443 to all nodes in the host {rke2} cluster.
+** The ingress controller should forward traffic to the pod in the {srancher} deployment.
+** The ingress controller should redirect HTTP to HTTPS protocol and terminate SSL/TLS on port TCP/443.
 +
 [NOTE]
 ====
-At the time of publication, the supported version of {certmanager} is {certmanager-version}.
+By default, {srancher} can generate an SSL certificate for encrypting network traffic.
+You can also configure {letsencrypt-website}[Let’s Encrypt] or provide a your own certificate.
 ====
 
-.. Create the {certmanager} CRDs and apply the Helm chart resource manifest with the following commands:
-
-... Apply the CRDs.
-+
-[source, console]
-----
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.crds.yaml
-----
-
-... Add the Jetstack Helm repository.
-+
-[source, console]
-----
-
-helm repo add jetstack https://charts.jetstack.io
-----
-
-... Update your local Helm repository cache.
-+
-[source, console]
-----
-# Update your local Helm chart repository cache
-helm repo update
-----
-
-... Install the {certmanager} Helm chart.
-+
-[source, console]
-----
-helm install cert-manager jetstack/cert-manager \
-  --namespace cert-manager \
-  --create-namespace \
-  --version ${CERT_MANAGER_VERSION}
-----
-+
-You can monitor the progress of the installation, looking for all pods to be in running status, with:
-+
-[source, console]
-----
-kubectl get pods --namespace cert-manager
-----
+For more further considerations, review {srancher-docs-best-practices}[Best Practices for the {srancher-long} Server].
 
 
-. Add the {srancher} Helm repository:
-+
-[source, console]
-----
-helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
-----
-
-. Create a namespace for {srancher}.
-+
-[source, console]
-----
-kubectl create namespace cattle-system
-----
-
-. Prepare to use the Helm chart for {srancher}:
-+
-[NOTE]
-====
-This host name should be resolvable to an IP address of the {rke2} host, or a load balancer / proxy server that supports this installation of {srancher}.
-====
-
-.. Set the following variable to the host name of the {srancher} server instance.
-+
-[source, console]
-----
-HOSTNAME=""
-----
+Once you have defined your deployment requirements, proceed with the installation by following the detailed guidance provided in {srancher-docs-installing}[Installing {srancher-long}].
 
 
-.. Set the following variable to the number of deployed Kubernetes nodes planned to host the {srancher} service.
-+
-[source, console]
-----
-REPLICAS=""
-----
-
-.. Set the following variable to the desired version of {srancher} server instance.
-+
-[source, console]
-----
-RANCHER_VERSION=""
-----
-
-.. Install the {srancher} Helm chart.
-+
-[source, console]
-----
-helm install rancher rancher-stable/rancher \
-  --namespace cattle-system \
-  --set hostname=${HOSTNAME} \
-  --set replicas=${REPLICAS} \
-  --version=${RANCHER_VERSION}
-----
-+
-You can monitor progress of the installation with:
-+
-[source, console]
-----
-kubectl -n cattle-system rollout status deploy/rancher
-----
-
-. Connect to the {srancher} Web UI:
-
-.. On a client system, use a Web browser to connect to the {srancher} service, from HTTPS.
-
-.. Provide a new Admin password.
-+
-[IMPORTANT]
-====
-On the second configuration page, ensure the "Rancher Server URL" is set to the host name specified when installing the {srancher} Helm Chart and the port is 443.
-====
 
 
-==== Deployment considerations
 
-To further optimize deployment factors, leverage the following practices:
 
-* *Availability* - In instances where a load balancer is used to access a {rke2} cluster, deploying two additional {rke2} cluster nodes, for a total of three, will automatically make {srancher} highly available.
+//While logged in to the node, as root or with sudo privileges, install {srancher}:
+//
+//. Install cert-manager.
+//
+//.. Set the following variable with the desired version of {certmanager}.
+//+
+//[source, console]
+//----
+//CERT_MANAGER_VERSION=""
+//----
+//+
+//[NOTE]
+//====
+//At the time of publication, the supported version of {certmanager} is {certmanager-version}.
+//====
+//
+//.. Create the {certmanager} CRDs and apply the Helm chart resource manifest with the following commands:
+//
+//... Apply the CRDs.
+//+
+//[source, console]
+//----
+//kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.crds.yaml
+//----
+//
+//... Add the Jetstack Helm repository.
+//+
+//[source, console]
+//----
+//
+//helm repo add jetstack https://charts.jetstack.io
+//----
+//
+//... Update your local Helm repository cache.
+//+
+//[source, console]
+//----
+//# Update your local Helm chart repository cache
+//helm repo update
+//----
+//
+//... Install the {certmanager} Helm chart.
+//+
+//[source, console]
+//----
+//helm install cert-manager jetstack/cert-manager \
+//  --namespace cert-manager \
+//  --create-namespace \
+//  --version ${CERT_MANAGER_VERSION}
+//----
+//+
+//You can monitor the progress of the installation, looking for all pods to be in running status, with:
+//+
+//[source, console]
+//----
+//kubectl get pods --namespace cert-manager
+//----
+//
+//. Install {srancher}.
+//
+//.. Add the {srancher} Helm repository:
+//+
+//[source, console]
+//----
+//helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+//----
+//
+//.. Create a namespace for {srancher}.
+//+
+//[source, console]
+//----
+//kubectl create namespace cattle-system
+//----
+//
+//.. Set the following variable to the host name of the {srancher} server instance.
+//+
+//[source, console]
+//----
+//HOSTNAME=""
+//----
+//+
+//[NOTE]
+//====
+//This host name should be resolvable to an IP address of the {rke2} host, or a load balancer / proxy server that supports this installation of {srancher}.
+//====
+//
+//
+//.. Set the following variable to the number of deployed Kubernetes nodes planned to host the {srancher} service.
+//+
+//[source, console]
+//----
+//REPLICAS=""
+//----
+//
+//.. Set the following variable to the desired version of {srancher} server instance.
+//+
+//[source, console]
+//----
+//RANCHER_VERSION=""
+//----
+//
+//.. Install {srancher} with Helm.
+//+
+//[source, console]
+//----
+//helm install rancher rancher-stable/rancher \
+//  --namespace cattle-system \
+//  --set hostname=${HOSTNAME} \
+//  --set replicas=${REPLICAS} \
+//  --version=${RANCHER_VERSION}
+//----
+//+
+//You can monitor progress of the installation with:
+//+
+//[source, console]
+//----
+//kubectl -n cattle-system rollout status deploy/rancher
+//----
+//
 
-* *Security* - The basic deployment steps described above are for deploying {srancher} with automatically generated, self-signed security certificates. Other options are to have {srancher} create public certificates from Let’s Encrypt associated with a publicly resolvable host name for the {srancher} server, or to provide preconfigured, private certificates.
-
-* *Integrity* - This deployment of {srancher} uses the {rke2} etcd key/value store to persist its data and configuration, which offers several advantages.
-With a multi-node cluster and this resiliency through replication, having to provide highly-available storage is not needed.
-In addition, backing up the RKE2 etcd store protects the cluster and the installation of {srancher} and permits restoration of a given state.
-
-After this successful deployment of the {srancher} solution, review the {srancher-manager-docs}[product documentation] for details on how downstream Kubernetes clusters can be deployed
+//. Access the {srancher} Web UI from to complete initial setup.
+//
+//.. On a client system, open a Web browser to the {srancher} UI.
+//
+//.. Provide a new Admin password.
+//+
+//[IMPORTANT]
+//====
+//On the second configuration page, ensure the "Rancher Server URL" is set to the host name specified when installing the {srancher} Helm Chart and the port is 443.
+//====
 
 
 
