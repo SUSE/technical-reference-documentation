@@ -96,7 +96,7 @@
 :sai-provider: SUSE
 :sai-brand: SUSE® AI
 :sai-long: SUSE AI
-:sai: {suse-long}
+:sai: {sai-long}
 :sai-version: 1.0
 :sai-website: https://www.suse.com/products/ai/
 :sai-docs: https://documentation.suse.com/suse-ai/{sai-version}/
@@ -116,6 +116,11 @@
 :rke2-website: {rke2-docs-intro}
 :rke2-docs-reqs: {rke2-docs-root}install/requirements.html
 :rke2-docs-ports: {rke2-docs-root}install/requirements.html#_networking
+:rke2-install-methods: {rke2-docs-root}install/methods.html
+:rke2-server-install: {rke2-docs-root}install/quickstart.html#_server_node_installation
+:rke2-linux-agent-install: {rke2-docs-root}install/quickstart.html#_linux_agent_worker_node_installation
+:rke2-windows-agent-install: {rke2-docs-root}install/quickstart.html#_windows_agent_worker_node_installation
+:rke2-high-availability: {rke2-docs-root}install/ha.html
 
 
 :srancher-provider: SUSE
@@ -123,13 +128,14 @@
 :srancher-long: SUSE Rancher Prime
 :srancher: SUSE Rancher
 :srancher-website: https://www.suse.com/products/rancher/
-:srancher-doc: {scn-docs-root}rancher-manager/
-:srancher-docs: https://rancher.com/docs/rke/latest/en/
+:srancher-docs: {scn-docs-root}rke2/
+//:srancher-docs: {scn-docs-root}rancher-manager/
+//:srancher-doc: https://rancher.com/docs/rke/latest/en/
 :srancher-support-matrix: https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/
-#:rancher-release: https://github.com/rancher/rke/
-#:rancher-ports: {rancher-docs}os/#ports
-#:rancher-example-yaml: {rancher-docs}example-yamls/
-#:rancher-example-config: {rancher-docs}config-options/
+:rancher-release: https://github.com/rancher/rke/
+:rancher-ports: {srancher-docs}os/#ports
+// :rancher-example-yaml: {srancher-docs}example-yamls/
+// :rancher-example-config: {srancher-docs}config-options/
 :srancher-manager-docs: {scn-docs-root}rancher-manager/
 
 :sles-provide: SUSE
@@ -140,7 +146,7 @@
 :sles-website: https://www.suse.com/products/server/
 :sles-docs: https://documentation.suse.com/sles/16.0/
 :sles-download: https://www.suse.com/download/sles/
-:sles-docs-agma-auto: https://documentation.suse.com/sles/16.0/html/SLES-x86-64-agama-automated-installation/
+:sles-docs-agma-auto: {sles-docs}html/SLES-x86-64-agama-automated-installation/
 
 
 :sstorage-provider: SUSE
@@ -207,18 +213,20 @@
 :cml: {cml-long}
 :cml-version:
 :cml-website: https://clear.ml
-:cml-docs: component 2 product documentation URL
-:cml-idp: https://clear.ml/docs/latest/docs/user_management/identity_providers
+:cml-docs: https://clear.ml/docs/latest/docs/
+:cml-idp: {cml-docs}user_management/identity_providers
 :cml-github: https://github.com/clearml/clearml/
 :cml-example: {cml-github}/tree/master/examples
 :cml-pytorch: {cml-github}blob/master/examples/frameworks/pytorch/pytorch_mnist.py
 :cml-dataset: {cml-github}blob/master/examples/hyperdatasets/finetune_qa_lora.py
+:cml-enterprise-helm-chart: https://raw.githubusercontent.com/clearml/clearml-enterprise-helm-charts/gh-pages
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 // ---- Other component variables --------------
 :kubectl:
+:nvidia-gpu-operator: https://nvidia.github.io/gpu-operator
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -292,7 +300,9 @@
 //    :metatask2: Installation
 //    :metatask3: Deployment
 // -
-:metatask1: task
+:metatask1: Artificial Intelligence
+:metatask2: Integration
+:metatask3: Deployment
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
