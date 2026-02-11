@@ -37,7 +37,7 @@ include::./rc_suse-virtualization_purestorage-portworx_bare-metal-vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended as a supplement to the {comp1} with {comp2} on Bare Metal” Reference Architecture. It builds on the foundational design by providing additional guidance for deploying and running SUSE Virtualization with Portworx Enterprise in bare metal environments.
+This document is intended as a supplement to the {svirt} with {pxe} on Bare Metal” Reference Architecture. It builds on the foundational design by providing additional guidance for deploying and running SUSE Virtualization with Portworx Enterprise in bare metal environments.
 The objective is to help organizations seamlessly integrate SUSE Virtualization with Portworx Enterprise, ensuring deployments that deliver optimized performance, scalability, and reliability for virtualized workloads.
 
 
@@ -146,7 +146,11 @@ In this section, we provide a planning and architecture overview for deploying S
 
 The virtualization capabilities in SUSE are powered by key components from the SUSE Linux Enterprise virtualization stack:
 
-The virtualization capabilities in SUSE are delivered through an integrated solution that brings together compute, storage, and orchestration layers. Rather than focusing on low-level hypervisor internals, the architecture highlights how SUSE Virtualization and Portworx Enterprise work together to provide a flexible, scalable, and enterprise-grade platform.
+The virtualization capabilities in SUSE are delivered through an integrated solution that brings together compute, storage, and orchestration layers.
+Rather than focusing on low-level hypervisor internals, the architecture highlights how SUSE Virtualization and Portworx Enterprise work together to provide a flexible, scalable, and enterprise-grade platform.
+
+image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of SUSE Virtualization with Portworx Storage", General Architecture of SUSE Virtualization with Portworx Storage, align="center", width=90%]
+
 
 === SUSE Virtualization
 
@@ -169,7 +173,10 @@ The solution incorporates the underlying physical infrastructure, including host
 These components provide the performance, connectivity, and resiliency required for running large-scale virtualized and containerized workloads.
 
 == Reference Design
-The diagram below shows a high-level design of the SUSE Virtualization reference architecture with Portworx Pure storage FlashArray deployed on bare metal hardware. By implementing this design, a platform engineering team can automate the provisioning of a well-defined architecture following best practices that includes high availability, operations management, observability, business continuity, performance, and security.
+
+The diagram below shows a high-level, reference design with SUSE Virtualization  Portworx Enterprise deployed on bare-metal nodes along with a Pure Storage FlashArray. By implementing this design, a platform engineering team can automate the provisioning of a well-defined architecture following best practices that includes high availability, operations management, observability, business continuity, performance, and security.
+
+image::suse-portworx-arc-diagram.png[title="Reference Architecture Diagram", Reference Architecture Diagram, align="center", width=90%]
 
 
 
@@ -411,6 +418,9 @@ This simplifies initial deployment and is suitable for:
 
 However, this configuration can lead to congestion and should be avoided in performance-sensitive or production environments.
 
+image::Portworx-default-network-configuration.png[title="Portworx Default Network Configuration", Portworx Default Network Configuration, align="center", width=90%]
+
+
 === Dedicated Data Networks
 
 For production deployments, Portworx can be configured to use a dedicated NIC for data replication between nodes.
@@ -421,6 +431,10 @@ This separation ensures that:
 * Kubernetes control-plane and workload networking remain uncongested
 
 Dedicated data networks significantly improve throughput and reliability in clusters with high replication demands.
+
+image::Portworx-dedicated-network-configuration.png[title="Portworx Dedicated Data Network Configuration", Portworx Dedicated Data Network Configuration, align="center", width=90%]
+
+
 
 === Network Performance Considerations
 
@@ -510,6 +524,8 @@ A storage pool in Portworx is a logical grouping of a node's physical drives. Po
 To set up a storage pool, you need a minimum of one drive per node. Portworx evaluates each drive through a benchmark process, categorizing it based on its throughput into one of three I/O priorities: low, medium, or high. Drives that share the same I/O priority and size within a node are grouped into a pool. This categorization allows you to align various applications with the appropriate tier of storage based on their performance requirements. For instance, database applications can be placed on flash devices for high performance, while applications managing logging data can utilize less performant options.
 A single backing disk is required per node to create a storage pool. However, for future scalability, consider the methods available to increase storage capacity in the cluster. This can be achieved either by expanding an existing disk (which is often feasible when using a hardware array for backing disks) or by adding additional disks to the storage pool. While both methods increase capacity, adding more disks necessitates an I/O rebalancing process, which is intensive. Using a single drive allows for the storage pool to be resized by expanding the backing disks. When the Portworx storage cluster is expanded by vertically scaling the backing drives, it does not require a data rebalance. For this reason, Portworx recommends using a single disk as the backing disk for the storage cluster in a bare metal environment.
 
+image::storage-cluster.png[title="Portworx Storage Pool Architecture", Portworx Storage Pool Architecture, align="center", width=90%]
+
 == Journal Devices
 
 Portworx recommends configuring a journal device to handle metadata writes. Journal writes are small and frequent; therefore, using a solid-state drive (SSD) or NVMe device is strongly recommended.
@@ -578,8 +594,9 @@ These nodes should be distributed across multiple fault domains to ensure quorum
 Deploying KVDB on dedicated disks and distributing metadata nodes across fault domains enhances fault tolerance and ensures consistent performance in SUSE Virtualization environments.
 ====
 
+image::kvdb-reference-portworx.png[title="KVDB reference", KVDB reference, align="center", width=90%]
 
-== Generic Third Party Array Considerations
+== General Third-Party Storage Considerations
 
 A hardware storage array can be used to provide the block devices as backing disks for the Portworx storage cluster. Using a hardware storage array may offer benefits such as deduplication or compression for replicas stored in the Portworx storage cluster, depending on the capabilities of the storage array vendor.
 
@@ -601,6 +618,8 @@ For storage cluster disks, Portworx recommends presenting a single volume per st
 
 Creating additional volumes of a desired size is straightforward with an external hardware array. In scenarios using an external hardware array, Portworx recommends creating 3 GB volumes from the array and presenting them to the worker nodes to be used as the journal device.
 
+image::Third-party-array-diagram.png[title="Third-party Array Diagram", Third-party Array Diagram, align="center", width=90%]
+
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Starting with the software at the top of the solution stack,
@@ -618,194 +637,22 @@ Creating additional volumes of a desired size is straightforward with an externa
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-
-=== Software Component 1
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide details about each software component in its own subsection.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-
-=== Compute Component 1
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide details about each compute component in its own subsection.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-
-== Deployment overview
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide detailed steps the reader should follow to set up an
-// environment described in this guide.
-// - Link to other resources (such as the SUSE Rancher documentation)
-//   to provide context and details rather than duplicating everything
-//   in this document.
-// - Ordered lists to organize and present procedural steps.
-// - Use code blocks for source code and console commands.
-//   Commands:
-//     [source, console]
-//     ----
-//     systemctl enable multipathd
-//     ----
-//   Source code:
-//     [source, yaml]
-//     ----
-//     network:
-//       version: 1
-//       config:
-//         - type: physical
-//           name: eth0
-//           subnets:
-//         - type: dhcp
-//     ----
-//   - Always include example command output in a listing box.
-//      [listing]
-//      ----
-//      Type   | # |     | Cleanup | Description           | Userdata
-//      -------+---+ ... +---------+-----------------------+--------------
-//      single | 0 |     |         | current               |
-//      single | 1 |     | number  | first root filesystem |
-//      ----
-//   - Include relevant screenshots with annotations as needed for clarity.
-//   - Use admonitions (notes, tips, warnings, etc.) to provide additional
-//     context, exceptions, etc.
-//
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-This section provides practical guidance for deploying a functional proof-of-concept implementation of the solution with additional considerations for scaling to production.
-
-
-// Provide a representation of the solution as a layered deployment stack.
-// See https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rancher-k3s-sles_hpe-proliant-synergy/id-deployment.html#id-deployment-overview
-//image::solution-name_deployment-stack.png[title="Solution name: Deployment", scaledwidth="90%", align="center"]
-
-
-For deployment purposes, the solution can be illustrated as a layered stack.  The deployment process then consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications).  The following sections provide guidance for deploying each layer of the solution.
-
-
-
-=== Compute platform deployment
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing and deploying the
-// compute platform.
-// Use subsections (level three, ====) for layer components, if needed.
-// For example, you could use a ‘ABC Server deployment’ subsection
-// and a separate ‘XYZ Storage deployment’ subsection.
-// If you do use subsections, be sure to detail Preparation,
-// Process, and Considerations in each.
-// Remember to use the defined variables for product names,
-// websites, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-The compute platform provides a foundational layer ...
-Add content here
-
-
-*Preparation*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-
-*Process*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-*Considerations*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-
-=== Software
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// As with the Compute platform, provide step-by-step guidance for
-// preparing and deploying the Software.
-// Solutions almost always have multiple Software components deployed
-// as layers.
-// So, use of subsections is likely.
-// The heading for each subsection should reflect the layer (product)
-// being deployed; for example, ‘SUSE Rancher Prime deployment’.
-// Remember to use the defined variables for product names,
-// websites, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-The following sections provide deployment guidance for each software layer.
-
-
-==== Software product deployment
-
-
-*Preparation*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the software component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-*Process*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the softwware component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-*Considerations*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-
-
-== Validation
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide validation steps for testing that the solution deployment
-// was successful and configured properly.
-// This could entail a list of specific checks (e.g., commands and
-// expected output), running an automated tool for performing these
-// checks, or implementing a functional demonstration.
-// Include commands, output, and screenshots, as needed.
-// Remember to represent steps as an ordered list.
-// Use subsections if needed for clarity.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-
-
 == Summary
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Summarize:
-// - Solution description
-// - Motivation for the solution
-// - What was covered in this document
-// - Suggested next steps for the learning journey
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+This reference configuration describes an architecture for deploying SUSE Virtualization with Portworx Enterprise by Pure Storage on bare metal infrastructure.
+It supplements the existing SUSE and Pure Storage reference architecture by providing additional design considerations, deployment guidance, and operational best practices specific to virtualization and stateful workloads.
 
-Add content here
+The solution integrates SUSE Virtualization, SUSE Rancher Prime, and Portworx Enterprise to deliver a unified platform for running virtual machines and container workloads on the same Kubernetes-based infrastructure.
+SUSE Virtualization provides VM lifecycle management using KubeVirt, Rancher Prime offers centralized cluster and access management, and Portworx Enterprise delivers persistent storage services such as replication, failover, backup, and disaster recovery.
 
+The reference design focuses on key architectural principles including high availability, scalability, performance, and operational consistency.
+It outlines recommended cluster sizing, node resource requirements, fault-domain awareness, and network separation for management and data traffic.
+Storage integration is based on raw block devices presented from Pure Storage FlashArray systems using Fibre Channel or iSCSI, with multipathing configured for resiliency and bandwidth.
+
+Operational guidance covers storage pool design, journal device configuration, and KVDB deployment options.
+The document recommends the use of a single backing disk per node for simplified capacity expansion, high-performance journal devices for metadata operations, and a highly available internal KVDB distributed across multiple nodes and fault domains.
+
+By following the guidance in this document, organizations can deploy a stable and predictable SUSE Virtualization environment with Portworx storage on bare metal.
+The architecture is designed to support production virtualization workloads while maintaining flexibility for future expansion into hybrid, edge, or mixed VM and container use cases.
 
 
 == Frequently Asked Questions (FAQs)
@@ -823,18 +670,6 @@ Answer paragraph 2.
 Image
 --
 
-
-
-== References
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a list of the references used in this document.
-// Use variables to simplify future updates, such as:
-// * {ref-url}[Reference title]
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-* Reference 1
-* Reference 2
 
 
 
