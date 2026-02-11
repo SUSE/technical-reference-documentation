@@ -1,412 +1,459 @@
 :docinfo:
+
 include::./common_docinfo_vars.adoc[]
+
 include::./rc_suse-virtualization_netapp-trident_iscsi-vars.adoc[]
+
 [#art-{article-id}]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // SUSE Technical Reference Documentation
 // Reference Configuration
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//
-// DOCUMENT ATTRIBUTES AND VARIABLES
-//
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// 1. Define variables (document attributes) in the vars file.
-// 2. Develop content and reference variables in the adoc file.
-// 3. Update the docinfo.xml file as needed.
-// 4. Update DC file (at a minimum, deactivate DRAFT mode)
-//
-// For further guidance, see
-//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
-
 = {title}: {subtitle}
-
-
 
 == Introduction
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a motivation for the document in 2-4 sentences to identify:
-//   - what the document is about
-//   - why it may be of interest to the reader
-//   - what products are being highlighted
-// Include an approved SUSE | Partner logo lock-up if relevant/possible
-// Include any additional, relevant details
+// Introduction
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
-
-
+This guide focuses on the solution comprising {comp1-long} and {comp2-long}, leveraging {comp3-long}. The motivation and purpose of this solution center around enabling {comp1-long} to use external, high-performance NetApp storage for persistent volumes, specifically allowing for the creation of VMs with disks assigned using a NetApp-backed StorageClass.
 
 === Scope
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Specify what this guide covers in no more than 2 sentences.
-// E.g., "This document ..."
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
+This guide covers the detailed steps required for setting up a three-node {comp1-long} cluster to consume NetApp storage via iSCSI and Trident CSI. It includes steps for LUN provisioning, multipath configuration, Trident installation, StorageClass definition, and basic validation.
 
 === Audience
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Identify for whom this document is intended, perhaps with:
-//   - topics of interests (e.g., machine learning, security, etc.)
-//   - job roles (e.g., developer, administrator, platform architect, etc.)
-//   - required skills
-// E.g., "The intended audience for this guide includes ..."
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+This guide is intended for IT professionals responsible for virtualization and infrastructure management, such as Infrastructure Architects, Systems Administrators, or Platform Engineers.
 
-Add content here
+To successfully follow this guide, you should have:
 
-
+* Familiarity with {comp1-long} deployment and configuration.
+* Experience with NetApp storage provisioning and management.
+* Understanding of iSCSI configuration concepts.
+* Working knowledge of Kubernetes commands, particularly for Trident CSI and secret management.
 
 === Acknowledgments
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Acknowledge contributors not listed as authors.
-// Something like:
-//   The authors wish to acknowledge the contributions of the following
-//   individuals:
-//   * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
-//   * {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
-// NOTE: If there are none, comment out this section.
+// Contributors
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The following individuals contributed to the creation of this document:
+The authors wish to acknowledge the contributions of the following individuals:
 
-* firstname surname, jobtitle, orgname
-* firstname surname, jobtitle, orgname
+* Martin George
+* Arun Kumar C
 
+=== Prerequisites
 
+The following resources and configurations are required to support the solution:
 
-== Business aspect
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide high-level statement of the business value and challenges addressed.
-// Expand on these in the following sections.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
-=== Business problem
-
-Add content here
-
-
-=== Business value
-
-Add content here
-
+* **{comp1-long} Cluster:** A functional {comp1-docs}[{comp1-long}] cluster must be installed and operational.
+* **{comp2-long}:** A {comp2-docs}[NetApp ONTAP] system must be available that meets the Trident environment prerequisites and is accessible from the {comp1-long} cluster nodes.
+* **Network Connectivity:** Robust network connectivity between all {comp1-long} nodes and the NetApp ONTAP system is required to support storage operations.
+* **Sufficient Resources:** {comp1-long} nodes must have adequate  {comp1-docs1}[CPU, memory, and local disk space] to support the Trident deployment and the expected workloads. Ensure the environment meets the minimum requirements for a stable and supported deployment. A Trident-managed Kubernetes storage setup must include at least three nodes, each meeting specific hardware, software, and network requirements.
+* **Administrative Access:** You need administrative access to the {comp1-docs2}[{comp1-long}] UI and the underlying Kubernetes cluster to apply configurations and manage resources.
+* **Trident and CSI Driver Versions:** Use {comp3-docs}[NetApp Trident] 23.x or newer and a compatible CSI driver version.
 
 == Architectural overview
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide an architecture diagram that illustrates the solution and its
-// core software and compute platform (hardware or cloud) components.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-// Update below the file name and title for architecture diagram (PNG or SVG).
-//image::solution-name_architecture-diagram.png[title="Solution name", scaledwidth="90%", align="center"]
-
-
-As illustrated in the figure above, the key components of the solution are:
-
-* Software
-
-  ** Software Component 1 - Role / function
-  ** Software Component 2 - Role / function
-
-* Compute platform
-
-  ** Compute Platform 1 - Role / function
-  ** Compute Platform 2 - Role / function
-
-
-Each of these components is described more fully in the sections below.
-
-
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Starting with the software at the top of the solution stack,
-// provide detailed descriptions of each component.
-// Provide relevant details about the component, including
-// role / function, recommended versions, sizings, deployment
-// configurations (to be detailed later), etc.
-// Use diagrams, as needed, and appropriate links to existing resources
-// to provide more context and details.
-// Be sure to reference variables defined in the vars file to simplify
-// future updates of the document.
-//   This variables can include the component name (very useful for long
-//   names), supported versions, URLs of its product and documentation
-//   websites, etc.
+// Architecture
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+The diagram below illustrates the basic architecture for integrating NetApp storage with {comp1-long}.
 
+image::architecture_diagram.png[title="Architecture: SUSE Virtualization with NetApp ONTAP and Trident", scaledwidth="90%", align="center"]
 
-=== Software Component 1
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide details about each software component in its own subsection.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+The solution consists of the components identified below:
 
-Add content here
+* **{comp1-long} (3 nodes):** Provides compute and orchestration for VMs and containers.
+* **{comp2-long}:** External storage backend providing iSCSI LUNs.
+* **{comp3-long}:** Kubernetes CSI driver enabling dynamic provisioning of persistent storage.
 
-
-
-=== Compute Component 1
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide details about each compute component in its own subsection.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Add content here
-
-
+**Logical Flow:** {comp1-long} nodes connect to the NetApp ONTAP system over the iSCSI protocol. Multipath provides high availability and redundancy. Trident CSI manages storage lifecycle operations, dynamically provisioning volumes for virtual machines.
 
 == Deployment overview
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide detailed steps the reader should follow to set up an
-// environment described in this guide.
-// - Link to other resources (such as the SUSE Rancher documentation)
-//   to provide context and details rather than duplicating everything
-//   in this document.
-// - Ordered lists to organize and present procedural steps.
-// - Use code blocks for source code and console commands.
-//   Commands:
-//     [source, console]
-//     ----
-//     systemctl enable multipathd
-//     ----
-//   Source code:
-//     [source, yaml]
-//     ----
-//     network:
-//       version: 1
-//       config:
-//         - type: physical
-//           name: eth0
-//           subnets:
-//         - type: dhcp
-//     ----
-//   - Always include example command output in a listing box.
-//      [listing]
-//      ----
-//      Type   | # |     | Cleanup | Description           | Userdata
-//      -------+---+ ... +---------+-----------------------+--------------
-//      single | 0 |     |         | current               |
-//      single | 1 |     | number  | first root filesystem |
-//      ----
-//   - Include relevant screenshots with annotations as needed for clarity.
-//   - Use admonitions (notes, tips, warnings, etc.) to provide additional
-//     context, exceptions, etc.
-//
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 This section provides practical guidance for deploying a functional proof-of-concept implementation of the solution with additional considerations for scaling to production.
 
-
-// Provide a representation of the solution as a layered deployment stack.
-// See https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rancher-k3s-sles_hpe-proliant-synergy/id-deployment.html#id-deployment-overview
-//image::solution-name_deployment-stack.png[title="Solution name: Deployment", scaledwidth="90%", align="center"]
-
-
-For deployment purposes, the solution can be illustrated as a layered stack.  The deployment process then consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications).  The following sections provide guidance for deploying each layer of the solution.
-
-
+For deployment purposes, the solution can be illustrated as a layered stack. The deployment process then consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications). The following sections provide guidance for deploying each layer of the solution.
 
 === Compute platform deployment
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing and deploying the
-// compute platform.
-// Use subsections (level three, ====) for layer components, if needed.
-// For example, you could use a ‘ABC Server deployment’ subsection
-// and a separate ‘XYZ Storage deployment’ subsection.
-// If you do use subsections, be sure to detail Preparation,
-// Process, and Considerations in each.
-// Remember to use the defined variables for product names,
-// websites, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-The compute platform provides a foundational layer ...
-Add content here
-
+The compute platform provides the foundational layer for the solution. The following steps detail how to prepare the {comp1-long} nodes for iSCSI integration.
 
 *Preparation*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
-
-
+. Install a {comp1-long} high-availability cluster.
+.. Ensure each node meets minimum hardware requirements and that hardware virtualization (VT-x/AMD-V) is enabled.
+.. Deploy {comp1-long}. See the official documentation for detailed guidance.
+.. After deployment, confirm you have access to the {comp1-long} cluster management UI and `kubeconfig`.
 
 *Process*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the compute platform component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
+. Configure iSCSI Initiator (Persistent Configuration via CloudInit YAML).
+.. Create a CloudInit resource to auto-start each node. You must include the following configuration in `/oem`.
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: iscsi-ip-config
+spec:
+  matchSelector: {}
+    kubernetes.io/hostname: harvester-node-1 # Replace with actual hostname
+  filename: 01_iscsi_ip.yaml
+  contents: |
+    stages:
+      initramfs:
+        - name: "Configure iSCSI network interfaces"
+          files:
+            - path: /etc/NetworkManager/system-connections/iscsi-path1.nmconnection
+              owner: 0
+              group: 0
+              permissions: 0600
+              content: |
+                [connection]
+                id=iscsi-path1
+                type=ethernet
+                interface-name=eno3np0
+                autoconnect=true
+                [ipv4]
+                method=manual
+                addresses=192.168.100.87/24 # Replace the IP address
+                never-default=true
+            - path: /etc/NetworkManager/system-connections/iscsi-path2.nmconnection
+              owner: 0
+              group: 0
+              permissions: 0600
+              content: |
+                [connection]
+                id=iscsi-path2
+                type=ethernet
+                interface-name=eno4np1
+                autoconnect=true
+                [ipv4]
+                method=manual
+                addresses=192.168.200.87/24 # Replace the IP address
+                never-default=true
+----
++
+.. Apply the configuration on each node:
++
+[source, console]
+----
+kubectl apply -f 01_iscsi_ip.yaml
+----
++
+.. Verify the status of the CloudInit resource:
++
+[source, console]
+----
+kubectl get cloudinit
+----
 
+. Enable and Persist iSCSI Service
++
+Create a CloudInit resource to auto-start the iSCSI daemon, `iscsid`:
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: iscsid-start
+spec:
+  matchSelector: {}
+  filename: 99_iscsid.yaml
+  contents: |
+    stages:
+      network:
+        - name: "Enable and start iscsid"
+          systemctl:
+            enable:
+              - iscsid
+            start:
+              - iscsid
+----
++
+Apply on any node:
++
+[source, console]
+----
+kubectl apply -f 99_iscsid.yaml
+----
++
+Verify status of `iscsid`:
++
+[source, console]
+----
+systemctl status iscsid
+----
 
-*Considerations*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+. Provision a LUN from NetApp Storage and Map It to Cluster
+.. Log in to the NetApp ONTAP System Manager.
+.. Create a new LUN and assign it to an iSCSI initiator group containing the {comp1-long} nodes' IQNs.
+.. Note the following information:
+* LUN path
+* Target IQNs
+* iSCSI portal IPs
 
-Add content here
-
-
+. Enable and Configure Multipath
+.. Create a CloudInit resource to auto-start the multipath daemon (`multipathd`) with the loaded configuration:
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: multipathd-config
+spec:
+  matchSelector: {}
+  filename: 99_multipathd.yaml
+  contents: |
+    stages:
+      network:
+        - name: "Configure multipath.conf"
+          files:
+            - path: /etc/multipath.conf
+              permissions: 0644
+              owner: 0
+              group: 0
+              content: |
+                defaults {
+                    find_multipaths no
+                    user_friendly_names yes
+                }
+                blacklist {
+                    device {
+                        vendor ".*"
+                        product ".*"
+                    }
+                }
+                blacklist_exceptions {
+                    device {
+                        vendor "NETAPP"
+                        product "LUN"
+                    }
+                }
+        - name: "Enable and start multipathd"
+          systemctl:
+            enable:
+              - multipathd
+            start:
+              - multipathd
+----
++
+.. Apply on any node:
++
+[source, console]
+----
+kubectl apply -f 99_multipathd.yaml
+----
++
+.. Verify status of cloudinit and multipathd:
++
+[source, console]
+----
+kubectl get cloudinit
+systemctl status multipathd
+----
 
 === Software
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// As with the Compute platform, provide step-by-step guidance for
-// preparing and deploying the Software.
-// Solutions almost always have multiple Software components deployed
-// as layers.
-// So, use of subsections is likely.
-// The heading for each subsection should reflect the layer (product)
-// being deployed; for example, ‘SUSE Rancher Prime deployment’.
-// Remember to use the defined variables for product names,
-// websites, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+The following sections provide deployment guidance for the software layer, specifically the installation and configuration of {comp3-long}.
 
-The following sections provide deployment guidance for each software layer.
-
-
-==== Software product deployment
-
+==== Trident CSI Deployment
 
 *Preparation*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the software component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
+. Prepare Worker Nodes
++
+Before installing {comp3-long}, ensure that each {comp1-long} node meets the prerequisites for Kubernetes storage integration. Follow the official NetApp documentation for {comp3-docs-worker-prep}[Worker Node Preparation for Trident CSI].
 
+. Configure NetApp Storage Controller Secrets
++
+Create a Kubernetes secret for ONTAP credentials:
++
+[source, console]
+----
+kubectl create secret generic ontap-secret -n trident \
+  --from-literal=username=admin \
+  --from-literal=password='YourPassword'
+----
 
 *Process*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide step-by-step guidance for preparing the softwware component.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
+. Install {comp3-long}
++
+It is recommended to use `tridentctl` for installation. You can find more details in the {comp3-docs-install}[NetApp Trident Installation Guide].
++
+[source, console, subs="attributes+"]
+----
+wget {comp3-installer-url}
+tar -xzf trident-installer-24.06.0.tar.gz
+cd trident-installer
+./tridentctl install -n trident
+----
++
+Verify that all Trident pods are in the `Running` state:
++
+[source, console]
+----
+kubectl get pods -n trident
+----
 
+. Configure Trident Backend
++
+Create a backend configuration file (e.g., `ontap-backend.json`):
++
+[source, json]
+----
+{
+  "version": 1,
+  "storageDriverName": "ontap-san",
+  "managementLIF": "10.10.10.50",
+  "dataLIF": "192.168.100.10",
+  "svm": "harvester_svm",
+  "username": "admin",
+  "password": "YourPassword",
+  "igroupName": "harvester_igroup"
+}
+----
++
+Apply the backend:
++
+[source, console]
+----
+./tridentctl create backend -f ontap-backend.json -n trident
+----
++
+Validate the backend:
++
+[source, console]
+----
+./tridentctl get backend -n trident
+----
 
-*Considerations*
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Note any considerations for deployment not covered above, such as automation, storage expansion, future scaling, etc.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+. Define StorageClass and SnapshotClass
++
+Create a file named `netapp-storageclass.yaml`:
++
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: netapp-storageclass
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: csi.trident.netapp.io
+parameters:
+  fsType: ext4
+  backendType: "ontap-san"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+----
++
+Apply it:
++
+[source, console]
+----
+kubectl apply -f netapp-storageclass.yaml
+----
++
+Create a file named `netapp-snapshotclass.yaml`:
++
+[source, yaml]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: netapp-snapclass
+driver: csi.trident.netapp.io
+deletionPolicy: Delete
+----
++
+Apply it:
++
+[source, console]
+----
+kubectl apply -f netapp-snapshotclass.yaml
+----
 
-Add content here
+. Register CSI Driver in {comp1-long} UI
+.. Log in to the {comp1-long} UI.
+.. Go to **Advanced > Settings > csi-driver-config**.
+.. Click **Edit Setting**.
+.. Set the provisioner to `csi.trident.netapp.io`.
+.. Save changes.
 
+. Set NetApp CSI Driver as Default StorageClass
++
+Ensure the NetApp storage class is default and disable others if necessary:
++
+[source, console]
+----
+kubectl patch storageclass harvester-longhorn \
+  -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
-
+kubectl patch storageclass netapp-storageclass \
+  -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+----
 
 == Validation
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide validation steps for testing that the solution deployment
-// was successful and configured properly.
-// This could entail a list of specific checks (e.g., commands and
-// expected output), running an automated tool for performing these
-// checks, or implementing a functional demonstration.
-// Include commands, output, and screenshots, as needed.
-// Remember to represent steps as an ordered list.
-// Use subsections if needed for clarity.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
+Ensure that {comp3-long} is correctly integrated with {comp1-long} by provisioning a virtual machine (VM) that uses a StorageClass backed by the NetApp ONTAP iSCSI backend.
 
+. Create a VM
+.. Log in to the {comp1-long} UI.
+.. Navigate to **Virtual Machines** and click **Create**.
+.. Select a namespace for your VM.
+.. Provide a name for your VM.
+.. On the **Basics** tab, configure CPU (e.g., 2) and Memory (e.g., 4 GB).
+.. On the **Volumes** tab, select or add disks:
+* For the root disk, select the StorageClass `netapp-storageclass` and specify the desired size.
+* (Optional) Click **Add Disk** to add an ISO image.
+.. Click **Create** to deploy the VM.
 
+. Verify with the {comp1-long} UI
+.. Navigate to **Virtual Machines > [Your VM] > Volumes**.
+.. Confirm that the attached disk is using the `netapp-storageclass` StorageClass.
 
+. Verify with the CLI
+.. Log in to the {comp1-long} management node CLI as root.
+.. List the PersistentVolumeClaims (PVCs) in the VM’s namespace:
++
+[source, console]
+----
+kubectl get pvc -n <namespace>
+----
++
+.. Confirm that the **STORAGECLASS** column shows `netapp-storageclass`.
 
 == Summary
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Summarize:
-// - Solution description
-// - Motivation for the solution
-// - What was covered in this document
-// - Suggested next steps for the learning journey
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
+Organizations are accelerating their digital transformation by modernizing applications and infrastructure — transitioning from traditional, virtual machine–centric environments to modern, cloud-native platforms powered by Kubernetes. {comp1-long} delivers a unified and flexible platform that allows organizations to seamlessly run both virtual machine (VM) and container workloads side-by-side on the same infrastructure.
 
+{comp3-long} extends this capability by providing enterprise-grade, dynamic storage provisioning for Kubernetes and {comp1-long} clusters. Through its integration with {comp2-long}, Trident enables resilient, scalable, and efficient iSCSI-based storage for mission-critical workloads, ensuring consistent performance, automation, and data protection across hybrid environments.
 
+This guide detailed the steps to configure and validate the integration of {comp1-long} with {comp3-long} and {comp2-long}, showcasing how enterprises can build a consistent, automated, and production-ready virtualization environment.
 
-== Frequently Asked Questions (FAQs)
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// If possible provide an unordered list of frequently asked questions
-// with the respective answers.
-// Answers are contained in open blocks associated with each question.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+=== Continue Your Learning Journey
 
-. Question 1?
-+
---
-Answer paragraph 1.
-Answer paragraph 2.
-Image
---
+Explore the following resources to learn more:
 
+* {comp1-docs}[{comp1-long} Documentation]
+* {comp3-docs}[{comp3-long} Documentation]
+* {comp2-docs}[{comp2-long} Documentation]
 
-
-== References
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a list of the references used in this document.
-// Use variables to simplify future updates, such as:
-// * {ref-url}[Reference title]
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-* Reference 1
-* Reference 2
-
-
-
-== Glossary
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a glossary of key terms used in this document.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Term::
-Definition
-
-Term::
-Definition
-
-
-
-
-== Appendix
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Use subsections of the Appendix to provide such content as:
-// * a complete bill of materials for all components
-// * benchmark results
-// * other supporting content
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-The following sections provide additional information and resources.
-
-
-=== Compute platform bill of materials
-
-Add content here
-
-
-=== Software bill of materials
-
-Add content here
-
-
-=== Benchmark results
-
-Add content here
-
-
-
+To learn more about modernizing and optimizing your IT infrastructure with SUSE and NetApp, contact SUSE at {suse-isv-email}.
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Do not modify below this break.
@@ -416,18 +463,18 @@ Add content here
 <?pdfpagebreak?>
 ++++
 
-
 :leveloffset: 0
 
 == Legal notice
+
 include::common_trd_legal_notice.adoc[]
 
 ++++
 <?pdfpagebreak?>
 ++++
 
-
 :leveloffset: 0
+
 include::common_gfdl1.2_i.adoc[]
 
 //end
