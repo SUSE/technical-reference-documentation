@@ -580,35 +580,35 @@ To ensure a stable, secure, and scalable Rancher Kubernetes Engine (RKE/RKE2) de
 
 === {srancher-long}
 
-*Preparation*
+==== Preparation
 
-. For the respective node’s firewall service, either
+. For the respective node’s firewall service, either enable and configure the necessary inbound ports or stop and disable the firewall service.
 
-* enable and configure the necessary inbound ports or
-* stop and completely disable the firewall service.
-
-. Determine the desired SSL configuration for TLS termination
-
-* Rancher-generated TLS certificate NOTE: This is the easiest way of installing {srancher} with self-signed certificates.
-* Let’s Encrypt
-* Bring your own certificate
+. Determine the desired SSL configuration for TLS termination.
+Options include:
++
+--
+* Use a {srancher}-generated (self-signed) TLS certificate.
+* Use a {letsencrypt-website}[Let’s Encrypt] certificate.
+* Bring your own certificate.
 
 . Obtain a Helm binary matching the respective Kubernetes version for this {srancher} implementation.
 
 ////
 [NOTE]
 ====
-Enable the respective kubeconfig setting for kubectl , K3s - /etc/rancher/k3s/k3s.yml, to be leveraged by helm command.
+Enable the respective kubeconfig setting for kubectl, K3s - /etc/rancher/k3s/k3s.yml, to be leveraged by helm command.
 ====
 ////
 
-*Deployment Process*
 
-While logged in to the node, as root or with sudo privileges, install srancher:
+==== Deployment process
 
-. Install cert-manager
+While logged in to the node, as root or with sudo privileges, install {srancher}:
 
-.. Set the following variable with the desired version of cert-manager
+. Install cert-manager.
+
+.. Set the following variable with the desired version of {certmanager}.
 +
 [source, console]
 ----
@@ -617,92 +617,98 @@ CERT_MANAGER_VERSION=""
 +
 [NOTE]
 ====
-At this time, the most current, supported version of cert-manager is v1.5.1
+At the time of publication, the supported version of {certmanager} is {certmanager-version}.
 ====
 
-.. Create the cert-manager CRDs and apply the Helm Chart resource manifest
+.. Create the {certmanager} CRDs and apply the Helm chart resource manifest with the following commands:
+
+... Apply the CRDs.
 +
 [source, console]
 ----
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.crds.yaml
 ----
+
+... Add the Jetstack Helm repository.
 +
 [source, console]
 ----
-# Add the Jetstack Helm repository
+
 helm repo add jetstack https://charts.jetstack.io
 ----
+
+... Update your local Helm repository cache.
 +
 [source, console]
 ----
 # Update your local Helm chart repository cache
 helm repo update
 ----
+
+... Install the {certmanager} Helm chart.
 +
 [source, console]
 ----
-# Install the cert-manager Helm chart
 helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --create-namespace \
   --version ${CERT_MANAGER_VERSION}
 ----
-
-
-.. Check the progress of the installation, looking for all pods to be in running status:
 +
-[source,bash]
+You can monitor the progress of the installation, looking for all pods to be in running status, with:
++
+[source, console]
 ----
 kubectl get pods --namespace cert-manager
 ----
 
-. Add the {srancher} helm chart repository:
+
+. Add the {srancher} Helm repository:
 +
-[source,bash]
+[source, console]
 ----
 helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 ----
 
-. Create a namespace for {srancher}
+. Create a namespace for {srancher}.
 +
-[source,bash]
+[source, console]
 ----
 kubectl create namespace cattle-system
 ----
 
-. Prepare to use the Helm Chart for {srancher}:
-
+. Prepare to use the Helm chart for {srancher}:
 +
 [NOTE]
 ====
-This host name should be resolvable to an IP address of the {rke2} host, or a load balancer/proxy server that supports this installation of {srancher}.
+This host name should be resolvable to an IP address of the {rke2} host, or a load balancer / proxy server that supports this installation of {srancher}.
 ====
 
-.. Set the following variable to the host name of the {srancher} server instance
+.. Set the following variable to the host name of the {srancher} server instance.
 +
-[source,bash]
+[source, console]
 ----
 HOSTNAME=""
 ----
 
 
-.. Set the following variable to the number of deployed K3s nodes planned to host the {srancher} service
+.. Set the following variable to the number of deployed Kubernetes nodes planned to host the {srancher} service.
 +
-[source,bash]
+[source, console]
 ----
 REPLICAS=""
 ----
 
-.. Set the following variable to the desired version of {srancher} server instance
+.. Set the following variable to the desired version of {srancher} server instance.
 +
-[source,bash]
+[source, console]
 ----
 RANCHER_VERSION=""
 ----
 
-.. Install the {srancher} Helm Chart
+.. Install the {srancher} Helm chart.
 +
-[source,bash]
+[source, console]
 ----
 helm install rancher rancher-stable/rancher \
   --namespace cattle-system \
@@ -710,17 +716,18 @@ helm install rancher rancher-stable/rancher \
   --set replicas=${REPLICAS} \
   --version=${RANCHER_VERSION}
 ----
-
-... Monitor the progress of the installation:
 +
-[source,bash]
+You can monitor progress of the installation with:
++
+[source, console]
 ----
 kubectl -n cattle-system rollout status deploy/rancher
 ----
 
 . Connect to the {srancher} Web UI:
 
-.. On a client system, use a Web browser to connect to the {srancher} service, from HTTPs.
+.. On a client system, use a Web browser to connect to the {srancher} service, from HTTPS.
+
 .. Provide a new Admin password.
 +
 [IMPORTANT]
@@ -728,13 +735,18 @@ kubectl -n cattle-system rollout status deploy/rancher
 On the second configuration page, ensure the "Rancher Server URL" is set to the host name specified when installing the {srancher} Helm Chart and the port is 443.
 ====
 
-*Deployment Consideration*
 
-To further optimize deployment factors, leverage the following practices
+==== Deployment considerations
 
-. *Availability* - In instances where a load balancer is used to access a {rke2} cluster, deploying two additional {rke2} cluster nodes, for a total of three, will automatically make {srancher} highly available.
-. *Security* - The basic deployment steps described above are for deploying {srancher} with automatically generated, self-signed security certificates. Other options are to have {srancher} create public certificates from Let’s Encrypt associated with a publicly resolvable host name for the {srancher} server, or to provide preconfigured, private certificates.
-. *Integrity* - This deployment of {srancher} uses the {rke2} etcd key/value store to persist its data and configuration, which offers several advantages. With a multi-node cluster and this resiliency through replication, having to provide highly-available storage is not needed. In addition, backing up the RKE2 etcd store protects the cluster and the installation of SUSE Rancher and permits restoration of a given state.
+To further optimize deployment factors, leverage the following practices:
+
+* *Availability* - In instances where a load balancer is used to access a {rke2} cluster, deploying two additional {rke2} cluster nodes, for a total of three, will automatically make {srancher} highly available.
+
+* *Security* - The basic deployment steps described above are for deploying {srancher} with automatically generated, self-signed security certificates. Other options are to have {srancher} create public certificates from Let’s Encrypt associated with a publicly resolvable host name for the {srancher} server, or to provide preconfigured, private certificates.
+
+* *Integrity* - This deployment of {srancher} uses the {rke2} etcd key/value store to persist its data and configuration, which offers several advantages.
+With a multi-node cluster and this resiliency through replication, having to provide highly-available storage is not needed.
+In addition, backing up the RKE2 etcd store protects the cluster and the installation of {srancher} and permits restoration of a given state.
 
 After this successful deployment of the {srancher} solution, review the {srancher-manager-docs}[product documentation] for details on how downstream Kubernetes clusters can be deployed
 
