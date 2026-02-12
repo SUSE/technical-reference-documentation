@@ -95,23 +95,32 @@
 :svirt: SUSE Virtualization
 :svirt-version1: v1.6.1
 :svirt-website: https://www.suse.com/products/rancher/virtualization/
-:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/
+:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/
 :svirt-docs-intro: {svirt-docs}introduction/overview.html
 :svirt-docs-reqs: {svirt-docs}installation-setup/requirements.html
 :svirt-docs-create-vm: {svirt-docs}virtual-machines/create-vm.html
 
 :pxe-provider: Portworx by Pure Storage
 :pxe: Portworx Enterprise
-:pxe-version1: 3.5
+:pxe-version1: 25.2.2
 :pxe-website: https://portworx.com/products/portworx-enterprise/
 :pxe-docs: https://docs.portworx.com/portworx-enterprise
-:pxe-reqs: {pxe-docs}/platform/kubernetes/flasharray/before-you-begin#environment-prerequisites
-:pxe-flasharray-user-access: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/install-flasharray-cd-da#set-up-user-access-in-flasharray
-:pxe-k8s-secret: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/fa-multi-tenancy#create-a-kubernetes-secret
-:pxe-manage-rwx-block: {pxe-docs}/platform/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
+// :pxe-reqs: {pxe-docs}/platform/kubernetes/flasharray/before-you-begin#environment-prerequisites
+// :pxe-flasharray-user-access: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/install-flasharray-cd-da#set-up-user-access-in-flasharray
+// :pxe-k8s-secret: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/fa-multi-tenancy#create-a-kubernetes-secret
+// :pxe-manage-rwx-block: {pxe-docs}/platform/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
 :pxe-central: https://central.portworx.com/
 :pxo: Portworx Operator
 :pxo-version1: 25.5.0
+:pxe-suse-virt: https://docs.portworx.com/portworx-enterprise/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
+
+:rancher: SUSE Rancher Prime
+:rancher-long: SUSE® Rancher Prime
+:rancher-short: SUSE Rancher
+:rancher-website: https://www.suse.com/products/rancher/
+
+
+:suse-pxe-dep-guide: https://portworx.com/wp-content/uploads/2025/11/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -153,13 +162,13 @@
 
 :subtitle: Reference Configuration for Modern Virtualization with SUSE and Portworx
 
-:usecase: (<55 characters) use case
+:usecase: SUSE Virtualization with Portworx by Pure Storage
 
-:description: (<150 characters) description
+:description: Design and deploy a high-performance, scalable virtualization platform on bare metal using SUSE Virtualization integrated with Portworx Enterprise storage.
 
-:description-social: (<55 characters) social media description
+:description-social: Modern bare-metal virtualization with SUSE and Portworx
 
-:executive-summary: (<300 characters) brief summary
+:executive-summary: This reference configuration provides guidance for deploying SUSE Virtualization with Portworx Enterprise on bare metal infrastructure. It outlines architecture, storage, and networking best practices to deliver a scalable, resilient platform for running virtual machines and containerized workloads with enterprise-grade performance and data protection.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -208,13 +217,17 @@
 //        you must edit the docinfo file, too.
 // -
 :author1-firstname: Gopala
-:author1-surname: Krishnan A
+:author1-surname: Krishnan
 :author1-jobtitle: Partner Solution Architect
 :author1-orgname: SUSE
 :author2-firstname: Suresh
 :author2-surname: S
 :author2-jobtitle: Partner Solution Architect
 :author2-orgname: SUSE
+:author3-firstname: Terry
+:author3-surname: Smith
+:author3-jobtitle: Partner Solution Innovation Director
+:author3-orgname: SUSE
 
 //:author2-firstname: first (given) name
 //:contrib1-firstname: first (given) name
