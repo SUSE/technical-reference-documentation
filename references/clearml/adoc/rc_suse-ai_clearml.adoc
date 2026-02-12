@@ -758,6 +758,28 @@ Once you have defined your deployment requirements, proceed with the installatio
 
 === {sstorage}
 
+{sstorage} provides persistent storage for Kubernetes workloads running on {rke2-long} and managed by {srancher-long}. It enables high availability, scalability, and data protection for stateful applications.
+
+For a stable and production-ready deployment, consider the following:
+
+. *Cluster Requirement* – Deploy {sstorage} on a running RKE2 cluster managed by {srancher-long}. Storage nodes must meet the documented hardware, disk, and network requirements. Use dedicated disks only.
+Refer to {sstorage-requirements}[{sstorage} Requirements]
+
+. *High Availability* – Use a minimum of three storage nodes to maintain quorum and ensure data availability. Distribute storage across failure domains where possible.
+
+. *Disk and Performance Planning* – Select SSD or HDD based on workload performance needs. Configure replication settings carefully to balance performance and data protection.
+
+. *Capacity Planning* – Monitor storage usage and plan for expansion by adding disks or nodes as required.
+
+. *Backup and Recovery* – Enable snapshots and integrate with enterprise backup solutions to protect persistent data and support disaster recovery.
+
+. *Installation and Configuration* – Deploy {sstorage} using the supported method in {srancher-long}. 
+For detailed installation and configuration steps, refer to the {sstorage-docs}[official documentation]
+
+
+
+// commenting the older content 
+////
 {sstorage} provides persistent, software-defined storage services for containerized and cloud-native workloads. In this solution stack, {sstorage} is used to supply highly available, scalable persistent volumes for Kubernetes workloads managed by {srancher}.
 
 *Preparation*
@@ -817,6 +839,7 @@ To optimize the storage layer, consider the following:
 . *Capacity Planning* - Monitor storage utilization and plan for future expansion by adding disks or nodes as needed.
 . *Backup and Recovery* - Enable snapshotting and backup mechanisms to protect persistent data and allow recovery from failures.
 
+////
 
 === {ssecurity}
 
