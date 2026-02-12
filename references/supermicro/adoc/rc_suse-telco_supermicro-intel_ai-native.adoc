@@ -1,0 +1,1706 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+include::./rc_suse-telco_supermicro-intel_ai-native-vars.adoc[]
+[#art-{article-id}]
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Reference Configuration
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define variables (document attributes) in the vars file.
+// 2. Develop content and reference variables in the adoc file.
+// 3. Update the docinfo.xml file as needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+= {doctitle}: {docsubtitle}
+
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a motivation for the document in 2-4 sentences to identify:
+//   - what the document is about
+//   - why it may be of interest to the reader
+//   - what products are being highlighted
+// Include an approved SUSE | Partner logo lock-up if relevant/possible
+// Include any additional, relevant details
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Telecommunications operators are transforming their networks to support 5G-Advanced, ORAN, massive MEC scale-out, and AI-driven automation. These transformations demand infrastructure that simultaneously delivers extreme packet-processing performance, deterministic low latency, integrated AI acceleration, and dramatically lower power and space footprints.
+
+This reference configuration documents the successful validation of the {stelco-long} stack, featuring {rancher-long}, running on a Supermicro {smss} powered by Intel® Xeon® 6 SoC processors, proving that a single-socket, CPU-only platform can replace legacy accelerator-heavy designs.
+
+
+
+=== Scope
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Specify what this guide covers in no more than 2 sentences.
+// E.g., "This document ..."
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This document details a validated reference configuration for deploying {stelco-long} on Supermicro {smss} systems powered by {cpu-long} processors.
+It covers the solution architecture, hardware and software components, deployment methodology, and performance validation for CPU-only, AI-ready telco edge and vRAN use cases.
+
+
+=== Audience
+
+This reference configuration is intended for:
+
+* telecommunications network architects, infrastructure and platform engineers, and operations teams responsible for designing, deploying, and managing 5G and AI-enabled telco edge infrastructure
+
+* technical decision-makers evaluating platform modernization strategies, including IT and network leadership seeking to reduce infrastructure complexity, power consumption, and total cost of ownership
+
+* system integrators, solution architects, and other partner organizations involved in designing or validating telco edge solutions
+
+
+=== Acknowledgments
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Acknowledge contributors not listed as authors.
+// Something like:
+//   The authors wish to acknowledge the contributions of the following
+//   individuals:
+//   * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+//   * {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
+// NOTE: If there are none, comment out this section.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The authors wish to acknowledge the contributions of the following individuals to the creation of this document:
+
+* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+* {editor1-firstname} {editor1-surname}, {editor1-jobtitle}, {editor1-orgname}
+* {editor2-firstname} {editor2-surname}, {editor2-jobtitle}, {editor2-orgname}
+
+
+== Market challenge
+
+Telecommunications operators today face an *unprecedented convergence of pressures* that legacy
+infrastructure was never designed to handle.
+Traffic volumes are exploding, driven by nationwide 5G rollout, massive IoT deployments, ultra-high-definition video streaming, private 5G networks, and enterprise edge services.
+At the same time, service-level agreements have become far more stringent with *sub-millisecond end-to-end latency and microsecond-level jitter* now mandatory for ORAN fronthaul/midhaul transport, Ultra-Reliable Low-Latency Communication (URLLC), industrial automation, and Extended Reality (XR) applications.
+
+Compounding this is the *rapid integration of artificial intelligence* into every layer of the network.
+Modern RAN and core functions increasingly rely on embedded machine-learning models for dynamic beamforming, traffic prediction, interference management, anomaly detection, and closed-loop automation through RIC platforms.
+These AI-driven capabilities demand significant inferencing throughput directly at the edge, yet most existing deployments still depend on fixed-function RAN infrastructure defined before the AI boom.
+
+*Power consumption, cooling capacity, and physical space* have emerged as hard limits at thousands of edge and far-edge sites.
+Rising energy prices and sustainability mandates are pushing OPEX ever higher, while the continued reliance on specialized appliances, external accelerators, and vendor-locked platforms *dramatically inflates both CAPEX and lifecycle management overhead*.
+Validation cycles lengthen, software updates become risky, and multi-vendor interoperability remains a constant friction point.
+
+At the same time, regulators and enterprises are imposing *stricter requirements for data sovereignty*, hardware-rooted confidential computing, and verifiable platform integrity.
+Operators must modernize at speed while simultaneously reducing cost, power, complexity, and risk - an equation that traditional architectures can no longer solve.
+
+
+
+== Solution
+
+The combination of {cpu} based telco-optimized systems by Supermicro and the {stelco} stack directly addresses every dimension of these challenges with a *single, fully integrated platform* that is *ready for massive scale-out* today.
+
+At the foundation sits the {cpu}, a purpose-built processor family that delivers up to 72 Performance-cores, enormous per-core caches for deterministic packet processing, and fully integrated Intel vRAN Boost.
+Native Intel AMX matrix extensions provide massive AI inferencing throughput without external accelerators, while on-die Intel QAT handles compression and cryptography at line rate.
+With up to 128 PCIe Gen5 lanes and CXL 2.0 readiness, the platform offers unmatched I/O flexibility and future-proof expansion.
+
+The 1U {smss112-website}[{smss112-long}] and 2U {smss212-website}[{smss212-long}] {smss} systems turn these silicon advantages into deployable reality.
+Outdoor-rated and air-cooled compact designs with redundant Titanium power supplies fit perfectly into constrained edge sites.
+The integrated E830 NIC delivers nanosecond-accurate Precision Time Protocol (PTP) and SyncE synchronization essential for vRAN and ORAN deployments.
+The 1U system is already an {oran-doc}[{oran}].
+
+SUSE completes the solution with {stelco}, the hardened, modular, cloud-native software stack specifically designed to meet the strict demands of the telecommunications industry by enabling operators to host both VNFs and CNFs on the same platform.
+Built on {slm-website}[{slm}], {rke2-website}[{rke2}], and {rancher-website}[{rancher}], the platform provides a secure, carrier-grade foundation for 5G, fixed access, OSS/BSS, and edge infrastructure.
+{stelco} is built entirely on open source and has been rigorously validated to deliver reliable performance at scale.
+Its AI-ready, disaggregated architecture supports zero-touch automation and the flexibility to integrate best-of-breed network functions efficiently and sustainably.
+
+{stelco} offers automated lifecycle management for infrastructure components, support for multi-cloud and edge deployments with consistent operations, and enhanced observability through integrated monitoring tools.
+Furthermore, it ensures security at scale, from OS hardening to container scanning, while its foundation in open standards and ecosystem support effectively prevents vendor lock-in.
+A key differentiator is SUSE’s robust edge computing capabilities, as {stelco} is optimized for constrained environments, enabling telcos to deploy CNFs and VNFs in remote or decentralized locations with minimal overhead - a flexibility essential for new 5G-powered services like smart city infrastructure and industrial IoT.
+The solution also facilitates zero-touch provisioning and seamless orchestration at the edge, which dramatically reduces operational complexity and deployment times.
+Ultimately, with its modular, open architecture, {stelco} allows operators to unlock efficiencies in the core, deploy innovative services at the edge, and adapt rapidly to future market demands.
+
+By uniting Intel’s fully-integrated vRAN Boost and AI acceleration, Supermicro’s rugged edge-system engineering and global supply-chain excellence, and SUSE’s zero-touch, GitOps-driven telco cloud stack, this solution delivers a *true single-box, CPU-only telco cloud node* that simultaneously replaces the legacy BBU, external L1 accelerator (FPGA/in-line card), SmartNIC, timing card, and discrete AI inference appliances.
+Under a 95% CPU load on the isolated cores, the platform *successfully achieves a measure of latency of sub 5 µs*.
+This achievement demonstrates that this consolidated, CPU-only architecture in a single, outdoor-rated system can deliver the guaranteed, deterministic, low-latency performance required for the most demanding 5G and ORAN use cases that previously had to be spread across multiple devices.
+
+With this, operators can realize {ref-vran-perf}[dramatic gains]:
+
+* Up to 2.4x higher increase in RAN capacity vs previous generation per node
+
+* Up to 70% lower power consumption, better performance per watt vs previous generation per site
+
+* Up to 3.2x AI RAN inference performance per core[NP1]  gain vs previous generation
+
+
+Moreover, the supply-chain risk is minimized through Supermicro’s Tier-1 scale and regional manufacturing, while {stelco} enables fully-automated, reproducible deployments across tens of thousands of sites with zero touch provisioning.
+The entire platform is open, disaggregated, and future-proof, supporting everything from today’s RAN deployments to tomorrow’s AI-native 6G edge networks.
+
+
+
+== Solution component overview
+
+=== {cpu-long}
+
+//The {cpu} with Performance-cores drives up throughput for network and edge use cases with high per-core performance and edge-optimized accelerators in a power-efficient architecture.
+
+The {cpu} provides outstanding energy-efficient performance across networking use cases, including vRAN deployments.
+The Performance-cores (P-cores) are optimized for high throughput and low latency, with built-in acceleration for packet and signal processing, load balancing, and AI.
+
+{cpu} features are detailed in the figure below.
+
+image::intelxeon6soc-overview-1.png[title="{cpu} features", {cpu} features, align="center", width=90%]
+
+By leveraging {cpu} processors, enterprises and network operators can scale up performance for AI and analytics workloads at the edge.
+Performance expectations are detailed in the following figure.
+
+image::intelxeon6soc-overview-2.png[title="{cpu} performance boosts", {cpu} performance boosts, align="center", width=90%]
+
+
+Building on this foundation, Intel vRAN Boost integrates vRAN acceleration directly into the SoC.
+Intel vRAN Boost is sized to ensure ample headroom even in the most intense use-cases and with the highest core count options, allowing future software optimizations to further increase server capacity without worrying about hitting acceleration limits.
+And, independent software vendors and developers using the O-RAN Acceleration Abstraction Layer standardized DPDK interface can optimize their vRAN software stacks for vRAN Boost hardware acceleration and easily move from one generation of Intel vRAN Boost to the next.
+
+image::intelxeon6soc-vran-performance.png[title="{cpu} vRAN performance", {cpu} vRAN performance, align="center", width=90%]
+
+
+=== {smss-long}
+
+The 1U {smss112-long} is designed for telco edge applications.
+
+image::supermicro-112D-front.png[title="{smss112-long} front view", {smss112-long} front view, align="center", width=90%]
+
+
+Key features are noted in the table below.
+
+[%unbreakable]
+[cols="1,3",options="header"]
+|===
+2+|*{smss112-long}*
+
+|*CPU*
+|{cpu-long} {cpu-version1} +
+42-core processor with Intel QAT and Intel vRAN Accelerator
+
+|*Networking*
+|Integrated Intel E830 +
+8 SFP28 25 GbE LAN ports +
+1 RJ45 1 GbE LAN port (IPMI)
+
+|*Form factor*
+|1U short-depth server (43 × 437 × 399 mm)
+
+|*Power*
+|Redundant 800W Platinum-level power supplies +
+AC or DC options available
+|===
+
+
+{smss-provider} offers both 1U and 2U options.
+For more details, visit the product pages:
+
+* {smss112-website}[{smss112-long}]
+
+* {smss212-website}[{smss212-long}]
+
+
+
+=== {stelco-long}
+
+The {stelco} platform provides a validated, carrier-grade, cloud-native foundation that empowers telco enterprises with a disaggregated, AI-ready architecture that can sustainably scale infrastructures while seamlessly deploying GenAI, predictive AI, and latency-sensitive applications at the edge.
+
+image::suse-telco-cloud_architecture.png[title="{stelco} architecture", {stelco} architecture, align="center", width=90%]
+
+{empty} +
+Key capabilities of {stelco} include:
+
+[.{stelco}-key-capabilities]
+[%unbreakable]
+[cols="1,2"]
+|===
+|Capability |Strategic Value
+
+|Unified Management Plane
+|Centralized control and observability for Kubernetes clusters running on RKE2, K3s, and other CNCF-certified Kubernetes distributions, including AKS, EKS, and GKE
+
+|Fleet GitOps Automation
+|Declarative management for thousands of clusters, preventing configuration drift
+
+|Zero-Touch Provisioning
+|Automated deployment and lifecycle management for telco-grade workloads across core, cloud, and far-edge environments
+
+|Edge Optimization
+|Lightweight K3s-based architecture and hardened SUSE Linux Micro operating system for consistency and high performance in resource-constrained or disconnected edge sites
+
+|Policy-Driven Governance
+|Consistent compliance and security across multi-tenant telco environments
+
+|Carrier Grade Security
+|FIPS 140-3 validated cryptography, CIS Benchmark compliance, and centralized RBAC/SSO to meet stringent telco security standards
+|===
+
+
+See the {stelco-docs-atip}[{stelco} documentation] for more information.
+
+
+
+== Deployment prerequisites and requirements
+
+Some specific considerations for {stelco} deployments are highlighted here.
+For further details, see {stelco-docs-reqs}[{stelco}: Requirements & Assumptions].
+
+
+=== Hardware
+
+Some hardware deployment considerations are listed below.
+
+
+* *Management Cluster*
+
+** Must have network connectivity to the target server management/BMC API.
+
+** Must have network connectivity to the target server control plane network.
+
+** For multi-node Management Clusters, an additional reserved IP address is required.
+
+
+* *Managed hosts*
+
+** Must support out-of-band management via Redfish, iDRAC, or iLO interfaces.
+
+** Must support deployment via virtual media (PXE is not currently supported).
+
+** Must have network connectivity to the Management Cluster for access to the Metal3 provisioning APIs.
+
+
+=== Software
+
+You will need some software tools to deploy and manage the environment.
+They can be installed either on the Management Cluster or on a host with access to the Management Cluster.
+They include:
+
+* {kubectl-website}[Kubectl]
+* {helm-website}[Helm]
+* {clusterctl-website}[Clusterctl]
+* Container runtime, such as {podman-website}[Podman] or {rancherdesktop-website}[Rancher Desktop]
+
+Additionally, the {slm-long} OS image must be downloaded from the {scc-website}[SUSE Customer Center] or {slm-downloads}[SUSE {slm} Downloads page].
+The selected image file at the time of publication is `SL-Micro.x86_64-6.1-Base-GM.raw.xz`.
+
+
+=== Network
+
+Follow the official {stelco} guidelines and recommendations described in {stelco-docs-reqs}#id-network[{stelco}: Network Requirements].
+
+
+=== Ports
+
+For details on port requirements, see {stelco-docs-reqs}#id-port-requirements[{stelco}: Port Requirements].
+
+
+=== Services
+
+For details on supported services, such as DHCP and DNS, see the {stelco-docs-reqs}#id-services-dhcp-dns-etc[{stelco}: Services (DHCP, DNS, etc.)].
+
+[IMPORTANT]
+====
+For telco workloads, it is important to disable or configure properly some of the services running on the nodes to avoid any impact on the workload performance running on the nodes.
+
+See {stelco-docs-reqs}#id-disabling-systemd-services[{stelco}: Disabling Systemd Services] for details.
+====
+
+
+
+== Edge Image Builder
+
+For the long-term stability and maintainability of the environment, it is paramount to have easily auditable, reproducible, and customized base images.
+{stelco-docs-eib}[Edge Image Builder (EIB)], one of the components of {stelco}, helps mitigate these concerns by providing a simple and quick mechanism to customize {slm} base images for a variety of scenarios.
+EIB can produce an image that contains all of the configuration and workload artifacts (such as, RPMs and container images) needed for telco deployments.
+EIB can enable true zero-touch provisioning, even in low-bandwidth connections and air-gapped environments.
+A single image can be reused across multiple nodes, including advanced situations such as deploying HA Kubernetes clusters and individualized network configurations per node.
+By leveraging a declarative, YAML-based definition format, EIB easily fits into existing GitOps and CI/CD pipelines, generating reproducible images with full accountability of their contents.
+
+EIB is an open source project.
+Visit the official {eib-repo}[EIB repository] for more information.
+
+
+=== Management Cluster EIB definition
+
+Follow the steps outlined in this section to generate the EIB ISO image for the Management Cluster.
+For further details, see {stelco-docs-mgmtcluster}[{stelco}: Setting up the Management Cluster].
+
+. Generate the `eib-image` {stelco-docs-mgmtcluster}#mgmt-cluster-directory-structure[directory structure] as illustrated below.
+//
++
+You can find examples of the directory structure and files in the {sedge-long} GitHub repository, under {stelco-examples}[`telco cloud examples`].
++
+[listing]
+----
+.
+├── base-images
+├── custom
+│   ├── files
+│   │   ├── basic-setup.sh
+│   │   ├── metal3.sh
+│   │   ├── mgmt-stack-setup.service
+│   │   └── rancher.sh
+│   └── scripts
+│       ├── 02-tmpfs-cni.sh
+│       ├── 99-alias.sh
+│       └── 99-mgmt-setup.sh
+├── kubernetes
+│   ├── config
+│   │   └── server.yaml
+│   ├── helm
+│   │   └── values
+│   │       ├── certmanager.yaml
+│   │       ├── longhorn.yaml
+│   │       ├── metal3.yaml
+│   │       ├── neuvector.yaml
+│   │       └── rancher.yaml
+│   └── manifests
+│       └── neuvector-namespace.yaml
+├── mgmt-cluster-34-61-defaultNet.yaml
+└── network
+    └── mgmt-cluster-network.yaml
+----
++
+[IMPORTANT]
+====
+The {slm-long} OS image must be downloaded from the {scc-website}[{scc-long}] or {slm-downloads}[{slm} Downloads page], and it must be located under the `base-images` directory.
+====
+
+. Follow {stelco-docs-kiwi-builder}[Building updated SUSE Linux Micro images with {kiwi}] to create your {kiwi-docs}[{kiwi}] ISO image.
+
+. Add your {kiwi} ISO image to the `base-images` directory.
+
+. Update the following files:
+
+.. In the `kubernetes/helm/values/metal3.yaml` file, change `ironicIP` to your mgmt
+   cluster IP address (for example, 172.30.8.11).
+.. In the `kubernetes/helm/values/rancher.yaml` file, change `hostname` to your mgmt
+   cluster IP address (for example, 172.30.8.11).
+.. In the `network/mgmt-cluster-network.yaml` file, update the network settings to match your environment.
+//
++
+See the example listing below:
++
+[source, yaml]
+----
+routes:
+  config:
+    - destination: 0.0.0.0/0
+      metric: 100
+      next-hop-address: 172.30.0.1
+      next-hop-interface: eth0
+      table-id: 254
+dns-resolver:
+  config:
+    server:
+      - 8.8.8.8
+interfaces:
+  - name: eth0
+    type: ethernet
+    state: up
+    mac-address: 3C:EC:EF:C0:4E:56
+    ipv4:
+      address:
+        - ip: 172.30.8.11
+          prefix-length: 20
+          dhcp: false
+          enabled: true
+    ipv6:
+      enabled: false
+----
+
+
+. Modify the `eib/mgmt-cluster-34-61-defaultNet.yaml` file as follows:
+
+.. For the *encryptedPassword* parameter, replace `$ROOT_PASSWORD` with the root password for your Management Cluster.
++
+[TIP]
+====
+Generate this password with:
+[source, console]
+----
+openssl passwd -6 PASSWORD
+----
+Be sure to replace `PASSWORD` with your desired password.
+====
++
+[NOTE]
+====
+The final {rancher-short} password will be configured from the file, `custom/files/basic-setup.sh`.
+====
+
+.. For the *sccRegistrationCode* parameter, replace `$SCC_REGISTRATION_CODE` with your registration code for {slm} from the {scc-website}[{scc-long}].
+
+
+. Build the EIB image using `podman`.
++
+[source, console]
+----
+podman run --rm --privileged -it -v $PWD:/eib \
+registry.suse.com/edge/3.4/edge-image-builder:1.3.0 \
+build --definition-file mgmt-cluster-34-61-defaultNet.yaml
+----
++
+You should see output like the following as the EIB image is built:
++
+[listing]
+----
+SELinux is enabled in the Kubernetes configuration. The necessary RPM packages will be
+downloaded.
+Downloading file: rancher-public.key 100% |
+SUSE Telco Cloud … * (<75 characters) Your Guide Title
+the value in the file.
+██████████████████████████████████████████████████████████████████████████|
+(2.4/2.4 kB, 17 MB/s)
+Setting up Podman API listener...
+Pulling selected Helm charts... 100% |
+██████████████████████████████████████████████████████████████████████████|
+(8/8, 3 it/s)
+Generating image customization components...
+Identifier ................... [SUCCESS]
+Custom Files ................. [SUCCESS]
+Time ......................... [SKIPPED]
+Network ...................... [SUCCESS]
+Groups ....................... [SKIPPED]
+Users ........................ [SUCCESS]
+Proxy ........................ [SKIPPED]
+Resolving package dependencies...
+Rpm .......................... [SUCCESS]
+Os Files ..................... [SKIPPED]
+Systemd ...................... [SKIPPED]
+Fips ......................... [SKIPPED]
+Elemental .................... [SKIPPED]
+Suma ......................... [SKIPPED]
+Populating Embedded Artifact Registry... 100% |
+███████████████████████████████████████████████████████████████████████████|
+(19/19, 21 it/min)
+Embedded Artifact Registry ... [SUCCESS]
+Keymap ....................... [SUCCESS]
+Configuring Kubernetes component...
+Downloading file: rke2_installer.sh
+Downloading file: rke2-images-core.linux-amd64.tar.zst 100% |
+████████████████████████████████████████████████████████████████████████████|
+(701/701 MB, 82 MB/s)
+Downloading file: rke2-images-calico.linux-amd64.tar.zst 100% |
+████████████████████████████████████████████████████████████████████████████|
+(362/362 MB, 470 MB/s)
+Downloading file: rke2-images-multus.linux-amd64.tar.zst 100% |
+████████████████████████████████████████████████████████████████████████████|
+(39/39 MB, 468 MB/s)
+Downloading file: sha256sum-amd64.txt 100% |
+████████████████████████████████████████████████████████████████████████████|
+(4.3/4.3 kB, 32 MB/s)
+Kubernetes ................... [SUCCESS]
+Certificates ................. [SKIPPED]
+Cleanup ...................... [SKIPPED]
+Building ISO image...
+Kernel Params ................ [SKIPPED]
+Build complete, the image can be found at: eib-mgmt-cluster-x86_64-image-61-34.iso
+----
+
+
+=== Downstream Cluster EIB definition
+
+Follow the steps below to generate the EIB RAW image for Downstream Clusters.
+
+. The folder `eib-edge-34-61` contains all the necessary files to generate the EIB RAW image for Downstream Clusters with some telco packages and performance scripts.
+//
++
+You can get a copy of the file contents in {stelco-docs-automated}[Fully automated directed network provisioning].
++
+[listing]
+----
+.
+├── base-images
+│   └── SL-Micro.x86_64-6.1-Base-RT-Kiwi.raw
+├── custom
+│   ├── files
+│   │   ├── performance-settings.sh
+│   │   └── sriov-auto-filler.sh
+│   └── scripts
+│       ├── 01-fix-growfs.sh
+│       ├── 02-tmpfs-cni.sh
+│       ├── 03-performance.sh
+│       └── 04-sriov.sh
+├── edge-cluster.yaml
+└── network
+    └── configure-network.sh
+----
+
+. Add your {kiwi} ISO image as a base-image in the `base-images` folder.
+
+. The configuration file, `edge-cluster.yaml`, details the packages and scripts that will be included in the image.
+//
+As with the Management Cluster, modify the following parameters in `edge-cluster.yaml` according to your environment:
+
+.. For the *encryptedPassword* parameter, replace `$ROOT_PASSWORD` with the root password for your Management Cluster.
+
+.. For the *sccRegistrationCode* parameter, replace `$SCC_REGISTRATION_CODE` with your registration code for {slm} from the {scc-website}[{scc-long}].
+
+. Build the EIB image.
++
+[source, console]
+----
+podman run --rm --privileged -it -v $PWD:/eib \
+registry.suse.com/edge/3.4/edge-image-builder:1.3.0 \
+build --definition-file edge-cluster.yaml
+----
++
+The output should be similar to:
++
+[listing]
+----
+Setting up Podman API listener...
+Generating image customization components...
+Identifier ................... [SUCCESS]
+Custom Files ................. [SUCCESS]
+Time ......................... [SKIPPED]
+Network ...................... [SUCCESS]
+Groups ....................... [SKIPPED]
+Users ........................ [SUCCESS]
+Proxy ........................ [SKIPPED]
+Resolving package dependencies...
+Rpm .......................... [SUCCESS]
+Os Files ..................... [SKIPPED]
+Systemd ...................... [SUCCESS]
+Fips ......................... [SKIPPED]
+Elemental .................... [SKIPPED]
+Suma ......................... [SKIPPED]
+Embedded Artifact Registry ... [SKIPPED]
+Keymap ....................... [SUCCESS]
+Kubernetes ................... [SKIPPED]
+Certificates ................. [SKIPPED]
+Cleanup ...................... [SUCCESS]
+Building RAW image...
+Kernel Params ................ [SUCCESS]
+Build complete, the image can be found at: eibimage-34-61-rt-telco.raw
+----
+
+
+== Deployment details
+
+Recommended deployment patterns include:
+
+* vRAN Consolidation Nodes
+//
++
+Use {cpu-long} to migrate from accelerator-heavy architectures to single-socket.
+
+* Edge AI + Network Services Nodes
+//
++
+Deploy compact nodes at MEC sites for RAN intelligence, telemetry analysis, and enterprise edge computing.
+
+
+Telco operators can use the following deployment checklist:
+
+. *Performance and sizing*
+.. Profile RAN, Core, and Edge workloads (packet rate, concurrency, inference rate).
+.. Select {cpu-long} SKUs based on core density and memory requirements.
+.. Validate CPU-only acceleration options for vRAN.
+
+. *Ecosystem and integration*
+.. Use OEM-validated RAN and Core blueprints.
+.. Verify compatibility with cloud-native orchestration stacks (K8s, CNF frameworks).
+.. Validate DPDK, vRAN Boost and AI acceleration paths.
+
+. *Power and thermal design*
+.. Update site power budgets for higher consolidation ratios.
+.. Plan airflow and thermal envelopes for high-density edge PoPs.
+
+. *Security and compliance*
+.. Enable hardware security features and confidential computing.
+.. Map regulatory requirements for data protection and sovereignty.
+
+. *Operational deployment*
+.. Verify telemetry and observability frameworks.
+.. Test fail-over, redundancy and RAN real-time behavior.
+.. Align lifecycle refresh with OEM roadmaps.
+
+
+=== {stelco} direct network provisioning
+
+{stelco-docs-automated}[Directed network provisioning] is a feature that allows you to automate the provisioning of Downstream Clusters.
+This is a useful feature when you have many Downstream Clusters to provision and want to automate the process.
+{metal3-website}[{metal3}] is an open-source project that provides tools for managing bare-metal infrastructure in Kubernetes.
+With its {capi-website}[{capi-long} ({capi})] integrations, {metal3} is able to manage infrastructure resources across many infrastructure providers via broadly adopted vendor-neutral APIs.
+
+
+==== Management Cluster deployment
+
+The process of deploying the Management Cluster is outlined here.
+
+. Load the Management Cluster EIB ISO generated previously in the {smss-provider} BMC.
++
+image::8.1.3-load-management-cluster.png[title="Set the path to the Management Cluster EIB ISO image", Load the Management Cluster EIB ISO, align="center", width=90%]
+
+. Boot the server from Virtual Media function.
++
+image::8.1.3-boot-1.png[title="Power on the server", Power on the server, align="center", width=90%]
++
+image::8.1.3-boot-2.png[title="Boot the ISO image", Boot the ISO image, align="center", width=90%]
+
+. The installation starts automatically without any manual interaction.
+This includes installation and configuration of {slm} as well as {rke2} with all required Helm charts.
+This process is illustrated in the following screenshots.
++
+image::8.1.3-installation-1.png[title="Boot the installer", Boot the installer, align="center", width=90%]
++
+image::8.1.3-installation-2.png[title="Load the {slm} raw image", Load the {slm} RAW image, align="center", width=90%]
++
+image::8.1.3-installation-3.png[title="Install components", Install components, align="center", width=90%]
++
+image::8.1.3-installation-4.png[title="Start services and complete installation", Start services and complete installation, align="center", width=90%]
+
+. At this stage, the system is ready and the Management Cluster has been deployed.
+Kubeconfig is configured with the user provided in the EIB definition file by default.
+//
++
+Verify that the cluster is ready.
++
+[source, console]
+----
+kubectl get nodes
+----
++
+You should see output similar to the following:
++
+[listing]
+----
+NAME                   STATUS   ROLES                       AGE   VERSION
+mgmt-cluster-network   Ready    control-plane,etcd,master   37s   v1.33.3+rke2r1
+----
+
+. Verify that {rancher} is available.
+
+.. Access the {rancher} UI by opening your Web browser to https://rancher-172.30.8.11.sslip.io:8443/.
+
+.. Log in with the credentials configured in the file, `custom/files/basic-setup.sh`, during the EIB process.
++
+image::8.1.3-rancher-ui-1.png[title="{rancher} UI login screen", {rancher} UI login screen, align="center", width=90%]
++
+image::8.1.3-rancher-ui-2.png[title="{rancher} UI dashboard", {rancher} UI dashboard, align="center", width=90%]
+
+
+==== Downstream Cluster deployment
+
+To deploy the Downstream Cluster (provision the operating system and RKE2 cluster automatically), you need to create manifest files from the Management Cluster.
+These files include the BareMetalHost definition file (`bmh.yaml`) and the Provision file (`capi.yaml`).
+
+. Create a BaremetalHost definition file (`bmh.yaml`).
++
+//
+For reference, see <<Sample BareMetalHost definition file (`bmh.yaml`)>>.
+
+. Apply the manifests using kubectl (alternatively it could be applied using Rancher UI):The manifests should be applied utilizing kubectl (an alternative method is to apply them via the Rancher UI):
++
+[source, console]
+----
+kubectl apply -f manifests-examples/bmh.yaml
+----
+
+. Check that inspection has started to retrieve all hardware information from the server to fill the BareMetalHost object in RKE2.
++
+[source, console]
+----
+mgmt-cluster-network:~ # kubectl get bmh
+----
++
+[listing]
+----
+NAME      STATE        CONSUMER   ONLINE   ERROR   AGE
+lab-sm1   inspecting              true             11s
+----
+
+. You can retrieve the configuration and hardware details of the downstream cluster hosts with:
++
+[source,console]
+----
+kubectl get bmh lab-sm1 -o yaml
+----
++
+For reference, see <<Sample BareMetalHost details>>.
+
+
+. The same information is represented now in the {rancher} UI:
++
+image::8.1.4-rancher-ui-1.png[title="{rancher} – Bare Metal Hosts Management View", {rancher} – Bare Metal Hosts Management View, align="center", width=90%]
++
+image::8.1.4-rancher-ui-2.png[title="{rancher} – Hardware Data Details for Discovered BareMetalHost", align="center", width=90%]
+
+. Apply the Provision file (`capi.yaml`) to provision the Downstream Cluster hosts with the operating system and RKE2 cluster.
+This also applies telco features, such as DPDK, SR-IOV, CPU isolation, huge pages, and kernel parameter tuning.
+//
++
+See <<Sample Provision file (`capi.yaml`)>> for reference.
+
+
+. Verify the BareMetalHost (BMH) provisioning status.
++
+[source,console]
+----
+kubectl get bmh
+----
++
+The output of the command will change as the provisioning progresses.
++
+[listing]
+----
+NAME      STATE          CONSUMER                               ONLINE   ERROR   AGE
+lab-sm1   provisioning   multinode-cluster-controlplane-kf8lg   true             21h
+lab-sm2   available                                             true             17h
+----
++
+[listing]
+----
+NAME      STATE         CONSUMER                               ONLINE   ERROR   AGE
+lab-sm1   provisioned   multinode-cluster-controlplane-97266   true             38m
+lab-sm2   available                                            true             30m
+----
++
+[listing]
+----
+NAME      STATE         CONSUMER                                ONLINE   ERROR   AGE
+lab-sm1   provisioned   multinode-cluster-controlplane-97266    true             49m
+lab-sm2   provisioned   multinode-cluster-workers-dxhgg-54cq4   true             41m
+----
+
+. After provisioning completes, the nodes join the Downstream Cluster and transition to the *Ready* state.
+//
++
+Verify this with:
++
+[source,console]
+----
+kubectl get nodes
+----
++
+[listing]
+----
+NAME                                    STATUS   ROLES                       AGE    VERSION
+multinode-cluster-t4rwk                 Ready    control-plane,etcd,master   12m    v1.33.3+rke2r1
+multinode-cluster-workers-dxhgg-54cq4   Ready    <none>                      45s    v1.33.3+rke2r1
+----
+
+. Verify that the cluster is provisioned and active with the {rancher} UI.
++
+image::8.1.4-rancher-ui-3.png[title="{rancher} – Clusters Overview Showing Active Downstream Cluster", align="center", width=90%]
++
+image::8.1.4-rancher-ui-4.png[title="{rancher} – Downstream Cluster Nodes in Active State", align="center", width=90%]
+
+
+== Performance testing
+
+For performance testing, you can use a real-time simulator to replicate specific workloads per CPU during defined time periods.
+Then, measure CPU latency in scheduling new tasks on both isolated and housekeeping cores.
+You can use `cyclictest` (see {sle-rt-hw-testing}[SLE RT Hardware Testing]), along with a configured {rt-testing-json}[a JSON file] to simulate a particular CPU load percentage and quantify the latency associated with scheduling tasks concurrently.
+You an also use `cyclictest` to produce a histogram to visualize the results, as shown below.
+
+For this document, the authors deployed the described reference configuration with the telco tunings provided in the <<Sample Provision file (`capi.yaml`)>>) and using {smss112-long} hosts.
+
+[NOTE]
+====
+Host details provided by `hostnamectl`:
+
+[listing]
+----
+   Static hostname: (unset)
+Transient hostname: suse-wl2.shared.i14y-lab.com
+         Icon name: computer-server
+           Chassis: server 🖳
+        Machine ID: f0a7cf72a88948968d537e0d471c4656
+           Boot ID: f2391ee36fcb4caf89508b9be07ca940
+  Operating System: SUSE Linux Micro 6.1
+       CPE OS Name: cpe:/o:suse:sl-micro:6.1
+            Kernel: Linux 6.4.0-30-rt
+      Architecture: x86-64
+   Hardware Vendor: Supermicro
+    Hardware Model: SYS-112D-42C-FN8P
+  Firmware Version: 1.0
+     Firmware Date: Mon 2025-08-25
+      Firmware Age: 1month 2w 1d
+----
+====
+
+The authors applied a CPU load of 95 percent on isolated cores with a duration of 7200 seconds, using the command:
+
+[source,console]
+----
+cyclictest -F /tmp/cyclictest-monitor.pipe -p98 -t36 --affinity=6-41 --mainaffinity=1 :--interval=1000 --histogram=60 --spike=10 --duration=7200 --quiet
+----
+
+The results, plotted below, show that latency remains below five microseconds for the duration of the test.
+
+image::9.2-latency-plot.png[title="Real-Time CPU Latency Distribution", Real-Time CPU Latency Distribution, align="center", width=90%]
+
+
+
+== Conclusions and next steps
+
+This validated reference design illustrates that {stelco-long}, running on {smss-long}s and powered by {cpu-long} processors, can deliver a CPU-only, telco edge platform that meets stringent telco requirements and is capable of supporting AI-native, low-latency workloads at scale.
+By replacing legacy accelerator-heavy designs with an integrated architectures, operators can significantly improve RAN capacity, power efficiency, and AI inference performance while reducing physical footprint, deployment complexity, and operational risk.
+Moreover, {stelco} provides a hardened, cloud-native foundation with zero-touch provisioning, consistent lifecycle management, and support for both VNFs and CNFs across core, edge, and far-edge environments.
+
+Together, {stelco-provider}, {smss-provider}, and {cpu-provider} enable operators to stop compromising and modernize their networks, scale AI-driven services, and prepare for next-generation 5G-Advanced and 6G use cases while lowering total cost of ownership and improving sustainability.
+
+
+Continue your learning journey with these resources:
+
+* {stelco-docs-atip}[{stelco} deployment documentation]
+* {cpu-website}[{cpu} Networking and Edge]
+* {vRAN-platform}[Platform and Performance Advantages to Accelerate vRAN Deployments]
+* {cpu-pressrelease}[Leadership AI and Networking Solutions with {cpu}]
+* {smss-provider}'s {smss112-website}[{smss112}] and {smss212-website}[{smss212}] specifications
+
+
+To move forward with transforming your network, please contact your {stelco-provider}, {cpu-provider}, or {smss-provider} account team to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs.
+
+
+
+== Frequently Asked Questions (FAQs)
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// If possible provide an unordered list of frequently asked questions
+// with the respective answers.
+// Answers are contained in open blocks associated with each question.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+. *What is the AI-Accelerated 5G Telco Platform?*
++
+--
+It is a joint solution combining the SUSE Telco Cloud Platform and Intel® Xeon® 6 SoC-based systems by Supermicro to enable AI-powered vRAN and edge workloads with cloud-native operations, low latency, and high efficiency.
+--
+. *How does the SUSE Telco Cloud Platform support 5G edge deployments?*
++
+--
+It provides a Kubernetes-based, cloud-native foundation optimized for telecom environments, enabling automated lifecycle management, scalability, and reliable operation of distributed edge and network workloads.
+--
+. *Why is Intel® Xeon® 6 SoC important for this solution?*
++
+--
+Intel Xeon 6 SoC processors deliver integrated capabilities for vRAN processing and AI inference, helping achieve deterministic low latency, strong performance, and improved performance-per-watt on SoC-based systems.
+--
+. *What is the role of Supermicro systems in this solution?*
++
+--
+Supermicro systems provide the carrier-grade server platforms optimized for edge and telecom environments.
+They deliver the compute density, I/O capabilities, and thermal efficiency required to run AI inference, vRAN, and edge workloads reliably at distributed 5G edge sites.
+--
+. *What types of workloads can run on this platform?*
++
+--
+The platform supports cloud-native network functions (CNFs), AI inference applications, vRAN workloads, and modern edge services required for 5G and ORAN environments.
+--
+
+. *How does this architecture help improve power efficiency?*
++
+
+--
+By consolidating AI, vRAN, and edge workloads on a SoC-based platform with optimized performance-per-watt, operators can reduce hardware sprawl and improve energy efficiency.
+--
+. *How does this solution support ORAN and modern 5G architectures?*
++
+--
+The cloud-native platform supports containerized network functions and open, software-defined components aligned with ORAN and modern 5G design principles.
+--
+. *What value does this joint solution bring to telecom operators?*
++
+--
+It delivers a validated, integrated platform that accelerates AI-enabled 5G deployment, supports new intelligent services, improves operational efficiency, and provides a future-ready foundation for telco innovation.
+--
+
+
+//== References
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a list of the references used in this document.
+// Use variables to simplify future updates, such as:
+// * {ref-url}[Reference title]
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+//
+//
+//* Reference 1
+//* Reference 2
+
+
+
+//== Glossary
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a glossary of key terms used in this document.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+//Term::
+//Definition
+
+//Term::
+//Definition
+
+
+
+
+== Appendix
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Use subsections of the Appendix to provide such content as:
+// * a complete bill of materials for all components
+// * benchmark results
+// * other supporting content
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The following sections provide additional information and resources.
+
+
+//=== Compute platform bill of materials
+//
+//Add content here
+
+
+//=== Software bill of materials
+//
+//Add content here
+
+
+=== Sample files and output
+
+
+==== Sample BareMetalHost definition file (`bmh.yaml`)
+
+[source, yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lab-sm1-credentials
+type: Opaque
+data:
+  username: <<< user in base64 >>>
+  password: <<< password in base64 >>>
+---
+apiVersion: metal3.io/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: lab-sm1
+  labels:
+    cluster-role: control-plane
+spec:
+  online: true
+  bootMACAddress: 7C:C2:55:ED:67:7A
+  rootDeviceHints:
+    deviceName: /dev/nvme0n1
+  bmc:
+    address: redfish-virtualmedia://172.30.8.2/redfish/v1/Systems/1/
+    disableCertificateVerification: true
+    credentialsName: lab-sm1-credentials
+----
+
+
+
+==== Sample BareMetalHost details
+
+[source, yaml]
+----
+apiVersion: v1
+items:
+- apiVersion: metal3.io/v1alpha1
+  kind: BareMetalHost
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"metal3.io/v1alpha1","kind":"BareMetalHost","metadata":{"annotations":{},"labels":{"cluster-role":"control-plane"},"name":"lab-sm1","namespace":"default"},"spec":{"bmc":{"address":"redfish-virtualmedia://172.30.8.2/redfish/v1/Systems/1/","credentialsName":"lab-sm1-credentials","disableCertificateVerification":true},"bootMACAddress":"7C:C2:55:ED:67"
+        "online":true,"rootDeviceHints":{"deviceName":"/dev/nvme0n1"}}}
+    creationTimestamp: "2025-10-06T10:30:55Z"
+    finalizers:
+    - baremetalhost.metal3.io
+    generation: 2
+    labels:
+      cluster-role: control-plane
+    name: lab-sm1
+    namespace: default
+    resourceVersion: "2475116"
+    uid: c693353a-f933-4d68-9b4c-2e04571e9075
+  spec:
+    architecture: x86_64
+    automatedCleaningMode: metadata
+    bmc:
+      address: redfish-virtualmedia://172.30.8.2/redfish/v1/Systems/1/
+      credentialsName: lab-sm1-credentials
+      disableCertificateVerification: true
+    bootMACAddress: 7C:C2:55:ED:67:7A
+    online: true
+    rootDeviceHints:
+      deviceName: /dev/nvme0n1
+  status:
+    errorCount: 0
+    errorMessage: ""
+    goodCredentials:
+      credentials:
+        name: lab-sm1-credentials
+        namespace: default
+      credentialsVersion: "2469066"
+    hardware:
+      cpu:
+        arch: x86_64
+        clockMegahertz: 3500
+        count: 84
+        flags:
+        - 3dnowprefetch
+        - abm
+        - acpi
+        - adx
+        - aes
+        - amx_bf16
+        - amx_int8
+        - amx_tile
+        - aperfmperf
+        - apic
+        - arat
+        - arch_capabilities
+        - arch_lbr
+        - arch_perfmon
+        - art
+        - avx
+        - avx2
+        - avx512_bf16
+        - avx512_bitalg
+        - avx512_fp16
+        - avx512_vbmi2
+        - avx512_vnni
+        - avx512_vpopcntdq
+        - avx512bw
+        - avx512cd
+        - avx512dq
+        - avx512f
+        - avx512ifma
+        - avx512vbmi
+        - avx512vl
+        - avx_vnni
+        - bmi1
+        - bmi2
+        - bts
+        - bus_lock_detect
+        - cat_l2
+        - cat_l3
+        - cdp_l2
+        - cdp_l3
+        - cldemote
+        - clflush
+        - clflushopt
+        - clwb
+        - cmov
+        - constant_tsc
+        - cpuid
+        - cpuid_fault
+        - cqm
+        - cqm_llc
+        - cqm_mbm_local
+        - cqm_mbm_total
+        - cqm_occup_llc
+        - cx16
+        - cx8
+        - dca
+        - de
+        - ds_cpl
+        - dtes64
+        - dtherm
+        - dts
+        - enqcmd
+        - epb
+        - ept
+        - ept_ad
+        - erms
+        - est
+        - f16c
+        - flexpriority
+        - flush_l1d
+        - fma
+        - fpu
+        - fsgsbase
+        - fsrm
+        - fxsr
+        - gfni
+        - hle
+        - ht
+        - hwp
+        - hwp_act_window
+        - hwp_epp
+        - hwp_pkg_req
+        - ibpb
+        - ibrs
+        - ibrs_enhanced
+        - ibt
+        - ida
+        - intel_ppin
+        - intel_pt
+        - invpcid
+        - la57
+        - lahf_lm
+        - lm
+        - mba
+        - mca
+        - mce
+        - md_clear
+        - mmx
+        - monitor
+        - movbe
+        - movdir64b
+        - movdiri
+        - msr
+        - mtrr
+        - nonstop_tsc
+        - nopl
+        - nx
+        - ospke
+        - pae
+        - pat
+        - pbe
+        - pcid
+        - pclmulqdq
+        - pconfig
+        - pdcm
+        - pdpe1gb
+        - pebs
+        - pge
+        - pku
+        - pln
+        - pni
+        - popcnt
+        - pse
+        - pse36
+        - pts
+        - rdpid
+        - rdrand
+        - rdseed
+        - rdt_a
+        - rdtscp
+        - rep_good
+        - rtm
+        - sdbg
+        - sep
+        - serialize
+        - sha_ni
+        - smap
+        - smep
+        - smx
+        - split_lock_detect
+        - ss
+        - ssbd
+        - sse
+        - sse2
+        - sse4_1
+        - sse4_2
+        - ssse3
+        - stibp
+        - syscall
+        - tm
+        - tm2
+        - tme
+        - tpr_shadow
+        - tsc
+        - tsc_adjust
+        - tsc_deadline_timer
+        - tsc_known_freq
+        - tsxldtrk
+        - umip
+        - user_shstk
+        - vaes
+        - vme
+        - vmx
+        - vnmi
+        - vpclmulqdq
+        - vpid
+        - waitpkg
+        - wbnoinvd
+        - x2apic
+        - xgetbv1
+        - xsave
+        - xsavec
+        - xsaveopt
+        - xsaves
+        - xtopology
+        - xtpr
+        model: GENUINE INTEL(R) XEON(R)
+      firmware:
+        bios:
+          date: 06/18/2025
+          vendor: American Megatrends International, LLC.
+          version: T20250618140143
+      hostname: suse-wl1.shared.i14y-lab.com
+      nics:
+      - mac: 7c:c2:55:ed:60:17
+        model: 0x8086 0x579e
+        name: eno7np1
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:18
+        model: 0x8086 0x579e
+        name: eno8np2
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:19
+        model: 0x8086 0x579e
+        name: eno9np3
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:12
+        model: 0x8086 0x579e
+        name: eno2np0
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:13
+        model: 0x8086 0x579e
+        name: eno3np1
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:14
+        model: 0x8086 0x579e
+        name: eno4np2
+        speedGbps: 25
+      - mac: 7c:c2:55:ed:60:15
+        model: 0x8086 0x579e
+        name: eno5np3
+        speedGbps: 25
+      - ip: 172.30.8.12
+        mac: 7c:c2:55:ed:5f:38
+        model: 0x8086 0x1533
+        name: eno1
+        speedGbps: 1
+      - ip: fe80::3163:b4a6:5840:3b6f%eno1
+        mac: 7c:c2:55:ed:5f:38
+        model: 0x8086 0x1533
+        name: eno1
+        speedGbps: 1
+      - mac: 7c:c2:55:ed:60:16
+        model: 0x8086 0x579e
+        name: eno6np0
+        speedGbps: 25
+      ramMebibytes: 262144
+      storage:
+      - alternateNames:
+        - /dev/nvme1n1
+        - /dev/disk/by-path/pci-0000:b4:00.0-nvme-1
+        model: SAMSUNG MZQL2960HCJR-00A07
+        name: /dev/disk/by-path/pci-0000:b4:00.0-nvme-1
+        serialNumber: S64FNS0X801971
+        sizeBytes: 960197124096
+        type: NVME
+        wwn: eui.36344630588019710025385300000001
+      - alternateNames:
+        - /dev/nvme0n1
+        - /dev/disk/by-path/pci-0000:b5:00.0-nvme-1
+        model: SAMSUNG MZQL2960HCJR-00A07
+        name: /dev/disk/by-path/pci-0000:b5:00.0-nvme-1
+        serialNumber: S64FNS0X801972
+        sizeBytes: 960197124096
+        type: NVME
+        wwn: eui.36344630588019720025385300000001
+      systemVendor:
+        manufacturer: Supermicro
+        productName: SYS-112D-42C-FN8P (To be filled by O.E.M.)
+        serialNumber: S956463X5705960
+    hardwareProfile: unknown
+    lastUpdated: "2025-10-06T10:41:19Z"
+    operationHistory:
+      deprovision:
+        end: null
+        start: null
+      inspect:
+        end: "2025-10-06T10:41:19Z"
+        start: "2025-10-06T10:31:06Z"
+      provision:
+        end: null
+        start: null
+      register:
+        end: "2025-10-06T10:31:06Z"
+        start: "2025-10-06T10:30:55Z"
+    operationalStatus: OK
+    poweredOn: true
+    provisioning:
+      ID: a031479c-ffde-4cea-8fdb-334fc5e85f67
+      bootMode: UEFI
+      image:
+        url: ""
+      rootDeviceHints:
+        deviceName: /dev/nvme0n1
+      state: available
+    triedCredentials:
+      credentials:
+        name: lab-sm1-credentials
+        namespace: default
+      credentialsVersion: "2469066"
+kind: List
+metadata:
+  resourceVersion: ""
+----
+
+
+==== Sample Provision file (`capi.yaml`)
+
+[source, yaml]
+----
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: multinode-cluster
+  namespace: default
+  labels:
+    cluster-api.cattle.io/rancher-auto-import: "true"
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 192.168.0.0/18
+    services:
+      cidrBlocks:
+        - 10.96.0.0/12
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: RKE2ControlPlane
+    name: multinode-cluster
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: Metal3Cluster
+    name: multinode-cluster
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3Cluster
+metadata:
+  name: multinode-cluster
+  namespace: default
+spec:
+  controlPlaneEndpoint:
+    host: 172.30.8.12
+    port: 6443
+  noCloudProvider: true
+
+## Control Plane
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: RKE2ControlPlane
+metadata:
+  name: multinode-cluster
+  namespace: default
+spec:
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: Metal3MachineTemplate
+    name: multinode-cluster-controlplane
+  replicas: 1
+  version: v1.33.3+rke2r1
+  rolloutStrategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxSurge: 0
+  registrationMethod: "control-plane-endpoint"
+  serverConfig:
+    cni: calico
+    cniMultusEnable: true
+  agentConfig:
+    format: ignition
+    additionalUserData:
+      config: |
+        variant: fcos
+        version: 1.4.0
+        kernel_arguments:
+          should_exist:
+            - intel_iommu=on
+            - iommu=pt
+            - idle=poll
+            - mce=off
+            - hugepagesz=1G hugepages=40
+            - hugepagesz=2M hugepages=0
+            - default_hugepagesz=1G
+            - irqaffinity=0-5
+            - isolcpus=domain,nohz,managed_irq,6-41
+            - nohz_full=16-41
+            - rcu_nocbs=16-41
+            - rcu_nocb_poll
+            - nosoftlockup
+            - nowatchdog
+            - nohz=on
+            - nmi_watchdog=0
+            - skew_tick=1
+            - quiet
+            - rcupdate.rcu_cpu_stall_suppress=1
+            - rcupdate.rcu_expedited=1
+            - rcupdate.rcu_normal_after_boot=1
+            - rcupdate.rcu_task_stall_timeout=0
+            - rcutree.kthread_prio=99
+        systemd:
+          units:
+            - name: rke2-preinstall.service
+              enabled: true
+              contents: |
+                [Unit]
+                Description=rke2-preinstall
+                Wants=network-online.target
+                Before=rke2-install.service
+                ConditionPathExists=!/run/cluster-api/bootstrap-success.complete
+                [Service]
+                Type=oneshot
+                User=root
+                ExecStartPre=/bin/sh -c "mount -L config-2 /mnt"
+                ExecStart=/bin/sh -c "sed -i \"s/BAREMETALHOST_UUID/$(jq -r .uuid /mnt/openstack/latest/meta_data.json)/\" /etc/rancher/rke2/config.yaml"
+                ExecStart=/bin/sh -c "echo \"node-name: $(jq -r .name /mnt/openstack/latest/meta_data.json)\" >> /etc/rancher/rke2/config.yaml"
+                ExecStartPost=/bin/sh -c "umount /mnt"
+                [Install]
+                WantedBy=multi-user.target
+            - name: cpu-partitioning.service
+              enabled: true
+              contents: |
+                [Unit]
+                Description=cpu-partitioning
+                Wants=network-online.target
+                After=network.target network-online.target
+                [Service]
+                Type=oneshot
+                User=root
+                ExecStart=/bin/sh -c "echo isolated_cores=6-41 > /etc/tuned/cpu-partitioning-variables.conf"
+                ExecStartPost=/bin/sh -c "tuned-adm profile cpu-partitioning"
+                ExecStartPost=/bin/sh -c "systemctl enable tuned.service"
+                [Install]
+                WantedBy=multi-user.target
+            - name: performance-settings.service
+              enabled: true
+              contents: |
+                [Unit]
+                Description=performance-settings
+                Wants=network-online.target
+                After=network.target network-online.target cpu-partitioning.service
+                [Service]
+                Type=oneshot
+                User=root
+                ExecStart=/bin/sh -c "/opt/performance-settings/performance-settings.sh"
+                [Install]
+                WantedBy=multi-user.target
+    kubelet:
+      extraArgs:
+        - provider-id=metal3://BAREMETALHOST_UUID
+    nodeName: "Node-multinode-cluster"
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3MachineTemplate
+metadata:
+  name: multinode-cluster-controlplane
+  namespace: default
+spec:
+  template:
+    spec:
+      dataTemplate:
+        name: multinode-cluster-controlplane-template
+      hostSelector:
+        matchLabels:
+          cluster-role: control-plane
+      image:
+        checksum: http://172.30.4.28/eibimage-34-61-rt-telco.raw.sha256
+        checksumType: sha256
+        format: raw
+        url: http://172.30.4.28/eibimage-34-61-rt-telco.raw
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3DataTemplate
+metadata:
+  name: multinode-cluster-controlplane-template
+  namespace: default
+spec:
+  clusterName: multinode-cluster
+  metaData:
+    objectNames:
+      - key: name
+        object: machine
+      - key: local-hostname
+        object: machine
+      - key: local_hostname
+        object: machine
+## Workers
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  labels:
+    cluster.x-k8s.io/cluster-name: multinode-cluster
+  name: multinode-cluster-workers
+  namespace: default
+spec:
+  clusterName: multinode-cluster
+  replicas: 1
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: multinode-cluster
+  template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/cluster-name: multinode-cluster
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: RKE2ConfigTemplate
+          name: multinode-cluster-workers
+      clusterName: multinode-cluster
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: Metal3MachineTemplate
+        name: multinode-cluster-workers
+      nodeDrainTimeout: 0s
+      version: v1.33.3+rke2r1
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: RKE2ConfigTemplate
+metadata:
+  name: multinode-cluster-workers
+  namespace: default
+spec:
+  template:
+    spec:
+      agentConfig:
+        format: ignition
+        kubelet:
+          extraArgs:
+            - provider-id=metal3://BAREMETALHOST_UUID
+        nodeName: "Node-multinode-cluster-worker"
+        additionalUserData:
+          config: |
+            variant: fcos
+            version: 1.4.0
+            kernel_arguments:
+              should_exist:
+                - intel_iommu=on
+                - iommu=pt
+                - idle=poll
+                - mce=off
+                - hugepagesz=1G hugepages=40
+                - hugepagesz=2M hugepages=0
+                - default_hugepagesz=1G
+                - irqaffinity=0-5
+                - isolcpus=domain,nohz,managed_irq,6-41
+                - nohz_full=16-41
+                - rcu_nocbs=16-41
+                - rcu_nocb_poll
+                - nosoftlockup
+                - nowatchdog
+                - nohz=on
+                - nmi_watchdog=0
+                - skew_tick=1
+                - quiet
+                - rcupdate.rcu_cpu_stall_suppress=1
+                - rcupdate.rcu_expedited=1
+                - rcupdate.rcu_normal_after_boot=1
+                - rcupdate.rcu_task_stall_timeout=0
+                - rcutree.kthread_prio=99
+            systemd:
+              units:
+                - name: rke2-preinstall.service
+                  enabled: true
+                  contents: |
+                    [Unit]
+                    Description=rke2-preinstall
+                    Wants=network-online.target
+                    Before=rke2-install.service
+                    ConditionPathExists=!/run/cluster-api/bootstrap-success.complete
+                    [Service]
+                    Type=oneshot
+                    User=root
+                    ExecStartPre=/bin/sh -c "mount -L config-2 /mnt"
+                    ExecStart=/bin/sh -c "sed -i \"s/BAREMETALHOST_UUID/$(jq -r .uuid /mnt/openstack/latest/meta_data.json)/\" /etc/rancher/rke2/config.yaml"
+                    ExecStart=/bin/sh -c "echo \"node-name: $(jq -r .name /mnt/openstack/latest/meta_data.json)\" >> /etc/rancher/rke2/config.yaml"
+                    ExecStartPost=/bin/sh -c "umount /mnt"
+                    [Install]
+                    WantedBy=multi-user.target
+                - name: cpu-partitioning.service
+                  enabled: true
+                  contents: |
+                    [Unit]
+                    Description=cpu-partitioning
+                    Wants=network-online.target
+                    After=network.target network-online.target
+                    [Service]
+                    Type=oneshot
+                    User=root
+                    ExecStart=/bin/sh -c "echo isolated_cores=6-41 > /etc/tuned/cpu-partitioning-variables.conf"
+                    ExecStartPost=/bin/sh -c "tuned-adm profile cpu-partitioning"
+                    ExecStartPost=/bin/sh -c "systemctl enable tuned.service"
+                    [Install]
+                    WantedBy=multi-user.target
+                - name: performance-settings.service
+                  enabled: true
+                  contents: |
+                    [Unit]
+                    Description=performance-settings
+                    Wants=network-online.target
+                    After=network.target network-online.target cpu-partitioning.service
+                    [Service]
+                    Type=oneshot
+                    User=root
+                    ExecStart=/bin/sh -c "/opt/performance-settings/performance-settings.sh"
+                    [Install]
+                    WantedBy=multi-user.target
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3MachineTemplate
+metadata:
+  name: multinode-cluster-workers
+  namespace: default
+spec:
+  template:
+    spec:
+      dataTemplate:
+        name: multinode-cluster-workers-template
+      hostSelector:
+        matchLabels:
+          cluster-role: worker
+      image:
+        checksum: http://172.30.4.28/eibimage-34-61-rt-telco.raw.sha256
+        checksumType: sha256
+        format: raw
+        url: http://172.30.4.28/eibimage-34-61-rt-telco.raw
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3DataTemplate
+metadata:
+  name: multinode-cluster-workers-template
+  namespace: default
+spec:
+  clusterName: multinode-cluster
+  metaData:
+    objectNames:
+      - key: name
+        object: machine
+      - key: local-hostname
+        object: machine
+      - key: local_hostname
+        object: machine
+----
+
+//Add content here
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end

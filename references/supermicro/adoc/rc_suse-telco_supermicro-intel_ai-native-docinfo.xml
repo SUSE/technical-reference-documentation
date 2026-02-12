@@ -1,0 +1,227 @@
+<!-- https://tdg.docbook.org/tdg/5.2/info -->
+
+<dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+    <dm:bugtracker>
+        <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
+        <dm:product>{doctitle}</dm:product>
+    </dm:bugtracker>
+</dm:docmanager>
+
+<!-- Note to author/editor
+     - This docinfo XML file features metadata that helps identify
+       the contents of your document.
+     - It uses attributes/variables to minimize the number of edits
+       needed in this file.
+     - Attributes/variables are defined in your vars file and
+       referenced in the docinfo and adoc files.
+     - See the comments in this document for information on
+       metadata tags that may require edits.
+     - Find more details on attribute/variables in var file comments
+       and in
+       https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+-->
+
+
+<!-- document organization metadata
+     Do NOT edit these metadata tags.
+-->
+<meta name="series">Technical References</meta>
+<meta name="type">Reference Configuration</meta>
+
+
+<!-- document title and subtitle
+     Do NOT edit these metadata tags.
+-->
+<title>{doctitle}</title>
+<subtitle>{docsubtitle}</subtitle>
+
+
+<!-- descriptions
+     Do NOT edit these metadata tags.
+-->
+<meta name="description">{description}</meta>
+<meta name="social-desc">{description-social}</meta>
+
+
+<!-- tasks
+     - Tasks are predefined phrases that are used for filtering which documentation is displayed
+       in the SUSE Documentation portal.
+     - Repeat the 'phrase' element for each additional task.
+     - Be sure required variables ('metatask1', 'metatask2', etc.) are defined in your vars file.
+-->
+<meta name="task">
+    <phrase>{metatask1}</phrase>
+    <phrase>{metatask2}</phrase>
+    <phrase>{metatask3}</phrase>
+</meta>
+
+
+
+<!-- Technical components
+     - Use the template below to specify each component by name and version.
+     - Multiple versions of the same component must be listed separately.
+-->
+<meta name="productname">
+  <productname version="">{stelco-long}</productname>
+</meta>
+
+
+<!-- Component listings for Google Analytics
+     - Provide a comma-delimited list of components and their respective versions.
+-->
+<productname>{stelco-long}</productname>
+
+
+
+<!-- Platform
+     - The platform metadata tag is scheduled for deprecation.
+     - However, in the meantime, mirror the component content
+       of the productname metadata above.
+-->
+<meta name="platform">{stelco-long}</meta>
+<meta name="platform">{smss112-long}</meta>
+<meta name="platform">{smss212-long}</meta>
+
+
+<!-- Partner metadata
+     Identify ONLY ONE technical partner (business or organization name)
+     supplying a primary component of the solution.
+-->
+<meta name="techpartner">{smss-provider}</meta>
+
+
+<!-- author metadata
+     - For additional authors, replicate author tag structure inside the authorgroup.
+     - Editors and other contributors can be acknowledged in an acknowledgement section
+       of the adoc file.
+-->
+<authorgroup>
+  <author>
+
+      <personname>
+      <firstname>{author2-firstname}</firstname>
+      <surname>{author2-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author2-jobtitle}</jobtitle>
+      <orgname>{author2-orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author3-firstname}</firstname>
+      <surname>{author3-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author3-jobtitle}</jobtitle>
+      <orgname>{author3-orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author4-firstname}</firstname>
+      <surname>{author4-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author4-jobtitle}</jobtitle>
+      <orgname>{author4-orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author5-firstname}</firstname>
+      <surname>{author5-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author5-jobtitle}</jobtitle>
+      <orgname>{author5-orgname}</orgname>
+    </affiliation>
+  </author>
+    <author>
+    <personname>
+      <firstname>{author6-firstname}</firstname>
+      <surname>{author6-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author6-jobtitle}</jobtitle>
+      <orgname>{author6-orgname}</orgname>
+    </affiliation>
+  </author>
+</authorgroup>
+
+
+<!-- cover logo images
+     - Specify the image or images to use on the document cover.
+
+       NOTE: Two image objects are required to accommodate different
+             width requirements for HTML ('role="html"') and for
+             PDF ('role="fo"').
+             The default uses '5em' for for PDF and '152px' for HTML.
+
+     - The default logo (`common/images/src/svg/suse.svg`) is the
+       official SUSE chameleon with 'SUSE' printed to its right.
+     - The logo is designed for light backgrounds.
+     - When you run the setup script, a symbolic link to this image
+       file is created in your project's `media/src/svg` directory.
+     - Make no changes below if you wish to use this image.
+     
+     - To display alternative logo (including an approved logo lock-up)
+       on the document cover:
+       - If the desired SVG image is located in `common/images/src/svg`,
+         create a symbolic link to it in your project's
+         `media/src/svg` directory.
+       - If you have a new SVG image, copy it to your project's
+         `media/src/svg` directory.
+         IMPORTANT: Trim extraneous whitespace from all sides of your image.
+       - Update 'fileref' in the tags below with the appropriate filename.
+
+     - It is possible to specify multiple, separate SVG logo images for the
+       cover logo by duplicating the `mediaobject` group and specifying
+       the appropriate files.
+       This is not preferred, as it can introduce alignment issues.
+-->
+<cover role="logos">
+  <mediaobject>
+    <imageobject role="fo">
+      <imagedata fileref="suse.svg" width="5em"/>
+    </imageobject>
+    <imageobject role="html">
+      <imagedata fileref="suse.svg" width="152px"/>
+    </imageobject>
+  </mediaobject>
+</cover>
+
+
+<!-- revision history
+     - Provide a complete revision history in reverse chronological order
+       (most recent first).
+     - Replicate the `revision` group for each revision.
+     - Each revision must include the data and a brief description.
+-->
+<revhistory xml:id="rh-art-{article-id}">
+  <revision>
+    <date>{rev1-date}</date>
+    <revdescription>
+      <para>{rev1-description}</para>
+    </revdescription>
+  </revision>
+</revhistory>
+
+
+<!-- brief abstract for document
+     Do NOT edit
+-->
+<abstract role="executivesummary">
+  <title>Summary</title>
+  <para>{executive-summary}</para>
+</abstract>
+
+
+<!-- disclaimer
+     Do NOT edit
+-->
+<abstract>
+  <title>Disclaimer</title>
+  <para>{disclaimer}</para>
+</abstract>
+

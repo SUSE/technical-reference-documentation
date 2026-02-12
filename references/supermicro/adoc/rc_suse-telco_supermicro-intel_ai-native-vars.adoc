@@ -1,0 +1,317 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Reference Configuration
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: suse-telco-supermicro-intel-ai
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+//-
+:rev1-date: 2026-01-31
+:rev1-description: Original version
+:docdate: {rev1-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Variable names follow a simple pattern:
+//   - compX[-MODIFIER]
+//   where:
+//   - X is an integer starting from 1 for the primary component,
+//     2 for a secondary component, and so on.
+//   - -MODIFIER is text that identifies the stored information.
+//   Some -MODIFIER values include:
+//   - EMPTY: If the modifier is missing, the variable contains
+//     the name of the component
+//     E.g.: 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime',
+//           'Kubeflow', 'Veeam Kasten', 'SQL Server'
+//     NOTE: Be sure to use approved product names.
+//   - -provider: Name of company or project providing the component
+//                (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//   - -version1: A relevant product version (e.g., '15 SP6', '3.1.2')
+//                Additional product versions must be listed separately
+//                (e.g., '-version2: '2.9.5')
+//   - -website: Product website (e.g., https://www.suse.com/products/server/)
+//   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//
+//   You can create additional modifiers as needed.
+//
+// -
+
+// - - - SUSE variables - - -
+:stelco-provider: SUSE
+:stelco-long: SUSE® Telco Cloud
+:stelco: SUSE Telco Cloud
+:stelco-version1: v3.4
+:stelco-website: https://www.suse.com/products/edge-for-telco/
+:stelco-docs: https://documentation.suse.com/suse-edge/3.4/html/edge/
+:stelco-docs-atip: {stelco-docs}atip.html
+:stelco-docs-arch: {stelco-docs}atip-architecture.html
+:stelco-docs-reqs: {stelco-docs}atip-requirements.html
+:stelco-docs-mgmtcluster: {stelco-docs}atip-management-cluster.html
+:stelco-docs-kiwi-builder: {stelco-docs}guides-kiwi-builder-images.html
+:stelco-docs-automated: {stelco-docs}atip-automated-provisioning.html
+:stelco-docs-metal3-arch: {stelco-docs}quickstart-metal3.html#id-high-level-architecture-2
+:stelco-docs-eib: {stelco-docs}components-eib.html
+:sedge-long: SUSE® Edge
+:sedge-repo: https://github.com/suse-edge/
+:stelco-examples: {sedge-repo}telco-cloud-examples
+:eib-repo: https://github.com/suse-edge/edge-image-builder
+
+:slm: SUSE Linux Micro
+:slm-long: SUSE® Linux Micro
+:slm-version1: 6.1
+:slm-website: https://www.suse.com/products/micro/
+:slm-downloads: https://www.suse.com/download/sle-micro/
+
+:rke2: RKE2
+:rke2-website: https://documentation.suse.com/cloudnative/rke2/latest/en/introduction.html
+
+:k3s: K3s
+:k3s-website: https://www.suse.com/products/k3s/
+
+:rancher: SUSE Rancher Prime
+:rancher-long: SUSE® Rancher Prime
+:rancher-short: SUSE Rancher
+:rancher-website: https://www.suse.com/products/rancher/
+
+:scc-long: SUSE Customer Center
+:scc: SCC
+:scc-website: https://scc.suse.com/
+
+
+:sle-rt-hw-testing: https://documentation.suse.com/sle-rt/15-SP7/html/SLE-RT-all/article-hardware-testing.html
+:rt-testing-json: https://github.com/scheduler-tools/rt-app/blob/master/doc/examples/template.json
+
+
+// - - -
+
+
+// - - - SUPERMICRO variables - - -
+:smss-provider: SUPERMICRO
+:smss: IoT SuperServer
+:smss-long: {smss-provider}® {smss}
+
+:smss112: SYS-112D-42C-FN8P
+:smss112-long: {smss-provider}® {smss} {smss112}
+:smss112-website: https://www.supermicro.com/en/products/system/iot/1u/sys-112d-42c-fn8p
+
+:smss212: SYS-212D-72C-FN8P
+:smss212-long: {smss-provider}® {smss} {smss212}
+:smss212-website: https://www.supermicro.com/en/products/system/iot/2u/sys-212d-72c-fn8p
+
+// - - -
+
+
+// - - - Intel variables - - -
+:cpu-provider: Intel
+:cpu-long: Intel® Xeon® 6 SoC
+:cpu: Intel Xeon 6 SoC
+:cpu-version1: 6726P-B
+:cpu-website: https://www.intel.com/content/www/us/en/products/details/processors/xeon/edge.html
+:cpu-docs: component 2 product documentation URL
+:cpu-pressrelease: https://www.intc.com/news-events/press-releases/detail/1728/intel-unveils-leadership-ai-and-networking-solutions-with
+:vRAN-platform: https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf
+:ref-vran-perf: https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf
+
+// - - -
+
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+
+
+// - - - ORAN variables - - -
+:oran: official O-RAN Alliance hardware reference design for outdoor macrocells
+:oran-doc: https://www.google.com/url?q=https://specifications.o-ran.org/download?id%3D970&sa=D&source=docs&ust=1766740571306521&usg=AOvVaw0-klBTjBWajbwHxVWI7Rhu
+// - - -
+
+// - - - Community Project variables - - -
+:kubectl-website: https://kubernetes.io/docs/reference/kubectl/kubectl/
+:helm-website: https://helm.sh/
+:clusterctl-website: https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl
+:podman-website: https://podman.io/
+:rancherdesktop-website: https://rancherdesktop.io/
+:kiwi: KIWI
+:kiwi-long: {kiwi} NG
+:kiwi-docs: https://osinside.github.io/kiwi/
+:capi: CAPI
+:capi-long: Cluster API
+:capi-website: https://cluster-api.sigs.k8s.io
+:metal3: pass:quotes[Metal^3^]
+:metal3-website: https://metal3.io
+// - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// doctitle - (<75 characters) concisely identify the guide.
+//         (e.g.: "Kubeflow with SUSE Rancher Prime")
+// docsubititle - (<75 characters) expound on the title.
+//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with SUSE Rancher Prime")
+// usecase: (<55 characters) key words or phrases that identify the
+//          use case of this guide
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) brief description of what this guide
+//              provides (e.g.: "Deploy Kubeflow with SUSE Rancher Primer")
+// description-social: (<55 characters) condensed description suitable for
+//                     social media (e.g.: "Kubeflow with SUSE Rancher")
+// executive-summary: (<300 characters) brief summary of the guide that
+//                    appears near the beginning of the rendered document
+//                    (e.g.: "Kubeflow simplifies deployment of machine
+//                            learning (ML) workflows on Kubernetes clusters.
+//                            This document provides step-by-step guidance
+//                            for deploying Kubeflow on an RKE2 cluster with
+//                            SUSE Rancher Prime."
+//
+// NOTE: You can reference component variables in titles.
+//       E.g., If you have the component variables:
+//             :comp1: SUSE Linux Enterprise Server
+//             :comp2: JupyterLab
+//             you can reference them to define new variables, like:
+//             :title: Simplify deployment of {comp2} with {comp1}
+// -
+:doctitle: SUSE Telco Cloud on Intel Xeon 6 SoC-based Supermicro systems
+
+:docsubtitle: Validated reference design for high-density, low-latency, AI-ready telco edge deployments
+
+:usecase: AI-Accelerated 5G Telco Edge Platform
+
+:description: Joint {stelco-provider}, {cpu-provider}, and {smss-provider} solution enabling AI-accelerated vRAN and edge workloads on {stelco} with cloud-native automation, low latency, and power efficiency.
+
+:description-social: AI-ready 5G edge with {stelco-provider}, {smss-provider}, and {cpu-provider}
+
+:executive-summary: This joint solution showcases the {stelco-long} platform running on {cpu-long}–based {smss-long} systems to deliver an AI-accelerated 5G telco platform.  It enables vRAN and edge AI workloads using cloud-native automation, deterministic low latency, and strong performance-per-watt, helping operators modernize networks for AI-driven services.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//
+//   A task must be one of these supported values:
+//    Administration, Artificial Intelligence, Auditing, Authentication,
+//    Automation, Backup &amp; Recovery, Certification, Cloud,
+//    Clustering, Compliance, Configuration, Containerization,
+//    Container Management, Data Intelligence, Deployment, Design,
+//    Encryption, High Availability, Image Building, Implementation,
+//    Installation, Integration, Maintenance, Migration, Monitoring,
+//    Packaging, Security, Storage, Subscription Management,
+//    Troubleshooting, Upgrade &amp; Update, Virtualization,
+//    Vulnerability, Web
+//
+//  E.g.,
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: Design
+:metatask2: Implementation
+:metatask3: Integration
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//   Follow the pattern to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//   NOTE: Other contributors and editors are typically listed in
+//         an Acknowledgements section.
+//         To list additional authors or contributors on the cover page,
+//         you must edit the docinfo.xml file as well.
+// -
+:author2-firstname: Alberto
+:author2-surname: Morgante
+:author2-jobtitle: Principal Telco Engineer
+:author2-orgname: SUSE
+:author3-firstname: Jonas
+:author3-surname: Arndt
+:author3-jobtitle: Senior Telco Engineer
+:author3-orgname: SUSE
+:author4-firstname: Tim
+:author4-surname: Irnich
+:author4-jobtitle: Senior Distinguished Telco Product Manager
+:author4-orgname: SUSE
+:author5-firstname: Michael
+:author5-surname: Holzerland
+:author5-jobtitle: EMEA Telco Lead
+:author5-orgname: Supermicro
+:author6-firstname: Niall
+:author6-surname: Power
+:author6-jobtitle: Solutions Architect and Intel FlexRAN Software PLM
+:author6-orgname: Intel
+:contrib1-firstname: Vesselin
+:contrib1-surname: Matev
+:contrib1-jobtitle: Partner Solutions Manager
+:contrib1-orgname: SUSE
+:editor1-firstname: Terry
+:editor1-surname: Smith
+:editor1-jobtitle: Ecosystem Solution Innovation Director
+:editor1-orgname: SUSE
+:editor2-firstname: Suresh
+:editor2-surname: S
+:editor2-jobtitle: Partner Solution Architect
+:editor2-orgname: SUSE
+
+//:author2-firstname: first (given) name
+//:contrib1-firstname: first (given) name
+//:editor1-firstname: first (given) name
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
