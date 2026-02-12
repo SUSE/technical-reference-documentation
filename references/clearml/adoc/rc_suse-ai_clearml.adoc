@@ -261,7 +261,7 @@ It integrates with {sai} to deliver infrastructure optimization, resource alloca
 * AI Developer Center provides a robust environment for developing, training, and testing AI models, accessible from anywhere.
 * GenAI Application Engine deploys and manages AI workloads and AI agents with pre-configured networking, authentication, and security.
 
-{cml} deploys 3 main components into the resource cluster:
+{cml} deploys three main components into the resource cluster:
 
 * {cml} Control Plane -  The main server which hosts the UI and backend.
 * {cml} Agent - Manages the orchestration of workloads on the Kubernetes cluster.
@@ -762,18 +762,18 @@ Once you have defined your deployment requirements, proceed with the installatio
 
 For a stable and production-ready deployment, consider the following:
 
-. *Cluster Requirement* – Deploy {sstorage} on a running RKE2 cluster managed by {srancher-long}. Storage nodes must meet the documented hardware, disk, and network requirements. Use dedicated disks only.
+* *Cluster Requirement* – Deploy {sstorage} on a running RKE2 cluster managed by {srancher-long}. Storage nodes must meet the documented hardware, disk, and network requirements. Use dedicated disks only.
 Refer to {sstorage-requirements}[{sstorage} Requirements]
 
-. *High Availability* – Use a minimum of three storage nodes to maintain quorum and ensure data availability. Distribute storage across failure domains where possible.
+* *High Availability* – Use a minimum of three storage nodes to maintain quorum and ensure data availability. Distribute storage across failure domains where possible.
 
-. *Disk and Performance Planning* – Select SSD or HDD based on workload performance needs. Configure replication settings carefully to balance performance and data protection.
+* *Disk and Performance Planning* – Select SSD or HDD based on workload performance needs. Configure replication settings carefully to balance performance and data protection.
 
-. *Capacity Planning* – Monitor storage usage and plan for expansion by adding disks or nodes as required.
+* *Capacity Planning* – Monitor storage usage and plan for expansion by adding disks or nodes as required.
 
-. *Backup and Recovery* – Enable snapshots and integrate with enterprise backup solutions to protect persistent data and support disaster recovery.
+* *Backup and Recovery* – Enable snapshots and integrate with enterprise backup solutions to protect persistent data and support disaster recovery.
 
-. *Installation and Configuration* – Deploy {sstorage} using the supported method in {srancher-long}. 
+* *Installation and Configuration* – Deploy {sstorage} using the supported method in {srancher-long}.
 For detailed installation and configuration steps, refer to the {sstorage-docs}[official documentation]
 
 
