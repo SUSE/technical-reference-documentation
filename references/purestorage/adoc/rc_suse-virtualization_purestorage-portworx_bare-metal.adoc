@@ -22,7 +22,7 @@ include::./rc_suse-virtualization_purestorage-portworx_bare-metal-vars.adoc[]
 
 
 
-= {title}: {subtitle}
+= {doctitle}: {docsubtitle}
 
 
 
@@ -37,8 +37,9 @@ include::./rc_suse-virtualization_purestorage-portworx_bare-metal-vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended as a supplement to the {svirt} with {pxe} on Bare Metal” Reference Architecture. It builds on the foundational design by providing additional guidance for deploying and running SUSE Virtualization with Portworx Enterprise in bare metal environments.
-The objective is to help organizations seamlessly integrate SUSE Virtualization with Portworx Enterprise, ensuring deployments that deliver optimized performance, scalability, and reliability for virtualized workloads.
+This document is intended to supplement to the {ref-svirt-pxe-wp}[{svirt-long} and {pxe-long}] white paper.
+It builds on the foundational design by providing additional guidance for deploying and running {svirt-brand} with {pxe-brand} in bare metal environments.
+The objective is to help organizations seamlessly integrate {svirt} with {pxe}, ensuring deployments that deliver optimized performance, scalability, and reliability for virtualized workloads.
 
 
 
@@ -149,41 +150,47 @@ The virtualization capabilities in SUSE are powered by key components from the S
 The virtualization capabilities in SUSE are delivered through an integrated solution that brings together compute, storage, and orchestration layers.
 Rather than focusing on low-level hypervisor internals, the architecture highlights how SUSE Virtualization and Portworx Enterprise work together to provide a flexible, scalable, and enterprise-grade platform.
 
-image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of SUSE Virtualization with Portworx Storage", General Architecture of SUSE Virtualization with Portworx Storage, align="center", width=90%]
+image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of {svirt} with {pxe-long}", General Architecture of {svirt} with {pxe-long}, align="center", width=90%]
 
 
-=== SUSE Virtualization
+=== {svirt-brand}
 
-{svirt} enables the management of virtual machines and containers side-by-side on a unified, cloud-native platform. Built on enterprise-grade Linux and the KubeVirt project, it provides a lightweight, hyper-converged infrastructure solution.
-By integrating natively with SUSE Rancher Prime, it offers centralized authentication, access control, and observability, allowing operators to manage diverse workloads across data center and edge environments with a consistent operational model.
+{svirt} enables the management of virtual machines and containers side-by-side on a unified, cloud-native, hyperconverged infrastructure platform.
+{svirt} natively integrates with {srancher-long} to deliver centralized authentication, access control, and observability for managing diverse workloads across data center, cloud, and edge environments with a consistent operational model.
 
-=== SUSE Rancher Prime
 
-{rancher} enables enterprises to secure, deploy, run‌, and manage modern, cloud native workloads anywhere.
+=== {srancher-brand}
+
+{srancher-long} enables enterprises to secure, deploy, run‌, and manage modern, cloud native workloads anywhere.
 It delivers centralized authentication, access control, observability, and built-in security with robust Kubernetes workload management, unified access controls, and observability.
-By natively integrating with SUSE Virtualization, enterprises can gain control over their entire IT infrastructure.
+By natively integrating with {svirt}, enterprises can unify their entire IT infrastructure and support both container and VM workloads.
 
-=== Portworx Enterprise by Pure Storage
 
-Portworx Enterprise serves as the enterprise-grade storage layer for both VM and container workloads. It delivers persistent volumes, high availability, automated failover, backup and disaster recovery, performance optimization, and encryption. This ensures consistent storage reliability across on-premises, hybrid, and edge deployments running on SUSE Virtualization.
+=== {pxe-brand}
+
+{pxe-long} serves as the enterprise-grade storage layer for both VM and container workloads. It delivers persistent volumes, high availability, automated failover, backup and disaster recovery, performance optimization, and encryption. This ensures consistent storage reliability across on-premises, hybrid, and edge deployments running on {svirt}.
+
 
 === Compute platform
 
-The solution is deployed on physical infrastructure, including host and worker nodes, networking components (switches, NICs, routing), and enterprise storage devices such as Pure Storage.
+The solution is deployed on physical infrastructure, including host and worker nodes, networking components (switches, NICs, routing), and enterprise storage devices such as a {pfa-long}.
 These components provide the performance, connectivity, and resiliency required for running large-scale virtualized and containerized workloads.
+
+
 
 == Reference Design
 
-The diagram below shows a high-level, reference design with SUSE Virtualization  Portworx Enterprise deployed on bare-metal nodes along with a Pure Storage FlashArray. By implementing this design, a platform engineering team can automate the provisioning of a well-defined architecture following best practices that includes high availability, operations management, observability, business continuity, performance, and security.
+The diagram below shows a high-level, reference design for {svirt} integrated with {pxe} deployed on bare-metal nodes along with a {pfa-long}.
+By implementing this design, a platform engineering team can automate the provisioning of a well-defined architecture following best practices that includes high availability, operations management, observability, business continuity, performance, and security.
 
-image::suse-portworx-arc-diagram.png[title="Reference Architecture Diagram", Reference Architecture Diagram, align="center", width=90%]
+image::suse-portworx-arc-diagram.png[title="Reference Design", Reference Design, align="center", width=90%]
 
 
 
 === Host node considerations
 
 
-The foundation of the deployment is the bare metal compute nodes that will host both the SUSE Virtualization hypervisor and the Portworx storage layer.
+The foundation of the deployment is the bare metal compute nodes that will host both the {svirt} hypervisor and the Portworx storage layer.
 
 ==== Cluster topology and sizing
 
@@ -610,7 +617,7 @@ image::Third-party-array-diagram.png[title="Third-party Array Diagram", Third-pa
 
 == Deployment
 
-For detailed deployment and configuration procedures, refer to the accompanying {suse-pxe-dep-guide}[Deployment Guide].
+For detailed deployment and configuration procedures, refer to {ref-svirt-pxe-wp}[{svirt-long} and {pxe-long}] white paper.
 
 == Summary
 This reference configuration describes an architecture for deploying SUSE Virtualization with {pxe} by Pure Storage on bare metal infrastructure.
