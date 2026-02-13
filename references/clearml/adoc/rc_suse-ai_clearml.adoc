@@ -773,7 +773,7 @@ Refer to {sstorage-requirements}[{sstorage} Requirements]
 
 * *Backup and Recovery* – Enable snapshots and integrate with enterprise backup solutions to protect persistent data and support disaster recovery.
 
-* *Installation and Configuration* – Deploy {sstorage} using the supported method in {srancher-long}.
+*Installation and Configuration* – Deploy {sstorage} using the supported method in {srancher-long}. 
 For detailed installation and configuration steps, refer to the {sstorage-docs}[official documentation]
 
 
@@ -843,7 +843,10 @@ To optimize the storage layer, consider the following:
 
 === {ssecurity}
 
-{ssecurity} provides runtime container and Kubernetes security, vulnerability scanning, continuous compliance checks, and policy enforcement for applications running on Kubernetes. This section describes how to deploy {ssecurity} using the Rancher UI in a reproducible, step-by-step way.
+// commenting the older content
+
+////
+{ssecurity} provides runtime container security, Kubernetes workload protection, vulnerability scanning, continuous compliance validation, and policy enforcement for workloads running on {rke2-long} and managed by {srancher-long}. It delivers visibility, threat detection, and automated policy control across the container lifecycle.
 
 *Preparation*
 
@@ -921,12 +924,47 @@ Once deployed:
 . *Admission Control* To enforce security policies at deploy time, ensure the admission controller is enabled and appropriate policies defined.
 . *Resource Planning* Security scanning and monitoring components consume cluster resources; plan node sizing accordingly.
 . *Compliance Reporting* Use CIS and custom policy templates to generate compliance reports for internal audits.
+////
+
+{ssecurity} provides runtime container security, Kubernetes workload protection, vulnerability scanning, continuous compliance validation, and policy enforcement for workloads running on {rke2-long} and managed by {srancher-long}. It delivers visibility, threat detection, and automated policy control across the container lifecycle.
+
+For a stable and production-ready deployment, consider the following:
+
+. *System Requirements* – Validate component requirements (Controllers, Scanners, Enforcers, Managers). Review supported operating systems, CPU, memory, and platform compatibility. Follow documented minimum and recommended specifications to ensure performance and reliability. Refer to {ssecurity-requirements}[official documentation]
+
+. *Cluster Requirement* – Deploy {ssecurity} on a running {rke2} cluster managed by {srancher-long}. Ensure the cluster meets documented CPU, memory, and networking requirements. Verify node connectivity to required container registries (public or private).
+
+. *Namespace and Deployment Scope* – Deploy {ssecurity} in the dedicated namespace:
++
+[source, bash]
+----
+cattle-neuvector-system
+----
+This isolates security components from application workloads and simplifies lifecycle management.
+
+. *High Availability* – Distribute controllers and enforcers across multiple worker nodes. Avoid single points of failure. Maintain protection during node failures or maintenance events.
+
+. *Runtime Protection and Admission Control* – Enable runtime security and admission control. Start policies in monitor mode. Move to enforce mode after validation to prevent unintended workload disruption.
+
+. *Vulnerability and Compliance Scanning* – Enable image scanning and continuous compliance checks. Apply required compliance templates (for example, CIS Benchmarks) based on organizational or regulatory requirements.
+
+. *Resource Planning* – Account for CPU and memory consumption from scanning and monitoring components. Size worker nodes appropriately, especially in high-density workload environments.
+
+. *Logging and Monitoring Integration* – Integrate alerts, events, and audit logs with centralized logging and monitoring platforms to improve visibility, response time, and audit readiness.
+
+. *Backup and Disaster Recovery* – Include {ssecurity} policies and configurations in the cluster backup strategy. Ensure etcd backups capture security-related Kubernetes resources. Validate restore procedures periodically.
+
+*Installation and Configuration*
+
+Deploy {ssecurity} using the supported method in {srancher-long} UI.
+For detailed, version-aligned installation and configuration steps, refer to the official documentation: {ssecurity-rancher-deployment}[{ssecurity} Deployment with Rancher]
 
 
 === {sai}
 
+// commenting the older content
+////
 {sai} provides a cloud-native, scalable AI platform for deploying GenAI workloads on Kubernetes. It consists of a collection of modular components (AI middleware, vector databases, inference engines, etc.) that can be installed individually or as a full stack using the SUSE Deployer meta-chart. {sai} integrates with {srancher} and conforms to SUSE software entitlement and cluster requirements. 
-
 
 *Preparation*
 
@@ -946,7 +984,7 @@ Ensure the following prerequisites are completed before deploying {sai}:
 . Registry credentials
 .. Create a Kubernetes secret for the SUSE Application Collection registry, using your entitlement credentials.
 +
-[source,bash]
+[source, console]
 ----
 kubectl create namespace suse-ai
 kubectl create secret docker-registry application-collection \
@@ -999,6 +1037,42 @@ helm upgrade --install suse-ai-deployer \
 . *Resource Planning* AI components (especially vector databases and inference workloads) can be resource intensive. Plan CPU, memory, storage, and GPU capacity accordingly.
 . *Namespace Isolation* Use a dedicated Kubernetes namespace (e.g., suse-ai) to isolate {sai} workloads.
 . *Monitoring & Logging* Integrate with SUSE Observability for metrics and logs to monitor performance and troubleshoot issues.
+////
+
+{sai} provides a cloud-native, scalable platform for deploying Generative AI workloads on Kubernetes. It includes modular AI components (middleware, vector databases, inference engines, and UI services) that can be deployed individually or as a full stack using the SUSE Deployer meta-chart. {sai} integrates with {srancher} and aligns with SUSE entitlement and cluster requirements.
+
+For a stable and production-ready deployment, consider the following:
+
+. *Cluster Requirement* – Deploy {sai} on a running Kubernetes cluster (for example, {srancher-long} with {rke2}). Ensure all nodes are registered and healthy.
+
+. *GPU and Node Preparation* – Provision GPU-enabled nodes with NVIDIA drivers and CUDA installed. Label nodes appropriately for AI workloads. Refer to {sai-reqs}[(sai) Requirements]:
+
+. *Entitlement and Registry Access* – Maintain a valid {sai} subscription. Ensure access to the SUSE Application Collection registry for Helm charts and container images. Keep credentials current.
+
+. *Namespace Isolation* – Create a dedicated namespace (for example, suse-ai) to isolate AI workloads from other cluster applications.
+
+. *Registry Credentials Configuration* – Create Kubernetes image pull secrets for the SUSE Application Collection registry using entitlement credentials. Validate image pull access before deployment.
+
+. *Helm Registry Access* – Authenticate to the Helm OCI registry hosting {sai} charts prior to installation.
+
+. *cert-manager Dependency* – Install cert-manager in the cluster before deploying {sai} components that require certificate management.
+
+. *Deployment Method* – Deploy {sai} using the SUSE Deployer Helm chart. Use SUSE-provided override templates (for example, production or minimal profiles) and customize values based on workload requirements.
+
+. *Installation Order and Dependencies* – Install foundational components (such as cert-manager) first, followed by core AI services. Deploy optional components (for example, GPU-based or framework-specific services) after core services are operational.
+
+. *Resource Planning* – AI components, including inference engines and vector databases, are resource intensive. Plan CPU, memory, storage, and GPU capacity based on expected workload size and concurrency.
+
+. *Monitoring and Logging Integration* – Configure SUSE Observability to collect metrics, logs, and traces for {sai} components. Monitor GPU utilization, inference latency, memory consumption, and storage performance. Integrate alerts for proactive incident response.
+Refer to {sai-monitoring}[{sai} Monitoring and Observability]:
+ 
+. *Operational Validation* – After deployment, verify all pods and services are in a healthy state. Confirm GPU allocation, storage availability, and external access endpoints before onboarding workloads.
+
+*Installation and Configuration*
+
+Deploy {sai} using Helm and the SUSE Deployer meta-chart in the dedicated namespace.
+For detailed, version-aligned installation steps and configuration guidance, refer to the {sai-aideployer}[official documentation]:
+
 
 
 === {cml}
@@ -1211,8 +1285,8 @@ Refer to {cml}’s {cml-idp}[online documentation] for further information on co
 . Verifying the installation of Control Plane
 To verify the {cml} control plane is up and running use a web browser to access (https://app.<BASE_DOMAIN>;).
 +
-image::clearml-login-screen.png[title="{cml} login screen",{cml} login screen , align="center", width=90%]
-+
+image::clearml-login-screen.png[title="{cml} login screen", {cml} login screen , align="center", width90%]
+
 . Setting up Worker Nodes
 +
 The {cml} Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to {cml} queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
