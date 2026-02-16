@@ -19,7 +19,7 @@
 //   This is typically a series of words (often from the document title)
 //   separated by hyphens (-).
 //   (e.g., "rancher-kubflow-deployment")
-:article-id: unique-article-id
+:article-id: suse-virt-portworx-purestorage-baremetal
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -92,7 +92,9 @@
 //            the docinfo file to reflect this.
 // -
 :svirt-provider: SUSE
-:svirt: SUSE Virtualization
+:svirt-brand: SUSE® Virtualization
+:svirt-long: SUSE Virtualization
+:svirt: {svirt-long}
 :svirt-version1: v1.6.1
 :svirt-website: https://www.suse.com/products/rancher/virtualization/
 :svirt-docs: https://documentation.suse.com/cloudnative/virtualization/
@@ -100,7 +102,15 @@
 :svirt-docs-reqs: {svirt-docs}installation-setup/requirements.html
 :svirt-docs-create-vm: {svirt-docs}virtual-machines/create-vm.html
 
-:pxe-provider: Portworx by Pure Storage
+:srancher-brand: SUSE® Rancher Prime
+:srancher-long: SUSE Rancher Prime
+:srancher: SUSE Rancher
+:srancher-website: https://www.suse.com/products/rancher/
+
+
+:pxe-provider: Pure Storage
+:pxe-brand: Portworx Enterprise by Pure Storage
+:pxe-long: Portworx Enterprise by Pure Storage
 :pxe: Portworx Enterprise
 :pxe-version1: 25.2.2
 :pxe-website: https://portworx.com/products/portworx-enterprise/
@@ -114,13 +124,13 @@
 :pxo-version1: 25.5.0
 :pxe-suse-virt: https://docs.portworx.com/portworx-enterprise/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
 
-:rancher: SUSE Rancher Prime
-:rancher-long: SUSE® Rancher Prime
-:rancher-short: SUSE Rancher
-:rancher-website: https://www.suse.com/products/rancher/
+:pfa-provider: Pure Storage
+:pfa-long: Pure Storage FlashArray
+:pfa: Pure FlashArray
 
 
-:suse-pxe-dep-guide: https://portworx.com/wp-content/uploads/2025/11/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
+:ref-svirt-pxe-wp: https://links.imagerelay.com/cdn/3404/ql/c67bb8f363744ccea209fbbe4242605c/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
+//:suse-pxe-dep-guide: https://portworx.com/wp-content/uploads/2025/11/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -158,9 +168,9 @@
 //        will appear as:
 //          "Simplify deployment of JupyterLab with SUSE Linux Enterprise Server"
 // -
-:title: SUSE Virtualization with Portworx by Pure Storage on Bare Metal
+:doctitle: SUSE Virtualization with Portworx by Pure Storage on Bare Metal
 
-:subtitle: Reference Configuration for Modern Virtualization with SUSE and Portworx
+:docsubtitle: Reference Configuration for Modern Virtualization with SUSE and Portworx
 
 :usecase: SUSE Virtualization with Portworx by Pure Storage
 
@@ -198,8 +208,9 @@
 //    :metatask2: Installation
 //    :metatask3: Deployment
 // -
-:metatask1: task
-
+:metatask1: Design
+:metatask2: Deployment
+:metatask3: Integration
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 

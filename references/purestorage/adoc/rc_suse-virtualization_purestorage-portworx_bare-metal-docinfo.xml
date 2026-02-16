@@ -3,7 +3,7 @@
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
     <dm:bugtracker>
         <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
-        <dm:product>{title}</dm:product>
+        <dm:product>{doctitle}</dm:product>
     </dm:bugtracker>
 </dm:docmanager>
 
@@ -32,8 +32,8 @@
 <!-- document title and subtitle
      Do NOT edit these metadata tags.
 -->
-<title>{title}</title>
-<subtitle>{subtitle}</subtitle>
+<title>{doctitle}</title>
+<subtitle>{docsubtitle}</subtitle>
 
 
 <!-- descriptions
@@ -56,6 +56,8 @@
 -->
 <meta name="task">
     <phrase>{metatask1}</phrase>
+    <phrase>{metatask2}</phrase>
+    <phrase>{metatask3}</phrase>
 </meta>
 
 
@@ -69,8 +71,8 @@
      - This list is NOT visible in the rendered document.
 -->
 <meta name="productname">
-  <productname version="{svirt-version1}">{svirt}</productname>
-  <productname version="{pxe-version1}">{pxe-provider}</productname>
+  <productname version="">{svirt-long}</productname>
+  <productname version="">{pxe-long}</productname>
 </meta>
 
 
@@ -79,7 +81,7 @@
        respective versions.
      - This list appears above the title in the rendered document.
 -->
-<productname>{svirt} {svirt-version1}, {pxe-provider} {pxe-version1}</productname>
+<productname>{svirt-long}, {pxe-long}</productname>
 
 
 
@@ -88,15 +90,15 @@
      - However, in the meantime, mirror the component content
        of the productname metadata above.
 -->
-<meta name="platform">{svirt} {svirt-version1}</meta>
-<meta name="platform">{pxe-provider} {pxe-version1}</meta>
+<meta name="platform">{svirt-long}</meta>
+<meta name="platform">{pxe-long}</meta>
 
 
 <!-- Partner metadata
      Identify ONLY ONE technical partner (business or organization name)
      supplying a primary component of the solution.
 -->
-<meta name="techpartner">{pxe}</meta>
+<meta name="techpartner">{pxe-provider}</meta>
 
 
 <!-- author metadata
