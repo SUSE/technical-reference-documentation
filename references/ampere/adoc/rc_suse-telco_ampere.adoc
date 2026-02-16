@@ -1,0 +1,1049 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+include::./rc_suse-telco_ampere-vars.adoc[]
+[#art-{article-id}]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Reference Configuration
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define variables (document attributes) in the vars file.
+// 2. Develop content and reference variables in the adoc file.
+// 3. Update the docinfo.xml file as needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+= {title}: {subtitle}
+
+
+
+== The Structural Transformation of the Telecommunications Landscape
+
+Telecommunications operators are undergoing the most profound
+transformation in the history of the industry. The simultaneous rollout
+of *5G-Advanced*, *Open RAN*, *massive Multi-access Edge Computing
+(MEC)*, and the *integration of AI-driven automation* are driving
+exponential growth in traffic, processing requirements, and
+service-level expectations. The demand for agility, scalability, and
+cost-efficiency is pushing the industry toward cloud-native software
+stacks running on high-performance, energy-efficient, general-purpose
+processors. The convergence of *high-performance hardware* *and
+optimized software stacks* is crucial for success in the modern
+telecommunications industry.
+
+The strategic collaboration between SUSE and Ampere Computing addresses
+these challenges by validating
+{comp1-website}[+++SUSE Telco Cloud+++]
+configurations on
+{comp2-website}[+++Ampere® platforms+++].
+Our partnership represents a milestone in providing telecommunications
+operators with a *horizontally scalable*, *vendor-neutral
+infrastructure* that minimizes TCO while maximizing compute density in
+space-constrained edge environments. The move toward *disaggregated*,
+*multi-vendor ecosystems* requires a consistent underlying platform that
+can handle the *deterministic latency* and *high-throughput
+requirements* of modern 5G networks.
+
+
+== Operational Constraints and the Radio Access Network (RAN)
+
+
+Telecom operators face significant challenges when deploying RAN
+workloads, which require a combination of performance, latency, and
+power efficiency. The increasing demand for high-bandwidth 5G services
+has led to a *surge in RAN traffic*, making it essential to pack more
+compute resources into smaller footprints while optimizing power
+consumption. These workloads are no longer purely traditional
+packet-forwarding tasks. Modern Distributed Units (DU), Central Units
+(CU), User Plane Functions (UPF), and near-RT RIC platforms now embed
+*significant machine-learning inference for beam management, load
+prediction, slice assurance, and security analytics*. The net result is
+a dramatic increase in required FLOPS per site, yet most current
+deployments still achieve this through power-hungry discrete
+accelerators (FPGAs, SmartNICs, and GPUs) that add cost, thermal
+complexity, and supply-chain fragility.
+
+Energy efficiency has become a hard operational constraint. Many edge
+sites are limited on power and cooling, while electricity prices in many
+regions have risen *50-100% in the last three years*. Sustainability
+commitments further amplify the pressure where operators must materially
+reduce Scope 2 emissions while scaling capacity by orders of magnitude.
+Traditional high-TDP x86 platforms, even when paired with inline
+accelerators, routinely exceed 800-1200W per node under real-world vRAN
+loads - a trajectory that is no longer economically or environmentally
+viable at scale.
+
+At the same time, the industry’s move toward disaggregated, multi-vendor
+ecosystems exposes the limitations of closed, accelerator-dependent
+designs. Long integration cycles, firmware inter-dependencies, and
+single-source inline cards slow down lab validation and field upgrades,
+while creating hidden TCO penalties that often exceed the original
+hardware savings.
+
+
+== Architectural Design for Cloud-Native Telco
+
+The joint reference architecture from SUSE and Ampere Computing
+addresses these challenges with a *radically simplified*,
+*high-efficiency*, *CPU-only platform* built on Arm-based architecture
+silicon.
+
+image::image5.png[ref-arch, scaledwidth="100%", align="left"]
+
+Ampere processors are built for high performance while delivering
+excellent power efficiency. In addition, the processors scale linearly
+with load thereby enhancing power efficiency for workloads that do not
+require the full core capacity of these high core count products. This
+characteristic also creates *natural headroom for new applications or AI
+algorithms* to expand functionality easily in power and space
+constrained environments like the Telco RAN. Finally, Ampere processors
+are *highly predictable* yielding very deterministic performance for
+parallel scale-out workloads like packet processing, SW-only L1
+processing, L2/L3 stacks and the sensitive AI functionality many
+carriers want to deploy in their networks.
+
+Ampere processors deliver up to 192 arm64 cores in a single socket with
+*a completely uniform memory hierarchy* and *no performance variability
+across cores*. Combined with the SUSE near RT OS for Telcos, this
+reference architecture addresses noisy-neighbor effects and provides the
+deterministic instruction retirement required for DPDK-based Layer 1 and
+Layer 2 processing in vRAN workloads.
+
+Utilizing the Ampere platform’s unparalleled advantages in terms of core
+density and power efficiency, this solution is designed to *pack more
+compute resources into smaller footprints while minimizing power
+consumption*. This makes it an ideal fit for RAN deployments where space
+constraints are a significant challenge. The support of Arm-based
+hardware is a core pillar of SUSE's Telco strategy due to the undeniable
+advantages in terms of core density and power efficiency.
+
+image::image3.png[cloud-arch, scaledwidth="100%", align="left"]
+
+image::image6.png[cloud-arch2, scaledwidth="100%", align="left"]
+
+The SUSE Telco Cloud solution is specifically designed to take advantage
+of these benefits by providing *a cloud-native infrastructure that is
+optimized for RAN workloads*. Our combined solution includes support for
+containerization, microservices orchestration, and network function
+virtualization (NFV) – all essential components for deploying modern 5G
+networks. By using SUSE Telco Cloud on the Ampere Altra platform,
+telecom operators can enjoy a significant reduction in total cost of
+ownership while achieving better performance density, latency, and power
+efficiency.
+
+Because the entire solution is purely CPU-based and fully open,
+operators *avoid accelerator lock-in*, *reduce validation time from
+months to weeks*, and can *run any certified CNF or VNF on the same
+physical node*, whether it’s a FlexRAN-style DU, an open-source L1, a 5G
+Core UPF, or an edge AI inference application. The result is a
+horizontally scalable platform that *simultaneously maximizes site
+capacity*, *minimizes power and cooling requirements*, and
+*future-proofs the infrastructure for 6G-era workloads* that will demand
+even greater compute density at the edge.
+
+
+
+== Architecture concepts and Diagram
+
+
+// === [_Ampere to share graphics and diagrams here_]
+
+image::image5.png[cloud-arch1, scaledwidth="100%", align="left"]
+https://documentation.suse.com/suse-edge/3.4/html/edge/atip-architecture.html[SUSE
+Telco Cloud Architecture]
+
+image::image3.png[cloud-arch2, scaledwidth="100%", align="left"]
+
+
+
+== Hardware and networking infrastructure.
+
+
+CPU Architecture
+
+.. Model: Ampere® Altra®
+
+.. Arch: aarch64x
+
+.. Cores: 128
+
+*(The system tested here and widely in use are Ampere Altra systems, the
+AmpereOne systems provide even higher performance and core density and
+are supported by this reference architecture)
+
+
+== Prerequisites
+
+
+=== Enable SRIOV on the NICS (BIOS Configuration)
+The first task to do to enable SRIOV is to configure properly the BIOS
+to enable the global configuration SRIOV, as well as the nic
+configuration to enable in a specific nic. To achieve that the following
+{supermicro-url}[guide] can be
+followed.
+After configuring properly the BIOS, the following command can be
+executed to verify if the SRIOV is enabled on the Interfaces that we
+want to use:
+
+[source, console]
+----
+find /sys/class/net/*/device/sriov_totalvfs -exec sh -c 'echo -n "\{}:
+"; cat \{}' \;
+
+/sys/class/net/enP1p1s0f0np0/device/sriov_totalvfs: 64
+
+/sys/class/net/enP1p1s0f1np1/device/sriov_totalvfs: 64
+
+/sys/class/net/enP1p1s0f2np2/device/sriov_totalvfs: 64
+
+/sys/class/net/enP1p1s0f3np3/device/sriov_totalvfs: 64
+
+/sys/class/net/eno1np0/device/sriov_totalvfs: 2
+
+/sys/class/net/eno2np1/device/sriov_totalvfs: 2
+----
+
+
+=== BIOS Tuning
+
+
+After enabling SR-IOV on the desired NICs, the next step involves tuning
+the BIOS settings. This can be accomplished through the BMC Web UI.
+
+The following configurations must be applied:
+
+[source, console]
+----
+Advanced->ACPI Settings->Enable CPPC [Disabled]
+
+Advanced->ACPI Settings->Enable LPI [Disabled]
+
+Chipset->CPU Configuration->ANC mode [Quadrant]
+----
+
+
+CPPC stands for Collaborative Processor Performance Control. It is an
+ACPI interface that allows the Operating System (OS) to manage CPU
+performance states more efficiently than legacy methods (like P-States
+or SpeedStep). Instead of using discrete frequency steps, CPPC
+communicates a continuous performance scale, allowing the CPU to change
+frequency/voltage faster and more precisely.
+
+LPI stands for *Low Power Idle*. This setting exposes the Low Power S0
+Idle (also known as S0ix or Modern Standby) capability to the Operating
+System. It allows specific components and the CPU to enter ultra-low
+power states without fully sleeping (S3), maintaining a quick wake-up
+capability.
+
+ANC stands for *Ampere NUMA Control* (specific to Ampere Altra / Altra Max
+ARM processors). This setting determines how the processor's cores and
+memory controllers are clustered into Non-Uniform Memory Access (NUMA)
+domains. *Quadrant* implies 4 NUMA domains per socket. (Lowest local
+memory latency).
+
+== Edge Image Builder
+=== What is Edge Image Builder
+
+The need for easily auditable, reproducible, and customized base images
+becomes paramount to the long-term stability and maintainability of the
+environment.
+{edge-image-builder}[Edge
+Image Builder (EIB)], one of the components of SUSE Telco Cloud, helps
+mitigate these concerns by providing a mechanism to customize SL Micro
+base images to include all of the configurations and workload artifacts
+needed by telco deployments.
+{github-edge-image-builder}[EIB is an open source
+project] that enables the simplified and quick configuration of
+customized SUSE Linux Micro images for a variety of scenarios. The
+resulting image contains all of the configuration and binary artifacts
+(RPMs, container images, etc.) necessary to provision the node at first
+boot, providing true zero-touch provisioning even in the case of
+low-bandwidth connections and air-gapped scenarios. A single image can
+be reused across multiple nodes, including advanced situations such as
+deploying HA Kubernetes clusters and individualized network
+configuration per node. By leveraging a declarative, YAML-based
+definition format, EIB easily fits into existing GitOps and CI/CD
+pipelines, generating reproducible images with full accountability of
+their contents.
+
+=== EIB Config
+
+Following the
+{github-eib-config}[Telco Repository] you can find some kind of examples already fully
+prepared to be used, but we are going to explain the different
+configurations we should have to properly deploy a downstream cluster
+for running telco workloads using the Ampere platform.
+
+The Telco Performance tests require the following EIB OS configurations:
+. EIB definition yaml file:
+The Image Definition File is a YAML document describing a single image
+to build. The file is specified using the --definition-file argument.
+Only a single image may be built at a time, however the same image
+configuration directory may be used to build multiple images by creating
+multiple definition files.
+
+You can find more information following the next
+{github-suse-edge}[link]
+
+
+[source, yaml]
+----
+apiVersion: 1.0
+image:
+  imageType: RAW
+  arch: x86_64
+  baseImage: SL-Micro.x86_64.raw     
+  outputImageName: eibimage-slmicro-rt-telco.raw
+operatingSystem:
+  kernelArgs:
+    - ignition.platform.id=openstack
+  systemd:
+    disable:
+      - rebootmgr
+      - transactional-update.timer
+      - transactional-update-cleanup.timer
+      - fstrim
+      - time-sync.target
+  users:
+    - username: root
+      encryptedPassword: ${ROOT_PASSWORD}
+  packages:
+    packageList:
+      - jq
+      - dpdk
+      - dpdk-tools
+      - libdpdk-23
+      - pf-bb-config
+      - open-iscsi
+      - tuned
+      - cpupower
+      - openssh-server-config-rootlogin
+    sccRegistrationCode: ${SCC_REGISTRATION_CODE}
+
+----
+* Custom Files:
+
+EIB has the ability to bundle in custom scripts that will be run during
+the combustion phase when a node is booted with the built image.
+Additionally, custom files may be included, however they are not
+automatically deployed on the node when it boots. If these files are
+needed beyond the combustion phase, a script should be included that
+explicitly copies them to the filesystem.
+
+Combustion scripts are executed alphabetically. All scripts that EIB
+automatically includes will be prefixed using values between 00 and 49
+(e.g. 05-configure-network.sh, 30-suma-register.sh). Unless absolutely
+sure the default flow should be interrupted, all custom scripts should
+be prefixed within the range 50-99 (e.g. 60-my-script.sh) or not begin
+with a number.
+
+You can find more information following the next
+{github-suse-edge}[link]
+
+
+[source, console]
+----
+   - name: performance-settings.sh
+      content: |
+        #!/bin/bash
+
+        # Script generate to tuning the performance of the system for running Telco Workloads
+        # This script is intended to be run on a worker node in a Telco Edge Cluster
+
+
+
+        if [ "`whoami`" != "root" ]; then
+                echo root required to run the script
+                exit 127
+        fi
+
+        MAX_EXIT_LATENCY=1
+        input=$(cat /etc/tuned/cpu-partitioning-variables.conf)
+        total_cores=$(grep -c ^processor /proc/cpuinfo)
+        cpus=$(echo "$input" | awk -F'=' '{print $2}')
+
+        expand_ranges() {
+            echo "$1" | awk -v RS=',' '
+            {
+                if ($1 ~ /-/) {
+                    split($1, range, "-")
+                    for (i = range[1]; i <= range[2]; i++) {
+                        printf i (i==range[2] ? "" : " ")
+                    }
+                } else {
+                    printf $1
+                }
+                printf (NR == NR ? " " : "")
+            }' | sed 's/ $//'
+        }
+
+        ISOLATED_CPUS=$(expand_ranges "$cpus")
+        all_cores=$(seq 0 $((total_cores-1)))
+        isolated_set=$(echo $ISOLATED_CPUS | tr ',' '\n') # Convert to newline separated list
+        HK_CPUS=""
+
+        for core in $all_cores; do
+            if ! echo "$isolated_set" | grep -q "^$core$"; then
+                HK_CPUS+="$core "
+            fi
+        done
+
+        HK_CPUS=$(echo "$HK_CPUS" | sed 's/ $//')
+
+        set_cpufreq_performance() {
+          echo Configure: CpuFreq performance
+          cpupower frequency-set -g performance | grep -v "Setting cpu:"
+          cpupower set -b 0
+        }
+
+        unset_timer_migration() {
+          echo Configure: Disable Timer migration
+          sysctl kernel.timer_migration=0
+        }
+
+        migrate_kdaemons_hk() {
+          echo Configure: Migrate kthreads to HK
+          for NODE in `ls -1 -d /sys/devices/system/node/node* | sed -e 's/.*node//'`; do
+            for KTHREAD in kswapd$NODE kcompactd$NODE ; do
+              PID_KTHREAD=`pidof $KTHREAD`
+              [ "$PID_KTHREAD" = "" ] && PID_KTHREAD=`pidof -w $KTHREAD`
+              if [ "$PID_KTHREAD" = "" ]; then
+                echo "WARNING: Unable to identify PID of $KTHREAD"
+                continue
+              fi
+              taskset -pc `echo $HK_CPUS | tr ' ' ','` $PID_KTHREAD
+            done
+          done
+        }
+
+        set_isolatecpu_latency() {
+          echo Configure: IsolCpus latency requirements
+          cat /proc/cmdline  | tr ' ' '\n' | grep -q ^idle=poll
+          if [ $? -eq 0 ]; then
+            echo "WARNING: Using idle=poll as a kernel paramter makes per-cpu pm qos redundant"
+            return
+          fi
+
+          for CPU in $ISOLATED_CPUS; do
+            SYSFS_PARAM="/sys/devices/system/cpu/cpu$CPU/power/pm_qos_resume_latency_us"
+            if [ ! -e $SYSFS_PARAM ]; then
+              echo "WARNING: Unable to set PM QOS max latency for CPU $CPU\n"
+              continue
+            fi
+            echo $MAX_EXIT_LATENCY > $SYSFS_PARAM
+            echo "Set PM QOS maximum resume latency on CPU $CPU to ${MAX_EXIT_LATENCY}us"
+          done
+        }
+
+        delay_vmstat_updates() {
+          echo Configure: Delay vmstat updates
+          sysctl -w vm.stat_interval=300
+        }
+
+        set_cpufreq_performance
+        unset_timer_migration
+        migrate_kdaemons_hk
+        set_isolatecpu_latency
+        delay_vmstat_updates
+
+
+
+    - name: sriov-auto-filler.sh
+      content: |
+        #!/bin/bash
+        cat <<- EOF > /var/sriov-networkpolicy-template.yaml
+        apiVersion: sriovnetwork.openshift.io/v1
+        kind: SriovNetworkNodePolicy
+        metadata:
+          name: atip-RESOURCENAME
+          namespace: sriov-network-operator
+        spec:
+          nodeSelector:
+            feature.node.kubernetes.io/network-sriov.capable: "true"
+          resourceName: RESOURCENAME
+          deviceType: DRIVER
+          numVfs: NUMVF
+          mtu: 1500
+          nicSelector:
+            pfNames: ["PFNAMES"]
+            deviceID: "DEVICEID"
+            vendor: "VENDOR"
+            rootDevices:
+              - PCIADDRESS
+        EOF
+
+        export KUBECONFIG=/etc/rancher/rke2/rke2.yaml; export KUBECTL=/var/lib/rancher/rke2/bin/kubectl
+
+        while true; do
+          export NODE_NAME=$(${KUBECTL} --kubeconfig=${KUBECONFIG} get nodes -o json | jq -r '.items[] | select(.metadata.labels."node-role.kubernetes.io/control-plane" != "true" and (.status.conditions[]? | select(type=="object") | select(.type=="Ready" and .status=="True"))) | .metadata.name' | head -n1)
+
+          syncStatus=$(${KUBECTL} --kubeconfig=${KUBECONFIG} get sriovnetworknodestates.sriovnetwork.openshift.io -n sriov-network-operator -ojson | jq -r ".items[] | select(.metadata.name==\"${NODE_NAME}\") | .status.syncStatus")
+          if [ -z "$syncStatus" ] || [ "$syncStatus" != "Succeeded" ]; then
+            sleep 10
+          else
+            break
+          fi
+        done
+
+        input=$(${KUBECTL} --kubeconfig=${KUBECONFIG} get cm sriov-custom-auto-config -n sriov-network-operator -ojson | jq -r '.data."config.json"')
+        jq -c '.[]' <<< $input | while read i; do
+          interface=$(echo $i | jq -r '.interface')
+          pfname=$(echo $i | jq -r '.pfname')
+          resourceName=$(echo $i | jq -r '.resourceName')
+
+          # Check if the resource already exists
+          if ${KUBECTL} --kubeconfig=${KUBECONFIG} get sriovnetworknodepolicy.sriovnetwork.openshift.io "atip-$resourceName" -n sriov-network-operator &>/dev/null; then
+            echo "Resource $resourceName already exists, skipping."
+            continue
+          fi
+
+          pciaddress=$(${KUBECTL} --kubeconfig=${KUBECONFIG} get sriovnetworknodestates.sriovnetwork.openshift.io -n sriov-network-operator -ojson | jq -r ".items[] | select(.metadata.name==\"${NODE_NAME}\") | .status.interfaces[] | select(.name==\"$interface\") | .pciAddress")
+          vendor=$(${KUBECTL} --kubeconfig=${KUBECONFIG} get sriovnetworknodestates.sriovnetwork.openshift.io -n sriov-network-operator -ojson | jq -r ".items[] | select(.metadata.name==\"${NODE_NAME}\") | .status.interfaces[] | select(.name==\"$interface\") | .vendor")
+          deviceid=$(${KUBECTL} --kubeconfig=${KUBECONFIG} get sriovnetworknodestates.sriovnetwork.openshift.io -n sriov-network-operator -ojson | jq -r ".items[] | select(.metadata.name==\"${NODE_NAME}\") | .status.interfaces[] | select(.name==\"$interface\") | .deviceID")
+          driver=$(echo $i | jq -r '.driver')
+
+          yamlContent=$(sed -e "s/RESOURCENAME/$resourceName/g" \
+                          -e "s/DRIVER/$driver/g" \
+                          -e "s/PFNAMES/$pfname/g" \
+                          -e "s/VENDOR/$vendor/g" \
+                          -e "s/DEVICEID/$deviceid/g" \
+                          -e "s/PCIADDRESS/$pciaddress/g" \
+                          -e "s/NUMVF/$(echo $i | jq -r '.numVFsToCreate')/g" /var/sriov-networkpolicy-template.yaml)
+
+          echo "$yamlContent" | ${KUBECTL} 
+--kubeconfig=${KUBECONFIG} apply -f -
+        done
+
+
+
+    - name: udp-tuning.conf
+      content: |
+        net.core.rmem_max = 1342177280
+        net.core.wmem_max = 516777216
+        net.core.rmem_default = 10000000
+        net.core.wmem_default = 10000000
+        net.core.netdev_max_backlog = 416384
+        net.core.optmem_max = 25165824
+        net.ipv4.udp_mem = 11416320 15221760 22832640
+        net.core.netdev_budget = 1024
+        net.ipv4.udp_rmem_min = 16384
+        net.ipv4.udp_wmem_min = 16384
+        net.ipv4.conf.all.rp_filter = 0
+        net.core.optmem_max = 4194304
+        net.ipv4.conf.all.send_redirects = 0
+----
+
+* Custom Scripts:
+
+[source, console]
+----
+    - name: 100-performance.sh
+      content: |
+        #!/bin/bash
+        # create the folder to extract the artifacts there
+        mkdir -p /opt/performance-settings
+        # copy the artifacts
+        cp performance-settings.sh /opt/performance-settings/
+
+    - name: 101-sriov.sh
+      content: |    - name: 100-performance.sh
+      content: |
+        #!/bin/bash
+        # create the folder to extract the artifacts there
+        mkdir -p /opt/performance-settings
+        # copy the artifacts
+        cp performance-settings.sh /opt/performance-settings/
+
+    - name: 101-sriov.sh
+      content: |
+        #!/bin/bash
+        # create the folder to extract the artifacts there
+        mkdir -p /opt/sriov
+        # copy the artifacts
+        cp sriov-auto-filler.sh /opt/sriov/sriov-auto-filler.sh
+
+    - name: 102-udp-tuning.sh
+      content: |
+        #!/bin/bash
+        if ip link show eth2 > /dev/null 2>&1; then
+          cp udp-tuning.conf /etc/sysctl.d/udp-tuning.conf
+          sysctl -p /etc/sysctl.d/udp-tuning.conf
+          sysctl kernel.sched_rt_runtime_us=-1
+          ethtool -C eth2 rx-usecs 50
+          ethtool -C eth2 tx-usecs 50
+          ethtool -C eth2 adaptive-rx on
+          ethtool -C eth2 adaptive-tx on
+          ethtool -K eth2 rx-checksum on
+          ethtool -K eth2 gro on
+        fi
+        #!/bin/bash
+        # create the folder to extract the artifacts there
+        mkdir -p /opt/sriov
+        # copy the artifacts
+        cp sriov-auto-filler.sh /opt/sriov/sriov-auto-filler.sh
+
+    - name: 102-udp-tuning.sh
+      content: |
+        #!/bin/bash
+        if ip link show eth2 > /dev/null 2>&1; then
+          cp udp-tuning.conf /etc/sysctl.d/udp-tuning.conf
+          sysctl -p /etc/sysctl.d/udp-tuning.conf
+          sysctl kernel.sched_rt_runtime_us=-1
+          ethtool -C eth2 rx-usecs 50
+          ethtool -C eth2 tx-usecs 50
+          ethtool -C eth2 adaptive-rx on
+          ethtool -C eth2 adaptive-tx on
+          ethtool -K eth2 rx-checksum on
+          ethtool -K eth2 gro on
+        fi
+----
+
+== Deployment details
+=== SUSE Telco Cloud Direct Network provisioning
+
+Directed network provisioning is a feature that allows you to automate
+the provisioning of downstream clusters. This feature is useful when you
+have many downstream clusters to provision, and you want to automate the
+process.
+
+The network architecture is based on the following components:
+
+
+.. Management network: This network is used for the management of
+downstream cluster nodes. It is used for the out-of-band management.
+Usually, this network is also connected to a separate management switch,
+but it can be connected to the same service switch using VLANs to
+isolate the traffic.
+
+.. Control-plane network: This network is used for the communication
+between the downstream cluster nodes and the services that are running
+on them. This network is also used for the communication between the
+nodes and the external services, like the DHCP or DNSservers. In some
+cases, for connected environments, the switch/router can handle traffic
+through the Internet.
+
+.. Other networks: In some cases, nodes could be connected to other
+networks for specific purposes.
+
+image::image7.png[deployment-details, scaledwidth="100%", align="left"]
+
+
+[TIP]
+====
+We assume that the management cluster is already deployed to focus
+on the downstream cluster for running Telco performance tests
+====
+
+
+==== Cluster API & SUSE Telco Cloud
+
+Cluster API is a Kubernetes sub-project focused on providing declarative
+APIs and tooling to simplify provisioning, upgrading, and operating
+multiple Kubernetes clusters.
+
+Started by the Kubernetes Special Interest Group (SIG) Cluster
+Lifecycle, the Cluster API project uses Kubernetes-style APIs and
+patterns to automate cluster lifecycle management for platform
+operators. The supporting infrastructure, like virtual machines,
+networks, load balancers, and VPCs, as well as the Kubernetes cluster
+configuration are all defined in the same way that application
+developers operate deploying and managing their workloads. This enables
+consistent and repeatable cluster deployments across a wide variety of
+infrastructure environments.
+
+This section describes the workflow used to automate the provisioning of
+a single-node downstream cluster using directed network provisioning
+using SUSE Telco Cloud. This is the simplest way to automate the
+provisioning of a downstream cluster.
+
+The image generated using EIB, as described in the previous section,
+with the minimal configuration to set up the downstream cluster has to
+be located in the management cluster.
+
+The following diagram shows the workflow used to automate the
+provisioning of a single-node downstream cluster using directed network
+provisioning:
+
+image::image4.png[capi-metal3, scaledwidth="100%", align="left"]
+
+
+==== CAPI and Metal3 Manifests
+
+The complete example is available in the
+{github-capi-manifest}[Telco
+Examples Repository]. For a better understanding of the CAPI and metal3
+manifest details, we will explain the full manifest section by section.
+
+The following section describes all the important parts for Telco inside
+the full yaml file:
+
+
+* Pre_rke2_commands
+
+This is a requirement to enable the possibility of creating VF (virtual
+functions) using SRIOV
+
+[source, console]
+----
+ modprobe vfio-pci enable_sriov=1 disable_idle_d3=1
+
+----
+
+
+* Kernel_arguments
+
+The kernel arguments are important to be configured to enable the
+real-time kernel to work properly giving the best performance and low
+latency to run telco workloads. There are some important concepts to
+keep in mind when configuring the kernel arguments for this use case. If
+you want to see the full description of each kernel argument you can
+follow the
+{suse-Kernel-arguments}[official
+documentation]
+
+[source, console]
+----
+   - randomize_kstack_offset=0
+      - rd.timeout=60
+      - rd.retry=45
+      - console=ttyS1,115200
+      - console=tty0
+      - hugepagesz=1G hugepages=20
+      - hugepagesz=2M hugepages=0
+      - default_hugepagesz=1G
+      - ignition.platform.id=openstack
+      - intel_iommu=on
+      - iommu=pt
+      - irqaffinity=0-5
+      - isolcpus=domain,nohz,managed_irq,6-127
+      - mce=off
+      - nohz=on
+      - net.ifnames=1
+      - nmi_watchdog=0
+      - nohz_full=6-127
+      - nosoftlockup
+      - nowatchdog
+      - quiet
+      - rcu_nocb_poll
+      - rcu_nocbs=6-127
+      - rcupdate.rcu_cpu_stall_suppress=1
+      - rcupdate.rcu_expedited=1
+      - rcupdate.rcu_normal_after_boot=1
+      - rcupdate.rcu_task_stall_timeout=0
+      - rcutree.kthread_prio=99
+      - security=selinux
+      - selinux=1
+----
+
+
+* Systemd_units
+
+This is the way to fine tuning the system once the system has been
+deployed using CAPI. As you can see, there are some kind of cpu tuning
+tasks, performance scripts as well as the VF (virtual function) & SRIOV
+creation to make it easy and fully automated.
+
+
+[source, console]
+----
+    - name: cpu-partitioning.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=cpu-partitioning
+        Wants=network-online.target
+        After=network.target network-online.target
+        [Service]
+        Type=oneshot
+        User=root
+        ExecStart=/bin/sh -c "echo isolated_cores=6-127 > /etc/tuned/cpu-partitioning-variables.conf"
+        ExecStartPost=/bin/sh -c "tuned-adm profile cpu-partitioning"
+        ExecStartPost=/bin/sh -c "systemctl enable tuned.service"
+        [Install]
+        WantedBy=multi-user.target
+    - name: performance-settings.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=performance-settings
+        Wants=network-online.target
+        After=network.target network-online.target cpu-partitioning.service
+        [Service]
+        Type=oneshot
+        User=root
+        ExecStart=/bin/sh -c "/opt/performance-settings/performance-settings.sh"
+        [Install]
+        WantedBy=multi-user.target
+    - name: sriov-custom-auto-vfs.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=SRIOV Custom Auto VF Creation
+        Wants=network-online.target  rke2-server.target
+        After=network.target network-online.target rke2-server.target
+        [Service]
+        User=root
+        Type=forking
+        TimeoutStartSec=5400
+        ExecStart=/bin/sh -c '/bin/sh -c "while ! /var/lib/rancher/rke2/bin/kubectl --kubeconfig=/etc/rancher/rke2/rke2.yaml wait --for condition=ready nodes --timeout=30m --selector='\''!node-role.kubernetes.io/control-plane'\'' ; do sleep 10 ; done"'
+        ExecStartPost=/bin/sh -c "/opt/sriov/sriov-auto-filler.sh"
+        RemainAfterExit=yes
+        KillMode=process
+        [Install]
+        WantedBy=multi-user.target
+----
+
+* files (Apply this only in the RKE2ControlPlane)
+
+The following file allows you to configure the SRIOV params to decide
+the number of VFs, the PF interface, and the driver you want to use.
+
+For more information you can follow the
+{suse-sriov}[official
+documentation] to get more information about the configurations
+available.
+
+
+[source, console]
+----
+    - name: cpu-partitioning.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=cpu-partitioning
+        Wants=network-online.target
+        After=network.target network-online.target
+        [Service]
+        Type=oneshot
+        User=root
+        ExecStart=/bin/sh -c "echo isolated_cores=6-127 > /etc/tuned/cpu-partitioning-variables.conf"
+        ExecStartPost=/bin/sh -c "tuned-adm profile cpu-partitioning"
+        ExecStartPost=/bin/sh -c "systemctl enable tuned.service"
+        [Install]
+        WantedBy=multi-user.target
+    - name: performance-settings.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=performance-settings
+        Wants=network-online.target
+        After=network.target network-online.target cpu-partitioning.service
+        [Service]
+        Type=oneshot
+        User=root
+        ExecStart=/bin/sh -c "/opt/performance-settings/performance-settings.sh"
+        [Install]
+        WantedBy=multi-user.target
+    - name: sriov-custom-auto-vfs.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=SRIOV Custom Auto VF Creation
+        Wants=network-online.target  rke2-server.target
+        After=network.target network-online.target rke2-server.target
+        [Service]
+        User=root
+        Type=forking
+        TimeoutStartSec=5400
+        ExecStart=/bin/sh -c '/bin/sh -c "while ! /var/lib/rancher/rke2/bin/kubectl --kubeconfig=/etc/rancher/rke2/rke2.yaml wait --for condition=ready nodes --timeout=30m --selector='\''!node-role.kubernetes.io/control-plane'\'' ; do sleep 10 ; done"'
+        ExecStartPost=/bin/sh -c "/opt/sriov/sriov-auto-filler.sh"
+        RemainAfterExit=yes
+        KillMode=process
+        [Install]
+        WantedBy=multi-user.target
+
+----
+
+== Performance Testing
+=== Introduction
+
+
+This performance section is divided into two distinct phases: Network
+Stress Analysis and Deterministic CPU Validation. The objective of the
+networking test is to characterize the limits of the System Under Test
+(SUT) network stack. We are not merely checking for connectivity; we are
+stressing the interface to identify its saturation point and stability
+under load.
+
+* Bandwidth Saturation: We will use iPerf3 to generate synthetic TCP
+traffic that exceeds the theoretical limit of the link. This forces the
+SUT to manage buffer flows and flow control, revealing the maximum
+sustainable Throughput.
+
+* Stability Analysis: We will inject UDP traffic streams to measure Jitter
+(variance in packet arrival time) and Packet Loss. This simulates
+real-time data streams (like video or sensor data) where consistency is
+more critical than raw speed.
+
+* Latency Profiling: We will run concurrent ICMP (Ping) probes during load
+testing to measure the Round-Trip Time (RTT). This determines how
+quickly the network stack can process simple requests while under heavy
+stress.
+The objective of the CPU test is not to measure how fast the processor
+computes data (benchmarking), but rather how predictably it responds to
+events (determinism).
+
+* Latency Histogramming: We will use cyclictest to generate a
+high-frequency loop that sleeps and wakes up at a specific interval. By
+comparing the scheduled wake-up time with the actual wake-up time, we
+calculate the latency. We will run this for an extended period to catch
+rare "spikes" caused by hardware interrupts or kernel locks.
+
+* Load Simulation: We will use rt-app to simulate a synthetic real-time
+application payload. This ensures the scheduler is being tested under
+conditions that mimic a production environment.
+
+* Threshold Validation: We analyze the maximum latency outlier. The strict
+success criterion is that no single event may be delayed by more than
+10μs. Any spike above this threshold indicates a failure in the
+real-time configuration (e.g., non-preemptible kernel sections or power
+management interference).
+
+The following sections outline the operational strategy for each phase.
+
+=== Network Performance
+
+These automated tests utilize Iperf3 to send traffic at a rate of 250
+Mbps with a 64B packet size.
+
+Our testing methodology involves creating two Pods: one configured as a
+server and the other as a client. We then initiate traffic from the
+client to the server and subsequently measure packet loss. This
+environment allows us to test four distinct scenarios.
+
+. Two nodes without SRIOV
+
+. Single node without SRIOV
+
+. Single node with SRIOV
+
+. Two nodes with SRIOV
+
+image::image8.png[network-performance, scaledwidth="60%", align="left"]
+
+
+For the test to be considered successful, the packet drop rate must be
+below 1%. Below is an example of the output from one of the scenarios:
+
+[source, console]
+----
+Connecting to host 192.168.5.137, port 5201
+[  5] local 192.168.19.217 port 33947 connected to 192.168.5.137 port 5201
+[ ID] Interval           Transfer     Bitrate         Total Datagrams
+[  5]   0.00-1.00   sec  8.69 MBytes  72.8 Mbits/sec  142395  
+[  5]   1.00-2.00   sec  8.80 MBytes  73.8 Mbits/sec  144138  
+[  5]   2.00-3.00   sec  8.78 MBytes  73.7 Mbits/sec  143865  
+[  5]   3.00-4.00   sec  8.78 MBytes  73.6 Mbits/sec  143841  
+[  5]   4.00-5.00   sec  8.77 MBytes  73.6 Mbits/sec  143732  
+[  5]   5.00-6.00   sec  8.78 MBytes  73.6 Mbits/sec  143851  
+[  5]   6.00-7.00   sec  8.78 MBytes  73.6 Mbits/sec  143822  
+[  5]   7.00-8.00   sec  8.77 MBytes  73.6 Mbits/sec  143752  
+[  5]   8.00-9.00   sec  8.78 MBytes  73.6 Mbits/sec  143821  
+[  5]   9.00-10.00  sec  8.79 MBytes  73.7 Mbits/sec  144057  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bitrate         Jitter    Lost/Total Datagrams
+[  5]   0.00-10.00  sec  87.7 MBytes  73.6 Mbits/sec  0.000 ms  0/1437274 (0%)  sender
+[  5]   0.00-10.00  sec  87.7 MBytes  73.6 Mbits/sec  0.011 ms  162/1437274 (0.011%)  receiver
+
+iperf Done.
+
+----
+
+=== CPU Performance
+For the cpu-performance we use the following projects:
+
+* {github-rtapp}[RT-App]
+
+* https://gitlab.suse.de/edge-engineering/telco-performance/-/tree/main/Performance-settings/rt-low-latency-tools[Cyclictest]
+
+For this test, we generated a 95% load using rt-app. Subsequently, we
+executed two distinct tests (isolated/HK cores), each lasting two hours.
+
+
+The testing involves two scenarios:
+
+. Isolated Core Capacity: Measures the system's ability to schedule new
+tasks on the isolated cores when they are under a heavy load (95%
+utilization using rt-app).
+
+. System Under Stress: Measures the performance of the isolated cores
+while the housekeeping cores are experiencing a high load (95%
+utilization using rt-app), simulating potential system issues.
+
+
+For the test to be considered successful, the maximum latency of each
+core should be less than 10 us.
+
+[source, console]
+----
+cyclictest -F /tmp/cyclictest-monitor.pipe -p98 -t36
+--affinity=<cpu-isolated-cores> --mainaffinity=1 :--interval=1000
+--histogram=60 --spike=10 --duration=7200 --quiet
+----
+
+Below is an example of the output from one of the tests:
+
+image::image1.png[cpu-performance, scaledwidth="100%", align="left"]
+
+[source, console]
+----
+# Max Latencies: 00006 00006 00006 00006 00007 00006 00006 00006 00007 00006 00006 00006 00007 00005 00006 00006 00006 00006 00006 00007 00009 00008 00008 00008 00005 00006 00006 00007 00006 00006 00006 00006 00006 00006 00006 00007 00006 00006 00007 00006 00006 00006 00006 00006 00006 00008 00008 00008 00008 00008 00005 00006 00006 00005 00006 00006 00006 00005 00006 00009 00009 00008 00008 00008 00008 00008 00008 00006 00006 00006 00006 00006 00006 00006 00006 00008 00006 00006 00006 00007 00008 00006 00006 00005 00008 00008 00008 00008 00006 00007 00007 00006 00006 00006 00006 00006 00008 00008 00008 00005 00006 00006 00006 00006 00006 00006 00006 00007 00007 00008 00007 00007 00007 00007 00007 00006 00006 00006 00006 00006 00006 00006
+
+----
+
+image::image2.png[cpu-performance2, scaledwidth="100%", align="left"]
+
+== Conclusion and next steps
+
+The Ampere and SUSE joint solution for telco clouds delivers a
+future-proof, open, cloud-native telco platform that combines unmatched
+core density, best-in-class power efficiency, and carrier-grade
+real-time performance, all without the need of additional accelerators
+or vendor lock-in.
+
+Operators can now deploy high-capacity 5G RAN and edge services at
+dramatically lower power, space, and total cost while preserving full
+flexibility to run any CNF or VNF on the same infrastructure.
+
+Next Steps:
+
+* Explore the {suse-telco-cloud}[SUSE Telco Cloud documentation]
+
+* Schedule a joint proof-of-concept or sizing workshop with your {suse-contact}[SUSE] and {ampere-contact}[Ampere Computing] account teams
+
+* Meet with the {mwcbarcelona-suse}[SUSE] and {mwcbarcelona-suse}[Ampere Computing] teams in person at Mobile World Congress 2026 in March!
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
