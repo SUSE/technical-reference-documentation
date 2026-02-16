@@ -40,7 +40,9 @@ include::./rc_suse-telco_supermicro-intel_ai-native-vars.adoc[]
 
 Telecommunications operators are transforming their networks to support 5G-Advanced, ORAN, massive MEC scale-out, and AI-driven automation. These transformations demand infrastructure that simultaneously delivers extreme packet-processing performance, deterministic low latency, integrated AI acceleration, and dramatically lower power and space footprints.
 
-This reference configuration documents the successful validation of the {stelco-long} stack, featuring {rancher-long}, running on a Supermicro {smss} powered by Intel® Xeon® 6 SoC processors, proving that a single-socket, CPU-only platform can replace legacy accelerator-heavy designs.
+This reference configuration documents the successful validation of the {stelco-long} stack, featuring {rancher-long}, 
+running on a Supermicro {smss} powered by Intel® Xeon® 6 SoC processors. 
+This solution proves that a single-socket, CPU-only platform can replace legacy accelerator-heavy designs.
 
 
 
@@ -90,7 +92,8 @@ The authors wish to acknowledge the contributions of the following individuals t
 Telecommunications operators today face an *unprecedented convergence of pressures* that legacy
 infrastructure was never designed to handle.
 Traffic volumes are exploding, driven by nationwide 5G rollout, massive IoT deployments, ultra-high-definition video streaming, private 5G networks, and enterprise edge services.
-At the same time, service-level agreements have become far more stringent with *sub-millisecond end-to-end latency and microsecond-level jitter* now mandatory for ORAN fronthaul/midhaul transport, Ultra-Reliable Low-Latency Communication (URLLC), industrial automation, and Extended Reality (XR) applications.
+At the same time, service-level agreements have become far more stringent. *Sub-millisecond end-to-end latency and microsecond-level jitter* are now mandatory for 
+ORAN fronthaul/midhaul transport, Ultra-Reliable Low-Latency Communication (URLLC), industrial automation, and Extended Reality (XR) applications.
 
 Compounding this is the *rapid integration of artificial intelligence* into every layer of the network.
 Modern RAN and core functions increasingly rely on embedded machine-learning models for dynamic beamforming, traffic prediction, interference management, anomaly detection, and closed-loop automation through RIC platforms.
@@ -118,20 +121,26 @@ Outdoor-rated and air-cooled compact designs with redundant Titanium power suppl
 The integrated E830 NIC delivers nanosecond-accurate Precision Time Protocol (PTP) and SyncE synchronization essential for vRAN and ORAN deployments.
 The 1U system is already an {oran-doc}[{oran}].
 
-SUSE completes the solution with {stelco}, the hardened, modular, cloud-native software stack specifically designed to meet the strict demands of the telecommunications industry by enabling operators to host both VNFs and CNFs on the same platform.
+SUSE completes the solution with {stelco}, its hardened, modular, cloud-native software stack. Specifically designed to meet the strict demands 
+of the telecommunications industry, it enables operators to host both VNFs and CNFs on the same platform.
 Built on {slm-website}[{slm}], {rke2-website}[{rke2}], and {rancher-website}[{rancher}], the platform provides a secure, carrier-grade foundation for 5G, fixed access, OSS/BSS, and edge infrastructure.
 {stelco} is built entirely on open source and has been rigorously validated to deliver reliable performance at scale.
 Its AI-ready, disaggregated architecture supports zero-touch automation and the flexibility to integrate best-of-breed network functions efficiently and sustainably.
 
 {stelco} offers automated lifecycle management for infrastructure components, support for multi-cloud and edge deployments with consistent operations, and enhanced observability through integrated monitoring tools.
 Furthermore, it ensures security at scale, from OS hardening to container scanning, while its foundation in open standards and ecosystem support effectively prevents vendor lock-in.
-A key differentiator is SUSE’s robust edge computing capabilities, as {stelco} is optimized for constrained environments, enabling telcos to deploy CNFs and VNFs in remote or decentralized locations with minimal overhead - a flexibility essential for new 5G-powered services like smart city infrastructure and industrial IoT.
+A key differentiator is SUSE’s robust edge computing capabilities, as {stelco} is optimized for constrained environments. 
+This allows telcos to deploy CNFs and VNFs in remote or decentralized locations with minimal overhead - a flexibility essential for new 5G-powered services like smart city infrastructure and industrial IoT.
 The solution also facilitates zero-touch provisioning and seamless orchestration at the edge, which dramatically reduces operational complexity and deployment times.
 Ultimately, with its modular, open architecture, {stelco} allows operators to unlock efficiencies in the core, deploy innovative services at the edge, and adapt rapidly to future market demands.
 
-By uniting Intel’s fully-integrated vRAN Boost and AI acceleration, Supermicro’s rugged edge-system engineering and global supply-chain excellence, and SUSE’s zero-touch, GitOps-driven telco cloud stack, this solution delivers a *true single-box, CPU-only telco cloud node* that simultaneously replaces the legacy BBU, external L1 accelerator (FPGA/in-line card), SmartNIC, timing card, and discrete AI inference appliances.
+The solution unites Intel’s fully-integrated vRAN Boost and AI acceleration, Supermicro’s rugged edge-system engineering and global supply-chain 
+excellence, and SUSE’s zero-touch, GitOps-driven telco cloud stack. The result is a *true single-box, CPU-only telco cloud node* that simultaneously 
+replaces the legacy BBU, external L1 accelerator (FPGA/in-line card), SmartNIC, timing card, and discrete AI inference appliances.
 Under a 95% CPU load on the isolated cores, the platform *successfully achieves a measure of latency of sub 5 µs*.
-This achievement demonstrates that this consolidated, CPU-only architecture in a single, outdoor-rated system can deliver the guaranteed, deterministic, low-latency performance required for the most demanding 5G and ORAN use cases that previously had to be spread across multiple devices.
+This achievement demonstrates that a consolidated, CPU-only architecture in a single, outdoor-rated system can deliver guaranteed, 
+deterministic, low-latency performance. Thus, it meets the requirements of the most demanding 5G and ORAN use cases that previously 
+had to be spread across multiple devices.
 
 With this, operators can realize {ref-vran-perf}[dramatic gains]:
 
@@ -167,8 +176,10 @@ image::intelxeon6soc-overview-2.png[title="{cpu} performance boosts", {cpu} perf
 
 
 Building on this foundation, Intel vRAN Boost integrates vRAN acceleration directly into the SoC.
-Intel vRAN Boost is sized to ensure ample headroom even in the most intense use-cases and with the highest core count options, allowing future software optimizations to further increase server capacity without worrying about hitting acceleration limits.
-And, independent software vendors and developers using the O-RAN Acceleration Abstraction Layer standardized DPDK interface can optimize their vRAN software stacks for vRAN Boost hardware acceleration and easily move from one generation of Intel vRAN Boost to the next.
+Intel vRAN Boost is sized to provide ample headroom, even in the most intense use-cases and with high-core-count options.
+This overhead allows for future software optimizations that increase server capacity without the risk of hitting acceleration limits.
+And, independent software vendors and developers using the O-RAN Acceleration Abstraction Layer standardized DPDK interface 
+can optimize their vRAN software stacks for vRAN Boost hardware acceleration and easily move from one generation of Intel vRAN Boost to the next.
 
 image::intelxeon6soc-vran-performance.png[title="{cpu} vRAN performance", {cpu} vRAN performance, align="center", width=90%]
 
@@ -216,7 +227,9 @@ For more details, visit the product pages:
 
 === {stelco-long}
 
-The {stelco} platform provides a validated, carrier-grade, cloud-native foundation that empowers telco enterprises with a disaggregated, AI-ready architecture that can sustainably scale infrastructures while seamlessly deploying GenAI, predictive AI, and latency-sensitive applications at the edge.
+The {stelco} platform provides a validated, carrier-grade, cloud-native foundation. Its disaggregated, 
+AI-ready architecture allows telco enterprises to scale infrastructure sustainably while seamlessly deploying GenAI, predictive AI, 
+and latency-sensitive applications at the edge.
 
 image::suse-telco-cloud_architecture.png[title="{stelco} architecture", {stelco} architecture, align="center", width=90%]
 
@@ -293,7 +306,7 @@ They include:
 * {clusterctl-website}[Clusterctl]
 * Container runtime, such as {podman-website}[Podman] or {rancherdesktop-website}[Rancher Desktop]
 
-Additionally, the {slm-long} OS image must be downloaded from the {scc-website}[SUSE Customer Center] or {slm-downloads}[SUSE {slm} Downloads page].
+Additionally, the {slm} OS image must be downloaded from the {scc-website}[SUSE Customer Center] or {slm-downloads}[SUSE {slm} Downloads page].
 The selected image file at the time of publication is `SL-Micro.x86_64-6.1-Base-GM.raw.xz`.
 
 
@@ -376,7 +389,7 @@ You can find examples of the directory structure and files in the {sedge-long} G
 +
 [IMPORTANT]
 ====
-The {slm-long} OS image must be downloaded from the {scc-website}[{scc-long}] or {slm-downloads}[{slm} Downloads page], and it must be located under the `base-images` directory.
+The {slm} OS image must be downloaded from the {scc-website}[{scc-long}] or {slm-downloads}[{slm} Downloads page], and it must be located under the `base-images` directory.
 ====
 
 . Follow {stelco-docs-kiwi-builder}[Building updated SUSE Linux Micro images with {kiwi}] to create your {kiwi-docs}[{kiwi}] ISO image.
@@ -516,7 +529,7 @@ Build complete, the image can be found at: eib-mgmt-cluster-x86_64-image-61-34.i
 
 Follow the steps below to generate the EIB RAW image for Downstream Clusters.
 
-. The folder `eib-edge-34-61` contains all the necessary files to generate the EIB RAW image for Downstream Clusters with some telco packages and performance scripts.
+. The directory `eib-edge-34-61` contains all the necessary files to generate the EIB RAW image for Downstream Clusters with some telco packages and performance scripts.
 //
 +
 You can get a copy of the file contents in {stelco-docs-automated}[Fully automated directed network provisioning].
@@ -540,7 +553,7 @@ You can get a copy of the file contents in {stelco-docs-automated}[Fully automat
     └── configure-network.sh
 ----
 
-. Add your {kiwi} ISO image as a base-image in the `base-images` folder.
+. Add your {kiwi} ISO image as a base-image in the `base-images` directory.
 
 . The configuration file, `edge-cluster.yaml`, details the packages and scripts that will be included in the image.
 //
@@ -635,8 +648,8 @@ Telco operators can use the following deployment checklist:
 
 {stelco-docs-automated}[Directed network provisioning] is a feature that allows you to automate the provisioning of Downstream Clusters.
 This is a useful feature when you have many Downstream Clusters to provision and want to automate the process.
-{metal3-website}[{metal3}] is an open-source project that provides tools for managing bare-metal infrastructure in Kubernetes.
-With its {capi-website}[{capi-long} ({capi})] integrations, {metal3} is able to manage infrastructure resources across many infrastructure providers via broadly adopted vendor-neutral APIs.
+{metal3-website}[{metal3}] is an open source project that provides tools for managing bare-metal infrastructure in Kubernetes.
+With its {capi-website}[{capi-long} ({capi})] integrations, {metal3} can manage infrastructure resources across many infrastructure providers via broadly adopted vendor-neutral APIs.
 
 
 ==== Management Cluster deployment
@@ -654,7 +667,7 @@ image::8.1.3-boot-1.png[title="Power on the server", Power on the server, align=
 image::8.1.3-boot-2.png[title="Boot the ISO image", Boot the ISO image, align="center", width=90%]
 
 . The installation starts automatically without any manual interaction.
-This includes installation and configuration of {slm} as well as {rke2} with all required Helm charts.
+This includes installation and configuration of {slm} and {rke2} with all required Helm charts.
 This process is illustrated in the following screenshots.
 +
 image::8.1.3-installation-1.png[title="Boot the installer", Boot the installer, align="center", width=90%]
@@ -705,7 +718,7 @@ These files include the BareMetalHost definition file (`bmh.yaml`) and the Provi
 //
 For reference, see <<Sample BareMetalHost definition file (`bmh.yaml`)>>.
 
-. Apply the manifests using kubectl (alternatively it could be applied using Rancher UI):The manifests should be applied utilizing kubectl (an alternative method is to apply them via the Rancher UI):
+. Apply the manifests using kubectl (alternatively it could be applied using Rancher UI): The manifests should be applied using kubectl (an alternative method is to apply them via the Rancher UI):
 +
 [source, console]
 ----
@@ -850,11 +863,13 @@ image::9.2-latency-plot.png[title="Real-Time CPU Latency Distribution", Real-Tim
 
 == Conclusions and next steps
 
-This validated reference design illustrates that {stelco-long}, running on {smss-long}s and powered by {cpu-long} processors, can deliver a CPU-only, telco edge platform that meets stringent telco requirements and is capable of supporting AI-native, low-latency workloads at scale.
+This validated reference design illustrates a high-performance telco edge platform built on {stelco-long}, {smss-long}s, and {cpu-long} processors. 
+By utilizing a CPU-only architecture, the design meets stringent telco standards and requirements and scales effectively for AI-native, low-latency workloads. 
 By replacing legacy accelerator-heavy designs with an integrated architectures, operators can significantly improve RAN capacity, power efficiency, and AI inference performance while reducing physical footprint, deployment complexity, and operational risk.
 Moreover, {stelco} provides a hardened, cloud-native foundation with zero-touch provisioning, consistent lifecycle management, and support for both VNFs and CNFs across core, edge, and far-edge environments.
 
-Together, {stelco-provider}, {smss-provider}, and {cpu-provider} enable operators to stop compromising and modernize their networks, scale AI-driven services, and prepare for next-generation 5G-Advanced and 6G use cases while lowering total cost of ownership and improving sustainability.
+Together, {stelco-provider}, {smss-provider}, and {cpu-provider} enable operators to modernize their networks without compromise.  
+This partnership helps scale AI-driven services, and prepare users for next-generation 5G-Advanced and 6G use cases, all  while lowering TCO and improving sustainability.
 
 
 Continue your learning journey with these resources:
@@ -866,7 +881,7 @@ Continue your learning journey with these resources:
 * {smss-provider}'s {smss112-website}[{smss112}] and {smss212-website}[{smss212}] specifications
 
 
-To move forward with transforming your network, please contact your {stelco-provider}, {cpu-provider}, or {smss-provider} account team to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs.
+To move forward with transforming your network, contact your {stelco-provider}, {cpu-provider}, or {smss-provider} account team to arrange a joint solution workshop and receive expert sizing assistance tailored to your specific deployment needs.
 
 
 
