@@ -19,22 +19,36 @@ include::./rc_suse-virtualization_netapp-trident_iscsi-vars.adoc[]
 // Introduction
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide focuses on the solution comprising {comp1-long} and {comp2-long}, leveraging {comp3-long}. The motivation and purpose of this solution center around enabling {comp1-long} to use external, high-performance NetApp storage for persistent volumes, specifically allowing for the creation of VMs with disks assigned using a NetApp-backed StorageClass.
+In this guide, you learn how to leverage {ontap-brand} and the {trident-brand} to provide to deliver high-performance {ontap-provider} storage for virtual machines (VMs) hosted in your {svirt-brand} environment.
+
+////
+This guide focuses on the solution comprising SUSE Virtualization and NetApp ONTAP Storage, leveraging Trident Container Storage Interface (CSI).
+The motivation and purpose of this solution center around enabling SUSE Virtualization to use external, high-performance NetApp storage for persistent volumes, specifically allowing for the creation of VMs with disks assigned using a NetApp-backed StorageClass.
+////
+
 
 === Scope
 
-This guide covers the detailed steps required for setting up a three-node {comp1-long} cluster to consume NetApp storage via iSCSI and Trident CSI. It includes steps for LUN provisioning, multipath configuration, Trident installation, StorageClass definition, and basic validation.
+This guide covers the detailed steps required for setting up a three-node {svirt-long} cluster to consume {ontap-provider} storage with the {trident-long}.
+It includes steps for LUN provisioning, multipath configuration, {trident} installation, StorageClass definition, and basic validation.
+
 
 === Audience
 
-This guide is intended for IT professionals responsible for virtualization and infrastructure management, such as Infrastructure Architects, Systems Administrators, or Platform Engineers.
+This guide is intended for IT professionals responsible for virtualization and infrastructure management, such as infrastructure architects, systems administrators, or platform engineers.
 
 To successfully follow this guide, you should have:
 
-* Familiarity with {comp1-long} deployment and configuration.
-* Experience with NetApp storage provisioning and management.
-* Understanding of iSCSI configuration concepts.
-* Working knowledge of Kubernetes commands, particularly for Trident CSI and secret management.
+* Familiarity with {svirt-long} deployment and configuration
+* Experience with {ontap-provider} storage provisioning and management
+* Understanding of iSCSI concepts and configuration
+* Working knowledge of Kubernetes
+
+
+
+////
+These individuals are named as authors, so they do not need to be named here.
+If you prefer to list these individuals here, remove them from the author metadata tags.
 
 === Acknowledgments
 
@@ -46,17 +60,20 @@ The authors wish to acknowledge the contributions of the following individuals:
 
 * Martin George
 * Arun Kumar C
+////
+
 
 === Prerequisites
 
 The following resources and configurations are required to support the solution:
 
-* **{comp1-long} Cluster:** A functional {comp1-docs}[{comp1-long}] cluster must be installed and operational.
-* **{comp2-long}:** A {comp2-docs}[NetApp ONTAP] system must be available that meets the Trident environment prerequisites and is accessible from the {comp1-long} cluster nodes.
-* **Network Connectivity:** Robust network connectivity between all {comp1-long} nodes and the NetApp ONTAP system is required to support storage operations.
-* **Sufficient Resources:** {comp1-long} nodes must have adequate  {comp1-docs1}[CPU, memory, and local disk space] to support the Trident deployment and the expected workloads. Ensure the environment meets the minimum requirements for a stable and supported deployment. A Trident-managed Kubernetes storage setup must include at least three nodes, each meeting specific hardware, software, and network requirements.
-* **Administrative Access:** You need administrative access to the {comp1-docs2}[{comp1-long}] UI and the underlying Kubernetes cluster to apply configurations and manage resources.
-* **Trident and CSI Driver Versions:** Use {comp3-docs}[NetApp Trident] 23.x or newer and a compatible CSI driver version.
+* **{svirt-long} Cluster:** A functional {svirt-docs}[{svirt-long}] cluster must be installed and operational.
+* **{ontap-long}:** A {ontap-docs}[NetApp ONTAP] system must be available that meets the Trident environment prerequisites and is accessible from the {svirt-long} cluster nodes.
+* **Network Connectivity:** Robust network connectivity between all {svirt-long} nodes and the NetApp ONTAP system is required to support storage operations.
+* **Sufficient Resources:** {svirt-long} nodes must have adequate  {svirt-docs-reqs}[CPU, memory, and local disk space] to support the Trident deployment and the expected workloads. Ensure the environment meets the minimum requirements for a stable and supported deployment. A Trident-managed Kubernetes storage setup must include at least three nodes, each meeting specific hardware, software, and network requirements.
+* **Administrative Access:** You need administrative access to the {svirt} UI and the underlying Kubernetes cluster to apply configurations and manage resources.
+See {svirt-docs-faq}[{svirt}: Troubleshooting FAQ].
+* **Trident and CSI Driver Versions:** Use {trident-docs}[NetApp Trident] 23.x or newer and a compatible CSI driver version.
 
 == Architectural overview
 
@@ -64,17 +81,17 @@ The following resources and configurations are required to support the solution:
 // Architecture
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The diagram below illustrates the basic architecture for integrating NetApp storage with {comp1-long}.
+The diagram below illustrates the basic architecture for integrating NetApp storage with {svirt-long}.
 
 image::architecture_diagram.png[title="Architecture: SUSE Virtualization with NetApp ONTAP and Trident", scaledwidth="90%", align="center"]
 
 The solution consists of the components identified below:
 
-* **{comp1-long} (3 nodes):** Provides compute and orchestration for VMs and containers.
-* **{comp2-long}:** External storage backend providing iSCSI LUNs.
-* **{comp3-long}:** Kubernetes CSI driver enabling dynamic provisioning of persistent storage.
+* **{svirt-long} (3 nodes):** Provides compute and orchestration for VMs and containers.
+* **{ontap-long}:** External storage backend providing iSCSI LUNs.
+* **{trident-long}:** Kubernetes CSI driver enabling dynamic provisioning of persistent storage.
 
-**Logical Flow:** {comp1-long} nodes connect to the NetApp ONTAP system over the iSCSI protocol. Multipath provides high availability and redundancy. Trident CSI manages storage lifecycle operations, dynamically provisioning volumes for virtual machines.
+**Logical Flow:** {svirt-long} nodes connect to the NetApp ONTAP system over the iSCSI protocol. Multipath provides high availability and redundancy. Trident CSI manages storage lifecycle operations, dynamically provisioning volumes for virtual machines.
 
 == Deployment overview
 
@@ -84,14 +101,14 @@ For deployment purposes, the solution can be illustrated as a layered stack. The
 
 === Compute platform deployment
 
-The compute platform provides the foundational layer for the solution. The following steps detail how to prepare the {comp1-long} nodes for iSCSI integration.
+The compute platform provides the foundational layer for the solution. The following steps detail how to prepare the {svirt-long} nodes for iSCSI integration.
 
 *Preparation*
 
-. Install a {comp1-long} high-availability cluster.
+. Install a {svirt-long} high-availability cluster.
 .. Ensure each node meets minimum hardware requirements and that hardware virtualization (VT-x/AMD-V) is enabled.
-.. Deploy {comp1-long}. See the official documentation for detailed guidance.
-.. After deployment, confirm you have access to the {comp1-long} cluster management UI and `kubeconfig`.
+.. Deploy {svirt-long}. See the official documentation for detailed guidance.
+.. After deployment, confirm you have access to the {svirt-long} cluster management UI and `kubeconfig`.
 
 *Process*
 
@@ -197,7 +214,7 @@ systemctl status iscsid
 
 . Provision a LUN from NetApp Storage and Map It to Cluster
 .. Log in to the NetApp ONTAP System Manager.
-.. Create a new LUN and assign it to an iSCSI initiator group containing the {comp1-long} nodes' IQNs.
+.. Create a new LUN and assign it to an iSCSI initiator group containing the {svirt-long} nodes' IQNs.
 .. Note the following information:
 * LUN path
 * Target IQNs
@@ -266,7 +283,7 @@ systemctl status multipathd
 
 === Software
 
-The following sections provide deployment guidance for the software layer, specifically the installation and configuration of {comp3-long}.
+The following sections provide deployment guidance for the software layer, specifically the installation and configuration of {trident-long}.
 
 ==== Trident CSI Deployment
 
@@ -274,7 +291,7 @@ The following sections provide deployment guidance for the software layer, speci
 
 . Prepare Worker Nodes
 +
-Before installing {comp3-long}, ensure that each {comp1-long} node meets the prerequisites for Kubernetes storage integration. Follow the official NetApp documentation for {comp3-docs-worker-prep}[Worker Node Preparation for Trident CSI].
+Before installing {trident-long}, ensure that each {svirt-long} node meets the prerequisites for Kubernetes storage integration. Follow the official NetApp documentation for {trident-docs-worker-prep}[Worker Node Preparation for Trident CSI].
 
 . Configure NetApp Storage Controller Secrets
 +
@@ -289,13 +306,13 @@ kubectl create secret generic ontap-secret -n trident \
 
 *Process*
 
-. Install {comp3-long}
+. Install {trident-long}
 +
-It is recommended to use `tridentctl` for installation. You can find more details in the {comp3-docs-install}[NetApp Trident Installation Guide].
+It is recommended to use `tridentctl` for installation. You can find more details in the {trident-docs-install}[NetApp Trident Installation Guide].
 +
 [source, console, subs="attributes+"]
 ----
-wget {comp3-installer-url}
+wget {trident-installer-url}
 tar -xzf trident-installer-24.06.0.tar.gz
 cd trident-installer
 ./tridentctl install -n trident
@@ -387,8 +404,8 @@ Apply it:
 kubectl apply -f netapp-snapshotclass.yaml
 ----
 
-. Register CSI Driver in {comp1-long} UI
-.. Log in to the {comp1-long} UI.
+. Register CSI Driver in {svirt-long} UI
+.. Log in to the {svirt-long} UI.
 .. Go to **Advanced > Settings > csi-driver-config**.
 .. Click **Edit Setting**.
 .. Set the provisioner to `csi.trident.netapp.io`.
@@ -409,10 +426,10 @@ kubectl patch storageclass netapp-storageclass \
 
 == Validation
 
-Ensure that {comp3-long} is correctly integrated with {comp1-long} by provisioning a virtual machine (VM) that uses a StorageClass backed by the NetApp ONTAP iSCSI backend.
+Ensure that {trident-long} is correctly integrated with {svirt-long} by provisioning a virtual machine (VM) that uses a StorageClass backed by the NetApp ONTAP iSCSI backend.
 
 . Create a VM
-.. Log in to the {comp1-long} UI.
+.. Log in to the {svirt-long} UI.
 .. Navigate to **Virtual Machines** and click **Create**.
 .. Select a namespace for your VM.
 .. Provide a name for your VM.
@@ -422,12 +439,12 @@ Ensure that {comp3-long} is correctly integrated with {comp1-long} by provisioni
 * (Optional) Click **Add Disk** to add an ISO image.
 .. Click **Create** to deploy the VM.
 
-. Verify with the {comp1-long} UI
+. Verify with the {svirt-long} UI
 .. Navigate to **Virtual Machines > [Your VM] > Volumes**.
 .. Confirm that the attached disk is using the `netapp-storageclass` StorageClass.
 
 . Verify with the CLI
-.. Log in to the {comp1-long} management node CLI as root.
+.. Log in to the {svirt-long} management node CLI as root.
 .. List the PersistentVolumeClaims (PVCs) in the VM’s namespace:
 +
 [source, console]
@@ -439,19 +456,19 @@ kubectl get pvc -n <namespace>
 
 == Summary
 
-Organizations are accelerating their digital transformation by modernizing applications and infrastructure — transitioning from traditional, virtual machine–centric environments to modern, cloud-native platforms powered by Kubernetes. {comp1-long} delivers a unified and flexible platform that allows organizations to seamlessly run both virtual machine (VM) and container workloads side-by-side on the same infrastructure.
+Organizations are accelerating their digital transformation by modernizing applications and infrastructure — transitioning from traditional, virtual machine–centric environments to modern, cloud-native platforms powered by Kubernetes. {svirt-long} delivers a unified and flexible platform that allows organizations to seamlessly run both virtual machine (VM) and container workloads side-by-side on the same infrastructure.
 
-{comp3-long} extends this capability by providing enterprise-grade, dynamic storage provisioning for Kubernetes and {comp1-long} clusters. Through its integration with {comp2-long}, Trident enables resilient, scalable, and efficient iSCSI-based storage for mission-critical workloads, ensuring consistent performance, automation, and data protection across hybrid environments.
+{trident-long} extends this capability by providing enterprise-grade, dynamic storage provisioning for Kubernetes and {svirt-long} clusters. Through its integration with {ontap-long}, Trident enables resilient, scalable, and efficient iSCSI-based storage for mission-critical workloads, ensuring consistent performance, automation, and data protection across hybrid environments.
 
-This guide detailed the steps to configure and validate the integration of {comp1-long} with {comp3-long} and {comp2-long}, showcasing how enterprises can build a consistent, automated, and production-ready virtualization environment.
+This guide detailed the steps to configure and validate the integration of {svirt-long} with {trident-long} and {ontap-long}, showcasing how enterprises can build a consistent, automated, and production-ready virtualization environment.
 
 === Continue Your Learning Journey
 
 Explore the following resources to learn more:
 
-* {comp1-docs}[{comp1-long} Documentation]
-* {comp3-docs}[{comp3-long} Documentation]
-* {comp2-docs}[{comp2-long} Documentation]
+* {svirt-docs}[{svirt-long} Documentation]
+* {trident-docs}[{trident-long} Documentation]
+* {ontap-docs}[{ontap-long} Documentation]
 
 To learn more about modernizing and optimizing your IT infrastructure with SUSE and NetApp, contact SUSE at {suse-isv-email}.
 
