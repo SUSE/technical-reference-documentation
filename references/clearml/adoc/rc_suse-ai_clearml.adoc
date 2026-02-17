@@ -392,6 +392,47 @@ It serves as the base operating system for Kubernetes control plane and worker n
 // compute platform.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+
+The solution is deployed on a production-grade Kubernetes cluster. The underlying compute infrastructure may be based on virtual machines, bare metal servers, or cloud-native infrastructure, provided it meets enterprise high-availability and performance requirements.
+
+*Production Architecture Baseline*
+
+. A minimum enterprise production deployment requires:
++
+.. Kubernetes Control Plane:
+... Minimum 3 control-plane nodes (HA quorum)
+.. Application / Platform Nodes:
+... Minimum 3 worker nodes hosting platform services (HA)
+.. Execution / Worker Nodes (ClearML Agents):
+... Dedicated node pools for CPU and GPU workloads (if applicable)
+... Minimum node count determined by workload concurrency and SLA requirements
+
+. Worker node sizing must account for:
++
+.. CPU and memory requirements per job
+.. GPU requirements (if applicable)
+.. Dataset size and I/O throughput
+.. Expected concurrent task execution
+
+*High Availability Requirements*
+
+Enterprise production deployments must implement:
+
+. Multi-node control plane (minimum three nodes)
+. Replicated application services
+. Persistent storage with redundancy
+. Load-balanced ingress
+
+*Component-Level Sizing*
+
+Detailed resource requirements, node sizing, storage specifications, and scaling considerations for individual components and clusters are defined in their respective sections of this guide.
+
+This section provides the overall architectural view; final node counts and configurations must be derived from workload analysis and capacity planning.
+
+
+
+// commenting the old content
+////
 Leveraging the enterprise grade functionality of the operating system mentioned in the previous section, many compute platforms can be the foundation of the deployment:
 
 * Virtual machines on supported hypervisors or hosted on cloud service providers
@@ -405,7 +446,7 @@ End-users can know that both SUSE and participating partners will work together 
 
 Customers can be verify hardware certification by searching {suse-yes-certified-bulletins}[SUSE YES Certified Bulletins].
 ====
-
+////
 
 == Deployment 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
