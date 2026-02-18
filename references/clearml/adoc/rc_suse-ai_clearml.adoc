@@ -397,31 +397,31 @@ The solution is deployed on a production-grade Kubernetes cluster. The underlyin
 
 *Production Architecture Baseline*
 
-. A minimum enterprise production deployment requires:
+* A minimum enterprise production deployment requires:
 +
-.. Kubernetes Control Plane:
-... Minimum 3 control-plane nodes (HA quorum)
-.. Application / Platform Nodes:
-... Minimum 3 worker nodes hosting platform services (HA)
-.. Execution / Worker Nodes (ClearML Agents):
-... Dedicated node pools for CPU and GPU workloads (if applicable)
-... Minimum node count determined by workload concurrency and SLA requirements
+** Kubernetes Control Plane:
+*** Minimum 3 control-plane nodes (HA quorum)
+** Application / Platform Nodes:
+*** Minimum 3 worker nodes hosting platform services (HA)
+** Execution / Worker Nodes (ClearML Agents):
+*** Dedicated node pools for CPU and GPU workloads (if applicable)
+*** Minimum node count determined by workload concurrency and SLA requirements
 
-. Worker node sizing must account for:
+* Worker node sizing must account for:
 +
-.. CPU and memory requirements per job
-.. GPU requirements (if applicable)
-.. Dataset size and I/O throughput
-.. Expected concurrent task execution
+** CPU and memory requirements per job
+** GPU requirements (if applicable)
+** Dataset size and I/O throughput
+** Expected concurrent task execution
 
 *High Availability Requirements*
 
 Enterprise production deployments must implement:
 
-. Multi-node control plane (minimum three nodes)
-. Replicated application services
-. Persistent storage with redundancy
-. Load-balanced ingress
+* Multi-node control plane (minimum three nodes)
+* Replicated application services
+* Persistent storage with redundancy
+* Load-balanced ingress
 
 *Component-Level Sizing*
 
