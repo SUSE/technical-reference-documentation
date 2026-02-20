@@ -684,7 +684,7 @@ For detailed, version-aligned installation steps and configuration guidance, ref
 image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platform Architecture, scaledwidth="90%", align="center"]
 
 
-=== Preparation
+==== Preparation
 
 . Ensure your cluster has at least three nodes for the control plane, each provisioned with:
 +
@@ -772,7 +772,7 @@ These are provided by the {cml} team:
 
 
 
-*Deployment process*
+==== Deployment process
 
 * *Set up Helm Chart for custom configuration*
 
@@ -930,7 +930,7 @@ image::clearml-login-screen.png[title="{cml} login screen", {cml} login screen ,
 
 * *Setup Worker Nodes*
 
-. *Overview*
+. Overview
 +
 The {cml} Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to {cml} queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
 +
@@ -944,7 +944,7 @@ The Controller pod:
 ... Logs task data to the {cml} Server
 
 +
-. *Prerequisites*
+. Prerequisites
 +
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} agent for each tenant (using a tenant admin’s API credentials).
 +
@@ -952,7 +952,7 @@ In a multi-tenant deployment, tenant isolation is achieved by creating a dedicat
 .. Each worker environment must be able to access the {cml} Server over the same network.
 
 +
-. *Procedure*
+. Procedure
 +
 [Optional]NVIDIA GPU Operator
 +
@@ -1008,23 +1008,23 @@ helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace
 {cml} supports various silicon vendors such as Nvidia, AMD and Intel. For detailed configuration instructions refer to {cml}’s online documentation.
 
 
-* *{cml} Agent Deployment*
+* *Deploy {cml} Agent*
 +
-.. Add the {cml} Helm repository to your cluster:
+. Add the {cml} Helm repository to your cluster:
 +
 [source, console] 
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
 +
-.. Update the local repository:
+. Update the local repository:
 +
 [source, console] 
 ----
 helm repo update
 ----
 +
-.. Create a clearml-agent-values.override.yaml file with the agent settings:
+. Create a clearml-agent-values.override.yaml file with the agent settings:
 +
 Replace the below <ACCESS_KEY> and <SECRET_KEY> with the tenant admin API credentials created in the control plane setup procedure.
 Set the <api|file|web>ServerUrlReference fields to match your {cml} Server URLs i.e.( https://api.<BASE_DOMAIN>)etc.
@@ -1050,14 +1050,14 @@ agentk8sglue:
 ----
 For more advanced configurations, refer to {cml}’s online documentation
 +
-.. Install the {cml} Enterprise Agent:
+. Install the {cml} Enterprise Agent:
 +
 [source, bash] 
 ----
 helm upgrade -i -n clearml-worker clearml-agent clearml-enterprise/clearml-enterprise-agent --create-namespace -f clearml-agent-values.override.yaml
 ----
 +
-.. Verifying the installation of Control Node
+. Verifying the installation of Control Node
 +
 To verify the {cml} Agent has been deployed to your cluster:
 Use a web browser to access( https://app.<BASE_DOMAIN>;)
