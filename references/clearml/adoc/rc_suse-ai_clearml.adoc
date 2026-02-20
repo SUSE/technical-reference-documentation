@@ -708,7 +708,7 @@ image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platfor
 * _Ingress Controller_
 //
 +
-An Ingress controller (for example, nginx-ingress) is required.
+An ingress controller (for example, nginx-ingress) is required.
 If exposing services externally, configure a load balancer (such as, MetalLB).
 
 * _Port specification_
@@ -735,74 +735,80 @@ Some example subdomains include:
 
 * For advanced deployments, preconfigure a CNI.
 
-* For multi-tenant deployment, set up {cml-idp}[IdP] per tenant.
+* For multi-tenant deployment, set up {cml-docs-idp}[IdP] per tenant.
 --
 
-. Configure the storage.
-//
-+
-This includes:
+. Configure the storage with:
 +
 --
-* A configured StorageClass and an accessible storage backend for the {cml} Control Plane
-* A configured PVC (ReadWriteMany policy) and PV for the {cml} workers
+* a StorageClass to an accessible storage backend for the {cml} control plane
+* a PVC (ReadWriteMany policy) and PV for the {cml} workers
 --
 
-. Configure the _{cml} Artifactories_
+. Configure the _{cml} Artifactories_.
 //
 +
 To install the different {cml} components, credentials to {cml}’s artifact repositories are required.
-These are provided by the {cml} team:
+These following are provided by the {cml} team:
 +
 --
-* Helm repository credentials (referenced from this point on as "<HELM_REPO_TOKEN>")
-* DockerHub registry credentials (referenced from this point on as "<{cml}_DOCKERHUB_TOKEN>")
+* Helm repository credentials (referenced hereafter as "<HELM_REPO_TOKEN>")
+* DockerHub registry credentials (referenced hereafter as "<CLEARML_DOCKERHUB_TOKEN>")
 --
 
-. Make sure you have access to the following charts, which {cml}'s control plane has as dependencies:
-{cml}’s control plane uses these charts as dependencies:
+. Make sure you have access to the charts listed below:
 +
 |===
 | Name | Version | Repo
 
-| elasticsearch | 8.5.1 | https://helm.elastic.co
-| mongodb | 15.6.26 | oci://docker.io/bitnamicharts
-| redis | 17.8.3 | oci://docker.io/bitnamicharts
+| elasticsearch | 8.5.1 | link:https://helm.elastic.co[]
+| mongodb | 15.6.26 | link:oci://docker.io/bitnamicharts[]
+| redis | 17.8.3 | link:oci://docker.io/bitnamicharts[]
 |===
 
 
 
-==== Deployment process
+==== Deploying the {cml} Control Plane
 
-* *Set up Helm Chart for custom configuration*
-
-. Add the {cml} Helm repository to your cluster:
+. Add the {cml} Helm repository to your cluster.
 +
-[source, bash]
+[source, console]
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
 +
-. Update the local repository:
+[WARNING]
+====
+Should this be:
+
+[source, console]
+----
+helm registry login docker.io --username allegroaienterprise --password <CLEARML_DOCKERHUB_TOKEN>
+----
+
+See https://clear.ml/docs/latest/docs/deploying_clearml/enterprise_deploy/k8s#installation
+====
+
+. Update the local repository cache.
 +
-[source, bash]
+[source, console]
 ----
 helm repo update
 ----
-. Configure Deployment Parameters
+
+. Configure deployment parameters.
 +
-The installation procedure makes use of a tailored helm chart to deploy the {cml} control plane components.
-Deployment specific parameters are set through a custom {cml}-values.override.yaml.
+The installation procedure makes use of a tailored Helm chart to deploy the {cml} control plane components.
+Deployment-specific parameters are set through a custom `{cml-override-file}` file.
+//
 +
-. Setup Baseline Configuration
+Create a `{cml-override-file}` file with the baseline {cml} service settings as shown below.
+Be sure to replace the `<BASE_DOMAIN>` placeholders with the domain you have assigned to the cluster's ingress controller. This will be the base domain for reaching your {cml} installation.
 +
-Create a {cml}-values.override.yaml file with the baseline {cml} service settings:
-Replace the below <BASE_DOMAIN> placeholders with the domain you’ve assigned  to the cluster's Ingress Controller. This will be the base domain for reaching your {cml} installation.
-+
-[source, bash]
+[source, yaml]
 ----
 imageCredentials:
-  password: "<{cml}_DOCKERHUB_TOKEN>"
+  password: "<CLEARML_DOCKERHUB_TOKEN>"
 clearml:
   cookieDomain: "<BASE_DOMAIN>"
 apiserver:
@@ -827,80 +833,90 @@ clearmlApplications:
   enabled: true
 ----
 
-. Setup Multi-tenant configuration
+. Enable a multi-tenant configuration.
 +
-Establish an initial supervisor tenant with a supervisor user. This user will have the authority to create and remove other tenants, and access information across all tenants.
-+
-Update the clearml-values.override.yaml with the following values:
-Replace the below <SUPERVISOR_COMPANY_ID>, <SUPERVISOR_USER_KEY>, <SUPERVISOR_USER_SECRET> and <SUPERVISOR_USER_EMAIL> with desired values. The <SUPERVISOR_USER_KEY> and <SUPERVISOR_USER_SECRET> can be used to log in as the supervisor user from the ClearML Web UI via app.<BASE_DOMAIN>.
-+
-Note that the <SUPERVISOR_USER_EMAIL> value must be explicitly quoted (e.g. "\"email@example.com\"").
+Establish an initial supervisor tenant with a supervisor user.
+This user will have the authority to create and remove other tenants, and access information across all tenants.
+Do this by updating the `{cml-override-file}` with the following:
 +
 [source, yaml]
 ----
 apiserver:
   extraEnvs:
-    - name: {cml}__services__organization__features__user_management_advanced
+    - name: CLEARML__services__organization__features__user_management_advanced
       value: "true"
-    - name: {cml}__services__workers__resource_usages__supervisor_company
+    - name: CLEARML__services__workers__resource_usages__supervisor_company
       value: "<SUPERVISOR_COMPANY_ID>"
-    - name: {cml}__secure__credentials__supervisor__role
+    - name: CLEARML__secure__credentials__supervisor__role
       value: "system"
-    - name: {cml}__secure__credentials__supervisor__allow_login
+    - name: CLEARML__secure__credentials__supervisor__allow_login
       value: "true"
-    - name: {cml}__secure__credentials__supervisor__user_key
+    - name: CLEARML__secure__credentials__supervisor__user_key
       value: "<SUPERVISOR_USER_KEY>"
-    - name: {cml}__secure__credentials__supervisor__user_secret
+    - name: CLEARML__secure__credentials__supervisor__user_secret
       value: "<SUPERVISOR_USER_SECRET>"
-    - name: {cml}__secure__credentials__supervisor__sec_groups
+    - name: CLEARML__secure__credentials__supervisor__sec_groups
       value: "[\"users\", \"admins\", \"queue_admins\"]"
-    - name: {cml}__secure__credentials__supervisor__email
+    - name: CLEARML__secure__credentials__supervisor__email
       value: "\"<SUPERVISOR_USER_EMAIL>\""
-    - name: {cml}__apiserver__company__unique_names
+    - name: CLEARML__apiserver__company__unique_names
       value: "true"
 ----
++
+Be sure to replace `<SUPERVISOR_COMPANY_ID>`, `<SUPERVISOR_USER_KEY>`, `<SUPERVISOR_USER_SECRET>`, and `<SUPERVISOR_USER_EMAIL>` with desired values.
+The `<SUPERVISOR_USER_KEY>` and `<SUPERVISOR_USER_SECRET>` can be used to log in as the supervisor user to the {cml} Web UI at `++https://app.<BASE_DOMAIN++`.
++
+[NOTE]
+====
+The <SUPERVISOR_USER_EMAIL> value must be explicitly quoted (for example, "\"email@example.com\"").
+====
 
-* *Deploy the {cml} Control Plane*
+. Install the {cml} Enterprise Control Plane using the configuration in your `{cml-override-file}`.
 +
-Install the {cml} Enterprise Control Plane using the configuration in your clearml-values.override.yaml.
-+
-[source, bash]
+[source, console]
 ----
 helm upgrade -i -n clearml clearml clearml-enterprise/clearml-enterprise --create-namespace -f clearml-values.override.yaml
 ----
 
-. Creating a Tenant
-.. Set up the environment for configuring the server via API:
-  The environment variables should match the values defined in the previous installation steps.
+
+. Create a tenant.
+
+.. Using the values defined earlier, define environment variables for configuring the server via API.
 +
-[source, bash]
+[source, console]
 ----
 APISERVER_URL="https://api.<BASE_DOMAIN>"
 APISERVER_KEY="<SUPERVISOR_USER_KEY>"
 APISERVER_SECRET="<SUPERVISOR_USER_SECRET>"
 ----
-.. Create a tenant:
-Replace the below <TENANT_NAME> with a name for the new tenant
+
+.. Call the API server with the tenant's name.
 +
-[source, bash]
+Be sure to replace `<TENANT_NAME>` in the command below with an appropriate value.
++
+[source, console]
 ----
 curl $APISERVER_URL/system.create_company \
   -H "Content-Type: application/json" \
   -u $APISERVER_KEY:$APISERVER_SECRET \
   -d '{"name":"<TENANT_NAME>"}'
 ----
-The API returns the new tenant ID (<COMPANY_ID>)
-.. Validate tenant creation by listing existing tenants:
 +
-[source, bash]
+After executing this command, the API returns the new tenant ID (`<COMPANY_ID>`).
+
+.. Validate tenant creation by listing existing tenants.
++
+[source, console]
 ----
 curl -u $APISERVER_KEY:$APISERVER_SECRET $APISERVER_URL/system.get_companies
 ----
-.. Create a utility administrator user for to facilitate tenant configuration:
-Replace the below <COMPANY_ID> with the value returned when creating the tenant.
-Replace the below <ADMIN_USER_NAME> and <ADMIN_USER_EMAIL> with suitable values.
+
+.. Create a utility administrator user to facilitate tenant configuration.
 +
-[source, bash]
+In the command below, replace `<COMPANY_ID>` with the value returned when creating the tenant.
+Also, replace `<ADMIN_USER_NAME>` and `<ADMIN_USER_EMAIL>` with suitable values.
++
+[source, console]
 ----
 curl $APISERVER_URL/auth.create_user \
   -H "Content-Type: application/json" \
@@ -908,73 +924,84 @@ curl $APISERVER_URL/auth.create_user \
   -d '{"name":"<ADMIN_USER_NAME>","company":"<COMPANY_ID>", \
      "email":"<ADMIN_USER_EMAIL>","role":"admin","internal":"true"}'
 ----
-.. Create a utility API credentials for this administrator user:
+
+.. Create utility API credentials for the administrator user.
 +
-[source, bash]
+[source, console]
 ----
 curl $APISERVER_URL/auth.create_credentials \
   -H "Content-Type: application/json" \
   -H "X-{cml}-Impersonate-As: <USER_ID>" \
   -u $APISERVER_KEY:$APISERVER_SECRET
 ----
-The returned set of key and secret can be used for additional API configuration of the tenant.
++
+The returned key and secret pair can be used for additional API configuration of the tenant.
++
+[TIP]
+====
+You can onboard users through an Identity Provider (IdP).
 
-. Onboarding Users through an Identity Provider (SSO)
-{cml} supports a wide range of protocols and providers. In {cml}, each tenant is associated with its own IdP to authenticate and authorize access to the {cml} platform.
-Refer to {cml}’s {cml-idp}[online documentation] for further information on configuring each IdP
+{cml} supports a wide range of protocols and providers.
+In {cml}, each tenant is associated with its own IdP to authenticate and authorize access to the {cml} platform.
 
-. Verifying the installation of Control Plane
-To verify the {cml} control plane is up and running use a web browser to access (https://app.<BASE_DOMAIN>;).
+Refer to {cml-docs-idp}[{cml} Identity Providers] for further information.
+====
+
+. Verify installation of {cml} Enterprise Control Plane by opening a Web browser to `++https://app.<BASE_DOMAIN>++`.
++
+If the deployment is successful, you should see the {cml} log in screen.
 +
 image::clearml-login-screen.png[title="{cml} login screen", {cml} login screen , align="center", width=90%]
 
-* *Setup Worker Nodes*
 
-. Overview
-+
+== Setting up worker nodes
+
+=== Overview
+
 The {cml} Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to {cml} queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
-+
+
 The Controller pod:
-+
-.. Pulls jobs from {cml} execution queues
-.. Prepares a Kubernetes job based on the provided YAML template.
-.. Inside each job pod, the {cml} Agent:
-... Installs the required environment for the task.
-... Executes and monitors the task process.
-... Logs task data to the {cml} Server
 
-+
-. Prerequisites
-+
+. Pulls jobs from {cml} execution queues
+. Prepares a Kubernetes job based on the provided YAML template.
+. Inside each job pod, the {cml} Agent:
+.. Installs the required environment for the task.
+.. Executes and monitors the task process.
+.. Logs task data to the {cml} Server
+
+
+=== Prerequisites
+
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} agent for each tenant (using a tenant admin’s API credentials).
-+
-.. A running {cml} Control plane
-.. Each worker environment must be able to access the {cml} Server over the same network.
 
+* A running {cml} Enterprise Control plane
+* Each worker environment must be able to access the {cml} server over the same network.
+
+
+=== Procedure
+
+
+. (Optional) Configure the NVIDIA GPU Operator.
 +
-. Procedure
+When using NVIDIA GPUs, configure the NVIDIA GPU Operator according to recommended security settings.
+
+.. Add the NVIDIA GPU Operator Helm repository.
 +
-[Optional]NVIDIA GPU Operator
-+
-When using Nvidia GPUs, users should configure the Nvidia GPU Operator according to recommended security settings, with {cml}’s overrides file.
-+
-.. Add the NVIDIA GPU Operator Helm repository:
-+
-[source, bash]
+[source, console]
 ----
 helm repo add nvidia {nvidia-gpu-operator}
 ----
-+
-.. Update the local repository:
+
+.. Update the local repository.
 +
 [source, console] 
 ----
 helm repo update
 ----
-.. Create a gpu-operator.override.yaml file with Nvidia GPU configuration settings:
-(These values were chosen to prevent unprivileged containers from bypassing the Kubernetes Device Plugin API):
+
+.. Create a `{cml-gpu-override-file}` file with NVIDIA GPU configuration settings as shown below:
 +
-[source, bash] 
+[source, yaml]
 ----
 toolkit:
   env:
@@ -997,6 +1024,11 @@ devicePlugin:
    - name: NVIDIA_DRIVER_CAPABILITIES
      value: all
 ----
++
+[NOTE]
+====
+These values were chosen to prevent unprivileged containers from bypassing the Kubernetes Device Plugin API.
+====
 
 .. Install the Nvidia GPU Operator:
 +
@@ -1024,13 +1056,13 @@ helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_RE
 helm repo update
 ----
 +
-. Create a clearml-agent-values.override.yaml file with the agent settings:
+. Create a `{cml-agent-override-file}` file with the agent settings:
 +
 Replace the below <ACCESS_KEY> and <SECRET_KEY> with the tenant admin API credentials created in the control plane setup procedure.
 Set the <api|file|web>ServerUrlReference fields to match your {cml} Server URLs i.e.( https://api.<BASE_DOMAIN>)etc.
 Replace <MAX_AVAILABLE_GPUS> with the total number of GPUs made available to {cml} agents on this cluster
 +
-[source, bash] 
+source, console]
 ----
 imageCredentials:
   password: "<CLEARML_DOCKERHUB_TOKEN>"
@@ -1052,7 +1084,7 @@ For more advanced configurations, refer to {cml}’s online documentation
 +
 . Install the {cml} Enterprise Agent:
 +
-[source, bash] 
+[source, console]
 ----
 helm upgrade -i -n clearml-worker clearml-agent clearml-enterprise/clearml-enterprise-agent --create-namespace -f clearml-agent-values.override.yaml
 ----
@@ -1074,19 +1106,19 @@ In a multi-tenant deployment, tenant isolation is achieved by creating a dedicat
 . *Procedure*
 .. Add the {cml} Helm repository to your cluster:
 +
-[source, bash] 
+[source, console]
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
 .. Update the local repository:
 +
-[source, bash] 
+[source, console]
 ----
 helm repo update
 ----
 .. Create a clearml-app-gateway-values.override.yaml file with the agent settings in the following form (See configuration description below):
 +
-[source, bash] 
+[source, console]
 ----
 imageCredentials:
    password: "<CLEARML_DOCKERHUB_TOKEN>"
@@ -1124,7 +1156,7 @@ Set the <apiServerUrlReference> field to match your
 Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (e.g. Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
 Replace <CHART_VERSION> - Version recommended by the {cml} Support Team.
 +
-[source, bash] 
+[source, console]
 ----
 helm upgrade --install <RELEASE_NAME> -n clearml-worker clearml-enterprise/clearml-enterprise-app-gateway --version <CHART_VERSION> -f clearml-app-gateway-values.override.yaml
 ----
@@ -1145,14 +1177,14 @@ The deployed <RELEASE_NAME> router will appear in the list.
 // commenting the older version
 ////
 . *Configuring Deployment Parameters*
-The installation procedure makes use of a tailored helm chart to deploy the {cml} control plane components.
+The installation procedure makes use of a tailored Helm chart to deploy the {cml} control plane components.
 Deployment specific parameters are set through a custom {cml}-values.override.yaml.
 
 . *Baseline Configuration*
 Create a {cml}-values.override.yaml file with the baseline {cml} service settings:
 Replace the below <BASE_DOMAIN> placeholders with the domain you’ve assigned  to the cluster's Ingress Controller. This will be the base domain for reaching your {cml} installation.
 +
-[source, bash]
+[source, console]
 ----
 imageCredentials:
   password: "<{cml}_DOCKERHUB_TOKEN>"
@@ -1217,14 +1249,14 @@ apiserver:
 +
 Add the {cml} Helm repository to your cluster:
 +
-[source, bash]
+[source, console]
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
 +
 Update the local repository:
 +
-[source, bash]
+[source, console]
 ----
 helm repo update
 ----
@@ -1232,7 +1264,7 @@ helm repo update
 . Deploying the {cml} Control Plane
 Install the {cml} Enterprise Control Plane using the configuration in your clearml-values.override.yaml.
 +
-[source, bash]
+[source, console]
 ----
 helm upgrade -i -n clearml clearml clearml-enterprise/clearml-enterprise --create-namespace -f clearml-values.override.yaml
 ----
@@ -1241,7 +1273,7 @@ helm upgrade -i -n clearml clearml clearml-enterprise/clearml-enterprise --creat
 .. Set up the environment for configuring the server via API:
   The environment variables should match the values defined in the previous installation steps.
 +
-[source, bash]
+[source, console]
 ----
 APISERVER_URL="https://api.<BASE_DOMAIN>"
 APISERVER_KEY="<SUPERVISOR_USER_KEY>"
@@ -1250,7 +1282,7 @@ APISERVER_SECRET="<SUPERVISOR_USER_SECRET>"
 .. Create a tenant:
 Replace the below <TENANT_NAME> with a name for the new tenant
 +
-[source, bash]
+[source, console]
 ----
 curl $APISERVER_URL/system.create_company \
   -H "Content-Type: application/json" \
@@ -1260,7 +1292,7 @@ curl $APISERVER_URL/system.create_company \
 The API returns the new tenant ID (<COMPANY_ID>)
 .. Validate tenant creation by listing existing tenants:
 +
-[source, bash]
+[source, console]
 ----
 curl -u $APISERVER_KEY:$APISERVER_SECRET $APISERVER_URL/system.get_companies
 ----
@@ -1268,7 +1300,7 @@ curl -u $APISERVER_KEY:$APISERVER_SECRET $APISERVER_URL/system.get_companies
 Replace the below <COMPANY_ID> with the value returned when creating the tenant.
 Replace the below <ADMIN_USER_NAME> and <ADMIN_USER_EMAIL> with suitable values.
 +
-[source, bash]
+[source, console]
 ----
 curl $APISERVER_URL/auth.create_user \
   -H "Content-Type: application/json" \
@@ -1278,7 +1310,7 @@ curl $APISERVER_URL/auth.create_user \
 ----
 .. Create a utility API credentials for this administrator user:
 +
-[source, bash]
+[source, console]
 ----
 curl $APISERVER_URL/auth.create_credentials \
   -H "Content-Type: application/json" \
@@ -1289,7 +1321,7 @@ The returned set of key and secret can be used for additional API configuration 
 
 . Onboarding Users through an Identity Provider (SSO)
 {cml} supports a wide range of protocols and providers. In {cml}, each tenant is associated with its own IdP to authenticate and authorize access to the {cml} platform.
-Refer to {cml}’s {cml-idp}[online documentation] for further information on configuring each IdP
+Refer to {cml}’s {cml-docs-idp}[online documentation] for further information on configuring each IdP
 
 . Verifying the installation of Control Plane
 To verify the {cml} control plane is up and running use a web browser to access (https://app.<BASE_DOMAIN>;).
@@ -1324,7 +1356,7 @@ When using Nvidia GPUs, users should configure the Nvidia GPU Operator according
 
 . Add the NVIDIA GPU Operator Helm repository:
 +
-[source, bash]
+[source, console]
 ----
 helm repo add nvidia {nvidia-gpu-operator}
 ----
@@ -1338,7 +1370,7 @@ helm repo update
 . Create a gpu-operator.override.yaml file with Nvidia GPU configuration settings:
 (These values were chosen to prevent unprivileged containers from bypassing the Kubernetes Device Plugin API):
 +
-[source, bash] 
+[source, console]
 ----
 toolkit:
   env:
@@ -1393,7 +1425,7 @@ Replace the below <ACCESS_KEY> and <SECRET_KEY> with the tenant admin API creden
 Set the <api|file|web>ServerUrlReference fields to match your {cml} Server URLs i.e.( https://api.<BASE_DOMAIN>)etc.
 Replace <MAX_AVAILABLE_GPUS> with the total number of GPUs made available to {cml} agents on this cluster
 +
-[source, bash] 
+[source, console]
 ----
 imageCredentials:
   password: "<CLEARML_DOCKERHUB_TOKEN>"
@@ -1415,7 +1447,7 @@ For more advanced configurations, refer to {cml}’s online documentation
 +
 .. Install the {cml} Enterprise Agent:
 +
-[source, bash] 
+[source, console]
 ----
 helm upgrade -i -n clearml-worker clearml-agent clearml-enterprise/clearml-enterprise-agent --create-namespace -f clearml-agent-values.override.yaml
 ----
@@ -1435,19 +1467,19 @@ In a multi-tenant deployment, tenant isolation is achieved by creating a dedicat
 *Procedure*
 * Add the {cml} Helm repository to your cluster:
 +
-[source, bash] 
+[source, console]
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
 * Update the local repository:
 +
-[source, bash] 
+source, console]
 ----
 helm repo update
 ----
 * Create a clearml-app-gateway-values.override.yaml file with the agent settings in the following form (See configuration description below):
 +
-[source, bash] 
+[source, console]
 ----
 imageCredentials:
    password: "<CLEARML_DOCKERHUB_TOKEN>"
@@ -1485,7 +1517,7 @@ Configuration options:
 Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (e.g. Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
 Replace <CHART_VERSION> - Version recommended by the {cml} Support Team.
 +
-[source, bash] 
+[source, console]
 ----
 helm upgrade --install <RELEASE_NAME> -n clearml-worker clearml-enterprise/clearml-enterprise-app-gateway --version <CHART_VERSION> -f clearml-app-gateway-values.override.yaml
 ----
