@@ -678,7 +678,7 @@ For detailed, version-aligned installation steps and configuration guidance, ref
 
 
 
-=== {cml}
+=== {cml} Control Plane
 
 
 image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platform Architecture, scaledwidth="90%", align="center"]
@@ -954,9 +954,9 @@ If the deployment is successful, you should see the {cml} log in screen.
 image::clearml-login-screen.png[title="{cml} login screen", {cml} login screen , align="center", width=90%]
 
 
-==== Setting up worker nodes
+=== {cml} Worker Nodes
 
-===== Overview
+==== Overview
 
 The {cml} Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to {cml} queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
 
@@ -970,7 +970,7 @@ The Controller pod:
 .. Logs task data to the {cml} Server
 
 
-===== Prerequisites
+==== Prerequisites
 
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} agent for each tenant (using a tenant admin’s API credentials).
 
@@ -978,7 +978,7 @@ In a multi-tenant deployment, tenant isolation is achieved by creating a dedicat
 * Each worker environment must be able to access the {cml} server over the same network.
 
 
-===== Procedure
+==== Procedure
 
 
 . (Optional) Configure the NVIDIA GPU Operator.
