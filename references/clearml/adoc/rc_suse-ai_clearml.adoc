@@ -954,9 +954,9 @@ If the deployment is successful, you should see the {cml} log in screen.
 image::clearml-login-screen.png[title="{cml} login screen", {cml} login screen , align="center", width=90%]
 
 
-== Setting up worker nodes
+==== Setting up worker nodes
 
-=== Overview
+===== Overview
 
 The {cml} Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to {cml} queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
 
@@ -970,7 +970,7 @@ The Controller pod:
 .. Logs task data to the {cml} Server
 
 
-=== Prerequisites
+===== Prerequisites
 
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} agent for each tenant (using a tenant admin’s API credentials).
 
@@ -978,7 +978,7 @@ In a multi-tenant deployment, tenant isolation is achieved by creating a dedicat
 * Each worker environment must be able to access the {cml} server over the same network.
 
 
-=== Procedure
+===== Procedure
 
 
 . (Optional) Configure the NVIDIA GPU Operator.
@@ -1040,29 +1040,29 @@ helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace
 {cml} supports various silicon vendors such as Nvidia, AMD and Intel. For detailed configuration instructions refer to {cml}’s online documentation.
 
 
-* *Deploy {cml} Agent*
+. Deploy {cml} Agent
 +
-. Add the {cml} Helm repository to your cluster:
+.. Add the {cml} Helm repository to your cluster:
 +
 [source, console] 
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
 +
-. Update the local repository:
+.. Update the local repository:
 +
 [source, console] 
 ----
 helm repo update
 ----
 +
-. Create a `{cml-agent-override-file}` file with the agent settings:
+.. Create a `{cml-agent-override-file}` file with the agent settings:
 +
 Replace the below <ACCESS_KEY> and <SECRET_KEY> with the tenant admin API credentials created in the control plane setup procedure.
 Set the <api|file|web>ServerUrlReference fields to match your {cml} Server URLs i.e.( https://api.<BASE_DOMAIN>)etc.
 Replace <MAX_AVAILABLE_GPUS> with the total number of GPUs made available to {cml} agents on this cluster
 +
-source, console]
+[source, console]
 ----
 imageCredentials:
   password: "<CLEARML_DOCKERHUB_TOKEN>"
@@ -1098,25 +1098,28 @@ Go to the Orchestration > Queues page
 Verify configured queues appear in the Queues page
 
 
-* *Setup an Application Gateway*
-+
+==== Setup an Application Gateway
+
 The Application Gateway enables access to AI workload applications (e.g. remote IDEs like VSCode and Jupyter, model API interface, etc.). It acts as a proxy, identifying {cml} Tasks running within its Kubernetes namespace and making them available for network access
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} Application Gateway  for each tenant (using a tenant admin’s API credentials)
-+
-. *Procedure*
-.. Add the {cml} Helm repository to your cluster:
+
+//. *Procedure*
+
+. Add the {cml} Helm repository to your cluster:
 +
 [source, console]
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
-.. Update the local repository:
+
+. Update the local repository:
 +
 [source, console]
 ----
 helm repo update
 ----
-.. Create a clearml-app-gateway-values.override.yaml file with the agent settings in the following form (See configuration description below):
+
+. Create a clearml-app-gateway-values.override.yaml file with the agent settings in the following form (See configuration description below):
 +
 [source, console]
 ----
@@ -1138,20 +1141,21 @@ tcpSession:
     start:
     end:
 ----
++
 Set the <apiServerUrlReference> field to match your 
 +
-... Configuration options:
-.... imageCredentials.password: {cml} DockerHub Access Token.
-.... clearml.apiKey and clearml.apiSecret: Tenant admin API credentials created in the control plane setup procedure.
-.... clearml.apiServerUrlReference: {cml} Server URL i.e.( https://api.<BASE_DOMAIN>;)
-.... clearml.authCookieName: Cookie used by the {cml} server to store the {cml} authentication cookie.
-.... ingress.hostName: Hostname of App Gateway used by the ingress controller to access it.
-.... tcpSession.routerAddress: The external App Gateway address (can be an IP, hostname, or load balancer address) depending on your network setup. Ensure this address is accessible for TCP connections.
-.... tcpSession.service.type: Service type used to expose TCP functionality, default is NodePort.
-.... tcpSession.portRange.start: Start port for the TCP Session feature.
-.... tcpSession.portRange.end: End port for the TCP Session feature.
+.. Configuration options:
+... imageCredentials.password: {cml} DockerHub Access Token.
+... clearml.apiKey and clearml.apiSecret: Tenant admin API credentials created in the control plane setup procedure.
+... clearml.apiServerUrlReference: {cml} Server URL i.e.( https://api.<BASE_DOMAIN>;)
+... clearml.authCookieName: Cookie used by the {cml} server to store the {cml} authentication cookie.
+... ingress.hostName: Hostname of App Gateway used by the ingress controller to access it.
+... tcpSession.routerAddress: The external App Gateway address (can be an IP, hostname, or load balancer address) depending on your network setup. Ensure this address is accessible for TCP connections.
+... tcpSession.service.type: Service type used to expose TCP functionality, default is NodePort.
+... tcpSession.portRange.start: Start port for the TCP Session feature.
+... tcpSession.portRange.end: End port for the TCP Session feature.
 
-.. Install the {cml} Application Gateway:
+. Install the {cml} Application Gateway:
 +
 Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (e.g. Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
 Replace <CHART_VERSION> - Version recommended by the {cml} Support Team.
@@ -1161,7 +1165,7 @@ Replace <CHART_VERSION> - Version recommended by the {cml} Support Team.
 helm upgrade --install <RELEASE_NAME> -n clearml-worker clearml-enterprise/clearml-enterprise-app-gateway --version <CHART_VERSION> -f clearml-app-gateway-values.override.yaml
 ----
 
-.. Verifying the installation
+. Verifying the installation
 +
 To verify the {cml} Agent has been deployed to your cluster:
 Use a web browser to access( https://app.<BASE_DOMAIN>;)
