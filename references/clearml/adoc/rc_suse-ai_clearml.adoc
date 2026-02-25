@@ -1188,11 +1188,24 @@ The deployed <RELEASE_NAME> router will appear in the list.
 // Use subsections if needed for clarity.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+The test {cml}’s integration, users should:
+
+. Log into the User interface, ensure that the interface is reachable and loads properly.
+
+. Set up {cml}’s SDK by {cml-sdk-setup}[installing] {cml}’s python SDK and run {cml}’s examples. Relevant examples can be found on {cml}’s {cml-github}[Github page].
+
 image::clearml-validation1.png[{cml} AI Platform, scaledwidth="90%", align="center"]
+
+{cml}’s experiment manager is the core of its AI Development Center. To start, either try a simple MNIST classifier {cml-example}[example] or run {cml-dataset}[this] code to perform LLM finetuning. All relevant information is captured and displayed by {cml}.
 
 image::clearml-validation2.png[{cml} AI Platform, scaledwidth="90%", align="center"]
 
+Pipeline Orchestration with {cml} - Based on {cml-pipeline}[this] github example. Running the linked example on a configured clearml server would result in a similar pipeline visualization in the {cml} user interface. See {cml-docs-pipeline}[cml] Pipeline Orchestration documentation for more information.
+
 image::clearml-validation-3.png[{cml} AI Platform , scaledwidth="90%", align="center"]
+
+{cml}’s Resource Configuration allows admins to set resource hierarchies, spillovers and quotas. To do that, admins need to configure the {cml} Agent to the topology configured in the {cml} user interface. For more information, see {cml}’s {cml-docs-webapp-config}[documentation].
+
 
 
 
