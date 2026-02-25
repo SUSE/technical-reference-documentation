@@ -240,7 +240,7 @@ A single image can be reused across multiple nodes, including advanced situation
 Following the
 {github-eib-config}[Telco Repository] you can find some kind of examples already fully prepared to be used, but we are going to explain the different configurations we should have to properly deploy a downstream cluster for running telco workloads using the Ampere platform.The Telco Performance tests require the following EIB OS configurations:
 
-. EIB definition yaml file:
+==== EIB definition yaml file:
 
 The Image Definition File is a YAML document describing a single image to build.
 The file is specified using the --definition-file argument. Only a single image may be built at a time, however the same image configuration directory may be used to build multiple images by creating multiple definition files.
@@ -284,7 +284,7 @@ operatingSystem:
     sccRegistrationCode: ${SCC_REGISTRATION_CODE}
 
 ----
-* Custom Files:
+==== Custom Files:
 
 EIB has the ability to bundle in custom scripts that will be run during the combustion phase when a node is booted with the built image. Additionally, custom files may be included, however they are not automatically deployed on the node when it boots. If these files are needed beyond the combustion phase, a script should be included that explicitly copies them to the filesystem.
 
@@ -297,7 +297,7 @@ You can find more information following the next
 
 See <<Sample Provision file (`custom-files.sh`)>> for reference.
 
-* Custom Scripts:
+==== Custom Scripts:
 
 See <<Sample Provision file (`custom-script.sh`)>> for reference.
 
@@ -355,7 +355,7 @@ The following section describes all the important parts for Telco inside the ful
 * Pre_rke2_commands
 
 This is a requirement to enable the possibility of creating VF (virtual functions) using SR-IOV
-+
+
 [source, console]
 ----
  modprobe vfio-pci enable_sriov=1 disable_idle_d3=1
