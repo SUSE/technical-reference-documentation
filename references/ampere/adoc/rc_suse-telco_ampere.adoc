@@ -124,7 +124,7 @@ Because the entire solution is purely CPU-based and fully open, operators *avoid
 
 
 
-== Architecture concepts and Diagram
+== Architecture Concepts and Diagram
 
 
 // === [_Ampere to share graphics and diagrams here_]
@@ -137,7 +137,7 @@ image::image3.png[title="SUSE Telco Cloud on Ampere Altra – Reference Architec
 
 
 
-=== Hardware and networking infrastructure.
+=== Hardware and Networking Infrastructure.
 
 
 CPU Architecture
@@ -148,13 +148,18 @@ CPU Architecture
 
 * Cores: 128
 
+[NOTE]
+====
+Ampere Altra systems tested here are widely used. 
+This reference architecture is also relevant for AmpereOne systems, which provide even higher performance and core density.
+====
 *(The system tested here and widely in use are Ampere Altra systems, the AmpereOne systems provide even higher performance and core density and are supported by this reference architecture)
 
 
 == Prerequisites
 
 
-=== Enable SR-IOV on the NICS (BIOS Configuration)
+=== Enable SR-IOV On The NICS (BIOS Configuration)
 
 The first task to do to enable SR-IOV is to configure properly the BIOS to enable the global configuration SR-IOV, as well as the nic configuration to enable in a specific nic. 
 To achieve that the following {supermicro-url}[guide] can be followed. 
@@ -175,8 +180,8 @@ SR-IOV is critically important for modern Telco Cloud and 5G/vRAN (Virtualized R
 
 The first task to enable SR-IOV is to configure it in the system BIOS.
 
-. Enable SR-IOV for the specific NIC under under Advance > Chipset > North Bridge > IIO Config > Intel VT.
-. Enable SR-IOV globally under Advance > PCIe Config > SR-IOV Enabled
+. Enable SR-IOV for the Specific NIC Under Advance > Chipset > North Bridge > IIO Config > Intel VT.
+. Enable SR-IOV Globally Under Advance > PCIe Config > SR-IOV Enabled
 See {supermicro-url}[Supermicro FAQ: How to enable SR-IOV].
 
 After configuring properly the BIOS, the following command can be executed to verify if the SR-IOV is enabled on the   Interfaces that we want to use:
@@ -240,7 +245,7 @@ A single image can be reused across multiple nodes, including advanced situation
 Following the
 {github-eib-config}[Telco Repository] you can find some kind of examples already fully prepared to be used, but we are going to explain the different configurations we should have to properly deploy a downstream cluster for running telco workloads using the Ampere platform.The Telco Performance tests require the following EIB OS configurations:
 
-==== EIB definition yaml file:
+==== EIB Definition yaml File:
 
 The Image Definition File is a YAML document describing a single image to build.
 The file is specified using the --definition-file argument. Only a single image may be built at a time, however the same image configuration directory may be used to build multiple images by creating multiple definition files.
@@ -295,11 +300,12 @@ You can find more information following the next
 {github-suse-edge}[link]
 
 
-See <<Sample Provision file (`custom-files.sh`)>> for reference.
+See <<Sample Provision File (`custom-files.sh`)>> for reference.
 
 ==== Custom Scripts:
 
-See <<Sample Provision file (`custom-script.sh`)>> for reference.
+See <<Sample Provision File (`custom-script.sh`)>> for reference.
+
 
 
 
@@ -311,13 +317,13 @@ Directed network provisioning is a feature that allows you to automate the provi
 The network architecture is based on the following components:
 
 
-.. Management network: This network is used for the management of downstream cluster nodes. It is used for the out-of-band management.
+.. Management Network: This network is used for the management of downstream cluster nodes. It is used for the out-of-band management.
 Usually, this network is also connected to a separate management switch, but it can be connected to the same service switch using VLANs to isolate the traffic.
 
-.. Control-plane network: This network is used for the communication between the downstream cluster nodes and the services that are running on them.
+.. Control-plane Network: This network is used for the communication between the downstream cluster nodes and the services that are running on them.
 This network is also used for the communication between the nodes and the external services, like the DHCP or DNSservers. In some cases, for connected environments, the switch/router can handle traffic through the Internet.
 
-.. Other networks: In some cases, nodes could be connected to other networks for specific purposes.
+.. Other Networks: In some cases, nodes could be connected to other networks for specific purposes.
 
 image::image7.png[title="Management and Control-Plane Network Architecture for Telco Cloud", Management and Control-Plane Network Architecture for Telco Cloud, align="center", width=90%]
 
@@ -328,7 +334,7 @@ We assume that the management cluster is already deployed to focus on the downst
 ====
 
 
-==== Cluster API & {comp1-long}
+==== Cluster API and {comp1-long}
 
 Cluster API is a Kubernetes sub-project focused on providing declarative APIs and tooling to simplify provisioning, upgrading, and operating multiple Kubernetes clusters.
 
@@ -543,13 +549,13 @@ These automated tests utilize Iperf3 to send traffic at a rate of 250 Mbps with 
 
 Our testing methodology involves creating two Pods: one configured as a server and the other as a client. We then initiate traffic from the client to the server and subsequently measure packet loss. This environment allows us to test four distinct scenarios.
 
-. Two nodes without SR-IOV
+. Two Nodes without SR-IOV
 
-. Single node without SR-IOV
+. Single Node without SR-IOV
 
-. Single node with SR-IOV
+. Single Node with SR-IOV
 
-. Two nodes with SR-IOV
+. Two Nodes with SR-IOV
 
 image::image8.png[title="Network Performance Test Scenarios with and without SR-IOV", Network Performance Test Scenarios with and without SR-IOV, align="center", width=60%]
 
@@ -619,7 +625,7 @@ image::image1.png[title="CPU Latency Performance Under System Stress", CPU Laten
 
 image::image2.png[title="CPU Latency Distribution and Maximum Latency Measurements", cpu-performance2, align="left", width=90%]
 
-== Conclusion and next steps
+== Conclusion and Next Steps
 
 The Ampere and SUSE joint solution for telco clouds delivers a future-proof, open, cloud-native telco platform that combines unmatched core density, best-in-class power efficiency, and carrier-grade real-time performance, all without the need of additional accelerators or vendor lock-in.
 
@@ -633,9 +639,9 @@ Next Steps:
 
 * Meet with the {mwcbarcelona-suse}[SUSE] and {mwcbarcelona-suse}[{comp2-name}] teams in person at Mobile World Congress 2026 in March!
 
-=== Sample files and output
+=== Sample Files and Output
 
-==== Sample Provision file (`custom-files.sh`)
+==== Sample Provision File (`custom-files.sh`)
 
 [source, console]
 ----
@@ -830,7 +836,7 @@ Next Steps:
 ----
 
 
-==== Sample Provision file (`custom-script.sh`)
+==== Sample Provision File (`custom-script.sh`)
 
 [source, console]
 ----
