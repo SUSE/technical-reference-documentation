@@ -17,6 +17,33 @@ SUSEPRODUCTS=('sles', 'slessap', 'slehpc', 'slmicro', 'slelp', 'slert', 'sleha',
 # Functions
 ##
 
+doctypes() {
+# display list of valid document types
+
+echo
+echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "  - Enter a valid document type:"
+echo "  -   - gs: Getting started guide"
+echo "  -         An introduction to a joint SUSE + partner solution"
+echo "  -         with step-by-step guidance to install, configure,"
+echo "  -         and validate the solution in a non-production"
+echo "  -         environment."
+echo "  -   - ri: Reference implementation"
+echo "  -         An architectural approach and basis for deployment"
+echo "  -         of a solution featuring multiple elements of the"
+echo "  -         SUSE product portfolio in a production environment."
+echo "  -   - rc: Reference configuration"
+echo "  -         A reference implementation with specified partner"
+echo "  -         hardware and software."
+echo "  -   - ea: Enterprise architecture"
+echo "  -         A holistic overview of an enterprise landscape"
+echo "  -         featuring joint SUSE and partner solutions."
+echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo
+
+}
+
+
 suselist() {
 # display list of SUSE products and abbreviations
 
@@ -53,12 +80,12 @@ echo
 ##
 echo
 echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
-echo "= Set up workspace for new TRD reference configuration      ="
+echo "= Set up workspace for a new technical reference document   ="
 echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo
 echo " This script will prompt you for information about your"
-echo " guide, then use your responses to create the directories"
-echo " and template files for your guide"
+echo " document, then use your responses to create the directories"
+echo " and template files you will need."
 echo
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "  - Before proceeding make sure you have:"
@@ -105,13 +132,13 @@ fi
 
 
 # Verify present working directory is correct for a reference configuration
-if [[ ! $PWD =~ reference$ ]] && [[ ! $PWD =~ reference$ ]]; then
+if [[ ! $PWD =~ references$ ]] && [[ ! $PWD =~ references$ ]]; then
   echo
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo "  - Your current working directory is:"
   echo "  - '$PWD'"
   echo "  -"
-  echo "  - Be sure you change to the 'reference' directory,"
+  echo "  - Be sure you change to the 'references' directory,"
   echo "  - then execute this script again."
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo
@@ -130,7 +157,35 @@ echo "- Gathering some information"
 echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo
 
+#-----------
+# get document type
+while read -p ">> Document type (gs, ri, rc, ea, help) : " response
+do
+  resp=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
+  # validate input
+  case $resp in
+    'help')
+      doctypes
 
+    ;;
+    'gs' | 'ri' | 'rc' | 'ea')
+      doctype=$resp
+      break
+    ;;
+    *)
+      echo
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+      echo "  - Invalid input."
+      doctypes
+      echo "  - Press CTRL+C to cancel and exit the script."
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+      echo
+    ;;
+  esac
+done
+#-------------
+
+#-----------
 # get primary SUSE product
 suseprods=""
 echo "- - - - - -"
@@ -138,8 +193,12 @@ echo "- Identify the featured SUSE products by entering"
 echo "- one product abbreviation at a time."
 echo "- When done, press ENTER with no value."
 echo "-"
-echo "- TIP: Start at the top of the software stack."
-echo "-      For example: 'rancher' then 'rke2' then 'sles'"
+echo "- TIPS:"
+echo "-   - You do not need to list all products, only"
+echo "-     the featured one or ones."
+echo "-   - When featuring multiple products, start at"
+echo "-     the top of the software stack."
+echo "-     For example: 'rancher' then 'rke2' then 'sles'"
 echo "-"
 echo "- Additional options:"
 echo "-   'list': display accepted abbreviations."
@@ -147,6 +206,7 @@ echo "-   'clear': clear the product list and start over."
 echo "-   Press CTRL+C to cancel and exit the script."
 echo "- - - - - -"
 echo
+
 while read -p ">> SUSE product : " response
 do
   resp=$( echo ${response} | tr '[:upper:]' '[:lower:]' )
@@ -180,33 +240,34 @@ do
     ;;
     *)
       if [[ "${SUSEPRODUCTS[*]}" =~ "${resp}" ]]; then
-	case ${resp} in
-          'sto')
-            resp="storage"
-	  ;;
-          'virt')
-            resp="virtualization"
-	  ;;
-          'obs')
-            resp="observability"
-	  ;;
-          'sec')
-            resp="security"
-	  ;;
-	esac
-	if [[ "${suseprods}" = "" ]]; then
-	  suseprods="${resp}"
-	else
-          suseprods="${suseprods}-${resp}"
-	fi
+        case ${resp} in
+         'sto')
+          resp="storage"
+         ;;
+         'virt')
+           resp="virtualization"
+         ;;
+         'obs')
+           resp="observability"
+         ;;
+         'sec')
+           resp="security"
+         ;;
+       esac
+       if [[ "${suseprods}" = "" ]]; then
+         suseprods="${resp}"
+       else
+         suseprods="${suseprods}-${resp}"
+       fi
       else
         echo
         echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
         echo "  - Invalid input."
-	echo "  - Enter a SUSE product abbreviation, 'list', or leave blank."
-	echo "  - Press CTRL+C to cancel and exit the script."
+        echo "  - Enter a SUSE product abbreviation, 'list',"
+        echo "  -   or leave blank to proceed to the next step."
+        echo "  - Press CTRL+C to cancel and exit this script."
         echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-	echo
+        echo
       fi
       echo
       echo "Featured SUSE products: \"${suseprods}\""
@@ -215,52 +276,59 @@ do
   esac
 done
 
-# get Name of the Primary Partner
-echo
-echo "- - - - - -"
-echo "- Enter the name of the primary partner."
-echo "-"
-echo "- TIP: Select one partner whose product is at the top"
-echo "-      of the software stack and provides the key"
-echo "-      functionality for the featured use case."
-echo "- - - - - -"
-echo
-while read -p ">> Primary partner : " response
-do
-  partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
-  if [ -n "$partnername" ]; then
-    break
-  else
-    echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-    echo "  - Invalid input."
-    echo "  - Primary partner cannot be blank."
-    echo "  - Press CTRL+C to cancel and exit the script."
-    echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-  fi
-done
-echo "Primary partner: \"${partnername}\""
-echo
+if [[ $doctype =~ ^(rc|gs) ]]; then
+  # get Name of the Primary Partner
+  echo
+  echo "- - - - - -"
+  echo "- Enter the name of the primary partner."
+  echo "-"
+  echo "- TIP: Select one partner whose product is at the top"
+  echo "-      of the software stack and provides the key"
+  echo "-      functionality for the featured use case."
+  echo "- - - - - -"
+  echo
+  while read -p ">> Primary partner : " response
+  do
+    partnername=$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )
+    if [ -n "$partnername" ]; then
+      break
+    else
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+      echo "  - Invalid input."
+      echo "  - Primary partner cannot be blank."
+      echo "  - Press CTRL+C to cancel and exit the script."
+      echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+    fi
+  done
+  echo "Primary partner: \"${partnername}\""
+  echo
 
-# get Name of the Primary Partner's product
-echo
-echo "- - - - - -"
-echo "- Enter the name of the primary partner's product."
-echo "-"
-echo "-   TIP: If the primary partner and the product"
-echo "-        share the same name, you can leave the"
-echo "-        partner product blank to avoid repetition."
-echo "-"
-echo "- - - - - -"
-echo
-read -p ">> Primary partner's product : " response
-if [ -n "$response" ]; then
-  partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )"
+  # set destination directory name
+  destdir=${partnername}
+  
+  # get Name of the Primary Partner's product
+  echo
+  echo "- - - - - -"
+  echo "- Enter the name of the primary partner's product."
+  echo "-"
+  echo "-   TIP: If the primary partner and the product"
+  echo "-        share the same name, you can leave the"
+  echo "-        partner product blank to avoid repetition."
+  echo "-"
+  echo "- - - - - -"
+  echo
+  read -p ">> Primary partner's product : " response
+  if [ -n "$response" ]; then
+    partnerprod="-$( echo ${response} | tr '[:upper:]' '[:lower:]' | sed 's/\ //g' )"
+  else
+    # allow the partner product name to be left blank
+    partnerprod=""
+  fi
+  echo "Primary partner product: \"${partnerprod}\""
+  echo
 else
-  # allow the partner product name to be left blank
-  partnerprod=""
+  destdir="suse"
 fi
-echo "Primary partner product: \"${partnerprod}\""
-echo
 
 # get Use Case or other text
 echo
@@ -270,13 +338,10 @@ echo "-"
 echo "- If a solution can address multiple use cases,"
 echo "- it may be useful to create a separate guide to"
 echo "- address unique concerns of each use case."
-echo "- Since the product stack is insufficient to distinguish"
-echo "- each guide, some additional text can be added to the"
-echo "- file name."
 echo "-"
-echo "-   TIP: It is preferable to leave this blank."
-echo "-        If needed, use fewer than 20 characters for the"
-echo "-        additional text."
+echo "-   NOTE:  This option appends the text to the document's"
+echo "-          file name, so it should be used sparingly to"
+echo "-          avoid especially long file names."
 echo "- - - - - -"
 echo
 read -p ">> Distinctive text : " response
@@ -293,7 +358,11 @@ echo
 # build base filename
 ##
 
-documentbase="rc_${suseprods}_${partnername}${partnerprod}${usecase}"
+if [[ $doctype =~ ^(rc|gs) ]]; then
+  documentbase="${doctype}_${suseprods}_${partnername}${partnerprod}${usecase}"
+else
+  documentbase="${doctype}_${suseprods}${usecase}"
+fi
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -304,8 +373,8 @@ echo
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "  - Preparing to create the following structure:"
 echo "  -"
-echo "  -   rc"
-echo "  -   └── ${partnername}"
+echo "  -   references"
+echo "  -   └── ${destdir}"
 echo "  -       ├── DC-${documentbase}"
 echo "  -       ├── adoc"
 echo "  -       │   ├── ${documentbase}.adoc"
@@ -329,16 +398,16 @@ echo
 ##
 
 # create primary directory if it does not already exist
-[ -d ${partnername} ] || mkdir ${partnername}
+[ -d ${destdir} ] || mkdir ${destdir}
 
 # create DC file
-if [ ! -f "${partnername}/DC-${documentbase}" ]; then
-  cp -n ${templatesroot}/template_DC ${partnername}/DC-${documentbase}
+if [ ! -f "${destdir}/DC-${documentbase}" ]; then
+  cp -n ${templatesroot}/template_DC ${destdir}/DC-${documentbase}
 else
   echo
   echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   echo "  - 'DC-${documentbase}' could not be created in"
-  echo "  - '${partnername}'."
+  echo "  - '${destdir}'."
   echo "  -"
   echo "  - If 'DC-${documentbase}' already exists,"
   echo "  - re-run this script with different input."
@@ -348,48 +417,48 @@ else
 fi
 
 # create adoc directory if it does not already exist
-[ -d ${partnername}/adoc ] || mkdir -p ${partnername}/adoc
+[ -d ${destdir}/adoc ] || mkdir -p ${destdir}/adoc
 
 # create symlinks to common files
-[ -L ${partnername}/adoc/common_gfdl1.2_i.adoc ] || \
-  ln -sr ${commonroot}/adoc/common_gfdl1.2_i.adoc ${partnername}/adoc/
-[ -L ${partnername}/adoc/common_sbp_legal_notice.adoc ] || \
-  ln -sr ${commonroot}/adoc/common_sbp_legal_notice.adoc ${partnername}/adoc/
-[ -L ${partnername}/adoc/common_trd_legal_notice.adoc ] || \
-  ln -sr ${commonroot}/adoc/common_trd_legal_notice.adoc ${partnername}/adoc/
-[ -L ${partnername}/adoc/common_docinfo_vars.adoc ] || \
-  ln -sr ${commonroot}/adoc/common_docinfo_vars.adoc ${partnername}/adoc/
+[ -L ${destdir}/adoc/common_gfdl1.2_i.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_gfdl1.2_i.adoc ${destdir}/adoc/
+[ -L ${destdir}/adoc/common_sbp_legal_notice.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_sbp_legal_notice.adoc ${destdir}/adoc/
+[ -L ${destdir}/adoc/common_trd_legal_notice.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_trd_legal_notice.adoc ${destdir}/adoc/
+[ -L ${destdir}/adoc/common_docinfo_vars.adoc ] || \
+  ln -sr ${commonroot}/adoc/common_docinfo_vars.adoc ${destdir}/adoc/
 
 # create docinfo.xml file
-[ -f "${partnername}/adoc/${documentbase}-docinfo.xml" ] || \
+[ -f "${destdir}/adoc/${documentbase}-docinfo.xml" ] || \
   cp ${templatesroot}/template_docinfo \
-     ${partnername}/adoc/${documentbase}-docinfo.xml
+     ${destdir}/adoc/${documentbase}-docinfo.xml
 
 # create vars file
-[ -f "${partnername}/adoc/${documentbase}-vars.adoc" ] || \
+[ -f "${destdir}/adoc/${documentbase}-vars.adoc" ] || \
   cp ${templatesroot}/template_vars \
-     ${partnername}/adoc/${documentbase}-vars.adoc
+     ${destdir}/adoc/${documentbase}-vars.adoc
 
-# create .adoc file
-[ -f "${partnername}/adoc/${documentbase}.adoc" ] || \
-  cp ${templatesroot}/template_main-rc \
-     ${partnername}/adoc/${documentbase}.adoc
+# create main file
+[ -f "${destdir}/adoc/${documentbase}.adoc" ] || \
+  cp ${templatesroot}/template_main-${doctype} \
+     ${destdir}/adoc/${documentbase}.adoc
 
 # create media directory structure
-[ -d ${partnername}/media/src/png ] || mkdir -p ${partnername}/media/src/png
-[ -d ${partnername}/media/src/svg ] || mkdir -p ${partnername}/media/src/svg
+[ -d ${destdir}/media/src/png ] || mkdir -p ${destdir}/media/src/png
+[ -d ${destdir}/media/src/svg ] || mkdir -p ${destdir}/media/src/svg
 # create symlink to logo
-[ -L ${partnername}/media/src/svg/suse.svg ] || \
-  ln -sr ${commonroot}/images/src/svg/suse.svg ${partnername}/media/src/svg/
+[ -L ${destdir}/media/src/svg/suse.svg ] || \
+  ln -sr ${commonroot}/images/src/svg/suse.svg ${destdir}/media/src/svg/
 # create images symlink
-[ -L ${partnername}/images ] || \
-  ln -sr ${partnername}/media ${partnername}/images
+[ -L ${destdir}/images ] || \
+  ln -sr ${destdir}/media ${destdir}/images
 
 # update interdocument references
 # ensure adoc file includes correct vars file
-[ -f "${partnername}/adoc/${documentbase}.adoc" ] && sed -i "s/include::\.\/template_vars\[\]/include::.\/${documentbase}-vars.adoc\[\]/g" ${partnername}/adoc/${documentbase}.adoc
+[ -f "${destdir}/adoc/${documentbase}.adoc" ] && sed -i "s/include::\.\/template_vars\[\]/include::.\/${documentbase}-vars.adoc\[\]/g" ${destdir}/adoc/${documentbase}.adoc
 # ensure DC file references correct adoc file
-[ -f "${partnername}/DC-${documentbase}" ] && sed -i "s/MAIN=\"template_main\"/MAIN=\"${documentbase}.adoc\"/g" ${partnername}/DC-${documentbase}
+[ -f "${destdir}/DC-${documentbase}" ] && sed -i "s/MAIN=\"template_main\"/MAIN=\"${documentbase}.adoc\"/g" ${destdir}/DC-${documentbase}
 
 
 
@@ -401,7 +470,7 @@ echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo "= Workspace for your new guide has been set up."
 echo "="
 echo "= Access your workspace in:"
-echo "=   rc/${partnername}"
+echo "=   references/${destdir}"
 echo "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
 echo
 
@@ -412,4 +481,5 @@ echo
 # Contributors:
 # - Terry Smith <terry.smith@suse.com>
 # Revisions:
-# - 20251204: Copied gssetup.sh to rcsetup.sh and modified 
+# - 20251208: Added document type selector
+# - 20251204: Copied gssetup.sh to refsetup.sh and modified
