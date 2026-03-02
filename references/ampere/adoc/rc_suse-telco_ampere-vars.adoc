@@ -91,22 +91,35 @@
 //            components in your solution, you will need to edit
 //            the docinfo file to reflect this.
 // -
-:comp1-provider: SUSE
-:comp1-brand: SUSE® Telco Cloud
-:comp1-long: SUSE Telco Cloud
-:comp1: {comp1-long}
-:comp1-version1: 
-:comp1-website: https://www.suse.com/products/edge-for-telco/
-:comp1-docs:
+:stelco-provider: SUSE
+:stelco-brand: SUSE® Telco Cloud
+:stelco-long: SUSE Telco Cloud
+:stelco: {stelco-long}
+:stelco-version1:
+:stelco-website: https://www.suse.com/products/edge-for-telco/
+:stelco-docs: https://documentation.suse.com/suse-edge/3.5/html/edge/
+:stelco-docs-atip: {stelco-docs}atip.html
+:stelco-contact: https://www.suse.com/contact/
 
-:comp2-provider: Ampere
-:comp2-brand: Ampere® Platforms
-:comp2-long: Ampere Platforms
-:comp2: {comp2-long}
-:comp2-version1:
-:comp2-website: https://amperecomputing.com/products/platforms
-:comp2-docs: 
-:comp2-name: Ampere Computing
+:sedge-eib-building-images: https://github.com/suse-edge/edge-image-builder/blob/main/docs/building-images.md
+//:github-suse-edge: https://github.com/suse-edge/edge-image-builder/blob/main/docs/building-images.md
+
+:amp-provider: Ampere Computing
+:amp: Ampere
+:amp-brand: {amp}® Platforms
+:amp-long: {amp} Platforms
+:amp-version1:
+:amp-website: https://amperecomputing.com/products/platforms
+:amp-docs:
+:amp-contact: https://amperecomputing.com/company/contact-us
+
+:altra: Altra
+:altra-brand: {amp}® {altra}®
+:altra-long: {amp} {altra}
+
+:ampone-brand: {amp}One® Platform
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -144,17 +157,17 @@
 //        will appear as:
 //          "Simplify deployment of JupyterLab with SUSE Linux Enterprise Server"
 // -
-:doctitle: {comp1-brand} on {comp2-brand}
+:doctitle: {stelco-brand} on {amp-brand}
 
 :docsubtitle: Density, performance & TCO gains for telecom operators
 
-:usecase: Telco cloud infrastructure with {comp1-provider} & {comp2-provider}
+:usecase: Telco cloud infrastructure with {stelco-provider} & {amp-provider}
 
 :description: High-density telco cloud architecture delivering improved performance, scalability, and lower total cost of ownership for telecom operators.
 
 :description-social: High-density telco cloud with better performance & TCO
 
-:executive-summary: {comp1-brand} on {comp2-brand} provides a cloud-native, CPU-based infrastructure optimized for modern telecom workloads such as 5G, Open RAN, and edge computing. It delivers high performance, deterministic latency, and superior energy efficiency while eliminating reliance on specialized hardware accelerators. This solution reduces total cost of ownership, simplifies operations, and enables telecom operators to deploy scalable, future-ready networks
+:executive-summary: {stelco-brand} on {amp-brand} provides a cloud-native, CPU-based infrastructure optimized for modern telecom workloads such as 5G, Open RAN, and edge computing. It delivers high performance, deterministic latency, and superior energy efficiency while eliminating reliance on specialized hardware accelerators. This solution reduces total cost of ownership, simplifies operations, and enables telecom operators to deploy scalable, future-ready networks
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -264,14 +277,11 @@
 :edge-image-builder: https://documentation.suse.com/suse-edge/3.3/html/edge/components-eib.html
 :github-edge-image-builder: https://github.com/suse-edge/edge-image-builder
 :github-eib-config: https://github.com/suse-edge/telco-cloud-examples/tree/main/telco-examples/edge-clusters/dhcp-less/eib
-:github-suse-edge: https://github.com/suse-edge/edge-image-builder/blob/main/docs/building-images.md
 :github-capi-manifest: https://github.com/suse-edge/telco-cloud-examples/blob/main/telco-examples/edge-clusters/dhcp-less/edge-telco-single-node/telco-capi-single-node-sriov-auto.yaml
 :suse-Kernel-arguments: https://documentation.suse.com/suse-edge/3.5/html/edge/atip-features.html#kernel-args
 :suse-sriov: https://documentation.suse.com/suse-edge/3.5/html/edge/atip-features.html#sriov
 :github-rtapp: https://github.com/scheduler-tools/rt-app
 :suse-telco-cloud: https://documentation.suse.com/suse-edge/3.5/html/edge/atip.html
-:suse-contact: https://www.suse.com/contact/
-:ampere-contact: https://amperecomputing.com/company/contact-us
 :mwcbarcelona-suse: https://www.mwcbarcelona.com/exhibitors/33792-suse
 :mwcbarcelona-ampere: https://www.mwcbarcelona.com/exhibitors/34509-ampere-computing
 :cyclictest: https://documentation.suse.com/sle-rt/15-SP7/html/SLE-RT-all/article-hardware-testing.html
