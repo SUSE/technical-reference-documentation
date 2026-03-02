@@ -208,11 +208,11 @@ This results in output similar to:
 After enabling SR-IOV on the desired NICs, the next step involves tuning the BIOS settings.
 This can be accomplished through the BMC Web UI with the following settings:
 
-. __Advanced__ > __ACPI Settings__ > __Enable CPPC__ *Disabled*
+. __Advanced__ > __ACPI Settings__ > __Enable CPPC__ - Set to *Disabled*.
 
-. __Advanced__ > __ACPI Settings__ > __Enable LPI__ *Disabled*
+. __Advanced__ > __ACPI Settings__ > __Enable LPI__ - Set to *Disabled*.
 
-. __Chipset__ > __CPU Configuration__ > __ANC mode__ *Quadrant*
+. __Chipset__ > __CPU Configuration__ > __ANC mode__ Set to *Quadrant*.
 
 Collaborative Processor Performance Control (CPPC) is an ACPI interface that allows the OS to manage CPU performance states more efficiently than legacy methods (like P-States and SpeedStep).
 Instead of using discrete frequency steps, CPPC communicates a continuous performance scale, allowing the CPU to change frequency/voltage faster and more precisely.
