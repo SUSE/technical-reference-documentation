@@ -254,7 +254,7 @@ These layers are implemented by deploying three main components into the resourc
 
 * {cml} Agent - manages the orchestration of workloads on the Kubernetes cluster
 
-* {cml} Application Gateway -  controls the networking into and out of {cml} provisioned pods
+* {cml} Application Gateway -  controls the networking, authentication and authorization into and out of {cml} provisioned pods
 
 
 
@@ -389,7 +389,7 @@ At least three control-plane nodes for high availability quorum
 * _Application / Platform Nodes_
 //
 +
-At least three worker nodes to host platform services with high availability
+At least three worker nodes on Kubernetes cluster to host platform services with high availability
 
 * _Execution / Worker Nodes (ClearML Agents)_
 //
@@ -763,8 +763,19 @@ These following are provided by the {cml} team:
 
 | elasticsearch | 8.5.1 | link:https://helm.elastic.co[]
 | mongodb | 15.6.26 | link:oci://docker.io/bitnamicharts[]
-| redis | 17.8.3 | link:oci://docker.io/bitnamicharts[]
+| drangonfly | 1.36.0 | link:oci://ghcr.io/drangonflydb/drangonfly/helm[]
 |===
++
+[NOTE]
+====
+For the latest release refere
+
+[source, console]
+----
+helm show readme oci://docker.io/clearml/clearml-enterprise > file.md
+----
+
+====
 
 
 
@@ -774,20 +785,11 @@ These following are provided by the {cml} team:
 +
 [source, console]
 ----
-helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
+helm repo add clearml-enterprise {cml-enterprise-helm-chart} 
 ----
 +
-[WARNING]
-====
-Should this be:
-
-[source, console]
-----
-helm registry login docker.io --username allegroaienterprise --password <CLEARML_DOCKERHUB_TOKEN>
-----
-
 See https://clear.ml/docs/latest/docs/deploying_clearml/enterprise_deploy/k8s#installation
-====
+
 
 . Update the local repository cache.
 +
@@ -1218,7 +1220,9 @@ image::clearml-validation-3.png[{cml} AI Platform , scaledwidth="90%", align="ce
 // - Suggested next steps for the learning journey
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Add content here
+This reference configuration outlines an opinionated yet flexible architecture for delivering an enterprise AI lifecycle management platform using {sai} integrated with {cml}. The solution establishes a standardized, Kubernetes-native foundation for running, managing, and governing AI workloads across on-premises, hybrid, and air-gapped environments.
+
+By combining SUSE’s secure and supported infrastructure stack with {cml}’s AI workload orchestration and lifecycle management capabilities, the architecture addresses key enterprise requirements such as scalability, multi-tenancy, security, observability, and operational consistency. The result is a repeatable platform design that enables organizations to operationalize AI workloads reliably while maintaining control over data, infrastructure, and governance.
 
 
 
@@ -1269,8 +1273,9 @@ Yes, {cml} fully supports air-gapped deployments with no connection to the inter
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-* Reference 1
-* Reference 2
+* {cml-docs-control-plane-installation}[ClearML Control Plane installation instructions]
+* {cml-docs-agent-installation}[ClearML Agent installation instructions]
+* {cml-docs-application-gateway}[ClearML Application Gateway installation instructions]
 
 
 
