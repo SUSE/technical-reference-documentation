@@ -783,7 +783,7 @@ helm show readme oci://docker.io/clearml/clearml-enterprise > file.md
 
 . Add the {cml} Helm repository to your cluster.
 +
-[source, console]
+[source, console, subs="attributes+"]
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} 
 ----
@@ -1043,25 +1043,25 @@ helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace
 
 
 . Deploy {cml} Agent
-+
+
 .. Add the {cml} Helm repository to your cluster:
 +
-[source, console] 
+[source, console, subs="attributes+"] 
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
-+
+
 .. Update the local repository:
 +
 [source, console] 
 ----
 helm repo update
 ----
-+
+
 .. Create a `{cml-agent-override-file}` file with the agent settings:
 +
 Replace the below <ACCESS_KEY> and <SECRET_KEY> with the tenant admin API credentials created in the control plane setup procedure.
-Set the <api|file|web>ServerUrlReference fields to match your {cml} Server URLs i.e.( https://api.<BASE_DOMAIN>)etc.
+Set the <api|file|web>ServerUrlReference fields to match your {cml} Server URLs ( https://api.<BASE_DOMAIN>;).
 Replace <MAX_AVAILABLE_GPUS> with the total number of GPUs made available to {cml} agents on this cluster
 +
 [source, console]
@@ -1083,14 +1083,14 @@ agentk8sglue:
   dashboardReportMaxGpu: <MAX_AVAILABLE_GPUS>
 ----
 For more advanced configurations, refer to {cml}’s online documentation
-+
-. Install the {cml} Enterprise Agent:
+
+. Install the {cml} Enterprise Agent
 +
 [source, console]
 ----
 helm upgrade -i -n clearml-worker clearml-agent clearml-enterprise/clearml-enterprise-agent --create-namespace -f clearml-agent-values.override.yaml
 ----
-+
+
 . Verifying the installation of Control Node
 +
 To verify the {cml} Agent has been deployed to your cluster:
@@ -1109,7 +1109,7 @@ In a multi-tenant deployment, tenant isolation is achieved by creating a dedicat
 
 . Add the {cml} Helm repository to your cluster:
 +
-[source, console]
+[source, console, subs="attributes+"]
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
@@ -1121,7 +1121,7 @@ helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_RE
 helm repo update
 ----
 
-. Create a clearml-app-gateway-values.override.yaml file with the agent settings in the following form (See configuration description below):
+. Create a '{clearml-app-gateway-values.override.yaml}' file with the agent settings in the following form (See configuration description below):
 +
 [source, console]
 ----
@@ -1149,7 +1149,7 @@ Set the <apiServerUrlReference> field to match your
 .. Configuration options:
 ... imageCredentials.password: {cml} DockerHub Access Token.
 ... clearml.apiKey and clearml.apiSecret: Tenant admin API credentials created in the control plane setup procedure.
-... clearml.apiServerUrlReference: {cml} Server URL i.e.( https://api.<BASE_DOMAIN>;)
+... clearml.apiServerUrlReference: {cml} Server URL as ( https://api.<BASE_DOMAIN>;)
 ... clearml.authCookieName: Cookie used by the {cml} server to store the {cml} authentication cookie.
 ... ingress.hostName: Hostname of App Gateway used by the ingress controller to access it.
 ... tcpSession.routerAddress: The external App Gateway address (can be an IP, hostname, or load balancer address) depending on your network setup. Ensure this address is accessible for TCP connections.
@@ -1159,7 +1159,7 @@ Set the <apiServerUrlReference> field to match your
 
 . Install the {cml} Application Gateway:
 +
-Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (e.g. Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
+Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (example - Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
 Replace <CHART_VERSION> - Version recommended by the {cml} Support Team.
 +
 [source, console]
@@ -1273,27 +1273,28 @@ Yes, {cml} fully supports air-gapped deployments with no connection to the inter
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-* {cml-docs-control-plane-installation}[ClearML Control Plane installation instructions]
-* {cml-docs-agent-installation}[ClearML Agent installation instructions]
-* {cml-docs-application-gateway}[ClearML Application Gateway installation instructions]
+* {cml-docs-control-plane-installation}[{cml} Control Plane installation instructions]
+* {cml-docs-agent-installation}[{cml} Agent installation instructions]
+* {cml-docs-application-gateway}[{cml} Application Gateway installation instructions]
+* {sai-docs}[{sai} installation guide]
 
 
 
-== Glossary
+// == Glossary
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a glossary of key terms used in this document.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Term::
-Definition
+// Term::
+// Definition
 
-Term::
-Definition
-
-
+// Term::
+// Definition
 
 
-== Appendix
+
+
+// == Appendix
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Use subsections of the Appendix to provide such content as:
 // * a complete bill of materials for all components
@@ -1301,22 +1302,22 @@ Definition
 // * other supporting content
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The following sections provide additional information and resources.
+// The following sections provide additional information and resources.
 
 
-=== Compute platform bill of materials
+// === Compute platform bill of materials
 
-Add content here
-
-
-=== Software bill of materials
-
-Add content here
+// Add content here
 
 
-=== Benchmark results
+// === Software bill of materials
 
-Add content here
+// Add content here
+
+
+// === Benchmark results
+
+// Add content here
 
 
 
