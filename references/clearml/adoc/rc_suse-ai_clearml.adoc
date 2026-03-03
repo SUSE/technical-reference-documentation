@@ -439,11 +439,11 @@ Be sure to select the appropriate, supported version of {sles} by reviewing the 
 You will need to register your installed system with {scc-website}[{scc-long}] to obtain software packages and patches.
 You can do this by configuring each node in one of the following ways:
 
-. to directly access the {scc-website}[{scc-long}] through an external network
+* directly access the {scc-website}[{scc-long}] through an external network
 
-. to use your organization’s internal, {smlm-website}[{smlm-brand}] infrastructure
+* use your organization’s internal, {smlm-website}[{smlm-brand}] infrastructure
 
-. to leverage a local server running an instance of {srmt-website}[{srmt-long} ({srmt})]
+* leverage a local server running an instance of {srmt-website}[{srmt-long} ({srmt})]
 
 [TIP]
 ====
@@ -470,30 +470,38 @@ Ensure these additional considerations are configured on each node:
 {rke2-long} provides the Kubernetes layer to host {srancher-long}.
 For a stable, secure, and scalable {rke2} deployment, consider the following:
 
-* *Version* - Identify the appropriate, supported version of {rke2} by reviewing the {srancher-support-matrix}[{srancher} Support Matrix].
+* *Version* - Identify the appropriate, supported version of {rke2} by reviewing the {srancher-support-matrix}[{srancher}: Support Matrix].
 
-* *Availability* - For production deployments, use an odd number of control plane / etcd nodes (minimum three) to maintain etcd quorum and prevent loss of cluster availability. When deploying multiple control-plane nodes, use an external load balancer to distribute traffic across the Kubernetes API servers.
+* *Availability* - For production deployments, use an odd number of control plane / etcd nodes (minimum three) to maintain etcd quorum and prevent loss of cluster availability.
+When deploying multiple control-plane nodes, use an external load balancer to distribute traffic across the Kubernetes API servers.
 
-* *Networking* - Ensure that all required Kubernetes, etcd, and container runtime ports are open between cluster nodes. Latency and packet loss between nodes—especially etcd members—can negatively impact cluster stability and performance.
+* *Networking* - Ensure that all required Kubernetes, etcd, and container runtime ports are open between cluster nodes.
+Latency and packet loss between nodes—especially etcd members—can negatively impact cluster stability and performance.
 
-* *etcd Data Protection* - etcd stores all Kubernetes cluster state and configuration. Enable regular etcd snapshots and store backups outside the cluster to support disaster recovery and cluster restoration.
+* *etcd Data Protection* - etcd stores all Kubernetes cluster state and configuration.
+Enable regular etcd snapshots and store backups outside the cluster to support disaster recovery and cluster restoration.
 
-* *Security* - Restrict SSH access to cluster nodes using key-based authentication only. Use least-privilege access for the SSH user specified in the cluster.yml file. Protect the generated kube_config_cluster.yml file, as it provides administrative access to the cluster.
+* *Security* - Restrict SSH access to cluster nodes using key-based authentication only.
+Use least-privilege access for the SSH user specified in the `cluster.yml` file.
+Protect the generated `cluster.yml` file, as it provides administrative access to the cluster.
 
-* *Scalability* - Additional worker or control-plane nodes can be added to the cluster after initial deployment by updating the cluster.yml file and re-running the rke up command. Plan IP addressing, DNS, and load balancer capacity accordingly.
+* *Scalability* - Additional worker or control-plane nodes can be added to the cluster after initial deployment by updating the `cluster.yml` file and re-running the rke up command. Plan IP addressing, DNS, and load balancer capacity accordingly.
 
-* *Certificate Management* - RKE automatically generates and manages Kubernetes certificates. If a load balancer or external endpoint is used, ensure all required IP addresses and FQDNs are included under authentication.sans in the cluster.yml file to avoid certificate validation issues.
+* *Certificate Management* - {rke2} automatically generates and manages Kubernetes certificates.
+If a load balancer or external endpoint is used, ensure all required IP addresses and FQDNs are included in the `cluster.yml` file to avoid certificate validation issues.
 
-* *Operating System Configuration* - Disable swap and ensure required kernel modules are loaded on all nodes. Apply consistent OS configuration across nodes to avoid unpredictable behavior.
+* *Operating System Configuration* - Disable swap and ensure required kernel modules are loaded on all nodes.
+Apply consistent OS configuration across nodes to avoid unpredictable behavior.
 
-* *Upgrade Strategy* - Before upgrading Kubernetes or RKE versions, review the supported version matrix and perform upgrades in a test environment. Back up etcd data prior to any upgrade operation.
+* *Upgrade Strategy* - Before upgrading Kubernetes or {rke2} versions, review the supported version matrix and perform upgrades in a test environment.
+Back up etcd data prior to any upgrade operation.
 
 * *Logging and Monitoring* - Plan for cluster-level monitoring and logging early in the deployment lifecycle to simplify troubleshooting and operational visibility.
 
 
 [NOTE]
 ====
-{rke2} installation requires a client system (an administrative workstation) that has been configured with {kubectl-website}[`kubectl` Utility].
+{rke2} installation requires a client system (an administrative workstation) that has been configured with {kubectl-website}[`kubectl` utility].
 ====
 
 
@@ -504,14 +512,14 @@ The deployment process includes the major steps outlined below.
 +
 {rke2} supports multiple installation methods, including tarball installation, RPM-based installation, and manual binary installation.
 The tarball installation method is recommended for most deployment scenarios due to its flexibility and consistency across environments.
-Refer to the official {rke2-install-methods}[{rke2} Installation Methods documentation] for details.
+Refer to the official {rke2-install-methods}[{rke2}: Installation Methods documentation] for details.
 
 . Install {rke2} on the control plane nodes.
 //
 +
-Install {rke2} on each server node by following the official guidance in {rke2-install-quickstart}[{rke2} Installation Quickstart].
+Install {rke2} on each server node by following the official guidance in {rke2-install-quickstart}[{rke2}: Installation Quickstart].
 
-. Configure high availability by following guidance provided in {rke2-install-ha}[{rke2} Installation High Availability].
+. Configure high availability by following guidance provided in {rke2-install-ha}[{rke2}: Installation High Availability].
 +
 [NOTE]
 ====
@@ -523,7 +531,7 @@ Ensure that the load balancer IP address or fully qualified domain name (FQDN) i
 . Install the appropriate agent on your worker nodes.
 //
 +
-Instructions for installing the Linux or Windows Agent are provided in {rke2-install-quickstart}[{rke2} Installation Quickstart].
+Instructions for installing the Linux or Windows Agent are provided in {rke2-install-quickstart}[{rke2}: Installation Quickstart].
 +
 [TIP]
 ====
@@ -535,7 +543,7 @@ Ensure that each worker node meets documented system requirements and can secure
 
 Before installing {srancher-long} onto your {rke2} cluster, consider the following:
 
-* *Deployment Strategy* - Understand and select a {srancher-dep-strategy}[{srancher} Deployment Strategy] for your requirements.
+* *Deployment Strategy* - Understand and select a {srancher-dep-strategy}[{srancher}: Deployment Strategy] for your requirements.
 
 * *Availability* - Deploy {srancher} to achieve your availability requirements.
 High availability, for example, can be achieved by deploying {srancher} on a highly available {rke2} cluster.
@@ -566,12 +574,13 @@ Once you have defined your deployment requirements, proceed with the installatio
 
 === {sstorage-long}
 
-{sstorage} provides persistent storage for Kubernetes workloads running on {rke2-long} and managed by {srancher-long}. It enables high availability, scalability, and data protection for stateful applications.
+{sstorage} provides persistent storage for Kubernetes workloads running on {rke2-long} and managed by {srancher-long}.
+It enables high availability, scalability, and data protection for stateful applications.
 
 For a stable and production-ready deployment, consider the following:
 
 * *Cluster Requirement* – Deploy {sstorage} on a running RKE2 cluster managed by {srancher-long}. Storage nodes must meet the documented hardware, disk, and network requirements. Use dedicated disks only.
-Refer to {sstorage-requirements}[{sstorage} Requirements]
+Refer to {sstorage-requirements}[{sstorage}: Requirements].
 
 * *High Availability* – Use a minimum of three storage nodes to maintain quorum and ensure data availability. Distribute storage across failure domains where possible.
 
@@ -581,8 +590,9 @@ Refer to {sstorage-requirements}[{sstorage} Requirements]
 
 * *Backup and Recovery* – Enable snapshots and integrate with enterprise backup solutions to protect persistent data and support disaster recovery.
 
-*Installation and Configuration* – Deploy {sstorage} using the supported method in {srancher-long}. 
-For detailed installation and configuration steps, refer to the {sstorage-docs}[official documentation]
+
+Deploy {sstorage} using a supported method in {srancher-long}.
+For detailed installation and configuration steps, refer to the {sstorage-installation}[{sstorage}: Installation].
 
 
 
@@ -594,37 +604,38 @@ It delivers visibility, threat detection, and automated policy control across th
 
 For a stable and production-ready deployment, consider the following:
 
-. *System Requirements* – Validate component requirements (Controllers, Scanners, Enforcers, Managers). Review supported operating systems, CPU, memory, and platform compatibility.
+* *System Requirements* – Validate component requirements (Controllers, Scanners, Enforcers, Managers). Review supported operating systems, CPU, memory, and platform compatibility.
 Follow documented minimum and recommended specifications to ensure performance and reliability.
-Refer to {ssecurity-requirements}[official documentation]
+Refer to {ssecurity-requirements}[{ssecurity}: System Requirements].
 
-. *Cluster Requirement* – Deploy {ssecurity} on a running {rke2} cluster managed by {srancher-long}.
+* *Cluster Requirements* – Deploy {ssecurity} on a running {rke2} cluster managed by {srancher-long}.
 Ensure the cluster meets documented CPU, memory, and networking requirements. Verify node connectivity to required container registries (public or private).
 
-. *Namespace and Deployment Scope* – Deploy {ssecurity} in the dedicated namespace:
-+
-[source, console]
-----
-cattle-neuvector-system
-----
+* *Namespace and Deployment Scope* – Deploy {ssecurity} in the dedicated namespace (for example, "cattle-neuvector-system").
 This isolates security components from application workloads and simplifies lifecycle management.
 
-. *High Availability* – Distribute controllers and enforcers across multiple worker nodes. Avoid single points of failure. Maintain protection during node failures or maintenance events.
+* *High Availability* – Distribute controllers and enforcers across multiple worker nodes.
+Avoid single points of failure.
+Maintain protection during node failures or maintenance events.
 
-. *Runtime Protection and Admission Control* – Enable runtime security and admission control. Start policies in monitor mode. Move to enforce mode after validation to prevent unintended workload disruption.
+* *Runtime Protection and Admission Control* – Enable runtime security and admission control.
+Start policies in monitor mode.
+Move to enforce mode after validation to prevent unintended workload disruption.
 
-. *Vulnerability and Compliance Scanning* – Enable image scanning and continuous compliance checks. Apply required compliance templates (for example, CIS Benchmarks) based on organizational or regulatory requirements.
+* *Vulnerability and Compliance Scanning* – Enable image scanning and continuous compliance checks.
+Apply required compliance templates (for example, CIS Benchmarks) based on organizational or regulatory requirements.
 
-. *Resource Planning* – Account for CPU and memory consumption from scanning and monitoring components. Size worker nodes appropriately, especially in high-density workload environments.
+* *Resource Planning* – Account for CPU and memory consumption from scanning and monitoring components.
+Size worker nodes appropriately, especially in high-density workload environments.
 
-. *Logging and Monitoring Integration* – Integrate alerts, events, and audit logs with centralized logging and monitoring platforms to improve visibility, response time, and audit readiness.
+* *Logging and Monitoring Integration* – Integrate alerts, events, and audit logs with centralized logging and monitoring platforms to improve visibility, response time, and audit readiness.
 
-. *Backup and Disaster Recovery* – Include {ssecurity} policies and configurations in the cluster backup strategy. Ensure etcd backups capture security-related Kubernetes resources. Validate restore procedures periodically.
+* *Backup and Disaster Recovery* – Include {ssecurity} policies and configurations in the cluster backup strategy.
+Ensure etcd backups capture security-related Kubernetes resources.
+Validate restore procedures periodically.
 
-*Installation and Configuration*
+For detailed, version-aligned installation and configuration steps, refer to {ssecurity-rancher-deployment}[{ssecurity}: Rancher Deployment].
 
-Deploy {ssecurity} using the supported method in {srancher-long} UI.
-For detailed, version-aligned installation and configuration steps, refer to the official documentation: {ssecurity-rancher-deployment}[{ssecurity} Deployment with Rancher]
 
 
 === {sai-long}
@@ -635,46 +646,46 @@ It includes modular AI components (middleware, vector databases, inference engin
 
 For a stable and production-ready deployment, consider the following:
 
-. *Cluster Requirement* – Deploy {sai} on a running Kubernetes cluster (for example, {srancher} with {rke2}).
+* *Cluster Requirement* – Deploy {sai} on a running Kubernetes cluster (for example, {srancher} with {rke2}).
 Ensure all nodes are registered and healthy.
 
-. *GPU and Node Preparation* – Provision GPU-enabled nodes with NVIDIA drivers and CUDA installed.
+* *GPU and Node Preparation* – Provision GPU-enabled nodes with NVIDIA drivers and CUDA installed.
 Label nodes appropriately for AI workloads.
-Refer to {sai-reqs}[{sai} Requirements]:
+Refer to {sai-reqs}[{sai}: Requirements].
 
-. *Entitlement and Registry Access* – Maintain a valid {sai} subscription.
+* *Entitlement and Registry Access* – Maintain a valid {sai} subscription.
 Ensure access to the SUSE Application Collection registry for Helm charts and container images.
 Keep credentials current.
 
-. *Namespace Isolation* – Create a dedicated namespace (for example, 'suse-ai') to isolate AI workloads from other cluster applications.
+* *Namespace Isolation* – Create a dedicated namespace (for example, "suse-ai") to isolate AI workloads from other cluster applications.
 
-. *Registry Credentials Configuration* – Create Kubernetes image pull secrets for the SUSE Application Collection registry using entitlement credentials. Validate image pull access before deployment.
+* *Registry Credentials Configuration* – Create Kubernetes image pull secrets for the SUSE Application Collection registry using entitlement credentials.
+Validate image pull access before deployment.
 
-. *Helm Registry Access* – Authenticate to the Helm OCI registry hosting {sai} charts prior to installation.
+* *Helm Registry Access* – Authenticate to the Helm OCI registry hosting {sai} charts prior to installation.
 
-. *cert-manager Dependency* – Install cert-manager in the cluster before deploying {sai} components that require certificate management.
+* *cert-manager Dependency* – Install cert-manager in the cluster before deploying {sai} components that require certificate management.
 
-. *Deployment Method* – Deploy {sai} using the SUSE Deployer Helm chart.
-Use SUSE-provided override templates (for example, production or minimal profiles) and customize values based on workload requirements.
+* *Deployment Method* – Deploy {sai} using the SUSE Deployer Helm chart.
+Use SUSE-provided override templates (production or minimal profiles) and customize values based on workload requirements.
 
-. *Installation Order and Dependencies* – Install foundational components (such as cert-manager) first, followed by core AI services.
+* *Installation Order and Dependencies* – Install foundational components (such as cert-manager) first, followed by core AI services.
 Deploy optional components (for example, GPU-based or framework-specific services) after core services are operational.
 
-. *Resource Planning* – AI components, including inference engines and vector databases, are resource intensive.
+* *Resource Planning* – AI components, including inference engines and vector databases, are resource intensive.
 Plan CPU, memory, storage, and GPU capacity based on expected workload size and concurrency.
 
-. *Monitoring and Logging Integration* – Configure SUSE Observability to collect metrics, logs, and traces for {sai} components.
+* *Monitoring and Logging Integration* – Configure SUSE Observability to collect metrics, logs, and traces for {sai} components.
 Monitor GPU utilization, inference latency, memory consumption, and storage performance.
 Integrate alerts for proactive incident response.
-Refer to {sai-monitoring}[{sai} Monitoring and Observability].
+Refer to {sai-monitoring}[{sai}: Monitoring and Observability].
  
-. *Operational Validation* – After deployment, verify all pods and services are in a healthy state.
+* *Operational Validation* – After deployment, verify all pods and services are in a healthy state.
 Confirm GPU allocation, storage availability, and external access endpoints before onboarding workloads.
 
-*Installation and Configuration*
 
-Deploy {sai} using Helm and the SUSE Deployer meta-chart in the dedicated namespace.
-For detailed, version-aligned installation steps and configuration guidance, refer to the {sai-aideployer}[official documentation].
+Deploy SUSE AI to the dedicated namespace using Helm and the {sai-deployer}[{sai} Deployer], a meta Helm chart that takes care of downloading and installing individual AI Library components.
+For detailed, version-aligned installation steps and configuration guidance, refer to the {sai-deployment}[Deploying and Installing {sai}].
 
 
 
@@ -686,7 +697,7 @@ image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platfor
 
 ==== Preparation
 
-. Ensure your cluster has at least three nodes for the control plane, each provisioned with:
+. Ensure the cluster for the {cml} Control Plane consists of at least three nodes that meet these minimum specifications:
 +
 --
 * 8 vCPUs
@@ -694,36 +705,68 @@ image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platfor
 * 500 GB storage
 --
 
-. Make sure your systems meet the following software dependencies:
-+
---
-* Kubernetes (such as {rke2}) >= 1.23.0-0
-* Kubectl
-* Helm
---
+. Be sure you have access to the Kubectl and Helm CLI tools.
 
-. Ensure the following network components are provisioned to make the {cml} control plane accessible:
-+
---
-* _Ingress Controller_
+. Use a supported Kubernetes distribution, such as {rke2}.
 //
 +
-An ingress controller (for example, nginx-ingress) is required.
+At the time of publication, the minimum Kubernetes version is {cml-k8s-version-min}.
+
+. Ensure your cluster has access to the {cml} software dependencies via their Helm charts.
+//
++
+At the time of publication, these include:
++
+--
+* elasticsearch
+* mongodb
+* dragonfly
+--
++
+To obtain a current list, log into the {cml} Docker repository and issue the following command:
++
+[source, console]
+----
+helm show readme oci://docker.io/clearml/clearml-enterprise > file.md
+----
++
+This will return output similar to:
++
+|===
+| Repository | Name | Version
+
+| link:https://helm.elastic.co[] | elasticsearch | 8.5.1
+| link:https://mongodb.github.io/helm-charts[] | mckMongodb(mongodb-kubernetes) | 1.6.1
+| link:oci://docker.io/bitnamicharts[] | mongodb | 15.6.26
+| link:oci://ghcr.io/drangonflydb/drangonfly/helm[] | drangonfly | v1.36.0
+|===
+
+
+. Provision or configure networking as follows:
++
+--
+* *Ingress controller*
+//
++
+An ingress controller (such as, nginx-ingress) is required.
 If exposing services externally, configure a load balancer (such as, MetalLB).
 
-* _Port specification_
+* *Port specification*
 //
 +
-The designated nodes for the {cml} control plane servers and workers should be able to communicate through HTTP/S (TCP ports 80 and 443).
-Any additional ports to be used in the deployment (TCP sessions) should also be pre-configured (see Application Gateway installation).
+The designated nodes for the {cml} Control Plane servers and workers should be able to communicate through HTTP/S (TCP ports 80 and 443).
+Any additional ports to be used in the deployment (TCP sessions) should also be pre-configured (see <<Setting up the Application Gateway>>).
 
-* _DNS Configuration_
+* *DNS configuration*
 //
 +
-A domain with subdomain support is required (referred hereafter as "<BASE_DOMAIN>"), ideally with trusted TLS certificates. All entries must be resolvable by the Ingress controller.
+A domain with subdomain support is required (referred hereafter as "<BASE_DOMAIN>"), ideally with trusted TLS certificates.
+All entries must be resolvable by the ingress controller.
+//
++
 Some example subdomains include:
 
-** Control plane servers:
+** Control Plane servers:
 *** api.<BASE_DOMAIN>
 *** app.<BASE_DOMAIN>
 *** files.<BASE_DOMAIN>
@@ -733,53 +776,37 @@ Some example subdomains include:
 *** tcp-router.<BASE_DOMAIN> (optional, for TCP sessions)
 
 
-* For advanced deployments, preconfigure a CNI.
+* For *advanced deployments*, configure a CNI.
 
-* For multi-tenant deployment, set up {cml-docs-idp}[IdP] per tenant.
+* For *multi-tenant deployment*, set up {cml-docs-idp}[IdP] per tenant.
 --
 
-. Configure the storage with:
+* Configure storage with:
 +
 --
 * a StorageClass to an accessible storage backend for the {cml} control plane
 * a PVC (ReadWriteMany policy) and PV for the {cml} workers
 --
 
-. Configure the _{cml} Artifactories_.
+. Configure the {cml} Artifactories.
 //
 +
 To install the different {cml} components, credentials to {cml}’s artifact repositories are required.
-These following are provided by the {cml} team:
+The following are provided by the {cml} team:
 +
 --
 * Helm repository credentials (referenced hereafter as "<HELM_REPO_TOKEN>")
 * DockerHub registry credentials (referenced hereafter as "<CLEARML_DOCKERHUB_TOKEN>")
 --
 
-. Make sure you have access to the charts listed below:
-+
-|===
-| Name | Version | Repo
-
-| elasticsearch | 8.5.1 | link:https://helm.elastic.co[]
-| mongodb | 15.6.26 | link:oci://docker.io/bitnamicharts[]
-| drangonfly | 1.36.0 | link:oci://ghcr.io/drangonflydb/drangonfly/helm[]
-|===
-+
-[NOTE]
-====
-For the latest release refere
-
-[source, console]
-----
-helm show readme oci://docker.io/clearml/clearml-enterprise > file.md
-----
-
-====
-
 
 
 ==== Deploying the {cml} Control Plane
+
+The {cml} Control Plane is the backend service infrastructure that allows multiple users to collaborate and manage their tasks by working seamlessly with the {cml} Python package and {cml} Agent.
+
+For current, detailed installation guidance, refer to {cml-docs-control-plane-installation}[{cml}: Enterprise Server Kubernetes Deployment].
+
 
 . Add the {cml} Helm repository to your cluster.
 +
@@ -1100,7 +1127,7 @@ Go to the Orchestration > Queues page
 Verify configured queues appear in the Queues page
 
 
-==== Setup an Application Gateway
+==== Setting up the Application Gateway
 
 The Application Gateway enables access to AI workload applications (e.g. remote IDEs like VSCode and Jupyter, model API interface, etc.). It acts as a proxy, identifying {cml} Tasks running within its Kubernetes namespace and making them available for network access
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} Application Gateway  for each tenant (using a tenant admin’s API credentials)
