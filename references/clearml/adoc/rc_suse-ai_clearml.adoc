@@ -795,7 +795,6 @@ To install the different {cml} components, credentials to {cml}’s artifact rep
 The following are provided by the {cml} team:
 +
 --
-* Helm repository credentials (referenced hereafter as "<HELM_REPO_TOKEN>")
 * DockerHub registry credentials (referenced hereafter as "<CLEARML_DOCKERHUB_TOKEN>")
 --
 
@@ -807,23 +806,14 @@ The {cml} Control Plane is the backend service infrastructure that allows multip
 
 For current, detailed installation guidance, refer to {cml-docs-control-plane-installation}[{cml}: Enterprise Server Kubernetes Deployment].
 
-
-. Add the {cml} Helm repository to your cluster.
-+
-[source, console, subs="attributes+"]
-----
-helm repo add clearml-enterprise {cml-enterprise-helm-chart} 
-----
-+
-See https://clear.ml/docs/latest/docs/deploying_clearml/enterprise_deploy/k8s#installation
-
-
-. Update the local repository cache.
+. Login to the ClearML OCI registry
 +
 [source, console]
 ----
-helm repo update
+helm registry login docker.io --username allegroaienterprise --password <CLEARML_DOCKERHUB_TOKEN>
 ----
++
+See {cml-docs-control-plane-installation}
 
 . Configure deployment parameters.
 +
