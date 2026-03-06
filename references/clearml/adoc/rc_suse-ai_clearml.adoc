@@ -250,11 +250,11 @@ Within this reference design, {cml} is responsible for:
 
 These layers are implemented by deploying three main components into the resource cluster:
 
-* {cml} Enterprise Server -  main server that hosts the UI and backend
+* {cml} Enterprise Server -  control plane that provides back-end services and the UI
 
 * {cml} Agent - manages the orchestration of workloads on the Kubernetes cluster
 
-* {cml} Application Gateway -  controls the networking, authentication and authorization into and out of {cml} provisioned pods
+* {cml} Application Gateway -  controls the networking, authentication and authorization into and out of {cml}-provisioned pods
 
 
 
@@ -697,7 +697,8 @@ image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platfor
 
 ==== Preparation
 
-. {cml} Enterprise Server provides {cml} Control Plane. Ensure that the cluster for the {cml} Enterprise Server Control Plane consists of at least three nodes that meet these minimum specifications:
+. {cml} Enterprise Server provides {cml} Control Plane.
+Ensure that the cluster for the {cml} Enterprise Server consists of at least three nodes that meet these minimum specifications:
 +
 --
 * 8 vCPUs
@@ -802,7 +803,7 @@ The following are provided by the {cml} team:
 
 ==== Deploying the {cml} Control Plane
 
-The {cml} Control Plane is the backend service infrastructure that allows multiple users to collaborate and manage their tasks by working seamlessly with the {cml} Python package and {cml} Agent.
+The {cml} Control Plane is the back-end service infrastructure that allows multiple users to collaborate and manage their tasks by working seamlessly with the {cml} Python package and {cml} Agent.
 
 For current, detailed installation guidance, refer to {cml-docs-control-plane-installation}[{cml}: Enterprise Server Kubernetes Deployment].
 
@@ -973,20 +974,22 @@ If the deployment is successful, you should see the {cml} log in screen.
 image::clearml-login-screen.png[title="{cml} login screen", {cml} login screen , align="center", width=90%]
 
 
-=== {cml} Worker Nodes
+=== {cml} worker nodes
 
 ==== Overview
 
-The {cml} Agent is installed on Kubernetes using a Helm chart. This sets up a controller pod that listens to {cml} queues and launches jobs as needed. The Agent can be deployed on the same Kubernetes cluster as the ClearML Control Plane or on a separate one.
+The {cml} Agent is installed on Kubernetes using a Helm chart.
+This sets up a controller pod that listens to {cml} queues and launches jobs as needed.
+The Agent can be deployed on the same Kubernetes cluster as the {cml} Control Plane or on a separate one.
 
 The Controller pod:
 
-. Pulls jobs from {cml} execution queues
+. Pulls jobs from {cml} execution queues.
 . Prepares a Kubernetes job based on the provided YAML template.
 . Inside each job pod, the {cml} Agent:
 .. Installs the required environment for the task.
 .. Executes and monitors the task process.
-.. Logs task data to the {cml} Server
+.. Logs task data to the {cml} Server.
 
 
 ==== Prerequisites
@@ -997,7 +1000,7 @@ In a multi-tenant deployment, tenant isolation is achieved by creating a dedicat
 * Each worker environment must be able to access the {cml} server over the same network.
 
 
-==== Procedure
+==== Setting up the {cml} worker nodes
 
 
 . (Optional) Configure the NVIDIA GPU Operator.
@@ -1006,9 +1009,9 @@ When using NVIDIA GPUs, configure the NVIDIA GPU Operator according to recommend
 
 .. Add the NVIDIA GPU Operator Helm repository.
 +
-[source, console]
+[source, console, subs="attributes+"]
 ----
-helm repo add nvidia {nvidia-gpu-operator}
+helm repo add nvidia {nvidia-gpu-operator-repo}
 ----
 
 .. Update the local repository.
@@ -1049,37 +1052,33 @@ devicePlugin:
 These values were chosen to prevent unprivileged containers from bypassing the Kubernetes Device Plugin API.
 ====
 
-.. Install the Nvidia GPU Operator:
+.. Install the NVIDIA GPU Operator.
 +
 [source, console] 
 ----
 helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace -f gpu-operator.override.yaml
 ----
 +
-{cml} supports various silicon vendors such as Nvidia, AMD and Intel. For detailed configuration instructions refer to {cml}’s online documentation.
+{cml} supports various silicon vendors such as NVIDIA, AMD and Intel. For detailed configuration instructions refer to {cml}’s online documentation.
 
 
-. Deploy {cml} Agent
+. Deploy {cml} Agent.
 
-.. Add the {cml} Helm repository to your cluster:
+.. Add the {cml} Helm repository to your cluster.
 +
 [source, console, subs="attributes+"] 
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
 
-.. Update the local repository:
+.. Update the local repository.
 +
 [source, console] 
 ----
 helm repo update
 ----
 
-.. Create a `{cml-agent-override-file}` file with the agent settings:
-+
-Replace the below <ACCESS_KEY> and <SECRET_KEY> with the tenant admin API credentials created in the control plane setup procedure.
-Set the <api|file|web>ServerUrlReference fields to match your {cml} Server URLs ( https://api.<BASE_DOMAIN>;).
-Replace <MAX_AVAILABLE_GPUS> with the total number of GPUs made available to {cml} agents on this cluster
+.. Create a `{cml-agent-override-file}` file with the agent settings as follows:
 +
 [source, console]
 ----
@@ -1099,46 +1098,63 @@ agentk8sglue:
       queueSettings: {}
   dashboardReportMaxGpu: <MAX_AVAILABLE_GPUS>
 ----
-For more advanced configurations, refer to {cml}’s online documentation
++
+--
+Be sure to:
 
-. Install the {cml} Enterprise Agent
+* replace `<ACCESS_KEY>` and `<SECRET_KEY>` with the tenant admin API credentials created in the control plane setup procedure.
+
+* set the `<CLEARML_API_SERVER_REFERENCE>`, `<CLEARML_FILE_SERVER_REFERENCE>`, and `<CLEARML_WEB_SERVER_REFERENCE>` values to match your {cml} server URL ( "https://api.<BASE_DOMAIN>" ).
+
+* replace `<MAX_AVAILABLE_GPUS>` with the total number of GPUs made available to {cml} agents on this cluster.
+
+For more advanced configurations, refer to {cml}’s online documentation
+--
+
+. Install the {cml} Agent.
 +
 [source, console]
 ----
 helm upgrade -i -n clearml-worker clearml-agent clearml-enterprise/clearml-enterprise-agent --create-namespace -f clearml-agent-values.override.yaml
 ----
 
-. Verifying the installation of Control Node
+. Verify installation.
+//
 +
-To verify the {cml} Agent has been deployed to your cluster:
-Use a web browser to access( https://app.<BASE_DOMAIN>;)
-Log in as the initial administrator configured in the control plane setup procedure
-Go to the Orchestration > Queues page
-Verify configured queues appear in the Queues page
+To verify that the {cml} Agent has been deployed to your cluster:
+
+.. Open your Web browser to "https://app.<BASE_DOMAIN>".
+
+.. Log in as the initial administrator configured in the control plane setup.
+
+.. Navigate to __Orchestration__ > __Queues__.
+
+.. Confirm that configured queues are listed.
 
 
-==== Setting up the Application Gateway
 
-The Application Gateway enables access to AI workload applications (e.g. remote IDEs like VSCode and Jupyter, model API interface, etc.). It acts as a proxy, identifying {cml} Tasks running within its Kubernetes namespace and making them available for network access
-In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} Application Gateway  for each tenant (using a tenant admin’s API credentials)
+=== {cml} Application Gateway
 
-//. *Procedure*
+The {cml} Application Gateway enables access to AI workload applications, such as remote IDEs (like {vscode-website}[VSCode] and {jupyter-website}[Jupyter Lab]), model API interfaces, and so on.
+It acts as a proxy, identifying {cml} tasks running within its Kubernetes namespace and making them available for network access.
+In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} Application Gateway for each tenant (using a tenant administrator’s API credentials).
 
-. Add the {cml} Helm repository to your cluster:
+
+. Add the {cml} Helm repository to your cluster.
 +
 [source, console, subs="attributes+"]
 ----
 helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
 ----
 
-. Update the local repository:
+. Update the local repository.
 +
 [source, console]
 ----
 helm repo update
 ----
 
-. Create a '{clearml-app-gateway-values.override.yaml}' file with the agent settings in the following form (See configuration description below):
+. Create a `clearml-app-gateway-values.override.yaml` file with the agent settings in the following form:
 +
 [source, console]
 ----
@@ -1161,28 +1177,33 @@ tcpSession:
     end:
 ----
 +
-Set the <apiServerUrlReference> field to match your 
-+
-.. Configuration options:
-... imageCredentials.password: {cml} DockerHub Access Token.
-... clearml.apiKey and clearml.apiSecret: Tenant admin API credentials created in the control plane setup procedure.
-... clearml.apiServerUrlReference: {cml} Server URL as ( https://api.<BASE_DOMAIN>;)
-... clearml.authCookieName: Cookie used by the {cml} server to store the {cml} authentication cookie.
-... ingress.hostName: Hostname of App Gateway used by the ingress controller to access it.
-... tcpSession.routerAddress: The external App Gateway address (can be an IP, hostname, or load balancer address) depending on your network setup. Ensure this address is accessible for TCP connections.
-... tcpSession.service.type: Service type used to expose TCP functionality, default is NodePort.
-... tcpSession.portRange.start: Start port for the TCP Session feature.
-... tcpSession.portRange.end: End port for the TCP Session feature.
+--
+Be sure to update the following fields with values appropriate for your environment:
 
-. Install the {cml} Application Gateway:
-+
-Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (example - Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
-Replace <CHART_VERSION> - Version recommended by the {cml} Support Team.
+* `clearml.password`: the {cml} DockerHub access token
+
+* `clearml.apiKey` and `clearml.apiSecret`: the {cml} tenant administrator API credentials (created in the control plane deployment)
+
+* `clearml.apiServerUrlReference`: the {cml} Server URL (`https://api.<BASE_DOMAIN>`)
+
+* `clearml.authCookieName`: the {cml} Server authentication cookie
+
+* `ingress.hostName`: the hostname of the {cml} Application Gateway that will be used by the ingress controller
+
+* `tcpSession.routerAddress`: the external {cml} Application Gateway address
+
+* `tcpSession.portRange.start` and `tcpSession.portRange.end`: the beginning and ending TCP session ports
+
+
+. Install the {cml} Application Gateway.
 +
 [source, console]
 ----
 helm upgrade --install <RELEASE_NAME> -n clearml-worker clearml-enterprise/clearml-enterprise-app-gateway --version <CHART_VERSION> -f clearml-app-gateway-values.override.yaml
 ----
++
+Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (example - Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
+Replace <CHART_VERSION> - Version recommended by the {cml} Support Team.
 
 . Verifying the installation
 +
@@ -1253,7 +1274,7 @@ By combining SUSE’s secure and supported infrastructure stack with {cml}’s A
 . Does {cml} support AMD accelerators?
 +
 --
-Yes! {cml} is a silicon agnostic platform and supports accelerators from Nvidia, AMD, Intel and others. {cml} also supports on Intel and arm CPUs.
+Yes! {cml} is a silicon agnostic platform and supports accelerators from NVIDIA, AMD, Intel and others. {cml} also supports on Intel and arm CPUs.
 --
 . Any Examples for Training Models on top of {cml}?
 +
@@ -1263,10 +1284,10 @@ For all examples check out {cml} {cml-example}[examples] in {cml}’s {cml-githu
 
 image::clearml-faq-q2.png[{cml} AI Platform, scaledwidth=90%, align=center]
 --
-. Does {cml} support serving Nvidia NIMs containers?
+. Does {cml} support serving NVIDIA NIMs containers?
 +
 --
-Yes, {cml} offers built-in deployment and management capabilities for Nvidia NIMs containers. It requires the NIMs application to be installed on the server.
+Yes, {cml} offers built-in deployment and management capabilities for NVIDIA NIMs containers. It requires the NIMs application to be installed on the server.
 
 image::clearml-faq-q3.png[{cml} AI Platform, scaledwidth=90%, align=center]
 --
