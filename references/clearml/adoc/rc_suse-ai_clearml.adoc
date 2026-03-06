@@ -756,7 +756,7 @@ If exposing services externally, configure a load balancer (such as, MetalLB).
 //
 +
 The designated nodes for the {cml} Control Plane servers and workers should be able to communicate through HTTP/S (TCP ports 80 and 443).
-Any additional ports to be used in the deployment (TCP sessions) should also be pre-configured (see <<Setting up the Application Gateway>>).
+Any additional ports to be used in the deployment (TCP sessions) should also be pre-configured (see <<{cml} Application Gateway>>).
 
 * *DNS configuration*
 //
@@ -1061,14 +1061,15 @@ helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace
 +
 {cml} supports various silicon vendors such as NVIDIA, AMD and Intel. For detailed configuration instructions refer to {cml}’s online documentation.
 
-
 . Deploy {cml} Agent.
 
-.. Add the {cml} Helm repository to your cluster.
+.. Log into the {cml} OCI registry.
 +
-[source, console, subs="attributes+"] 
+[source, console, subs="attributes+"]
 ----
-helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
+helm registry login docker.io \
+--username allegroaienterprise \
+--password <CLEARML_DOCKERHUB_TOKEN>
 ----
 
 .. Update the local repository.
@@ -1111,25 +1112,28 @@ Be sure to:
 For more advanced configurations, refer to {cml}’s online documentation
 --
 
-. Install the {cml} Agent.
+.. Install the {cml} Agent.
 +
-[source, console]
+[source, console, subs="attributes+"]
 ----
-helm upgrade -i -n clearml-worker clearml-agent clearml-enterprise/clearml-enterprise-agent --create-namespace -f clearml-agent-values.override.yaml
+helm upgrade -i <RELEASE_NAME> \
+-n <WORKLOAD_NAMESPACE> \
+oci://docker.io/clearml/clearml-enterprise-app-gateway \
+-f {cml-agent-override-file}
 ----
 
-. Verify installation.
+.. Verify the installation.
 //
 +
 To verify that the {cml} Agent has been deployed to your cluster:
 
-.. Open your Web browser to "https://app.<BASE_DOMAIN>".
+... Open your Web browser to "https://app.<BASE_DOMAIN>".
 
-.. Log in as the initial administrator configured in the control plane setup.
+... Log in as the initial administrator configured in the control plane setup.
 
-.. Navigate to __Orchestration__ > __Queues__.
+... Navigate to __Orchestration__ > __Queues__.
 
-.. Confirm that configured queues are listed.
+... Confirm that configured queues are listed.
 
 
 
@@ -1139,12 +1143,13 @@ The {cml} Application Gateway enables access to AI workload applications, such a
 It acts as a proxy, identifying {cml} tasks running within its Kubernetes namespace and making them available for network access.
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} Application Gateway for each tenant (using a tenant administrator’s API credentials).
 
-
-. Add the {cml} Helm repository to your cluster.
+. Log into the {cml} OCI registry.
 +
 [source, console, subs="attributes+"]
 ----
-helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_REPO_TOKEN> --password <HELM_REPO_TOKEN>
+helm registry login docker.io \
+--username allegroaienterprise \
+--password <CLEARML_DOCKERHUB_TOKEN>
 ----
 
 . Update the local repository.
@@ -1154,7 +1159,7 @@ helm repo add clearml-enterprise {cml-enterprise-helm-chart} --username <HELM_RE
 helm repo update
 ----
 
-. Create a `clearml-app-gateway-values.override.yaml` file with the agent settings in the following form:
+. Create a `{cml-gateway-override-file}` file with the agent settings in the following form:
 +
 [source, console]
 ----
@@ -1184,7 +1189,7 @@ Be sure to update the following fields with values appropriate for your environm
 
 * `clearml.apiKey` and `clearml.apiSecret`: the {cml} tenant administrator API credentials (created in the control plane deployment)
 
-* `clearml.apiServerUrlReference`: the {cml} Server URL (`https://api.<BASE_DOMAIN>`)
+* `clearml.apiServerUrlReference`: the {cml} Server URL ( "https://api.<BASE_DOMAIN>" )
 
 * `clearml.authCookieName`: the {cml} Server authentication cookie
 
@@ -1193,26 +1198,43 @@ Be sure to update the following fields with values appropriate for your environm
 * `tcpSession.routerAddress`: the external {cml} Application Gateway address
 
 * `tcpSession.portRange.start` and `tcpSession.portRange.end`: the beginning and ending TCP session ports
-
+--
 
 . Install the {cml} Application Gateway.
 +
-[source, console]
+[source, console, subs="attributes+"]
 ----
-helm upgrade --install <RELEASE_NAME> -n clearml-worker clearml-enterprise/clearml-enterprise-app-gateway --version <CHART_VERSION> -f clearml-app-gateway-values.override.yaml
+helm upgrade -i <RELEASE_NAME> \
+-n <WORKLOAD_NAMESPACE> \
+oci://docker.io/clearml/clearml-enterprise-app-gateway \
+-f {cml-gateway-override-file}
 ----
 +
-Replace <RELEASE_NAME> with a Unique name for the App Gateway within the Kubernetes namespace. This is a required parameter in Helm, which identifies a specific installation of the chart. The release name also defines the App Gateway's name and appears in the UI within AI workload application URLs (example - Remote IDE URLs). This can be customized to support multiple installations within the same namespace by assigning different release names.
-Replace <CHART_VERSION> - Version recommended by the {cml} Support Team.
+--
+Be sure to replace the placeholders with appropriate values:
 
-. Verifying the installation
-+
-To verify the {cml} Agent has been deployed to your cluster:
-Use a web browser to access( https://app.<BASE_DOMAIN>;)
-Log in as the initial administrator configured in the control plane setup procedure
-Go to the Setting > Application Gateway > Routers page
-+
-The deployed <RELEASE_NAME> router will appear in the list.
+* `<RELEASE_NAME>` - This is a unique identifier for the Application Gateway within the Kubernetes namespace that identifies a specific instance of the chart.
+It also defines the Application Gateway's name and appears in the UI within AI workload application URLs.
+You can support multiple installations within the same namespace by assigning different release names.
+
+* `<WORKLOAD_NAMESPACE>` - This is the Kubernetes namespace where workloads will be executed.
+This namespace must be shared between a dedicated {cml} agent and an Application Gateway.
+The agent is responsible for monitoring its assigned task queues and spawning workloads within this namespace.
+The Application Gateway monitors the same namespace for AI workloads (such as remote IDE applications).
+The Application Gateway has a namespace-limited scope, meaning it can only detect and manage tasks within its assigned namespace.
+
+* `<CHART_VERSION>` - This is the version recommended by the ClearML Support Team.
+--
+
+. Verify the installation.
+
+.. Open a Web browser to "https://app.<BASE_DOMAIN>".
+
+.. Log in as the initial administrator configured in the control plane setup procedure.
+
+.. Go to the __Settings__ > __Application Gateway__ > __Routers__.
+
+.. Confirm that the deployed `<RELEASE_NAME>` is listed.
 
 
 
@@ -1232,17 +1254,19 @@ The test {cml}’s integration, users should:
 
 . Log into the User interface, ensure that the interface is reachable and loads properly.
 
-. Set up {cml}’s SDK by {cml-sdk-setup}[installing] {cml}’s python SDK and run {cml}’s examples. Relevant examples can be found on {cml}’s {cml-github}[Github page].
+. Set up {cml}’s SDK by {cml-sdk-setup}[installing] {cml}’s python SDK and run {cml}’s examples. Relevant examples can be found on the {cml-github}[{cml} GitHub page].
 
-image::clearml-validation1.png[{cml} AI Platform, scaledwidth="90%", align="center"]
+image::clearml-validation1.png[{cml} AI Platform, align="center", width="90%"]
 
-{cml}’s experiment manager is the core of its AI Development Center. To start, either try a simple MNIST classifier {cml-example}[example] or run {cml-dataset}[this] code to perform LLM finetuning. All relevant information is captured and displayed by {cml}.
+{cml}’s experiment manager is the core of its AI Development Center.
+To start, either try a simple MNIST classifier {cml-example}[example] or run {cml-dataset}[this code] to perform LLM finetuning.
+All relevant information is captured and displayed by {cml}.
 
-image::clearml-validation2.png[{cml} AI Platform, scaledwidth="90%", align="center"]
+image::clearml-validation2.png[{cml} AI Platform, align="center", width="90%"]
 
 Pipeline Orchestration with {cml} - Based on {cml-pipeline}[this] github example. Running the linked example on a configured clearml server would result in a similar pipeline visualization in the {cml} user interface. See {cml-docs-pipeline}[cml] Pipeline Orchestration documentation for more information.
 
-image::clearml-validation-3.png[{cml} AI Platform , scaledwidth="90%", align="center"]
+image::clearml-validation-3.png[{cml} AI Platform, align="center", width="90%"]
 
 {cml}’s Resource Configuration allows admins to set resource hierarchies, spillovers and quotas. To do that, admins need to configure the {cml} Agent to the topology configured in the {cml} user interface. For more information, see {cml}’s {cml-docs-webapp-config}[documentation].
 
