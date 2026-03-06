@@ -250,7 +250,7 @@ Within this reference design, {cml} is responsible for:
 
 These layers are implemented by deploying three main components into the resource cluster:
 
-* {cml} Control Plane -  main server that hosts the UI and backend
+* {cml} Enterprise Server -  main server that hosts the UI and backend
 
 * {cml} Agent - manages the orchestration of workloads on the Kubernetes cluster
 
@@ -689,7 +689,7 @@ For detailed, version-aligned installation steps and configuration guidance, ref
 
 
 
-=== {cml} Control Plane
+=== {cml} Enterprise Server
 
 
 image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platform Architecture, scaledwidth="90%", align="center"]
@@ -697,7 +697,7 @@ image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platfor
 
 ==== Preparation
 
-. Ensure the cluster for the {cml} Control Plane consists of at least three nodes that meet these minimum specifications:
+. {cml} Enterprise Server provides {cml} Control Plane. Ensure that the cluster for the {cml} Enterprise Server Control Plane consists of at least three nodes that meet these minimum specifications:
 +
 --
 * 8 vCPUs
