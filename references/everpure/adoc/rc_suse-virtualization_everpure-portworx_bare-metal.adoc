@@ -37,10 +37,9 @@ include::./rc_suse-virtualization_everpure-portworx_bare-metal-vars.adoc[]
 // Include any additional, relevant details
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is intended to supplement to the {ref-svirt-pxe-wp}[{svirt-long} and {pxe-long}] white paper.
-It builds on the foundational design by providing additional guidance for deploying and running {svirt-brand} with {pxe-brand} in bare metal environments.
-The objective is to help organizations seamlessly integrate {svirt} with {pxe}, ensuring deployments that deliver optimized performance, scalability, and reliability for virtualized workloads.
 
+This document defines the design considerations and best practices for a modern virtualization platform featuring {svirt-brand} with {pxe-brand} and {pfa-brand} storage.
+It builds on the {ref-svirt-pxe-wp}[{svirt-long} and {pxe-long}] white paper with the objective of helping organizations deliver optimized performance, scalability, and reliability to support virtual machine and container workloads.
 
 
 
@@ -51,14 +50,11 @@ The objective is to help organizations seamlessly integrate {svirt} with {pxe}, 
 // E.g., "This document ..."
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document defines the design considerations, deployment guidance, and best practices for integrating {svirt-long} with Portworx Enterprise in bare metal environments.
-It supplements the {pxe-provider} reference architecture and provides additional details specific to virtualization workloads.
+This document provides:
 
-The scope of this document includes:
-
-* Architectural guidance for deploying {svirt-long} with Portworx on bare metal.
-* Operational practices for installation, scaling, monitoring, and lifecycle management.
-* Recommendations for running stateful, virtualized workloads with Portworx.
+* Architectural guidance for deploying {svirt-long} with {pxe-long} on bare metal
+* Best practices for installation, scaling, monitoring, and lifecycle management
+* Recommendations for running stateful, virtualized workloads backed by {pfa-long} storage
 
 
 
@@ -72,29 +68,20 @@ The scope of this document includes:
 // E.g., "The intended audience for this guide includes ..."
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This guide is intended for system administrators, DevOps engineers, and IT professionals responsible for deploying, managing, and maintaining storage solutions on {svirt-long} clusters utilizing Pure FlashArray. A basic understanding of Kubernetes, Harvester, and storage concepts is assumed.
-It is also relevant for IT decision-makers and infrastructure architects who are evaluating solutions to ensure scalability, performance, and reliability of virtualized workloads in enterprise environments.
+This guide is intended for platform engineers, system administrators, DevOps engineers, and IT professionals responsible for designing, deploying, managing, and maintaining IT infrastructure solutions to support cloud native and virtual machine workloads.
+
+Familiarity with Kubernetes, virtualization, and storage concepts is assumed.
 
 
 
+////
+=== Acknowledgments
 
-// === Acknowledgments
-//
-// // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// // Acknowledge contributors not listed as authors.
-// // Something like:
-// //   The authors wish to acknowledge the contributions of the following
-// //   individuals:
-// //   * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
-// //   * {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
-// // NOTE: If there are none, comment out this section.
-// // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-//
-// The authors wish to acknowledge the contributions of the following individuals to the creation of this document:
-//
-// //* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+The authors wish to acknowledge the contributions of the following individuals, whose collaboration on the This document is intended to supplement to the {ref-svirt-pxe-wp}[{svirt-long} and {pxe-long}] white paper inspired this document:
 
-
+* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+* {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
+////
 
 
 == Business aspect
@@ -103,8 +90,10 @@ It is also relevant for IT decision-makers and infrastructure architects who are
 // Expand on these in the following sections.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Enterprises are under pressure to modernize IT infrastructure while maintaining high levels of performance, resilience, and cost efficiency. Deploying {svirt-long} with Portworx  Enterprise on bare metal helps address these challenges by providing a scalable and reliable foundation for virtualized workloads.
-This integrated solution reduces operational complexity, protects critical data, accelerates workload deployment, and maximizes infrastructure investments through the combined strengths of Pure FlashArray performance and Portworx automation, enabling organizations to support digital transformation with confidence.
+Enterprises are under pressure to modernize IT infrastructure while maintaining high levels of performance, resilience, and cost efficiency.
+Deploying {svirt-long} with {pxe-long} and {pfa-long} on bare metal helps address these challenges by providing a scalable and reliable foundation for virtualized workloads.
+This integrated solution reduces operational complexity, protects critical data, accelerates workload deployment, and maximizes infrastructure investments, enabling organizations to support digital transformation with confidence.
+
 
 === Business problem
 
@@ -124,13 +113,15 @@ These challenges highlight the need for an integrated solution that simplifies o
 
 === Business value
 
-By addressing the complexity, scalability, and resiliency limitations of traditional virtualization and storage, {svirt} with Portworx Enterprise on bare metal empowers organizations to streamline operations while preparing for future growth.
+By addressing the complexity, scalability, and resiliency limitations of traditional virtualization and storage, {svirt} with {pxe} and {pfa-long} on bare metal empowers organizations to streamline operations while preparing for future growth.
 Developers gain faster access to persistent storage, enabling rapid innovation and accelerated application delivery.
 IT operators and platform engineers benefit from simplified management, automated scaling, and built-in data protection, all of which significantly reduce operational overhead.
-SUSE Virtualization also enhances infrastructure efficiency by supporting both container and virtual machine workloads on the same platform. This unified approach minimizes infrastructure sprawl, optimizes resource utilization, and simplifies operations across diverse environments.
+
+{svirt} enhances infrastructure efficiency by supporting both container and virtual machine workloads on the same platform.
+This unified approach minimizes infrastructure sprawl, optimizes resource utilization, and simplifies operations across diverse environments.
 
 For business leaders, these capabilities translate into improved agility, faster time-to-market, and stronger returns on infrastructure investments, while also reducing overall business risk.
-Together, SUSE Virtualization and Portworx provide a robust foundation not only for current enterprise workloads but also for forward-looking initiatives such as hybrid cloud expansion, edge computing, and digital transformation.
+Together, {svirt} and {px-long} provide a robust foundation not only for current enterprise workloads but also for forward-looking initiatives such as hybrid cloud expansion, edge computing, and digital transformation.
 
 
 == Architecture
@@ -139,47 +130,52 @@ Together, SUSE Virtualization and Portworx provide a robust foundation not only 
 // core software and compute platform (hardware or cloud) components.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-// Update below the file name and title for architecture diagram (PNG or SVG).
-//image::solution-name_architecture-diagram.png[title="Solution name", scaledwidth="90%", align="center"]
+This section provides a planning and architecture overview for deploying {svirt} with {px} on bare metal.
+The focus is to create a high-level design that ensures scalability, reliability, security, and performance.
+It outlines the key architectural components and their interactions, as well as illustrates the overall structure of the system to enable clear understanding of how the various elements work together to support your production workloads.
 
-In this section, we provide a planning and architecture overview for deploying {svirt} with Portworx on bare metal. Our focus is to create a high-level design that ensures scalability, reliability, security, and performance. We will outline the key architectural components and their interactions, as well as illustrate the overall structure of the system to enable clear understanding of how the various elements work together to support your production workloads
 
 === Component overview
 
-The virtualization capabilities in SUSE are powered by key components from the SUSE Linux Enterprise virtualization stack:
+The integrated solution brings together compute, storage, and orchestration layers, highlighting how {svirt} and {px-long} work together to provide a flexible, scalable, and enterprise-grade platform.
 
-The virtualization capabilities in SUSE are delivered through an integrated solution that brings together compute, storage, and orchestration layers.
-Rather than focusing on low-level hypervisor internals, the architecture highlights how SUSE Virtualization and Portworx Enterprise work together to provide a flexible, scalable, and enterprise-grade platform.
-
-image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of {svirt} with {pxe-long}", General Architecture of {svirt} with {pxe-long}, align="center", width=90%]
+image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of {svirt} with {px-long}", General Architecture of {svirt} with {px-long}, align="center", width=90%]
 
 
-=== {svirt-brand}
+=== {svirt-long}
 
 {svirt} enables the management of virtual machines and containers side-by-side on a unified, cloud-native, hyperconverged infrastructure platform.
 {svirt} natively integrates with {srancher-long} to deliver centralized authentication, access control, and observability for managing diverse workloads across data center, cloud, and edge environments with a consistent operational model.
 
 
-=== {srancher-brand}
+=== {srancher-long}
 
-{srancher-long} enables enterprises to secure, deploy, run‌, and manage modern, cloud native workloads anywhere.
+{srancher-long} enables enterprises to secure, deploy, run, and manage modern, cloud native workloads anywhere.
 It delivers centralized authentication, access control, observability, and built-in security with robust Kubernetes workload management, unified access controls, and observability.
-By natively integrating with {svirt}, enterprises can unify their entire IT infrastructure and support both container and VM workloads.
+With this native integration, the enterprise can gain robust, unified control of its entire IT estate.
 
 
-=== {pxe-brand}
+=== {pxe-long}
 
-{pxe-long} serves as the enterprise-grade storage layer for both VM and container workloads. It delivers persistent volumes, high availability, automated failover, backup and disaster recovery, performance optimization, and encryption. This ensures consistent storage reliability across on-premises, hybrid, and edge deployments running on {svirt}.
+{pxe-long} serves as the enterprise-grade storage layer for both VM and container workloads.
+It delivers persistent volumes, high availability, automated failover, disaster recovery, performance optimization, and encryption.
+This ensures consistent storage reliability across on-premises, hybrid, and edge deployments running on {svirt}.
+
+
+=== {pfa-long}
+
+Add content here
+
 
 
 === Compute platform
 
-The solution is deployed on physical infrastructure, including host and worker nodes, networking components (switches, NICs, routing), and enterprise storage devices such as a {pfa-long}.
+The solution is deployed on physical infrastructure, including host and worker nodes, networking components (switches, NICs, routing), and enterprise storage, such as {pfa-long}.
 These components provide the performance, connectivity, and resiliency required for running large-scale virtualized and containerized workloads.
 
 
 
-== Reference design
+=== Reference design
 
 The diagram below shows a high-level, reference design for {svirt} integrated with {pxe} deployed on bare-metal nodes along with a {pfa-long}.
 By implementing this design, a platform engineering team can automate the provisioning of a well-defined architecture following best practices that includes high availability, operations management, observability, business continuity, performance, and security.
@@ -193,14 +189,13 @@ image::suse-portworx-arc-diagram.png[title="Reference Design", Reference Design,
 
 The foundation of the deployment is the bare metal compute nodes that will host both the {svirt} hypervisor and the Portworx storage layer.
 
+
 ==== Cluster topology and sizing
 
 * *Node Count:* While Portworx requires a minimum of three storage nodes to establish quorum, six nodes are recommended for production environments.
 * *Capacity Impact:* In a six-node cluster, losing one node impacts only one-sixth of the total capacity.
 * *I/O Distribution:* A six-node cluster distributes I/O requests more effectively.
 * *Fault Domains:* Ensure the cluster spans multiple availability zones or racks.
-
-
 
 
 ==== Resource requirements per node
@@ -215,44 +210,56 @@ This allows the operator to automatically discover and provision devices.
 
 Performance in a hyper-converged environment relies heavily on network stability and bandwidth. The network must be designed to handle both management traffic and high-volume storage replication.
 
+
 ==== Interface configuration
 
-* *Traffic Separation:* Assign dedicated network interfaces (NICs) for Management Traffic (Kubernetes control plane) and Data Traffic (Portworx replication).
+* *Traffic Separation:* Assign dedicated network interfaces (NICs) for Management Traffic (Kubernetes control plane) and Data Traffic ({px} replication).
 Isolating data traffic prevents storage replication from congesting the control plane.
-* *Redundancy:* Use NIC bonding (e.g., LACP mode 4) to ensure high availability and load balancing across interfaces.
 
+* *Redundancy:* Use NIC bonding (e.g., LACP mode 4) to ensure high availability and load balancing across interfaces.
 
 
 ==== Performance tuning
 
 * *Bandwidth:* A minimum of 10 Gbps is required. However, for production virtualization workloads, 25 Gbps or higher is strongly recommended to lower write latency and improve replication efficiency.
+
 * *Jumbo Frames:* Configure MTU 9000 (Jumbo Frames) on the storage network interfaces and physical switches to improve throughput for iSCSI and replication traffic,.
+
 
 
 === Physical storage (Backing Disks)
 
 Portworx requires raw block devices to provide persistent storage. In this
-architecture, these devices are provisioned from a {pxe-provider} FlashArray.
+architecture, these devices are provisioned from a {pfa-long}.
+
 
 ==== Connectivity
 
 * *Protocols:* Block devices can be presented via Fibre Channel (FC) or iSCSI.
+
 * *Fibre Channel:* Ensure proper zoning in the SAN fabric.
+
 * *iSCSI:* Dedicate Ethernet interfaces solely for storage traffic to avoid contention.
-* *Multipathing:* Configure multipathing on the SUSE Virtualization nodes. This provides redundancy in case of a path failure and can deliver additional bandwidth.
+
+* *Multipathing:* Configure multipathing on the {svirt} nodes.
+This provides redundancy in case of a path failure and can deliver additional bandwidth.
 
 
 ==== Volume presentation
 
-One Volume Per Node: It is recommended to present a single volume per storage node from the FlashArray. This simplifies management, as the storage pool can be resized by expanding this backing disk without triggering expensive data rebalancing operations.
+One Volume Per Node: It is recommended to present a single volume per storage node from the {pfa-long}.
+This simplifies management, as the storage pool can be resized by expanding this backing disk without triggering expensive data rebalancing operations.
+
 
 ==== Storage pools and I/O profiling
 
-* *Pool Creation:* Portworx groups drives with similar performance characteristics into storage pools. In a bare metal environment using an all-flash array, ensure all backing disks have consistent specifications to maintain uniform performance across the cluster.
+* *Pool Creation:* {px} groups drives with similar performance characteristics into storage pools.
+In a bare metal environment using an all-flash array, ensure all backing disks have consistent specifications to maintain uniform performance across the cluster.
+
 
 ==== Journaling
 
-* *Requirement:* Portworx uses a journal device for metadata writes.
+* *Requirement:* {px} uses a journal device for metadata writes.
 
 * *Configuration:* Allocate a 3 GB volume for the journal. Because metadata writes are frequent, this volume must be on high-performance storage (SSD/NVMe).
 If using a {pxe-provider} FlashArray, provision a specific 3 GB volume for this purpose to ensure metadata throughput does not become a bottleneck.
@@ -261,15 +268,20 @@ If using a {pxe-provider} FlashArray, provision a specific 3 GB volume for this 
 
 ==== Key-Value database (KVDB)
 
-* *Internal KVDB:* For most deployments, the internal KVDB is recommended. It eliminates the need for managing an external etcd cluster.
+* *Internal KVDB:* For most deployments, the internal KVDB is recommended.
+It eliminates the need for managing an external etcd cluster.
 
-* *Dedicated Resources:* Assign a dedicated 64 GB disk on three specific nodes for the KVDB. This isolates metadata I/O from application storage traffic. Label these nodes `px/metadata-node=true` and ensure they are distributed across fault domains.
+* *Dedicated Resources:* Assign a dedicated 64 GB disk on three specific nodes for the KVDB.
+This isolates metadata I/O from application storage traffic.
+Label these nodes `px/metadata-node=true` and ensure they are distributed across fault domains.
 
 
 
-== Preparing the SUSE Virtualization environment
+== Preparing the {svirt} environment
 
-Before deploying Portworx, you must prepare the {svirt-long} platform and underlying nodes to ensure they meet the specific storage requirements. Review the following configurations to ensure a stable and performant integration.
+Before deploying {px}, you must prepare the {svirt-long} platform and underlying nodes to ensure they meet the specific storage requirements.
+Review the following configurations to ensure a stable and performant integration.
+
 
 === Cluster topology and sizing
 
@@ -280,6 +292,7 @@ To ensure high availability and data redundancy, the physical layout of the clus
 * *I/O Distribution*: A larger cluster spreads I/O requests more evenly, helping reduce latency during peak traffic or rebuild operations.
 * *Fault Domains*: Distribute storage nodes evenly across availability zones, racks, or host groups to protect against localized hardware failures.
 * *Anti-Affinity*: When running {svirt-long} on top of another hypervisor (for example, KVM), configure anti-affinity rules to ensure Portworx storage nodes do not share the same physical host.
+
 
 === Node resource requirements
 
