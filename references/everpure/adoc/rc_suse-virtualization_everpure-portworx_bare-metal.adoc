@@ -130,52 +130,52 @@ Together, {svirt} and {px-long} provide a robust foundation not only for current
 // core software and compute platform (hardware or cloud) components.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This section provides a planning and architecture overview for deploying {svirt} with {px} on bare metal.
+This section provides an architectural overview for integrating {svirt-long} and {px-long} on bare metal.
 The focus is to create a high-level design that ensures scalability, reliability, security, and performance.
 It outlines the key architectural components and their interactions, as well as illustrates the overall structure of the system to enable clear understanding of how the various elements work together to support your production workloads.
+
+=== Architecture overview
+
+The integrated solution brings together compute, storage, and orchestration layers, highlighting how {svirt} and {px-long} work together to provide a flexible, scalable, and enterprise-grade platform.
+This is illustrated below.
+
+image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of {svirt} with {px-long}", General Architecture of {svirt} with {px-long}, align="center", scaledwidth=90%]
+
+The solution is deployed on physical infrastructure, including host and worker nodes, networking components (switches, NICs, routing), and enterprise storage, such as {pfa-long}.
+These components provide the performance, connectivity, and resiliency required for running large-scale virtualized and containerized workloads.
 
 
 === Component overview
 
-The integrated solution brings together compute, storage, and orchestration layers, highlighting how {svirt} and {px-long} work together to provide a flexible, scalable, and enterprise-grade platform.
 
-image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of {svirt} with {px-long}", General Architecture of {svirt} with {px-long}, align="center", width=90%]
-
-
-=== {svirt-long}
+==== {svirt-long}
 
 {svirt} enables the management of virtual machines and containers side-by-side on a unified, cloud-native, hyperconverged infrastructure platform.
 {svirt} natively integrates with {srancher-long} to deliver centralized authentication, access control, and observability for managing diverse workloads across data center, cloud, and edge environments with a consistent operational model.
 
 
-=== {srancher-long}
+==== {srancher-long}
 
 {srancher-long} enables enterprises to secure, deploy, run, and manage modern, cloud native workloads anywhere.
 It delivers centralized authentication, access control, observability, and built-in security with robust Kubernetes workload management, unified access controls, and observability.
 With this native integration, the enterprise can gain robust, unified control of its entire IT estate.
 
 
-=== {pxe-long}
+==== {pxe-long}
 
 {pxe-long} serves as the enterprise-grade storage layer for both VM and container workloads.
 It delivers persistent volumes, high availability, automated failover, disaster recovery, performance optimization, and encryption.
 This ensures consistent storage reliability across on-premises, hybrid, and edge deployments running on {svirt}.
 
 
-=== {pfa-long}
+==== {pfa-long}
 
 Add content here
 
 
 
-=== Compute platform
+== Design considerations
 
-The solution is deployed on physical infrastructure, including host and worker nodes, networking components (switches, NICs, routing), and enterprise storage, such as {pfa-long}.
-These components provide the performance, connectivity, and resiliency required for running large-scale virtualized and containerized workloads.
-
-
-
-=== Reference design
 
 The diagram below shows a high-level, reference design for {svirt} integrated with {pxe} deployed on bare-metal nodes along with a {pfa-long}.
 By implementing this design, a platform engineering team can automate the provisioning of a well-defined architecture following best practices that includes high availability, operations management, observability, business continuity, performance, and security.
@@ -183,63 +183,58 @@ By implementing this design, a platform engineering team can automate the provis
 image::suse-portworx-arc-diagram.png[title="Reference Design", Reference Design, align="center", width=90%]
 
 
-
-=== Host node considerations
-
-
-The foundation of the deployment is the bare metal compute nodes that will host both the {svirt} hypervisor and the Portworx storage layer.
+The foundation of the deployment is the bare metal compute nodes that will host both the {svirt} hypervisor and the {px} storage layer.
 
 
-==== Cluster topology and sizing
 
-* *Node Count:* While Portworx requires a minimum of three storage nodes to establish quorum, six nodes are recommended for production environments.
+=== Cluster topology and sizing
 
-* *Capacity Impact:* In a six-node cluster, losing one node impacts only one-sixth of the total capacity.
+* *Node count*: While Portworx requires a minimum of three storage nodes to establish quorum, six nodes are recommended for production environments.
 
-* *I/O Distribution:* A six-node cluster distributes I/O requests more effectively.
-* *Fault Domains:* Ensure the cluster spans multiple availability zones or racks.
+* *Capacity impact*: In a six-node cluster, losing one node impacts only one-sixth of the total capacity.
+
+* *I/O distribution*: A six-node cluster distributes I/O requests more effectively.
+
+* *Fault domains*: Ensure the cluster spans multiple availability zones or racks.
 
 
-==== Resource requirements per node
+=== Resource requirements per node
 
-* *CPU & RAM:* Each node requires a minimum of 8 CPU cores and 32 GB of RAM to ensure stable Portworx operation alongside virtualized workloads.
+* *CPU and memory*: Each node requires a minimum of 8 CPU cores and 32 GB of RAM to ensure stable {px} operation alongside virtualized workloads.
 
-* *Role Assignment:* Label all nodes contributing storage with `portworx.io/node-type=storage`.
+* *Role assignment:* Label all nodes contributing storage with `portworx.io/node-type=storage`.
 This allows the operator to automatically discover and provision devices.
-
 
 
 === Network
 
 Performance in a hyper-converged environment relies heavily on network stability and bandwidth. The network must be designed to handle both management traffic and high-volume storage replication.
 
+* *Interface configuration*
 
-==== Interface configuration
-
-* *Traffic Separation:* Assign dedicated network interfaces (NICs) for Management Traffic (Kubernetes control plane) and Data Traffic ({px} replication).
+** *Traffic separation:* Assign dedicated network interfaces (NICs) for Management Traffic (Kubernetes control plane) and Data Traffic ({px} replication).
 Isolating data traffic prevents storage replication from congesting the control plane.
 
-* *Redundancy:* Use NIC bonding (e.g., LACP mode 4) to ensure high availability and load balancing across interfaces.
+** *Redundancy:* Use NIC bonding (mode 4 or LACP) to ensure high availability and load balancing across interfaces.
 
 
-==== Performance tuning
+* *Performance tuning*
 
-* *Bandwidth:* A minimum of 10 Gbps is required.
+* *Bandwidth*: A minimum of 10 Gbps is required.
 However, for production virtualization workloads, 25 Gbps or higher is strongly recommended to lower write latency and improve replication efficiency.
 
-* *Jumbo Frames:* Configure MTU 9000 (Jumbo Frames) on the storage network interfaces and physical switches to improve throughput for iSCSI and replication traffic.
+* *Jumbo Frames*: Configure MTU 9000 (Jumbo Frames) on the storage network interfaces and physical switches to improve throughput for iSCSI and replication traffic.
 
 
+=== Storage
 
-=== Physical storage (Backing Disks)
-
-{px} requires raw block devices to provide persistent storage.
+* *Physical storage (Backing Disks)*: {px} requires raw block devices to provide persistent storage.
 In this architecture, these devices are provisioned from the {pfa-long}.
 
 
-==== Storage connectivity
-
-
+* *Storage connectivity*
++
+--
 * *Protocols:* Block devices can be presented via Fibre Channel (FC) or iSCSI.
 
 ** *Fibre Channel:* Ensure proper zoning in the SAN fabric.
@@ -248,34 +243,31 @@ In this architecture, these devices are provisioned from the {pfa-long}.
 
 * *Multipathing:* Configure multipathing on the {svirt} nodes.
 This provides redundancy in case of a path failure and can deliver additional bandwidth.
+--
 
-
-==== Volume presentation
-
-Present only *one volume per storage node* from the {pfa-long}.
+* *Volume presentation*: Present only *one volume per storage node* from the {pfa-long}.
 This simplifies management, as the storage pool can be resized by expanding this backing disk without triggering expensive data rebalancing operations.
 
 
-==== Storage pools and I/O profiling
-
-{px} groups drives with similar performance characteristics into storage pools.
+* *Storage pools and I/O profiling*: {px} groups drives with similar performance characteristics into storage pools.
 In a bare metal environment using an all-flash array, ensure *consistent specifications for all backing disks* to maintain uniform performance across the cluster.
 
+* *Journaling*: {px} uses a journal device for metadata writes.
+You should allocate a 3 GB volume for the journal.
+And, because metadata writes are frequent, this volume must be on high-performance storage (SSD/NVMe).
++
+[NOTE]
+====
+When using {pfa-long} storage, provision a specific 3 GB volume for this purpose to ensure metadata throughput does not become a bottleneck.
+====
 
-==== Journaling
 
-* *Requirement:* {px} uses a journal device for metadata writes.
+* *Key-Value database (KVDB)*
 
-* *Configuration:* Allocate a 3 GB volume for the journal. Because metadata writes are frequent, this volume must be on high-performance storage (SSD/NVMe).
-If using a {pxe-provider} FlashArray, provision a specific 3 GB volume for this purpose to ensure metadata throughput does not become a bottleneck.
-
-
-==== Key-Value database (KVDB)
-
-* *Internal KVDB:* For most deployments, the internal KVDB is recommended.
+** *Internal KVDB:* For most deployments, the internal KVDB is recommended.
 It eliminates the need for managing an external etcd cluster.
 
-* *Dedicated Resources:* Assign a dedicated 64 GB disk on three specific nodes for the KVDB.
+** *Dedicated Resources:* Assign a dedicated 64 GB disk on three specific nodes for the KVDB.
 This isolates metadata I/O from application storage traffic.
 Label these nodes `px/metadata-node=true` and ensure they are distributed across fault domains.
 
