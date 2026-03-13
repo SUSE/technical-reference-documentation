@@ -193,7 +193,9 @@ The foundation of the deployment is the bare metal compute nodes that will host 
 ==== Cluster topology and sizing
 
 * *Node Count:* While Portworx requires a minimum of three storage nodes to establish quorum, six nodes are recommended for production environments.
+
 * *Capacity Impact:* In a six-node cluster, losing one node impacts only one-sixth of the total capacity.
+
 * *I/O Distribution:* A six-node cluster distributes I/O requests more effectively.
 * *Fault Domains:* Ensure the cluster spans multiple availability zones or racks.
 
@@ -201,6 +203,7 @@ The foundation of the deployment is the bare metal compute nodes that will host 
 ==== Resource requirements per node
 
 * *CPU & RAM:* Each node requires a minimum of 8 CPU cores and 32 GB of RAM to ensure stable Portworx operation alongside virtualized workloads.
+
 * *Role Assignment:* Label all nodes contributing storage with `portworx.io/node-type=storage`.
 This allows the operator to automatically discover and provision devices.
 
@@ -221,25 +224,27 @@ Isolating data traffic prevents storage replication from congesting the control 
 
 ==== Performance tuning
 
-* *Bandwidth:* A minimum of 10 Gbps is required. However, for production virtualization workloads, 25 Gbps or higher is strongly recommended to lower write latency and improve replication efficiency.
+* *Bandwidth:* A minimum of 10 Gbps is required.
+However, for production virtualization workloads, 25 Gbps or higher is strongly recommended to lower write latency and improve replication efficiency.
 
-* *Jumbo Frames:* Configure MTU 9000 (Jumbo Frames) on the storage network interfaces and physical switches to improve throughput for iSCSI and replication traffic,.
+* *Jumbo Frames:* Configure MTU 9000 (Jumbo Frames) on the storage network interfaces and physical switches to improve throughput for iSCSI and replication traffic.
 
 
 
 === Physical storage (Backing Disks)
 
-Portworx requires raw block devices to provide persistent storage. In this
-architecture, these devices are provisioned from a {pfa-long}.
+{px} requires raw block devices to provide persistent storage.
+In this architecture, these devices are provisioned from the {pfa-long}.
 
 
-==== Connectivity
+==== Storage connectivity
+
 
 * *Protocols:* Block devices can be presented via Fibre Channel (FC) or iSCSI.
 
-* *Fibre Channel:* Ensure proper zoning in the SAN fabric.
+** *Fibre Channel:* Ensure proper zoning in the SAN fabric.
 
-* *iSCSI:* Dedicate Ethernet interfaces solely for storage traffic to avoid contention.
+** *iSCSI:* Dedicate Ethernet interfaces solely for storage traffic to avoid contention.
 
 * *Multipathing:* Configure multipathing on the {svirt} nodes.
 This provides redundancy in case of a path failure and can deliver additional bandwidth.
@@ -247,14 +252,14 @@ This provides redundancy in case of a path failure and can deliver additional ba
 
 ==== Volume presentation
 
-One Volume Per Node: It is recommended to present a single volume per storage node from the {pfa-long}.
+Present only *one volume per storage node* from the {pfa-long}.
 This simplifies management, as the storage pool can be resized by expanding this backing disk without triggering expensive data rebalancing operations.
 
 
 ==== Storage pools and I/O profiling
 
-* *Pool Creation:* {px} groups drives with similar performance characteristics into storage pools.
-In a bare metal environment using an all-flash array, ensure all backing disks have consistent specifications to maintain uniform performance across the cluster.
+{px} groups drives with similar performance characteristics into storage pools.
+In a bare metal environment using an all-flash array, ensure *consistent specifications for all backing disks* to maintain uniform performance across the cluster.
 
 
 ==== Journaling
@@ -263,7 +268,6 @@ In a bare metal environment using an all-flash array, ensure all backing disks h
 
 * *Configuration:* Allocate a 3 GB volume for the journal. Because metadata writes are frequent, this volume must be on high-performance storage (SSD/NVMe).
 If using a {pxe-provider} FlashArray, provision a specific 3 GB volume for this purpose to ensure metadata throughput does not become a bottleneck.
-
 
 
 ==== Key-Value database (KVDB)
@@ -277,9 +281,9 @@ Label these nodes `px/metadata-node=true` and ensure they are distributed across
 
 
 
-== Preparing the {svirt} environment
+== Preparing the {svirt-long} environment
 
-Before deploying {px}, you must prepare the {svirt-long} platform and underlying nodes to ensure they meet the specific storage requirements.
+Before deploying {px}, you must prepare the {svirt} platform and underlying nodes to ensure they meet the specific storage requirements.
 Review the following configurations to ensure a stable and performant integration.
 
 
@@ -289,10 +293,14 @@ To ensure high availability and data redundancy, the physical layout of the clus
 
 * *Node Count*: While a minimum of three storage nodes is required to establish quorum, six storage nodes are recommended for production environments.
 This reduces the impact of node failures and improves I/O load distribution.
+
 * *Capacity Impact*: In a six-node cluster, losing a single node affects only one-sixth of the total capacity, allowing the remaining nodes to rebalance workloads more efficiently.
+
 * *I/O Distribution*: A larger cluster spreads I/O requests more evenly, helping reduce latency during peak traffic or rebuild operations.
+
 * *Fault Domains*: Distribute storage nodes evenly across availability zones, racks, or host groups to protect against localized hardware failures.
-* *Anti-Affinity*: When running {svirt-long} on top of another hypervisor (for example, KVM), configure anti-affinity rules to ensure Portworx storage nodes do not share the same physical host.
+
+* *Anti-Affinity*: When running {svirt-long} on top of another hypervisor (for example, KVM), configure anti-affinity rules to ensure {px} storage nodes do not share the same physical host.
 
 
 === Node resource requirements
@@ -308,152 +316,154 @@ Each node participating in the storage cluster must meet the following minimum r
 Proper base system configuration is required for reliable storage clustering:
 
 * *Time Synchronization*: Configure NTP on all nodes to maintain cluster quorum and metadata consistency.
+
 * *Name Resolution*: Ensure all nodes can resolve each other’s hostnames using DNS or `/etc/hosts`.
-* *Swap Configuration*: Disable swap on storage nodes. If swap cannot be disabled, Portworx must be explicitly configured to tolerate it.
-* *Security Policies*: Update firewall rules and SELinux or AppArmor profiles to allow required Portworx communication ports.
+
+* *Swap Configuration*: Disable swap on storage nodes. If swap cannot be disabled, {px} must be explicitly configured to tolerate it.
+
+* *Security Policies*: Update firewall rules and SELinux or AppArmor profiles to allow required {px} communication ports.
+
 * *Network Connectivity*: Verify full bidirectional connectivity between all nodes on both management and data networks.
+
 
 === Node labeling and role assignment
 
-Portworx relies on Kubernetes labels to determine which nodes contribute storage resources:
+{px} relies on Kubernetes labels to determine which nodes contribute storage resources:
 
 * *Storage Nodes*: Apply the label `portworx.io/node-type=storage` to all nodes that provide storage.
-
-This allows the Portworx Operator to automatically discover and provision devices on these specific nodes.
+This allows the {pxo} to automatically discover and provision devices on these specific nodes.
 
 * *Storageless Nodes*: For compute-only nodes, do not apply the storage label.
-In hyper-converged environments where every node provides storage, the label is optional but recommended for clarity.
+In hyperconverged environments where every node provides storage, the label is optional but recommended for clarity.
 
 
 === Considerations for {svirt-long}
 
-{svirt-long} provides a consistent and flexible experience across deployment models, including bare metal, private cloud, and environments managed through SUSE Manager. Automation can be achieved using AutoYaST, Terraform, or SUSE Manager orchestration, while still allowing customization to meet specific infrastructure needs.
+{svirt} provides a consistent and flexible experience across deployment models, including bare metal and public or private cloud environments, while allowing customization to meet specific infrastructure needs.
 
-Subscription handling varies based on deployment type. Virtualized environments typically use vCPU- or VM-based subscriptions, while bare-metal deployments are socket-based, with each subscription covering a defined number of physical sockets per host.
+Subscription handling varies based on deployment type.
+Virtualized environments typically use vCPU- or VM-based subscriptions, while bare-metal deployments are socket-based, with each subscription covering a defined number of physical sockets per host.
 
-A key advantage of {svirt-long} is its tight integration with SUSE Rancher and Kubernetes.
+A key advantage of {svirt} is its tight integration with {srancher}.
 This enables virtual machines and containerized workloads to run side by side in a unified, cloud-native platform, simplifying management and supporting hybrid and edge computing use cases.
 
-=== Networking Considerations for {svirt-long}
 
-A well-designed network is critical for performance and reliability when running Portworx on {svirt-long}.
+==== Networking
 
-Carefully plan management and data networks to ensure efficient communication between nodes and consistent data availability. Firewall configuration and VLAN segmentation should be used to enhance security and isolate traffic where required.
+A well-designed network is critical for performance and reliability when running {px} on {svirt}.
 
-By following these networking best practices, you can improve cluster stability, optimize storage performance, and ensure high availability across the Portworx deployment.
+Carefully plan management and data networks to ensure efficient communication between nodes and consistent data availability.
+Firewall configuration and VLAN segmentation should be used to enhance security and isolate traffic where required.
 
-== Management and data interfaces
+By following these networking best practices, you can improve cluster stability, optimize storage performance, and ensure high availability across the {px} deployment.
 
-When planning network configurations for Portworx on {svirt-long}, several best practices should be followed to ensure efficient data flow, scalability, and predictable performance.
 
-=== Dedicated network interfaces
 
-Assign separate virtual or physical network interfaces for management and data traffic.
+==== Management and data interfaces
 
-* *Management Traffic*: Used for cluster operations and control-plane communication.
-* *Data Traffic*: Used for replication, volume access, and storage I/O.
+When planning network configurations for {px} on {svirt}, the following best practices help ensure efficient data flow, scalability, and predictable performance.
 
+
+* *Dedicated network interfaces*: Assign separate virtual or physical network interfaces for management and data traffic.
++
+--
+* Management traffic includes cluster operations and control-plane communications.
+* Data traffic includes storage I/O, volume access, and replication.
+--
++
 Isolating these traffic types helps prevent congestion and avoids performance degradation during peak load or rebuild operations.
 
-=== Use of bridge or MacvTap interfaces
 
-In KVM-based {svirt-long} environments, configure Linux bridges or MacvTap interfaces to provide direct network access to Portworx nodes.
-
+* *Bridge or MacvTap interfaces*: In KVM-based {svirt} environments, configure Linux bridges or MacvTap interfaces to provide direct network access to {px} nodes.
 This approach reduces latency and improves throughput for data replication and I/O-heavy workloads.
 
-=== Consistent network configuration across hosts
 
-Ensure that all {svirt-long} hosts use consistent:
-
+* *Consistent network configuration across hosts*: Ensure that all {svirt} hosts use consistent:
++
+--
 * Interface naming conventions
 * IP addressing schemes
 * VLAN assignments
-
+--
++
 Consistency reduces operational complexity and prevents issues during scaling, failover, or node migration.
 
-=== Jumbo frames and MTU settings
-
-For high-throughput storage workloads, enable jumbo frames on data interfaces:
-
-* *Recommended MTU*: 9000
-
+* *Jumbo frames and MTU settings*: For high-throughput storage workloads, enable jumbo frames by setting MTU to 9000 bytes on data interfaces.
 Jumbo frames should only be enabled if the entire network path supports the configured MTU to avoid packet fragmentation or dropped traffic.
 
-=== Bandwidth and quality of service
+* *Bandwidth and quality of service*: Reserve sufficient network bandwidth for {px} data traffic.
+When networks are shared, implement Quality of Service (QoS) policies to ensure predictable latency and throughput for storage replication and I/O.
 
-Reserve sufficient network bandwidth for Portworx data traffic.
-
-When networks are shared with other workloads, implement Quality of Service (QoS) policies to ensure predictable latency and throughput for storage replication and I/O.
-
-=== Redundancy and bonding
-
-Use NIC bonding or teaming to provide redundancy and load balancing across both management and data networks.
-
-* *Recommended mode*: LACP (mode 4)
-
+* *Redundancy and bonding*: Use NIC bonding or teaming to provide redundancy and load balancing across both management and data networks.
+Bonding mode 4 (802.3ad or LACP) is recommended.
 This configuration improves fault tolerance and ensures continued operation during NIC or link failures.
 
-=== Firewall and security rules
 
-* Configure firewall policies to allow required Portworx communication ports for control, data, and API traffic between nodes.
+* *Firewall and security rules*:
++
+--
+* Configure firewall policies to allow required {px} communication ports for control, data, and API traffic between nodes.
 
 * Restrict external access to management interfaces to secure administrative operations and reduce attack surface.
+--
 
-=== DNS and time synchronization
-
-Verify that all nodes have:
-
+* *DNS and time synchronization*: Verify that all nodes have:
++
+--
 * Consistent DNS resolution
+
 * Accurate NTP synchronization
+--
++
+{px} relies on stable name resolution and precise timekeeping to maintain cluster health and metadata consistency.
 
-Portworx relies on stable name resolution and precise timekeeping to maintain cluster health and metadata consistency.
-
-=== Default NIC usage
-
-By default, Portworx uses the same network interfaces as the Kubernetes cluster for both management traffic and data replication.
-
+* *Default NIC usage*: By default, {px} uses the same network interfaces as the Kubernetes cluster for both management traffic and data replication.
 This simplifies initial deployment and is suitable for:
-
++
+--
 * Lab environments
+
 * Proof-of-concept setups
+
 * Development clusters
-
+--
++
 However, this configuration can lead to congestion and should be avoided in performance-sensitive or production environments.
++
+image::Portworx-default-network-configuration.png[title="{px} Default Network Configuration", {px} Default Network Configuration, align="center", width=90%]
 
-image::Portworx-default-network-configuration.png[title="Portworx Default Network Configuration", Portworx Default Network Configuration, align="center", width=90%]
 
-
-=== Dedicated data networks
-
-For production deployments, Portworx can be configured to use a dedicated NIC for data replication between nodes.
-
+* *Dedicated data networks*: For production deployments, {px} can be configured to use a dedicated NIC for data replication between nodes.
 This separation ensures that:
-
++
+--
 * Storage replication traffic does not interfere with management or application traffic
+
 * Kubernetes control-plane and workload networking remain uncongested
-
+--
++
 Dedicated data networks significantly improve throughput and reliability in clusters with high replication demands.
++
+image::Portworx-dedicated-network-configuration.png[title="{px} Dedicated Data Network Configuration", {px} Dedicated Data Network Configuration, align="center", width=90%]
 
-image::Portworx-dedicated-network-configuration.png[title="Portworx Dedicated Data Network Configuration", Portworx Dedicated Data Network Configuration, align="center", width=90%]
 
+* *Network performance*: The physical network infrastructure has a direct impact on {px} write latency and overall storage throughput.
+Because {px} replicates data to peer nodes before acknowledging write operations, both bandwidth and latency are critical factors.
+Consider the following:
++
+--
+* Use NICs of the same speed and configuration for all storage nodes.
 
+* Ensure appropriate bandwidth:
+** Testing: 1 Gbps or higher
+** Typical enterprise environments: 10 Gbps or higher
+** High-performance environments: 25 Gbps or higher
 
-=== Network performance considerations
-
-The physical network infrastructure has a direct impact on Portworx write latency and overall storage throughput.
-
-Because Portworx replicates data to peer nodes before acknowledging write operations, both bandwidth and latency are critical factors.
-
-* *Recommended Bandwidth*: 10 Gbps or higher
-* *Minimum Bandwidth*: 1 Gbps
-* *Preferred for High-Performance Workloads*: 25 Gbps or higher
-* *Latency*: Less than 5 ms round-trip between storage nodes
-* *Network Consistency*: All storage nodes should use NICs of the same speed and configuration
-
+* Ensure latency is less than 5 ms round-trip between storage nodes
+--
++
 Higher bandwidth and lower latency networks improve replication efficiency, reduce write latency, and enhance stability for data-intensive workloads.
 
-NOTE: Network bandwidth and latency directly affect Portworx replication performance.
-High-speed networks (25 Gbps or greater) are strongly recommended for production environments with sustained or latency-sensitive storage workloads.
 
 == Backing disks for the Portworx Storage cluster
 
