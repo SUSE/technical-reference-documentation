@@ -287,7 +287,8 @@ Review the following configurations to ensure a stable and performant integratio
 
 To ensure high availability and data redundancy, the physical layout of the cluster must be planned carefully:
 
-* *Node Count*: While a minimum of three storage nodes is required to establish quorum, six storage nodes are recommended for production environments. This reduces the impact of node failures and improves I/O load distribution.
+* *Node Count*: While a minimum of three storage nodes is required to establish quorum, six storage nodes are recommended for production environments.
+This reduces the impact of node failures and improves I/O load distribution.
 * *Capacity Impact*: In a six-node cluster, losing a single node affects only one-sixth of the total capacity, allowing the remaining nodes to rebalance workloads more efficiently.
 * *I/O Distribution*: A larger cluster spreads I/O requests more evenly, helping reduce latency during peak traffic or rebuild operations.
 * *Fault Domains*: Distribute storage nodes evenly across availability zones, racks, or host groups to protect against localized hardware failures.
@@ -320,18 +321,20 @@ Portworx relies on Kubernetes labels to determine which nodes contribute storage
 
 This allows the Portworx Operator to automatically discover and provision devices on these specific nodes.
 
-* *Storageless Nodes*: For compute-only nodes, do not apply the storage label. In hyper-converged environments where every node provides storage, the label is optional but recommended for clarity.
+* *Storageless Nodes*: For compute-only nodes, do not apply the storage label.
+In hyper-converged environments where every node provides storage, the label is optional but recommended for clarity.
 
 
-=== Considerations for SUSE Virtualization
+=== Considerations for {svirt-long}
 
 {svirt-long} provides a consistent and flexible experience across deployment models, including bare metal, private cloud, and environments managed through SUSE Manager. Automation can be achieved using AutoYaST, Terraform, or SUSE Manager orchestration, while still allowing customization to meet specific infrastructure needs.
 
 Subscription handling varies based on deployment type. Virtualized environments typically use vCPU- or VM-based subscriptions, while bare-metal deployments are socket-based, with each subscription covering a defined number of physical sockets per host.
 
-A key advantage of {svirt-long} is its tight integration with SUSE Rancher and Kubernetes. This enables virtual machines and containerized workloads to run side by side in a unified, cloud-native platform, simplifying management and supporting hybrid and edge computing use cases.
+A key advantage of {svirt-long} is its tight integration with SUSE Rancher and Kubernetes.
+This enables virtual machines and containerized workloads to run side by side in a unified, cloud-native platform, simplifying management and supporting hybrid and edge computing use cases.
 
-=== Networking Considerations for SUSE Virtualization
+=== Networking Considerations for {svirt-long}
 
 A well-designed network is critical for performance and reliability when running Portworx on {svirt-long}.
 
@@ -449,11 +452,13 @@ Because Portworx replicates data to peer nodes before acknowledging write operat
 
 Higher bandwidth and lower latency networks improve replication efficiency, reduce write latency, and enhance stability for data-intensive workloads.
 
-NOTE: Network bandwidth and latency directly affect Portworx replication performance. High-speed networks (25 Gbps or greater) are strongly recommended for production environments with sustained or latency-sensitive storage workloads.
+NOTE: Network bandwidth and latency directly affect Portworx replication performance.
+High-speed networks (25 Gbps or greater) are strongly recommended for production environments with sustained or latency-sensitive storage workloads.
 
 == Backing disks for the Portworx Storage cluster
 
-When configuring a Portworx storage cluster on {svirt-long}, the choice and configuration of backing disks are critical for achieving optimal performance, reliability, and scalability. The following considerations help guide the selection and configuration of backing disks for Portworx deployments.
+When configuring a Portworx storage cluster on {svirt-long}, the choice and configuration of backing disks are critical for achieving optimal performance, reliability, and scalability.
+The following considerations help guide the selection and configuration of backing disks for Portworx deployments.
 
 === Block devices
 
@@ -525,21 +530,26 @@ When you create a pool, Portworx categorizes it based on its latency and perform
 To set up a storage pool, you need a minimum of one drive per node. Portworx evaluates each drive through a benchmark process, categorizing it based on its throughput into one of three I/O priorities: low, medium, or high. Drives that share the same I/O priority and size within a node are grouped into a pool. This categorization allows you to align various applications with the appropriate tier of storage based on their performance requirements. For instance, database applications can be placed on flash devices for high performance, while applications managing logging data can utilize less performant options.
 A single backing disk is required per node to create a storage pool. However, for future scalability, consider the methods available to increase storage capacity in the cluster. This can be achieved either by expanding an existing disk (which is often feasible when using a hardware array for backing disks) or by adding additional disks to the storage pool.
 While both methods increase capacity, adding more disks necessitates an I/O rebalancing process, which is intensive.
-Using a single drive allows for the storage pool to be resized by expanding the backing disks. When the Portworx storage cluster is expanded by vertically scaling the backing drives, it does not require a data rebalance. For this reason, Portworx recommends using a single disk as the backing disk for the storage cluster in a bare metal environment.
+Using a single drive allows for the storage pool to be resized by expanding the backing disks.
+When the Portworx storage cluster is expanded by vertically scaling the backing drives, it does not require a data rebalance. For this reason, Portworx recommends using a single disk as the backing disk for the storage cluster in a bare metal environment.
 
 image::storage-cluster.png[title="Portworx Storage Pool Architecture", Portworx Storage Pool Architecture, align="center", width=90%]
 
 == Journal devices
 
-Portworx recommends configuring a journal device to handle metadata writes. Journal writes are small and frequent; therefore, using a solid-state drive (SSD) or NVMe device is strongly recommended.
+Portworx recommends configuring a journal device to handle metadata writes.
+Journal writes are small and frequent; therefore, using a solid-state drive (SSD) or NVMe device is strongly recommended.
 
-The journal device should have a capacity of 3 GB, as Portworx utilizes only this amount of space for journaling. Allocating a larger device does not improve performance unless the increased capacity also provides additional IOPS, such as in many cloud environments.
+The journal device should have a capacity of 3 GB, as Portworx utilizes only this amount of space for journaling.
+Allocating a larger device does not improve performance unless the increased capacity also provides additional IOPS, such as in many cloud environments.
 
-The journal device must be at least as fast as the fastest storage device on the node participating in the Portworx storage cluster. If the journal device performs slower, overall cluster write performance will be limited to the speed of the journal device.
+The journal device must be at least as fast as the fastest storage device on the node participating in the Portworx storage cluster.
+If the journal device performs slower, overall cluster write performance will be limited to the speed of the journal device.
 
 === Recommendations
 
-- For nodes using local drives as backing disks, configure the journal device to be automatically created from existing disks rather than dedicating a separate physical disk for the 3 GB requirement. This reduces hardware cost and complexity.
+- For nodes using local drives as backing disks, configure the journal device to be automatically created from existing disks rather than dedicating a separate physical disk for the 3 GB requirement.
+This reduces hardware cost and complexity.
 
 - For environments using storage arrays that can easily provision and present multiple volumes or LUNs to worker nodes, create a dedicated 3 GB volume specifically for the journal device to achieve better metadata write performance.
 
@@ -550,7 +560,8 @@ Using a high-performance SSD or NVMe device for journaling significantly improve
 
 == Portworx KVDB
 
-Portworx relies on a key-value database (KVDB) to store critical operational data such as cluster state, configuration, and volume metadata. Because this information is essential to cluster operation, it must be highly available, resilient, and protected from node or device failures.
+Portworx relies on a key-value database (KVDB) to store critical operational data such as cluster state, configuration, and volume metadata.
+Because this information is essential to cluster operation, it must be highly available, resilient, and protected from node or device failures.
 
 When deploying Portworx on {svirt-long}, you can configure the KVDB using one of the following options.
 
@@ -558,7 +569,8 @@ When deploying Portworx on {svirt-long}, you can configure the KVDB using one of
 
 The internal KVDB is integrated directly into the Portworx deployment and is the recommended configuration for most environments.
 
-This approach simplifies deployment by removing the need for an external database cluster, reducing management overhead and potential points of failure. The internal KVDB provides a stable and efficient mechanism for maintaining cluster metadata and configuration state.
+This approach simplifies deployment by removing the need for an external database cluster, reducing management overhead and potential points of failure.
+The internal KVDB provides a stable and efficient mechanism for maintaining cluster metadata and configuration state.
 
 === External etcd Cluster
 
@@ -569,7 +581,8 @@ This option is suitable for organizations that:
 - Already maintain a production etcd infrastructure
 - Require advanced features such as SyncDR (Synchronous Disaster Recovery)
 
-SyncDR depends on an external etcd cluster to maintain data consistency and high availability across geographically distributed sites. However, using an external etcd cluster introduces additional setup and management complexity.
+SyncDR depends on an external etcd cluster to maintain data consistency and high availability across geographically distributed sites.
+However, using an external etcd cluster introduces additional setup and management complexity.
 
 When using this option, ensure the etcd cluster is deployed across multiple fault domains to maintain quorum during node or site outages.
 
@@ -577,7 +590,8 @@ When using this option, ensure the etcd cluster is deployed across multiple faul
 
 * Use an internal KVDB unless SyncDR or other advanced requirements dictate the use of an external etcd cluster.
 
-* When using the internal KVDB, assign a dedicated 64 GB disk per KVDB node. This isolates KVDB I/O operations from general storage traffic, reducing contention and latency for applications using Portworx volumes.
+* When using the internal KVDB, assign a dedicated 64 GB disk per KVDB node.
+This isolates KVDB I/O operations from general storage traffic, reducing contention and latency for applications using Portworx volumes.
 
 * The internal KVDB requires three SUSE Virtualization worker nodes for normal operation. The dedicated 64 GB disk is required only on these nodes.
 
@@ -596,25 +610,32 @@ image::kvdb-reference-portworx.png[title="KVDB reference", KVDB reference, align
 
 == General third-party storage considerations
 
-A hardware storage array can be used to provide the block devices as backing disks for the Portworx storage cluster. Using a hardware storage array may offer benefits such as deduplication or compression for replicas stored in the Portworx storage cluster, depending on the capabilities of the storage array vendor.
+A hardware storage array can be used to provide the block devices as backing disks for the Portworx storage cluster.
+Using a hardware storage array may offer benefits such as deduplication or compression for replicas stored in the Portworx storage cluster, depending on the capabilities of the storage array vendor.
 
-When providing backing disks to Portworx storage nodes from a hardware array, special considerations should be taken. This section outlines design considerations when using an external Storage Array Network for Portworx backing disks.
+When providing backing disks to Portworx storage nodes from a hardware array, special considerations should be taken.
+This section outlines design considerations when using an external Storage Array Network for Portworx backing disks.
 
 * Block devices are typically presented to physical hosts (SUSE Virtualization worker nodes) via Fibre-Channel or iSCSI connections.
 
-* Portworx recommends using a minimum of two iSCSI or Fibre-Channel interfaces per node to present storage to the cluster. A pair of interfaces provides high availability in the case of hardware failure, and with multi-pathing, can deliver additional bandwidth to the backing storage array.
+* Portworx recommends using a minimum of two iSCSI or Fibre-Channel interfaces per node to present storage to the cluster.
+A pair of interfaces provides high availability in the case of hardware failure, and with multi-pathing, can deliver additional bandwidth to the backing storage array.
 
 Consider the configurations below for Fibre-Channel and iSCSI connections:
 
 * *Fibre-Channel:* Ensure proper zoning in the SAN Fabric for the nodes.
 
 
-* *iSCSI:* Dedicate Ethernet interfaces solely for storage traffic, rather than sharing them with SUSE Virtualization traffic. Configure jumbo frames on these interfaces and any in-line network devices, including physical switches and the storage array, to enhance performance.
+* *iSCSI:* Dedicate Ethernet interfaces solely for storage traffic, rather than sharing them with SUSE Virtualization traffic.
+Configure jumbo frames on these interfaces and any in-line network devices, including physical switches and the storage array, to enhance performance.
 
 
-For storage cluster disks, Portworx recommends presenting a single volume per storage node based on your sizing decisions. Using a single volume reduces performance impact if resizing operations are required later. If your storage array supports volume resizing, these volumes can be expanded to increase the total storage of the Portworx storage cluster without triggering a rebalancing task, which is a costly storage operation involving data copying.
+For storage cluster disks, Portworx recommends presenting a single volume per storage node based on your sizing decisions.
+Using a single volume reduces performance impact if resizing operations are required later.
+If your storage array supports volume resizing, these volumes can be expanded to increase the total storage of the Portworx storage cluster without triggering a rebalancing task, which is a costly storage operation involving data copying.
 
-Creating additional volumes of a desired size is straightforward with an external hardware array. In scenarios using an external hardware array, Portworx recommends creating 3 GB volumes from the array and presenting them to the worker nodes to be used as the journal device.
+Creating additional volumes of a desired size is straightforward with an external hardware array.
+In scenarios using an external hardware array, Portworx recommends creating 3 GB volumes from the array and presenting them to the worker nodes to be used as the journal device.
 
 image::Third-party-array-diagram.png[title="Third-party Array Diagram", Third-party Array Diagram, align="center", width=90%]
 
@@ -639,11 +660,11 @@ image::Third-party-array-diagram.png[title="Third-party Array Diagram", Third-pa
 For detailed deployment and configuration procedures, refer to {ref-svirt-pxe-wp}[{svirt-long} and {pxe-long}] white paper.
 
 == Summary
-This reference configuration describes an architecture for deploying SUSE Virtualization with {pxe} by {pxe-provider} on bare metal infrastructure.
+This reference configuration describes an architecture for deploying {svirt-long} with {pxe} by {pxe-provider} on bare metal infrastructure.
 It supplements the existing SUSE and {pxe-provider} reference architecture by providing additional design considerations, deployment guidance, and operational best practices specific to virtualization and stateful workloads.
 
-The solution integrates SUSE Virtualization, SUSE Rancher Prime, and {pxe} to deliver a unified platform for running virtual machines and container workloads on the same Kubernetes-based infrastructure.
-SUSE Virtualization provides VM lifecycle management using KubeVirt, Rancher Prime offers centralized cluster and access management, and {pxe} delivers persistent storage services such as replication, failover, backup, and disaster recovery.
+The solution integrates {svirt-long}, SUSE Rancher Prime, and {pxe} to deliver a unified platform for running virtual machines and container workloads on the same Kubernetes-based infrastructure.
+{svirt-long} provides VM lifecycle management using KubeVirt, Rancher Prime offers centralized cluster and access management, and {pxe} delivers persistent storage services such as replication, failover, backup, and disaster recovery.
 
 The reference design focuses on key architectural principles including high availability, scalability, performance, and operational consistency.
 It outlines recommended cluster sizing, node resource requirements, fault-domain awareness, and network separation for management and data traffic.
@@ -656,11 +677,12 @@ By following the guidance in this document, organizations can deploy a stable an
 The architecture is designed to support production virtualization workloads while maintaining flexibility for future expansion into hybrid, edge, or mixed VM and container use cases.
 
 == Conclusion
-Organizations are modernizing their applications and infrastructure, transitioning from traditional, virtual machine deployments to modern, cloud-native technologies, such as containers and Kubernetes.  SUSE Virtualization provides a flexible platform that enables container and virtual machine workloads to run side-by-side, on the same, unified infrastructure.
+Organizations are modernizing their applications and infrastructure, transitioning from traditional, virtual machine deployments to modern, cloud-native technologies, such as containers and Kubernetes.
+{svirt-long} provides a flexible platform that enables container and virtual machine workloads to run side-by-side, on the same, unified infrastructure.
 Portworx Enterprise by {pxe-provider} brings resilient, scalable, and efficient storage services for mission-critical workloads, supporting enterprise availability, mobility, and data protection needs.
-Together, SUSE Virtualization and Portworx by {pxe-provider} present enterprises with a robust, flexible infrastructure platform to support their mission-critical, virtualized and cloud-native workloads.
+Together, {svirt-long} and Portworx by {pxe-provider} present enterprises with a robust, flexible infrastructure platform to support their mission-critical, virtualized and cloud-native workloads.
 
-This guide provides an overview of this unified, infrastructure platform along with detailed steps for  configuring and validating the integration of SUSE Virtualization with Portworx Enterprise and a {pxe-provider} FlashArray to deliver a unified, infrastructure platform.
+This guide provides an overview of this unified, infrastructure platform along with detailed steps for  configuring and validating the integration of {svirt-long} with Portworx Enterprise and a {pxe-provider} FlashArray to deliver a unified, infrastructure platform.
 
 Continue your learning journey by exploring the following technical resources:
 
@@ -674,29 +696,29 @@ Continue your learning journey by exploring the following technical resources:
 // with the respective answers.
 // Answers are contained in open blocks associated with each question.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-. *What problem does SUSE Virtualization with Portworx on bare metal solve?*
+. *What problem does {svirt-long} with Portworx on bare metal solve?*
 +
 --
 This solution addresses the challenges of running modern, stateful virtualized workloads with high availability, performance, and operational consistency.
 It provides a unified platform to run virtual machines and containers together while ensuring enterprise-grade persistent storage, resiliency, and simplified lifecycle management.
 --
-. *Why deploy SUSE Virtualization on bare metal instead of a traditional hypervisor stack?*
+. *Why deploy {svirt-long} on bare metal instead of a traditional hypervisor stack?*
 +
 --
 Deploying on bare metal removes unnecessary abstraction layers, improves performance, and provides greater control over hardware resources.
 It also enables tighter integration with Kubernetes, allowing organizations to manage virtual machines and containers using the same cloud-native operational model.
 --
-. *How does Portworx integrate with SUSE Virtualization?*
+. *How does Portworx integrate with {svirt-long}?*
 +
 --
-Portworx integrates as the persistent storage layer for SUSE Virtualization by providing block storage volumes to both virtual machines and container workloads.
+Portworx integrates as the persistent storage layer for {svirt-long} by providing block storage volumes to both virtual machines and container workloads.
 It runs as a Kubernetes-native service and manages replication, failover, backup, and storage lifecycle operations transparently.
 --
 . *Is {pxe-provider} FlashArray required for this architecture?*
 +
 --
 {pxe-provider} FlashArray is recommended and validated in this reference configuration due to its performance, reliability, and enterprise features.
-However, Portworx can also work with other supported hardware storage arrays or local disks, provided they can present raw block devices to the SUSE Virtualization nodes.
+However, Portworx can also work with other supported hardware storage arrays or local disks, provided they can present raw block devices to the {svirt-long} nodes.
 --
 
 . *What is the minimum cluster size for production deployments?*
@@ -709,7 +731,7 @@ Portworx requires a minimum of three storage nodes to establish quorum. For prod
 
 +
 --
-Yes. SUSE Virtualization is designed to run virtual machines and Kubernetes workloads side by side on the same cluster.
+Yes. {svirt-long} is designed to run virtual machines and Kubernetes workloads side by side on the same cluster.
 Portworx provides persistent storage services for both workload types, enabling consistent data management across VMs and containers.
 --
 
@@ -740,7 +762,7 @@ Yes. Portworx provides built-in backup and disaster recovery capabilities. Advan
 . *Is this solution suitable for edge or remote deployments?*
 +
 --
-Yes. SUSE Virtualization and Portworx are well-suited for edge environments due to their lightweight footprint, Kubernetes-native management, and ability to operate consistently across centralized data centers and remote locations.
+Yes. {svirt-long} and Portworx are well-suited for edge environments due to their lightweight footprint, Kubernetes-native management, and ability to operate consistently across centralized data centers and remote locations.
 --
 // . Question 1?
 // +
