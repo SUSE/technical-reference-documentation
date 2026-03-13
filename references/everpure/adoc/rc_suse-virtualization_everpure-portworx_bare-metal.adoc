@@ -311,6 +311,7 @@ Each node participating in the storage cluster must meet the following minimum r
 * *Dedicated Storage Devices*: Provide raw block devices on each storage node. These devices must not be formatted or managed by LVM or filesystems, as Portworx requires direct disk access.
 * *Platform Consistency*: Ensure all nodes run the same SUSE Linux Enterprise Server version and kernel to avoid compatibility issues.
 
+
 === Operating system and network prerequisites
 
 Proper base system configuration is required for reliable storage clustering:
@@ -467,33 +468,43 @@ Higher bandwidth and lower latency networks improve replication efficiency, redu
 
 == Backing disks for the Portworx Storage cluster
 
-When configuring a Portworx storage cluster on {svirt-long}, the choice and configuration of backing disks are critical for achieving optimal performance, reliability, and scalability.
-The following considerations help guide the selection and configuration of backing disks for Portworx deployments.
+When configuring a {px} storage cluster on {svirt}, the choice and configuration of backing disks are critical for achieving optimal performance, reliability, and scalability.
+The following considerations help guide the selection and configuration of backing disks for {px} deployments.
+
 
 === Block devices
 
-Portworx requires raw block storage devices as backing storage for the cluster.
+{px} requires raw block storage devices as backing storage for the cluster.
 
 * Each storage node must be provisioned with raw block devices.
-* Devices must not be pre-formatted with filesystems or managed by LVM.
+
+* Devices must not be pre-formatted with file systems or managed by LVM.
+
 * Block devices can be sourced from:
+
 ** Local disks on bare-metal worker nodes
-** External storage arrays such as {pxe-provider} FlashArray or other SAN systems presenting block devices
+
+** External storage arrays such as {pfa-long} or other SAN systems presenting block devices
+
 * Ensure all backing devices are visible and accessible to the host operating system on each worker node.
+
 
 === Disk type and performance
 
 The type of block devices used directly impacts capacity, I/O performance, and throughput.
 
-* High-performance devices such as NVMe SSDs provide superior performance for Kubernetes workloads using Portworx persistent volumes.
-* SATA or SAS SSDs offer a balance between cost and performance.
+* High-performance devices such as NVMe SSDs provide superior performance for Kubernetes workloads using {px} persistent volumes.
+
+* SATA or SAS SSDs balance cost and performance.
+
 * Traditional HDDs are supported but may limit performance for latency-sensitive workloads.
 
 Select disk types based on application I/O requirements and performance expectations.
 
+
 === Disk redundancy and fault tolerance
 
-Portworx provides data protection through software-based replication.
+{px} provides data protection through software-based replication.
 
 * Application owners can define replication factors (for example, `repl2` or `repl3`) to store replicas across multiple nodes.
 * Replication ensures data availability during node or disk failures.
@@ -504,46 +515,61 @@ Additional disk-level protection can be achieved through hardware RAID configura
 * This approach can reduce replica rebuild operations triggered by disk failures.
 * Hardware RAID increases cost and should be evaluated against operational requirements.
 
+
 === Capacity planning
 
-Backing disks define the total usable capacity of the Portworx storage cluster.
+Backing disks define the total usable capacity of the {px} storage cluster.
 
-* A small portion of disk space is reserved for Portworx metadata and journaling.
+* A small portion of disk space is reserved for {px} metadata and journaling.
+
 * The majority of capacity is available for persistent volumes and their replicas.
+
 * Effective capacity planning must account for:
+
 ** Application replication factors
+
 ** Expected growth in storage demand
+
 ** Performance headroom
 
 Storage capacity can be expanded by resizing existing disks or adding additional block devices to storage nodes.
 
-=== Storage pool configuration
-
-Portworx requires at least one storage pool per cluster to operate.
-
-* Multiple storage pools can be created to:
-** Separate workloads
-** Build performance-based storage tiers
-** Isolate different disk types
-* Each storage pool should consist of disks with identical specifications.
-* Uniform disk characteristics ensure consistent performance across all nodes and replicas.
-
-Proper storage pool design helps maintain predictable performance and simplifies ongoing operations.
-
-By carefully planning backing disks and storage pool configurations, Portworx on {svirt-long} can deliver reliable, high-performance, and scalable persistent storage for both virtualized and containerized workloads.
 
 == Storage pools
-By following these guidelines, organizations can deploy a robust and scalable Portworx architecture on {svirt-long}, ensuring high availability and optimal performance for their applications.
-A storage pool in Portworx is a logical grouping of a node's physical drives.
-Portworx uses the space in these storage pools to dynamically create virtual volumes for containers. Storage pools consist of a collection of drives with the same capacity and type.
-When you create a pool, Portworx categorizes it based on its latency and performance in random and sequential IOPS.
-To set up a storage pool, you need a minimum of one drive per node. Portworx evaluates each drive through a benchmark process, categorizing it based on its throughput into one of three I/O priorities: low, medium, or high. Drives that share the same I/O priority and size within a node are grouped into a pool. This categorization allows you to align various applications with the appropriate tier of storage based on their performance requirements. For instance, database applications can be placed on flash devices for high performance, while applications managing logging data can utilize less performant options.
-A single backing disk is required per node to create a storage pool. However, for future scalability, consider the methods available to increase storage capacity in the cluster. This can be achieved either by expanding an existing disk (which is often feasible when using a hardware array for backing disks) or by adding additional disks to the storage pool.
-While both methods increase capacity, adding more disks necessitates an I/O rebalancing process, which is intensive.
-Using a single drive allows for the storage pool to be resized by expanding the backing disks.
-When the Portworx storage cluster is expanded by vertically scaling the backing drives, it does not require a data rebalance. For this reason, Portworx recommends using a single disk as the backing disk for the storage cluster in a bare metal environment.
+
+A storage pool is a logical grouping of physical drives, which {px} uses to dynamically create virtual volumes.
+You need a minimum of one drive per node to set up a storage pool.
+Pools should consist of drives that share the same I/O priority and size, which will help simplify operations and ensure predictable and consistent performance across all nodes and replicas.
+
+When you create a storage pool, {px} evaluates each drive through a benchmark process.
+It categorizing the pool based on its throughput into one of three I/O priorities: low, medium, or high.
+This allows you to align various applications with the appropriate tier of storage based on performance requirements.
+For instance, database applications can be placed on flash devices for high performance, while applications managing logging data can utilize less performant options.
+
+A single backing disk is required per node to create a storage pool.
+However, for future scalability, consider the methods available to increase storage capacity in the cluster.
+You can do this by expanding an existing disk (which makes more sense in the context of software-defined LUNs in a hardware array of physical disks) or by adding additional disks to the storage pool.
+
+While both methods increase capacity, adding more disks necessitates an I/O rebalancing process that can be intensive.
+Therefore, presenting a single backing disk for the storage cluster is recommended.
 
 image::storage-cluster.png[title="Portworx Storage Pool Architecture", Portworx Storage Pool Architecture, align="center", width=90%]
+
+
+{px} requires at least one storage pool per cluster to operate, but you can have multiple storage pools.
+
+Multiple storage pools can be useful to:
+
+** Separate workloads
+
+** Build performance-based storage tiers
+
+** Isolate different disk types
+
+
+By carefully planning backing disks and storage pool configurations, {px} can deliver reliable, high-performance, and scalable persistent storage to {svirt} for both virtualized and containerized workloads.
+
+
 
 == Journal devices
 
