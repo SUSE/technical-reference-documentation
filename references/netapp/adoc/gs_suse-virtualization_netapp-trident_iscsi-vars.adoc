@@ -4,7 +4,7 @@
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 :article-id: gs-suse-virtualization-netapp-trident-iscsi
-:rev1-date: 2024-05-22
+:rev1-date: 2025-03-24
 :rev1-description: Initial publication
 :docdate: {rev1-date}
 
@@ -21,33 +21,35 @@
 :svirt-website: https://www.suse.com/products/harvester
 :svirt-support-matrix: https://www.suse.com/suse-harvester/support-matrix/all-supported-versions/
 :svirt-docs: https://documentation.suse.com/cloudnative/virtualization/
-:svirt-docs-root: {svirt-docs}v1.6/en/
+:svirt-docs-root: {svirt-docs}latest/en/
 :svirt-docs-overview: {svirt-docs-root}introduction/overview.html
 :svirt-docs-reqs: {svirt-docs-root}installation-setup/requirements.html
+:svirt-docs-authentication: {svirt-docs-root}installation-setup/authentication.html
 :svirt-docs-troubleshooting: {svirt-docs-root}troubleshooting/installation.html
 :svirt-docs-faq: {svirt-docs-root}troubleshooting/faq.html
 :svirt-docs-pw-reset: {svirt-docs-root}{svirt-docs-faq}#_how_can_i_reset_the_administrator_password
 
 
-// Component 2: NetApp Storage
+// Component 2: NetApp ONTAP Data Management Software
+:ontap: ONTAP
 :ontap-provider: NetApp
 :ontap-brand: NetApp® ONTAP®
 :ontap-long: NetApp ONTAP
-:ontap: ONTAP
-:ontap-version1: Check vendor for latest
-:ontap-website: https://www.netapp.com/data-storage/ontap-data-management-software/
+:ontap-version1: 9
+:ontap-website: https://www.netapp.com/ontap-data-management-software/
 :ontap-docs: https://docs.netapp.com/us-en/ontap/
 
 
 // Component 3: Trident CSI
-:trident-provider: NetApp
-:trident-brand: NetApp® Trident™ Container Storage Interface
-:trident-long: NetApp Trident CSI
 :trident: Trident
+:trident-provider: NetApp
+:trident-brand: NetApp® Trident™
+:trident-long: NetApp Trident
 :trident-version1: 25.10.0
-:trident-website: https://netapp.io/persistent-storage-provisioner-for-kubernetes/
+:trident-website: https://github.com/NetApp/trident?tab=readme-ov-file#readme
 :trident-docs: https://docs.netapp.com/us-en/trident
 :trident-docs-install: https://docs.netapp.com/us-en/trident/trident-get-started/kubernetes-deploy-tridentctl.html#install-trident-using-tridentctl
+:trident-docs-reqs: https://docs.netapp.com/us-en/trident/trident-get-started/requirements.html
 :trident-docs-worker-prep: https://docs.netapp.com/us-en/trident/trident-use/worker-node-prep.html#iscsi-self-healing-capabilities
 :trident-installer-url: https://github.com/NetApp/trident/releases/download/v24.06.0/trident-installer-24.06.0.tar.gz
 
@@ -55,12 +57,17 @@
 // DOCUMENT TITLES AND DESCRIPTIONS
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-:title: Integrating SUSE Virtualization with NetApp Storage Using Trident CSI
-:subtitle: A Step-by-Step Guide to Configuring Persistent Storage for Virtual Machines Using NetApp ONTAP and Trident CSI
-:usecase: Persistent Storage for VMs using iSCSI
-:description: This guide details the steps to configure NetApp external storage with a SUSE Virtualization cluster using Trident CSI for VM persistent volumes.
-:description-social: Learn to integrate NetApp ONTAP storage with SUSE Virtualization using Trident CSI.
-:executive-summary: This guide covers the process of integrating NetApp external storage with the SUSE Virtualization cluster. It details the steps required for provisioning LUNs, configuring iSCSI and multipath, installing and configuring the Trident Container Storage Interface (CSI), and utilizing the NetApp-backed StorageClass to create and attach volumes to Virtual Machines.
+:title: Integrating {svirt-brand} with {ontap-provider}® Storage
+
+:subtitle: Enabling Persistent Storage for Virtual Machines Using {ontap-long} and {trident}
+
+:usecase: Persistent Storage for Virtual Machines
+
+:description: This guide details installation and configuration of {ontap-brand} and {trident-brand} to deliver persistent storage for virtual machines hosted in {svirt} clusters.
+
+:description-social: {svirt-long} with {ontap-provider} storage
+
+:executive-summary: This guide covers how to integrate {ontap-provider}® external storage with {svirt-brand} to provide persistent storage for virtual machines. It provides detailed steps for provisioning LUNs, configuring iSCSI and multipath, installing and configuring {trident}™ Container Storage Interface (CSI), and using a NetApp-backed StorageClass to create and attach volumes to virtual machines.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // MISCELLANEOUS ATTRIBUTES

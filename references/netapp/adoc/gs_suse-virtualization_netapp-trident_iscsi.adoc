@@ -13,23 +13,21 @@ include::./gs_suse-virtualization_netapp-trident_iscsi-vars.adoc[]
 
 = {title}: {subtitle}
 
+
 == Introduction
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Introduction
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-In this guide, you learn how to leverage {ontap-brand} and the {trident-brand} to provide to deliver high-performance {ontap-provider} storage for virtual machines (VMs) hosted in your {svirt-brand} environment.
-
-////
-This guide focuses on the solution comprising SUSE Virtualization and NetApp ONTAP Storage, leveraging Trident Container Storage Interface (CSI).
-The motivation and purpose of this solution center around enabling SUSE Virtualization to use external, high-performance NetApp storage for persistent volumes, specifically allowing for the creation of VMs with disks assigned using a NetApp-backed StorageClass.
-////
+{svirt-brand} is a cloud-native virtualization platform that unifies virtual machine (VM) and container management, streamlining operations, and boosting efficiency with a single, cohesive platform for hybrid cloud infrastructure.
+{ontap-brand} delivers unified data management, allowing you to manage, protect, and move data across your hybrid environment.
+By leveraging {trident-brand}, you can deliver high-performance storage for virtual machines (VMs) hosted in your {svirt-brand} environment.
 
 
 === Scope
 
-This guide covers the detailed steps required for setting up a three-node {svirt-long} cluster to consume {ontap-provider} storage with the {trident-long}.
+This guide covers the detailed steps required for setting up a three-node {svirt-long} cluster to consume {ontap-provider} storage.
 It includes steps for LUN provisioning, multipath configuration, {trident} installation, StorageClass definition, and basic validation.
 
 
@@ -65,55 +63,92 @@ The authors wish to acknowledge the contributions of the following individuals:
 
 === Prerequisites
 
-The following resources and configurations are required to support the solution:
+You will need the following, minimum resources to implement the described integration:
 
-* **{svirt-long} Cluster:** A functional {svirt-docs}[{svirt-long}] cluster must be installed and operational.
-* **{ontap-long}:** A {ontap-docs}[NetApp ONTAP] system must be available that meets the Trident environment prerequisites and is accessible from the {svirt-long} cluster nodes.
-* **Network Connectivity:** Robust network connectivity between all {svirt-long} nodes and the NetApp ONTAP system is required to support storage operations.
-* **Sufficient Resources:** {svirt-long} nodes must have adequate  {svirt-docs-reqs}[CPU, memory, and local disk space] to support the Trident deployment and the expected workloads. Ensure the environment meets the minimum requirements for a stable and supported deployment. A Trident-managed Kubernetes storage setup must include at least three nodes, each meeting specific hardware, software, and network requirements.
-* **Administrative Access:** You need administrative access to the {svirt} UI and the underlying Kubernetes cluster to apply configurations and manage resources.
+* *{svirt-long} cluster* with at least three nodes for high availability
+//
++
+See {svirt-docs-reqs}[{svirt}: Hardware and Network Requirements] and {trident-docs-reqs}[{trident}: Requirements] for for more details.
+
+* *{ontap-long} storage:*
+//
++
+{ontap-website}[{ontap}] intelligent data infrastructure must be available and accessible by the {svirt-long} cluster nodes.
+
+* *{trident} CSI driver:* {trident-docs}[{trident}] 23.x or newer
+
+* *Administrative access:* Ensure you have administrative access to the {svirt} UI and the underlying Kubernetes cluster to apply configurations and manage resources.
 See {svirt-docs-faq}[{svirt}: Troubleshooting FAQ].
-* **Trident and CSI Driver Versions:** Use {trident-docs}[NetApp Trident] 23.x or newer and a compatible CSI driver version.
 
-== Architectural overview
+
+
+== Architecture
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Architecture
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The diagram below illustrates the basic architecture for integrating NetApp storage with {svirt-long}.
+The diagram below illustrates the basic architecture for {svirt} integrated with {ontap-long} storage.
 
-image::architecture_diagram.png[title="Architecture: SUSE Virtualization with NetApp ONTAP and Trident", scaledwidth="90%", align="center"]
+image::architecture_diagram.png[title="Architecture: {svirt} with {ontap-long} and {trident}", scaledwidth="90%", align="center"]
 
-The solution consists of the components identified below:
+The key components of the solution are:
 
-* **{svirt-long} (3 nodes):** Provides compute and orchestration for VMs and containers.
-* **{ontap-long}:** External storage backend providing iSCSI LUNs.
-* **{trident-long}:** Kubernetes CSI driver enabling dynamic provisioning of persistent storage.
+* *{svirt-long}* is the cloud native solution that provides unified and streamlined orchestration for VMs and containers.
+Built on Kubernetes, {svirt} delivers a flexible, scalable, and resilient infrastructure platform for all of your workloads.
 
-**Logical Flow:** {svirt-long} nodes connect to the NetApp ONTAP system over the iSCSI protocol. Multipath provides high availability and redundancy. Trident CSI manages storage lifecycle operations, dynamically provisioning volumes for virtual machines.
+* *{ontap-long}* data management software powers {ontap} storage systems.
+With a global namespace that supports up to 24 hardware nodes of all types, ONTAP software supports unified storage (block and file), enabling significant workload consolidation that you can manage using the ONTAP System Manager GUI.
+In this solution, {ontap} is used to provision iSCSI LUNs on the {ontap} storage back-end.
 
-== Deployment overview
+* *{trident-long}* is a Container Storage Interface (CSI) that delivers dynamic storage orchestration and natively integrates with Kubernetes.
+{trident} enables consumption and management of storage resources across all popular NetApp storage platforms, in the public cloud or on premises.
+{trident} runs as a single controller pod and a node pod on each worker node in the cluster.
 
-This section provides practical guidance for deploying a functional proof-of-concept implementation of the solution with additional considerations for scaling to production.
 
-For deployment purposes, the solution can be illustrated as a layered stack. The deployment process then consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications). The following sections provide guidance for deploying each layer of the solution.
+When deployed together in the illustrated configuration, {svirt} nodes connect over the iSCSI protocol to {ontap-long} storage using the {trident} CSI.
+High availability storage access is available when the cluster environment is configured with multipath support.
 
-=== Compute platform deployment
 
-The compute platform provides the foundational layer for the solution. The following steps detail how to prepare the {svirt-long} nodes for iSCSI integration.
+== Deployment
 
-*Preparation*
+This section provides practical guidance for deploying a functional, proof-of-concept implementation of the solution with additional considerations for scaling to production.
 
-. Install a {svirt-long} high-availability cluster.
-.. Ensure each node meets minimum hardware requirements and that hardware virtualization (VT-x/AMD-V) is enabled.
-.. Deploy {svirt-long}. See the official documentation for detailed guidance.
-.. After deployment, confirm you have access to the {svirt-long} cluster management UI and `kubeconfig`.
+For deployment purposes, the solution can be illustrated as a layered stack.
+The deployment process then consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications).
+Guidance for deploying each layer of the solution are provided in the following sections.
 
-*Process*
 
-. Configure iSCSI Initiator (Persistent Configuration via CloudInit YAML).
-.. Create a CloudInit resource to auto-start each node. You must include the following configuration in `/oem`.
+=== Compute platform
+
+. Ensure each node meets minimum {svirt-docs-reqs}[hardware requirements].
++
+[NOTE]
+====
+Be sure hardware virtualization (VT-x/AMD-V) is enabled on each node.
+====
+
+. Deploy the nodes, storage, and network as illustrated in the architecture diagram.
+
+
+=== {svirt-long}
+
+. Install a {svirt} high-availability cluster onto the compute platform.
+//
++
+See {svirt-docs-overview}[official documentation] for detailed guidance.
+
+. After deployment, confirm you have access to the cluster through the {svirt} UI and CLI.
+For tips, see {svirt-docs-authentication}[{svirt}: Authentication] and {svirt-docs-faq}[{svirt}: Troubleshooting - FAQ].
+
+
+=== Configure the iSCSI initiator and iSCSI service
+
+Use CloudInit to create a persistent configuration of the iSCSI initiator.
+
+. Define the configuration of the iSCSI initiator.
+
+.. Create the `01_iscsi_ip.yaml` CloudInit resource file listed below in the `/oem` directory on each cluster node.
 +
 [source, yaml]
 ----
@@ -159,24 +194,25 @@ spec:
                 addresses=192.168.200.87/24 # Replace the IP address
                 never-default=true
 ----
-+
-.. Apply the configuration on each node:
+
+
+.. Apply the configuration on each node.
 +
 [source, console]
 ----
 kubectl apply -f 01_iscsi_ip.yaml
 ----
-+
-.. Verify the status of the CloudInit resource:
+
+.. Verify the CloudInit resource.
 +
 [source, console]
 ----
 kubectl get cloudinit
 ----
 
-. Enable and Persist iSCSI Service
-+
-Create a CloudInit resource to auto-start the iSCSI daemon, `iscsid`:
+. Enable the iSCSI service daemon.
+
+.. Create `99_iscsid.yaml` in the `/oem` directory any node.
 +
 [source, yaml]
 ----
@@ -197,31 +233,39 @@ spec:
             start:
               - iscsid
 ----
-+
-Apply on any node:
+
+
+.. Apply the configuration.
 +
 [source, console]
 ----
 kubectl apply -f 99_iscsid.yaml
 ----
-+
-Verify status of `iscsid`:
+
+.. Verify the status of `iscsid` on each node.
 +
 [source, console]
 ----
 systemctl status iscsid
 ----
 
-. Provision a LUN from NetApp Storage and Map It to Cluster
-.. Log in to the NetApp ONTAP System Manager.
-.. Create a new LUN and assign it to an iSCSI initiator group containing the {svirt-long} nodes' IQNs.
-.. Note the following information:
+=== Provision a LUN from and map it to cluster
+
+. Log in to the NetApp ONTAP System Manager.
+
+. Create a new LUN and assign it to an iSCSI initiator group containing the {svirt-long} nodes' IQNs.
+
+. Note the following information:
++
+--
 * LUN path
 * Target IQNs
 * iSCSI portal IPs
+--
 
-. Enable and Configure Multipath
-.. Create a CloudInit resource to auto-start the multipath daemon (`multipathd`) with the loaded configuration:
+=== Enable and configure Multipath
+
+. Create a CloudInit resource to auto-start the multipath daemon (`multipathd`) with the loaded configuration:
 +
 [source, yaml]
 ----
