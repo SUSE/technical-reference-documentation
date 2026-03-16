@@ -98,11 +98,11 @@ The key components of the solution are:
 Built on Kubernetes, {svirt} delivers a flexible, scalable, and resilient infrastructure platform for all of your workloads.
 
 * *{ontap-long}* data management software powers {ontap} storage systems.
-With a global namespace that supports up to 24 hardware nodes of all types, ONTAP software supports unified storage (block and file), enabling significant workload consolidation that you can manage using the ONTAP System Manager GUI.
+With a global namespace that supports up to 24 hardware nodes of all types, {ontap} software supports unified storage (block and file), enabling significant workload consolidation that you can manage using the {ontap} System Manager GUI.
 In this solution, {ontap} is used to provision iSCSI LUNs on the {ontap} storage back-end.
 
 * *{trident-long}* is a Container Storage Interface (CSI) that delivers dynamic storage orchestration and natively integrates with Kubernetes.
-{trident} enables consumption and management of storage resources across all popular NetApp storage platforms, in the public cloud or on premises.
+{trident} enables consumption and management of storage resources across all popular {trident-provider} storage platforms, in the public cloud or on premises.
 {trident} runs as a single controller pod and a node pod on each worker node in the cluster.
 
 
@@ -249,19 +249,19 @@ kubectl apply -f 99_iscsid.yaml
 systemctl status iscsid
 ----
 
-=== Provision a LUN from and map it to cluster
-
-. Log in to the NetApp ONTAP System Manager.
-
-. Create a new LUN and assign it to an iSCSI initiator group containing the {svirt-long} nodes' IQNs.
-
-. Note the following information:
-+
---
-* LUN path
-* Target IQNs
-* iSCSI portal IPs
---
+// === Provision a LUN from and map it to cluster
+//
+// . Log in to the NetApp ONTAP System Manager.
+//
+// . Create a new LUN and assign it to an iSCSI initiator group containing the {svirt-long} nodes' IQNs.
+//
+// . Note the following information:
+// +
+// --
+// * LUN path
+// * Target IQNs
+// * iSCSI portal IPs
+// --
 
 === Enable and configure Multipath
 
@@ -329,17 +329,18 @@ systemctl status multipathd
 
 The following sections provide deployment guidance for the software layer, specifically the installation and configuration of {trident-long}.
 
-==== Trident CSI Deployment
+==== {trident} CSI Deployment
 
 *Preparation*
 
 . Prepare Worker Nodes
 +
-Before installing {trident-long}, ensure that each {svirt-long} node meets the prerequisites for Kubernetes storage integration. Follow the official NetApp documentation for {trident-docs-worker-prep}[Worker Node Preparation for Trident CSI].
+Before installing {trident-long}, ensure that each {svirt-long} node meets the prerequisites for Kubernetes storage integration.
+Follow the official {trident-provider} documentation for {trident-docs-worker-prep}[Worker Node Preparation for {trident} CSI].
 
-. Configure NetApp Storage Controller Secrets
+. Configure {trident-provider} Storage Controller Secrets
 +
-Create a Kubernetes secret for ONTAP credentials:
+Create a Kubernetes secret for {ontap} credentials:
 +
 [source, console]
 ----
@@ -352,7 +353,8 @@ kubectl create secret generic ontap-secret -n trident \
 
 . Install {trident-long}
 +
-It is recommended to use `tridentctl` for installation. You can find more details in the {trident-docs-install}[NetApp Trident Installation Guide].
+It is recommended to use `tridentctl` for installation.
+You can find more details in the {trident-docs-install}[{trident-provider} {trident} Installation Guide].
 +
 [source, console, subs="attributes+"]
 ----
@@ -362,14 +364,14 @@ cd trident-installer
 ./tridentctl install -n trident
 ----
 +
-Verify that all Trident pods are in the `Running` state:
+Verify that all {trident} pods are in the `Running` state:
 +
 [source, console]
 ----
 kubectl get pods -n trident
 ----
 
-. Configure Trident Backend
+. Configure {trident} Backend
 +
 Create a backend configuration file (e.g., `ontap-backend.json`):
 +
@@ -455,9 +457,9 @@ kubectl apply -f netapp-snapshotclass.yaml
 .. Set the provisioner to `csi.trident.netapp.io`.
 .. Save changes.
 
-. Set NetApp CSI Driver as Default StorageClass
+. Set {trident-provider} CSI Driver as Default StorageClass
 +
-Ensure the NetApp storage class is default and disable others if necessary:
+Ensure the {trident-provider} storage class is default and disable others if necessary:
 +
 [source, console]
 ----
@@ -470,39 +472,115 @@ kubectl patch storageclass netapp-storageclass \
 
 == Validation
 
-Ensure that {trident-long} is correctly integrated with {svirt-long} by provisioning a virtual machine (VM) that uses a StorageClass backed by the NetApp ONTAP iSCSI backend.
+Ensure that {trident-long} is correctly integrated with {svirt-long} by provisioning a virtual machine (VM) that uses a StorageClass backed by the {trident-provider} {ontap} iSCSI backend.
 
-. Create a VM
-.. Log in to the {svirt-long} UI.
+// . Create a VM
+// .. Log in to the {svirt-long} UI.
+// .. Navigate to **Virtual Machines** and click **Create**.
+// .. You may choose to create one or multiple VM instances.
+// .. Select a namespace for your VM.
+// [NOTE]
+// ====
+// Only the harvester-public namespace is visible to all users by default.
+// ====
+// .. Provide a name for your VM.
+// .. On the **Basics** tab, configure CPU (e.g., 2) and Memory (e.g., 4 GB).
+// .. On the **Volumes** tab, select or add disks:
+// * For the root disk, select the StorageClass `netapp-storageclass` and specify the desired size.
+// * (Optional) Click **Add Disk** to add an ISO image.
+// .. Click **Create** to deploy the VM.
+//
+// . Verify with the {svirt-long} UI
+// .. Navigate to **Virtual Machines > [Your VM] > Volumes**.
+// .. Confirm that the attached disk is using the `netapp-storageclass` StorageClass.
+//
+// . Verify with the CLI
+// .. Log in to the {svirt-long} management node CLI as root.
+// .. List the PersistentVolumeClaims (PVCs) in the VM’s namespace:
+// +
+// [source, console]
+// ----
+// kubectl get pvc -n <namespace>
+// ----
+// +
+// .. Confirm that the **STORAGECLASS** column shows `netapp-storageclass`.
+
+=== Create a VM
+.. Log in to the SUSE Virtualization (Harvester) UI.
 .. Navigate to **Virtual Machines** and click **Create**.
+.. You may choose to create one or multiple VM instances.
 .. Select a namespace for your VM.
++
+[NOTE]
+====
+Only the `harvester-public` namespace is visible to all users by default.
+====
 .. Provide a name for your VM.
-.. On the **Basics** tab, configure CPU (e.g., 2) and Memory (e.g., 4 GB).
+.. (Optional) Select a VM template (e.g., `iso-image`, `raw-image`, `windows-iso-image`) to speed up provisioning.
+.. On the **Basics** tab, configure the following settings:
++
+* **CPU**: 2
+* **Memory**: 4 GB
+* **SSHKey**: Select an existing key or upload a new one (required if you need SSH access).
+* **(Optional) Overcommit configuration**: Set CPU, memory, and storage overcommit ratios to allow scheduling of additional VMs even when physical resources are fully utilized.
+* **(Optional) Other advanced settings**: Run strategy, OS type, or custom cloud-init data.
 .. On the **Volumes** tab, select or add disks:
-* For the root disk, select the StorageClass `netapp-storageclass` and specify the desired size.
-* (Optional) Click **Add Disk** to add an ISO image.
-.. Click **Create** to deploy the VM.
++
+* One writable root disk is created by default.
+* Click **Add Disk** → choose `cd-rom` as the disk type.
+* Select the ISO image you uploaded and set its boot order to `1`.
++
+* Choose the StorageClass named `netapp-storageclass`, which is provisioned by Trident.
+.. For the root disk, select the StorageClass (e.g., `netapp-storageclass`) and specify the desired size.
+.. The management network is added by default.
 
-. Verify with the {svirt-long} UI
-.. Navigate to **Virtual Machines > [Your VM] > Volumes**.
+* You may remove it if using VLAN networks.
+* Optionally, add additional interfaces (`VLAN`, `bridge`, `masquerade`).
+.. Review all settings and click **Create** to deploy the VM.
+
+[NOTE]
+====
+Ensure that the `netapp-storageclass` StorageClass was created during the installation process and is marked as the default or explicitly selected during VM creation.
+====
+
+=== Verify the VM Storage
+
+You can use the SUSE Virtualization UI or CLI to verify that the VM is backed by NetApp Trident CSI and the ONTAP iSCSI backend.
+
+. *Verify with the SUSE Virtualization UI*
+.. In the SUSE Virtualization UI, navigate to:
++
+`Virtual Machines → <Your VM> → Volumes`
++
 .. Confirm that the attached disk is using the `netapp-storageclass` StorageClass.
 
-. Verify with the CLI
-.. Log in to the {svirt-long} management node CLI as root.
+
+. *Verify with the SUSE Virtualization CLI*
+.. Log in to the SUSE Virtualization management node CLI as `root`.
 .. List the PersistentVolumeClaims (PVCs) in the VM’s namespace:
 +
-[source, console]
+[source,console]
 ----
 kubectl get pvc -n <namespace>
 ----
 +
-.. Confirm that the **STORAGECLASS** column shows `netapp-storageclass`.
+
++
+[NOTE]
+====
+Confirm that the **STORAGECLASS** column shows `netapp-storageclass`.
+====
+
+.. This indicates that the disk was provisioned using the NetApp-backed StorageClass managed by Trident.
+
 
 == Summary
 
-Organizations are accelerating their digital transformation by modernizing applications and infrastructure — transitioning from traditional, virtual machine–centric environments to modern, cloud-native platforms powered by Kubernetes. {svirt-long} delivers a unified and flexible platform that allows organizations to seamlessly run both virtual machine (VM) and container workloads side-by-side on the same infrastructure.
+Organizations are accelerating their digital transformation by modernizing applications and infrastructure, transitioning from traditional, virtual machine–centric environments to modern, cloud-native platforms powered by Kubernetes.
+{svirt-long} delivers a unified and flexible platform that allows organizations to seamlessly run both virtual machine (VM) and container workloads side-by-side on the same infrastructure.
 
-{trident-long} extends this capability by providing enterprise-grade, dynamic storage provisioning for Kubernetes and {svirt-long} clusters. Through its integration with {ontap-long}, Trident enables resilient, scalable, and efficient iSCSI-based storage for mission-critical workloads, ensuring consistent performance, automation, and data protection across hybrid environments.
+{trident-long} extends this capability by providing enterprise-grade, dynamic storage provisioning for Kubernetes and {svirt-long} clusters.
+Through its integration with {ontap-long}, {trident} enables resilient, scalable, and efficient iSCSI-based storage for mission-critical workloads, ensuring consistent performance, automation, and data protection across hybrid environments.
 
 This guide detailed the steps to configure and validate the integration of {svirt-long} with {trident-long} and {ontap-long}, showcasing how enterprises can build a consistent, automated, and production-ready virtualization environment.
 
@@ -514,7 +592,52 @@ Explore the following resources to learn more:
 * {trident-docs}[{trident-long} Documentation]
 * {ontap-docs}[{ontap-long} Documentation]
 
-To learn more about modernizing and optimizing your IT infrastructure with SUSE and NetApp, contact SUSE at {suse-isv-email}.
+To learn more about modernizing and optimizing your IT infrastructure with SUSE and {trident-provider}, contact SUSE at {suse-isv-email}.
+
+== Frequently Asked Questions (FAQs)
+. *What is the role of Trident CSI in the SUSE Virtualization environment?*
++
+--
+NetApp Trident acts as a Container Storage Interface (CSI) driver that integrates NetApp storage with Kubernetes-based platforms such as SUSE Virtualization.
+
+It enables dynamic provisioning of persistent storage volumes for virtual machines and containers using NetApp ONTAP storage systems.
+--
+
+. *Why is multipath configuration required for NetApp iSCSI storage?*
++
+--
+Multipath provides high availability and redundancy for storage connections.
+
+When multiple network paths exist between SUSE Virtualization nodes and the NetApp storage system, multipath ensures that:
+
+* Storage traffic can fail over automatically if a path becomes unavailable.
+* Performance is improved through path load balancing.
+* Storage access remains uninterrupted during network or interface failures.
+--
+
+. *Why must the `netapp-storageclass` be configured as the default StorageClass?*
++
+--
+Setting `netapp-storageclass` as the default ensures that newly created volumes automatically use NetApp-backed storage unless another StorageClass is explicitly selected.
+
+This simplifies VM provisioning and guarantees that persistent volumes are dynamically created through Trident using the NetApp ONTAP backend.
+--
+
+. *Can you deploy Trident CSI using methods other than `tridentctl`?*
++
+--
+Yes. While `tridentctl` is the recommended installation method, Trident can also be deployed using Helm charts.
+
+Helm-based deployment is useful when you manage Kubernetes applications through a package management workflow.
+--
+
+. *Can SUSE Virtualization run both virtual machines and container workloads?*
++
+--
+Yes. SUSE Virtualization supports running virtual machines and Kubernetes workloads on the same infrastructure.
+
+This unified platform simplifies operations and allows organizations to modernize applications while maintaining existing VM-based workloads.
+--
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Do not modify below this break.
