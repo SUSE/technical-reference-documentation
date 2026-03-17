@@ -161,6 +161,42 @@ This reference configuration addresses these challenges by providing a standardi
 This solution is designed as a strong foundation for operationalizing AI while maintaining control, visibility, and security at enterprise scale.
 
 
+=== Representative customer use cases
+
+The following representative customer scenarios illustrate how SUSE AI and ClearML address common enterprise AI infrastructure challenges across regulated, distributed, and high-growth environments. 
+These examples highlight the operational patterns that this reference configuration is intended to support, including secure isolation, efficient GPU utilization, centralized orchestration, and scalable execution across on-premises and hybrid environments.
+
+==== On-premises Air-Gapped Defense Environment
+
+A defense organization operating in an air-gapped environment needed to support confidential AI projects while maintaining strict isolation between teams. 
+Resource management was heavily manual, and limited visibility into GPU occupancy made it difficult to determine which resources were available, in use, or assigned to specific users. 
+As a result, AI projects were often allocated entire clusters, reducing overall utilization and slowing research progress.
+
+By deploying ClearML Infrastructure Control Plane, the organization gained centralized visibility into compute utilization and introduced policy-based GPU allocation. 
+Resource access was governed through quotas, with controlled access to additional capacity when available. 
+ClearML was integrated directly into the experimentation workflow so that jobs could be submitted and tracked through a centralized interface, even in an air-gapped deployment. 
+This improved GPU utilization, increased transparency for development teams, and reduced the need to rerun experiments, helping accelerate time to market.
+
+==== Automatic Identity Verification for Financial Services
+
+A financial services organization supporting remote machine learning teams needed to execute large-scale AI workloads across distributed GPU infrastructure while managing datasets larger than 10 TB. 
+As experimentation scaled, the team faced challenges in allocating GPUs efficiently, coordinating work across environments, and maintaining reproducibility. 
+Operational overhead increased, and compute resources were not being used as effectively as required.
+
+The organization deployed ClearML to orchestrate experiments, schedule workloads across on-premises GPUs, and automate cloud bursting during periods of peak demand. 
+Centralized workload and compute management improved GPU utilization by more than 20 percent and enabled efficient handling and versioning of datasets 10x larger than previously managed. 
+This reduced the complexity of running distributed machine learning workloads while improving consistency and operational control.
+
+==== Fine-Tuning Language-Specific LLMs
+
+A global research organization developing customized LLM-based translation models required a platform that could support experimentation while also providing a reliable path to production. 
+The team was running workloads on an on-premises GPU cluster and needed a solution that could improve resilience, scale automatically, and reduce dependence on manual operational intervention.
+
+The organization deployed ClearML to manage experiment tracking, orchestration, and workload execution across research and production environments. 
+ClearML enabled centralized control of experiments and infrastructure, automated execution on available GPUs, and improved the reliability of the translation service. 
+As a result, the organization was able to serve 3.5x more customers without adding hardware or increasing day-to-day operational burden.
+
+
 == Architectural overview
 
 The solution, featuring the integration of {sai-long} and {cml-long}, provides a unified AI infrastructure platform that supports the full lifecycle of AI workloads, from experimentation and training through deployment and monitoring, while enforcing consistency, security, and operational visibility.
