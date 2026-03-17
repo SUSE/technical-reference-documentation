@@ -62,15 +62,15 @@
      - Multiple versions of the same component must be listed separately.
 -->
 <meta name="productname">
-  <productname version="{svirt-version1}">{svirt}</productname>
-  <productname version="{hitachivsp-version1}">{hitachivsp-long}</productname>
+  <productname version="">{svirt}</productname>
+  <productname version="">{hitachivsp-long}</productname>
 </meta>
 
 
 <!-- Component listings for Google Analytics
      - Provide a comma-delimited list of components and their respective versions.
 -->
-<productname>{svirt} {svirt-version1}, {hitachivsp-long}</productname>
+<productname>{svirt}, {hitachivsp-long}</productname>
 
 
 
@@ -79,8 +79,8 @@
      - However, in the meantime, mirror the component content
        of the productname metadata above.
 -->
-<meta name="platform">{svirt} {svirt-version1}+</meta>
-<meta name="platform">{hitachivsp-long} {hitachivsp-version1}</meta>
+<meta name="platform">{svirt}</meta>
+<meta name="platform">{hitachivsp-long}</meta>
 
 
 <!-- Partner metadata
@@ -158,6 +158,12 @@
      - Each revision must include the data and a brief description.
 -->
 <revhistory xml:id="rh-art-{article-id}">
+  <revision>
+    <date>{rev3-date}</date>
+    <revdescription>
+      <para>{rev3-description}</para>
+    </revdescription>
+  </revision>
   <revision>
     <date>{rev2-date}</date>
     <revdescription>
