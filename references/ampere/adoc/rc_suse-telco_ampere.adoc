@@ -104,11 +104,11 @@ Telecom operators face significant challenges when deploying RAN workloads, whic
 The increasing demand for high-bandwidth 5G services has led to a *surge in RAN traffic*, making it essential to pack more compute resources into smaller footprints while optimizing power consumption.
 These workloads are no longer purely traditional packet-forwarding tasks.
 Modern Distributed Units (DU), Central Units (CU), User Plane Functions (UPF), and near-RT RIC platforms now embed *significant machine-learning inference for beam management, load prediction, slice assurance, and security analytics*.
-The net result is a dramatic increase in required FLOPS per site, yet most current deployments still achieve this through power-hungry discrete accelerators (FPGAs, SmartNICs, and GPUs) that add cost, thermal complexity, and supply-chain fragility.
+The net result is a dramatic increase in required FLOPS per site. Most current deployments still achieve this through power-hungry discrete accelerators (FPGAs, SmartNICs, and GPUs) that add cost, thermal complexity, and supply-chain fragility.
 
-Energy efficiency has become a hard operational constraint.Many edge sites are limited on power and cooling, while electricity prices in many regions have risen *50-100% in the last three years*.
+Energy efficiency has become a hard operational constraint. Many edge sites are limited on power and cooling, while electricity prices in many regions have risen *50-100% in the last three years*.
 Sustainability commitments further amplify the pressure where operators must materially reduce Scope 2 emissions while scaling capacity by orders of magnitude.
-Traditional high-TDP x86 platforms, even when paired with inline accelerators, routinely exceed 800-1200W per node under real-world vRAN loads - a trajectory that is no longer economically or environmentally viable at scale.
+Traditional high-TDP x86 platforms, even when paired with inline accelerators, routinely exceed 800-1200W per node under real-world vRAN loads -- a trajectory that is no longer economically or environmentally viable at scale.
 
 At the same time, the industry’s move toward disaggregated, multi-vendor ecosystems exposes the limitations of closed, accelerator-dependent designs.
 Long integration cycles, firmware inter-dependencies, and single-source inline cards slow down lab validation and field upgrades, while creating hidden TCO penalties that often exceed the original hardware savings.
@@ -132,7 +132,7 @@ Combined with the SUSE near RT OS for telcos, this reference design addresses no
 
 Utilizing the {amp-long}’s unparalleled advantages in core density and power efficiency, this solution is designed to *pack more compute resources into smaller footprints while minimizing power consumption*.
 This makes it an ideal fit for RAN deployments where space constraints are a significant challenge.
-The support of Arm-based hardware is a core pillar of SUSE's telco strategy due to the undeniable advantages in terms of core density and power efficiency.
+The support of Arm-based hardware is a core pillar of SUSE's telco strategy because of the undeniable advantages in terms of core density and power efficiency.
 
 //image::image3.png[cloud-arch, scaledwidth="100%", align="left"]
 //image::image6.png[title="{stelco} Architecture", {stelco} Architecture, align="center", width=90%]
@@ -140,7 +140,7 @@ The support of Arm-based hardware is a core pillar of SUSE's telco strategy due 
 The {stelco-long} solution is specifically designed to take advantage of these benefits by providing *a cloud-native infrastructure that is optimized for RAN workloads*. Our combined solution includes support for containerization, microservices orchestration, and network function virtualization (NFV) – all essential components for deploying modern 5G networks.
 By using {stelco-long} on the Ampere Altra platform, telecom operators can enjoy a significant reduction in total cost of ownership while achieving better performance density, latency, and power efficiency.
 
-Because the entire solution is purely CPU-based and fully open, operators *avoid accelerator lock-in*, *reduce validation time from months to weeks*, and can *run any certified CNF or VNF on the same physical node*, whether it’s a FlexRAN-style DU, an open-source L1, a 5G Core UPF, or an edge AI inference application.
+Because the entire solution is purely CPU-based and fully open, operators *avoid accelerator lock-in*, *reduce validation time from months to weeks*. They can also *run any certified CNF or VNF on the same physical node*, whether it is a FlexRAN-style DU, an open source L1, a 5G Core UPF, or an edge AI inference application.
 The result is a horizontally scalable platform that *simultaneously maximizes site capacity*, *minimizes power and cooling requirements*, and *future-proofs the infrastructure for 6G-era workloads* that will demand even greater compute density at the edge.
 
 
@@ -166,12 +166,12 @@ This is achieved by dividing the physical network interface card (NIC) into mult
 * *Virtual Function (VF):* A lightweight PCIe function that contains the resources necessary for data movement but has a restricted configuration space. 
 VFs can be directly assigned to virtual machines (VMs) or containers, bypassing the host OS's network stack and the hypervisor's virtual switch.
 
-SR-IOV is critically important for modern Telco Cloud and 5G/vRAN (Virtualized Radio Access Network) deployments due to its direct impact on network performance and deterministic latency:
+SR-IOV is critically important for modern Telco Cloud and 5G/vRAN (Virtualized Radio Access Network) deployments because of its direct impact on network performance and deterministic latency:
 
 * *Low Latency and High Throughput:* By allowing VFs to be directly assigned to Network Functions (like virtual Distributed Units - vDUs), SR-IOV creates a near bare-metal data path. This eliminates the overhead of the hypervisor's network stack and virtual switching layers, which significantly reduces latency and maximizes throughput—essential for handling high-bandwidth, real-time 5G traffic.
 * *Deterministic Performance:* In 5G vRAN, L1 (Layer 1) processing requires very strict timing and deterministic performance. The bypass of the virtual switch layer minimizes "noisy neighbor" effects and jitter caused by context switching and software processing, ensuring a consistent and predictable packet arrival time crucial for maintaining quality of service.
-* *Efficiency* and CPU Offload: SR-IOV offloads packet processing from the host CPU to the NIC hardware. This frees up valuable CPU cores—especially the real-time isolated cores (as configured in the document)—to focus solely on running the demanding application-level workloads (like DPDK processing or specialized AI inference) rather than spending cycles on packet forwarding and network virtualization overhead.
-* *Enabling* Cloud-Native Functions (CNFs): For containerized network functions (CNFs) running on Kubernetes (like SUSE Telco Cloud), SR-IOV is leveraged via mechanisms like the SR-IOV Network Operator to provide direct network connectivity to pods, allowing CNFs to meet the rigorous performance demands previously only achievable with specialized hardware.
+* *Efficiency* and CPU Offload: SR-IOV offloads packet processing from the host CPU to the NIC hardware. This frees up valuable CPU cores—especially the real-time isolated cores (as configured in the document)—to focus solely on running the demanding application-level workloads (like DPDK processing or specialized AI inference) It prevents them from spending cycles on packet forwarding and network virtualization overhead.
+* *Enabling* Cloud-Native Functions (CNFs): For containerized network functions (CNFs) running on Kubernetes (like SUSE Telco Cloud), SR-IOV is leveraged via mechanisms like the SR-IOV Network Operator to provide direct network connectivity to pods. This allows CNFs to meet the rigorous performance demands previously only achievable with specialized hardware.
 
 The first task to enable SR-IOV is to configure it in the system BIOS (See {supermicro-url}[Supermicro FAQ: How to enable SR-IOV]).
 
@@ -233,9 +233,9 @@ Quadrant implies 4 NUMA domains per socket, yielding lowest local memory latency
 === What is Edge Image Builder
 
 The need for easily auditable, reproducible, and customized base images becomes paramount to the long-term stability and maintainability of the environment.
-{edge-image-builder}[Edge Image Builder (EIB)], one of the components of {stelco-long}, helps mitigate these concerns by providing a mechanism to customize SL Micro
+{edge-image-builder}[Edge Image Builder (EIB)], one of the components of {stelco-long}, helps mitigate these concerns. It provides a mechanism to customize SL Micro
 base images to include all of the configurations and workload artifacts needed by telco deployments.
-{github-edge-image-builder}[EIB is an open source project] that enables the simplified and quick configuration of customized SUSE Linux Micro images for a variety of scenarios. The resulting image contains all of the configuration and binary artifacts (RPMs, container images, etc.) necessary to provision the node at first boot, providing true zero-touch provisioning even in the case of low-bandwidth connections and air-gapped scenarios.
+{github-edge-image-builder}[EIB is an open source project] that enables the simplified and quick configuration of customized SUSE Linux Micro images for a variety of scenarios. The resulting image contains all of the configuration and binary artifacts (RPMs, container images, etc.) necessary to provision the node at first boot. This way, it provides true zero-touch provisioning even in the case of low-bandwidth connections and air-gapped scenarios.
 A single image can be reused across multiple nodes, including advanced situations such as deploying HA Kubernetes clusters and individualized network configuration per node. By leveraging a declarative, YAML-based definition format, EIB easily fits into existing GitOps and CI/CD pipelines, generating reproducible images with full accountability of their contents.
 
 === EIB configuration
@@ -294,7 +294,7 @@ You can find more information at {sedge-eib-building-images}[Edge Image Builder:
 
 ==== Custom files
 
-EIB has the ability to bundle custom scripts that run during the combustion phase when a node is booted with the built image.
+EIB can bundle custom scripts that run during the combustion phase when a node is booted with the built image.
 However, custom files are not automatically deployed on the node when it boots.
 If custom files are needed beyond the combustion phase, a script should be included that explicitly copies them to the file system.
 
@@ -303,7 +303,7 @@ See <<Sample custom performance tuning file>> for reference.
 
 Combustion scripts are executed alphabetically.
 All scripts automatically included by EIB are prefixed using values between 00 and 49 (for example, `05-configure-network.sh`, `30-suma-register.sh`).
-Unless certain that you need to interrupt the default flow, all custom scripts should be prefixed within the range 50 to 99 (e.g., `60-my-script.sh`) or not begin with a number.
+Unless certain that you need to interrupt the default flow, all custom scripts should be prefixed within the range 50 to 99 (for example, `60-my-script.sh`) or not begin with a number.
 
 See <<Sample custom file to copy scripts to the file system>> for reference.
 
@@ -330,7 +330,7 @@ This network is usually connected to a separate management switch, but it can be
 * Control-plane network
 //
 +
-This network is used for the communication between the downstream cluster nodes and the services that are running on them as well as communication between the nodes and external services, like the DHCP and DNS.
+This network is used for the communication between the downstream cluster nodes and the services that are running on them. It is also used for communication between the nodes and external services, like the DHCP and DNS.
 For connected environments, the switch/router can handle traffic through the Internet.
 
 * Other networks
@@ -343,7 +343,7 @@ image::image7.png[title="Management and Control-Plane Network Architecture for T
 
 [NOTE]
 ====
-For the purposes of this document, it is assumed that the management cluster is already deployed in order to focus on the downstream cluster for running telco performance tests.
+For this document, it is assumed that the management cluster is already deployed in order to focus on the downstream cluster for running telco performance tests.
 ====
 
 
@@ -352,7 +352,7 @@ For the purposes of this document, it is assumed that the management cluster is 
 Cluster API is a Kubernetes sub-project focused on providing declarative APIs and tooling to simplify provisioning, upgrading, and operating multiple Kubernetes clusters.
 
 Started by the Kubernetes Special Interest Group (SIG), Cluster Lifecycle, the Cluster API project uses Kubernetes-style APIs and patterns to automate cluster lifecycle management for platform operators.
-The supporting infrastructure, like virtual machines, networks, load balancers, and VPCs, as well as the Kubernetes cluster configuration are all defined in the same way that application developers operate deploying and managing their workloads.
+The supporting infrastructure, like virtual machines, networks, load balancers, and VPCs, and the Kubernetes cluster configuration are all defined in the same way that application developers operate deploying and managing their workloads.
 This enables consistent and repeatable cluster deployments across a wide variety of infrastructure environments.
 
 The following diagram illustrates the workflow used to deploy a single-node downstream cluster with directed network provisioning:
@@ -663,7 +663,7 @@ image::image2.png[cpu-performance2, align="left", width=90%]
 
 == Conclusion and next steps
 
-The Ampere and SUSE joint solution delivers a future-proof, open, cloud-native telco platform that combines unmatched core density, best-in-class power efficiency, and carrier-grade real-time performance, all without the need for additional accelerators or vendor lock-in.
+The Ampere and SUSE joint solution delivers a future-proof, open, cloud-native telco platform. It combines unmatched core density, best-in-class power efficiency, and carrier-grade real-time performance, all without the need for additional accelerators or vendor lock-in.
 
 Operators can now deploy high-capacity 5G RAN and edge services at dramatically lower power, space, and total cost while preserving full flexibility to run any CNF or VNF on the same infrastructure.
 
