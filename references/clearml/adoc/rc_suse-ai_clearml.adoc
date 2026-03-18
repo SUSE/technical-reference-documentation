@@ -1,0 +1,1465 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+include::./rc_suse-ai_clearml-vars.adoc[]
+[#art-{article-id}]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Reference Configuration
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define variables (document attributes) in the vars file.
+// 2. Develop content and reference variables in the adoc file.
+// 3. Update the docinfo.xml file as needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+= {doctitle}: {docsubtitle}
+
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a motivation for the document in 2-4 sentences to identify:
+//   - what the document is about
+//   - why it may be of interest to the reader
+//   - what products are being highlighted
+// Include an approved SUSE | Partner logo lock-up if relevant/possible
+// Include any additional, relevant details
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This technical reference provides a validated design for building an enterprise-grade AI compute and machine learning operations (MLOps) platform using {sai-brand} integrated with {cml-brand}.
+It describes an opinionated but flexible architecture, designed to help organizations deploy, operate, and scale machine learning workloads in a secure, consistent, and observable manner across on-premises, cloud, and hybrid environments.
+
+As enterprises increasingly adopt artificial intelligence to drive business value, many face challenges in moving from isolated experimentation to reliable, repeatable production deployments.
+Common obstacles include fragmented tooling, inconsistent environments, limited lifecycle visibility, and difficulties in scaling GPU-enabled workloads while maintaining security and governance.
+{sai} and {cml} together address these challenges by providing a Kubernetes-native foundation for AI workloads combined with end-to-end MLOps capabilities.
+
+This reference configuration focuses on platform-level concerns rather than data science methodologies.
+It outlines how platform teams can standardize machine learning workflows, manage shared AI infrastructure, and enable multiple data science teams to work efficiently within a governed and observable environment at enterprise scale.
+It includes discussion of business context and value as well as technical architecture and operational guidance.
+
+
+
+=== Scope
+
+This document covers:
+
+* The business and technical drivers for adopting an AI infrastructure management platform
+* A reference architecture for {sai} and {cml}integration
+* Core software and infrastructure components and their roles
+* Deployment considerations and validation guidance
+* Security, scalability, and observability best practices
+
+This document does not cover:
+
+* Detailed machine learning algorithms or data science workflows
+* Application-specific model tuning
+* Vendor-specific hardware performance benchmarking
+* Step-by-step installation instructions already documented by {sai-provider} or {cml-provider}
+
+
+=== Audience
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify for whom this document is intended, perhaps with:
+//   - topics of interests (e.g., machine learning, security, etc.)
+//   - job roles (e.g., developer, administrator, platform architect, etc.)
+//   - required skills
+// E.g., "The intended audience for this guide includes ..."
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This reference is intended for professionals involved in designing, deploying, or operating enterprise AI platforms, including:
+
+* Platform engineers
+* Infrastructure architects
+* DevOps and MLOps engineers
+* Cloud-native administrators
+
+
+To successfully follow this guide, you should have:
+
+* Working knowledge of Kubernetes and containerized workloads
+* Experience administering Linux-based systems
+* Familiarity with cloud-native concepts
+* A basic understanding of the machine learning lifecycle and core MLOps concepts
+
+
+=== Acknowledgments
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Acknowledge contributors not listed as authors.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The following individuals contributed to the creation of this document:
+
+* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+* {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
+* {contrib3-firstname} {contrib3-surname}, {contrib3-jobtitle}, {contrib3-orgname}
+* {contrib4-firstname} {contrib4-surname}, {contrib4-jobtitle}, {contrib4-orgname}
+
+== Business aspect
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide high-level statement of the business value and challenges addressed.
+// Expand on these in the following sections.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Enterprises increasingly invest in AI infrastructure to support process automation, AI model development, and management.
+While many organizations succeed in acquiring powerful hardware, they often struggle to operate it efficiently, securely, and at scale.
+
+Without a centralized infrastructure management layer, AI resources are frequently underutilized, fragmented across teams, and difficult to govern.
+Inconsistent access controls, limited visibility into usage, and ad hoc workload orchestration lead to poor utilization of expensive compute and increased operational overhead, resulting in lost ROI.
+
+This reference configuration addresses these challenges by providing an enterprise-ready AI infrastructure management platform based on {sai-long} and {cml-long}.
+The solution enables organizations to operate shared compute as a controlled, multi-tenant platform while offering essential tools that support AI builders without requiring a separate MLOps stack.
+
+
+=== Business problem
+
+Organizations attempting to scale machine learning commonly encounter the following challenges:
+
+* *Limited visibility* - Without centralized observability, teams struggle to understand resource allocation, workload placement, and actual compute consumption across the organization.
+
+* *Infrastructure underutilization* - Organizations invest heavily in AI compute but lack centralized control to ensure resources are efficiently shared, scheduled, and fully utilized across teams.
+
+* *Operational complexity* - Running AI workloads across multiple clusters and environments introduces manual processes, fragile configurations, and increased operational risk for platform teams.
+
+* *Security and governance challenges* - Shared AI infrastructure requires consistent enforcement of isolation, access control, and policies to protect sensitive data and intellectual property.
+
+* *Scalability and resource flexibility* - AI workloads demand elastic access to compute resources and require a uniform resource access interface across hybrid environments.
+
+* *Multi-tenancy* - Enterprise platforms must support multiple teams with shared infrastructure while maintaining isolation, resource governance, and access control.
+
+* *Fragmented model development and deployment tooling* - Teams need a consistent toolset to develop, test, and deploy models, but fragmented tools and workflows slow iteration and increase operational friction.
+
+These challenges affect multiple personas, including data scientists, platform teams, IT operations, and business stakeholders responsible for risk and compliance.
+
+
+=== Business value
+
+This reference configuration addresses these challenges by providing a standardized, enterprise-ready MLOps platform that delivers the following benefits:
+
+* *Accelerated time to value* - Streamlined and repeatable machine learning workflows reduce friction from experimentation to production.
+
+* *Improved operational consistency* - A Kubernetes-native platform ensures consistent deployment and operation of ML workloads across environments, improving infrastructure ROI.
+
+* *Enhanced security and governance* - Integrated security and observability capabilities help protect models, data, and pipelines throughout the lifecycle, suitable for sovereign AI initiatives.
+
+* *Scalable AI infrastructure* - The solution supports growth by enabling elastic scaling of compute resources, including GPU-enabled workloads when required.
+
+* *Future-ready architecture* - A modular and cloud-agnostic design allows organizations to adapt to evolving AI use cases and infrastructure strategies.
+
+This solution is designed as a strong foundation for operationalizing AI while maintaining control, visibility, and security at enterprise scale.
+
+
+=== Representative customer use cases
+
+The following representative customer scenarios illustrate how SUSE AI and ClearML address common enterprise AI infrastructure challenges across regulated, distributed, and high-growth environments. 
+These examples highlight the operational patterns that this reference configuration is intended to support, including secure isolation, efficient GPU utilization, centralized orchestration, and scalable execution across on-premises and hybrid environments.
+
+==== On-premises Air-Gapped Defense Environment
+
+*Business Challenge*
+
+A defense organization operating in an air-gapped environment needed to support confidential AI projects while maintaining strict isolation between teams. 
+Resource management was heavily manual, and limited visibility into GPU occupancy made it difficult to determine which resources were available, in use, or assigned to specific users. 
+As a result, AI projects were often allocated entire clusters, reducing overall utilization and slowing research progress.
+
+*The Solution*
+
+By deploying ClearML Infrastructure Control Plane, the organization gained centralized visibility into compute utilization and introduced policy-based GPU allocation. 
+Resource access was governed through quotas, with controlled access to additional capacity when available. 
+ClearML was integrated directly into the experimentation workflow so that jobs could be submitted and tracked through a centralized interface, even in an air-gapped deployment. 
+This improved GPU utilization, increased transparency for development teams, and reduced the need to rerun experiments, helping accelerate time to market.
+
+==== Automatic Identity Verification for Financial Services
+
+*Business Challenge*
+
+A financial services organization supporting remote machine learning teams needed to execute large-scale AI workloads across distributed GPU infrastructure while managing datasets larger than 10 TB. 
+As experimentation scaled, the team faced challenges in allocating GPUs efficiently, coordinating work across environments, and maintaining reproducibility. 
+Operational overhead increased, and compute resources were not being used as effectively as required.
+
+*The Solution*
+
+The organization deployed ClearML to orchestrate experiments, schedule workloads across on-premises GPUs, and automate cloud bursting during periods of peak demand. 
+Centralized workload and compute management improved GPU utilization by more than 20 percent and enabled efficient handling and versioning of datasets 10x larger than previously managed. 
+This reduced the complexity of running distributed machine learning workloads while improving consistency and operational control.
+
+==== Fine-Tuning Language-Specific LLMs
+
+*Business Challenge*
+
+A global research organization developing customized LLM-based translation models required a platform that could support experimentation while also providing a reliable path to production. 
+The team was running workloads on an on-premises GPU cluster and needed a solution that could improve resilience, scale automatically, and reduce dependence on manual operational intervention.
+
+*The Solution*
+
+The organization deployed ClearML to manage experiment tracking, orchestration, and workload execution across research and production environments. 
+ClearML enabled centralized control of experiments and infrastructure, automated execution on available GPUs, and improved the reliability of the translation service. 
+As a result, the organization was able to serve 3.5x more customers without adding hardware or increasing day-to-day operational burden.
+
+
+== Architectural overview
+
+The solution, featuring the integration of {sai-long} and {cml-long}, provides a unified AI infrastructure platform that supports the full lifecycle of AI workloads, from experimentation and training through deployment and monitoring, while enforcing consistency, security, and operational visibility.
+Its architecture follows a layered, Kubernetes-native design that allows clear separation of responsibilities.
+This results in highly flexible, AI infrastructure that can scale across on-premises, hybrid, and multi-cloud environments.
+
+At a high level, the architecture consists of the following layers:
+
+* Compute or hardware infrastructure
+* Container management
+* AI and MLOps platform
+* Security and observability
+
+
+The following diagram illustrates the details of this architecture.
+
+image::ClearML+suse.png[title="{sai} and {cml} AI Platform Architecture", {sai} and {cml} AI Platform Architecture, scaledwidth="90%", align="center"]
+
+[NOTE]
+====
+This reference configuration focuses on architectural patterns and integration points.
+For installation details and hardware-specific guidance, refer to the official {sai-provider} and {cml-provider} documentation.
+====
+
+
+The key components of the solution are:
+
+
+* *Software*
+
+** *{cml-brand}* - Delivers AI infrastructure management capabilities that enable GPU optimization, AI workload orchestration and scheduling, policy-driven resource governance, and full lifecycle control of AI workloads and models.
+
+** *{sai-brand}* - Provides the enterprise-grade Kubernetes foundation and runtime environment for AI and machine learning workloads.
+
+** *{srancher-brand}* - Enables centralized Kubernetes cluster management, access control, and lifecycle operations.
+
+** *{ssecurity-brand}* - Provides container image scanning, runtime security, and network visibility.
+
+** *{spr-brand}* - Acts as the secure container image registry for training and inference workloads.
+
+** *{sstorage-brand}* - Provides distributed, cloud-native persistent storage for platform services and AI workloads.
+
+** *{rke2-brand}* - Provide the secure Kubernetes orchestration layer to run platform services, training jobs, and inference workloads.
+
+** *{sles-brand}* -  Provides the secure, stable, and enterprise-grade operating system foundation for Kubernetes nodes and supporting infrastructure. {sles} delivers a hardened Linux environment with long-term support, integrated security updates, and certified compatibility with {sai}, {rke2}, and GPU drivers, ensuring consistent and reliable operation of AI platform services and workloads.
+
+
+* *Compute platform* - Supplies computational, networking, and storage hardware (whether on-premises, including air-gapped, or cloud) to support infrastructure and workload requirements.
+
+
+Each component is further described in the next sections.
+
+
+
+== Software components
+
+This section describes the primary software components that compose the solution, including their roles in infrastructure and workload management.
+
+
+=== {cml-brand}
+
+{cml-website}[{cml}] provides the AI infrastructure management and workload orchestration capabilities required to manage the AI training, building, and inferencing lifecycle.
+It integrates with {sai} to deliver infrastructure optimization, resource allocation, experiment tracking, pipeline orchestration, and model governance on top of the Kubernetes platform.
+
+
+Within this reference design, {cml} is responsible for:
+
+* Tracking experiments, pipelines metrics, parameters, and models
+
+* Managing datasets and data lineage
+
+* Managing built-in multi-tenancy and billing
+
+* Optimizing infrastructure with dynamic, fractional GPUs and {cml}’s Unified Memory Technology
+
+* Defining resource quotas, over-quotas, priorities and spillovers
+
+
+{cml} is comprised of three layers:
+
+* Infrastructure Control Plane - allowing you to manage and optimize AI infrastructure – whether on-premises, in the cloud, or both - ensuring high performance and cost optimization
+
+* AI Developer Center - providing a robust environment for developing, training, and testing AI models, accessible from anywhere
+
+* GenAI Application Engine - deploying and managing AI workloads and AI agents with pre-configured networking, authentication, and security
+
+
+These layers are implemented by deploying three main components into the resource cluster:
+
+* {cml} Enterprise Server -  control plane that provides back-end services and the UI
+
+* {cml} Agent - manages the orchestration of workloads on the Kubernetes cluster
+
+* {cml} Application Gateway -  controls the networking, authentication and authorization into and out of {cml}-provisioned pods
+
+
+
+{cml} operates as the primary interface for AI builders, while relying on {sai} for secure and scalable workload execution.
+
+
+=== {sai-brand}
+
+{sai-website}[{sai}] provides the enterprise-grade foundation for running AI and machine learning workloads on Kubernetes.
+It delivers a validated, supported platform that enables consistent execution of AI workloads across environments.
+
+{sai} is responsible for:
+
+* Providing a Kubernetes-native environment optimized for AI workloads
+* Enabling consistent deployment of training and inference workloads
+* Supporting GPU-enabled workloads where required
+* Integrating with container management, security, and observability services
+
+{sai} serves as the control plane and execution environment for all machine learning workloads described in this architecture.
+
+
+=== {srancher-brand}
+
+{srancher-website}[{srancher-long}] provides centralized management and lifecycle control for the Kubernetes clusters that host the platform and run the workloads.
+
+{srancher} is used to:
+
+* Provision and manage Kubernetes clusters across environments
+* Enforce consistent cluster configuration and access control
+* Provide centralized visibility into cluster health and resource utilization
+* Support multi-cluster and multi-tenant operations
+
+{srancher} enables platform teams to operate infrastructure at scale while maintaining consistency and governance.
+
+
+=== {rke2-brand}
+
+{rke2-website}[{rke2-long} ({rke2})] provides the secure, enterprise-ready Kubernetes distribution used to run all platform services and machine learning workloads in this architecture.
+It delivers a CNCF-compliant Kubernetes environment that is hardened by default and suitable for regulated and enterprise environments.
+
+{rke2} is responsible for:
+
+* Providing the Kubernetes orchestration layer for {sai} and {cml}
+* Running platform services, training jobs, and inference workloads
+* Enforcing Kubernetes-native scheduling, networking, and resource isolation
+* Supporting GPU-enabled workloads where required
+* Integrating with {srancher} for centralized lifecycle management
+
+{rke2} forms the foundational orchestration layer for the platform and enables consistent workload execution across on-premises, hybrid, and multi-cloud environments.
+
+
+=== {sstorage-brand}
+
+{sstorage-website}[{sstorage-long}], powered by Longhorn, provides distributed, cloud-native persistent storage for the platform.
+It delivers highly available and resilient storage that supports stateful platform services and machine learning workloads running on Kubernetes.
+
+{sstorage} is responsible for:
+
+* Storing {cml} metadata, artifacts, and logs
+* Providing persistent volumes for platform and workloads
+* Supporting data replication and high availability
+* Enabling snapshotting and backup of critical platform data
+
+{sstorage} is deployed on {rke2} clusters and backed by local or network-attached disks.
+It provides consistent, Kubernetes-native storage that supports performance, durability, and operational requirements across environments.
+
+
+=== {ssecurity-brand}
+
+{ssecurity-website}[{ssecurity-long}], powered by NeuVector, provides container and runtime security for the platform and workloads.
+
+{ssecurity} is used to:
+
+* Perform vulnerability scanning of container images
+* Enforce runtime security policies for AI workloads
+* Monitor network traffic between platform components
+* Provide real-time threat detection and response
+
+{ssecurity} ensures that machine learning workloads and supporting services operate within enterprise security and compliance requirements.
+
+
+=== {spr-brand}
+
+{spr-website}[{spr-long}] provides a secure container image registry for storing and distributing container images used by the platform.
+
+{spr} is used for:
+
+* Storing base images for training and inference workloads
+* Managing versioned application and model images
+* Integrating with vulnerability scanning and access controls
+* Supporting secure image promotion across environments
+
+Using a centralized registry helps ensure consistency and traceability across development, testing, and production workflows.
+
+
+=== {sles-brand}
+
+{sles-website}[{sles-long}] provides the secure, stable, and enterprise-grade operating system foundation for the platform.
+It serves as the base operating system for Kubernetes control plane and worker nodes, as well as supporting infrastructure components used by {sai} and {cml}.
+
+
+{sles} is responsible for:
+
+* Providing a hardened and supported Linux operating system for Kubernetes nodes
+* Ensuring compatibility with {rke2}, container runtimes, and GPU drivers
+* Delivering long-term stability through enterprise lifecycle management and security updates
+* Supporting high-performance compute workloads, including GPU-accelerated training and inference
+* Enabling consistent operating system configuration across on-premises, cloud, and hybrid environments
+
+{sles} underpins the reliability, security, and operational consistency of the entire AI platform, ensuring that Kubernetes, {sai}, and {cml} services run on a certified and enterprise-supported operating system foundation.
+
+
+
+=== Compute platform
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide step-by-step guidance for preparing and deploying the
+// compute platform.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+The solution is deployed on a production-grade, Kubernetes cluster.
+The underlying compute infrastructure may be based on virtual machines, bare-metal servers, or cloud-native infrastructure, provided it meets enterprise availability and performance requirements.
+
+A baseline, production deployment should include the following considerations:
+
+* _Kubernetes Control Plane_
+//
++
+At least three control-plane nodes for high availability quorum
+
+* _Application / Platform Nodes_
+//
++
+At least three worker nodes on Kubernetes cluster to host platform services with high availability
+
+* _Execution / Worker Nodes (ClearML Agents)_
+//
++
+A minimum node count will be based on technical and business requirements, such as concurrency, SLAs, dedicated pools for CPU and GPU workloads, and so on.
+//
++
+Worker node sizing must account for:
++
+--
+* CPU and memory requirements per job
+* GPU requirements (if applicable)
+* Dataset size and I/O throughput
+* Expected concurrent task execution
+--
+
+Additional considerations for enterprise environments with _strict availability requirements_ include:
+
+* Multi-node control plane (minimum three nodes)
+* Replicated application services
+* Persistent storage with redundancy
+* Load-balanced ingress
+
+
+
+Detailed resource requirements, node sizing, storage specifications, and scaling considerations for individual components and clusters are defined in their respective sections of this guide.
+However, final node counts and configurations must be derived from workload analysis and capacity planning.
+
+
+== Deployment 
+
+This section provides a high-level overview for deploying {cml-long} into your {sai-long} environment.
+It describes deployment considerations for the major compute platform and software layers to form a functional platform for AI workloads.
+The solution is represented as a layered stack, where each layer depends on the services provided by the layer below it.
+Deployment is performed in a bottom-up sequence, ensuring that each foundational capability is in place before higher-level services are introduced.
+
+image::suse-clearml-layer-diagram.png[title="{sai} and {cml} Layered Diagram", {sai} and {cml} Layered Diagram, scaledwidth="90%", align="center"]
+
+
+
+=== {sles-long}
+
+At the base of the software stack is {sles-website}[{sles}].
+You can download {sles} as an ISO file or virtual machine image from {sles-download}[{sles} Downloads] or from the {scc-website}[{scc-long} ({scc})].
+Be sure to select the appropriate, supported version of {sles} by reviewing the {srancher-support-matrix}[{srancher} support matrix].
+
+You will need to register your installed system with {scc-website}[{scc-long}] to obtain software packages and patches.
+You can do this by configuring each node in one of the following ways:
+
+* directly access the {scc-website}[{scc-long}] through an external network
+
+* use your organization’s internal, {smlm-website}[{smlm-brand}] infrastructure
+
+* leverage a local server running an instance of {srmt-website}[{srmt-long} ({srmt})]
+
+[TIP]
+====
+During OS installation, you can point each node to the respective update service.
+This can also be accomplished post-installation with the command line tool, {suseconnect-docs}[SUSEConnect].
+====
+
+In production environments, you can optimize deployment and reduce manual interaction with unattended, automated deployments.
+See {sles-docs-agma-auto}[Automated Installation Using Agama].
+
+
+Ensure these additional considerations are configured on each node:
+
+. Domain Name Service (DNS) - an external network-accessible service to map IP Addresses to host names
+
+. Network Time Protocol (NTP) - an external network-accessible service to obtain and synchronize system times to aid in time stamp consistency
+
+. Ensure connectivity by configuring the firewall to allow necessary inbound {rke2-docs-ports}[{rke2} ports] or, depending on your security compliance requirements, disable the firewall service.
+
+
+
+=== {rke2-long}
+
+{rke2-long} provides the Kubernetes layer to host {srancher-long}.
+For a stable, secure, and scalable {rke2} deployment, consider the following:
+
+* *Version* - Identify the appropriate, supported version of {rke2} by reviewing the {srancher-support-matrix}[{srancher}: Support Matrix].
+
+* *Availability* - For production deployments, use an odd number of control plane / etcd nodes (minimum three) to maintain etcd quorum and prevent loss of cluster availability.
+When deploying multiple control-plane nodes, use an external load balancer to distribute traffic across the Kubernetes API servers.
+
+* *Networking* - Ensure that all required Kubernetes, etcd, and container runtime ports are open between cluster nodes.
+Latency and packet loss between nodes—especially etcd members—can negatively impact cluster stability and performance.
+
+* *etcd Data Protection* - etcd stores all Kubernetes cluster state and configuration.
+Enable regular etcd snapshots and store backups outside the cluster to support disaster recovery and cluster restoration.
+
+* *Security* - Restrict SSH access to cluster nodes using key-based authentication only.
+Use least-privilege access for the SSH user specified in the `cluster.yml` file.
+Protect the generated `cluster.yml` file, as it provides administrative access to the cluster.
+
+* *Scalability* - Additional worker or control-plane nodes can be added to the cluster after initial deployment by updating the `cluster.yml` file and re-running the rke up command. Plan IP addressing, DNS, and load balancer capacity accordingly.
+
+* *Certificate Management* - {rke2} automatically generates and manages Kubernetes certificates.
+If a load balancer or external endpoint is used, ensure all required IP addresses and FQDNs are included in the `cluster.yml` file to avoid certificate validation issues.
+
+* *Operating System Configuration* - Disable swap and ensure required kernel modules are loaded on all nodes.
+Apply consistent OS configuration across nodes to avoid unpredictable behavior.
+
+* *Upgrade Strategy* - Before upgrading Kubernetes or {rke2} versions, review the supported version matrix and perform upgrades in a test environment.
+Back up etcd data prior to any upgrade operation.
+
+* *Logging and Monitoring* - Plan for cluster-level monitoring and logging early in the deployment lifecycle to simplify troubleshooting and operational visibility.
+
+
+[NOTE]
+====
+{rke2} installation requires a client system (an administrative workstation) that has been configured with {kubectl-website}[`kubectl` utility].
+====
+
+
+The deployment process includes the major steps outlined below.
+
+. Select your installation method.
+//
++
+{rke2} supports multiple installation methods, including tarball installation, RPM-based installation, and manual binary installation.
+The tarball installation method is recommended for most deployment scenarios due to its flexibility and consistency across environments.
+Refer to the official {rke2-install-methods}[{rke2}: Installation Methods documentation] for details.
+
+. Install {rke2} on the control plane nodes.
+//
++
+Install {rke2} on each server node by following the official guidance in {rke2-install-quickstart}[{rke2}: Installation Quickstart].
+
+. Configure high availability by following guidance provided in {rke2-install-ha}[{rke2}: Installation High Availability].
++
+[NOTE]
+====
+For multi-node control plane deployments, you will need to provision an external load balancer to distribute traffic across server nodes.
+
+Ensure that the load balancer IP address or fully qualified domain name (FQDN) is included in the TLS Subject Alternative Name (SAN) configuration to prevent certificate validation issues.
+====
+
+. Install the appropriate agent on your worker nodes.
+//
++
+Instructions for installing the Linux or Windows Agent are provided in {rke2-install-quickstart}[{rke2}: Installation Quickstart].
++
+[TIP]
+====
+Ensure that each worker node meets documented system requirements and can securely communicate with the server nodes.
+====
+
+
+=== {srancher-long}
+
+Before installing {srancher-long} onto your {rke2} cluster, consider the following:
+
+* *Deployment Strategy* - Understand and select a {srancher-dep-strategy}[{srancher}: Deployment Strategy] for your requirements.
+
+* *Availability* - Deploy {srancher} to achieve your availability requirements.
+High availability, for example, can be achieved by deploying {srancher} on a highly available {rke2} cluster.
+
+* *Backup/Restore and Disaster Recovery* - Implement backup/restore and disaster recovery strategies to protect your infrastructure and workloads.
+This will include leveraging a distributed storage solution, such as {sstorage-long}, as well as third-party backup/restore and disaster recovery solutions certified for {srancher}.
+
+* *Network Handling and Security* - Ensure your network configuration can properly and securely handle incoming network traffic.
+A few recommendations include:
+
+** DNS should resolve to a layer 4 load balancer.
+** The load balancer should forward port TCP/80 and TCP/443 to all nodes in the host {rke2} cluster.
+** The ingress controller should forward traffic to the pod in the {srancher} deployment.
+** The ingress controller should redirect HTTP to HTTPS protocol and terminate SSL/TLS on port TCP/443.
++
+[NOTE]
+====
+By default, {srancher} can generate an SSL certificate for encrypting network traffic.
+You can also configure {letsencrypt-website}[Let’s Encrypt] or provide a your own certificate.
+====
+
+For more further considerations, review {srancher-docs-best-practices}[Best Practices for the {srancher-long} Server].
+
+
+Once you have defined your deployment requirements, proceed with the installation by following the detailed guidance provided in {srancher-docs-installing}[Installing {srancher-long}].
+
+
+
+=== {sstorage-long}
+
+{sstorage} provides persistent storage for Kubernetes workloads running on {rke2-long} and managed by {srancher-long}.
+It enables high availability, scalability, and data protection for stateful applications.
+
+For a stable and production-ready deployment, consider the following:
+
+* *Cluster Requirement* – Deploy {sstorage} on a running RKE2 cluster managed by {srancher-long}. Storage nodes must meet the documented hardware, disk, and network requirements. Use dedicated disks only.
+Refer to {sstorage-requirements}[{sstorage}: Requirements].
+
+* *High Availability* – Use a minimum of three storage nodes to maintain quorum and ensure data availability. Distribute storage across failure domains where possible.
+
+* *Disk and Performance Planning* – Select SSD or HDD based on workload performance needs. Configure replication settings carefully to balance performance and data protection.
+
+* *Capacity Planning* – Monitor storage usage and plan for expansion by adding disks or nodes as required.
+
+* *Backup and Recovery* – Enable snapshots and integrate with enterprise backup solutions to protect persistent data and support disaster recovery.
+
+
+Deploy {sstorage} using a supported method in {srancher-long}.
+For detailed installation and configuration steps, refer to the {sstorage-installation}[{sstorage}: Installation].
+
+
+
+=== {ssecurity-long}
+
+
+{ssecurity} provides runtime container security, Kubernetes workload protection, vulnerability scanning, continuous compliance validation, and policy enforcement for workloads running on {rke2-long} and managed by {srancher-long}.
+It delivers visibility, threat detection, and automated policy control across the container lifecycle.
+
+For a stable and production-ready deployment, consider the following:
+
+* *System Requirements* – Validate component requirements (Controllers, Scanners, Enforcers, Managers). Review supported operating systems, CPU, memory, and platform compatibility.
+Follow documented minimum and recommended specifications to ensure performance and reliability.
+Refer to {ssecurity-requirements}[{ssecurity}: System Requirements].
+
+* *Cluster Requirements* – Deploy {ssecurity} on a running {rke2} cluster managed by {srancher-long}.
+Ensure the cluster meets documented CPU, memory, and networking requirements. Verify node connectivity to required container registries (public or private).
+
+* *Namespace and Deployment Scope* – Deploy {ssecurity} in the dedicated namespace (for example, "cattle-neuvector-system").
+This isolates security components from application workloads and simplifies lifecycle management.
+
+* *High Availability* – Distribute controllers and enforcers across multiple worker nodes.
+Avoid single points of failure.
+Maintain protection during node failures or maintenance events.
+
+* *Runtime Protection and Admission Control* – Enable runtime security and admission control.
+Start policies in monitor mode.
+Move to enforce mode after validation to prevent unintended workload disruption.
+
+* *Vulnerability and Compliance Scanning* – Enable image scanning and continuous compliance checks.
+Apply required compliance templates (for example, CIS Benchmarks) based on organizational or regulatory requirements.
+
+* *Resource Planning* – Account for CPU and memory consumption from scanning and monitoring components.
+Size worker nodes appropriately, especially in high-density workload environments.
+
+* *Logging and Monitoring Integration* – Integrate alerts, events, and audit logs with centralized logging and monitoring platforms to improve visibility, response time, and audit readiness.
+
+* *Backup and Disaster Recovery* – Include {ssecurity} policies and configurations in the cluster backup strategy.
+Ensure etcd backups capture security-related Kubernetes resources.
+Validate restore procedures periodically.
+
+For detailed, version-aligned installation and configuration steps, refer to {ssecurity-rancher-deployment}[{ssecurity}: Rancher Deployment].
+
+
+
+=== {sai-long}
+
+{sai} provides a cloud-native, scalable platform for deploying Generative AI workloads on Kubernetes.
+It includes modular AI components (middleware, vector databases, inference engines, and UI services) that can be deployed individually or as a full stack using the "SUSE Deployer meta-chart".
+{sai} integrates with {srancher} and aligns with SUSE entitlement and cluster requirements.
+
+For a stable and production-ready deployment, consider the following:
+
+* *Cluster Requirement* – Deploy {sai} on a running Kubernetes cluster (for example, {srancher} with {rke2}).
+Ensure all nodes are registered and healthy.
+
+* *GPU and Node Preparation* – Provision GPU-enabled nodes with NVIDIA drivers and CUDA installed.
+Label nodes appropriately for AI workloads.
+Refer to {sai-reqs}[{sai}: Requirements].
+
+* *Entitlement and Registry Access* – Maintain a valid {sai} subscription.
+Ensure access to the SUSE Application Collection registry for Helm charts and container images.
+Keep credentials current.
+
+* *Namespace Isolation* – Create a dedicated namespace (for example, "suse-ai") to isolate AI workloads from other cluster applications.
+
+* *Registry Credentials Configuration* – Create Kubernetes image pull secrets for the SUSE Application Collection registry using entitlement credentials.
+Validate image pull access before deployment.
+
+* *Helm Registry Access* – Authenticate to the Helm OCI registry hosting {sai} charts prior to installation.
+
+* *cert-manager Dependency* – Install cert-manager in the cluster before deploying {sai} components that require certificate management.
+
+* *Deployment Method* – Deploy {sai} using the SUSE Deployer Helm chart.
+Use SUSE-provided override templates (production or minimal profiles) and customize values based on workload requirements.
+
+* *Installation Order and Dependencies* – Install foundational components (such as cert-manager) first, followed by core AI services.
+Deploy optional components (for example, GPU-based or framework-specific services) after core services are operational.
+
+* *Resource Planning* – AI components, including inference engines and vector databases, are resource intensive.
+Plan CPU, memory, storage, and GPU capacity based on expected workload size and concurrency.
+
+* *Monitoring and Logging Integration* – Configure SUSE Observability to collect metrics, logs, and traces for {sai} components.
+Monitor GPU utilization, inference latency, memory consumption, and storage performance.
+Integrate alerts for proactive incident response.
+Refer to {sai-monitoring}[{sai}: Monitoring and Observability].
+ 
+* *Operational Validation* – After deployment, verify all pods and services are in a healthy state.
+Confirm GPU allocation, storage availability, and external access endpoints before onboarding workloads.
+
+
+Deploy SUSE AI to the dedicated namespace using Helm and the {sai-deployer}[{sai} Deployer], a meta Helm chart that takes care of downloading and installing individual AI Library components.
+For detailed, version-aligned installation steps and configuration guidance, refer to the {sai-deployment}[Deploying and Installing {sai}].
+
+
+
+=== {cml} Enterprise Server
+
+
+image::clearml-components.png[title="{cml} Platform Architecture", {cml} Platform Architecture, scaledwidth="90%", align="center"]
+
+
+==== Preparation
+
+. {cml} Enterprise Server provides {cml} Control Plane.
+Ensure that the cluster for the {cml} Enterprise Server consists of at least three nodes that meet these minimum specifications:
++
+--
+* 8 vCPUs
+* 32 GB RAM
+* 500 GB storage
+--
+
+. Be sure you have access to the Kubectl and Helm CLI tools.
+
+. Use a supported Kubernetes distribution, such as {rke2}.
+//
++
+At the time of publication, the minimum Kubernetes version is {cml-k8s-version-min}.
+
+. Ensure your cluster has access to the {cml} software dependencies via their Helm charts.
+//
++
+At the time of publication, these include:
++
+--
+* elasticsearch
+* mongodb
+* dragonfly
+--
++
+To obtain a current list, log into the {cml} Docker repository and issue the following command:
++
+[source, console]
+----
+helm show readme oci://docker.io/clearml/clearml-enterprise > file.md
+----
++
+This will return output similar to:
++
+|===
+| Repository | Name | Version
+
+| link:https://helm.elastic.co[] | elasticsearch | 8.5.1
+| link:https://mongodb.github.io/helm-charts[] | mckMongodb(mongodb-kubernetes) | 1.6.1
+| link:oci://docker.io/bitnamicharts[] | mongodb | 15.6.26
+| link:oci://ghcr.io/drangonflydb/drangonfly/helm[] | drangonfly | v1.36.0
+|===
+
+
+. Provision or configure networking as follows:
++
+--
+* *Ingress controller*
+//
++
+An ingress controller (such as, nginx-ingress) is required.
+If exposing services externally, configure a load balancer (such as, MetalLB).
+
+* *Port specification*
+//
++
+The designated nodes for the {cml} Control Plane servers and workers should be able to communicate through HTTP/S (TCP ports 80 and 443).
+Any additional ports to be used in the deployment (TCP sessions) should also be pre-configured (see <<{cml} Application Gateway>>).
+
+* *DNS configuration*
+//
++
+A domain with subdomain support is required (referred hereafter as "<BASE_DOMAIN>"), ideally with trusted TLS certificates.
+All entries must be resolvable by the ingress controller.
+//
++
+Some example subdomains include:
+
+** Control Plane servers:
+*** api.<BASE_DOMAIN>
+*** app.<BASE_DOMAIN>
+*** files.<BASE_DOMAIN>
+
+** Application Gateway:
+*** router.<BASE_DOMAIN>
+*** tcp-router.<BASE_DOMAIN> (optional, for TCP sessions)
+
+
+* For *advanced deployments*, configure a CNI.
+
+* For *multi-tenant deployment*, set up {cml-docs-idp}[IdP] per tenant.
+--
+
+* Configure storage with:
++
+--
+* a StorageClass to an accessible storage backend for the {cml} control plane
+* a PVC (ReadWriteMany policy) and PV for the {cml} workers
+--
+
+. Configure the {cml} Artifactories.
+//
++
+To install the different {cml} components, credentials to {cml}’s artifact repositories are required.
+The following are provided by the {cml} team:
++
+--
+* DockerHub registry credentials (referenced hereafter as "<CLEARML_DOCKERHUB_TOKEN>")
+--
+
+
+
+==== Deploying the {cml} Control Plane
+
+The {cml} Control Plane is the back-end service infrastructure that allows multiple users to collaborate and manage their tasks by working seamlessly with the {cml} Python package and {cml} Agent.
+
+For current, detailed installation guidance, refer to {cml-docs-control-plane-installation}[{cml}: Enterprise Server Kubernetes Deployment].
+
+. Login to the ClearML OCI registry
++
+[source, console]
+----
+helm registry login docker.io --username allegroaienterprise --password <CLEARML_DOCKERHUB_TOKEN>
+----
++
+See {cml-docs-control-plane-installation}
+
+. Configure deployment parameters.
++
+The installation procedure makes use of a tailored Helm chart to deploy the {cml} control plane components.
+Deployment-specific parameters are set through a custom `{cml-override-file}` file.
+//
++
+Create a `{cml-override-file}` file with the baseline {cml} service settings as shown below.
+Be sure to replace the `<BASE_DOMAIN>` placeholders with the domain you have assigned to the cluster's ingress controller. This will be the base domain for reaching your {cml} installation.
++
+[source, yaml]
+----
+imageCredentials:
+  password: "<CLEARML_DOCKERHUB_TOKEN>"
+clearml:
+  cookieDomain: "<BASE_DOMAIN>"
+apiserver:
+  ingress:
+    enabled: true
+    hostName: "api.<BASE_DOMAIN>"
+  service:
+    type: ClusterIP
+fileserver:
+  ingress:
+    enabled: true
+    hostName: "files.<BASE_DOMAIN>"
+  service:
+    type: ClusterIP
+webserver:
+  ingress:
+    enabled: true
+    hostName: "app.<BASE_DOMAIN>"
+  service:
+    type: ClusterIP
+clearmlApplications:
+  enabled: true
+----
+
+. Enable a multi-tenant configuration.
++
+Establish an initial supervisor tenant with a supervisor user.
+This user will have the authority to create and remove other tenants, and access information across all tenants.
+Do this by updating the `{cml-override-file}` with the following:
++
+[source, yaml]
+----
+apiserver:
+  extraEnvs:
+    - name: CLEARML__services__organization__features__user_management_advanced
+      value: "true"
+    - name: CLEARML__services__workers__resource_usages__supervisor_company
+      value: "<SUPERVISOR_COMPANY_ID>"
+    - name: CLEARML__secure__credentials__supervisor__role
+      value: "system"
+    - name: CLEARML__secure__credentials__supervisor__allow_login
+      value: "true"
+    - name: CLEARML__secure__credentials__supervisor__user_key
+      value: "<SUPERVISOR_USER_KEY>"
+    - name: CLEARML__secure__credentials__supervisor__user_secret
+      value: "<SUPERVISOR_USER_SECRET>"
+    - name: CLEARML__secure__credentials__supervisor__sec_groups
+      value: "[\"users\", \"admins\", \"queue_admins\"]"
+    - name: CLEARML__secure__credentials__supervisor__email
+      value: "\"<SUPERVISOR_USER_EMAIL>\""
+    - name: CLEARML__apiserver__company__unique_names
+      value: "true"
+----
++
+Be sure to replace `<SUPERVISOR_COMPANY_ID>`, `<SUPERVISOR_USER_KEY>`, `<SUPERVISOR_USER_SECRET>`, and `<SUPERVISOR_USER_EMAIL>` with desired values.
+The `<SUPERVISOR_USER_KEY>` and `<SUPERVISOR_USER_SECRET>` can be used to log in as the supervisor user to the {cml} Web UI at `++https://app.<BASE_DOMAIN++`.
++
+[NOTE]
+====
+The <SUPERVISOR_USER_EMAIL> value must be explicitly quoted (for example, "\"email@example.com\"").
+====
+
+. Install the {cml} Enterprise Control Plane using the configuration in your `{cml-override-file}`.
++
+[source, console]
+----
+helm upgrade -i -n clearml clearml clearml-enterprise/clearml-enterprise --create-namespace -f clearml-values.override.yaml
+----
+
+
+. Create a tenant.
+
+.. Using the values defined earlier, define environment variables for configuring the server via API.
++
+[source, console]
+----
+APISERVER_URL="https://api.<BASE_DOMAIN>"
+APISERVER_KEY="<SUPERVISOR_USER_KEY>"
+APISERVER_SECRET="<SUPERVISOR_USER_SECRET>"
+----
+
+.. Call the API server with the tenant's name.
++
+Be sure to replace `<TENANT_NAME>` in the command below with an appropriate value.
++
+[source, console]
+----
+curl $APISERVER_URL/system.create_company \
+  -H "Content-Type: application/json" \
+  -u $APISERVER_KEY:$APISERVER_SECRET \
+  -d '{"name":"<TENANT_NAME>"}'
+----
++
+After executing this command, the API returns the new tenant ID (`<COMPANY_ID>`).
+
+.. Validate tenant creation by listing existing tenants.
++
+[source, console]
+----
+curl -u $APISERVER_KEY:$APISERVER_SECRET $APISERVER_URL/system.get_companies
+----
+
+.. Create a utility administrator user to facilitate tenant configuration.
++
+In the command below, replace `<COMPANY_ID>` with the value returned when creating the tenant.
+Also, replace `<ADMIN_USER_NAME>` and `<ADMIN_USER_EMAIL>` with suitable values.
++
+[source, console]
+----
+curl $APISERVER_URL/auth.create_user \
+  -H "Content-Type: application/json" \
+  -u $APISERVER_KEY:$APISERVER_SECRET \
+  -d '{"name":"<ADMIN_USER_NAME>","company":"<COMPANY_ID>", \
+     "email":"<ADMIN_USER_EMAIL>","role":"admin","internal":"true"}'
+----
+
+.. Create utility API credentials for the administrator user.
++
+[source, console]
+----
+curl $APISERVER_URL/auth.create_credentials \
+  -H "Content-Type: application/json" \
+  -H "X-{cml}-Impersonate-As: <USER_ID>" \
+  -u $APISERVER_KEY:$APISERVER_SECRET
+----
++
+The returned key and secret pair can be used for additional API configuration of the tenant.
++
+[TIP]
+====
+You can onboard users through an Identity Provider (IdP).
+
+{cml} supports a wide range of protocols and providers.
+In {cml}, each tenant is associated with its own IdP to authenticate and authorize access to the {cml} platform.
+
+Refer to {cml-docs-idp}[{cml} Identity Providers] for further information.
+====
+
+. Verify installation of {cml} Enterprise Control Plane by opening a Web browser to `++https://app.<BASE_DOMAIN>++`.
++
+If the deployment is successful, you should see the {cml} log in screen.
++
+image::clearml-login-screen.png[title="{cml} login screen", {cml} login screen , align="center", width=90%]
+
+
+=== {cml} worker nodes
+
+==== Overview
+
+The {cml} Agent is installed on Kubernetes using a Helm chart.
+This sets up a controller pod that listens to {cml} queues and launches jobs as needed.
+The Agent can be deployed on the same Kubernetes cluster as the {cml} Control Plane or on a separate one.
+
+The Controller pod:
+
+. Pulls jobs from {cml} execution queues.
+. Prepares a Kubernetes job based on the provided YAML template.
+. Inside each job pod, the {cml} Agent:
+.. Installs the required environment for the task.
+.. Executes and monitors the task process.
+.. Logs task data to the {cml} Server.
+
+
+==== Prerequisites
+
+In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} agent for each tenant (using a tenant admin’s API credentials).
+
+* A running {cml} Enterprise Control plane
+* Each worker environment must be able to access the {cml} server over the same network.
+
+
+==== Setting up the {cml} worker nodes
+
+
+. (Optional) Configure the NVIDIA GPU Operator.
++
+When using NVIDIA GPUs, configure the NVIDIA GPU Operator according to recommended security settings.
+
+.. Add the NVIDIA GPU Operator Helm repository.
++
+[source, console, subs="attributes+"]
+----
+helm repo add nvidia {nvidia-gpu-operator-repo}
+----
+
+.. Update the local repository.
++
+[source, console] 
+----
+helm repo update
+----
+
+.. Create a `{cml-gpu-override-file}` file with NVIDIA GPU configuration settings as shown below:
++
+[source, yaml]
+----
+toolkit:
+  env:
+   - name: ACCEPT_NVIDIA_VISIBLE_DEVICES_ENVVAR_WHEN_UNPRIVILEGED
+     value: "false"
+   - name: ACCEPT_NVIDIA_VISIBLE_DEVICES_AS_VOLUME_MOUNTS
+     value: "true"
+devicePlugin:
+ env:
+   - name: PASS_DEVICE_SPECS
+     value: "true"
+   - name: FAIL_ON_INIT_ERROR
+     value: "true"
+   - name: DEVICE_LIST_STRATEGY # Use volume-mounts
+     value: volume-mounts
+   - name: DEVICE_ID_STRATEGY
+     value: uuid
+   - name: NVIDIA_VISIBLE_DEVICES
+     value: all
+   - name: NVIDIA_DRIVER_CAPABILITIES
+     value: all
+----
++
+[NOTE]
+====
+These values were chosen to prevent unprivileged containers from bypassing the Kubernetes Device Plugin API.
+====
+
+.. Install the NVIDIA GPU Operator.
++
+[source, console] 
+----
+helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace -f gpu-operator.override.yaml
+----
++
+{cml} supports various silicon vendors such as NVIDIA, AMD and Intel. For detailed configuration instructions refer to {cml}’s online documentation.
+
+. Deploy {cml} Agent.
+
+.. Log into the {cml} OCI registry.
++
+[source, console, subs="attributes+"]
+----
+helm registry login docker.io \
+--username allegroaienterprise \
+--password <CLEARML_DOCKERHUB_TOKEN>
+----
+
+.. Update the local repository.
++
+[source, console] 
+----
+helm repo update
+----
+
+.. Create a `{cml-agent-override-file}` file with the agent settings as follows:
++
+[source, console]
+----
+imageCredentials:
+  password: "<CLEARML_DOCKERHUB_TOKEN>"
+clearml:
+  agentk8sglueKey: "<ACCESS_KEY>"
+  agentk8sglueSecret: "<SECRET_KEY>"
+agentk8sglue:
+  apiServerUrlReference: "<CLEARML_API_SERVER_REFERENCE>"
+  fileServerUrlReference: "<CLEARML_FILE_SERVER_REFERENCE>"
+  webServerUrlReference: "<CLEARML_WEB_SERVER_REFERENCE>"
+  createQueues: true
+  queues:
+    exampleQueue:
+      templateOverrides: {}
+      queueSettings: {}
+  dashboardReportMaxGpu: <MAX_AVAILABLE_GPUS>
+----
++
+--
+Be sure to:
+
+* replace `<ACCESS_KEY>` and `<SECRET_KEY>` with the tenant admin API credentials created in the control plane setup procedure.
+
+* set the `<CLEARML_API_SERVER_REFERENCE>`, `<CLEARML_FILE_SERVER_REFERENCE>`, and `<CLEARML_WEB_SERVER_REFERENCE>` values to match your {cml} server URL ( "https://api.<BASE_DOMAIN>" ).
+
+* replace `<MAX_AVAILABLE_GPUS>` with the total number of GPUs made available to {cml} agents on this cluster.
+
+For more advanced configurations, refer to {cml}’s online documentation
+--
+
+.. Install the {cml} Agent.
++
+[source, console, subs="attributes+"]
+----
+helm upgrade -i <RELEASE_NAME> \
+-n <WORKLOAD_NAMESPACE> \
+oci://docker.io/clearml/clearml-enterprise-app-gateway \
+-f {cml-agent-override-file}
+----
+
+.. Verify the installation.
+//
++
+To verify that the {cml} Agent has been deployed to your cluster:
+
+... Open your Web browser to "https://app.<BASE_DOMAIN>".
+
+... Log in as the initial administrator configured in the control plane setup.
+
+... Navigate to __Orchestration__ > __Queues__.
+
+... Confirm that configured queues are listed.
+
+
+
+=== {cml} Application Gateway
+
+The {cml} Application Gateway enables access to AI workload applications, such as remote IDEs (like {vscode-website}[VSCode] and {jupyter-website}[Jupyter Lab]), model API interfaces, and so on.
+It acts as a proxy, identifying {cml} tasks running within its Kubernetes namespace and making them available for network access.
+In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} Application Gateway for each tenant (using a tenant administrator’s API credentials).
+
+. Log into the {cml} OCI registry.
++
+[source, console, subs="attributes+"]
+----
+helm registry login docker.io \
+--username allegroaienterprise \
+--password <CLEARML_DOCKERHUB_TOKEN>
+----
+
+. Update the local repository.
++
+[source, console]
+----
+helm repo update
+----
+
+. Create a `{cml-gateway-override-file}` file with the agent settings in the following form:
++
+[source, console]
+----
+imageCredentials:
+   password: "<CLEARML_DOCKERHUB_TOKEN>"
+clearml:
+  apiKey: "<ACCESS_KEY>"
+  apiSecret: "<SECRET_KEY>"
+  apiServerUrlReference: "<CLEARML_API_SERVER_REFERENCE>"
+  authCookieName: ""
+ingress:
+  enabled: true
+  hostName: ""
+tcpSession:
+  routerAddress: ""
+  service:
+    type: LoadBalancer
+  portRange:
+    start:
+    end:
+----
++
+--
+Be sure to update the following fields with values appropriate for your environment:
+
+* `clearml.password`: the {cml} DockerHub access token
+
+* `clearml.apiKey` and `clearml.apiSecret`: the {cml} tenant administrator API credentials (created in the control plane deployment)
+
+* `clearml.apiServerUrlReference`: the {cml} Server URL ( "https://api.<BASE_DOMAIN>" )
+
+* `clearml.authCookieName`: the {cml} Server authentication cookie
+
+* `ingress.hostName`: the hostname of the {cml} Application Gateway that will be used by the ingress controller
+
+* `tcpSession.routerAddress`: the external {cml} Application Gateway address
+
+* `tcpSession.portRange.start` and `tcpSession.portRange.end`: the beginning and ending TCP session ports
+--
+
+. Install the {cml} Application Gateway.
++
+[source, console, subs="attributes+"]
+----
+helm upgrade -i <RELEASE_NAME> \
+-n <WORKLOAD_NAMESPACE> \
+oci://docker.io/clearml/clearml-enterprise-app-gateway \
+-f {cml-gateway-override-file}
+----
++
+--
+Be sure to replace the placeholders with appropriate values:
+
+* `<RELEASE_NAME>` - This is a unique identifier for the Application Gateway within the Kubernetes namespace that identifies a specific instance of the chart.
+It also defines the Application Gateway's name and appears in the UI within AI workload application URLs.
+You can support multiple installations within the same namespace by assigning different release names.
+
+* `<WORKLOAD_NAMESPACE>` - This is the Kubernetes namespace where workloads will be executed.
+This namespace must be shared between a dedicated {cml} agent and an Application Gateway.
+The agent is responsible for monitoring its assigned task queues and spawning workloads within this namespace.
+The Application Gateway monitors the same namespace for AI workloads (such as remote IDE applications).
+The Application Gateway has a namespace-limited scope, meaning it can only detect and manage tasks within its assigned namespace.
+
+* `<CHART_VERSION>` - This is the version recommended by the ClearML Support Team.
+--
+
+. Verify the installation.
+
+.. Open a Web browser to "https://app.<BASE_DOMAIN>".
+
+.. Log in as the initial administrator configured in the control plane setup procedure.
+
+.. Go to the __Settings__ > __Application Gateway__ > __Routers__.
+
+.. Confirm that the deployed `<RELEASE_NAME>` is listed.
+
+
+
+== Validation
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide validation steps for testing that the solution deployment
+// was successful and configured properly.
+// This could entail a list of specific checks (e.g., commands and
+// expected output), running an automated tool for performing these
+// checks, or implementing a functional demonstration.
+// Include commands, output, and screenshots, as needed.
+// Remember to represent steps as an ordered list.
+// Use subsections if needed for clarity.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The test {cml}’s integration, users should:
+
+. Log into the User interface, ensure that the interface is reachable and loads properly.
+
+. Set up {cml}’s SDK by {cml-sdk-setup}[installing] {cml}’s python SDK and run {cml}’s examples. Relevant examples can be found on the {cml-github}[{cml} GitHub page].
+
+image::clearml-validation1.png[{cml} AI Platform, align="center", width="90%"]
+
+{cml}’s experiment manager is the core of its AI Development Center.
+To start, either try a simple MNIST classifier {cml-example}[example] or run {cml-dataset}[this code] to perform LLM finetuning.
+All relevant information is captured and displayed by {cml}.
+
+image::clearml-validation2.png[{cml} AI Platform, align="center", width="90%"]
+
+Pipeline Orchestration with {cml} - Based on {cml-pipeline}[this] github example. Running the linked example on a configured clearml server would result in a similar pipeline visualization in the {cml} user interface. See {cml-docs-pipeline}[cml] Pipeline Orchestration documentation for more information.
+
+image::clearml-validation-3.png[{cml} AI Platform, align="center", width="90%"]
+
+{cml}’s Resource Configuration allows admins to set resource hierarchies, spillovers and quotas. To do that, admins need to configure the {cml} Agent to the topology configured in the {cml} user interface. For more information, see {cml}’s {cml-docs-webapp-config}[documentation].
+
+
+
+
+== Summary
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize:
+// - Solution description
+// - Motivation for the solution
+// - What was covered in this document
+// - Suggested next steps for the learning journey
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This reference configuration outlines an opinionated yet flexible architecture for delivering an enterprise AI lifecycle management platform using {sai} integrated with {cml}. The solution establishes a standardized, Kubernetes-native foundation for running, managing, and governing AI workloads across on-premises, hybrid, and air-gapped environments.
+
+By combining SUSE’s secure and supported infrastructure stack with {cml}’s AI workload orchestration and lifecycle management capabilities, the architecture addresses key enterprise requirements such as scalability, multi-tenancy, security, observability, and operational consistency. The result is a repeatable platform design that enables organizations to operationalize AI workloads reliably while maintaining control over data, infrastructure, and governance.
+
+
+
+== Frequently Asked Questions (FAQs)
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// If possible provide an unordered list of frequently asked questions
+// with the respective answers.
+// Answers are contained in open blocks associated with each question.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// . Does {cml} support AMD accelerators?
+// +
+// --
+// Yes! {cml} is a silicon agnostic platform and supports accelerators from NVIDIA, AMD, Intel and others. {cml} also supports on Intel and arm CPUs.
+// --
+
+. Does the {sai-long} and {cml-long} solution support different hardware accelerators?
++
+--
+Yes. The joint solution combining SUSE and ClearML is designed to run on heterogeneous infrastructure. 
+The platform is silicon-agnostic and supports accelerators from multiple vendors, including NVIDIA and AMD GPUs, as well as Intel accelerators. 
+It can also run on standard Intel and Arm CPU architectures, allowing organizations to deploy and scale AI/ML workloads across diverse hardware environments supported by SUSE.
+--
+. Any Examples for Training Models on top of {cml}?
++
+--
+Absolutely! You can find simple examples such as training an MNIST classifier with Pytorch {cml-pytorch}[here] or fine tune an LLM using managed Q&A dataset {cml-dataset}[here].
+For all examples check out {cml} {cml-example}[examples] in {cml}’s {cml-github}[github repository]
+
+image::clearml-faq-q2.png[{cml} AI Platform, scaledwidth=90%, align=center]
+--
+. Does {cml} support serving NVIDIA NIMs containers?
++
+--
+Yes, {cml} offers built-in deployment and management capabilities for NVIDIA NIMs containers. It requires the NIMs application to be installed on the server.
+
+image::clearml-faq-q3.png[{cml} AI Platform, scaledwidth=90%, align=center]
+--
+. Is {cml} installed on-prem?
++
+--
+{cml} supports installing both on-prem as well as on Cloud instances
+--
+. Does {cml} support air-gapped deployments?
++
+--
+Yes, {cml} fully supports air-gapped deployments with no connection to the internet.
+--
+
+
+== References
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a list of the references used in this document.
+// Use variables to simplify future updates, such as:
+// * {ref-url}[Reference title]
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+* {cml-docs-control-plane-installation}[{cml} Control Plane installation instructions]
+* {cml-docs-agent-installation}[{cml} Agent installation instructions]
+* {cml-docs-application-gateway}[{cml} Application Gateway installation instructions]
+* {sai-docs}[{sai} installation guide]
+
+
+
+// == Glossary
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a glossary of key terms used in this document.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// Term::
+// Definition
+
+// Term::
+// Definition
+
+
+
+
+// == Appendix
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Use subsections of the Appendix to provide such content as:
+// * a complete bill of materials for all components
+// * benchmark results
+// * other supporting content
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// The following sections provide additional information and resources.
+
+
+// === Compute platform bill of materials
+
+// Add content here
+
+
+// === Software bill of materials
+
+// Add content here
+
+
+// === Benchmark results
+
+// Add content here
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
