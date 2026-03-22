@@ -46,7 +46,7 @@ Common obstacles include fragmented tooling, inconsistent environments, limited 
 
 This reference configuration focuses on platform-level concerns rather than data science methodologies.
 It outlines how platform teams can standardize machine learning workflows, manage shared AI infrastructure, and enable multiple data science teams to work efficiently within a governed and observable environment at enterprise scale.
-It includes discussion of business context and value as well as technical architecture and operational guidance.
+It includes discussion of the business context and its value. It also covers technical architecture and provides operational guidance.
 
 
 
@@ -211,7 +211,8 @@ As a result, the organization was able to serve 3.5x more customers without addi
 
 == Architectural overview
 
-The solution, featuring the integration of {sai-long} and {cml-long}, provides a unified AI infrastructure platform that supports the full lifecycle of AI workloads, from experimentation and training through deployment and monitoring, while enforcing consistency, security, and operational visibility.
+The solution integrates {sai-long} and {cml-long} to provide a unified AI infrastructure platform. It supports the full lifecycle 
+of AI workloads—from experimentation and training to deployment and monitoring—while ensuring consistency, security, and operational visibility.
 Its architecture follows a layered, Kubernetes-native design that allows clear separation of responsibilities.
 This results in highly flexible, AI infrastructure that can scale across on-premises, hybrid, and multi-cloud environments.
 
@@ -253,7 +254,7 @@ The key components of the solution are:
 
 ** *{rke2-brand}* - Provide the secure Kubernetes orchestration layer to run platform services, training jobs, and inference workloads.
 
-** *{sles-brand}* -  Provides the secure, stable, and enterprise-grade operating system foundation for Kubernetes nodes and supporting infrastructure. {sles} delivers a hardened Linux environment with long-term support, integrated security updates, and certified compatibility with {sai}, {rke2}, and GPU drivers, ensuring consistent and reliable operation of AI platform services and workloads.
+** *{sles-brand}* -  Provides the secure, stable, and enterprise-grade operating system foundation for Kubernetes nodes and supporting infrastructure. {sles} delivers a hardened Linux environment with long-term support, integrated security updates, and certified compatibility with {sai}, {rke2}, and GPU drivers. This ensures consistent and reliable operation of AI platform services and workloads.
 
 
 * *Compute platform* - Supplies computational, networking, and storage hardware (whether on-premises, including air-gapped, or cloud) to support infrastructure and workload requirements.
@@ -287,13 +288,13 @@ Within this reference design, {cml} is responsible for:
 * Defining resource quotas, over-quotas, priorities and spillovers
 
 
-{cml} is comprised of three layers:
+{cml} consists of three layers:
 
 * Infrastructure Control Plane - allowing you to manage and optimize AI infrastructure – whether on-premises, in the cloud, or both - ensuring high performance and cost optimization
 
 * AI Developer Center - providing a robust environment for developing, training, and testing AI models, accessible from anywhere
 
-* GenAI Application Engine - deploying and managing AI workloads and AI agents with pre-configured networking, authentication, and security
+* GenAI Application Engine - deploying and managing AI workloads and AI agents with preconfigured networking, authentication, and security
 
 
 These layers are implemented by deploying three main components into the resource cluster:
@@ -401,7 +402,7 @@ Using a centralized registry helps ensure consistency and traceability across de
 === {sles-brand}
 
 {sles-website}[{sles-long}] provides the secure, stable, and enterprise-grade operating system foundation for the platform.
-It serves as the base operating system for Kubernetes control plane and worker nodes, as well as supporting infrastructure components used by {sai} and {cml}.
+It serves as the base operating system for Kubernetes control plane and worker nodes, and for supporting infrastructure components used by {sai} and {cml}.
 
 
 {sles} is responsible for:
@@ -558,8 +559,8 @@ The deployment process includes the major steps outlined below.
 . Select your installation method.
 //
 +
-{rke2} supports multiple installation methods, including tarball installation, RPM-based installation, and manual binary installation.
-The tarball installation method is recommended for most deployment scenarios due to its flexibility and consistency across environments.
+{rke2} supports multiple installation methods, including TAR archive installation, RPM-based installation, and manual binary installation.
+The TAR archive installation method is recommended for most deployment scenarios because of its flexibility and consistency across environments.
 Refer to the official {rke2-install-methods}[{rke2}: Installation Methods documentation] for details.
 
 . Install {rke2} on the control plane nodes.
@@ -597,7 +598,7 @@ Before installing {srancher-long} onto your {rke2} cluster, consider the followi
 High availability, for example, can be achieved by deploying {srancher} on a highly available {rke2} cluster.
 
 * *Backup/Restore and Disaster Recovery* - Implement backup/restore and disaster recovery strategies to protect your infrastructure and workloads.
-This will include leveraging a distributed storage solution, such as {sstorage-long}, as well as third-party backup/restore and disaster recovery solutions certified for {srancher}.
+This will include leveraging a distributed storage solution, such as {sstorage-long}, and third-party backup/restore and disaster recovery solutions certified for {srancher}.
 
 * *Network Handling and Security* - Ensure your network configuration can properly and securely handle incoming network traffic.
 A few recommendations include:
@@ -605,12 +606,12 @@ A few recommendations include:
 ** DNS should resolve to a layer 4 load balancer.
 ** The load balancer should forward port TCP/80 and TCP/443 to all nodes in the host {rke2} cluster.
 ** The ingress controller should forward traffic to the pod in the {srancher} deployment.
-** The ingress controller should redirect HTTP to HTTPS protocol and terminate SSL/TLS on port TCP/443.
+** The ingress controller should redirect HTTP to HTTPS protocol and terminate TLS/SSL on port TCP/443.
 +
 [NOTE]
 ====
 By default, {srancher} can generate an SSL certificate for encrypting network traffic.
-You can also configure {letsencrypt-website}[Let’s Encrypt] or provide a your own certificate.
+You can also configure {letsencrypt-website}[Let’s Encrypt] or provide your own certificate.
 ====
 
 For more further considerations, review {srancher-docs-best-practices}[Best Practices for the {srancher-long} Server].
@@ -772,7 +773,7 @@ At the time of publication, these include:
 * dragonfly
 --
 +
-To obtain a current list, log into the {cml} Docker repository and issue the following command:
+To obtain a current list, log in to the {cml} Docker repository and issue the following command:
 +
 [source, console]
 ----
@@ -804,7 +805,7 @@ If exposing services externally, configure a load balancer (such as, MetalLB).
 //
 +
 The designated nodes for the {cml} Control Plane servers and workers should be able to communicate through HTTP/S (TCP ports 80 and 443).
-Any additional ports to be used in the deployment (TCP sessions) should also be pre-configured (see <<{cml} Application Gateway>>).
+Any additional ports to be used in the deployment (TCP sessions) should also be preconfigured (see <<{cml} Application Gateway>>).
 
 * *DNS configuration*
 //
@@ -866,7 +867,7 @@ See {cml-docs-control-plane-installation}
 
 . Configure deployment parameters.
 +
-The installation procedure makes use of a tailored Helm chart to deploy the {cml} control plane components.
+The installation procedure uses a tailored Helm chart to deploy the {cml} control plane components.
 Deployment-specific parameters are set through a custom `{cml-override-file}` file.
 //
 +
@@ -1017,7 +1018,7 @@ Refer to {cml-docs-idp}[{cml} Identity Providers] for further information.
 
 . Verify installation of {cml} Enterprise Control Plane by opening a Web browser to `++https://app.<BASE_DOMAIN>++`.
 +
-If the deployment is successful, you should see the {cml} log in screen.
+If the deployment is successful, you should see the {cml} login screen.
 +
 image::clearml-login-screen.png[title="{cml} login screen", {cml} login screen , align="center", width=90%]
 
@@ -1111,7 +1112,7 @@ helm install -n gpu-operator gpu-operator nvidia/gpu-operator --create-namespace
 
 . Deploy {cml} Agent.
 
-.. Log into the {cml} OCI registry.
+.. Log in to the {cml} OCI registry.
 +
 [source, console, subs="attributes+"]
 ----
@@ -1191,7 +1192,7 @@ The {cml} Application Gateway enables access to AI workload applications, such a
 It acts as a proxy, identifying {cml} tasks running within its Kubernetes namespace and making them available for network access.
 In a multi-tenant deployment, tenant isolation is achieved by creating a dedicated Kubernetes namespace  for each tenant, and deploying a dedicated {cml} Application Gateway for each tenant (using a tenant administrator’s API credentials).
 
-. Log into the {cml} OCI registry.
+. Log in to the {cml} OCI registry.
 +
 [source, console, subs="attributes+"]
 ----
@@ -1241,7 +1242,7 @@ Be sure to update the following fields with values appropriate for your environm
 
 * `clearml.authCookieName`: the {cml} Server authentication cookie
 
-* `ingress.hostName`: the hostname of the {cml} Application Gateway that will be used by the ingress controller
+* `ingress.hostName`: the host name of the {cml} Application Gateway that will be used by the ingress controller
 
 * `tcpSession.routerAddress`: the external {cml} Application Gateway address
 
@@ -1300,7 +1301,7 @@ The Application Gateway has a namespace-limited scope, meaning it can only detec
 
 The test {cml}’s integration, users should:
 
-. Log into the User interface, ensure that the interface is reachable and loads properly.
+. Log in to the User interface, ensure that the interface is reachable and loads properly.
 
 . Set up {cml}’s SDK by {cml-sdk-setup}[installing] {cml}’s python SDK and run {cml}’s examples. Relevant examples can be found on the {cml-github}[{cml} GitHub page].
 
@@ -1346,7 +1347,7 @@ By combining SUSE’s secure and supported infrastructure stack with {cml}’s A
 // . Does {cml} support AMD accelerators?
 // +
 // --
-// Yes! {cml} is a silicon agnostic platform and supports accelerators from NVIDIA, AMD, Intel and others. {cml} also supports on Intel and arm CPUs.
+// Yes! {cml} is a silicon agnostic platform and supports accelerators from NVIDIA, AMD, Intel and others. {cml} also supports on Intel and ARM CPUs.
 // --
 
 . Does the {sai-long} and {cml-long} solution support different hardware accelerators?
@@ -1354,7 +1355,7 @@ By combining SUSE’s secure and supported infrastructure stack with {cml}’s A
 --
 Yes. The joint solution combining SUSE and ClearML is designed to run on heterogeneous infrastructure. 
 The platform is silicon-agnostic and supports accelerators from multiple vendors, including NVIDIA and AMD GPUs, as well as Intel accelerators. 
-It can also run on standard Intel and Arm CPU architectures, allowing organizations to deploy and scale AI/ML workloads across diverse hardware environments supported by SUSE.
+It can also run on standard Intel and ARM CPU architectures, allowing organizations to deploy and scale AI/ML workloads across diverse hardware environments supported by SUSE.
 --
 . Any Examples for Training Models on top of {cml}?
 +
@@ -1374,12 +1375,12 @@ image::clearml-faq-q3.png[{cml} AI Platform, scaledwidth=90%, align=center]
 . Is {cml} installed on-prem?
 +
 --
-{cml} supports installing both on-prem as well as on Cloud instances
+{cml} supports installing both on-prem and on Cloud instances
 --
 . Does {cml} support air-gapped deployments?
 +
 --
-Yes, {cml} fully supports air-gapped deployments with no connection to the internet.
+Yes, {cml} fully supports air-gapped deployments with no connection to the Internet.
 --
 
 
