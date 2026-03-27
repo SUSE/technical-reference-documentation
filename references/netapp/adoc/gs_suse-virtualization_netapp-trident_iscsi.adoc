@@ -208,6 +208,9 @@ kubectl apply -f 01_iscsi_ip.yaml
 [source, console]
 ----
 kubectl get cloudinit
+NAME               AGE
+iscsi-ip-config    20s
+
 ----
 
 . Enable the iSCSI service daemon.
@@ -247,6 +250,23 @@ kubectl apply -f 99_iscsid.yaml
 [source, console]
 ----
 systemctl status iscsid
+● iscsid.service - Open-iSCSI
+     Loaded: loaded (/usr/lib/systemd/system/iscsid.service; disabled;)
+     Active: active (running) since Fri 2026-03-27 20:59:47 IST; 8s ago
+TriggeredBy: ● iscsid.socket
+       Docs: man:iscsid(8)
+             man:iscsiuio(8)
+             man:iscsiadm(8)
+   Main PID: 27651 (iscsid)
+     Status: "Ready to process requests"
+      Tasks: 1
+        CPU: 3ms
+     CGroup: /system.slice/iscsid.service
+             └─27651 /sbin/iscsid -f
+
+Mar 27 20:59:47 docserver systemd[1]: Starting Open-iSCSI...
+Mar 27 20:59:47 docserver systemd[1]: Started Open-iSCSI.
+
 ----
 
 // === Provision a LUN from and map it to cluster
@@ -317,12 +337,25 @@ spec:
 kubectl apply -f 99_multipathd.yaml
 ----
 +
-.. Verify status of cloudinit and multipathd:
+.. Verify status ofand multipathd:
 +
 [source, console]
 ----
-kubectl get cloudinit
 systemctl status multipathd
+● multipathd.service - Device-Mapper Multipath Device Controller
+     Loaded: loaded (/usr/lib/systemd/system/multipathd.service; disabled;)
+     Active: active (running) since Fri 2026-03-27 21:01:08 IST; 11s ago
+TriggeredBy: ○ multipathd.socket
+   Main PID: 28854 (multipathd)
+     Status: "up"
+      Tasks: 7
+        CPU: 18ms
+     CGroup: /system.slice/multipathd.service
+             └─28854 /sbin/multipathd -d -s
+
+Mar 27 21:01:08 docserver systemd[1]: Starting Device-Mapper Multipath Device Controller...
+Mar 27 21:01:08 docserver multipathd[28854]: multipathd v0.10.2+122+suse.51e02cc: start up
+
 ----
 
 === Software
@@ -365,12 +398,17 @@ cd trident-installer
 ----
 +
 Verify that all {trident} pods are in the `Running` state:
+
 +
 [source, console]
 ----
 kubectl get pods -n trident
+NAME                                      READY   STATUS    RESTARTS   AGE
+trident-controller-5dd5f9df49-xkp7t       6/6     Running   0          2m37s
+trident-node-linux-7qmcw                  2/2     Running   0          2m37s
+trident-node-linux-9k4xr                  2/2     Running   0          2m37s
+trident-node-linux-zhx9n                  2/2     Running   0          2m37s
 ----
-
 . Configure {trident} Backend
 +
 Create a backend configuration file (e.g., `ontap-backend.json`):
@@ -401,6 +439,11 @@ Validate the backend:
 [source, console]
 ----
 ./tridentctl get backend -n trident
++----------------+----------------+----------+--------+------------+---------+
+| NAME           | STORAGE DRIVER | UUID     | STATE  | USER-STATE | VOLUMES |
++----------------+----------------+----------+--------+------------+---------+
+| ontapsan_XXXXX | ontap-san      | xxxxxxxx | online | normal     |       0 |
++----------------+----------------+----------+--------+------------+---------+
 ----
 
 . Define StorageClass and SnapshotClass
@@ -430,6 +473,15 @@ Apply it:
 ----
 kubectl apply -f netapp-storageclass.yaml
 ----
+Verify it:
++
+[source, console]
+----
+kubectl get storageclass
+NAME            PROVISIONER            VOLUMEBINDINGMODE ALLOWVOLUMEEXPANSION
+netapp-storage  csi.trident.netapp.io  Immediate         true
+----
+
 +
 Create a file named `netapp-snapshotclass.yaml`:
 +
@@ -449,7 +501,14 @@ Apply it:
 ----
 kubectl apply -f netapp-snapshotclass.yaml
 ----
-
+Verify it
++
+[source, console]
+----
+kubectl get volumesnapshotclass
+NAME               DRIVER                  DELETIONPOLICY   AGE
+netapp-snapclass   csi.trident.netapp.io   Delete           6s
+----
 . Register CSI Driver in {svirt-long} UI
 .. Log in to the {svirt-long} UI.
 .. Go to **Advanced > Settings > csi-driver-config**.
