@@ -38,7 +38,7 @@ include::./rc_suse-virtualization_everpure-portworx_bare-metal-vars.adoc[]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
-This document defines the design considerations and best practices for a modern virtualization platform featuring {svirt-brand} with {pxe-brand} and {pfa-brand} storage.
+This document defines the design considerations and best practices for a modern virtualization platform featuring {svirt-docs}[{svirt-brand}] with {pxe-website}[{pxe-brand}] and {pfa-brand} storage.
 It builds on the {ref-svirt-pxe-wp}[{svirt-long} and {pxe-long}] white paper with the objective of helping organizations deliver optimized performance, scalability, and reliability to support virtual machine and container workloads.
 
 
@@ -136,9 +136,9 @@ Together, {svirt} and {px-long} provide a robust foundation not only for current
 //
 // === Architecture
 
-This section provides a planning and architecture overview for deploying {svirt-long} with {px} on bare metal.
+This section provides a planning and architecture overview for deploying {svirt-website}[{svirt-long}] with {pxe-suse-virt}[{px}] on bare metal.
 The focus is to describe a high-level design that ensures scalability, reliability, security, and performance by identifying the key architectural components and their interactions within the context of the integrated solution and how this can support your production workloads.
-The integration brings together {svirt-long} and {px} Enterprise by {px-provider} to deliver compute, storage, and orchestration layers for a modern, adaptable, and scalable, enterprise virtualization solution. Rather than focusing on low-level hypervisor internals, the architecture highlights how {svirt-long} and {px} Enterprise work together to provide a flexible, scalable, and enterprise-grade platform.
+The integration brings together {svirt-long} and {px} Enterprise by {pxe-website}[{px-provider}] to deliver compute, storage, and orchestration layers for a modern, adaptable, and scalable, enterprise virtualization solution. Rather than focusing on low-level hypervisor internals, the architecture highlights how {svirt-long} and {px} Enterprise work together to provide a flexible, scalable, and enterprise-grade platform.
 
 image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of {svirt} with {px-long}", General Architecture of {svirt} with {px-long}, align="center", scaledwidth=90%]
 
@@ -147,13 +147,13 @@ image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Arch
 
 === {svirt-long}
 
-{svirt-long} is a lightweight, hyperconverged infrastructure solution,enabling the management of virtual machines and containers side-by-side on a unified, cloud-native platform.
+{svirt-website}[{svirt-long}] is a lightweight, hyperconverged infrastructure solution,enabling the management of virtual machines and containers side-by-side on a unified, cloud-native platform.
 To ensure a secure and optimized base, {svirt-long} is deployed on SUSE Linux Micro, an immutable, enterprise-grade operating system purpose-built for containerized and virtual workloads.
-Furthermore, the platform integrates natively with {srancher-long} This integration equips the architecture with centralized authentication, access control, observability, and built-in security, empowering operators to manage diverse workloads across data center and edge environments using a consistent operational model.
+Furthermore, the platform integrates natively with {srancher-website}[{srancher-long}] This integration equips the architecture with centralized authentication, access control, observability, and built-in security, empowering operators to manage diverse workloads across data center and edge environments using a consistent operational model.
 
 === {pxe-brand}
 
-{px} Enterprise serves as the enterprise-grade storage layer for both VM and container workloads.
+{pxe-website}[{px}] Enterprise serves as the enterprise-grade storage layer for both VM and container workloads.
 It ensures consistent storage reliability across on-premises, hybrid, and edge deployments by delivering persistent volumes, high availability, automated failover, backup and disaster recovery, performance optimization, and encryption.
 A critical component to this deployment is the {px} Operator.
 Deployed natively into the cluster, the {px} Operator is designed to efficiently automate and manage the installation, configuration, and ongoing upgrade workflows of all {px} components.
