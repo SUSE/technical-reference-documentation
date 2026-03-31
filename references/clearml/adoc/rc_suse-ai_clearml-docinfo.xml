@@ -3,22 +3,22 @@
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
     <dm:bugtracker>
         <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
-        <dm:product>{title}</dm:product>
+        <dm:product>{doctitle}</dm:product>
     </dm:bugtracker>
 </dm:docmanager>
 
 <!-- Note to author/editor
      - This docinfo XML file features metadata that helps identify
        the contents of your document.
-     - It uses attributes/variables to minimize the number of edits
-       needed in this file.
-     - Attributes/variables are defined in your vars file and
-       referenced in the docinfo and adoc files.
-     - See the comments in this document for information on
-       metadata tags that may require edits.
-     - Find more details on attribute/variables in var file comments
-       and in
-       https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+     - This docinfo file is pre-configured with some standard
+       content with references to variables defined in your vars file.
+     - Variables (or attributes) that are defined in your vars file
+       can be referenced in the docinfo file, your main adoc file,
+       as well as any included adoc files.
+     - Using variables vastly simplifies document maintenance.
+     - Where this file may need edits, comments are interspersed
+       to provide guidance.
+     - Find more details on attribute/variables in the var file.
 -->
 
 
@@ -32,8 +32,8 @@
 <!-- document title and subtitle
      Do NOT edit these metadata tags.
 -->
-<title>{title}</title>
-<subtitle>{subtitle}</subtitle>
+<title>{doctitle}</title>
+<subtitle>{docsubtitle}</subtitle>
 
 
 <!-- descriptions
@@ -44,10 +44,15 @@
 
 
 <!-- tasks
-     - Tasks are predefined phrases that are used for filtering which documentation is displayed
-       in the SUSE Documentation portal.
-     - Repeat the 'phrase' element for each additional task.
-     - Be sure required variables ('metatask1', 'metatask2', etc.) are defined in your vars file.
+     - Tasks are predefined phrases that are used for filtering
+       documentation in the SUSE Documentation portal.
+     - Define metataskX variables in your vars file and
+       reference them here.
+     - For additional tasks, duplicate only the phrase element,
+       then update the variable reference.
+
+     IMPORTANT: Be sure all referenced variables ('metatask1',
+                'metatask2', etc.) are defined in your vars file.
 -->
 <meta name="task">
     <phrase>{metatask1}</phrase>
@@ -59,18 +64,24 @@
 
 <!-- Technical components
      - Use the template below to specify each component by name and version.
+     - Be sure to reference the long (full) name of each component.
      - Multiple versions of the same component must be listed separately.
+     - Be sure to the variables referenced here match what you define
+       in the vars file.
+     - This list is NOT visible in the rendered document.
 -->
 <meta name="productname">
-  <productname version="">{svirt}</productname>
-  <productname version="">{hitachivsp-long}</productname>
+  <productname version="">{sai-brand}</productname>
+  <productname version="">{cml-long}</productname>
 </meta>
 
 
 <!-- Component listings for Google Analytics
-     - Provide a comma-delimited list of components and their respective versions.
+     - Provide a comma-delimited list of components and their
+       respective versions.
+     - This list appears above the title in the rendered document.
 -->
-<productname>{svirt}, {hitachivsp-long}</productname>
+<productname>{sai} {sai-version}, {cml} {cml-version}</productname>
 
 
 
@@ -79,21 +90,23 @@
      - However, in the meantime, mirror the component content
        of the productname metadata above.
 -->
-<meta name="platform">{svirt}</meta>
-<meta name="platform">{hitachivsp-long}</meta>
+<meta name="platform">{sai-brand}</meta>
+<meta name="platform">{cml-brand}</meta>
 
 
 <!-- Partner metadata
      Identify ONLY ONE technical partner (business or organization name)
      supplying a primary component of the solution.
 -->
-<meta name="techpartner">{hitachivsp-provider}</meta>
+<meta name="techpartner">{cml-provider}</meta>
 
 
 <!-- author metadata
-     - For additional authors, replicate author tag structure inside the authorgroup.
-     - Editors and other contributors can be acknowledged in an acknowledgement section
-       of the adoc file.
+     Identify the authors of the documentation.
+     - For additional authors, replicate contents of the author tag set,
+       then update the variables accordingly.
+     - Editors and other contributors are typically acknowledged in
+       an Acknowledgments subsection of the Introduction of your document.
 -->
 <authorgroup>
   <author>
@@ -106,11 +119,31 @@
       <orgname>{author1-orgname}</orgname>
     </affiliation>
   </author>
+  <author>
+    <personname>
+      <firstname>{author2-firstname}</firstname>
+      <surname>{author2-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author2-jobtitle}</jobtitle>
+      <orgname>{author2-orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author3-firstname}</firstname>
+      <surname>{author3-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author3-jobtitle}</jobtitle>
+      <orgname>{author3-orgname}</orgname>
+    </affiliation>
+  </author>
 </authorgroup>
 
 
 <!-- cover logo images
-     - Specify the image or images to use on the document cover.
+     Specify the image or images to use on the document cover.
 
        NOTE: Two image objects are required to accommodate different
              width requirements for HTML ('role="html"') and for
@@ -118,11 +151,11 @@
              The default uses '5em' for for PDF and '152px' for HTML.
 
      - The default logo (`common/images/src/svg/suse.svg`) is the
-       official SUSE chameleon with 'SUSE' printed to its right.
-     - The logo is designed for light backgrounds.
+       official SUSE chameleon logo designed for light backgrounds.
      - When you run the setup script, a symbolic link to this image
        file is created in your project's `media/src/svg` directory.
-     - Make no changes below if you wish to use this image.
+     - Make no changes to this section unless you explicitly need
+       to use a different logo image.
      
      - To display alternative logo (including an approved logo lock-up)
        on the document cover:
@@ -142,34 +175,22 @@
 <cover role="logos">
   <mediaobject>
     <imageobject role="fo">
-      <imagedata fileref="suse.svg" width="5em"/>
+      <imagedata fileref="logo-lockup_suse-clearml_hor_bglt.svg" width="10em"/>
     </imageobject>
     <imageobject role="html">
-      <imagedata fileref="suse.svg" width="152px"/>
+      <imagedata fileref="logo-lockup_suse-clearml_hor_bglt.svg" width="300px"/>
     </imageobject>
   </mediaobject>
 </cover>
 
 
 <!-- revision history
-     - Provide a complete revision history in reverse chronological order
-       (most recent first).
+     Provide a complete revision history in reverse chronological order
+     (most recent first).
      - Replicate the `revision` group for each revision.
-     - Each revision must include the data and a brief description.
+     - Each revision must include the date and description.
 -->
 <revhistory xml:id="rh-art-{article-id}">
-  <revision>
-    <date>{rev3-date}</date>
-    <revdescription>
-      <para>{rev3-description}</para>
-    </revdescription>
-  </revision>
-  <revision>
-    <date>{rev2-date}</date>
-    <revdescription>
-      <para>{rev2-description}</para>
-    </revdescription>
-  </revision>
   <revision>
     <date>{rev1-date}</date>
     <revdescription>
@@ -180,7 +201,7 @@
 
 
 <!-- brief abstract for document
-     Do NOT edit
+     Do NOT edit these metadata tags.
 -->
 <abstract role="executivesummary">
   <title>Summary</title>
@@ -189,10 +210,9 @@
 
 
 <!-- disclaimer
-     Do NOT edit
+     Do NOT edit these metadata tags.
 -->
 <abstract>
   <title>Disclaimer</title>
   <para>{disclaimer}</para>
 </abstract>
-

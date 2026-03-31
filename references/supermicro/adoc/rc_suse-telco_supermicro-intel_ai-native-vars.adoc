@@ -1,6 +1,6 @@
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // SUSE Technical Reference Documentation
-// Getting Started Guide
+// Reference Configuration
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 // DOCUMENT ATTRIBUTES AND VARIABLES
@@ -22,7 +22,7 @@
 //   This is typically a series of words (often from the document title)
 //   separated by hyphens (-).
 //   (e.g., "rancher-kubflow-deployment")
-:article-id: suse-virt-hitachivsp-storage
+:article-id: suse-telco-supermicro-intel-ai
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -38,13 +38,9 @@
 //   :rev1-description: Original version
 // Set docdate to the most recent revision.
 //-
-:rev3-date: 2026-03-16
-:rev3-description: Updated CloudInit CRD for consistency
-:rev2-date: 2026-01-28
-:rev2-description: Added persistency to multipathd
-:rev1-date: 2026-01-23
-:rev1-description: Initial publication
-:docdate: {rev2-date}
+:rev1-date: 2026-02-16
+:rev1-description: Original version
+:docdate: {rev1-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -78,57 +74,129 @@
 //   You can create additional modifiers as needed.
 //
 // -
-:svirt-provider: SUSE
-:svirt: SUSE Virtualization
-:svirt-version1: v1.6
-:svirt-website: https://www.suse.com/products/rancher/virtualization/
-:svirt-docs-root: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/
-:svirt-docs: {svirt-docs-root}introduction/overview.html
-:svirt-docs-ha: {svirt-docs-root}introduction/deploy-ha-cluster.html
-:svirt-docs-iso: {svirt-docs-root}installation-setup/methods/iso-install.html
-:svirt-docs-multipathd: {svirt-docs-root}storage/csidriver.html#_2_multipath_support
-:svirt-docs-csi: {svirt-docs-root}storage/csidriver.html
 
-:slmicro-provider: SUSE
-:slmicro-long: SUSE Linux Micro
-:slmicro: SL Micro
-:slmicro-version1: 6.1
-:slmicro-website: https://www.suse.com/products/micro/
-:slmicro-docs: https://documentation.suse.com/sle-micro/6.2/
+// - - - SUSE variables - - -
+:stelco-provider: SUSE
+:stelco-long: SUSE® Telco Cloud
+:stelco: SUSE Telco Cloud
+:stelco-version1: v3.4
+:stelco-website: https://www.suse.com/products/edge-for-telco/
+:stelco-docs: https://documentation.suse.com/suse-edge/3.4/html/edge/
+:stelco-docs-atip: {stelco-docs}atip.html
+:stelco-docs-arch: {stelco-docs}atip-architecture.html
+:stelco-docs-reqs: {stelco-docs}atip-requirements.html
+:stelco-docs-mgmtcluster: {stelco-docs}atip-management-cluster.html
+:stelco-docs-kiwi-builder: {stelco-docs}guides-kiwi-builder-images.html
+:stelco-docs-automated: {stelco-docs}atip-automated-provisioning.html
+:stelco-docs-metal3-arch: {stelco-docs}quickstart-metal3.html#id-high-level-architecture-2
+:stelco-docs-eib: {stelco-docs}components-eib.html
+:sedge-long: SUSE® Edge
+:sedge-repo: https://github.com/suse-edge/
+:stelco-examples: {sedge-repo}telco-cloud-examples
+:eib-repo: https://github.com/suse-edge/edge-image-builder
 
-:rke2-provider: SUSE
-:rke2-long: Rancher Kubernetes Engine 2
-:rke2-long-alt: RKE Government
+:slm: SUSE Linux Micro
+:slm-long: SUSE® Linux Micro
+:slm-version1: 6.1
+:slm-website: https://www.suse.com/products/micro/
+:slm-downloads: https://www.suse.com/download/sle-micro/
+
 :rke2: RKE2
-:rke2-version1: 1.33
 :rke2-website: https://documentation.suse.com/cloudnative/rke2/latest/en/introduction.html
-:rke2-docs: https://documentation.suse.com/cloudnative/rke2/
 
-:hitachivsp-provider: Hitachi Vantara
-:hitachivsp: Hitachi VSP
-:hitachivsp-long: Hitachi Vantara Virtual Storage Platform One
-:hitachivsp-version1:
-:hitachivsp-website: https://www.hitachivantara.com/
-:hitachivsp-storage-website: https://www.hitachivantara.com/en-in/products/storage-platforms
-:hitachivsp-docs: https://docs.hitachivantara.com/
+:k3s: K3s
+:k3s-website: https://www.suse.com/products/k3s/
 
-:hspc-provider: {hitachivsp-provider}
-:hspc: HSPC
-:hspc-long: Hitachi Storage Plug-in for Containers
-:hspc-version1: v3.16.1
-:hspc-website: https://www.hitachivantara.com/en-us/pdf/datasheet/storage-plug-in-for-containers-datasheet.pdf
+:rancher: SUSE Rancher Prime
+:rancher-long: SUSE® Rancher Prime
+:rancher-short: SUSE Rancher
+:rancher-website: https://www.suse.com/products/rancher/
+
+:scc-long: SUSE Customer Center
+:scc: SCC
+:scc-website: https://scc.suse.com/
+
+
+:sle-rt-hw-testing: https://documentation.suse.com/sle-rt/15-SP7/html/SLE-RT-all/article-hardware-testing.html
+:rt-testing-json: https://github.com/scheduler-tools/rt-app/blob/master/doc/examples/template.json
+
+
+// - - -
+
+
+// - - - SUPERMICRO variables - - -
+:smss-provider: SUPERMICRO
+:smss: IoT SuperServer
+:smss-long: {smss-provider}® {smss}
+
+:smss112: SYS-112D-42C-FN8P
+:smss112-long: {smss-provider}® {smss} {smss112}
+:smss112-website: https://www.supermicro.com/en/products/system/iot/1u/sys-112d-42c-fn8p
+
+:smss212: SYS-212D-72C-FN8P
+:smss212-long: {smss-provider}® {smss} {smss212}
+:smss212-website: https://www.supermicro.com/en/products/system/iot/2u/sys-212d-72c-fn8p
+
+// - - -
+
+
+// - - - Intel variables - - -
+:cpu-provider: Intel
+:cpu-long: Intel® Xeon® 6 SoC
+:cpu: Intel Xeon 6 SoC
+:cpu-version1: 6726P-B
+:cpu-website: https://www.intel.com/content/www/us/en/products/details/processors/xeon/edge.html
+:cpu-docs: component 2 product documentation URL
+:cpu-pressrelease: https://www.intc.com/news-events/press-releases/detail/1728/intel-unveils-leadership-ai-and-networking-solutions-with
+:vRAN-platform: https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf
+:ref-vran-perf: https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/vran-xeon6-soc-p-cores-solution-brief-final.pdf
+
+// - - -
+
+
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+
+
+// - - - ORAN variables - - -
+:oran: official O-RAN Alliance hardware reference design for outdoor macrocells
+:oran-doc: https://specifications.o-ran.org/specifications
+// - - -
+
+// - - - Community Project variables - - -
+:kubectl-website: https://kubernetes.io/docs/reference/kubectl/kubectl/
+:helm-website: https://helm.sh/
+:clusterctl-website: https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl
+:podman-website: https://podman.io/
+:rancherdesktop-website: https://rancherdesktop.io/
+:kiwi: KIWI
+:kiwi-long: {kiwi} NG
+:kiwi-docs: https://osinside.github.io/kiwi/
+:capi: CAPI
+:capi-long: Cluster API
+:capi-website: https://cluster-api.sigs.k8s.io
+:metal3: pass:quotes[Metal^3^]
+:metal3-website: https://metal3.io
+// - - -
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // DOCUMENT TITLES AND DESCRIPTIONS
 //   Describe the guide by its purpose, use case, value.
 //
-// title - (<75 characters) concisely identify the guide.
+// doctitle - (<75 characters) concisely identify the guide.
 //         (e.g.: "Kubeflow with SUSE Rancher Prime")
-// subititle - (<75 characters) expound on the title.
+// docsubititle - (<75 characters) expound on the title.
 //             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with SUSE Rancher Prime")
 // usecase: (<55 characters) key words or phrases that identify the
 //          use case of this guide
@@ -148,22 +216,22 @@
 //
 // NOTE: You can reference component variables in titles.
 //       E.g., If you have the component variables:
-//             :svirt: SUSE Linux Enterprise Server
-//             :hitachivsp: JupyterLab
+//             :comp1: SUSE Linux Enterprise Server
+//             :comp2: JupyterLab
 //             you can reference them to define new variables, like:
-//             :title: Simplify deployment of {hitachivsp} with {svirt}
+//             :title: Simplify deployment of {comp2} with {comp1}
 // -
-:title: SUSE Virtualization with Hitachi VSP Storage
+:doctitle: SUSE Telco Cloud on Intel Xeon 6 SoC-based Supermicro Systems
 
-:subtitle: Deploy SUSE Virtualization and Hitachi VSP Storage for cloud native virtualization infrastructure
+:docsubtitle: Validated reference design for high-density, low-latency, AI-ready telco edge deployments
 
-:usecase: cloud native virtualization infrastructure
+:usecase: AI-Accelerated 5G Telco Edge Platform
 
-:description: Guidance for integrating SUSE Virtualization and Hitachi storage platforms to enable modern, enterprise, cloud native virtualization infrastructure.
+:description: Joint {stelco-provider}, {cpu-provider}, and {smss-provider} solution enabling AI-accelerated vRAN and edge workloads on {stelco} with cloud-native automation, low latency, and power efficiency.
 
-:description-social: Integration and deployment guide for SUSE Virtualization and Hitachi storage
+:description-social: AI-ready 5G edge with {stelco-provider}, {smss-provider}, and {cpu-provider}
 
-:executive-summary: This guide describes how to integrate Hitachi Storage with SUSE Virtualization using the Hitachi Storage Plug‑in for Containers (HSPC CSI driver). It covers prerequisites, multipath configuration, CSI operator installation, and the creation of Kubernetes resources (Secret, StorageClass, PVC, SnapshotClass), along with validation steps using both CLI and the SUSE Virtualization UI. This guide is intended for platform engineers, systems administrators, and others who design, deploy, and manage enterprise, cloud native, and virtualization infrastructure.
+:executive-summary: This joint solution showcases the {stelco-long} platform running on {cpu-long}–based {smss-long} systems to deliver an AI-accelerated 5G telco platform.  It enables vRAN and edge AI workloads using cloud-native automation, deterministic low latency, and strong performance-per-watt, helping operators modernize networks for AI-driven services.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -191,9 +259,9 @@
 //    :metatask2: Installation
 //    :metatask3: Deployment
 // -
-:metatask1: Integration
-:metatask2: Storage
-:metatask3: Deployment
+:metatask1: Design
+:metatask2: Implementation
+:metatask3: Integration
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -209,38 +277,41 @@
 //         To list additional authors or contributors on the cover page,
 //         you must edit the docinfo.xml file as well.
 // -
-:author1-firstname: Jivaji
-:author1-surname: Ihare
-:author1-jobtitle: Partner Solution Architect
-:author1-orgname: SUSE
-:contrib1-firstname: Alejandro
-:contrib1-surname: Bonilla
-:contrib1-jobtitle: Domain Solution Architect
+:author2-firstname: Alberto
+:author2-surname: Morgante
+:author2-jobtitle: Principal Telco Engineer
+:author2-orgname: SUSE
+:author3-firstname: Jonas
+:author3-surname: Arndt
+:author3-jobtitle: Senior Telco Engineer
+:author3-orgname: SUSE
+:author4-firstname: Tim
+:author4-surname: Irnich
+:author4-jobtitle: Senior Distinguished Telco Product Manager
+:author4-orgname: SUSE
+:author5-firstname: Michael
+:author5-surname: Holzerland
+:author5-jobtitle: EMEA Telco Lead
+:author5-orgname: Supermicro
+:author6-firstname: Niall
+:author6-surname: Power
+:author6-jobtitle: Solutions Architect and Intel FlexRAN Software PLM
+:author6-orgname: Intel
+:contrib1-firstname: Vesselin
+:contrib1-surname: Matev
+:contrib1-jobtitle: Partner Solutions Manager
 :contrib1-orgname: SUSE
 :editor1-firstname: Terry
 :editor1-surname: Smith
-:editor1-jobtitle: Director, Partner Ecosystem Solution Innovations
+:editor1-jobtitle: Ecosystem Solution Innovation Director
 :editor1-orgname: SUSE
+:editor2-firstname: Suresh
+:editor2-surname: S
+:editor2-jobtitle: Partner Solution Architect
+:editor2-orgname: SUSE
+
 //:author2-firstname: first (given) name
 //:contrib1-firstname: first (given) name
 //:editor1-firstname: first (given) name
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// MISCELLANEOUS ATTRIBUTES
-//   Define any additional variables here for use within the document.
-// -
-:fc-long: Fibre Channel
-:fc: FC
-:fc-wiki: https://en.wikipedia.org/wiki/Fibre_Channel
-
-:iscsi-long: Internet Small Computer Systems Interface
-:iscsi: iSCSI
-:iscsi-wiki: https://en.wikipedia.org/wiki/ISCSI
-
-:suse-terms-root: https://documentation.suse.com/cloudnative/storage/latest/en/
-:suse-terms-storageclass: {suse-terms-root}introduction/terminology.html#_storageclass
-:suse-terms-pvc: {suse-terms-root}introduction/terminology.html#_persistentvolumeclaim
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -3,7 +3,7 @@
 <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
     <dm:bugtracker>
         <dm:url>https://github.com/SUSE/technical-reference-documentation/issues/new</dm:url>
-        <dm:product>{title}</dm:product>
+        <dm:product>{doctitle}</dm:product>
     </dm:bugtracker>
 </dm:docmanager>
 
@@ -26,14 +26,14 @@
      Do NOT edit these metadata tags.
 -->
 <meta name="series">Technical References</meta>
-<meta name="type">Getting Started</meta>
+<meta name="type">Reference Configuration</meta>
 
 
 <!-- document title and subtitle
      Do NOT edit these metadata tags.
 -->
-<title>{title}</title>
-<subtitle>{subtitle}</subtitle>
+<title>{doctitle}</title>
+<subtitle>{docsubtitle}</subtitle>
 
 
 <!-- descriptions
@@ -62,15 +62,14 @@
      - Multiple versions of the same component must be listed separately.
 -->
 <meta name="productname">
-  <productname version="">{svirt}</productname>
-  <productname version="">{hitachivsp-long}</productname>
+  <productname version="">{stelco-long}</productname>
 </meta>
 
 
 <!-- Component listings for Google Analytics
      - Provide a comma-delimited list of components and their respective versions.
 -->
-<productname>{svirt}, {hitachivsp-long}</productname>
+<productname>{stelco-long}</productname>
 
 
 
@@ -79,15 +78,16 @@
      - However, in the meantime, mirror the component content
        of the productname metadata above.
 -->
-<meta name="platform">{svirt}</meta>
-<meta name="platform">{hitachivsp-long}</meta>
+<meta name="platform">{stelco-long}</meta>
+<meta name="platform">{smss112-long}</meta>
+<meta name="platform">{smss212-long}</meta>
 
 
 <!-- Partner metadata
      Identify ONLY ONE technical partner (business or organization name)
      supplying a primary component of the solution.
 -->
-<meta name="techpartner">{hitachivsp-provider}</meta>
+<meta name="techpartner">{smss-provider}</meta>
 
 
 <!-- author metadata
@@ -97,13 +97,54 @@
 -->
 <authorgroup>
   <author>
-    <personname>
-      <firstname>{author1-firstname}</firstname>
-      <surname>{author1-surname}</surname>
+
+      <personname>
+      <firstname>{author2-firstname}</firstname>
+      <surname>{author2-surname}</surname>
     </personname>
     <affiliation>
-      <jobtitle>{author1-jobtitle}</jobtitle>
-      <orgname>{author1-orgname}</orgname>
+      <jobtitle>{author2-jobtitle}</jobtitle>
+      <orgname>{author2-orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author3-firstname}</firstname>
+      <surname>{author3-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author3-jobtitle}</jobtitle>
+      <orgname>{author3-orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author4-firstname}</firstname>
+      <surname>{author4-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author4-jobtitle}</jobtitle>
+      <orgname>{author4-orgname}</orgname>
+    </affiliation>
+  </author>
+  <author>
+    <personname>
+      <firstname>{author5-firstname}</firstname>
+      <surname>{author5-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author5-jobtitle}</jobtitle>
+      <orgname>{author5-orgname}</orgname>
+    </affiliation>
+  </author>
+    <author>
+    <personname>
+      <firstname>{author6-firstname}</firstname>
+      <surname>{author6-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author6-jobtitle}</jobtitle>
+      <orgname>{author6-orgname}</orgname>
     </affiliation>
   </author>
 </authorgroup>
@@ -158,18 +199,6 @@
      - Each revision must include the data and a brief description.
 -->
 <revhistory xml:id="rh-art-{article-id}">
-  <revision>
-    <date>{rev3-date}</date>
-    <revdescription>
-      <para>{rev3-description}</para>
-    </revdescription>
-  </revision>
-  <revision>
-    <date>{rev2-date}</date>
-    <revdescription>
-      <para>{rev2-description}</para>
-    </revdescription>
-  </revision>
   <revision>
     <date>{rev1-date}</date>
     <revdescription>
