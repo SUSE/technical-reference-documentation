@@ -57,10 +57,16 @@
 <meta name="task">
     <phrase>{metatask1}</phrase>
 </meta>
+<meta name="task">
+    <phrase>{metatask2}</phrase>
+</meta>
+<meta name="task">
+    <phrase>{metatask3}</phrase>
+</meta>
 
 
 
-<!-- Technical components
+<!-- Technical componentscomp1-website
      - Use the template below to specify each component by name and version.
      - Be sure to reference the long (full) name of each component.
      - Multiple versions of the same component must be listed separately.
@@ -69,8 +75,8 @@
      - This list is NOT visible in the rendered document.
 -->
 <meta name="productname">
-  <productname version="{comp1-version1}">{comp1-long}</productname>
-  <productname version="{comp2-version1}">{comp2-long}</productname>
+   <productname version="{srancher-version1}">{srancher-long}</productname>
+   <productname version="{ws-version1}">{ws-long}</productname> 
 </meta>
 
 
@@ -79,7 +85,7 @@
        respective versions.
      - This list appears above the title in the rendered document.
 -->
-<productname>{comp1} {comp1-version1}, {comp2} {comp2-version1}</productname>
+<productname>{srancher}, {ws}</productname>
 
 
 
@@ -88,15 +94,15 @@
      - However, in the meantime, mirror the component content
        of the productname metadata above.
 -->
-<meta name="platform">{comp1-long} {comp1-version1}</meta>
-<meta name="platform">{comp2-long} {comp2-version1}</meta>
+<meta name="platform">{srancher-long} </meta>
+<meta name="platform">{ws-long} </meta>
 
 
 <!-- Partner metadata
      Identify ONLY ONE technical partner (business or organization name)
      supplying a primary component of the solution.
 -->
-<meta name="techpartner">{comp2-provider}</meta>
+<meta name="techpartner">{ws-provider}</meta>
 
 
 <!-- author metadata
@@ -117,7 +123,16 @@
       <orgname>{author1-orgname}</orgname>
     </affiliation>
   </author>
- 
+  <author>
+    <personname>
+      <firstname>{author2-firstname}</firstname>
+      <surname>{author2-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author2-jobtitle}</jobtitle>
+      <orgname>{author2-orgname}</orgname>
+    </affiliation>
+  </author>
   <author>
     <personname>
       <firstname>{author3-firstname}</firstname>
@@ -126,17 +141,6 @@
     <affiliation>
       <jobtitle>{author3-jobtitle}</jobtitle>
       <orgname>{author3-orgname}</orgname>
-    </affiliation>
-  </author>
-
-   <author>
-    <personname>
-      <firstname>{author2-firstname}</firstname>
-      <surname>{author2-surname}</surname>
-    </personname>
-    <affiliation>
-      <jobtitle>{author2-jobtitle}</jobtitle>
-      <orgname>{author2-orgname}</orgname>
     </affiliation>
   </author>
 </authorgroup>
