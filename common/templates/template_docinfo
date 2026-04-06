@@ -8,17 +8,17 @@
 </dm:docmanager>
 
 <!-- Note to author/editor
-     - This docinfo XML file features metadata that helps identify
+     - This Docinfo XML file features metadata that helps identify
        the contents of your document.
      - This docinfo file is pre-configured with some standard
-       content with references to variables defined in your vars file.
-     - Variables (or attributes) that are defined in your vars file
-       can be referenced in the docinfo file, your main adoc file,
+       content with references to variables defined in your Vars file.
+     - Variables (or attributes) that are defined in your Vars file
+       can be referenced in the Docinfo file, your Main content file,
        as well as any included adoc files.
      - Using variables vastly simplifies document maintenance.
      - Where this file may need edits, comments are interspersed
        to provide guidance.
-     - Find more details on attribute/variables in the var file.
+     - Find more details on attribute/variables in the Vars file.
 -->
 
 
@@ -46,13 +46,13 @@
 <!-- tasks
      - Tasks are predefined phrases that are used for filtering
        documentation in the SUSE Documentation portal.
-     - Define metataskX variables in your vars file and
+     - Define metataskX variables in your Vars file and
        reference them here.
      - For additional tasks, duplicate only the phrase element,
        then update the variable reference.
 
      IMPORTANT: Be sure all referenced variables ('metatask1',
-                'metatask2', etc.) are defined in your vars file.
+                'metatask2', etc.) are defined in your Vars file.
 -->
 <meta name="task">
     <phrase>{metatask1}</phrase>
@@ -61,11 +61,13 @@
 
 
 <!-- Technical components
-     - Use the template below to specify each component by name and version.
-     - Be sure to reference the long (full) name of each component.
-     - Multiple versions of the same component must be listed separately.
-     - Be sure to the variables referenced here match what you define
-       in the vars file.
+     - Use the pattern below to specify the core components.
+     - Update to match the variables you defined in your Vars file.
+     - Use the long (full) name of each component.
+     - Delete the version reference (e.g., '{comp1-version1}') unless needed.
+       NOTE: Most TRDs do not reference versions here.
+     - Multiple versions of the same component can be provided in a
+       comma-separated list.
      - This list is NOT visible in the rendered document.
 -->
 <meta name="productname">
@@ -75,8 +77,9 @@
 
 
 <!-- Component listings for Google Analytics
-     - Provide a comma-delimited list of components and their
-       respective versions.
+     - Provide a comma-delimited list of components.
+     - Update here as above, with your variables and dropping the
+       versions, unless needed.
      - This list appears above the title in the rendered document.
 -->
 <productname>{comp1} {comp1-version1}, {comp2} {comp2-version1}</productname>
@@ -93,8 +96,8 @@
 
 
 <!-- Partner metadata
-     Identify ONLY ONE technical partner (business or organization name)
-     supplying a primary component of the solution.
+     Identify ONLY ONE SUSE partner (business or organization name)
+     supplying a core component of the solution.
 -->
 <meta name="techpartner">{comp2-provider}</meta>
 
@@ -104,7 +107,7 @@
      - For additional authors, replicate contents of the author tag set,
        then update the variables accordingly.
      - Editors and other contributors are typically acknowledged in
-       an Acknowledgments subsection of the Introduction of your document.
+       an Acknowledgments section in your Main content file.
 -->
 <authorgroup>
   <author>
