@@ -394,42 +394,42 @@ For complete step-by-step instructions, exact commands, and configuration files,
 
 Before deploying {px} on {svirt-long}, ensure the following preparatory steps are completed:
 
-* *Multipath setup*: Deploy a Harvester CloudInit resource to configure node-level udev rules and multipath settings tailored for the Everpure {pfa}.
+. *Multipath setup*: Deploy a Harvester CloudInit resource to configure node-level udev rules and multipath settings tailored for the Everpure {pfa}.
 After applying the configuration, restart the cluster nodes to ensure the changes take effect.
 
-* *Array credentials*: Configure user access within the Everpure {pfa}.
+. *Array credentials*: Configure user access within the Everpure {pfa}.
 Create a corresponding Kubernetes secret in the {px} namespace to securely store these credentials for authentication.
 
 === Generate the {px} installation specifications
 
 {px} installation specifications are generated using the {px} Central portal.
 
-* *{px} Central configuration*: Access the {px} Central Web portal to generate a customized installation specification for the Everpure {pfa} platform.
+. *{px} Central configuration*: Access the {px} Central Web portal to generate a customized installation specification for the Everpure {pfa} platform.
 
-* *Basic and storage settings*: Define the Kubernetes environment details and select the built-in etcd option.
+. *Basic and storage settings*: Define the Kubernetes environment details and select the built-in etcd option.
 Configure storage parameters such as enabling PX-Storev2, selecting Fibre Channel connectivity, and defining capacity mapping along with maximum node distribution.
 
-* *Network and customization*: Ensure the {px} services starting port is correctly configured.
+. *Network and customization*: Ensure the {px} services starting port is correctly configured.
 Select the Rancher Kubernetes Engine (RKE) environment and generate the installation specifications.
 
 === Install the {px} Operator and StorageCluster
 
 After generating the installation specifications, deploy the required {px} components.
 
-* *Deploy the {px} Operator*: Execute the first generated installation specification on the {svirt-long} management node.
+. *Deploy the {px} Operator*: Execute the first generated installation specification on the {svirt-long} management node.
 
-* *Configure the Stork snapshot (Optional)*: If running a compatible version of {svirt-long} (v1.6.0 or later), configure and apply a Stork Snapshot StorageClass.
+. *Configure the Stork snapshot (Optional)*: If running a compatible version of {svirt-long} (v1.6.0 or later), configure and apply a Stork Snapshot StorageClass.
 
-* *Deploy the {px} StorageCluster*: Execute the second generated specification to initiate deployment of the {px} StorageCluster.
+. *Deploy the {px} StorageCluster*: Execute the second generated specification to initiate deployment of the {px} StorageCluster.
 
 === StorageClass and CSI driver configuration
 
 Once the {px} cluster is deployed, configure storage integration with Kubernetes and {svirt-long}.
 
-* *Add the StorageClass*: Create and apply a new default Kubernetes StorageClass configured to use the {px} provisioner.
+. *Add the StorageClass*: Create and apply a new default Kubernetes StorageClass configured to use the {px} provisioner.
 Ensure that any pre-existing default storage classes (such as Longhorn) are unset to avoid conflicts.
 
-* *Update {svirt-long} UI settings*: Navigate to the advanced settings in the {svirt-long} UI under `csi-driver-config`.
+. *Update {svirt-long} UI settings*: Navigate to the advanced settings in the {svirt-long} UI under `csi-driver-config`.
 Map the new CSI driver provisioner and define the appropriate volume snapshot class name.
 
 == Validation
@@ -441,466 +441,33 @@ For detailed validation steps and troubleshooting guidance, refer to the complet
 
 Before validating the deployment, ensure that the environment is correctly configured and operational:
 
-* *{px} health*: Verify that the {px} Operator and StorageCluster are in a healthy state.
+. *{px} health*: Verify that the {px} Operator and StorageCluster are in a healthy state.
 
-* *CSI driver registration*: Ensure that the {px} CSI driver is successfully registered within the cluster.
+. *CSI driver registration*: Ensure that the {px} CSI driver is successfully registered within the cluster.
 
-* *StorageClass verification*: Confirm that the {px} StorageClass is available and configured as the default StorageClass.
+. *StorageClass verification*: Confirm that the {px} StorageClass is available and configured as the default StorageClass.
 
 === Functional validation
 
 Perform the following steps to validate storage provisioning and integration with {svirt-long}:
 
-* *Provision a test VM*: From the {svirt-long} UI, create a virtual machine and assign its primary writable root disk to the {px} StorageClass.
+. *Provision a test VM*: From the {svirt-long} UI, create a virtual machine and assign its primary writable root disk to the {px} StorageClass.
 
-* *Verify provisioning*: Confirm that the PersistentVolumeClaim (PVC) is successfully created and bound to a {px}-provisioned volume using the correct CSI driver.
+. *Verify provisioning*: Confirm that the PersistentVolumeClaim (PVC) is successfully created and bound to a {px}-provisioned volume using the correct CSI driver.
 
-* *Validate operation*: Start the virtual machine and verify that it reaches a running state with the root disk properly attached and accessible.
+. *Validate operation*: Start the virtual machine and verify that it reaches a running state with the root disk properly attached and accessible.
 
 === Optional validation checks
 
 Additional validation steps can be performed to further verify functionality:
 
-* *Snapshot validation*: If snapshot functionality is enabled, validate successful creation of volume snapshots.
+. *Snapshot validation*: If snapshot functionality is enabled, validate successful creation of volume snapshots.
 
-* *Persistence check*: Restart the virtual machine and confirm that data persists across reboots.
-
+. *Persistence check*: Restart the virtual machine and confirm that data persists across reboots.
 [NOTE]
 ====
 These optional checks help ensure advanced storage features and data durability within the {px} environment.
 ====
-
-// This section details how to deploy the reference design described in this document.
-// Be sure to consult product documentation for the latest details and requirements for your situation.
-//
-// The major steps in the deployment workflow are:
-//
-// . Preparing the environment
-// . Configuring the storage
-// . Validating the integration
-//
-//
-// === Preparing the environment
-//
-// Before starting the installation, perform the preparatory steps detailed in the following sections.
-//
-//
-// ==== Enabling multipath support
-//
-// Ensure that multipath support is enabled for all {svirt} nodes by deploying a CloudInit resource to configure node-level udev rules and multipath settings tailored for the {px-provider} {pfa}.
-//
-// . Create a CloudInit resource file, `pure-multipath.yaml`, with the following contents:
-// +
-// [source, yaml]
-// ----
-// apiVersion: node.harvesterhci.io/v1beta1
-// kind: CloudInit
-// metadata:
-//   name: pure-multipath
-// spec:
-//   contents: |
-//     stages:
-//       network:
-//       - name: "Configure pure storage"
-//         files:
-//         - path: /etc/udev/rules.d/99-pure-storage.rules
-//           permissions: 0644
-//           content: |
-//             #ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="INQUIRY_DATA_HAS_CHANGED", TEST=="rescan", ATTR{rescan}="x"
-//             ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="CAPACITY_DATA_HAS_CHANGED", TEST=="rescan", ATTR{rescan}="x"
-//             #ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="THIN_PROVISIONING_SOFT_THRESHOLD_REACHED", TEST=="rescan", ATTR{rescan}="x"
-//             #ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="MODE_PARAMETERS_CHANGED", TEST=="rescan", ATTR{rescan}="x"
-//             ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="REPORTED_LUNS_DATA_HAS_CHANGED", RUN+="scan-scsi-target $env{DEVPATH}"
-//         - path: /etc/multipath.conf
-//           content: |
-//             defaults {
-//               user_friendly_names no
-//               enable_foreign "^$"
-//                     polling_interval    10
-//             }
-//             devices {
-//                 device {
-//                     vendor                      "NVME"
-//                     product                     "Pure Storage FlashArray"
-//                     path_selector               "queue-length 0"
-//                     path_grouping_policy        group_by_prio
-//                     prio                        ana
-//                     failback                    immediate
-//                     fast_io_fail_tmo            10
-//                     user_friendly_names         no
-//                     no_path_retry               0
-//                     features                    0
-//                     dev_loss_tmo                60
-//                 }
-//                 device {
-//                     vendor                   "PURE"
-//                     product                  "FlashArray"
-//                     path_selector            "service-time 0"
-//                     hardware_handler         "1 alua"
-//                     path_grouping_policy     group_by_prio
-//                     prio                     alua
-//                     failback                 immediate
-//                     path_checker             tur
-//                     fast_io_fail_tmo         10
-//                     user_friendly_names      no
-//                     no_path_retry            0
-//                     features                 0
-//                     dev_loss_tmo             600
-//                 }
-//             }
-//             blacklist_exceptions {
-//                     property "(SCSI_IDENT_|ID_WWN)"
-//             }
-//             blacklist {
-//                   devnode "^pxd[0-9]*"
-//                   devnode "^pxd*"
-//                   device {
-//                     vendor "VMware"
-//                     product "Virtual disk"
-//                   }
-//             }
-//           permissions: 0644
-//       - name: "Start multipathd service"
-//         systemctl:
-//           enable:
-//           - multipathd
-//           start:
-//           - multipathd
-//   filename: 99_multipathd.yaml
-//   matchSelector: {}
-//
-// ----
-//
-// . Apply the CloudInit resource resource to the {svirt} cluster.
-// +
-// [source, console]
-// ----
-// kubectl apply -f pure-multipath.yaml
-// ----
-//
-// . Restart the {svirt} cluster nodes.
-//
-//
-// ==== Configuring {pfa} access credentials
-//
-// Set user access credentials in the {pfa-long}, then store the credentials in a Kubernetes secret in the Portworx namespace.
-//
-// . {pxe-flasharray-user-access}[Configure user access] in the {pfa-long}.
-//
-//
-// . {pxe-k8s-secret}[Create a Kubernetes secret], named `px-pure-secret`, to securely store your {pfa} credentials.
-//
-// .. Create a file, named `pure.json`, containing your {pfa} credentials.
-//
-// .. Add the secret to your `portworx` namespace.
-// +
-// [source, console]
-// ----
-// kubectl create secret generic px-pure-secret --namespace portworx --from-file=pure.json
-// ----
-//
-//
-// === Configuring the storage
-//
-// In this part of the workflow, you install {pxe} components and configure your {svirt} cluster to access storage backed by the {pfa-long}.
-//
-//
-// ==== Generating the {pxe} installation specification
-//
-// The {pxo} is designed to efficiently manage the installation and upgrade workflows of all {pxe} components, but it must be configured for your environment.
-// This is accomplished by generating a {pxe} spec.
-//
-//
-// . Log in to {pxe-central}[Portworx Central].
-//
-// . Select _Portworx Enterprise_ -> _Generate Spec_.
-//
-// . Choose the _Portworx Version_ and select `Pure FlashArray` for _Platform_, then click _Customize_.
-//
-// . On the _Basic_ tab:
-// +
-// image::suse-portworx-modvirt_px-spec_01_basic.png[title="Portworx: Generate Spec - Basic", scaledwidth="90%", align="center"]
-//
-// .. Validate or fill in values for each of the following fields:
-// +
-// --
-// * _Portworx Version_
-// * _Kubernetes Version_
-// * _Namespace_ (for example, `portworx`)
-// --
-//
-// .. Select the `Built-in` option for _etcd_.
-//
-// .. Click _Next_.
-//
-//
-//
-// . On the _Storage_ tab, make the following choices:
-// +
-// image::suse-portworx-modvirt_px-spec_02_storage.png[title="Portworx: Generate Spec - Storage", scaledwidth="90%", align="center"]
-//
-// .. Set _Select Cloud Platform_ to `Pure FlashArray`.
-// .. Set _Select type of disk_ to `Create Using a Spec`
-// .. Enable _PX-StoreV2_.
-// .. Select `Fiber Channel` for _Type of  storage area network_.
-// .. Enter the desired _Size_ of the disk to be mapped to the {svirt} cluster.
-// .. Update the _Max storage nodes per availability zone_ to `3` (for a 3-node cluster).
-// .. Click _Next_.
-//
-// . On the _Network_ tab, configure the {pxe} service port, then click _Next_.
-// //
-// +
-// [NOTE]
-// ====
-// The default {pxe} service port is `9001`.
-// ====
-// +
-// image::suse-portworx-modvirt_px-spec_03_network.png[title="Portworx: Generate Spec - Network", scaledwidth="90%", align="center"]
-//
-// . On the _Customize_ tab, select `Rancher Kubernetes Engine (RKE)` then click _Finish_.
-// +
-// image::suse-portworx-modvirt_px-spec_04_customize.png[title="Portworx: Generate Spec - Customize", scaledwidth="90%", align="center"]
-//
-// . You are next presented with two Kubectl commands.
-// The first is for deploying the {pxo}, and the second is for deploying the Portworx StorageCluster.
-// Save these commands, as you will need them in the following section.
-//
-//
-// ==== Installing {pxe}
-//
-// Install {pxe} by deploying the {pxo} with the two Kubectl commands you generated earlier.
-//
-// . Log in to the {svirt} management node command-line interface (CLI) with root access.
-//
-// . Run the first, saved Kubectl command to install the {pxo}.
-// //
-// +
-// The command should look similar to:
-// +
-// [source, console]
-// ----
-// kubectl apply -f 'https://install.portworx.com/3.5?comp=pxoperator&kbver=1.3.0&ns=portworx'
-// ----
-// +
-// This should result in output like:
-// +
-// [listing]
-// ----
-// namespace/portworx created
-// serviceaccount/portworx-operator created
-// clusterrole.rbac.authorization.k8s.io/portworx-operator created
-// clusterrolebinding.rbac.authorization.k8s.io/portworx-operator created
-// deployment.apps/portworx-operator created
-// ----
-//
-// . If you are using {svirt} {svirt-version1} or later, add a Stork Snapshot StorageClass.
-//
-// .. Create the YAML file, `stork-snapshot-sc.yaml`, with the following contents:
-// +
-// [source, yaml]
-// ----
-// apiVersion: storage.k8s.io/v1
-// kind: StorageClass
-// metadata:
-//   name: stork-snapshot-sc
-//   annotations:
-// cdi.harvesterhci.io/storageProfileVolumeModeAccessModes: '{"Block":["ReadWriteOnce"]}'
-// provisioner: stork-snapshot
-// allowVolumeExpansion: true
-// reclaimPolicy: Delete
-// volumeBindingMode: Immediate
-// ----
-//
-// .. Apply the the YAML file to add the Stork Snapshot StorageClass.
-// +
-// [source, console]
-// ----
-// kubectl apply -f stork-snapshot-sc.yaml
-// ----
-// +
-// You should see this output:
-// +
-// [listing]
-// ----
-// storageclass.storage.k8s.io/stork-snapshot-sc created
-// ----
-//
-// . Execute the second of the {pxe} spec Kubectl commands you generated earlier to deploy the {pxe} StorageCluster.
-// //
-// +
-// The command is similar to:
-// +
-// [source, console]
-// ----
-// kubectl apply -f 'https://install.portworx.com/3.5?operator=true&mc=false&kbver=1.3.0&ns=portworx&b=true&iop=6&mz=3&s=%22size%3D1000%22&pureSanType=FC&ce=pure&dmthin=true&c=px-cluster-82af5d7d-f249-4f45-9e80-d1590e7bfce4&stork=true&csi=true&mon=true&tel=true&st=k8s&promop=true'
-// ----
-// +
-// If successful, you will see output like:
-// +
-// [listing]
-// ----
-// storagecluster.core.libopenstorage.org/px-cluster-82af5d7d-f249-4f45-9e80-d1590e7bfce4 created
-// ----
-//
-//
-// === Adding the {pxe} StorageClass
-//
-// . Ensure you are still logged in to the {svirt} management CLI as root.
-//
-// . Create the YAML file, `portworx-storageclass.yaml`, with the following contents:
-// +
-// [source, yaml]
-// ----
-// allowVolumeExpansion: true
-// apiVersion: storage.k8s.io/v1
-// kind: StorageClass
-// metadata:
-//   annotations:
-//     storageclass.kubernetes.io/is-default-class: "true"
-//   name: data-disk-storage
-// parameters:
-//   cdi.kubevirt.io/storage.contentType: kubevirt
-//   nodiscard: "true"
-//   repl: "2"
-// provisioner: pxd.portworx.com
-// reclaimPolicy: Delete
-// volumeBindingMode: Immediate
-// ----
-//
-// . Apply this YAML file to create add the {pxe} StorageClass.
-// +
-// [source, console]
-// ----
-// kubectl apply -f portworx-storageclass.yaml
-// ----
-// +
-// You should see:
-// +
-// [listing]
-// ----
-// storageclass.storage.k8s.io/data-disk-storage created
-// ----
-//
-// [TIP]
-// ====
-// You may see a “request is invalid” error, such as:
-//
-// [listing]
-// ----
-// The request is invalid: default StorageClass, 'harvester-longhorn', already exists.
-// Please reset it first before setting 'data-disk-storage' as default.
-// ----
-//
-// If this happens:
-//
-// . Unset the default `harvester-longhorn` StorageClass using the command:
-// +
-// [source, console]
-// ----
-// kubectl patch storageclass harvester-longhorn -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
-// ----
-//
-// . Re-apply the {pxe} StorageClass.
-// +
-// [source, console]
-// ----
-// kubectl apply -f portworx-storageclass.yaml
-// ----
-//
-// ====
-//
-//
-// ==== Mapping the provisioner to the {pxe} CSI driver
-//
-//
-// . Log in to the {svirt} UI.
-//
-// . Navigate to __Advanced__ > __Settings__.
-//
-// . Locate `csi-driver-config` and select __⋮__ > __Edit Setting__.
-//
-// . Set the __Provisioner__ to `pxd.portworx.com`.
-//
-// . Set the __Volume Snapshot Class Name__ to `px-csi-snapclass`.
-// //
-// +
-// This setting points to the name of the VolumeSnapshotClass used for creating volume snapshots or VM snapshots.
-//
-// image::suse-portworx-modvirt_csi-driver-config-external.png[title="SUSE Virtualization: csi-driver-config", scaledwidth="90%", align="center"]
-//
-//
-// === Validating the integration
-//
-// Ensure that {pxe} is correctly integrated with {svirt} by verifying that a virtual machine (VM) can be provisioned with storage on the {pfa}.
-//
-// . Create a new VM.
-// //
-// +
-// For guidance, refer to the {svirt-docs-create-vm}[SUSE Virtualization: Create a Virtual Machine] and be sure to select the StorageClass provisioned by Portworx (`data-disk-storage`) for your VM disk volume.
-//
-// . Wait for your VM to be provisioned.
-//
-// . In the {svirt} UI, navigate to __Virtual Machines__ > __<Your VM>__ > __Volumes__ and confirm that the attached disk has the `data-disk-storage` StorageClass.
-//
-// [NOTE]
-// ====
-// You can also verify the provisioned disk for a VM from the CLI.
-//
-// . Log into the {svirt} management CLI.
-//
-// . List the PersistentVolumeClaims (PVCs) in the VM’s namespace.
-// +
-// [source, console]
-// ----
-// kubectl get pvc -n <namespace>
-// ----
-// +
-// [listing]
-// ----
-// NAME          STATUS  VOLUME                                    CAPACITY  ACCESS MODES  STORAGECLASS       AGE
-// vm1-rootdisk  Bound   pvc-8f3c8b2c-6e1e-4c6a-a83e-9d6c34ac3b21  40Gi      RWX           data-disk-storage  2m
-// ----
-//
-// . Confirm that the STORAGECLASS column shows `data-disk-storage`.
-//
-// . For further verification, confirm that the volume is provisioned by `pxd.portworx.com`.
-// +
-// [source, console]
-// ----
-// kubectl describe pv pvc-8f3c8b2c-6e1e-4c6a-a83e-9d6c34ac3b21
-// ----
-// +
-// [listing]
-// ----
-// Name:                 pvc-8f3c8b2c-6e1e-4c6a-a83e-9d6c34ac3b21
-// StorageClass:         data-disk-storage
-// Annotations:
-// pv.kubernetes.io/provisioned-by: pxd.portworx.com
-// Status: Bound
-// Reclaim Policy:       Delete
-// VolumeMode:           Block
-// Source:
-//     Type:             CSI (a Container Storage Interface (CSI) volume source)
-//     Driver:           pxd.portworx.com
-//     FSType:
-//     VolumeHandle:     424582431912071110
-//    ReadOnly:          false
-//    VolumeAttributes:  attached=ATTACH_STATE_EXTERNAL
-//                       error=
-//                       parent=
-//                       readonly=false
-//                       secure=false
-//                       shared=false
-//                       shared_mode=BLOCK
-//                       sharedv4=false
-//                       state=VOLUME_STATE_DETACHED
-//                       type=px-raw-volume
-// ----
-//
-// ====
-//
-// With these steps, you have validated that your VM is backed by the {pfa} with {pxe}.
-//
 
 
 == Summary
