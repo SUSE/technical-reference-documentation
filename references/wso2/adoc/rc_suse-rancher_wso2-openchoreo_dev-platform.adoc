@@ -42,22 +42,22 @@ To address this gap, many organizations build internal developer platforms that 
 As AI-driven software delivery becomes more common, these platforms must also support AI agents as first-class participants in software delivery and operations.
 This reference configuration describes a layered solution that combines:
 
-  * {srancher-long} for enterprise Kubernetes lifecycle management
-  * {ws-provider} Developer Platform for {ws} for developer self-service and platform abstractions
-  * {wsapig} for secure API and AI traffic mediation
-  * {wsagm} for managing the lifecycle of AI agents
-  * {ws} security and observability modules for governance and operational visibility
+* {srancher-brand} for enterprise Kubernetes lifecycle management
+* {ws-brand} Developer Platform for {ws} for developer self-service and platform abstractions
+* {wsapig} for secure API and AI traffic mediation
+* {wsagm} for managing the lifecycle of AI agents
+* {ws-security} and {ws-obs} modules for governance and operational visibility
 
 Together, these technologies provide:
 
-  * Centralized Kubernetes cluster management
-  * Self-service application delivery for developers
-  * GitOps, API, CLI, UI, and MCP-based platform access
-  * Built-in CI/CD automation
-  * Integrated observability
-  * Policy-driven governance
-  * AI-native operational automation
-  * Managed lifecycle support for enterprise AI agents
+* Centralized Kubernetes cluster management
+* Self-service application delivery for developers
+* GitOps, API, CLI, UI, and MCP-based platform access
+* Built-in CI/CD automation
+* Integrated observability
+* Policy-driven governance
+* AI-native operational automation
+* Managed lifecycle support for enterprise AI agents
 
 The solution is designed for organizations that want to build a modern internal developer platform on Kubernetes while supporting both human users and AI agents through a governed and extensible platform architecture.
 
@@ -70,7 +70,7 @@ This guide provides a reference architecture and deployment guidance for buildin
 The following aspects are covered:
 
 * Business challenge and value delivered by the solution
-* Layered solution architecture
+* Layered solutio{ws} securityn architecture
 * Core software and infrastructure components, and their roles and functions
 * High-level deployment guidance for a proof-of-concept environment
 * Validation of the deployed solution
@@ -92,8 +92,8 @@ Typical readers include platform engineers, Kubernetes administrators, DevOps en
 These roles are commonly responsible for designing, deploying, and operating internal developer platforms and Kubernetes-based application environments across development, testing, and production systems.
 
 To follow this guide successfully, you should have a basic understanding of Kubernetes concepts and operations, familiarity with containers and cloud-native applications, and experience with CI/CD workflows. 
-You should also have general knowledge of API management, ingress and networking patterns, and observability concepts such as logs, metrics, and traces.
- Basic familiarity with AI agents or agent-based workflows is helpful, as this reference architecture includes AI-native capabilities that allow agents to interact with the platform through governed interfaces.
+You should also have general knowledge of API management, ingress and networking patterns, and observability concepts such as logs, metrics, and traces. 
+Basic familiarity with AI agents or agent-based workflows is helpful, as this reference architecture includes AI-native capabilities that allow agents to interact with the platform through governed interfaces.
 
 
 //=== Acknowledgments
@@ -130,7 +130,7 @@ These new agent-driven workflows create additional requirements for security, li
 This solution addresses both needs through a layered architecture. {srancher-long} provides centralized Kubernetes management and operational consistency. 
 {ws-provider} Developer Platform for {ws} provides a self-service developer platform with platform abstractions, built-in workflows, and AI-native interfaces. 
 {wsapig} and {wsagm} extend the solution to support governed AI interactions and managed agent lifecycles. 
-{ws} security and observability modules provide runtime governance, operational visibility, and integrated platform insights across the environment.
+{ws-security} and {ws-obs} modules provide runtime governance, operational visibility, and integrated platform insights across the environment.
 
 
 === Business challenge
@@ -138,19 +138,19 @@ This solution addresses both needs through a layered architecture. {srancher-lon
 Key challenges faced by organizations include:
 
 * **Developer productivity and platform complexity** +
-  Developers often depend on platform teams to provision environments, configure pipelines, expose APIs, and troubleshoot deployments. This slows delivery and creates repeated operational overhead.
+Developers often depend on platform teams to provision environments, configure pipelines, expose APIs, and troubleshoot deployments. This slows delivery and creates repeated operational overhead.
 
 * **Fragmented platform tooling** +
-  Many platform stacks combine separate tools for cluster management, CI/CD, observability, API exposure, and AI integration. Without a consistent platform model, teams must integrate and maintain these tools independently.
+Many platform stacks combine separate tools for cluster management, CI/CD, observability, API exposure, and AI integration. Without a consistent platform model, teams must integrate and maintain these tools independently.
 
 * **Difficulty governing AI-native workflows** +
-  As enterprises adopt AI copilots and agents, they need a secure way to expose platform capabilities to those agents. They also need visibility into how agents operate, what systems they access, and how lifecycles are controlled.
+As enterprises adopt AI copilots and agents, they need a secure way to expose platform capabilities to those agents. They also need visibility into how agents operate, what systems they access, and how lifecycles are controlled.
 
 * **Operational burden on SRE and platform teams** +
-  SREs and platform engineers spend significant time diagnosing issues across multiple clusters, services, APIs, and workflows. These tasks become more complex when AI agents and automation are added to the environment.
+SREs and platform engineers spend significant time diagnosing issues across multiple clusters, services, APIs, and workflows. These tasks become more complex when AI agents and automation are added to the environment.
 
 * **Need for enterprise-ready Kubernetes operations** +
-  Organizations need a reliable and repeatable way to manage Kubernetes clusters, enforce operational standards, and support multiple environments across development, testing, and production.
+Organizations need a reliable and repeatable way to manage Kubernetes clusters, enforce operational standards, and support multiple environments across development, testing, and production.
 
 
 === Business value
@@ -191,7 +191,7 @@ image::arch.png[title="{srancher-provider}-{ws-provider} Architecture", {sranche
 
 
 This is a layered, cloud-native solution that can be deployed in your data center, in public clouds, or anywhere you can run Kubernetes. 
-For on-premises, you can choose SUSE Virtualization to provide a modern, consistent infrastructure foundation that enables you to run virtual machine and container workloads side-by-side.
+For on-premises, you can choose {svirt} to provide a modern, consistent infrastructure foundation that enables you to run virtual machine and container workloads side-by-side.
 
 
 {srancher-long} is an enterprise, cloud-native platform offering unified, multi-cluster Kubernetes management. 
@@ -236,13 +236,13 @@ Key components of the solution include:
 
 
 * {ws-provider} Developer Platform for {ws} – Developer self-service platform and control plane
-* Optional {wsapig} – Secure API and AI gateway capabilities
-* Optional {wsagm} – AI agent lifecycle management
+* optional {wsapig} – Secure API and AI gateway capabilities
+* optional {wsagm} – AI agent lifecycle management
 * {ws} Security – Security and policy capabilities for the platform
 * {ws} Observability – Monitoring and observability support
 * Workflow Tooling – Build and delivery automation
 * {srancher-long} – Centralized Kubernetes cluster lifecycle management and governance
-* Optional SUSE Virtualization - Cloud-native virtualization for consistent infrastructure foundation
+* optional {svirt} - Cloud-native virtualization for consistent infrastructure foundation
 
 
 **Compute Platform**
@@ -254,7 +254,8 @@ Key components of the solution include:
 Each key solution component is described below, starting at the platform layer and moving downward to the compute platform.
 
 
-=== {ws-provider} Developer Platform for {ws} +
+=== {ws-provider} Developer Platform for {ws}
+
 {ws-provider} Developer Platform for {ws} is a Kubernetes-native internal developer platform that enables platform teams to provide self-service workflows while maintaining governance and operational control. 
 It offers a developer portal, declarative platform abstractions, CI/CD integration, environment management, and observability-aware workflows.
 
@@ -272,7 +273,7 @@ Key functions include:
 * AI-native interaction through MCP and agent integrations
 
 
-Recommended version: {wso2-latest-release}[Latest{ws-long} release] 
+Recommended version: {wso2-latest-release}[Latest {ws-long} release] 
 
 
 === {wsapig}
@@ -337,7 +338,7 @@ Key functions include:
 
 
 Recommended version: Latest supported version +
-Website: {wso2-oc-security}[{ws} Security]
+Website: {wso2-oc-security}[{ws-security}]
 
 
 === {ws} Observability plane
@@ -372,19 +373,18 @@ Key functions include:
 * Build automation
 * Delivery workflows
 * Integration with platform CI/CD processes
+
 Website: {wso2-oc-workflow}[{ws} Workflow Plane]
-
-
-**Rancher Managed Kubernetes Cluster**
-A Kubernetes cluster, managed by {srancher-long}, hosts the control plane, data plane, workflow plane, observability plane, and user workloads.  
-A conformant Kubernetes distribution, such as RKE2, is recommended.
 
 
 === {srancher-long}
 
-
 {srancher-long} is an enterprise, cloud-native platform offering unified, multi-cluster Kubernetes management. 
 It provides streamlined and consistent operations, centralized security, policy, and user management, along with a secure supply chain, trusted delivery, and enterprise lifecycle and support.
+
+
+A Kubernetes cluster, managed by {srancher-long}, hosts the control plane, data plane, workflow plane, observability plane, and user workloads.  
+A conformant Kubernetes distribution, such as RKE2, is recommended.
 
 
 {srancher} provides the cluster management foundation for the entire solution, including all platform and workload services.
@@ -406,14 +406,14 @@ Documentation: {srancher-docs}[{srancher-long} Documentation]
 
 
 
-=== SUSE Virtualization
+=== {svirt}
 
 
-SUSE Virtualization provides a modern, cloud-native virtualization platform that enables organizations to run Kubernetes clusters on top of bare-metal infrastructure with a consistent and supported foundation. 
+{svirt} provides a modern, cloud-native virtualization platform that enables organizations to run Kubernetes clusters on top of bare-metal infrastructure with a consistent and supported foundation. 
 It is recommended for on-premise deployments where virtualization is required to host the underlying infrastructure.
 
 
-For cloud or hosted environments, SUSE Virtualization is optional, and the {srancher-long} and {ws-provider} solution can run on any supported infrastructure or public cloud provider.
+For cloud or hosted environments, {svirt} is optional, and the {srancher-long} and {ws-provider} solution can run on any supported infrastructure or public cloud provider.
 
 
 Recommended version: {svirt-url}[{svirt} latest supported version] +
@@ -458,15 +458,16 @@ The software components provide the foundational layer for all higher-level serv
 
 === {srancher-long}
 
-Install or prepare {srancher-long} before deploying the developer platform stack.
-
 
 To install {srancher-long} follow below high-level steps:
 
 
 . Install {srancher-long}.
+
 . Create or import the target Kubernetes cluster.
+
 . Configure cluster access, authentication, and governance.
+
 . Confirm that the cluster is ready to host platform services.
 
 
@@ -474,22 +475,30 @@ Detailed guidance for various deployment scenarios are available in {rancher-ins
 
 
 === {ws-provider} Developer Platform for {ws}
+
 Deploy the {ws-provider} Developer Platform for {ws} into the Rancher-managed Kubernetes cluster by following the installation procedure described in the {ws} documentation. 
 {ws} can run on any conformant Kubernetes cluster, including clusters provisioned and managed by {srancher-long}, and can be deployed on on-premises infrastructure or supported cloud providers.
 
 
-The complete {wso2-oc-install}[installation guide] is available.
+The complete {ws-long}[installation guide] is available.
 
 The following high-level steps summarize the installation flow. Refer to the linked documentation for the detailed commands and configuration values.
 
 
 . Ensure that the target cluster is accessible using kubectl and Helm. Refer to {wso2-oc-pre}[{ws-long} environment prerequisites].
-. Install required dependencies such as ingress, certificate management, and storage support. Refer to {wso2-oc-install-pre}[{ws-long} installation prerequisites] 
-. Deploy the {ws} control plane components into the Kubernetes cluster. Refer to {wso2-oc-install}[Steps to install {ws}]
-. Confirm that all platform services are running and accessible. Refer to {wso2-oc-verify-install}[Verify installation]
-. Open the portal endpoint and confirm that the platform UI is available. Refer to {wso2-oc-access}[access the {ws} Portal]
-. Deploy a sample workload to validate the build, deploy, and runtime workflow. Refer to {wso2-oc-deploy-sample}[Deploy a sample application]
-. Confirm that the workload runs in the data plane and that logs, metrics, and traces are available. Refer to {wso2-oc-verify}[Verify deployment]
+
+. Install required dependencies such as ingress, certificate management, and storage support. Refer to {wso2-oc-install-pre}[{ws-long} installation prerequisites]. 
+
+. Deploy the {ws} control plane components into the Kubernetes cluster. Refer to {wso2-oc-install}[Steps to install {ws}].
+
+. Confirm that all platform services are running and accessible. Refer to {wso2-oc-verify-install}[Verify installation].
+
+. Open the portal endpoint and confirm that the platform UI is available. Refer to {wso2-oc-access}[access the {ws} Portal].
+
+. Deploy a sample workload to validate the build, deploy, and runtime workflow. Refer to {wso2-oc-deploy-sample}[Deploy a sample application].
+
+. Confirm that the workload runs in the data plane and that logs, metrics, and traces are available. Refer to {wso2-oc-verify}[Verify deployment].
+
 . Enable additional modules.
 
 
@@ -506,26 +515,31 @@ Deploy the {wsapig} module into the data plane by following the installation pro
 The gateway module is installed as an {ws} module and integrated with the platform using the standard module integration mechanism.
 
 
-The complete installation guide for the gateway module is available {wso2-apig-installation}[here]
-//JI need to add link
+The complete installation guide for the gateway module is available. {wso2-apig-installation}[see the refference documentation]
 
 
 The following high-level steps summarize the installation flow. Refer to the linked documentation for the exact commands and configuration values.
 
 
 . Confirm that the {ws} data plane is installed and that the Kubernetes cluster is accessible using kubectl and Helm.
+
 . Install the {ws-provider} API Platform gateway module using the Helm chart provided in the module repository.
+
 . Provide the required configuration values for routing, security policies, and service exposure according to the module documentation. 
+
 . Ensure the module is registered with the {ws} data plane so that the control plane can create Gateway and routing resources.
+
 . Confirm that the gateway controller and related services are running in the Kubernetes cluster.
+
 . Deploy a sample service and confirm that requests are routed through the gateway and enforced by configured policies. 
+
 . Additional features such as policy enforcement, AI traffic mediation, and API governance can be configured using the gateway settings supported by the module.
 
 
 Refer to the {wso2-apig-conf}[module documentation] for supported configuration options and production deployment recommendations.
 
 
-=== {wsagm} and Built-in Agents
+=== {wsagm} and built-in agents
 
 
 Configure AI and agent capabilities for the platform by enabling Model Context Protocol (MCP) support, configuring the {wsagm} module, and registering platform agents such as the SRE agent. 
@@ -535,18 +549,23 @@ These features allow AI agents to interact with the platform through governed in
 . Configure Agent Manager +
 Install and configure the {wsagm} module to manage the lifecycle of AI agents used by the platform. Agent Manager is responsible for registering agents, managing agent configuration, and controlling how agents interact with platform services. 
 Ensure that the Agent Manager module is deployed in the data plane and integrated with the {ws} control plane. 
-{wso2-agent-manager}[Instructions]
+Refer to {wso2-agent-manager}[{wsagm}: configurations]
 
 . Configure MCP integration +
+
 .. Enable Model Context Protocol (MCP) support so that AI agents and external tools can interact with the platform through governed interfaces.
+
 .. MCP allows agents to access platform APIs, observability data, and deployment workflows using structured requests instead of direct cluster access. +
-{wso2-agent-manager-mcp}[Instructions]
+Refer to {wso2-agent-manager-mcp}[{wsagm}: Configure MCP integration]
+
 .. Verify that MCP endpoints are reachable and that authentication and authorization policies are correctly configured.
 
 . Configure SRE agent.
+
 .. Configure the SRE agent to enable AI-assisted operational workflows such as incident investigation, observability analysis, and runtime diagnostics.
+
 .. The SRE agent uses MCP and observability data to analyze logs, metrics, and traces and provide operational insights to platform engineers. +
-{wso2-agent-manager-sre}[Instructions]
+Refer to {wso2-agent-manager-sre}[{wsagm}: Configure SRE agent]
 
 === Workflow and observability integrations
 
@@ -559,10 +578,15 @@ The following high-level steps summarize the integration flow. Refer to the link
 
 
 . Enable workflow capabilities and create workflows using the {ws} {wso2-workflow}[workflow feature].
+
 . Install the {wso2-obs-logs}[OpenSearch logs] module using the provided Helm chart and module configuration. 
+
 . Install the {wso2-obs-tracing}[tracing module] based on OpenSearch and configure it for the data plane. 
+
 . Install the {wso2-obs-metric}[Prometheus metrics] module and configure metrics collection for platform and workloads.
+
 . Confirm that logs, metrics, and traces are collected for platform services, workloads, and agent operations.
+
 . Create and run a workflow to verify that build, deployment, or automation tasks execute successfully.
 
 
@@ -576,13 +600,21 @@ Validate successful deployment of the solution using the following checks.
 
 
 . Confirm that {srancher} shows the target Kubernetes cluster in a healthy state.
+
 . Confirm that {ws} control plane services are running.
+
 . Access the developer portal successfully.
+
 . Verify UI, CLI, API, MCP, and GitOps access paths as applicable.
-. Deploy a sample application or component using one of the examples from the {ws} {wso2-exaple-catelog}[examples catalog].
+
+. Deploy a sample application or component using one of the examples from the {ws} {wso2-example-catelog}[example catalog].
+
 . Route traffic through the {wsapig}.
+
 . Register or activate a sample agent through {wsagm}.
+
 . Confirm logs, metrics, and traces are visible in the observability stack.
+
 . Verify that a sample operational workflow can be performed by a human user and, where applicable, by an AI agent.
 
 
@@ -595,7 +627,7 @@ Successful validation demonstrates that the platform supports developer self-ser
 This reference configuration describes a layered architecture for building a secure, AI-native, internal developer platform on Kubernetes. 
 It features {srancher-long} to provide the operational foundation for Kubernetes. 
 This is combined with {ws-provider} {ws}, providing the developer platform layer and {wsapig} and {wsagm} to extend the platform to support governed API exposure and managed AI agent lifecycles. 
-Additionally, {ws} security and observability modules strengthen runtime governance and operational insight.
+Additionally, {ws-security} and observability modules strengthen runtime governance and operational insight.
 
 
 As next steps, you can evaluate production sizing, high availability, enterprise security integration, explore the {wso2-oc-platform-guide}[{ws} Platform Engineering Guide], and additional agent-driven workflows based on your platform strategy.
