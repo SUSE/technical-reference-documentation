@@ -1,0 +1,280 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: rc_suse-rancher_wso2-openchoreo_dev-platform
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2026-04-03
+//   :rev1-description: 2026-04-03
+// Set docdate to the most recent revision.
+//-
+:rev1-date: 2026-04-03
+:rev1-description: Initial version
+:docdate: {rev1-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components,
+//   such as full product names, versions, websites, documentation
+//   URLs, and so on.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Each component can have a series of variables that follow a
+//   simple pattern:
+//     compX[-MODIFIER]
+//   where:
+//     compX is a short name for the component.
+//       You can use something generic, such as:
+//       'comp3', 'os', 'server', 'gpu', and so on.
+//       Or, you can use a more specific variable name, such as:
+//       'sles', 'rancher', 'portworx', 'powerflex', etc.
+//     -MODIFIER is text that identifies the stored information.
+//       Some MODIFIER values include:
+//         - provider: Name of company or project providing the component
+//             (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//         - long: The full name of the product.
+//             (e.g., 'SUSE Rancher Prime', 'Portworx Enterprise by Pure Storage')
+//         - version1: The relevant product version referenced in
+//             the document (e.g., '15 SP7', '3.2.4', 'v1.7.1')
+//             If additional product versions are called out in the
+//             document, record them in separate variables
+//             (e.g., '-version2', '-version3')
+//             NOTE: Documents are often created around a single version
+//                   with sufficient certainty that certain later versions
+//                   will work.
+//                   This can be called out with text like,
+//                   "{comp1-version1} and later."
+//         - website: Product website (e.g., https://www.suse.com/products/server/)
+//         - docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//             It can also be useful to form variables for specific sections in
+//             a component's documentation.
+//             For example, you could link to the section for creating a VM
+//             in SUSE Virtualization with:
+//             :svirt-docs-createvm: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/virtual-machines/create-vm.html
+//
+//   You can create your own modifiers to fit your needs.
+//
+// IMPORTANT: The 'comp1', 'comp2' examples provided here are also
+//            used in the docinfo file.
+//            If you use different variable names or additional
+//            components in your solution, you will need to edit
+//            the docinfo file to reflect this.
+// -
+:srancher-provider: SUSE
+:srancher-brand: SUSE® Rancher Prime
+:srancher-long: SUSE Rancher Prime
+:srancher: SUSE Rancher 
+:svirt: SUSE Virtualization
+:srancher-version1: 2.13.x
+:srancher-website: https://www.suse.com/products/rancher/
+:srancher-docs: https://documentation.suse.com/cloudnative/rancher-manager/ 
+:svirt-url: https://www.suse.com/suse-harvester/support-matrix/all-supported-versions/
+:svirt-doc-url: https://documentation.suse.com/cloudnative/virtualization/
+:rancher-install: https://documentation.suse.com/cloudnative/rancher-manager/latest/en/installation-and-upgrade/installation-and-upgrade.html
+
+
+
+
+
+:ws-provider: WSO2
+:ws-brand: WSO2
+:ws-long: WSO2 OpenChoreo
+:ws: OpenChoreo
+:ws-version1: 1.0 
+:ws-website: https://wso2.com/
+:ws-docs: https://wso2.com/engineering-platform/openchoreo/
+:wsapig: WSO2 AI/API Gateway
+:wsagm: WSO2 Agent Manager
+:ws-security: OpenChoreo Security
+:ws-obs: OpenChoreo Observability
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title: (<75 characters) Concisely identify the subject of the document.
+//         (e.g.: "Deploying Kubeflow with SUSE Rancher Prime")
+// subititle: (<75 characters) Expound on the subject of the document.
+//             (e.g., "Validated solution design for Telco-native AI")
+// usecase: (<55 characters) Identify the use case or purpose of the
+//          documented solution.
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) Give a brief description of what this
+//              document is about.
+// description-social: (<55 characters) Condense the description to be
+//                     suitable for social media.
+// executive-summary: (<300 characters) Provide a brief summary of the
+//                    the document, typically with business case and
+//                    technical components.
+//                    This text appears near the beginning of the rendered
+//                    document.
+//
+// TIP: You can reference defined variables when defining new variables.
+//      For example:
+//        Say that you have defined above these component variables:
+//          :comp1-long : SUSE Linux Enterprise Server
+//          :comp2-long: JupyterLab
+//        Then, you could reference them when you define the title
+//        variable like this:
+//          :doctitle: Simplify deployment of {comp2-long} with {comp1-long}
+//        When rendered, the variables will be expanded and the title
+//        will appear as:
+//          "Simplify deployment of JupyterLab with SUSE Linux Enterprise Server"
+// -
+:doctitle: {srancher-long} and {ws-provider} Developer Platform for {ws}
+
+:docsubtitle: AI-Native Platform Engineering Stack by {srancher-provider} and {ws-provider}
+
+:usecase: Internal Developer Platform, Platform Engineering, AI-Assisted Operations, Cloud-Native Application Delivery, Agent Management
+
+
+:description: Reference architecture combining {srancher} and {ws} to build a secure AI-native internal developer platform on Kubernetes
+
+:description-social: AI-native developer platform on {srancher}
+:executive-summary: This guide presents a reference architecture that combines {srancher-brand} and the {ws-brand} Developer Platform for OpenChoreo to build an enterprise internal developer platform. {srancher} manages Kubernetes clusters while {ws} provides developer self-service, CI/CD, observability, governance, AI-native operational agents, a {wsapig}, and a {wsagm} for agent lifecycle management.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//   Typically, no more than three tasks defined per
+//     document.
+//
+//   Tasks must be one of these supported values:
+//     Administration, Artificial Intelligence, Auditing, Authentication,
+//     Automation, Backup &amp; Recovery, Certification, Cloud,
+//     Clustering, Compliance, Configuration, Containerization,
+//     Container Management, Data Intelligence, Deployment, Design,
+//     Encryption, High Availability, Image Building, Implementation,
+//     Installation, Integration, Maintenance, Migration, Monitoring,
+//     Packaging, Security, Storage, Subscription Management,
+//     Troubleshooting, Upgrade &amp; Update, Virtualization,
+//     Vulnerability, Web
+//
+//   For example:
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// - 
+
+:metatask1: Design
+:metatask2: Integration
+:metatask3: Deployment
+//:metatask4: Container Management
+//:metatask5: Containerization
+//:metatask6: Cloud
+//:metatask7: Administration
+//:metatask8: Automation
+//:metatask9: Monitoring
+//:metatask10: Security
+//:metatask11: Agent Management
+//:metatask12: API Management
+
+ 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//
+//   Follow the pattern below to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//
+//   TIP: Other contributors and editors are typically listed in
+//        an Acknowledgments section.
+//        To list additional authors or contributors on the cover page,
+//        you must edit the docinfo file, too.
+// -
+:author1-firstname: Lakmal
+:author1-surname: Warusawithana
+:author1-jobtitle: Vice President & Distinguished Engineer
+:author1-orgname: WSO2
+:author2-firstname: Jivaji
+:author2-surname: Ihare
+:author2-jobtitle: Partner Solution Architect
+:author2-orgname: SUSE
+:author3-firstname: Terry
+:author3-surname: Smith
+:author3-jobtitle: Director of Partner Ecosystem Solution Innovation
+:author3-orgname: SUSE
+
+//:contrib1-firstname: first (given) name
+//:editor1-firstname: first (given) name
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+:wso2-latest-release: https://wso2.com/engineering-platform/openchoreo/
+:wso2-api-platform: https://wso2.com/api-platform/
+:wso2-agent-manager: https://wso2.com/agent-platform/
+:wso2-oc-security: https://openchoreo.dev/
+:wso2-oc-obs: https://openchoreo.dev/
+:wso2-oc-workflow: https://openchoreo.dev/
+:wso2-oc-install: https://openchoreo.dev/docs/getting-started/try-it-out/on-your-environment/
+:wso2-oc-pre: https://openchoreo.dev/docs/getting-started/try-it-out/on-your-environment/#prerequisites
+:wso2-oc-install-pre: https://openchoreo.dev/docs/getting-started/try-it-out/on-your-environment/#install-prerequisites
+:wso2-oc-install: https://openchoreo.dev/docs/getting-started/try-it-out/on-your-environment/#install-openchoreo
+:wso2-oc-verify-install: https://openchoreo.dev/docs/getting-started/try-it-out/on-your-environment/#verify-installation
+:wso2-oc-access: https://openchoreo.dev/docs/getting-started/try-it-out/on-your-environment/#access-the-portal
+:wso2-oc-deploy-sample: https://openchoreo.dev/docs/getting-started/try-it-out/on-your-environment/#deploy-a-sample
+:wso2-oc-verify: https://openchoreo.dev/docs/getting-started/try-it-out/on-your-environment/#verify
+:wso2-apig-installation: https://github.com/openchoreo/community-modules/tree/main/gateway-wso2-api-platform
+:wso2-apig-conf: https://github.com/openchoreo/community-modules/tree/main/gateway-wso2-api-platform
+:wso2-agent-manager: https://openchoreo.dev/modules/
+:wso2-agent-manager-mcp: https://openchoreo.dev/docs/next/ai/overview/#mcp-servers
+:wso2-agent-manager-sre: https://openchoreo.dev/docs/next/ai/overview/#sre-agent
+:wso2-workflow: https://openchoreo.dev/docs/user-guide/workflows/creating-workflows/
+:wso2-obs-logs: https://github.com/openchoreo/community-modules/tree/main/observability-logs-opensearch
+:wso2-obs-tracing: https://github.com/openchoreo/community-modules/tree/main/observability-tracing-opensearch
+:wso2-obs-metric: https://github.com/openchoreo/community-modules/tree/main/observability-metrics-prometheus
+:wso2-example-catelog: https://openchoreo.dev/docs/learn-from-examples/examples-catalog/
+:wso2-oc-platform-guide: https://openchoreo.dev/docs/next/category/platform-engineer-guide/
+:wso2-working-with-ai: https://openchoreo.dev/docs/next/category/working-with-ai/
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
