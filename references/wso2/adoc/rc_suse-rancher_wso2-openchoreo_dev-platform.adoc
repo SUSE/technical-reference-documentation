@@ -122,7 +122,8 @@ Basic familiarity with AI agents or agent-based workflows is helpful, as this re
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Organizations need to improve developer productivity without losing control over security, governance, and operations. 
-In many enterprises, Kubernetes adoption has succeeded at the infrastructure level, but the developer experience still depends on fragmented tools, manual processes, and platform teams that must bridge gaps between infrastructure, application delivery, and operational support.
+In many enterprises, Kubernetes adoption has been successful at the infrastructure level. 
+However, the developer experience still depends on fragmented tools, manual processes, and platform teams that must bridge the gaps between infrastructure, application delivery, and operational support.
 
 At the same time, enterprises are beginning to adopt AI agents to assist with development, operations, architecture review, incident response, and cost optimization. 
 These new agent-driven workflows create additional requirements for security, lifecycle management, observability, and governed access to platform capabilities.
@@ -442,7 +443,8 @@ Before installing the platform components, ensure that you have met the followin
 * Network connectivity between control plane, data plane, and workflow components
 
 
-You can deploy the solution on infrastructure hosted in your own data center or on a cloud provider, as long as the Kubernetes environment is supported by {srancher} and meets the resource requirements of the platform components.
+You can deploy the solution on infrastructure hosted in your own data center or on a cloud provider.
+However, the Kubernetes environment must be supported by {srancher} and meet the resource requirements of the platform components.
 
 
 The software components provide the foundational layer for all higher-level services. For a proof-of-concept deployment, you should prepare:
@@ -634,7 +636,7 @@ As next steps, you can evaluate production sizing, high availability, enterprise
 
 
 
-== Frequently Asked Questions (FAQs)
+== Frequently Asked Questions (FAQ)
 
 
 . **What role does {srancher-long} play in this solution?** + 
@@ -660,7 +662,9 @@ RKE2 (Rancher Kubernetes Engine 2) is SUSE’s next-generation, fully conformant
 Unlike older engines, it entirely removes the Docker dependency (using containerd instead) and provides a hardened, secure-by-default environment essential for running mission-critical {ws-provider} API Gateways and Agent Modules.
 
 . **How does RKE2 improve the security posture of the Data and Control planes?** +
-Security is built into RKE2's default configuration. It is designed to pass the CIS Kubernetes Benchmark out of the box with minimal configuration. Furthermore, it supports FIPS 140-2 compliance and adheres to DISA STIG requirements, ensuring that the {ws-provider} Security Modules and API/AI Gateways operate on a defense-in-depth foundation.
+Security is built into RKE2's default configuration. It is designed to pass the CIS Kubernetes Benchmark out of the box with minimal configuration. 
+Furthermore, it supports FIPS 140-2 compliance and adheres to DISA STIG requirements. 
+This ensures that the {ws-provider} Security Modules and API/AI Gateways operate on a defense-in-depth foundation.
 
 . **How does RKE2 integrate with the "{srancher-long}" layer shown in the architecture?** +
 RKE2 is a first-class citizen within the {srancher-long} ecosystem. Choosing RKE2 ensures seamless, automated cluster lifecycle management (provisioning, upgrading, and scaling) directly from the {srancher} UI or via GitOps workflows. 
