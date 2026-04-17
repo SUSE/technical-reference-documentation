@@ -390,7 +390,7 @@ image::Third-party-array-diagram.png[title="Third-party Array Diagram", Third-pa
 This section outlines the high-level deployment workflow.
 For complete step-by-step instructions, exact commands, and configuration files, refer to the fully detailed deployment documentation.
 
-=== Preparatory configurations
+=== Preparing for deployment
 
 Before deploying {px} on {svirt-long}, ensure the following preparatory steps are completed:
 
@@ -400,7 +400,7 @@ After applying the configuration, restart the cluster nodes to ensure the change
 . *Array credentials*: Configure user access within the Everpure {pfa}.
 Create a corresponding Kubernetes secret in the {px} namespace to securely store these credentials for authentication.
 
-=== Generate the {px} installation specifications
+=== Generating the {px} installation specifications
 
 {px} installation specifications are generated using the {px} Central portal.
 
@@ -412,7 +412,7 @@ Configure storage parameters such as enabling PX-Storev2, selecting Fibre Channe
 . *Network and customization*: Ensure the {px} services starting port is correctly configured.
 Select the Rancher Kubernetes Engine (RKE) environment and generate the installation specifications.
 
-=== Install the {px} Operator and StorageCluster
+=== Installing the {pxo} and StorageCluster
 
 After generating the installation specifications, deploy the required {px} components.
 
@@ -422,7 +422,7 @@ After generating the installation specifications, deploy the required {px} compo
 
 . *Deploy the {px} StorageCluster*: Execute the second generated specification to initiate deployment of the {px} StorageCluster.
 
-=== StorageClass and CSI driver configuration
+=== Configuring the StorageClass and CSI driver
 
 Once the {px} cluster is deployed, configure storage integration with Kubernetes and {svirt-long}.
 
