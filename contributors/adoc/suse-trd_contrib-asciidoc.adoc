@@ -24,21 +24,21 @@ When creating your content:
 
 * Ensure files are encoded to https://en.wikipedia.org/wiki/UTF-8[UTF-8].
 
-* Start each line in the first column. +
-There should be no leading whitespace.
-
-* Strip trailing whitespace from lines.
+* Start each sentence on a new line, even if it is part of the same paragraph. +
+This makes it easier to edit and handle Git merge conflicts.
 
 * End lines with the newline (or line feed) character only. +
 Some operating systems add both a carriage return and a line feed to the end of a line.
 You must strip these carriage return characters from your files before submission.
 This can also be done by https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings?platform=windows[configuring Git to handle line endings].
 
+* Start each line in the first column. +
+There should be no leading whitespace.
+
+* Strip trailing whitespace from lines.
+
 * Do not edit files outside the scope of your project. +
 This includes common files, scripts, and the files associated with other published documentation.
-
-* Start each sentence on a new line, even if it is part of the same paragraph. +
-This makes it easier to edit and handle Git merge conflicts.
 
 
 The following sections address specific aspects of document structure and text styling with AsciiDoc.
@@ -46,11 +46,16 @@ The following sections address specific aspects of document structure and text s
 
 === Document attributes and variables
 
-{asciidoc-docs}attributes/document-attributes/[Document attributes] are name-value pairs that you can use to configure the AsciiDoc processor, define document metadata, and create reusable content.
-Think of document attributes as document-scoped variables.
-These variables can be defined anywhere in your document and used from that point forward.
-However, the best practice is to define all variables in one place (in the Vars file).
+In AsciiDoc, _document attributes_ are name-value pairs that you can use to configure the AsciiDoc processor, define document metadata, and create reusable content.
+Think of document attributes as document-scoped _variables_.
+They can be defined anywhere in your document and used from that point forward as you would variables in other programming languages.
 
+[TIP]
+====
+For best practice, define all variables in one place (your vars file).
+
+Using the standard templates, your vars file is imported at the beginning of your main content file.
+====
 
 A variable definition has the form:
 [source, asciidoc]
@@ -63,7 +68,7 @@ The value includes everything up to the first newline character.
 
 [TIP]
 ====
-Stubs for required and some optional variable definitions are provided in the Vars file template.
+Required variable definition stubs are provided in the vars file template.
 ====
 
 Some example variable definitions are shown below.
@@ -73,48 +78,45 @@ Some example variable definitions are shown below.
 :srancher-brand: SUSE® Rancher Prime
 :srancher-long: SUSE Rancher Prime
 :srancher: SUSE Rancher
-:srancher-version: 2.13
+:srancher-version1: 2.13
 :srancher-website: https://www.suse.com/products/rancher/
 :srancher-docs: https://documentation.suse.com/cloudnative/rancher-manager/
-
+:srancher-docs-ports: {srancher-docs}latest/en/installation-and-upgrade/requirements/port-requirements.html
 :doctitle: Enterprise AI on {srancher-long}
 ----
 
-
 Once defined, you can reference a variable in your text by surrounding the variable name with curly braces ( `{` and `}` ).
-In fact, you can even define variables using previously-defined variables (see the `doctitle` variable definition in the previous example).
-
+You can even reference already-defined variables when in variable definitions (see the `srancher-docs-ports` and `doctitle` in the example).
 
 
 === Document title and subtitle
 
-With AsciiDoc, the title of your document is usually placed on the first line of the main content file and is prefixed by a single equal sign ( `=` ).
+The document title is typically specified on the first line of an AsciiDoc document.
+It is a line prefixed by a single equal sign ( `=` ).
 An optional subtitle can be included on the same line, separated from the title by a colon and a space ( `:&#160;` ).
 
-For a technical reference, the title and subtitle are defined as variables in the Vars file, as shown below:
+With the standard {trd} templates, you define your document title and subtitle in your vars file with the `doctitle` and `docsubtitle` variables.
 
+For example:
 [source, asciidoc]
 ----
 :doctitle: {svirt-long} and {xbackup-long}
 :docsubtitle: Implement Disaster Recovery for your Cloud Native Virtualization Environment
 ----
 
-These variables can then be referenced elsewhere.
-
-In the Main content file, the title and subtitle are specified by the following line:
+These variables are then referenced in your main content file as follows:
 [source, asciidoc]
 ----
 = {doctitle}: {docsubtitle}
 ----
 
-You also reference the title and subtitle in the Docinfo file:
+The document title and subtitle are also referenced as metadata (describing your document) in your docinfo file with the following lines:
 [source, asciidoc]
 ----
 <title>{doctitle}</title>
 <subtitle>{docsubtitle}</subtitle>
 ----
 
-The standard templates include stubs for defining the `doctitle` and `docsubtitle` variables as well as the corresponding references in the Docinfo and Main content files.
 
 
 When defining your title and subtitle, use title-style capitalization by following these rules:
@@ -517,15 +519,15 @@ This is accomplished by setting the `subs` attribute for a block.
 
 Consider the simple example below.
 
-In your Vars file, define the variable you wish to use in a command example:
+In your vars file, define the variable you wish to use in a command example:
 
 [source, asciidoc]
 ----
- // attribute in your Vars file
+ // attribute in your vars file
  :myPath: /home/geeko/myproject/
 ----
 
-In your Main content file, you then reference it inside a code block:
+In your main content file, you then reference it inside a code block:
 
 [source, asciidoc]
 ----

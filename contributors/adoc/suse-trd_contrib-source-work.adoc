@@ -17,24 +17,24 @@ The DC file specifies the location of the main content, the stylesheet to use fo
 There is only one DC file per technical reference, located at the root of your project directory, and its name always begins with `DC-`.
 You typically only need to edit this file once, when you are ready to publish and you turn off draft mode.
 
-* *DocBook metadata (Docinfo) file* +
-Information about your document is provided by the Docinfo file.
+* *DocBook metadata (docinfo) file* +
+Information about your document is provided by the docinfo file.
 It is located in your project's `adoc` directory, and its file name always ends in `-docinfo.xml`.
 The standard template makes heavy use of variables to minimize the edits you must make to this file.
 Typical edits include updating variable names to match the ones you define in the vars file, identifying additional products or authors, and expanding the revision history.
 
-* *Variables (Vars) file* +
-{trd-alt} make heavy use of variables (or document attributes), most of which are defined in your Vars file.
-Your Vars file located in your project's `adoc` directory and its file name always ends in `-vars.adoc`.
+* *Variables (vars) file* +
+{trd-alt} make heavy use of variables (or document attributes), most of which are defined in your vars file.
+Your vars file located in your project's `adoc` directory and its file name always ends in `-vars.adoc`.
 Using variables helps ensure consistency throughout your document and also simplifies future revisions.
 The standard template provides stubs for required and recommended variable definitions.
 One of your first editing tasks is to define the variables you will use in your document.
 
-* *Main Content file* +
-Your Main Content file, located in your project's `adoc` directory, is identified in the DC file.
+* *Main content file* +
+Your main content file, located in your project's `adoc` directory, is identified in the DC file.
 This is where you add your main content, formatted with the AsciiDoc markup language.
 The standard template provide the framework for your selected document type.
-You can have multiple content files, but they must all be linked (with the AsciiDoc `include` directive) into your Main Content file.
+You can have multiple content files, but they must all be linked (with the AsciiDoc `include` directive) into your main content file.
 
 * *common content files* +
 These are source files that are included automatically when your document is rendered, providing such things as the open source documentation license and standard disclaimer.
