@@ -138,9 +138,10 @@ When defining your title and subtitle, use title-style capitalization by followi
 === Sections
 
 Sections help you group and organize related text.
-Each section is marked by a section heading.
-This is short text, prefixed by a section marker that indicates the section level.
-Section markers are two or more equal signs ( `==`, `===`, and so on).
+
+Start a new section with a section header, designated by two or more equal signs.
+
+For example:
 
 [source, asciidoc]
 ----
@@ -152,7 +153,7 @@ Section markers are two or more equal signs ( `==`, `===`, and so on).
 ----
 
 
-Guidance for section headings:
+Use the following guidance for section headings:
 
 * Choose a section title that clearly identifies what contents to expect.
 
@@ -176,7 +177,7 @@ Only the first word and proper nouns should be capitalized.
 * Avoid using more than three (`====`) section levels.
 
 * Ensure all sections have content. +
-A subsection heading should never immediately follow section heading without some intervening text.
+A subsection heading should never immediately follow a section heading without some intervening text.
 
 Consider the following example:
 
@@ -219,8 +220,13 @@ An unordered list is a series of items in no particular order and is sometimes c
 +
 --
 * Prefix an item by an asterisk ( `*` ) in the first column.
+
 * Create subordinate or nested lists by adding more asterisks.
-* Avoid creating more than three nest levels.
+
+* Do not indent list items.
+
+* Avoid creating more than three nested levels ( `***` ).
+
 * Insert a blank line between list items.
 --
 +
@@ -252,7 +258,9 @@ The rendering engine will replace the period with the appropriate number or lett
 
 * Create subordinate or nested lists by adding more periods.
 
-* Avoid creating more than three levels.
+* Avoid creating more than three levels ( `...` ).
+
+* Do not indent list items.
 
 * Insert a blank line between list items.
 --
@@ -344,12 +352,13 @@ For example:
 TIP: By default, some `zypper` commands perform `refresh` automatically.
 ----
 
-This is rendered as:
+This renders as:
 
 TIP: By default, some `zypper` commands perform `refresh` automatically.
 
 
-The block admonition style provides more flexibility for the content, as illustrated with this example:
+The block admonition style is preferred, as it provides more flexibility for the content.
+The following example illustrates a block admonition:
 
 [source, asciidoc]
 ----
