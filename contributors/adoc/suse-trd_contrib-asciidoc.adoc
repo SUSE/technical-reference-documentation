@@ -386,7 +386,7 @@ reset to the state at which the snapshot was taken.
 
 Technical guides often need to present source code, commands, and console output as they appear in a code editor or on the console screen.
 This usually means rendering content with a fixed-width font to preserve spacing and structure.
-And, for source code, it may involve syntax highlighting with color or other text styles.
+For source code, it also may involve syntax highlighting with color or other text styles.
 
 
 ==== Listing blocks
@@ -395,16 +395,16 @@ The basic listing block is used to denote text that should be rendered verbatim.
 This is most often used to present output from a command issued in a command-line terminal, or just to present weirdly-formatted text.
 
 [source, asciidoc]
+-----
+
+[listing]
+----
+This   text has      really weird      spacing   that is    preserved.
+
+Line spacing is also preserved.
 ----
 
- [listing]
- ----
- This   text has      really weird      spacing   that is    preserved.
-
- Line spacing is also preserved.
- ----
-
-----
+-----
 
 
 ==== Source code blocks
@@ -414,23 +414,23 @@ A source code block is a special version of a listing block that enables syntax 
 A snippet of Python code is illustrated below.
 
 [source, asciidoc]
+-----
+
+[source, python]
+----
+# import libraries
+import matplotlib.pyplot as plt
+import numpy as np
+ 
+# define data points
+xpoints = np.array([1, 2, 5, 12])
+ypoints = np.array([5, 3, 11, 6])
+ 
+plt.plot(xpoints, ypoints)
+plt.show()
 ----
 
- [source, python]
- ----
- # import libraries
- import matplotlib.pyplot as plt
- import numpy as np
- 
- # define data points
- xpoints = np.array([1, 2, 5, 12])
- ypoints = np.array([5, 3, 11, 6])
- 
- plt.plot(xpoints, ypoints)
- plt.show()
- ----
-
-----
+-----
 
 The key elements of the source code block are:
 
@@ -456,60 +456,59 @@ For full command examples, the best practice is to use a source code block with 
 For example:
 
 [source, asciidoc]
+-----
+
+[source, console]
+----
+sudo zypper install vim
 ----
 
- [source, console]
- ----
- sudo zypper install vim
- ----
-
-----
+-----
 
 In {trd}, it is common to combine a command-line instruction with the resulting output.
 This is illustrated below.
 
 [source, asciidoc]
+-----
+
+. Learn more about the `vim` package by issuing the following command:
++
+[source, console]
+----
+zypper info vim
+----
++
+[listing]
+----
+Information for package vim:
+----------------------------
+Repository     : Main Repository (OSS)
+Name           : vim
+Version        : 9.2.0219-1.1
+Arch           : x86_64
+Vendor         : openSUSE
+Installed Size : 5.2 MiB
+Installed      : Yes (automatically)
+Status         : out-of-date (version 9.2.0010-1.1 installed)
+Source package : vim-9.2.0219-1.1.src
+Upstream URL   : https://www.vim.org/
+Summary        : Vi IMproved
+Description    :
+    Vim (Vi IMproved) is an almost compatible version of the UNIX editor
+    vi. Almost every possible command can be performed using only ASCII
+    characters. Only the 'Q' command is missing (you do not need it). Many
+    new features have been added: multilevel undo, command line history,
+    file name completion, block operations, and editing of binary data.
 ----
 
- . Learn more about the `vim` package by issuing the following command:
- +
- [source, console]
- ----
- zypper info vim
- ----
- +
- [listing]
- ----
- Information for package vim:
- ----------------------------
- Repository     : Main Repository (OSS)
- Name           : vim
- Version        : 9.2.0219-1.1
- Arch           : x86_64
- Vendor         : openSUSE
- Installed Size : 5.2 MiB
- Installed      : Yes (automatically)
- Status         : out-of-date (version 9.2.0010-1.1 installed)
- Source package : vim-9.2.0219-1.1.src
- Upstream URL   : https://www.vim.org/
- Summary        : Vi IMproved
- Description    :
-     Vim (Vi IMproved) is an almost compatible version of the UNIX editor
-     vi. Almost every possible command can be performed using only ASCII
-     characters. Only the 'Q' command is missing (you do not need it). Many
-     new features have been added: multilevel undo, command line history,
-     file name completion, block operations, and editing of binary data.
- ----
-
-----
+-----
 
 [IMPORTANT]
 ====
-In this example, the command source block and its output in the listing block are embedded in an ordered list item.
-This is accomplished by appending the preceding line with a space and plus symbol (` +`).
+In this example, the plus symbol ( `+` ) is used to connect these blocks.
 This ensures that list indentation is preserved for the two blocks.
 
-See <<Continuation>> for more on this topic.
+See <<continuation>> for more on this topic.
 ====
 
 
@@ -517,39 +516,36 @@ See <<Continuation>> for more on this topic.
 
 Imagine that you need to illustrate several commands that reference the same, long, and complex argument,  such as a file name.
 Each time you type the argument, you risk making a typo.
-And, if you ever had to update the argument in a future revision of your document, you would have to do so everywhere it appears.
+And, if you ever had to update the argument in a future revision of your document, you would have to do so everywhere the file name appears.
 
-This is a perfect use for a variable (document attribute).
-However, listing and source code blocks are verbatim.
-So AsciiDoc directives and document attributes are ignored inside them.
+This is a perfect use for a variable (document attribute), but listing and source code blocks are verbatim.
+This means that the variable name is rendered instead of its value.
+Fortunately, you can overcome this with the `subs` block attribute.
 
-Fortunately, AsciiDoc provides a mechanism in the form of customized substitutions.
-This is accomplished by setting the `subs` attribute for a block.
+Consider this simple example:
 
-Consider the simple example below.
-
-In your vars file, define the variable you wish to use in a command example:
+In your vars file, define a variable:
 
 [source, asciidoc]
 ----
- // attribute in your vars file
- :myPath: /home/geeko/myproject/
+// attribute in your vars file
+:myPath: /home/geeko/myproject/
 ----
 
-In your main content file, you then reference it inside a code block:
+In your main content file, reference the inside a code block:
 
 [source, asciidoc]
-----
+-----
 
 // attribute referenced in source code block
- [source, console, subs="attributes+"]
- ----
+[source, console, subs="attributes+"]
+----
 
-  tree {myPath}
-
- ----
+tree {myPath}
 
 ----
+
+-----
 
 By including `subs="attributes+"`, this is rendered as:
 
@@ -561,19 +557,36 @@ tree {myPath}
 :!myPath:
 
 
-As in this example, `subs="attributes+"` is the most common substitution in {trd-alt}.
-You can learn about others in {asciidoc-docs}subs/apply-subs-to-blocks/[AsciiDoc Docs: Customize the Substitutions Applied to Blocks].
-
-
 [CAUTION]
 ====
-Attribute substitution can be tricky.
-The AsciiDoc rendering engine has no way of knowing if curly braces enclosing text in your code should be treated literally or substituted with the value of a variable you have defined.
+Attribute substitution can be tricky and can have unintended consequences.
+
+
+
+[source, asciidoc]
+-----
+
+Determine your current display server type by issuing the following command:
++
+[source, bash, subs="attributes+"]
+----
+cat ${XDG_SESSION_TYPE}
+----
+
+-----
+
+In this example,
+
+
 
 In Bash, for instance, it is common to reference variables as `$\{myVariable\}`.
 It may be important for `$\{myVariable\}` to appear in your code as-is.
-However, if attribute substitutions are enabled, the rendering engine will try to find a variable, named `myVariable`, and substitute its value.
-If there is no defined variable, the render would fail.
+If attribute substitutions are enabled, the rendering engine will try to find a variable, named `myVariable`, and substitute its value.
+This either fails (the variable is not defined) or an unwanted value is substituted for the variable.
+
+
+The AsciiDoc rendering engine curly braces enclosing text in your code should be treated literally or substituted with the value of a variable you have defined.
+
 
 One way to solve this is to not use the `subs="attributes+"` option.
 If you do need some substitutions but not others, you may be able to use {asciidoc-docs}subs/prevent/[escaping] to let the rendering engine know your intentions.
@@ -583,20 +596,20 @@ For example, by simply placing a backslash (`\`) just before each of the curly b
 Here is an example:
 
 [source, asciidoc]
+-----
+
+:myPrompt: geeko@mangrove.lane:~/myproject:
+
+[source, console, subs="attributes+"]
 ----
 
- :myPrompt: geeko@mangrove.lane:~/myproject:
-
- [source, console, subs="attributes+"]
- ----
-
- {myPrompt} echo "My stored value is $\{myVariable\}."
-
- ----
+{myPrompt} echo "My stored value is $\{myVariable\}."
 
 ----
 
-With `myPrompt` defined in your document, this code block would render as:
+-----
+
+This code block renders as:
 
 :myPrompt: geeko@mangrove.lane:~/myproject:
 [source, console, subs="attributes+"]
@@ -606,6 +619,9 @@ With `myPrompt` defined in your document, this code block would render as:
 :!myPrompt:
 
 ====
+
+
+For more on substitutions, see {asciidoc-docs-subs}[Asciidoctor Docs: Customize the Substitutions Applied to Blocks].
 
 
 
@@ -721,6 +737,7 @@ Thus, to display the image, `media/src/svg/my-tuxy-architecture.svg` at 75 perce
 ----
 
 
+[[continuation, Continuation]]
 === Continuation
 
 Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of an AsciiDoc document.
