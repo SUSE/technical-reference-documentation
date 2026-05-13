@@ -435,7 +435,7 @@ plt.show()
 The key elements of the source block are:
 
 * the explicit block style and language designation (`[source, python]`) +
-The style designation identifies the block as a source code block containing the specified programming language. +
+The style designation identifies the block as a verbatim block containing source code in the specified programming language. +
 Some common source language identifiers are: bash, c, html, python, sql, yaml, and xml.
 
 * the delimiter (`----`) +
@@ -626,18 +626,18 @@ For more on substitutions, see {asciidoc-docs-subs}[Asciidoctor Docs: Customize 
 
 As with commands on the command line, you may need to reference named elements of an application's graphical user interface (GUI).
 Use a double underscore ( `__` ) to delimit each element.
-If providing a series of element selections, separate each element with the greater than symbol ( `>` ).
+If providing a series of element selections, separate each element with the greater than symbol ( `>` ) preceded and followed by a space.
 
 [source, asciidoc]
 ----
 
- . Open _myfile_.
+. Open _myfile_.
 
- .. Click __File__ > __Open__.
+.. Click __File__ > __Open__.
 
- .. Select _myfile_ from the list.
+.. Select __myfile__ from the list.
 
- .. Click __Open__.
+.. Click __Open__.
 
 ----
 
@@ -656,64 +656,87 @@ A common type of URI is the familiar {wiki-url}[Uniform Resource Locator] (URL) 
 link text::
 This is the text you wish the reader to see (typically in place of the URI) and be able to click to open the remote resource in an appropriate application (such as a Web browser).
 
-The AsciiDoc processor detects common URL protocols, including HTTP, HTTPS, FTP, IRC, and MAILTO.
-That is, if you include a URL ( such as {trd-portal} ) in your text, it will be rendered as a link with the URL itself as the link text.
-However, the preference is to use custom link text in place of the URL.
+The AsciiDoc rendering engine detects common URL protocols, including HTTP, HTTPS, FTP, IRC, and MAILTO.
+These are then rendered as a clickable link with the URL itself as the link text.
 
-To use custom link text, append the text to the URL enclosed in square brackets (`[` and `]`).
+For best practices, use custom link text in place of the URL.
+To do this, append the URL with the desired text enclosed in square brackets (`[` and `]`).
 
 For example:
 
 [source, asciidoc, subs="attributes+"]
 ----
 
- Visit {trd-portal}[SUSE Documentation: {trd-alt}] to continue your learning journey.
+Manage your subscriptions and support cases at the {scc-url}[{scc}].
 
 ----
 
-When rendered, this appears as:
+This is rendered as:
 
-Visit {trd-portal}[SUSE Documentation: {trd-alt}] to continue your learning journey.
+Manage your subscriptions and support cases at the {scc-url}[{scc}].
 
 
 [TIP]
 ====
-You can also use variables in links.
+You can minimize typos and simplify future updates by using variables in your links.
+
+Start by defining the variables you need in your vars file:
+
+[source, asciidoc]
+----
+
+:scc: SUSE Customer Center
+:scc-url: https://scc.suse.com
+
+----
+
+Then, reference them in your content file:
+
+[source, asciidoc]
+----
+
+Manage your subscriptions and support cases at the {scc-url}[{scc}].
+
+----
+
 ====
+
 
 
 === Images
 
 You can enhance your document with graphical content, such as diagrams, screenshots, logos, and more.
+
 In AsciiDoc, the most common way to insert an image is with a block image macro.
 This takes the form:
 
 [source, asciidoc]
 ----
 
- image::TARGET[ATTRIBUTES]
+image::TARGET[ATTRIBUTES]
 
 ----
 
 where:
 
-* `image::` designates the block image macro.
+* `image::` informs the rendering engine that this is a block image macro.
 
-* `TARGET` is typically is your target image file.
+* `TARGET` specifies your target image file.
 +
 --
-AsciiDoc supports many image formats, but https://www.w3.org/Graphics/SVG/[Scaled Vector Graphics] (SVG) and https://en.wikipedia.org/wiki/PNG[Portable Network Graphics] (PNG) are preferred.
+AsciiDoc supports many image formats, but {svg-url}[Scaled Vector Graphics] (SVG) and {png-url}[Portable Network Graphics] (PNG) are preferred.
 
 Place your image files in the appropriate subdirectory of `media/src` by type.
-For example, if you are using a SVG file for a diagram, it would be located in `media/src/svg`.
-If you do this, you do not need to specify the path to the file.
+For example, if you use an SVG file for a diagram, place it in `media/src/svg`.
+Likewise, if you use a PNG for a screenshot, place it in `media/src/png`.
+By properly locating these files in this directory structure, you do not need to specify the file paths to reference them.
 --
 
 * `[ATTRIBUTES]` is a comma-delimited list of attributes, as key=value pairs.
 //
 +
 --
-The most common attributes you will use include:
+The attributes you should include with every image:
 
 * _alt text_: alternate text that briefly identifies the image.
 It is useful for text-to-speech readers and situations when the image cannot be displayed.
@@ -723,31 +746,36 @@ This is typically specified as a percentage of the content width (area between m
 
 * _align_: suggest horizontal alignment for the image (that is, left, center, and right).
 --
++
+Optionally, with the __title__ attribute, you can include an image title that is displayed below the image.
 
-Thus, to display the image, `media/src/svg/my-tuxy-architecture.svg` at 75 percent of the page width and centered horizontally, you would use:
+Thus, you could display the image, `media/src/png/tuxy-ui-dashboard.png` at 75 percent of the page width and centered horizontally with:
 
 [source, asciidoc]
 ----
 
- image::my-tuxy-architecture.svg[Tuxy Architecture, scaledwidth="75%", align="center"]
+image::tuxy-ui-dashboard.png[title="Tuxy UI Dashboard", Tuxy UI Dashboard, scaledwidth="75%", align="center"]
 
 ----
 
+See {asciidoc-docs-images}[AsciiDoc Docs: Images] for further details.
 
-[[continuation, Continuation]]
-=== Continuation
+
+
+[[continuation, List continuation]]
+=== List continuation
 
 Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of an AsciiDoc document.
-
 The most common type of block is a paragraph, which is a contiguous set of lines of text, bounded by one or more blank lines.
 Some other block elements are sections, lists, tables, image macros, listing blocks, source blocks, and admonitions.
 
-[TIP]
-====
-Blocks should always be bounded by an empty line (or document boundary), except when "attached" using list continuation.
-====
+When describing procedures in technical documentation, it is
 
-{asciidoc-docs}lists/continuation/#list-continuation[List continuation] (explicitly denoted by a plus symbol (`+`) by itself on the line between two blocks) can be used to join two adjacent blocks together.
+{asciidoc-docs-continuation}[List continuation] refers to attaching a block to a list item
+
+
+is explicitly denoted by a plus symbol ( `+` ), appearing by itself on the line between two blocks.
+ can be used to join two adjacent blocks together.
 The most common use for this is to allow a list item to contain one or more blocks, ensuring alignment of elements.
 
 Consider the example AsciiDoc code below.
@@ -807,7 +835,7 @@ man zypper
 ----
 ====
 
-Notice that the code block and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
-As a bonus, there is a source code block inside and properly aligned with `TIP` admonition.
+Notice that the      and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
+As a bonus, there is a source block inside and properly aligned with `TIP` admonition.
 
 By understanding blocks and continuation, you can create complex and beautifully rendered documents.
