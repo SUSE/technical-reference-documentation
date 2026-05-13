@@ -1,0 +1,780 @@
+:docinfo:
+
+include::./common_docinfo_vars.adoc[]
+
+include::./gs_suse-virtualization_netapp-trident_iscsi-vars.adoc[]
+
+[#art-{article-id}]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Reference Configuration
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+= {title}: {subtitle}
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Introduction
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+{svirt-brand} is a cloud-native virtualization platform that unifies virtual machine (VM) and container management, streamlining operations, and boosting efficiency with a single, cohesive platform for hybrid cloud infrastructure.
+{ontap-brand} delivers unified data management, allowing you to manage, protect, and move data across your hybrid environment.
+By leveraging {trident-brand}, you can deliver high-performance storage for virtual machines (VMs) hosted in your {svirt-brand} environment.
+
+
+=== Scope
+
+This guide covers the detailed steps required for setting up a three-node {svirt-long} cluster to consume {ontap-provider} storage.
+It includes steps for LUN provisioning, multipath configuration, {trident} installation, StorageClass definition, and basic validation.
+
+
+=== Audience
+
+This guide is intended for IT professionals responsible for virtualization and infrastructure management, such as infrastructure architects, systems administrators, or platform engineers.
+
+To successfully follow this guide, you should have:
+
+* Familiarity with {svirt-long} deployment and configuration
+* Experience with {ontap-provider} storage provisioning and management
+* Understanding of iSCSI concepts and configuration
+* Working knowledge of Kubernetes
+
+
+
+////
+These individuals are named as authors, so they do not need to be named here.
+If you prefer to list these individuals here, remove them from the author metadata tags.
+
+=== Acknowledgments
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Contributors
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The authors wish to acknowledge the contributions of the following individuals:
+
+* Martin George
+* Arun Kumar C
+////
+
+
+=== Prerequisites
+
+You will need the following, minimum resources to implement the described integration:
+
+* *{svirt-long} cluster* with at least three nodes for high availability
+//
++
+{svirt-website}[{svirt-long}] is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes.
+It is an open source alternative designed for operators seeking a cloud-native HCI solution. {svirt} runs on bare metal servers and provides integrated virtualization and distributed storage capabilities.
++
+See {svirt-docs-reqs}[{svirt}: Hardware and Network Requirements] and {trident-docs-reqs}[{trident}: Requirements] for more details.
+//
++
+This guide applies to {svirt-long} v{svirt-version1} and newer.
+
+* *{ontap-long} storage*
+//
++
+{ontap-website}[{ontap-long}] intelligent data infrastructure must be available and accessible by the {svirt-long} cluster nodes over a network.
+//
++
+This guide applies to {ontap} {ontap-version1} and newer.
+
+* *{trident-long} CSI driver*
+//
++
+{trident-docs}[{trident}] is an open source storage provisioner and orchestrator maintained by {trident-provider} that enables you to create storage volumes for containerized applications in Kubernetes.
+//
++
+This guide applies to {trident} {trident-version1} and newer.
+
+* *Administrative access:* Ensure that you have administrative access to the {svirt} UI and the underlying Kubernetes cluster to apply configurations and manage resources.
+//
++
+See {svirt-docs-faq}[{svirt}: Troubleshooting FAQ].
+
+
+
+== Architecture
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Architecture
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The diagram below illustrates the basic architecture for {svirt-long} integrated with {ontap-long} storage.
+
+image::architecture_diagram.png[title="Architecture: {svirt-long} with {ontap-long} and {trident}", scaledwidth="90%", align="center"]
+
+The key components of the solution are:
+
+* *{svirt-long}* is the cloud native solution that provides unified and streamlined orchestration for VMs and containers.
+Built on Kubernetes, {svirt} delivers a flexible, scalable, and resilient infrastructure platform for all of your workloads.
+
+* *{ontap-long}* data management software powers {ontap} storage systems.
+With a global namespace that supports up to 24 hardware nodes of all types, {ontap} software supports unified storage (block and file), enabling significant workload consolidation that you can manage using the {ontap} System Manager GUI.
+In this solution, {ontap} is used to provision iSCSI LUNs on the {ontap} storage back-end.
+
+* *{trident-long}* is a Container Storage Interface (CSI) that delivers dynamic storage orchestration and natively integrates with Kubernetes.
+{trident} enables consumption and management of storage resources across all popular {trident-provider} storage platforms, in the public cloud or on-premises.
+{trident} runs as a single controller pod and a node pod on each worker node in the cluster.
+
+
+When deployed together in the illustrated configuration, {svirt} nodes connect over the iSCSI protocol to {ontap-long} storage using the {trident} CSI.
+High availability storage access is available when the cluster environment is configured with multipath support.
+
+
+== Deployment
+
+This section provides practical guidance for deploying a functional, proof-of-concept implementation of the solution with additional considerations for scaling to production.
+
+For deployment purposes, the solution can be illustrated as a layered stack.
+The deployment process consists of installing and configuring each layer of this stack, typically from bottom (compute platform) to top (software applications).
+Guidance for deploying each layer of the solution are provided in the following sections.
+
+
+=== Preparing the compute platform
+
+. Ensure each node meets minimum {svirt-docs-reqs}[hardware requirements].
++
+[NOTE]
+====
+Be sure hardware virtualization (VT-x/AMD-V) is enabled on each node.
+====
+
+. Deploy the nodes, storage, and network as illustrated in the architecture diagram.
+
+
+=== Deploying {svirt-long}
+
+. Install a {svirt} high-availability cluster onto the compute platform.
+//
++
+See {svirt-docs-overview}[official documentation] for detailed guidance.
+
+. After deployment, confirm you have access to the cluster through the {svirt} UI and CLI.
+For tips, see {svirt-docs-authentication}[{svirt}: Authentication] and {svirt-docs-faq}[{svirt}: Troubleshooting - FAQ].
+
+
+=== Configuring iSCSI
+
+Use CloudInit to create a persistent configuration of the iSCSI initiator.
+
+. Define the configuration of the iSCSI initiator.
+
+.. Create the `01_iscsi_ip.yaml` CloudInit resource file listed below in the `/oem` directory on each cluster node.
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: iscsi-ip-config
+spec:
+  matchSelector: {}
+    kubernetes.io/hostname: harvester-node-1 # Replace with actual hostname
+  filename: 01_iscsi_ip.yaml
+  contents: |
+    stages:
+      initramfs:
+        - name: "Configure iSCSI network interfaces"
+          files:
+            - path: /etc/NetworkManager/system-connections/iscsi-path1.nmconnection
+              owner: 0
+              group: 0
+              permissions: 0600
+              content: |
+                [connection]
+                id=iscsi-path1
+                type=ethernet
+                interface-name=eno3np0
+                autoconnect=true
+                [ipv4]
+                method=manual
+                addresses=192.168.100.87/24 # Replace the IP address
+                never-default=true
+            - path: /etc/NetworkManager/system-connections/iscsi-path2.nmconnection
+              owner: 0
+              group: 0
+              permissions: 0600
+              content: |
+                [connection]
+                id=iscsi-path2
+                type=ethernet
+                interface-name=eno4np1
+                autoconnect=true
+                [ipv4]
+                method=manual
+                addresses=192.168.200.87/24 # Replace the IP address
+                never-default=true
+----
+
+
+.. Apply the configuration on each node.
++
+[source, console]
+----
+kubectl apply -f 01_iscsi_ip.yaml
+----
+
+.. Verify the iSCSI initiator is deployed.
++
+[source, console]
+----
+kubectl get cloudinit
+NAME               AGE
+iscsi-ip-config    20s
+
+----
+
+. Enable the iSCSI service daemon.
+
+.. Create `99_iscsid.yaml` in the `/oem` directory any node.
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: iscsid-start
+spec:
+  matchSelector: {}
+  filename: 99_iscsid.yaml
+  contents: |
+    stages:
+      network:
+        - name: "Enable and start iscsid"
+          systemctl:
+            enable:
+              - iscsid
+            start:
+              - iscsid
+----
+
+
+.. Apply the configuration.
++
+[source, console]
+----
+kubectl apply -f 99_iscsid.yaml
+----
+
+.. Verify the status of `iscsid` on each node.
++
+[source, console]
+----
+systemctl status iscsid
+----
++
+[listing]
+----
+● iscsid.service - Open-iSCSI
+     Loaded: loaded (/usr/lib/systemd/system/iscsid.service; disabled;)
+     Active: active (running) since Fri 2026-03-27 20:59:47 IST; 8s ago
+TriggeredBy: ● iscsid.socket
+       Docs: man:iscsid(8)
+             man:iscsiuio(8)
+             man:iscsiadm(8)
+   Main PID: 27651 (iscsid)
+     Status: "Ready to process requests"
+      Tasks: 1
+        CPU: 3ms
+     CGroup: /system.slice/iscsid.service
+             └─27651 /sbin/iscsid -f
+
+Mar 27 20:59:47 docserver systemd[1]: Starting Open-iSCSI...
+Mar 27 20:59:47 docserver systemd[1]: Started Open-iSCSI.
+
+----
+
+// === Provision a LUN from and map it to cluster
+//
+// . Log in to the NetApp ONTAP System Manager.
+//
+// . Create a new LUN and assign it to an iSCSI initiator group containing the {svirt-long} nodes' IQNs.
+//
+// . Note the following information:
+// +
+// --
+// * LUN path
+// * Target IQNs
+// * iSCSI portal IPs
+// --
+
+
+=== Enabling Multipath
+
+. Create a CloudInit resource to auto-start the multipath daemon (`multipathd`) as shown below.
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: multipathd-config
+spec:
+  matchSelector: {}
+  filename: 99_multipathd.yaml
+  contents: |
+    stages:
+      network:
+        - name: "Configure multipath.conf"
+          files:
+            - path: /etc/multipath.conf
+              permissions: 0644
+              owner: 0
+              group: 0
+              content: |
+                defaults {
+                    find_multipaths no
+                    user_friendly_names yes
+                }
+                blacklist {
+                    device {
+                        vendor ".*"
+                        product ".*"
+                    }
+                }
+                blacklist_exceptions {
+                    device {
+                        vendor "NETAPP"
+                        product "LUN"
+                    }
+                }
+        - name: "Enable and start multipathd"
+          systemctl:
+            enable:
+              - multipathd
+            start:
+              - multipathd
+----
+
+. Apply the configuration on any node.
++
+[source, console]
+----
+kubectl apply -f 99_multipathd.yaml
+----
+
+
+. Verify the status of `multipathd`.
++
+[source, console]
+----
+systemctl status multipathd
+----
++
+[listing]
+----
+● multipathd.service - Device-Mapper Multipath Device Controller
+     Loaded: loaded (/usr/lib/systemd/system/multipathd.service; disabled;)
+     Active: active (running) since Fri 2026-03-27 21:01:08 IST; 11s ago
+TriggeredBy: ○ multipathd.socket
+   Main PID: 28854 (multipathd)
+     Status: "up"
+      Tasks: 7
+        CPU: 18ms
+     CGroup: /system.slice/multipathd.service
+             └─28854 /sbin/multipathd -d -s
+
+Mar 27 21:01:08 docserver systemd[1]: Starting Device-Mapper Multipath Device Controller...
+Mar 27 21:01:08 docserver multipathd[28854]: multipathd v0.10.2+122+suse.51e02cc: start up
+----
+
+
+=== Deploying the {trident} CSI
+
+. Prepare the worker nodes.
++
+Before installing {trident-long}, ensure that each {svirt-long} node meets the prerequisites for Kubernetes storage integration.
+Follow the official {trident-provider} documentation for {trident-docs-worker-prep}[Worker Node Preparation for {trident} CSI].
+
+. Create a Kubernetes secret for your {ontap-long} storage controller credentials.
++
+[source, console]
+----
+kubectl create secret generic ontap-secret -n trident \
+  --from-literal=username=admin \
+  --from-literal=password='YourPassword'
+----
+
+. Install {trident-long}.
+//
++
+The preferred installation method uses `tridentctl`, which is demonstrated in the following steps.
+Be sure to check the {trident-docs-install}[{trident-provider} {trident} Installation Guide] for the latest details about obtaining and using `tridentctl`.
+
+.. Download the `trident-install` package.
++
+[source, console, subs="attributes+"]
+----
+wget {trident-installer-url}
+----
+
+.. Extract the `trident-install` and associated files.
++
+[source, console, subs="attributes+"]
+----
+tar -xzf {trident-installer-file}
+----
+
+.. Change to the extracted directory.
++
+[source, console, subs="attributes+"]
+----
+cd trident-installer
+----
+
+.. Initiate the installation.
++
+[source, console, subs="attributes+"]
+----
+./tridentctl install -n trident
+----
+
+.. Verify that all {trident} pods are in the `Running` state.
++
+[source, console]
+----
+kubectl get pods -n trident
+----
++
+[listing]
+----
+NAME                                      READY   STATUS    RESTARTS   AGE
+trident-controller-5dd5f9df49-xkp7t       6/6     Running   0          2m37s
+trident-node-linux-7qmcw                  2/2     Running   0          2m37s
+trident-node-linux-9k4xr                  2/2     Running   0          2m37s
+trident-node-linux-zhx9n                  2/2     Running   0          2m37s
+----
+
+
+. Configure the {trident} back-end.
+
+.. Create a back-end configuration file, `ontap-backend.json` as below.
++
+[source, json]
+----
+{
+  "version": 1,
+  "storageDriverName": "ontap-san",
+  "managementLIF": "10.10.10.50",
+  "dataLIF": "192.168.100.10",
+  "svm": "harvester_svm",
+  "username": "admin",
+  "password": "YourPassword",
+  "igroupName": "harvester_igroup"
+}
+----
+
+.. Apply the back-end.
++
+[source, console]
+----
+./tridentctl create backend -f ontap-backend.json -n trident
+----
+
+.. Validate the back-end.
++
+[source, console]
+----
+./tridentctl get backend -n trident
+----
++
+[listing]
+----
++----------------+----------------+----------+--------+------------+---------+
+| NAME           | STORAGE DRIVER | UUID     | STATE  | USER-STATE | VOLUMES |
++----------------+----------------+----------+--------+------------+---------+
+| ontapsan_XXXXX | ontap-san      | xxxxxxxx | online | normal     |       0 |
++----------------+----------------+----------+--------+------------+---------+
+----
+
+
+=== Defining the NetApp StorageClass and SnapshotClass
+
+. Create the NetApp StorageClass.
+
+.. Create a file, named `netapp-storageclass.yaml`, as shown below.
++
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: netapp-storageclass
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: csi.trident.netapp.io
+parameters:
+  fsType: ext4
+  backendType: "ontap-san"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+----
+
+.. Apply the StorageClass.
++
+[source, console]
+----
+kubectl apply -f netapp-storageclass.yaml
+----
+
+.. Verify that the StorageClass is available.
++
+[source, console]
+----
+kubectl get storageclass
+----
++
+[listing]
+----
+NAME            PROVISIONER            VOLUMEBINDINGMODE ALLOWVOLUMEEXPANSION
+netapp-storage  csi.trident.netapp.io  Immediate         true
+----
+
+
+. Create the NetApp SnapshotClass.
+
+.. Create a file, named `netapp-snapshotclass.yaml`, with the content below.
++
+[source, yaml]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: netapp-snapclass
+driver: csi.trident.netapp.io
+deletionPolicy: Delete
+----
+
+.. Apply the SnapshotClass.
++
+[source, console]
+----
+kubectl apply -f netapp-snapshotclass.yaml
+----
+
+.. Verify the that the SnapshotClass is deployed.
++
+[source, console]
+----
+kubectl get volumesnapshotclass
+----
++
+[listing]
+----
+NAME               DRIVER                  DELETIONPOLICY   AGE
+netapp-snapclass   csi.trident.netapp.io   Delete           6s
+----
+
+
+=== Registering the {trident-provider} CSI driver in {svirt-long}
+
+. Log in to the {svirt-long} UI.
+
+. Go to __Advanced__ > __Settings__ > __csi-driver-config__.
+
+. Click __Edit Setting__.
+
+. Set the provisioner to `csi.trident.netapp.io`.
+
+. Click __Save__.
+
+. Configure the {trident-provider} CSI driver as the default StorageClass.
+
+.. Unset Longhorn as the default StorageClass.
++
+[source, console]
+----
+kubectl patch storageclass harvester-longhorn \
+  -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+----
+
+.. Set the {trident-provider} CSI driver as the default StorageClass.
++
+[source, console]
+----
+kubectl patch storageclass netapp-storageclass \
+  -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+----
+
+
+== Validation
+
+Verify that you can create a virtual machine configured with the {trident-provider} StorageClass and which is backed by {ontap-long} iSCSI storage.
+
+
+=== Creating a VM
+
+. Log in to the {svirt} UI.
+
+. Navigate to __Virtual Machines__ and click __Create__.
+
+. Select a namespace for your VM.
++
+[NOTE]
+====
+Only the `harvester-public` namespace is visible to all users by default.
+====
+
+. Provide a name for your VM.
+
+. (Optional) Select a VM template (for example, `iso-image`, `raw-image`, `windows-iso-image`) to speed up provisioning.
+
+. On the __Basics__ tab, configure the following settings:
++
+--
+* __CPU__: 2
+* __Memory__: 4 GB
+* __SSHKey__: Select an existing key or upload a new one (required if you need SSH access).
+* (Optional) __Overcommit configuration__: Set CPU, memory, and storage overcommit ratios to allow scheduling of additional VMs even when physical resources are fully used.
+* (Optional) __Other advanced settings__: Run strategy, OS type, or custom cloud-init data.
+--
+
+. On the __Volumes__ tab, select or add disks.
++
+[NOTE]
+====
+One writable root disk is created by default.
+====
+
+.. Click __Add Disk__ and select `cd-rom` as the disk type.
+
+.. Select the ISO image you uploaded and set its boot order to `1`.
+
+.. Choose the StorageClass named `netapp-storageclass`, which is provisioned by {trident}.
+
+.. For the root disk, select the `netapp-storageclass` StorageClass and specify the desired size.
+
+
+. The management network is added by default.
+//
++
+You can remove it if using VLAN networks.
+Optionally, you can add additional interfaces (`VLAN`, `bridge`, `masquerade`).
+
+. Review all settings and click __Create__ to deploy the VM.
+
+
+=== Verifying the VM Storage
+
+You can use the {svirt} UI or CLI to verify that the VM is backed by {trident-provider} CSI and the {ontap} iSCSI back-end.
+
+==== Verifying with the {svirt} UI
+
+. Open __Virtual Machines__ > __<Your VM>__ > __Volumes__.
+
+. Confirm that the attached disk is using the `netapp-storageclass` StorageClass.
+
+
+==== Verifying with the {svirt} CLI
+
+. Log in to the {svirt} management node CLI as `root`.
+
+. List the PersistentVolumeClaims (PVCs) in the VM’s namespace.
++
+[source,console]
+----
+kubectl get pvc -n <namespace>
+----
+
+. Confirm that the *STORAGECLASS* column shows `netapp-storageclass`.
+
+
+
+== Summary
+
+Organizations are accelerating their digital transformation by modernizing applications and infrastructure, transitioning from traditional, virtual machine environments to modern, cloud-native platforms powered by Kubernetes.
+{svirt-long} delivers a unified and flexible platform that allows organizations to seamlessly run both virtual machine (VM) and container workloads side-by-side on the same infrastructure.
+
+{trident-long} extends this capability by providing enterprise-grade, dynamic storage provisioning for Kubernetes and {svirt} clusters.
+Through its integration with {ontap-long}, {trident} enables resilient, scalable, and efficient iSCSI-based storage for mission-critical workloads, ensuring consistent performance, automation, and data protection across hybrid environments.
+
+This guide details the steps to configure and validate the integration of {svirt-long} with {trident-long} and {ontap-long}, showcasing how enterprises can build a consistent, automated, and production-ready virtualization environment.
+
+
+Dive into the product documentation to continue your learning journey:
+
+* {svirt-docs}[{svirt-long} documentation]
+* {trident-docs}[{trident-long} documentation]
+* {ontap-docs}[{ontap-long} documentation]
+
+
+For further guidance on how to modernize and optimize your IT infrastructure, contact your {svirt-provider} or {ontap-provider} representative or e-mail {svirt-provider} at {suse-isv-email}.
+
+
+== Frequently Asked Questions (FAQ)
+
+. *What is the role of {trident} CSI in the {svirt} environment?*
++
+--
+{trident-long} acts as a Container Storage Interface (CSI) driver that integrates {ontap-provider} storage with Kubernetes-based platforms such as {svirt-long}.
+
+It enables dynamic provisioning of persistent storage volumes for virtual machines and containers using {ontap-long} storage systems.
+--
+
+. *Why is multipath configuration required for {ontap-provider} iSCSI storage?*
++
+--
+Multipath provides high availability and redundancy for storage connections.
+
+When multiple network paths exist between {svirt} nodes and the {ontap-provider} storage system, multipath ensures that:
+
+* Storage traffic can fail over automatically if a path becomes unavailable.
+* Performance is improved through path load balancing.
+* Storage access remains uninterrupted during network or interface failures.
+--
+
+. *Why must the `netapp-storageclass` be configured as the default StorageClass?*
++
+--
+Setting `netapp-storageclass` as the default ensures that newly created volumes automatically use {ontap-provider}-backed storage unless another StorageClass is explicitly selected.
+
+This simplifies VM provisioning and guarantees that persistent volumes are dynamically created through {trident} using the {ontap-long} back-end.
+--
+
+. *Can you deploy the {trident} CSI using methods other than `tridentctl`?*
++
+--
+Yes. While using `tridentctl` is the recommended installation method, {trident} can also be deployed using Helm charts.
+
+Helm-based deployment is useful when you manage Kubernetes applications through a package management workflow.
+--
+
+. *Can {svirt-long} run both virtual machines and container workloads?*
++
+--
+Yes. {svirt} supports running virtual machines and Kubernetes workloads on the same infrastructure.
+
+This unified platform simplifies operations and allows organizations to modernize applications while maintaining existing VM-based workloads.
+--
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+:leveloffset: 0
+
+== Legal notice
+
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+:leveloffset: 0
+
+include::common_gfdl1.2_i.adoc[]
+
+//end

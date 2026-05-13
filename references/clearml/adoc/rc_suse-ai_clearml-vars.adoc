@@ -1,0 +1,404 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: rc-suseai-clearml
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+//-
+:rev2-date: 2026-04-01
+:rev2-description: Updated architecture diagram
+
+:rev1-date: 2026-03-17
+:rev1-description: Original version
+:docdate: {rev2-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components,
+//   such as full product names, versions, websites, documentation
+//   URLs, and so on.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Each component can have a series of variables that follow a
+//   simple pattern:
+//     compX[-MODIFIER]
+//   where:
+//     compX is a short name for the component.
+//       You can use something generic, such as:
+//       'comp3', 'os', 'server', 'gpu', and so on.
+//       Or, you can use a more specific variable name, such as:
+//       'sles', 'rancher', 'portworx', 'powerflex', etc.
+//     -MODIFIER is text that identifies the stored information.
+//       Some MODIFIER values include:
+//         - provider: Name of company or project providing the component
+//             (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//         - long: The full name of the product.
+//             (e.g., 'SUSE Rancher Prime', 'Portworx Enterprise by Pure Storage')
+//         - version1: The relevant product version referenced in
+//             the document (e.g., '15 SP7', '3.2.4', 'v1.7.1')
+//             If additional product versions are called out in the
+//             document, record them in separate variables
+//             (e.g., '-version2', '-version3')
+//             NOTE: Documents are often created around a single version
+//                   with sufficient certainty that certain later versions
+//                   will work.
+//                   This can be called out with text like,
+//                   "{comp1-version1} and later."
+//         - website: Product website (e.g., https://www.suse.com/products/server/)
+//         - docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//             It can also be useful to form variables for specific sections in
+//             a component's documentation.
+//             For example, you could link to the section for creating a VM
+//             in SUSE Virtualization with:
+//             :svirt-docs-createvm: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/virtual-machines/create-vm.html
+//
+//   You can create your own modifiers to fit your needs.
+//
+// IMPORTANT: The 'comp1', 'comp2' examples provided here are also
+//            used in the docinfo file.
+//            If you use different variable names or additional
+//            components in your solution, you will need to edit
+//            the docinfo file to reflect this.
+// -
+
+// ---SUSE variables ------
+:sai-provider: SUSE
+:sai-brand: SUSE® AI
+:sai-long: SUSE AI
+:sai: {sai-long}
+:sai-version: 1.0
+:sai-website: https://www.suse.com/products/ai/
+:sai-docs: https://documentation.suse.com/suse-ai/{sai-version}/
+:sai-templates: {sai-docs}html/AI-deployment/index.html#ai-library-installing
+:sai-reqs: {sai-docs}html/AI-requirements/index.html
+:sai-deployment: {sai-docs}html/AI-deployment/index.html
+:sai-monitoring: {sai-docs}html/AI-monitoring/index.html
+:sai-deployer: {sai-docs}html/AI-deployment/index.html#ailibrary-installing-deployer
+
+:scn-docs-root: https://documentation.suse.com/cloudnative/
+
+:rke2-provider: SUSE
+:rke2-brand: SUSE® Kubernetes Engine (RKE2)
+:rke2-long: SUSE RKE2
+:rke2: RKE2
+:rke2-version:
+:rke2-docs-root: {scn-docs-root}rke2/latest/en/
+:rke2-docs-intro: {rke2-docs-root}introduction.html
+// SUSE does not have a proper product page for RKE2 at time of publication; use intro in docs
+:rke2-website: {rke2-docs-intro}
+:rke2-docs-reqs: {rke2-docs-root}install/requirements.html
+:rke2-docs-ports: {rke2-docs-root}install/requirements.html#_networking
+:rke2-install-methods: {rke2-docs-root}install/methods.html
+:rke2-install-quickstart: {rke2-docs-root}install/quickstart.html
+:rke2-install-ha: {rke2-docs-root}install/ha.html
+:rke2-linux-agent-install: {rke2-docs-root}install/quickstart.html#_linux_agent_worker_node_installation
+:rke2-windows-agent-install: {rke2-docs-root}install/quickstart.html#_windows_agent_worker_node_installation
+
+
+:srancher-provider: SUSE
+:srancher-brand: SUSE® Rancher Prime
+:srancher-long: SUSE Rancher Prime
+:srancher: SUSE Rancher
+:srancher-website: https://www.suse.com/products/rancher/
+:srancher-docs-root: {scn-docs-root}rancher-manager/latest/en/
+:srancher-docs-node-reqs: {srancher-docs-root}cluster-deployment/node-requirements.html
+:srancher-dep-strategy: {srancher-docs-root}installation-and-upgrade/best-practices/deployment-strategy.html
+:srancher-docs-best-practices: {srancher-docs-root}installation-and-upgrade/best-practices/best-practices.html
+:srancher-docs-tips: {srancher-docs-root}installation-and-upgrade/best-practices/tips-for-running-rancher.html
+:srancher-docs-installing: {srancher-docs-root}installation-and-upgrade/installation-and-upgrade.html
+//:srancher-docs: {scn-docs-root}rancher-manager/
+//:srancher-doc: https://rancher.com/docs/rke/latest/en/
+:srancher-support-matrix: https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/
+//:rancher-release: https://github.com/rancher/rke/
+//:rancher-ports: {srancher-docs}os/#ports
+// :rancher-example-yaml: {srancher-docs}example-yamls/
+// :rancher-example-config: {srancher-docs}config-options/
+
+
+:sles-provide: SUSE
+:sles-brand: SUSE® Linux Enterprise Server
+:sles-long: SUSE Linux Enterprise Server
+:sles: {sles-long}
+:sles-version: 16
+:sles-website: https://www.suse.com/products/server/
+:sles-docs: https://documentation.suse.com/sles/16.0/
+:sles-download: https://www.suse.com/download/sles/
+:sles-docs-agma-auto: {sles-docs}html/SLES-x86-64-agama-automated-installation/
+
+
+:sstorage-provider: SUSE
+:sstorage-brand: SUSE® Storage
+:sstorage-long: SUSE Storage
+:sstorage: {sstorage-long}
+:sstorage-version:
+:sstorage-website: https://www.suse.com/products/rancher/storage/
+:sstorage-docs: {scn-docs-root}storage/
+:sstorage-requirements: {sstorage-docs}latest/en/installation-setup/requirements.html
+:sstorage-installation: {sstorage-docs}latest/en/installation-setup/installation/installation.html
+
+
+:ssecurity-provide: SUSE
+:ssecurity-brand: SUSE® Security
+:ssecurity-long: SUSE Security
+:ssecurity: {ssecurity-long}
+:ssecurity-version:
+:ssecurity-website: https://www.suse.com/products/rancher/security/
+:ssecurity-docs: {scn-docs-root}security/
+:ssecurity-requirements: {ssecurity-docs}latest/en/requirements.html
+:ssecurity-rancher-deployment: {ssecurity-docs}latest/en/rancher.html
+
+:spr-provider: SUSE
+:spr-brand: SUSE® Private Registry
+:spr-long: SUSE Private Registry
+:spr: {spr-long}
+:spr-docs: {scn-docs-root}/suse-private-registry/html/private-registry/
+:spr-docs-intro: {spr-docs}pr-introduction.html
+// SUSE does not have a product page at time of publication; use documentation intro
+:spr-website: {spr-docs-intro}
+
+
+:scc-brand: SUSE® Customer Center
+:scc-long: SUSE Customer Center
+:scc: SCC
+:scc-website: https://scc.suse.com/
+
+:suse-yes-certification-program: https://www.suse.com/product-certification/yes-certified/
+:suse-yes-certification-process: https://www.suse.com/partners/ihv/yes/yes-certified-process
+:suse-yes-certified-bulletins: https://www.suse.com/yessearch/
+
+:smlm-brand: SUSE® Multi-Linux Manager
+:smlm-long: SUSE Multi-Linux Manager
+:smlm: {smlm-long}
+:smlm-website: https://www.suse.com/products/multi-linux-manager/
+
+:srmt-brand: SUSE® Remote Mirroring Tool
+:srmt-long: SUSE Remote Mirroring Tool
+:srmt: RMT
+:srmt-docs: https://documentation.suse.com/sles/15-SP7/html/SLES-all/book-rmt.html
+// SUSE does not have a product page at time of publication; use documentation
+:srmt-website: {srmt-docs}
+:suseconnect-docs: https://documentation.suse.com/sles/15-SP7/html/SLES-all/cha-register-sle.html#sec-register-sle-system-suseconnect
+//:suseconnect-kb: https://www.suse.com/support/kb/doc/?id=000018564
+:scaling: https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rke1-sles_hpe-proliant-synergy/id-glossary.html#g-scaling
+:availability: https://documentation.suse.com/trd/hpe/html/kubernetes_rc_rke1-sles_hpe-proliant-synergy/id-glossary.html#g-availability
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// ---- ClearML variables --------------
+
+:cml-provider: ClearML
+:cml-brand: ClearML
+:cml-long: ClearML
+:cml: {cml-long}
+:cml-version:
+:cml-website: https://clear.ml
+:cml-docs: https://clear.ml/docs/latest/docs/
+:cml-docs-webapp-config: {cml-docs}webapp/settings/webapp_settings_resource_configs/
+:cml-sdk-setup: {cml-docs}clearml_sdk/clearml_sdk_setup
+:cml-docs-idp: {cml-docs}user_management/identity_providers
+:cml-docs-pipeline: {cml-docs}pipelines/
+:cml-github: https://github.com/clearml/clearml/
+:cml-example: {cml-github}/tree/master/examples
+:cml-pytorch: {cml-github}blob/master/examples/frameworks/pytorch/pytorch_mnist.py
+:cml-dataset: {cml-github}blob/master/examples/hyperdatasets/finetune_qa_lora.py
+:cml-pipeline: {cml-github}blob/master/examples/pipeline/pipeline_from_decorator.py
+:cml-enterprise-helm-chart: https://raw.githubusercontent.com/clearml/clearml-enterprise-helm-charts/gh-pages
+:cml-override-file: clearml-values.override.yaml
+:cml-agent-override-file: clearml-agent-values.override.yaml
+:cml-gateway-override-file: clearml-app-gateway-values.override.yaml
+:cml-gpu-override-file: gpu-operator.override.yaml
+:cml-docs-control-plane-installation: {cml-docs}deploying_clearml/enterprise_deploy/k8s#installation
+:cml-docs-agent-installation: {cml-docs}clearml_agent/clearml_agent_deployment_k8s
+:cml-docs-application-gateway: {cml-docs}deploying_clearml/enterprise_deploy/appgw_install_k8s
+:cml-k8s-version-min: 1.23.0-0
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// ---- Other component variables --------------
+:kubectl-website: https://documentation.suse.com/cloudnative/rancher-manager/v2.13/en/rancher-admin/cli/kubectl.html
+:nvidia-gpu-operator-repo: https://nvidia.github.io/gpu-operator
+:letsencrypt-website: https://letsencrypt.org
+:certmanager: cert-manager
+:certmanager-version: v1.5.1
+:jupyter-website: https://jupyter.org
+:vscode-website: https://code.visualstudio.com
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title: (<75 characters) Concisely identify the subject of the document.
+//         (e.g.: "Deploying Kubeflow with SUSE Rancher Prime")
+// subititle: (<75 characters) Expound on the subject of the document.
+//             (e.g., "Validated solution design for Telco-native AI")
+// usecase: (<55 characters) Identify the use case or purpose of the
+//          documented solution.
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) Give a brief description of what this
+//              document is about.
+// description-social: (<55 characters) Condense the description to be
+//                     suitable for social media.
+// executive-summary: (<300 characters) Provide a brief summary of the
+//                    the document, typically with business case and
+//                    technical components.
+//                    This text appears near the beginning of the rendered
+//                    document.
+//
+// TIP: You can reference defined variables when defining new variables.
+//      For example:
+//        Say that you have defined above these component variables:
+//          :comp1-long : SUSE Linux Enterprise Server
+//          :comp2-long: JupyterLab
+//        Then, you could reference them when you define the title
+//        variable like this:
+//          :title: Simplify deployment of {comp2-long} with {comp1-long}
+//        When rendered, the variables will be expanded and the title
+//        will appear as:
+//          "Simplify deployment of JupyterLab with SUSE Linux Enterprise Server"
+// -
+:doctitle: Enterprise AI Lifecycle with {sai} and {cml}
+:docsubtitle: Delivering a Secure, Scalable, and Observable Platform for Managing AI Workloads
+:usecase: Artificial Intelligence model lifecycle management
+:description: Opinionated architecture for deploying and operating AI workloads using {sai} and {cml}.
+:description-social: AI Lifecycle Management with {sai} and {cml}
+:executive-summary: This document provides an opinionated reference design for an enterprise,  AI lifecycle management platform using {sai} and {cml} to streamline and accelerate AI operations with focus on scalability, security, observability, and operational consistency across environments.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//   Typically, no more than three tasks defined per
+//     document.
+//
+//   Tasks must be one of these supported values:
+//     Administration, Artificial Intelligence, Auditing, Authentication,
+//     Automation, Backup &amp; Recovery, Certification, Cloud,
+//     Clustering, Compliance, Configuration, Containerization,
+//     Container Management, Data Intelligence, Deployment, Design,
+//     Encryption, High Availability, Image Building, Implementation,
+//     Installation, Integration, Maintenance, Migration, Monitoring,
+//     Packaging, Security, Storage, Subscription Management,
+//     Troubleshooting, Upgrade &amp; Update, Virtualization,
+//     Vulnerability, Web
+//
+//   For example:
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: Artificial Intelligence
+:metatask2: Integration
+:metatask3: Deployment
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//
+//   Follow the pattern below to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//
+//   TIP: Other contributors and editors are typically listed in
+//        an Acknowledgments section.
+//        To list additional authors or contributors on the cover page,
+//        you must edit the docinfo file, too.
+// -
+:author1-firstname: Adarsh
+:author1-surname: Kumar
+:author1-jobtitle: Partner Solution Architect
+:author1-orgname: SUSE
+
+:author2-firstname: Erez
+:author2-surname: Schnaider
+:author2-jobtitle: Technical Marketing Manager
+:author2-orgname: ClearML
+
+:author3-firstname: Terry
+:author3-surname: Smith
+:author3-jobtitle: Ecosystem Solution Innovation Director
+:author3-orgname: SUSE
+
+:contrib1-firstname: Adam
+:contrib1-surname: Wolf
+:contrib1-jobtitle: Product Marketing Engineer
+:contrib1-orgname: ClearML
+
+:contrib2-firstname: Tina
+:contrib2-surname: Naro
+:contrib2-jobtitle: Senior Director of Product Marketing
+:contrib2-orgname: ClearML
+
+:contrib3-firstname: Victor
+:contrib3-surname: Gregorio
+:contrib3-jobtitle: AI Solution Innovation Director
+:contrib3-orgname: SUSE
+
+:contrib4-firstname: Martina
+:contrib4-surname: Ilieva
+:contrib4-jobtitle: Partner Alliance Manager
+:contrib4-orgname: SUSE
+
+//:author2-firstname: first (given) name
+//:contrib1-firstname: first (given) name
+//:editor1-firstname: first (given) name
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
