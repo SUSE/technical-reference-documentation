@@ -409,7 +409,7 @@ Line spacing is also preserved.
 
 ==== Source code blocks
 
-A source code block is a special version of a listing block that enables syntax highlighting, using color and text styles to distinguish code structures (such as keywords, variables, constants, comments, and so on).
+A source code block (or source block) is a special version of a listing block that enables syntax highlighting, using color and text styles to distinguish code structures (such as keywords, variables, constants, comments, and so on).
 
 A snippet of Python code is illustrated below.
 
@@ -432,27 +432,30 @@ plt.show()
 
 -----
 
-The key elements of the source code block are:
-
-* the delimiter (`----`) +
-The delimiter marks the start and the end of the designated content.
+The key elements of the source block are:
 
 * the explicit block style and language designation (`[source, python]`) +
-The style designation identifies the block as a source block containing the specified programming language. +
+The style designation identifies the block as a source code block containing the specified programming language. +
 Some common source language identifiers are: bash, c, html, python, sql, yaml, and xml.
+
+* the delimiter (`----`) +
+The delimiter marks the start and the end of the block content.
+
 
 
 ==== Commands
 
-There are two ways to handle commands.
-Short commands can be identified inline with other text by delimiting the command with the backtick character (```), as shown below.
+There are two ways to handle commands: inline and as a source block.
+
+Short commands can be identified inline with other text by delimiting the command with the backtick character ( ``` ), as shown below.
 
 [source, asciidoc]
 ----
  The `zypper` command can be used to install, update, or remove software, manage software repositories, perform queries, and more.
 ----
 
-For full command examples, the best practice is to use a source code block with `console` as the language identifier.
+For full command examples, the best practice is to use a source block with `console` as the language identifier.
+
 For example:
 
 [source, asciidoc]
@@ -464,6 +467,7 @@ sudo zypper install vim
 ----
 
 -----
+
 
 In {trd}, it is common to combine a command-line instruction with the resulting output.
 This is illustrated below.
@@ -505,8 +509,7 @@ Description    :
 
 [IMPORTANT]
 ====
-In this example, the plus symbol ( `+` ) is used to connect these blocks.
-This ensures that list indentation is preserved for the two blocks.
+In this example, the plus symbol ( `+` ) is used to connect these blocks to the list item and preserve indentation.
 
 See <<continuation>> for more on this topic.
 ====
@@ -516,11 +519,10 @@ See <<continuation>> for more on this topic.
 
 Imagine that you need to illustrate several commands that reference the same, long, and complex argument,  such as a file name.
 Each time you type the argument, you risk making a typo.
-And, if you ever had to update the argument in a future revision of your document, you would have to do so everywhere the file name appears.
 
-This is a perfect use for a variable (document attribute), but listing and source code blocks are verbatim.
-This means that the variable name is rendered instead of its value.
-Fortunately, you can overcome this with the `subs` block attribute.
+This is a perfect use for a variable (document attribute), but listing and source blocks are verbatim.
+So, variable references inside the blocks are ignored by default.
+To overcome this, you can use the `subs="attributes+"` block attribute.
 
 Consider this simple example:
 
@@ -532,7 +534,7 @@ In your vars file, define a variable:
 :myPath: /home/geeko/myproject/
 ----
 
-In your main content file, reference the inside a code block:
+In your main content file, reference the variable inside a source block as follows:
 
 [source, asciidoc]
 -----
@@ -559,39 +561,34 @@ tree {myPath}
 
 [CAUTION]
 ====
-Attribute substitution can be tricky and can have unintended consequences.
+Attribute substitution can be tricky.
 
+For example, the Bash shell also uses curly braces in referencing variables (such as, `$\{PATH\}`).
+With `subs="attributes+"` in your block designation, the rendering engine treats any "words" surrounded by curly braces as AsciiDoc variables and tries to render them.
 
+Consider the following example:
 
 [source, asciidoc]
 -----
 
 Determine your current display server type by issuing the following command:
-+
-[source, bash, subs="attributes+"]
+
+[source, console, subs="attributes+"]
 ----
-cat ${XDG_SESSION_TYPE}
+echo ${XDG_SESSION_TYPE}
 ----
 
 -----
 
-In this example,
+Your goal is to display this command verbatim, but the rendering engine tries to find an AsciiDoc definition for `XDG_SESSION_TYPE`.
+If it finds one, it substitutes the value.
+If it does not find one, the rendering fails.
+Neither result is what you want.
 
+When you want verbatim interpretation, the best practice is not to use the `subs="attributes+"` option.
 
-
-In Bash, for instance, it is common to reference variables as `$\{myVariable\}`.
-It may be important for `$\{myVariable\}` to appear in your code as-is.
-If attribute substitutions are enabled, the rendering engine will try to find a variable, named `myVariable`, and substitute its value.
-This either fails (the variable is not defined) or an unwanted value is substituted for the variable.
-
-
-The AsciiDoc rendering engine curly braces enclosing text in your code should be treated literally or substituted with the value of a variable you have defined.
-
-
-One way to solve this is to not use the `subs="attributes+"` option.
-If you do need some substitutions but not others, you may be able to use {asciidoc-docs}subs/prevent/[escaping] to let the rendering engine know your intentions.
-
-For example, by simply placing a backslash (`\`) just before each of the curly braces, you let the rendering engine know to treat the curly braces as literal characters and not as a variable reference.
+If you do need some substitutions but not others, you can use {asciidoc-docs}subs/prevent/[escaping] to let the rendering engine know your intentions.
+By simply placing a backslash ( `\` ) just before each of the curly braces, you designate the curly braces as literal characters.
 
 Here is an example:
 
@@ -603,18 +600,18 @@ Here is an example:
 [source, console, subs="attributes+"]
 ----
 
-{myPrompt} echo "My stored value is $\{myVariable\}."
+{myPrompt} echo "My stored value is in the variable, $\{myVariable\}."
 
 ----
 
 -----
 
-This code block renders as:
+This source block renders as:
 
 :myPrompt: geeko@mangrove.lane:~/myproject:
 [source, console, subs="attributes+"]
 ----
-{myPrompt} echo "My stored value is $\{myVariable\}."
+{myPrompt} echo "My stored value is in the variable, $\{myVariable\}."
 ----
 :!myPrompt:
 
@@ -743,8 +740,7 @@ Thus, to display the image, `media/src/svg/my-tuxy-architecture.svg` at 75 perce
 Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of an AsciiDoc document.
 
 The most common type of block is a paragraph, which is a contiguous set of lines of text, bounded by one or more blank lines.
-Sections, lists, and tables are also types of blocks.
-And, obviously, block image macros, listing blocks, code blocks, and admonitions are as well.
+Some other block elements are sections, lists, tables, image macros, listing blocks, source blocks, and admonitions.
 
 [TIP]
 ====
