@@ -1,3 +1,4 @@
+[[asciidoc-intro, Introduction]]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Section: AsciiDoc
@@ -8,15 +9,18 @@
 AsciiDoc is a lightweight and semantic markup language.
 It has an intuitive syntax and is designed for technical writing.
 
-This section provides some guidance (with examples) for using AsciiDoc.
-Some additional recommended references are:
+This section provides an introduction to AsciiDoc with examples to help you get started.
+
+For additional reference, see:
 
 * {sdocs-style-url}[SUSE Documentation Style Guide (AsciiDoc)]
 * {asciidoc-docs}[Asciidoctor Docs: AsciiDoc Language Reference]
 * {asciidoc-recommended}[AsciiDoc Recommended Practices]
 
 
-=== General guidelines
+
+[[asciidoc-general, General guidance]]
+=== General guidance
 
 When creating your content:
 
@@ -44,6 +48,18 @@ This includes common files, scripts, and the files associated with other publish
 The following sections address specific aspects of document structure and text styling with AsciiDoc.
 
 
+[[asciidoc-blocks, Blocks]]
+=== Blocks
+
+Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of your AsciiDoc document.
+The most common type of block is the paragraph, which is a contiguous set of lines of text, bounded by one or more empty lines.
+Other frequently used block types include sections, lists, tables, images, listing blocks, source code blocks, and admonitions.
+
+Blocks are defined with a line-oriented syntax.
+
+
+
+[[asciidoc-variables, Document attributes and variables]]
 === Document attributes and variables
 
 In AsciiDoc, _document attributes_ are name-value pairs that you can use to configure the AsciiDoc processor, define document metadata, and create reusable content.
@@ -89,6 +105,7 @@ Once defined, you can reference a variable in your text by surrounding the varia
 You can even reference already-defined variables when in variable definitions (see the `srancher-docs-ports` and `doctitle` in the example).
 
 
+[[asciidoc-titles, Document title and subtitle]]
 === Document title and subtitle
 
 The document title is typically specified on the first line of an AsciiDoc document.
@@ -135,6 +152,7 @@ When defining your title and subtitle, use title-style capitalization by followi
 
 
 
+[[asciidoc-sections, Sections]]
 === Sections
 
 Sections help you group and organize related text.
@@ -211,6 +229,7 @@ You need a place in your file system to contain ...
 
 
 
+[[asciidoc-lists, Lists]]
 === Lists
 
 Lists can provide structure to your content.
@@ -313,6 +332,8 @@ The container orchestration layer that exposes the API and interfaces to define,
 ----
 
 
+
+[[asciidoc-filenames, File and directory names]]
 === File and directory names
 
 Use the grave accent or back tick ( ``` ) to delimit file and directory names.
@@ -327,6 +348,8 @@ The `manifest.yaml` file is located in the `$HOME/my-tuxy-project` directory.
 For directory names, a trailing slash ( `/` ) can be used if it is not clear that you are referring to a directory.
 
 
+
+[[asciidoc-admonitions, Admonitions]]
 === Admonitions
 
 Use admonitions are used to help draw the reader's attention to content.
@@ -382,6 +405,7 @@ reset to the state at which the snapshot was taken.
 ----
 
 
+[[asciidoc-verbatim, Verbatim and source blocks]]
 === Verbatim and source blocks
 
 Technical guides often need to present source code, commands, and console output as they appear in a code editor or on the console screen.
@@ -389,6 +413,7 @@ This usually means rendering content with a fixed-width font to preserve spacing
 For source code, it also may involve syntax highlighting with color or other text styles.
 
 
+[[asciidoc-listing, Listing blocks]]
 ==== Listing blocks
 
 The basic listing block is used to denote text that should be rendered verbatim.
@@ -407,6 +432,7 @@ Line spacing is also preserved.
 -----
 
 
+[[asciidoc-source, Source code blocks]]
 ==== Source code blocks
 
 A source code block (or source block) is a special version of a listing block that enables syntax highlighting, using color and text styles to distinguish code structures (such as keywords, variables, constants, comments, and so on).
@@ -443,6 +469,7 @@ The delimiter marks the start and the end of the block content.
 
 
 
+[[asciidoc-commands, Commands]]
 ==== Commands
 
 There are two ways to handle commands: inline and as a source block.
@@ -451,7 +478,7 @@ Short commands can be identified inline with other text by delimiting the comman
 
 [source, asciidoc]
 ----
- The `zypper` command can be used to install, update, or remove software, manage software repositories, perform queries, and more.
+The `zypper` command can be used to install, update, or remove software, manage software repositories, perform queries, and more.
 ----
 
 For full command examples, the best practice is to use a source block with `console` as the language identifier.
@@ -511,10 +538,11 @@ Description    :
 ====
 In this example, the plus symbol ( `+` ) is used to connect these blocks to the list item and preserve indentation.
 
-See <<continuation>> for more on this topic.
+See <<asciidoc-continuation>> for more on this topic.
 ====
 
 
+[[asciidoc-subs, Attribute substitutions]]
 ==== Attribute substitutions
 
 Imagine that you need to illustrate several commands that reference the same, long, and complex argument,  such as a file name.
@@ -622,6 +650,7 @@ For more on substitutions, see {asciidoc-docs-subs}[Asciidoctor Docs: Customize 
 
 
 
+[[asciidoc-gui, Graphical user interface elements]]
 === Graphical user interface elements
 
 As with commands on the command line, you may need to reference named elements of an application's graphical user interface (GUI).
@@ -643,6 +672,7 @@ If providing a series of element selections, separate each element with the grea
 
 
 
+[[asciidoc-links, Links]]
 === Links
 
 AsciiDoc allows you to provide clickable links to external, addressable resources in your documents.
@@ -703,6 +733,7 @@ Manage your subscriptions and support cases at the {scc-url}[{scc}].
 
 
 
+[[asciidoc-images, Images]]
 === Images
 
 You can enhance your document with graphical content, such as diagrams, screenshots, logos, and more.
@@ -762,69 +793,33 @@ See {asciidoc-docs-images}[AsciiDoc Docs: Images] for further details.
 
 
 
-[[continuation, List continuation]]
-=== List continuation
+[[asciidoc-continuation, Continuation]]
+=== Continuation
+
+
 
 Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of an AsciiDoc document.
 The most common type of block is a paragraph, which is a contiguous set of lines of text, bounded by one or more blank lines.
-Some other block elements are sections, lists, tables, image macros, listing blocks, source blocks, and admonitions.
+Other block elements include sections, lists, tables, image macros, listing blocks, source blocks, and admonitions.
+Thus, an image or a source block is treated by the rendering engine somewhat like a paragraph.
 
-When describing procedures in technical documentation, it is
+To see what this means, consider the following example:
 
-{asciidoc-docs-continuation}[List continuation] refers to attaching a block to a list item
-
-
-is explicitly denoted by a plus symbol ( `+` ), appearing by itself on the line between two blocks.
- can be used to join two adjacent blocks together.
-The most common use for this is to allow a list item to contain one or more blocks, ensuring alignment of elements.
-
-Consider the example AsciiDoc code below.
 
 [source, asciidoc]
-----
-
- . Verify that `kernel-default` has been installed.
- +
- [source, console]
- ----
- sudo zypper se kernel-default
- ----
- +
- [IMPORTANT]
- ====
- After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
- ====
-
- . Reboot each node to enable the `kernel-default` kernel.
-
- [TIP]
- ====
- Learn more about the `zypper` command:
-
- [source, console]
- ----
- man zypper
- ----
- ====
-
-----
-
-Rendered, this code looks like:
+-----
 
 . Verify that `kernel-default` has been installed.
-+
 [source, console]
 ----
 sudo zypper se kernel-default
 ----
-+
 [IMPORTANT]
 ====
 After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
 ====
 
- . Reboot each node to enable the `kernel-default` kernel.
-
+. Reboot each node to enable the `kernel-default` kernel.
 [TIP]
 ====
 Learn more about the `zypper` command:
@@ -834,6 +829,32 @@ Learn more about the `zypper` command:
 man zypper
 ----
 ====
+
+-----
+
+Rendered, this code looks like:
+
+. Verify that `kernel-default` has been installed.
+[source, console]
+----
+sudo zypper se kernel-default
+----
+[IMPORTANT]
+====
+After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
+====
+
+ . Reboot each node to enable the `kernel-default` kernel.
+[TIP]
+====
+Learn more about the `zypper` command:
+
+[source, console]
+----
+man zypper
+----
+====
+
 
 Notice that the      and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
 As a bonus, there is a source block inside and properly aligned with `TIP` admonition.
