@@ -51,11 +51,84 @@ The following sections address specific aspects of document structure and text s
 [[asciidoc-blocks, Blocks]]
 === Blocks
 
-Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of your AsciiDoc document.
+Blocks (or block elements) are discrete, line-oriented chunks of content that form the basic structure of your AsciiDoc document.
 The most common type of block is the paragraph, which is a contiguous set of lines of text, bounded by one or more empty lines.
 Other frequently used block types include sections, lists, tables, images, listing blocks, source code blocks, and admonitions.
+Whether implied by syntax or explicitly declared, how a block is processed and rendered is determined by its content model, context, and style.
 
-Blocks are defined with a line-oriented syntax.
+This guide provides an overview of syntax for common block types.
+To learn more blocks and block characteristics, see {asciidoc-docs-blocks}[AsciiDoc Docs: Blocks].
+
+
+[[asciidoc-comments, Comments]]
+=== Comments
+
+A comment is a useful way to include a note that is only visible in the code and not rendered into the published document.
+
+Some uses for comments include:
+
+* A reminder, explanation, or suggestion for yourself, your collaboration team, or a future editor.
+
+* To temporarily hide content that is not yet ready for publication.
+
+* To help with debugging your AsciiDoc code.
+
+* To create a separation between two, adjacent blocks of the same type (such as two ordered lists).
+
+AsciiDoc provides two types of comments, described below.
+
+Comment line::
+Create a single-line comment by prefixing the text with two forward slashes ( `//` ).
+For example:
++
+[source, asciidoc]
+----
+This text will be rendered.
+
+// This text is a comment and will not be rendered.
+
+This text will be rendered.
+----
++
+[TIP]
+====
+It is customary to follow the two slashes with a space for human readability.
+====
+
+
+Comment block::
+Designate several lines as a commentary by delimiting it with four forward slashes ( `////` ):
++
+[source, asciidoc]
+----
+////
+This line and the list below are ignored by the AsciiDoc processor and will not be rendered.
+
+* apples
+
+* bananas
+
+* pears
+////
+----
++
+Another way to designate a comment block is:
++
+[source, asciidoc]
+-----
+
+[comment]
+--
+This line and the list below are ignored by the AsciiDoc processor and will not be rendered.
+
+* apples
+
+* bananas
+
+* pears
+--
+
+-----
 
 
 
