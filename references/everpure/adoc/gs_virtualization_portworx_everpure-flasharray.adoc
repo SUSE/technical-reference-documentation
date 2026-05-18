@@ -1,0 +1,580 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+include::./gs_virtualization_portworx_everpure-flasharray-vars.adoc[]
+[#art-{article-id}]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Getting Started Guide
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define variables (document attributes) in the vars file.
+// 2. Develop content and reference variables in the adoc file.
+// 3. Update the docinfo.xml file as needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+= {doctitle}: {docsubtitle}
+
+
+
+== Introduction
+
+Organizations are modernizing their IT infrastructure to gain the benefits of cloud-native technologies, like containers and Kubernetes.
+Often, however, they still need to support legacy workloads in traditional, virtual machine infrastructure.
+This can lead to duplicate hardware infrastructure and siloed operations.
+What organizations need is an enterprise platform that unifies traditional and cloud-native infrastructure.
+
+{svirt-brand}, built on a modern, Kubernetes stack, solves this challenge by enabling organizations to run both virtual machines and containerized applications on the same infrastructure platform.
+When combined with {pxe-brand}, enterprises can unlock advanced storage capabilities, ensuring seamless data management across diverse environments, enabling high availability and data protection, and supporting hybrid-cloud mobility and multi-cluster environments.
+
+In this document administrators and platform engineers learn how to deploy, configure, and validate a {svirt} environment with {pxe} and {pfa-long} storage, enabling them to deliver resilient, scalable, and efficient storage services for mission-critical workloads.
+
+This integrated solution addresses a wide range of scenarios, including:
+
+* Application Modernization: Seamlessly migrating or running legacy VM workloads and stateful cloud-native applications on the same infrastructure.
+
+* Hybrid and Multi-Cloud Deployments: Enabling workload and data mobility across on-premises, public cloud, and edge locations.
+
+* Business Continuity and Disaster Recovery: Providing cross-site failover and failback for both VMs and containers.
+
+* Dev/Test and Self-Service Environments: Allowing developers to quickly provision persistent, production-grade storage for any workload type.
+
+* Data-Intensive Workloads: Supporting databases, analytics, and AI/ML apps that require high availability and consistent performance.
+
+
+
+=== Scope
+
+This document provides instructions for installing {pxe} on a {svirt} cluster with an {pfa-long}.
+It details the necessary steps for configuring multipathing, deploying the {pxo}, defining the {px} StorageCluster, and updating {svirt} to use this storage for backing VMs and containers.
+
+
+=== Audience
+
+This guide is intended for system administrators, platform engineers, DevOps engineers, and IT professionals responsible for designing, deploying, managing, and maintaining a modern infrastructure environment for container and virtual machine workloads.
+A basic understanding of Kubernetes and storage concepts is assumed.
+
+
+
+== Overview
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Detail the steps of the installation procedure.
+// Replace 'Procedure' with one or more appropriate sections, such as:
+// - 'Setting up the environment'
+// - 'Installing the components'
+// - 'Configuring and tuning'
+// - 'Validating the deployment'
+// You may find it useful to organize complex procedures into
+// subsections.
+//
+// - As appropriate, make use of:
+//   - Ordered lists for steps
+//   - Code blocks for source code and console commands
+//     Readers should be able to use copy and paste to leverage
+//     commands and code in their environments
+//   - Listing blocks for output
+//   - Screenshots and diagrams
+//   - Admonitions (notes, tips, warnings, etc.)
+//
+// NOTE: Always include some validation or verification in your guide.
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+By deploying {svirt-long} with {pxe-long}, you gain robust, Kubernetes data storage and data management capabilities, such as automated data operations, elastic scalability, and flexible deployment options across hybrid, multi-cloud, and on-premises environments.
+With the included {px} Container Storage Inferface (CSI), you can leverage {pfa-long} storage to deliver unified, high-performance block storage to back your mission-critical VMs and containers in {svirt}.
+This is illustrated in the diagram below.
+
+image::suse-virt_portworx_everpure-flasharray.png[title="Architecture Diagram: {svirt-long} with {px} and {pfa-long}", Architecture Diagram: {svirt-long} with {px} and {pfa-long}, scaledwidth="90%", align="center"]
+
+
+{empty} +
+Key components of this architecture are:
+
+{svirt-long}::
+{svirt-website}[{svirt}] (formerly Harvester) is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes.  {svirt} leverages other components (such as {slmicro-website}[{slmicro}] and {rke2-docs}[{rke2}]) to deliver a secure, resilient, and scalable platform for managing virtual machine and container workloads.
+Access the {svirt-docs-intro}[{svirt} documentation] for detailed technical information, including {svirt-docs-reqs}[Hardware and Network Requirements] and installation guidance.  This guide references {svirt} {svirt-version1} and later.
+
+
+{pxe-long}::
+{pxe-website}[{pxe}] delivers elastic scalability, industry-leading availability, and self-service access to any storage infrastructure for the most widely used Kubernetes distribution.
+This fully-integrated storage solution offers automated capacity management, thin provisioning, and flexibility across hybrid, multi-cloud, and on-premises deployments.
+{pxe} installation, configuration, and updates are handled through the {pxo}.
+This guide references {pxe-docs}[{pxe}] {pxe-version1} or later and {pxo} {pxo-version1} or later.
+
+
+{pfa-long}::
+An {pfa-website}[{pfa-long}] delivers high-performance, scalable, all-flash storage.
+Your {pfa} must be configured to meet the {pxe-reqs}[{pxe} environment prerequisites] and be accessible from the {svirt} cluster nodes.
+
+{empty} +
+{empty}
+
+In the following pages, you learn how to configure your {svirt} environment with {pxe} to leverage a {pfa-long} for virtual machine storage.
+This includes:
+
+* Preparing the {svirt} cluster nodes and the {pfa-long}
+* Deploying the {pxo} to install and configuring {pxe}
+* Defining the Portworx StorageClass
+* Creating a virtual machine with {pfa}-backed persistent storage
+
+
+
+== Preparing the environment
+
+Before starting the installation, perform the following preparatory steps:
+
+. Enable multipath support on the {svirt} cluster nodes.
+
+.. Create a Harvester CloudInit resource file to deploy the required node-level configuration with the following contents:
++
+[source, yaml]
+----
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: pure-multipath
+spec:
+  contents: |
+    stages:
+      network:
+      - name: "Configure pure storage"
+        files:
+        - path: /etc/udev/rules.d/99-pure-storage.rules
+          permissions: 0644
+          content: |
+            #ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="INQUIRY_DATA_HAS_CHANGED", TEST=="rescan", ATTR{rescan}="x"
+            ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="CAPACITY_DATA_HAS_CHANGED", TEST=="rescan", ATTR{rescan}="x"
+            #ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="THIN_PROVISIONING_SOFT_THRESHOLD_REACHED", TEST=="rescan", ATTR{rescan}="x"
+            #ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="MODE_PARAMETERS_CHANGED", TEST=="rescan", ATTR{rescan}="x"
+            ACTION=="change", SUBSYSTEM=="scsi", ENV{SDEV_UA}=="REPORTED_LUNS_DATA_HAS_CHANGED", RUN+="scan-scsi-target $env{DEVPATH}"
+        - path: /etc/multipath.conf
+          content: |
+            defaults {
+              user_friendly_names no
+              enable_foreign "^$"
+                    polling_interval    10
+            }
+            devices {
+                device {
+                    vendor                      "NVME"
+                    product                     "Pure Storage FlashArray"
+                    path_selector               "queue-length 0"
+                    path_grouping_policy        group_by_prio
+                    prio                        ana
+                    failback                    immediate
+                    fast_io_fail_tmo            10
+                    user_friendly_names         no
+                    no_path_retry               0
+                    features                    0
+                    dev_loss_tmo                60
+                }
+                device {
+                    vendor                   "PURE"
+                    product                  "FlashArray"
+                    path_selector            "service-time 0"
+                    hardware_handler         "1 alua"
+                    path_grouping_policy     group_by_prio
+                    prio                     alua
+                    failback                 immediate
+                    path_checker             tur
+                    fast_io_fail_tmo         10
+                    user_friendly_names      no
+                    no_path_retry            0
+                    features                 0
+                    dev_loss_tmo             600
+                }
+            }
+            blacklist_exceptions {
+                    property "(SCSI_IDENT_|ID_WWN)"
+            }
+            blacklist {
+                  devnode "^pxd[0-9]*"
+                  devnode "^pxd*"
+                  device {
+                    vendor "VMware"
+                    product "Virtual disk"
+                  }
+            }
+          permissions: 0644
+      - name: "Start multipathd service"
+        systemctl:
+          enable:
+          - multipathd
+          start:
+          - multipathd
+  filename: 99_multipathd.yaml
+  matchSelector: {}
+
+----
+
+.. Apply the CloudInit resource resource to the {svirt} cluster.
++
+[source, console]
+----
+kubectl apply -f pure-multipath.yaml
+----
+
+.. Restart the {svirt} cluster nodes.
+
+
+. {pxe-flasharray-user-access}[Configure user access] in the {pfa-long}.
+
+
+. {pxe-k8s-secret}[Create a Kubernetes secret], named `px-pure-secret`, to securely store your {pfa} credentials.
+
+.. Create a file, named `pure.json`, containing your {pfa} credentials.
+
+.. Add the secret to your `portworx` namespace.
++
+[source, console]
+----
+kubectl create secret generic px-pure-secret --namespace portworx --from-file=pure.json
+----
+
+
+[#sec-gen-spec]
+== Generating the {px} spec
+
+The {pxo} is designed to efficiently manage the installation and upgrade workflow of all {pxe} components, but it must be configured for your environment.
+This is accomplished by generating a {px} spec.
+
+. Log in to {pxe-central}[{px} Central].
+
+. Select __{pxe}__ -> __Generate Spec__.
+
+. Choose the __{px} Version__ and `Pure FlashArray` for __Platform__, then click __Customize__.
+
+. On the __Basic__ tab:
++
+image::suse-portworx-modvirt_px-spec_01_basic.png[title="{px}: Generate Spec - Basic", {px}: Generate Spec - Basic, scaledwidth="90%", align="center"]
+
+.. Validate or fill in values for each of the following fields:
++
+--
+* __{px} Version__
+* __Kubernetes Version__
+* __Namespace__ (for example, `portworx`)
+--
+
+.. Select the `Built-in` option for __etcd__.
+
+.. Click __Next__.
+
+
+
+. On the __Storage__ tab, make the following choices:
++
+image::suse-portworx-modvirt_px-spec_02_storage.png[title="{px}: Generate Spec - Storage", {px}: Generate Spec - Storage, scaledwidth="90%", align="center"]
+
+.. Set __Select Cloud Platform__ to `Pure FlashArray`.
+.. Set __Select type of disk__ to `Create Using a Spec`.
+.. Enable __PX-StoreV2__.
+.. Select `Fiber Channel` for __Type of  storage area network__.
+.. Enter the desired __Size__ of the disk to be mapped to the {svirt} cluster.
+.. Update the __Max storage nodes per availability zone__ to `3` (for your 3-node cluster).
+.. Click __Next__.
+
+. On the __Network__ tab, configure the {px} service port, then click __Next__.
++
+[NOTE]
+====
+The default port is `9001`.
+====
++
+image::suse-portworx-modvirt_px-spec_03_network.png[title="{px}: Generate Spec - Network", {px}: Generate Spec - Network, scaledwidth="90%", align="center"]
+
+. On the __Customize__ tab, select `Rancher Kubernetes Engine (RKE)` then click __Finish__.
++
+image::suse-portworx-modvirt_px-spec_04_customize.png[title="{px}: Generate Spec - Customize", {px}: Generate Spec - Customize, scaledwidth="90%", align="center"]
+
+. The generator presents you with two Kubectl commands.
+The first is for deploying the {pxo}, and the second is for deploying the {px} StorageCluster.
+Save these commands, as you will need them in the following section.
+
+
+
+== Deploying the {pxo} and {px} StorageCluster
+
+The {pxo} efficiently manages the installation and upgrade workflow of all {pxe} components.
+To deploy the {pxo}, you use the first of the Kubectl commands you generated in <<sec-gen-spec>> as detailed below.
+
+. Log in to the {svirt} management node command-line interface (CLI) with root access.
+
+. Run the first Kubectl command saved from the previous section to install the {pxo}.
+//
++
+The command should be similar to:
++
+[source, console]
+----
+kubectl apply -f 'https://install.portworx.com/3.3?comp=pxoperator&kbver=1.3.0&ns=portworx'
+----
++
+You should see output like:
++
+[listing]
+----
+namespace/portworx created
+serviceaccount/portworx-operator created
+clusterrole.rbac.authorization.k8s.io/portworx-operator created
+clusterrolebinding.rbac.authorization.k8s.io/portworx-operator created
+deployment.apps/portworx-operator created
+----
+
+. If you are using {svirt} {svirt-version1} or later, add a Stork Snapshot StorageClass.
+
+.. Create the YAML file, `stork-snapshot-sc.yaml`, with the following contents:
++
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: stork-snapshot-sc
+  annotations:
+cdi.harvesterhci.io/storageProfileVolumeModeAccessModes: '{"Block":["ReadWriteOnce"]}'
+provisioner: stork-snapshot
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+----
+
+.. Apply the the YAML file to add the Stork Snapshot StorageClass.
++
+[source, console]
+----
+kubectl apply -f stork-snapshot-sc.yaml
+----
++
+You should see this output:
++
+[listing]
+----
+storageclass.storage.k8s.io/stork-snapshot-sc created
+----
+
+. Execute the second of the {px} spec Kubectl commands you generated in <<sec-gen-spec>> to deploy the {px} StorageCluster. +
+The command should look something like:
++
+[source, console]
+----
+kubectl apply -f 'https://install.portworx.com/3.3?operator=true&mc=false&kbver=1.3.0&ns=portworx&b=true&iop=6&mz=3&s=%22size%3D1000%22&pureSanType=FC&ce=pure&dmthin=true&c=px-cluster-82af5d7d-f249-4f45-9e80-d1590e7bfce4&stork=true&csi=true&mon=true&tel=true&st=k8s&promop=true'
+----
++
+If successful, the command generates output like:
++
+[listing]
+----
+storagecluster.core.libopenstorage.org/px-cluster-82af5d7d-f249-4f45-9e80-d1590e7bfce4 created
+----
+
+
+
+== Adding the {px} StorageClass
+
+. Ensure you are still logged in to the {svirt} management CLI as root.
+
+. Create the YAML file, `portworx-storageclass.yaml`, with the following contents:
++
+[source, yaml]
+----
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+  name: data-disk-storage
+parameters:
+  cdi.kubevirt.io/storage.contentType: kubevirt
+  nodiscard: "true"
+  repl: "2"
+provisioner: pxd.portworx.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+----
+
+. Apply this YAML file to add the {px} StorageClass.
++
+[source, console]
+----
+kubectl apply -f portworx-storageclass.yaml
+----
++
+You should see:
++
+[listing]
+----
+storageclass.storage.k8s.io/data-disk-storage created
+----
+
+[TIP]
+====
+You may see a “request is invalid” error, such as:
+[listing]
+----
+The request is invalid: default StorageClass, 'harvester-longhorn', already exists.
+Please reset it first before setting 'data-disk-storage' as default.
+----
+
+If this happens:
+
+. Unset the default `harvester-longhorn` StorageClass using the command:
++
+[source, console]
+----
+kubectl patch storageclass harvester-longhorn -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+----
+
+. Re-apply the {px} StorageClass.
++
+[source, console]
+----
+kubectl apply -f portworx-storageclass.yaml
+----
+====
+
+
+== Updating the {px} CSI driver configuration
+
+
+. Log in to the {svirt} UI.
+
+. Navigate to __Advanced__ > __Settings__.
+
+. Locate `csi-driver-config`, click the three dots (for more options), then select __Edit Setting__.
+
+. Set the __Provisioner__ to `pxd.portworx.com`.
+
+. Set the __Volume Snapshot Class Name__ to `px-csi-snapclass`. +
+This setting points to the name of the VolumeSnapshotClass used for creating volume snapshots or VM snapshots.
+
+image::suse-portworx-modvirt_csi-driver-config-external.png[title="{svirt}: csi-driver-config", {svirt}: csi-driver-config, scaledwidth="90%", align="center"]
+
+
+
+== Validating the integration
+
+Ensure that {pxe} is correctly integrated with {svirt} by verifying that a virtual machine (VM) can be provisioned with storage backed by the {pfa}.
+
+. Create a new VM. +
+For guidance, refer to the {svirt-docs-create-vm}[SUSE Virtualization: Create a Virtual Machine] and be sure to select the StorageClass provisioned by {px} (`data-disk-storage`) for your VM disk volume.
+
+. Verify that the VM was provisioned with {px} storage in the {svirt} UI.
+
+.. Open __Virtual Machines__.
+
+.. Select your VM.
+
+.. Open __Volumes__.
+
+.. Confirm that the attached disk is using the `data-disk-storage` StorageClass.
+
+. You can also verify the VM's storage from the CLI.
+
+.. Log into the {svirt} management CLI.
+
+.. List the PersistentVolumeClaims (PVCs) in the VM’s namespace.
++
+[source, console]
+----
+kubectl get pvc -n <namespace>
+----
++
+[listing, subs="normal"]
+----
+NAME          STATUS  VOLUME                                    CAPACITY  ACCESS MODES  STORAGECLASS       AGE
+vm1-rootdisk  Bound   pvc-8f3c8b2c-6e1e-4c6a-a83e-9d6c34ac3b21  40Gi      RWX           *data-disk-storage*  2m
+----
+
+.. Confirm that the STORAGECLASS column shows `data-disk-storage`.
+
+.. As an additional check, confirm that the volume is provisioned by `pxd.portworx.com`.
++
+[source, console]
+----
+kubectl describe pv pvc-8f3c8b2c-6e1e-4c6a-a83e-9d6c34ac3b21
+----
++
+[listing, subs="normal"]
+----
+Name:                 pvc-8f3c8b2c-6e1e-4c6a-a83e-9d6c34ac3b21
+StorageClass:         data-disk-storage
+Annotations:
+pv.kubernetes.io/provisioned-by: *pxd.portworx.com*
+Status: Bound
+Reclaim Policy:       Delete
+VolumeMode:           Block
+Source:
+    Type:             CSI (a Container Storage Interface (CSI) volume source)
+    Driver:           pxd.portworx.com
+    FSType:
+    VolumeHandle:     424582431912071110
+   ReadOnly:          false
+   VolumeAttributes:  attached=ATTACH_STATE_EXTERNAL
+                      error=
+                      parent=
+                      readonly=false
+                      secure=false
+                      shared=false
+                      shared_mode=BLOCK
+                      sharedv4=false
+                      state=VOLUME_STATE_DETACHED
+                      type=px-raw-volume
+----
+
+
+Upon successful completion of these checks, you have validated the integration of {svirt} with {px} and the {pfa-long}.
+
+
+
+== Summary
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Summarize:
+// - Solution description
+// - Motivation for the guide
+// - What was done
+// - Suggested next steps for the learning journey
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+{svirt-provider} and {pxe-provider} deliver the infrastructure platform modern enterprises seek.
+Integrating {svirt-long} with {pxe-long} and an {pfa-long} provides a flexible, resilient, and scalable platform for running container and virtual machine workloads side-by-side.
+This unified landscape helps streamline operations and can lower both operational and capital costs.
+
+This guide provides an overview of a reference architecture for the combined solution with detailed steps for implementation and validation.
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
