@@ -36,7 +36,7 @@ What organizations need is an enterprise platform that unifies traditional and c
 {svirt-brand}, built on a modern, Kubernetes stack, solves this challenge by enabling organizations to run both virtual machines and containerized applications on the same infrastructure platform.
 When combined with {pxe-brand}, enterprises can unlock advanced storage capabilities, ensuring seamless data management across diverse environments, enabling high availability and data protection, and supporting hybrid-cloud mobility and multi-cluster environments.
 
-In this document administrators and platform engineers learn how to deploy, configure, and validate a {svirt} environment with {pxe} and {pfa-long} storage, enabling them to deliver resilient, scalable, and efficient storage services for mission-critical workloads.
+In this document, administrators and platform engineers learn how to deploy, configure, and validate a {svirt} environment with {pxe} and {pfa-long} storage, enabling them to deliver resilient, scalable, and efficient storage services for mission-critical workloads.
 
 This integrated solution addresses a wide range of scenarios, including:
 
@@ -89,8 +89,10 @@ A basic understanding of Kubernetes and storage concepts is assumed.
 //
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-By deploying {svirt-long} with {pxe-long}, you gain robust, Kubernetes data storage and data management capabilities, such as automated data operations, elastic scalability, and flexible deployment options across hybrid, multi-cloud, and on-premises environments.
-With the included {px} Container Storage Inferface (CSI), you can leverage {pfa-long} storage to deliver unified, high-performance block storage to back your mission-critical VMs and containers in {svirt}.
+By deploying {svirt-long} with {pxe-long}, you gain robust Kubernetes data storage and data management capabilities.
+These include automated data operations, elastic scalability, and flexible deployment options across hybrid, multi-cloud, and on-premises environments.
+With the integrated {px} Container Storage Interface (CSI), you can leverage {pfa-long} storage to deliver unified, high-performance block storage 
+to back your mission-critical VMs and containers in {svirt}.
 This is illustrated in the diagram below.
 
 image::suse-virt_portworx_everpure-flasharray.png[title="Architecture Diagram: {svirt-long} with {px} and {pfa-long}", Architecture Diagram: {svirt-long} with {px} and {pfa-long}, scaledwidth="90%", align="center"]
@@ -100,8 +102,11 @@ image::suse-virt_portworx_everpure-flasharray.png[title="Architecture Diagram: {
 Key components of this architecture are:
 
 {svirt-long}::
-{svirt-website}[{svirt}] (formerly Harvester) is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes.  {svirt} leverages other components (such as {slmicro-website}[{slmicro}] and {rke2-docs}[{rke2}]) to deliver a secure, resilient, and scalable platform for managing virtual machine and container workloads.
-Access the {svirt-docs-intro}[{svirt} documentation] for detailed technical information, including {svirt-docs-reqs}[Hardware and Network Requirements] and installation guidance.  This guide references {svirt} {svirt-version1} and later.
+{svirt-website}[{svirt}] (formerly Harvester) is a modern, open, and interoperable hyperconverged infrastructure (HCI) solution built on Kubernetes.  
+{svirt} leverages other components (such as {slmicro-website}[{slmicro}] and {rke2-docs}[{rke2}]) to deliver a secure, resilient, and scalable platform 
+for managing virtual machine and container workloads.
+Access the {svirt-docs-intro}[{svirt} documentation] for detailed technical information, including {svirt-docs-reqs}[Hardware and Network Requirements] 
+and installation guidance. This guide references {svirt} {svirt-version1} and later.
 
 
 {pxe-long}::
@@ -113,16 +118,16 @@ This guide references {pxe-docs}[{pxe}] {pxe-version1} or later and {pxo} {pxo-v
 
 {pfa-long}::
 An {pfa-website}[{pfa-long}] delivers high-performance, scalable, all-flash storage.
-Your {pfa} must be configured to meet the {pxe-reqs}[{pxe} environment prerequisites] and be accessible from the {svirt} cluster nodes.
+Your {pfa} must be configured to meet the {pxe-reqs}[{pxe} environment prerequisites] and must be accessible from the {svirt} cluster nodes.
 
 {empty} +
 {empty}
 
-In the following pages, you learn how to configure your {svirt} environment with {pxe} to leverage a {pfa-long} for virtual machine storage.
+In the following pages, you will learn how to configure your {svirt} environment with {pxe} to leverage {pfa-long} for virtual machine storage.
 This includes:
 
 * Preparing the {svirt} cluster nodes and the {pfa-long}
-* Deploying the {pxo} to install and configuring {pxe}
+* Deploying the {pxo} to install and configure {pxe}
 * Defining the Portworx StorageClass
 * Creating a virtual machine with {pfa}-backed persistent storage
 
@@ -216,7 +221,7 @@ spec:
 
 ----
 
-.. Apply the CloudInit resource resource to the {svirt} cluster.
+.. Apply the CloudInit resource to the {svirt} cluster.
 +
 [source, console]
 ----
@@ -307,7 +312,7 @@ Save these commands, as you will need them in the following section.
 The {pxo} efficiently manages the installation and upgrade workflow of all {pxe} components.
 To deploy the {pxo}, you use the first of the Kubectl commands you generated in <<sec-gen-spec>> as detailed below.
 
-. Log in to the {svirt} management node command-line interface (CLI) with root access.
+. Log in to the {svirt} management node command line interface (CLI) with root access.
 
 . Run the first Kubectl command saved from the previous section to install the {pxo}.
 //
@@ -348,7 +353,7 @@ reclaimPolicy: Delete
 volumeBindingMode: Immediate
 ----
 
-.. Apply the the YAML file to add the Stork Snapshot StorageClass.
+.. Apply the YAML file to add the Stork Snapshot StorageClass.
 +
 [source, console]
 ----
@@ -481,7 +486,7 @@ For guidance, refer to the {svirt-docs-create-vm}[SUSE Virtualization: Create a 
 
 . You can also verify the VM's storage from the CLI.
 
-.. Log into the {svirt} management CLI.
+.. Log in to the {svirt} management CLI.
 
 .. List the PersistentVolumeClaims (PVCs) in the VM’s namespace.
 +
