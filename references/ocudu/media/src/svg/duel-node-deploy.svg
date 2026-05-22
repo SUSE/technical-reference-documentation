@@ -1,0 +1,75 @@
+<svg viewBox="0 0 1100 650" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 1100px; height: auto;">
+                <!-- Host 1 (DU Node) -->
+                <rect x="50" y="20" width="450" height="320" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="275" y="45" text-anchor="middle" font-size="16" font-weight="bold" fill="#2e7d32">Host 1 (DU Node)</text>
+
+                <!-- ocudu-gnb Pod -->
+                <rect x="80" y="65" width="390" height="160" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="275" y="85" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">ocudu-gnb Pod</text>
+                <rect x="110" y="100" width="330" height="100" fill="#a5d6a7" stroke="#388e3c" stroke-width="1" rx="3"></rect>
+                <text x="275" y="120" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">SR-IOV VF (ODU)</text>
+                <text x="275" y="140" text-anchor="middle" font-size="11" fill="#2e7d32">MAC: 00:11:22:33:00:11</text>
+                <text x="275" y="160" text-anchor="middle" font-size="11" fill="#2e7d32">PCI: 0000:53:11.0</text>
+                <text x="275" y="180" text-anchor="middle" font-size="10" fill="#388e3c">DPDK vfio-pci</text>
+
+                <!-- E810 Port -->
+                <rect x="80" y="240" width="390" height="80" fill="#81c784" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="275" y="265" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">E810 Port: ens6f1np1</text>
+                <text x="275" y="285" text-anchor="middle" font-size="11" fill="#2e7d32">25 GbE | PTP Enabled</text>
+                <text x="275" y="305" text-anchor="middle" font-size="10" fill="#388e3c">VF 0 → ocudu-gnb</text>
+
+                <!-- Arrow -->
+                <line x1="275" y1="225" x2="275" y2="240" stroke="#388e3c" stroke-width="2"></line>
+
+                <!-- Host 2 (RU Node) -->
+                <rect x="600" y="20" width="450" height="320" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="5"></rect>
+                <text x="825" y="45" text-anchor="middle" font-size="16" font-weight="bold" fill="#e65100">Host 2 (RU Node)</text>
+
+                <!-- ru-emulator Pod -->
+                <rect x="630" y="65" width="390" height="160" fill="#ffe0b2" stroke="#f57c00" stroke-width="2" rx="5"></rect>
+                <text x="825" y="85" text-anchor="middle" font-size="13" font-weight="bold" fill="#bf360c">ru-emulator Pod</text>
+                <rect x="660" y="100" width="330" height="100" fill="#ffcc80" stroke="#f57c00" stroke-width="1" rx="3"></rect>
+                <text x="825" y="120" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">SR-IOV VF (ORU)</text>
+                <text x="825" y="140" text-anchor="middle" font-size="11" fill="#e65100">MAC: 00:11:22:33:00:01</text>
+                <text x="825" y="160" text-anchor="middle" font-size="11" fill="#e65100">PCI: 0000:53:01.0</text>
+                <text x="825" y="180" text-anchor="middle" font-size="10" fill="#f57c00">DPDK vfio-pci</text>
+
+                <!-- E810 Port -->
+                <rect x="630" y="240" width="390" height="80" fill="#ffb74d" stroke="#f57c00" stroke-width="2" rx="5"></rect>
+                <text x="825" y="265" text-anchor="middle" font-size="13" font-weight="bold" fill="#bf360c">E810 Port: ens6f0np0</text>
+                <text x="825" y="285" text-anchor="middle" font-size="11" fill="#e65100">25 GbE | PTP Enabled</text>
+                <text x="825" y="305" text-anchor="middle" font-size="10" fill="#f57c00">VF 0 → ru-emulator</text>
+
+                <!-- Arrow -->
+                <line x1="825" y1="225" x2="825" y2="240" stroke="#f57c00" stroke-width="2"></line>
+
+                <!-- Network Switch -->
+                <rect x="350" y="380" width="400" height="80" fill="#e1f5fe" stroke="#0277bd" stroke-width="2" rx="5"></rect>
+                <text x="550" y="410" text-anchor="middle" font-size="16" font-weight="bold" fill="#01579b">Network Switch</text>
+                <text x="550" y="430" text-anchor="middle" font-size="12" fill="#0277bd">Same VLAN (e.g., VLAN 5)</text>
+                <text x="550" y="448" text-anchor="middle" font-size="11" fill="#0277bd">Low-latency, layer-2 forwarding</text>
+
+                <!-- Connection Lines -->
+                <line x1="275" y1="320" x2="275" y2="380" stroke="#0277bd" stroke-width="3"></line>
+                <line x1="825" y1="320" x2="825" y2="380" stroke="#0277bd" stroke-width="3"></line>
+                <line x1="275" y1="380" x2="450" y2="380" stroke="#0277bd" stroke-width="3"></line>
+                <line x1="650" y1="380" x2="825" y2="380" stroke="#0277bd" stroke-width="3"></line>
+
+                <!-- PTP Synchronization Box -->
+                <rect x="200" y="490" width="700" height="140" fill="#fff9c4" stroke="#f9a825" stroke-width="2" rx="5"></rect>
+                <text x="550" y="515" text-anchor="middle" font-size="15" font-weight="bold" fill="#f57f17">PTP Synchronization Required</text>
+                <text x="550" y="540" text-anchor="middle" font-size="12" fill="#f9a825">• Hosts must synchronize clocks via IEEE 1588v2 PTP</text>
+                <text x="550" y="560" text-anchor="middle" font-size="12" fill="#f9a825">• Use PTP grandmaster or boundary clock for time distribution</text>
+                <text x="550" y="580" text-anchor="middle" font-size="12" fill="#f9a825">• E810-XXVDA4T (T-version) provides sufficient hardware timestamping for LLS-C1</text>
+                <text x="550" y="600" text-anchor="middle" font-size="12" fill="#f9a825">• PTP compatible switch or direct connection required</text>
+
+                <!-- PTP Clock Icons -->
+                <circle cx="150" cy="570" r="30" fill="#ffeb3b" stroke="#f57f17" stroke-width="2"></circle>
+                <text x="150" y="577" text-anchor="middle" font-size="11" font-weight="bold" fill="#f57f17">PTP</text>
+                <circle cx="950" cy="570" r="30" fill="#ffeb3b" stroke="#f57f17" stroke-width="2"></circle>
+                <text x="950" y="577" text-anchor="middle" font-size="11" font-weight="bold" fill="#f57f17">PTP</text>
+
+                <!-- PTP Sync Arrows -->
+                <line x1="180" y1="570" x2="200" y2="570" stroke="#f57f17" stroke-width="2" stroke-dasharray="5,5"></line>
+                <line x1="900" y1="570" x2="920" y2="570" stroke="#f57f17" stroke-width="2" stroke-dasharray="5,5"></line>
+            </svg>

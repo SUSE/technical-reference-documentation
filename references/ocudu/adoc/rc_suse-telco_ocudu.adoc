@@ -83,10 +83,10 @@ Directed network provisioning: Automated cluster deployment with advanced networ
 
 === OCUDU
 
-OCUDU is a cloud-native implementation of 5G RAN components, providing deployment options for the gNB, CU, DU, CU-CP, and CU-UP. In this article, we focus on the gNB deployment variant, where all applications are combined into a single monolithic binary. OCUDU supports O-RAN Split 7.2, as well as Split 6 and Split 8. In this blog post, we use Split 7.2.
+OCUDU is a cloud-native implementation of 5G RAN components, providing deployment options for the gNB, CU, DU, CU-CP, and CU-UP. In this article, we focus on the gNB deployment variant, where all applications are combined into a single monolithic binary. 
+OCUDU supports O-RAN Split 7.2, as well as Split 6 and Split 8. In this blog post, we use Split 7.2.
 
-
-***** diagram goes here  *****
+image::architecture.svg[title=" O-RAN Split 7.2 in this Reference Architecture", O-RAN Split 7.2 in this Reference Architecture, align="center", width=110%]
 
 
 ==== O-RAN Split 7.2 in this Reference Architecture
@@ -212,7 +212,8 @@ The DU and RU emulator connection must use the same physical NIC. If different N
 Keeping both sides on the same NIC avoids this additional synchronization requirement for the single-node scenario.
 ====
 
-********* diagram goes here************
+image::single-node-deploy.svg[title="Single-Node Deployment",  Single-Node Deployment, align="center", width=100%]
+
 
 [IMPORTANT]
 ====
@@ -234,7 +235,7 @@ The du_mac_addr in gNB config must match the VF MAC, and ru_mac_addr in RU confi
 ==== Scenario 2: Dual Node Deployment
 This scenario separates the DU and RU onto different physical servers, simulating a real distributed deployment where the DU is centralized and RUs are at cell sites.
 
-********diagram goes here*******
+image::duel-node-deploy.svg[title="Dual Node Deployment", Dual Node Deployment, align="center", width=100%]
 
 
 Additional Requirements for Dual-Node:
@@ -307,7 +308,9 @@ topologyManagerPolicy: single-numa-node to minimize memory access latency.
 
 A persistent management cluster provisions downstream or workload clusters. This separation provides operational flexibility and centralized lifecycle management.
 
-******daigram goes here *****
+
+image::management-cluster.svg[title="Management Cluster Architecture", Management Cluster Architecture, align="center", width=100%]
+
 
 Why This Architecture?
 
@@ -868,7 +871,9 @@ Single Root I/O Virtualization (SR-IOV) is a hardware-based virtualization techn
 
 ==== How SR-IOV Works
 
-*******image goes here ************
+image::sriov-architecture.svg[title="SR-IOV Architecture", SR-IOV Architecture, align="center", width=100%]
+
+
 
 **Benefits:**
 
