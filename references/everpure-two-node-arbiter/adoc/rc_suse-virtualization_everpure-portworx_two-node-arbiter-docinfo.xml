@@ -56,6 +56,8 @@
 -->
 <meta name="task">
     <phrase>{metatask1}</phrase>
+    <phrase>{metatask2}</phrase>
+    <phrase>{metatask3}</phrase>
 </meta>
 
 
@@ -69,8 +71,8 @@
      - This list is NOT visible in the rendered document.
 -->
 <meta name="productname">
-  <productname version="{comp1-version1}">{comp1-long}</productname>
-  <productname version="{comp2-version1}">{comp2-long}</productname>
+  <productname version="">{svirt-long}</productname>
+  <productname version="">{pxe-long}</productname>
 </meta>
 
 
@@ -79,7 +81,7 @@
        respective versions.
      - This list appears above the title in the rendered document.
 -->
-<productname>{comp1} {comp1-version1}, {comp2} {comp2-version1}</productname>
+<productname>{svirt-long}, {pxe-long}</productname>
 
 
 
@@ -88,15 +90,15 @@
      - However, in the meantime, mirror the component content
        of the productname metadata above.
 -->
-<meta name="platform">{comp1-long} {comp1-version1}</meta>
-<meta name="platform">{comp2-long} {comp2-version1}</meta>
+<meta name="platform">{svirt-long}</meta>
+<meta name="platform">{pxe-long}</meta>
 
 
 <!-- Partner metadata
      Identify ONLY ONE technical partner (business or organization name)
      supplying a primary component of the solution.
 -->
-<meta name="techpartner">{comp2-provider}</meta>
+<meta name="techpartner">{pxe-provider}</meta>
 
 
 <!-- author metadata
@@ -117,6 +119,27 @@
       <orgname>{author1-orgname}</orgname>
     </affiliation>
   </author>
+
+  <author>
+    <personname>
+      <firstname>{author2-firstname}</firstname>
+      <surname>{author2-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author2-jobtitle}</jobtitle>
+      <orgname>{author2-orgname}</orgname>
+    </affiliation>
+    </author>
+    <author>
+    <personname>
+      <firstname>{author3-firstname}</firstname>
+      <surname>{author3-surname}</surname>
+    </personname>
+    <affiliation>
+      <jobtitle>{author3-jobtitle}</jobtitle>
+      <orgname>{author3-orgname}</orgname>
+    </affiliation>
+  </author>
 </authorgroup>
 
 
@@ -134,7 +157,7 @@
        file is created in your project's `media/src/svg` directory.
      - Make no changes to this section unless you explicitly need
        to use a different logo image.
-     
+
      - To display alternative logo (including an approved logo lock-up)
        on the document cover:
        - If the desired SVG image is located in `common/images/src/svg`,
