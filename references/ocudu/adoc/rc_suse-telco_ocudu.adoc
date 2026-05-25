@@ -29,8 +29,8 @@ include::./rc_suse-telco_ocudu-vars.adoc[]
 == Introduction
 
 The rapid evolution of 5G and edge computing demands a cloud-native infrastructure capable of delivering deterministic performance, real-time processing, and operational scalability. 
-This reference architecture demonstrates how OCUDU can be deployed on SUSE Telco Cloud using SUSE Edge technologies such as RKE2, Metal3, Cluster API, and SR-IOV networking. 
-The document focuses on validating hardware readiness, benchmarking RAN workloads, and enabling reproducible O-RAN Split 7.2 deployments through a software-defined environment.
+This reference architecture demonstrates how {ocudu-brand} can be deployed on {stelco-brand} using {stelco-edge} technologies such as RKE2, Metal3, Cluster API, and SR-IOV networking. 
+The document focuses on validating hardware readiness, benchmarking RAN workloads, and enabling reproducible O-RAN {ocudu-splite} {ocudu-splite-version} deployments through a software-defined environment.
 
 === Acknowledgments
 
@@ -50,18 +50,21 @@ The following individuals contributed to the creation of this document:
 == Product Overview
 
 
-===  SUSE Telco Cloud (SUSE Edge)
+
+
+
+===  {stelco-long} ({stelco-edge})
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Provide a statement or list of what the guide covers and
 // (if relevant) what it does not cover.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-SUSE Edge 3.5 is an enterprise-grade platform purpose-built for edge computing and telecommunications workloads. 
+{stelco-edge} {stelco-edge-version} is an enterprise-grade platform purpose-built for edge computing and telecommunications workloads. 
 It provides a complete infrastructure stack optimized for telco-specific requirements including real-time processing, deterministic latency, and hardware acceleration.
 
 ==== Core Technology Stack
-* SUSE Linux Micro RT: A real-time capable operating system based on SLE Micro, featuring the PREEMPT_RT kernel patch for microsecond-level latency guarantees. 
+* {slemicro} RT: A real-time capable operating system based on SLE Micro, featuring the PREEMPT_RT kernel patch for microsecond-level latency guarantees. 
 This OS is immutable, providing enhanced security and reliability through transactional updates.
 
 * RKE2 (Rancher Kubernetes Engine 2): A CNCF-certified Kubernetes distribution hardened for security and compliance. 
@@ -74,7 +77,7 @@ Metal3 treats physical servers as cloud resources, enabling declarative infrastr
 * SR-IOV Network Operator: Automates the discovery, configuration, and lifecycle management of SR-IOV network devices in Kubernetes clusters, enabling high-performance networking for CNF workloads.
 
 ==== Image Builder
-SUSE provides the Edge Image Builder (EIB), a tooling ecosystem that creates customized OS images containing:
+{stelco-provider} provides the {eib} (EIB), a tooling ecosystem that creates customized OS images containing:
 
 * Pre-installed packages (real-time kernel, DPDK, tuned profiles)
 * Embedded scripts for filesystem growth, performance tuning, SR-IOV automation
@@ -92,28 +95,28 @@ The declarative image-building process ensures consistent, reproducible deployme
 Directed network provisioning: Automated cluster deployment with advanced networking using nmstate for static IPs, VLANs, bonding, and dual-stack configurations.
 
 
-=== OCUDU
+=== {ocudu}
 
-OCUDU is a cloud-native implementation of 5G RAN components, providing deployment options for the gNB, CU, DU, CU-CP, and CU-UP. In this article, we focus on the gNB deployment variant, where all applications are combined into a single monolithic binary. 
-OCUDU supports O-RAN Split 7.2, as well as Split 6 and Split 8. In this blog post, we use Split 7.2.
+{ocudu} is a cloud-native implementation of 5G RAN components, providing deployment options for the gNB, CU, DU, CU-CP, and CU-UP. In this article, we focus on the gNB deployment variant, where all applications are combined into a single monolithic binary. 
+{ocudu} supports O-RAN {ocudu-splite} {ocudu-splite-version}, as well as Split 6 and Split 8. In this blog post, we use {ocudu-splite} {ocudu-splite-version}.
 
-image::architecture.svg[title=" O-RAN Split 7.2 in this Reference Architecture", O-RAN Split 7.2 in this Reference Architecture, align="center", width=110%]
+image::architecture.svg[title=" O-RAN {ocudu-splite} {ocudu-splite-version} in this Reference Architecture", O-RAN {ocudu-splite} {ocudu-splite-version} in this Reference Architecture, align="center", width=110%]
 
 
-==== O-RAN Split 7.2 in this Reference Architecture
-The diagram above shows how OCUDU maps the 5G RAN protocol stack onto O-RAN logical components. The blue area represents the OCUDU implementation, while the O-RU is shown as the external radio unit connected through the fronthaul interface.
+==== O-RAN {ocudu-splite} {ocudu-splite-version} in this Reference Architecture
+The diagram above shows how {ocudu} maps the 5G RAN protocol stack onto O-RAN logical components. The blue area represents the {ocudu} implementation, while the O-RU is shown as the external radio unit connected through the fronthaul interface.
 
-In this reference architecture, Split 7.2 defines where the DU connects to the O-RAN Radio Unit over the O-RAN Open Fronthaul interface. OCUDU provides the CU and DU-side functionality shown in the blue area of the diagram, including O-CU-CP, O-CU-UP, O-DU-high, and O-DU-low. The O-RU sits outside OCUDU and exchanges fronthaul traffic with the DU using the Split 7.2 interface.
+In this reference architecture, {ocudu-splite} {ocudu-splite-version} defines where the DU connects to the O-RAN Radio Unit over the O-RAN Open Fronthaul interface. {ocudu} provides the CU and DU-side functionality shown in the blue area of the diagram, including O-CU-CP, O-CU-UP, O-DU-high, and O-DU-low. The O-RU sits outside {ocudu} and exchanges fronthaul traffic with the DU using the {ocudu-splite} {ocudu-splite-version} interface.
 
 * O-CU-CP: Provides the control-plane part of the CU, including RRC and PDCP-C. It connects to the 5G Core control plane over NG-C/N2, to the O-CU-UP over E1, to the O-DU over F1-C, and optionally to the near-RT RIC over E2.
 * O-CU-UP: Provides the user-plane part of the CU, including SDAP and PDCP-U. It connects to the 5G Core user plane over NG-U/N3 and to the O-DU over F1-U.
 * O-DU-high: Contains the higher DU layers shown in the diagram, including RLC and MAC.
-* O-DU-low: Contains the lower DU processing shown in the diagram. For Split 7.2, this is the OCUDU component that connects to the O-RU over the O-RAN Open Fronthaul interface.
-* O-RU: Represents the O-RAN Radio Unit. It sits outside OCUDU and connects to the DU over the Split 7.2 fronthaul interface.
+* O-DU-low: Contains the lower DU processing shown in the diagram. For {ocudu-splite} {ocudu-splite-version}, this is the {ocudu} component that connects to the O-RU over the O-RAN Open Fronthaul interface.
+* O-RU: Represents the O-RAN Radio Unit. It sits outside {ocudu} and connects to the DU over the {ocudu-splite} {ocudu-splite-version} fronthaul interface.
 
-The diagram also shows Split 6 and 8 as an alternative lower-layer split option. This blog post focuses on Split 7.2, where the DU-to-RU connection uses the O-RAN Open Fronthaul model.
+The diagram also shows Split 6 and 8 as an alternative lower-layer split option. This blog post focuses on {ocudu-splite} {ocudu-splite-version}, where the DU-to-RU connection uses the O-RAN Open Fronthaul model.
 
-==== OCUDU RAN Workloads
+==== {ocudu} RAN Workloads
 
 
 [cols="1,3,3",options="header"]
@@ -123,7 +126,7 @@ The diagram also shows Split 6 and 8 as an alternative lower-layer split option.
 |Sizing Guidance
 
 |**ocudu-gnb**
-|Runs the OCUDU gNB deployment variant. In this blog post, this includes the CU-CP, CU-UP, and DU functionality in a single monolithic application.
+|Runs the {ocudu-gnb} deployment variant. In this blog post, this includes the CU-CP, CU-UP, and DU functionality in a single monolithic application.
 |Size according to the selected RAN configuration. Bandwidth, number of cells, antenna configuration, MIMO layers, numerology, enabled features, and traffic profile all influence CPU, memory, hugepage, and network requirements.
 
 |**ru-emulator**
@@ -151,11 +154,11 @@ The observability stack is lightweight compared to the RAN workloads. For a mini
 |Part of the minimal observability stack. Size according to metric volume, retention period, and whether persistent storage is required.
 
 |**Grafana**
-|Provides dashboards for visualizing OCUDU and deployment metrics.
+|Provides dashboards for visualizing {ocudu} and deployment metrics.
 |Part of the minimal observability stack. Usually lightweight for lab usage; increase resources for more users, dashboards, or data sources.
 
 |**Telegraf**
-|Collects metrics from the OCUDU deployment and forwards them to the metrics database.
+|Collects metrics from the {ocudu} deployment and forwards them to the metrics database.
 |Part of the minimal observability stack. Size according to the number of collected metrics, collection interval, and buffering requirements.
 |===
 
@@ -167,10 +170,10 @@ Size the RAN workloads from the radio configuration first, then allocate observa
 ====
 
 ==== Test Mode Capabilities
-OCUDU test mode exercises the complete software stack without requiring real UEs or RUs. Depending on the test use case, OCUDU can be tested with a physical radio unit or with the radio side fully emulated in software. 
+{ocudu} test mode exercises the complete software stack without requiring real UEs or RUs. Depending on the test use case, {ocudu} can be tested with a physical radio unit or with the radio side fully emulated in software. 
 This makes it useful for both lab validation and performance testing before integrating physical RAN hardware.
 
-In this reference architecture, we use the OCUDU RU emulator to fully exercise the OCUDU RAN stack and produce meaningful results in a controlled software-based environment.
+In this reference architecture, we use the {ocudu} RU emulator to fully exercise the {ocudu} RAN stack and produce meaningful results in a controlled software-based environment.
 
 ==== Configuration Parameters:
 
@@ -186,17 +189,17 @@ In this reference architecture, we use the OCUDU RU emulator to fully exercise t
 * Uplink: Single-layer in uplink.
 * TDD pattern: DDDDDDDSUU (7D1S2U).
 Test mode is enabled through the gNB configuration. 
-The relevant test mode options are set directly inside the OCUDU gNB config before the workload is started. 
+The relevant test mode options are set directly inside the {ocudu-gnb} config before the workload is started. 
 Once the gNB and RU emulator are running, monitor both logs and metrics to validate the deployment.
 
 Performance or configuration issues are usually visible in the application logs and telemetry. 
-For example, incorrect radio configuration, fronthaul configuration problems, timing issues, or resource bottlenecks should be investigated by checking the OCUDU logs together with the exported metrics.
+For example, incorrect radio configuration, fronthaul configuration problems, timing issues, or resource bottlenecks should be investigated by checking the {ocudu} logs together with the exported metrics.
 
 [WARNING]
 ====
 Test Mode Scope:
 
-Test mode generates controlled test traffic for validating the OCUDU RAN stack and the underlying infrastructure. 
+Test mode generates controlled test traffic for validating the {ocudu} RAN stack and the underlying infrastructure. 
 It is intended for RAN performance benchmarking, configuration validation, and troubleshooting. 
 End-to-end behavior with real UEs, physical RF conditions, and a production 5G Core should be validated separately when those components are part of the target deployment.
 
@@ -208,10 +211,10 @@ End-to-end behavior with real UEs, physical RF conditions, and a production 5G C
 === Deployment Topology
 
 ==== Scenario 1: Single Node Deployment
-This scenario co-locates the OCUDU gNB and the RU emulator on the same physical server. 
+This scenario co-locates the {ocudu-gnb} and the RU emulator on the same physical server. 
 It is useful for lab validation because the DU and RU emulator can use the same clock source and therefore remain synchronized without additional PTP or SyncE setup.
 
-In a real O-RAN Split 7.2 deployment, the DU node and the Radio Unit must be synchronized using PTP or SyncE. 
+In a real O-RAN {ocudu-splite} {ocudu-splite-version} deployment, the DU node and the Radio Unit must be synchronized using PTP or SyncE. 
 In this reference architecture, that external synchronization requirement does not apply because the RU emulator and DU run on the same host and use the same clock source.
 
 [WARNING]
@@ -264,7 +267,7 @@ Uncomment vlan_tag_cp and vlan_tag_up in the configs.
 
 
 === Hardware Specifications
-Flexibility Note: OCUDU can run on a wide range of hardware platforms, from small single-board computers (e.g., Raspberry Pi) to large dual-socket servers with 256 cores per NUMA node. 
+Flexibility Note: {ocudu} can run on a wide range of hardware platforms, from small single-board computers (e.g., Raspberry Pi) to large dual-socket servers with 256 cores per NUMA node. 
 The application is designed for performance benchmarking and can adapt to virtually any Kubernetes-capable hardware. 
 The specifications below represent a validated reference configuration for telco-grade performance testing.
 
@@ -276,7 +279,7 @@ The specifications below represent a validated reference configuration for telco
 
 |CPU
 |40+ physical cores (Intel Xeon Scalable or equivalent) Scales from low-power ARM to high-core-count x86
-|Reference: 8 cores for system, 32+ cores isolated for OCUDU workloads. Adjust based on available hardware.
+|Reference: 8 cores for system, 32+ cores isolated for {ocudu} workloads. Adjust based on available hardware.
 
 |Memory
 |64 GB+ RAM Scales based on workload requirements
@@ -299,10 +302,10 @@ The specifications below represent a validated reference configuration for telco
 ====
 Hardware Compatibility Notes:
 
-* Platform Flexibility: OCUDU can benchmark performance on any Kubernetes-capable platform. 
+* Platform Flexibility: {ocudu} can benchmark performance on any Kubernetes-capable platform. 
 Resource requirements scale with target throughput and cell count.
 
-* AVX-512 (Optional): The OCUDU AVX-512 image (ocudu_nightly_avx512) provides DSP optimizations for x86 platforms. 
+* AVX-512 (Optional): The {ocudu} AVX-512 image (ocudu_nightly_avx512) provides DSP optimizations for x86 platforms. 
 Non-AVX-512 platforms can use alternative builds.
 
 * NUMA Awareness: For multi-socket systems, pin workloads to a single NUMA node using Kubernetes 
@@ -598,7 +601,7 @@ spec:
 **Key Configuration Points:**
 
 * `hostSelector.matchLabels`: Selects BareMetalHosts with `cluster-role: control-plane` label. This enables grouping hosts by role (control-plane vs. worker).
-* `image.url`: HTTP-accessible raw disk image built with Edge Image Builder (EIB). Must include RT kernel, RKE2, and telco packages.
+* `image.url`: HTTP-accessible raw disk image built with {eib} (EIB). Must include RT kernel, RKE2, and telco packages.
 * `image.checksum`: SHA256 checksum for image verification during provisioning. Prevents corrupted image deployments.
 * `automatedCleaningMode: disabled`: Skips automated disk wiping between provisions. Enable for production to ensure clean state.
 * `agentConfig.additionalUserData`: References a Secret containing Ignition configuration for OS customization (kernel parameters, systemd services, files).
@@ -627,11 +630,11 @@ The `agentConfig.additionalUserData` section uses **Ignition** format (Fedora Co
 * **Kernel Parameters**: Add boot arguments for performance tuning
 * **User Management**: Create users, set SSH keys
 
-=== OCUDU gNB Helm Chart Configuration
+=== {ocudu} gNB Helm Chart Configuration
 
 The gNB is deployed through RKE2's built-in `HelmChart` CRD, which applies the
             Helm release automatically during cluster bootstrap. For this proof of concept, we use the
-            default OCUDU Split 7.2 profile for the OCUDU gNB.
+            default {ocudu} {ocudu-splite} {ocudu-splite-version} profile for the {ocudu-gnb}.
 
 [source]
 ----
@@ -687,7 +690,7 @@ spec:
 
 ==== Security Context
 
-The OCUDU gNB container does not need to run as a privileged container. Instead, the
+The {ocudu-gnb} container does not need to run as a privileged container. Instead, the
             deployment uses a minimum-privilege security context that grants only the Linux
             capabilities required by the workload.
 
@@ -895,7 +898,7 @@ image::sriov-architecture.svg[title="SR-IOV Architecture", SR-IOV Architecture, 
 
 === SR-IOV Configuration
 
-SUSE Telco Cloud automates SR-IOV setup using a custom ConfigMap consumed by a systemd service.
+{stelco-long} automates SR-IOV setup using a custom ConfigMap consumed by a systemd service.
 
 [source, yaml]
 ----
@@ -947,7 +950,7 @@ data:
 
 | `driver`
 | VF driver to bind. Options: `vfio-pci` (DPDK), `iavf` (kernel), `igb_uio` (legacy)
-| vfio-pci for OCUDU
+| vfio-pci for {ocudu}
 
 | `numVFsToCreate`
 | Number of virtual functions to create from this PF
@@ -994,7 +997,7 @@ Advertises resources to kubelet
 
 === MAC Address Override Service
 
-Critical for OCUDU: SR-IOV VF MAC addresses are randomized by default. The gNB and RU emulator configurations hardcode specific MACs, requiring manual override.
+Critical for {ocudu}: SR-IOV VF MAC addresses are randomized by default. The gNB and RU emulator configurations hardcode specific MACs, requiring manual override.
 
 [source]
 ----
@@ -1183,7 +1186,7 @@ kernelArguments:
 [TIP]
 ====
 * **Cores 0-7 (System Cores)**: Handle OS tasks, Kubernetes components, system daemons, interrupts. These cores remain under normal scheduler control.
-* **Cores 8-39 (Isolated Cores)**: Dedicated to OCUDU workloads. The kernel scheduler does not place tasks here unless explicitly pinned (via cgroups/cpusets). Timer ticks are disabled (adaptive-tick), and RCU callbacks are offloaded, minimizing OS interference.
+* **Cores 8-39 (Isolated Cores)**: Dedicated to {ocudu} workloads. The kernel scheduler does not place tasks here unless explicitly pinned (via cgroups/cpusets). Timer ticks are disabled (adaptive-tick), and RCU callbacks are offloaded, minimizing OS interference.
 * **Result**: Isolated cores achieve deterministic performance with <10μs jitter, suitable for real-time RAN processing.
 ====
 
@@ -1361,7 +1364,7 @@ To avoid manually reconfiguring the EAL arguments for every deployment, the gNB 
         # Should show VFs for ens6f0np0 and ens6f1np1
 ----
 
-==== Step 3: Verify OCUDU Pods
+==== Step 3: Verify {ocudu} Pods
 
 [source]
 ----
@@ -1412,7 +1415,7 @@ For **1 cell, 1 UE, 100MHz TDD, 4x1 MIMO, QAM256**:
         # Default credentials: admin / admin1234
 
         # Navigate to:
-        # - Dashboard → OCUDU Metrics (throughput, MCS, BLER)
+        # - Dashboard → {ocudu} Metrics (throughput, MCS, BLER)
         # - Dashboard → OFH Metrics (RX_ON_TIME, RX_EARLY, RX_LATE)
 ----
 
@@ -1545,7 +1548,7 @@ The repository includes Python parsers to extract KPIs from logs and compare aga
 
 == Conclusion
 
-This reference architecture demonstrates how OCUDU can be deployed on SUSE Telco Cloud
+This reference architecture demonstrates how {ocudu} can be deployed on {stelco-long}
             for hardware validation and RAN workload sizing. The measured resource requirements can
             then be used as input for planning and sizing a production deployment. This setup is not
             intended to represent a full production deployment. Instead, it shows how to verify whether
@@ -1560,11 +1563,11 @@ The deployment can be used to validate key infrastructure capabilities, includin
                 for direct, low-overhead packet processing.
 * **Real-time readiness:** Using the PREEMPT_RT kernel, CPU isolation,
                 hugepages, and tuned profiles to reduce jitter and improve determinism.
-* **O-RAN Split 7.2 validation:** Exercising the DU-to-RU path through the
+* **O-RAN {ocudu-splite} {ocudu-splite-version} validation:** Exercising the DU-to-RU path through the
                 O-RAN Open Fronthaul interface using the RU emulator.
 * **Observability:** Using logs, metrics, and dashboards to identify
                 configuration mistakes, resource bottlenecks, timing issues, and performance limits.
-In the single-node scenario, the OCUDU gNB and RU emulator run on the same host. This makes
+In the single-node scenario, the {ocudu} gNB and RU emulator run on the same host. This makes
             the setup well suited for validating CPU allocation, memory configuration, hugepages,
             SR-IOV device assignment, DPDK configuration, and overall platform readiness without
             requiring a separate physical RU.

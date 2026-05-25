@@ -56,6 +56,8 @@
 -->
 <meta name="task">
     <phrase>{metatask1}</phrase>
+    <phrase>{metatask2}</phrase>
+    <phrase>{metatask3}</phrase>
 </meta>
 
 
@@ -64,15 +66,15 @@
      - Use the pattern below to specify the core components.
      - Update to match the variables you defined in your Vars file.
      - Use the long (full) name of each component.
-     - Delete the version reference (e.g., '{comp1-version1}') unless needed.
+     - Delete the version reference (e.g., '') unless needed.
        NOTE: Most TRDs do not reference versions here.
      - Multiple versions of the same component can be provided in a
        comma-separated list.
      - This list is NOT visible in the rendered document.
 -->
 <meta name="productname">
-  <productname version="{comp1-version1}">{comp1-long}</productname>
-  <productname version="{comp2-version1}">{comp2-long}</productname>
+  <productname version="{stelco-version1}">{stelco-long}</productname>
+  <productname version="{ocudu-version1}">{ocudu-long}</productname>
 </meta>
 
 
@@ -82,7 +84,7 @@
        versions, unless needed.
      - This list appears above the title in the rendered document.
 -->
-<productname>{comp1} {comp1-version1}, {comp2} {comp2-version1}</productname>
+<productname>{stelco} {stelco-version1}, {ocudu} {ocudu-version1}</productname>
 
 
 
@@ -91,15 +93,15 @@
      - However, in the meantime, mirror the component content
        of the productname metadata above.
 -->
-<meta name="platform">{comp1-long} {comp1-version1}</meta>
-<meta name="platform">{comp2-long} {comp2-version1}</meta>
+<meta name="platform">{stelco-long} {stelco-version1}</meta>
+<meta name="platform">{ocudu-long} {ocudu-version1}</meta>
 
 
 <!-- Partner metadata
      Identify ONLY ONE SUSE partner (business or organization name)
      supplying a core component of the solution.
 -->
-<meta name="techpartner">{comp2-provider}</meta>
+<meta name="techpartner">{ocudu-provider}</meta>
 
 
 <!-- author metadata

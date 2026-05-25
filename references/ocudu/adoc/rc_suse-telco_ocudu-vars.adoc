@@ -88,21 +88,41 @@
 //            own variables wherever they occur, including:
 //            in the Vars file, the Docinfo file, and your Main content file.
 // -
-:comp1-provider: provider
-:comp1: SUSE Telco Cloud
-:comp1-long: SUSE Telco Cloud
-:comp1-brand: branded product name
-:comp1-version1: 3.5
-:comp1-website: product website URL
-:comp1-docs: product documentation URL
 
-:comp2-provider: provider
-:comp2: OCUDU
-:comp2-long: OCUDU
-:comp2-brand: branded product name
-:comp2-version1:
-:comp2-website: product website URL
-:comp2-docs: product documentation URL
+
+
+
+
+
+:stelco-provider: SUSE
+:stelco-brand: SUSE® Telco Cloud
+:stelco-long: SUSE Telco Cloud
+:stelco: {stelco-provider}
+:stelco-edge: SUSE Edge
+:stelco-edge-version: 3.5
+:stelco-version1:
+:slemicro: SUSE Linux Micro
+:eib: Edge Image Builder
+:stelco-website: https://www.suse.com/products/edge-for-telco/
+:stelco-docs: https://documentation.suse.com/suse-edge/3.5/html/edge/
+:stelco-docs-atip: {stelco-docs}atip.html
+:stelco-contact: https://www.suse.com/contact/
+
+:sedge-eib-building-images: https://github.com/suse-edge/edge-image-builder/blob/main/docs/building-images.md
+//:github-suse-edge: https://github.com/suse-edge/edge-image-builder/blob/main/docs/building-images.md
+
+:ocudu-provider: OCUDU
+:ocudu: OCUDU
+:ocudu-brand: {ocudu}®
+:ocudu-long: {ocudu}
+:ocudu-version1:
+:ocudu-gnb: OCUDU gNB
+:ocudu-splite: Split
+:ocudu-splite-version: 7.2
+:ocudu-website: 
+:ocudu-docs:
+:ocudu-contact: 
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -137,7 +157,7 @@
 //        will appear as:
 //          "Integrating SUSE Virtualization with Hitachi VSP Storage"
 // -
-:doctitle: OCUDU on SUSE Telco Cloud
+:doctitle: {ocudu} on {stelco-long}
 
 :docsubtitle: Technical Reference Architecture - Single Node Cluster Deployment using CAPI Workflow
 
@@ -147,7 +167,7 @@
 
 :description-social: (<55 characters) social media description
 
-:executive-summary: This document provides a technical reference for using OCUDU on SUSE Telco Cloud to validate hardware readiness and size resources for a selected 5G RAN configuration. The goal is not to describe a full production deployment. Instead, this reference architecture shows how to exercise the OCUDU stack, measure the resources required by the chosen RAN configuration, and use those measurements as input for planning a production deployment.
+:executive-summary: This document provides a technical reference for using {ocudu} on {stelco-long} to validate hardware readiness and size resources for a selected 5G RAN configuration. The goal is not to describe a full production deployment. Instead, this reference architecture shows how to exercise the {ocudu} stack, measure the resources required by the chosen RAN configuration, and use those measurements as input for planning a production deployment. In this setup, {ocudu} runs in the gNB deployment variant together with an RU emulator. This allows the DU-to-RU path to be validated with O-RAN {ocudu-splite} {ocudu-splite-version} and Open Fronthaul behavior while keeping the test environment fully software-based and reproducible.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
