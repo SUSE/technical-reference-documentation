@@ -88,7 +88,7 @@ The declarative image-building process ensures consistent, reproducible deployme
 
 ==== Key Features for Telco Workloads
 * Real-time kernel (PREEMPT_RT): Provides deterministic task scheduling with sub-millisecond latency, critical for RAN processing where timing violations can cause call drops.
-* CPU isolation: Kernel parameters (isolcpus, nohz_full, rcu_nocbs) dedicate cores exclusively to workloads, preventing kernel interference.
+* CPU isolation: Kernel parameters (`isolcpus`, `nohz_full`, `rcu_nocbs`) dedicate cores exclusively to workloads, preventing kernel interference.
 * Huge pages: 1GB and 2MB page support for DPDK applications, reducing TLB misses and improving memory access performance by up to 30%.
 * SR-IOV: Hardware-accelerated network virtualization bypassing the kernel network stack, achieving near-native NIC performance with CPU offload.
 
@@ -177,17 +177,17 @@ In this reference architecture, we use the {ocudu} RU emulator to fully exercise
 
 ==== Configuration Parameters:
 
-* nof_ues: Number of emulated users.
-* rnti: Radio Network Temporary Identifier used for the emulated UE.
-* cqi: Channel Quality Indicator. A higher CQI allows the scheduler to select a higher modulation and coding scheme.
-* ri: Rank Indicator for the number of downlink MIMO layers. In this reference architecture we use 4x4 MIMO in downlink and a single layer in uplink.
-* pusch_active / pdsch_active: Enable uplink and downlink traffic generation.
+* `nof_ues`: Number of emulated users.
+* `rnti`: Radio Network Temporary Identifier used for the emulated UE.
+* `cqi`: Channel Quality Indicator. A higher CQI allows the scheduler to select a higher modulation and coding scheme.
+* `ri`: Rank Indicator for the number of downlink MIMO layers. In this reference architecture we use 4x4 MIMO in downlink and a single layer in uplink.
+* `pusch_active` / `pdsch_active`: Enable uplink and downlink traffic generation.
 
 ==== Reference Test Configuration:
 
 * Downlink: 4x4 MIMO with QAM256.
 * Uplink: Single-layer in uplink.
-* TDD pattern: DDDDDDDSUU (7D1S2U).
+* TDD pattern: `DDDDDDDSUU` (7D1S2U).
 Test mode is enabled through the gNB configuration. 
 The relevant test mode options are set directly inside the {ocudu-gnb} config before the workload is started. 
 Once the gNB and RU emulator are running, monitor both logs and metrics to validate the deployment.
@@ -243,7 +243,7 @@ While PTP synchronization works on many NICs, the E810 has been validated for th
 For dual-node deployments, use the E810-XXVDA4T or an external PTP Grandmaster (PTP GM).
 
 * MAC Address Consistency: 
-The du_mac_addr in gNB config must match the VF MAC, and ru_mac_addr in RU config must match its VF MAC. Mismatches cause packet drops.
+The `du_mac_addr` in gNB config must match the VF MAC, and `ru_mac_addr` in RU config must match its VF MAC. Mismatches cause packet drops.
 ====
 
 ==== Scenario 2: Dual Node Deployment
@@ -263,7 +263,7 @@ Alternatively you can use a PTP Grandmaster (GM) of PTP class C.
 Class C PTP hardware is required.
 
 * VLAN Configuration: If using VLANs, configure them identically on both nodes. 
-Uncomment vlan_tag_cp and vlan_tag_up in the configs.
+Uncomment `vlan_tag_cp` and `vlan_tag_up` in the configs.
 
 
 === Hardware Specifications
@@ -305,13 +305,13 @@ Hardware Compatibility Notes:
 * Platform Flexibility: {ocudu} can benchmark performance on any Kubernetes-capable platform. 
 Resource requirements scale with target throughput and cell count.
 
-* AVX-512 (Optional): The {ocudu} AVX-512 image (ocudu_nightly_avx512) provides DSP optimizations for x86 platforms. 
+* AVX-512 (Optional): The {ocudu} AVX-512 image (`ocudu_nightly_avx512`) provides DSP optimizations for x86 platforms. 
 Non-AVX-512 platforms can use alternative builds.
 
 * NUMA Awareness: For multi-socket systems, pin workloads to a single NUMA node using Kubernetes 
-topologyManagerPolicy: single-numa-node to minimize memory access latency.
+`topologyManagerPolicy: single-numa-node` to minimize memory access latency.
 
-* TSC (x86): Ensure constant TSC (Time Stamp Counter) for DPDK timing on x86 platforms. Check /proc/cpuinfo for constant_tsc flag.
+* TSC (x86): Ensure constant TSC (Time Stamp Counter) for DPDK timing on x86 platforms. Check `/proc/cpuinfo` for `constant_tsc` flag.
 
 ====
 
@@ -341,9 +341,9 @@ Why This Architecture?
 
 === Deployment Steps
 
-==== Step 1: Bare Metal Host Enrollment **
+==== Step 1: Bare Metal Host Enrollment
 
-Create a BareMetalHost custom resource to register physical servers with Metal3. 
+Create a `BareMetalHost` custom resource to register physical servers with Metal3. 
 This resource encapsulates BMC credentials, hardware identifiers, and provisioning state.
 
 [source,yaml]
@@ -416,7 +416,7 @@ Troubleshooting BMH:
 
 ==== Step 2: CAPI Cluster Definition
 
-The Cluster resource is the top-level abstraction representing a Kubernetes cluster. It references infrastructure-specific and control-plane implementations.
+The `Cluster` resource is the top-level abstraction representing a Kubernetes cluster. It references infrastructure-specific and control-plane implementations.
 
 
 [source,yaml]
@@ -463,16 +463,16 @@ spec:
 
 Network Configuration:
 
-* Pod CIDR: 192.168.0.0/18 provides 16,384 IP addresses for pods. Calico CNI assigns /26 blocks per node (64 IPs per node supports 256 nodes).
+* Pod CIDR: `192.168.0.0/18` provides 16,384 IP addresses for pods. Calico CNI assigns /26 blocks per node (64 IPs per node supports 256 nodes).
 
-* Service CIDR: 10.96.0.0/12 is the standard Kubernetes default, supporting ~1M ClusterIP services.
+* Service CIDR: `10.96.0.0/12` is the standard Kubernetes default, supporting ~1M ClusterIP services.
 
 * Control Plane Endpoint: In single-node deployments, use the node's IP. In multi-node, use a VIP managed by MetalLB or keepalived.
 
 
 ==== Step 3: RKE2 Control Plane Configuration
 
-The RKE2ControlPlane defines Kubernetes version, CNI selection, and node-level customizations.
+The `RKE2ControlPlane` defines Kubernetes version, CNI selection, and node-level customizations.
 
 
 [source, yaml]
@@ -543,15 +543,15 @@ spec:
 
 Critical Settings Explained:
 
-* version: RKE2 versions include Kubernetes version + RKE2 patch (e.g., v1.34.2+rke2r1 = K8s 1.34.2 with RKE2 revision 1).
+* `version`: RKE2 versions include Kubernetes version + RKE2 patch (e.g., v1.34.2+rke2r1 = K8s 1.34.2 with RKE2 revision 1).
 
-* cniMultusEnable: true: Enables Multus meta-CNI plugin, allowing pods to attach to multiple networks. Required for SR-IOV secondary interfaces.
+* `cniMultusEnable`: true: Enables Multus meta-CNI plugin, allowing pods to attach to multiple networks. Required for SR-IOV secondary interfaces.
 
-* preRKE2Commands: Executed before RKE2 installation. Loads VFIO-PCI driver with SR-IOV enabled and D3 power state disabled (prevents NIC power-saving issues).
+* `preRKE2Commands`: Executed before RKE2 installation. Loads VFIO-PCI driver with SR-IOV enabled and D3 power state disabled (prevents NIC power-saving issues).
 
-* rolloutStrategy: Controls control-plane node upgrades. maxSurge: 0 prevents temporary dual control-planes (not possible in single-node).
+* `rolloutStrategy`: Controls control-plane node upgrades. maxSurge: 0 prevents temporary dual control-planes (not possible in single-node).
 
-* agentConfig.additionalUserData: Contains Ignition configuration (FCOS format) that runs at first boot. The structure above shows all file paths, systemd units, and kernel parameters with clickable links to sections where each component's content is detailed. Complete Ignition format explained in Section 4.1.
+* `agentConfig.additionalUserData`: Contains Ignition configuration (FCOS format) that runs at first boot. The structure above shows all file paths, systemd units, and kernel parameters with clickable links to sections where each component's content is detailed. Complete Ignition format explained in Section 4.1.
 
 [IMPORTANT]
 ====
