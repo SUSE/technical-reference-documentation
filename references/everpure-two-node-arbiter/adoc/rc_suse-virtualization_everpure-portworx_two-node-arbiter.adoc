@@ -131,10 +131,12 @@ models are not designed to solve, including:
 
 * *Separate stacks for VMs and containers:* Legacy virtualization platforms and container platforms are managed independently, doubling operational overhead, licensing costs, and training requirements.
 
-* *Three-node HA storage mandates:* Conventional distributed storage systems require a minimum of three full storage nodes to achieve quorum and tolerate a single-node failure. At the edge, provisioning three heavy-weight nodes per site is prohibitively expensive.
+* *Three-node HA storage mandates:* Conventional distributed storage systems require a minimum of three full storage nodes to achieve quorum and tolerate a single-node failure.
+At the edge, provisioning three heavy-weight nodes per site is prohibitively expensive.
 
 * *Operational complexity at scale:* Enterprises with hundreds of edge sites cannot staff each with
-a skilled infrastructure engineer. Automation, consistency, and simplified deployment procedures are
+a skilled infrastructure engineer.
+Automation, consistency, and simplified deployment procedures are
 non-negotiable.
 
 === Value
@@ -482,7 +484,9 @@ Provide the desired namespace name (for example, `portworx`) and select `Built-i
 
 image::suse-portworx-basic-configuration-built-in-kvdb.png[title="SUSE Virtualization and Portworx Basic Configuration with Built-in KVDB", align="center", width=90%]
 
-. In the Storage section, select Cloud Drive type as “None / Use Existing Disks” since Portworx will consume locally attached NVMe devices. Do not use the global "Use All Disks" option. Explicit per-node device paths will be defined directly in the StorageCluster manifest after download. Enable PX-StoreV2 as the storage engine. Set the maximum storage nodes per availability zone to 2, reflecting the two full storage worker nodes in the TNA topology (the arbiter node must not be counted as a storage node).
+. In the Storage section, select Cloud Drive type as “None / Use Existing Disks” since Portworx will consume locally attached NVMe devices. Do not use the global "Use All Disks" option.
+Explicit per-node device paths will be defined directly in the StorageCluster manifest after download. Enable PX-StoreV2 as the storage engine.
+Set the maximum storage nodes per availability zone to 2, reflecting the two full storage worker nodes in the TNA topology (the arbiter node must not be counted as a storage node).
 
 +
 
@@ -501,7 +505,9 @@ image::suse-portworx-network-configuration.png[title="SUSE Virtualization and Po
 image::suse-portworx-customize-rke2-configuration.png[title="SUSE Virtualization and Portworx RKE2 Customization", align="center", width=90%]
 
 
-. The spec is generated next and kubectl commands appear in the UI. Do not apply them yet. First, download and edit the Operator YAML to add the SUSE Virtualization-specific tolerations for node-role.kubernetes.io/control-plane (NoSchedule) and node-role.kubernetes.io/etcd (NoExecute).  Without these, Portworx pods will not schedule on the arbiter or control-plane nodes. Save the commands for reference before making these edits.
+. The spec is generated next and kubectl commands appear in the UI. Do not apply them yet. First, download and edit the Operator YAML to add the SUSE Virtualization-specific tolerations for node-role.kubernetes.io/control-plane (NoSchedule) and node-role.kubernetes.io/etcd (NoExecute).
+Without these, Portworx pods will not schedule on the arbiter or control-plane nodes.
+Save the commands for reference before making these edits.
 
 +
 
@@ -774,7 +780,8 @@ portworx    px-cluster-tna-5cmlx               1/1     Running   0            32
 ----
 
 +
-All three pods are `Running`: the Operator pod plus one {px} agent pod on each of the two storage worker nodes (`harveone` and `harvetwo`). The arbiter node runs only a lightweight KVDB participant, not a full {px} storage agent pod.
+All three pods are `Running`: the Operator pod plus one {px} agent pod on each of the two storage worker nodes (`harveone` and `harvetwo`).
+The arbiter node runs only a lightweight KVDB participant, not a full {px} storage agent pod.
 
 * Cluster Layer: `pxctl status` reports the correct TNA topology, 2 storage nodes online and 1 storageless arbiter online.
 
@@ -847,11 +854,14 @@ The `pxctl` output confirms the expected TNA state.
 // - Suggested next steps for the learning journey
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is a complete, step-by-step technical implementation guide for deploying {pxe-long} in a Two-Node with Arbiter (TNA) topology on {svirt-long}. The architecture delivers highly available, enterprise-grade storage at the edge using only two full storage nodes and one lightweight arbiter node, dramatically reducing hardware costs while preserving production-level resilience.
+This document is a complete, step-by-step technical implementation guide for deploying {pxe-long} in a Two-Node with Arbiter (TNA) topology on {svirt-long}.
+The architecture delivers highly available, enterprise-grade storage at the edge using only two full storage nodes and one lightweight arbiter node, dramatically reducing hardware costs while preserving production-level resilience.
 
-Organizations extending workloads beyond centralized data centers face a familiar trilemma. how to maintain high availability, minimize hardware expenditure, and operate with limited on-site expertise. Traditional storage HA mandates at least three full storage nodes. The TNA architecture dissolves that constraint ,the arbiter node participates only in quorum decisions and carries no data, cutting the hardware bill by roughly one-third while retaining full fault-tolerance semantics.
+Organizations extending workloads beyond centralized data centers face a familiar trilemma.how to maintain high availability, minimize hardware expenditure, and operate with limited on-site expertise.
+Traditional storage HA mandates at least three full storage nodes. The TNA architecture dissolves that constraint ,the arbiter node participates only in quorum decisions and carries no data, cutting the hardware bill by roughly one-third while retaining full fault-tolerance semantics.
 
-This reference configuration pairs {svirt-long}, a Kubernetes-native hyperconverged infrastructure platform, with {pxe-long}'s cloud-native CSI storage. Together they create a single, unified substrate on which virtual machines and containerized applications co-exist without separate management planes.
+This reference configuration pairs {svirt-long}, a Kubernetes-native hyperconverged infrastructure platform, with {pxe-long}'s cloud-native CSI storage.
+Together they create a single, unified substrate on which virtual machines and containerized applications co-exist without separate management planes.
 
 
 == Frequently Asked Questions (FAQs)
@@ -873,9 +883,7 @@ TNA is a {px} deployment topology designed for resource-constrained environments
 
 It consists of exactly two full storage worker nodes that hold application data with synchronous replication between them, plus one lightweight arbiter node.
 
-The arbiter participates in the internal {px} KVDB quorum as a tie-breaker during network partitions or node failures.
-
-This means the cluster can achieve a quorum majority (2 of 3 KVDB members) even when one storage node is unavailable.
+The arbiter participates in the internal {px} KVDB quorum as a tie-breaker during network partitions or node failures.This means the cluster can achieve a quorum majority (2 of 3 KVDB members) even when one storage node is unavailable.
 
 The arbiter does not store any application data, making it suitable for deployment on a smaller, less expensive server.
 --
@@ -912,50 +920,154 @@ For edge environments, maintain an out-of-band management path (IPMI/BMC) to eac
 // * {ref-url}[Reference title]
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-
-* Reference 1
-* Reference 2
-
+* SUSE Virtualization Documentation {svirt-website}
+* Portworx Enterprise Documentation {pxe-website}
+* Portworx Central (Operator/StorageCluster manifest generation){pxe-central}
+* RKE2 Documentation {rke2-website}
+* OpenSUSE Augeas RPM Repository {OSUSE-Augeas-Repo}
 
 
 == Glossary
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a glossary of key terms used in this document.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Term::
-Definition
+[cols="1,4",options="header"]
+|===
+|Term |Definition
 
-Term::
-Definition
+|TNA
+|Two-Node with Arbiter. A {px} deployment topology using 2 storage nodes + 1 storageless arbiter for HA quorum.
 
+|HCI
+|Hyperconverged Infrastructure. A software-defined architecture that combines compute, storage, and networking in a single system.
 
+|Arbiter
+|Also called Witness Node. A storageless {px} node that participates in KVDB quorum decisions without holding application data.
+
+|KVDB
+|Key-Value Database. {px}'s internal distributed store for cluster metadata and state management.
+
+|CSI
+|Container Storage Interface. A Kubernetes-standard API for storage drivers to expose persistent storage to containerized workloads.
+
+|RKE2
+|Rancher's hardened Kubernetes distribution, used as the container orchestration engine inside {svirt-long}.
+
+|SUSE Linux Micro
+|SUSE Linux Micro. An immutable, minimal OS base with a read-only root filesystem, used by {svirt-long}.
+
+|PX-StoreV2
+|{px} storage engine version 2. Used for NVMe-optimized, high-performance block storage in this deployment.
+
+|Augeas
+|A configuration management library. Required by {px} `px-storev2` for OS-level configuration parsing.
+
+|toleration
+|A Kubernetes pod specification field that allows a pod to schedule onto nodes with matching taints.
+
+|taint
+|A Kubernetes node property that repels pods unless those pods carry a matching tolerance.
+
+|NVMe
+|Non-Volatile Memory Express. A high-performance storage protocol for SSD and flash storage over PCIe.
+
+|===
 
 
 == Appendix
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Use subsections of the Appendix to provide such content as:
-// * a complete bill of materials for all components
-// * benchmark results
-// * other supporting content
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The following sections provide additional information and resources.
+All three nodes in this reference deployment are built on the Supermicro SYS-E403-14B-FRN2T, a compact IoT/Edge SuperServer from Supermicro's Compact Edge Server product line.
 
+This platform was selected for its short-depth form factor, NVMe storage support, and suitability for edge and far-edge environments where rack space and power budgets are constrained.
 
-=== Compute platform bill of materials
+[cols="2,3,1,4",options="header"]
+|===
+|Component |Specification |Qty |Notes
 
-Add content here
+|Server Platform
+|Supermicro SYS-E403-14B-FRN2T
+|3
+|2x Storage Workers (`harveone`, `harvetwo`) + 1x Arbiter (`arbitrary`)
 
+|Form Factor
+|Compact / Short-Depth (10.5" x 4.62" x 16")
+|--
+|Wall-mountable; suitable for shallow racks and edge cabinets
+
+|CPU
+|Intel Xeon 6700/6500 Series (P-core or E-core)
+|1/node
+|Up to 300W TDP with air cooling
+
+|RAM
+|DDR5 RDIMM, 8 DIMM slots per node
+|--
+|Up to 2TB per node; configured per workload requirements
+
+|NVMe Drive Bays
+|2x Front Hot-swap 2.5" NVMe
+|2/node
+|One bay for OS; one bay for {px} data disk
+
+|SATA Drive Bays
+|2x Internal Fixed 2.5" SATA
+|2/node
+|Available for additional storage; not used in this deployment
+
+|Network Ports
+|2x 10GbE RJ45 LAN
+|2/node
+|One port for cluster/storage traffic; one for management
+
+|Management Port
+|Dedicated IPMI / BMC
+|1/node
+|Out-of-band management for remote recovery at edge sites
+
+|PCIe Expansion
+|3x PCIe 5.0 x16 FHFL
+|--
+|Available for GPU/NIC expansion; not used in this deployment
+
+|Display / USB
+|1x VGA, 4x USB 3.2 Gen1, 2x USB 2.0
+|--
+|Local console access during initial setup
+
+|===
+
+=== Per-Node Storage Layout
+
+Each storage worker node (`harveone`, `harvetwo`) carries two 2.5" NVMe drives.
+
+The data NVMe is partitioned into three GPT partitions as described in the Pre-Installation Preparation section.
+
+The arbiter node uses the same platform but is configured as a storageless KVDB witness, it does not contribute NVMe capacity to the {px} storage pool and can be provisioned with a smaller NVMe drive.
+
+[cols="1,1,3,2",options="header"]
+|===
+|Partition |Size |{px} Role |StorageCluster Field
+
+|`p1`
+|~1 MiB
+|GPT alignment buffer (unused by {px})
+|Not referenced
+
+|`p2`
+|~64 GiB
+|{px} KVDB metadata store
+|`systemMetadataDevice`
+
+|`p3`
+|Remaining space
+|{px} storage pool data
+|`devices`
+
+|===
 
 === Software bill of materials
 
 Add content here
 
 
-=== Benchmark results
-
-Add content here
 
 
 
