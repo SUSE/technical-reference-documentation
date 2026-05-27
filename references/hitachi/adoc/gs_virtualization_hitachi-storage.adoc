@@ -225,48 +225,44 @@ systemctl status multipathd
 apiVersion: node.harvesterhci.io/v1beta1
 kind: CloudInit
 metadata:
-  name: multipathd-hitachi
+  name: multipathd-persistent
 spec:
-  matchSelector:
-    harvesterhci.io/managed: "true"
-  filename: 99-multipathd_hitachi.yaml
+  matchSelector: {}
   contents: |
-    stages:
-      network:
-        - name: "Configure Hitachi multipath"
-          files:
-            - path: /etc/multipath.conf
-              permissions: 0644
-              content: |
-                defaults {
-                    user_friendly_names yes
-                    find_multipaths yes
-                }
+    #cloud-config
+    write_files:
+      - path: /etc/multipath.conf
+        permissions: '0644'
+        owner: root:root
+        content: |
+          defaults {
+              user_friendly_names yes
+              find_multipaths yes
+          }
 
-                blacklist {
-                }
+          blacklist {
+          }
 
-                devices {
-                    device {
-                        vendor "(HITACHI|HP)"
-                        product "OPEN-.*"
-                        path_grouping_policy "multibus"
-                        path_checker "tur"
-                        features "0"
-                        failback immediate
-                        hardware_handler "0"
-                        prio "const"
-                        rr_weight uniform
-                        no_path_retry 10
-                    }
-                }
-        - name: "Start multipathd service"
-          systemctl:
-            enable:
-              - multipathd
-            start:
-              - multipathd
-  paused: false
+          devices {
+              device {
+                  vendor "(HITACHI|HP)"
+                  product "OPEN-.*"
+                  path_grouping_policy "multibus"
+                  path_checker "tur"
+                  features "0"
+                  failback immediate
+                  hardware_handler "0"
+                  prio "const"
+                  rr_weight uniform
+                  no_path_retry 10
+              }
+          }
+
+    runcmd:
+      - systemctl enable --now multipathd
+      - multipath -F || true
+      - multipath -r || true
+      
 ----
 
 ... Deploy the `99-multipathd_hitachi.yaml` CloudInit CRD.

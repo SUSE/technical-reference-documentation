@@ -22,7 +22,7 @@
 //   This is typically a series of words (often from the document title)
 //   separated by hyphens (-).
 //   (e.g., "rancher-kubflow-deployment")
-:article-id: suse-virt-hitachivsp-storage
+:article-id: gs-suse-virt-portworx-everpure
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -38,12 +38,10 @@
 //   :rev1-description: Original version
 // Set docdate to the most recent revision.
 //-
-:rev3-date: 2026-03-16
-:rev3-description: Updated CloudInit CRD for consistency
-:rev2-date: 2026-01-28
-:rev2-description: Added persistency to multipathd
-:rev1-date: 2026-01-23
-:rev1-description: Initial publication
+:rev2-date: 2026-03-31
+:rev2-description: Updated to SUSE Virtualization v1.6.1
+:rev1-date: 2025-10-15
+:rev1-description: Original version
 :docdate: {rev2-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -79,45 +77,51 @@
 //
 // -
 :svirt-provider: SUSE
-:svirt: SUSE Virtualization
-:svirt-version1: v1.6
+:svirt-brand: {svirt-provider}® Virtualization
+:svirt-long: {svirt-provider} Virtualization
+:svirt: {svirt-long}
+:svirt-version1: v1.6.0
 :svirt-website: https://www.suse.com/products/rancher/virtualization/
-:svirt-docs-root: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/
-:svirt-docs: {svirt-docs-root}introduction/overview.html
-:svirt-docs-ha: {svirt-docs-root}introduction/deploy-ha-cluster.html
-:svirt-docs-iso: {svirt-docs-root}installation-setup/methods/iso-install.html
-:svirt-docs-multipathd: {svirt-docs-root}storage/csidriver.html#_2_multipath_support
-:svirt-docs-csi: {svirt-docs-root}storage/csidriver.html
+:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/
+:svirt-docs-intro: {svirt-docs}introduction/overview.html
+:svirt-docs-reqs: {svirt-docs}installation-setup/requirements.html
+:svirt-docs-create-vm: {svirt-docs}virtual-machines/create-vm.html
+
+:pfa: FlashArray
+:pfa-provider: Everpure
+:pfa-brand: {pfa-provider}™ {pfa}™
+:pfa-long: {pfa-provider} {pfa}
+:pfa-website: https://www.purestorage.com/products/unified-block-file-storage.html
+:pfa-docs: https://support.purestorage.com/category/m_flasharray
+
+:px: Portworx
+:px-provider: {pfa-provider}
+:px-brand: {px}® by {px-provider}™
+:px-long: {px} by {px-provider}
+:pxe-provider: {px-provider}
+:pxe: {px} Enterprise
+:pxe-brand: {pxe}® by {pxe-provider}™
+:pxe-long: {pxe} by {pxe-provider}
+:pxe-version1: 3.5
+:pxe-website: https://portworx.com/products/portworx-enterprise/
+:pxe-docs: https://docs.portworx.com/portworx-enterprise
+:pxe-reqs: {pxe-docs}/platform/kubernetes/flasharray/before-you-begin#environment-prerequisites
+:pxe-flasharray-user-access: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/install-flasharray-cd-da#set-up-user-access-in-flasharray
+:pxe-k8s-secret: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/fa-multi-tenancy#create-a-kubernetes-secret
+:pxe-manage-rwx-block: {pxe-docs}/platform/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
+:pxe-central: https://central.portworx.com/
+:pxo: {px} Operator
+:pxo-version1: 25.5.0
 
 :slmicro-provider: SUSE
-:slmicro-long: SUSE Linux Micro
-:slmicro: SL Micro
-:slmicro-version1: 6.1
+:slmicro-brand: {slmicro-provider}® Linux Micro
+:slmicro: SUSE Linux Micro
 :slmicro-website: https://www.suse.com/products/micro/
-:slmicro-docs: https://documentation.suse.com/sle-micro/6.2/
 
 :rke2-provider: SUSE
-:rke2-long: Rancher Kubernetes Engine 2
-:rke2-long-alt: RKE Government
+:rke2-brand: {rke2-provider}® RKE2
 :rke2: RKE2
-:rke2-version1: 1.33
-:rke2-website: https://documentation.suse.com/cloudnative/rke2/latest/en/introduction.html
 :rke2-docs: https://documentation.suse.com/cloudnative/rke2/
-
-:hitachivsp-provider: Hitachi Vantara
-:hitachivsp: Hitachi VSP
-:hitachivsp-long: Hitachi Vantara Virtual Storage Platform One
-:hitachivsp-version1:
-:hitachivsp-website: https://www.hitachivantara.com/
-:hitachivsp-storage-website: https://www.hitachivantara.com/en-in/products/storage-platforms
-:hitachivsp-docs: https://docs.hitachivantara.com/
-
-:hspc-provider: {hitachivsp-provider}
-:hspc: HSPC
-:hspc-long: Hitachi Storage Plug-in for Containers
-:hspc-version1: v3.16.1
-:hspc-website: https://www.hitachivantara.com/en-us/pdf/datasheet/storage-plug-in-for-containers-datasheet.pdf
-
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -148,22 +152,23 @@
 //
 // NOTE: You can reference component variables in titles.
 //       E.g., If you have the component variables:
-//             :svirt: SUSE Linux Enterprise Server
-//             :hitachivsp: JupyterLab
+//             :comp1: SUSE Linux Enterprise Server
+//             :comp2: JupyterLab
 //             you can reference them to define new variables, like:
-//             :title: Simplify deployment of {hitachivsp} with {svirt}
+//             :doctitle: Simplify deployment of {comp2} with {comp1}
 // -
-:title: SUSE Virtualization with Hitachi VSP Storage
+:doctitle: Modern Virtualization with {svirt-provider} and {px-provider}
 
-:subtitle: Deploy SUSE Virtualization and Hitachi VSP Storage for cloud native virtualization infrastructure
+:docsubtitle: Integrating {pxe} and {pfa-long} Storage with {svirt-long}
 
-:usecase: cloud native virtualization infrastructure
+:usecase: modern virtualization
 
-:description: Guidance for integrating SUSE Virtualization and Hitachi storage platforms to enable modern, enterprise, cloud native virtualization infrastructure.
+:description: Learn how to deploy a modern, cloud-native environment to support both container and virtual machine workloads with {svirt-long} and {px-long}.
 
-:description-social: Integration and deployment guide for SUSE Virtualization and Hitachi storage
+:description-social: Modern Virtualization with {svirt} and {px-long}
 
-:executive-summary: This guide describes how to integrate Hitachi Storage with SUSE Virtualization using the Hitachi Storage Plug‑in for Containers (HSPC CSI driver). It covers prerequisites, multipath configuration, CSI operator installation, and the creation of Kubernetes resources (Secret, StorageClass, PVC, SnapshotClass), along with validation steps using both CLI and the SUSE Virtualization UI. This guide is intended for platform engineers, systems administrators, and others who design, deploy, and manage enterprise, cloud native, and virtualization infrastructure.
+:executive-summary: In this getting started guide, learn how to integrate {svirt-brand} with {pxe-brand} and an {pfa-brand} to provide a flexible, enterprise platform that enables running both containers and virtual machines with unparalleled high availability, data protection, hybrid-cloud mobility, and multi-cluster support.
+
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -191,9 +196,9 @@
 //    :metatask2: Installation
 //    :metatask3: Deployment
 // -
-:metatask1: Integration
-:metatask2: Storage
-:metatask3: Deployment
+:metatask1: Deployment
+:metatask2: Virtualization
+:metatask3: High Availability
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -209,19 +214,26 @@
 //         To list additional authors or contributors on the cover page,
 //         you must edit the docinfo.xml file as well.
 // -
-:author1-firstname: Jivaji
-:author1-surname: Ihare
+:author1-firstname: Gopala
+:author1-surname: Krishnan
 :author1-jobtitle: Partner Solution Architect
 :author1-orgname: SUSE
-:contrib1-firstname: Alejandro
-:contrib1-surname: Bonilla
-:contrib1-jobtitle: Domain Solution Architect
-:contrib1-orgname: SUSE
-:editor1-firstname: Terry
-:editor1-surname: Smith
-:editor1-jobtitle: Director, Partner Ecosystem Solution Innovations
-:editor1-orgname: SUSE
-//:author2-firstname: first (given) name
+:author2-firstname: Suresh
+:author2-surname: S
+:author2-jobtitle: Partner Solution Architect
+:author2-orgname: SUSE
+:author3-firstname: Terry
+:author3-surname: Smith
+:author3-jobtitle: Partner Solution Innovation Director
+:author3-orgname: SUSE
+:author4-firstname: Bhumitra
+:author4-surname: Nager
+:author4-jobtitle: Member of Technical Staff
+:author4-orgname: {pxe-provider}
+:author5-firstname: James
+:author5-surname: McShane
+:author5-jobtitle: Consulting Cloud Native Architect
+:author5-orgname: {pxe-provider}
 //:contrib1-firstname: first (given) name
 //:editor1-firstname: first (given) name
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -231,16 +243,6 @@
 // MISCELLANEOUS ATTRIBUTES
 //   Define any additional variables here for use within the document.
 // -
-:fc-long: Fibre Channel
-:fc: FC
-:fc-wiki: https://en.wikipedia.org/wiki/Fibre_Channel
 
-:iscsi-long: Internet Small Computer Systems Interface
-:iscsi: iSCSI
-:iscsi-wiki: https://en.wikipedia.org/wiki/ISCSI
-
-:suse-terms-root: https://documentation.suse.com/cloudnative/storage/latest/en/
-:suse-terms-storageclass: {suse-terms-root}introduction/terminology.html#_storageclass
-:suse-terms-pvc: {suse-terms-root}introduction/terminology.html#_persistentvolumeclaim
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
