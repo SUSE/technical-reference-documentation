@@ -54,10 +54,12 @@ The following sections address specific aspects of document structure and text s
 Blocks (or block elements) are discrete, line-oriented chunks of content that form the basic structure of your AsciiDoc document.
 The most common type of block is the paragraph, which is a contiguous set of lines of text, bounded by one or more empty lines.
 Other frequently used block types include sections, lists, tables, images, listing blocks, source code blocks, and admonitions.
-Whether implied by syntax or explicitly declared, how a block is processed and rendered is determined by its content model, context, and style.
 
-This guide provides an overview of syntax for common block types.
-To learn more blocks and block characteristics, see {asciidoc-docs-blocks}[AsciiDoc Docs: Blocks].
+How a block is processed and rendered is determined by its content model, context, and style.
+These are implied or explicitly declared by the syntax you use.
+This section is primarily an overview of syntax for using common block types.
+
+To learn more about blocks and block characteristics, see {asciidoc-docs-blocks}[AsciiDoc Docs: Blocks].
 
 
 [[asciidoc-comments, Comments]]
@@ -97,7 +99,7 @@ It is customary to follow the two slashes with a space for human readability.
 
 
 Comment block::
-Designate several lines as a commentary by delimiting it with four forward slashes ( `////` ):
+Designate several lines as commentary by delimiting it with four forward slashes ( `////` ):
 +
 [source, asciidoc]
 ----
@@ -144,6 +146,7 @@ They can be defined anywhere in your document and used from that point forward a
 For best practice, define all variables in one place (your vars file).
 
 Using the standard templates, your vars file is imported at the beginning of your main content file.
+This ensures that these variables have document-wide scope.
 ====
 
 A variable definition has the form:
@@ -152,12 +155,14 @@ A variable definition has the form:
 :name-of-an-attribute: value of the attribute
 ----
 
-The definition begins with the variable name surrounded by colons ( : ) and is followed by the value that is to be assigned.
-The value includes everything up to the first newline character.
+The definition begins with the variable name surrounded by colons ( : ) and is followed by a space and the value that is to be assigned.
+The value then includes everything between the space and the newline character.
 
 [TIP]
 ====
-Required variable definition stubs are provided in the vars file template.
+Some variable definition stubs are provided in the vars file template.
+If you modify the provided variable names, be sure to modify them everywhere they are referenced.
+This may include your main content file, your docinfo file, and even later in your vars file.
 ====
 
 Some example variable definitions are shown below.
@@ -169,13 +174,20 @@ Some example variable definitions are shown below.
 :srancher: SUSE Rancher
 :srancher-version1: 2.13
 :srancher-website: https://www.suse.com/products/rancher/
-:srancher-docs: https://documentation.suse.com/cloudnative/rancher-manager/
-:srancher-docs-ports: {srancher-docs}latest/en/installation-and-upgrade/requirements/port-requirements.html
+:srancher-docs: https://documentation.suse.com/cloudnative/rancher-manager/latest/en/
+:srancher-docs-ports: {srancher-docs}installation-and-upgrade/requirements/port-requirements.html
 :doctitle: Enterprise AI on {srancher-long}
 ----
 
-Once defined, you can reference a variable in your text by surrounding the variable name with curly braces ( `{` and `}` ).
-You can even reference already-defined variables when in variable definitions (see the `srancher-docs-ports` and `doctitle` in the example).
+[TIP]
+====
+It is a good practice to use variables for various aspects of the products featured in your technical reference.
+This helps you maintain consistency, minimize typing errors, and streamline future updates.
+====
+
+
+After defining a variable, you can reference it by surrounding the variable name with curly braces ( `{` and `}` ).
+You can even define new variables with references to already-defined variables (see the `srancher-docs-ports` and `doctitle` variables in the previous example).
 
 
 [[asciidoc-titles, Document title and subtitle]]
@@ -300,6 +312,20 @@ You need a place in your file system to contain ...
 
 ----
 
+[TIP]
+====
+Every section header automatically becomes a {asciidoc-docs-xref}[cross reference].
+This lets you create an internal link to a section from anywhere within your document.
+
+To do this, simply use the text of the section header enclosed in double angle brackets ( `<<` and `>>` ).
+
+For example:
+
+[source, asciidoc]
+----
+Learn more about <<Configuring Podman>>.
+----
+====
 
 
 [[asciidoc-lists, Lists]]
@@ -384,7 +410,7 @@ Description list::
 A description list is a collection of terms and their descriptions or definitions.
 +
 --
-* Start a term-description item with the term followed by two colons ( `::` ).
+* Start a description list item with the term followed by two colons ( `::` ).
 
 * Place the description on the next line without any indentation.
 
@@ -425,7 +451,7 @@ For directory names, a trailing slash ( `/` ) can be used if it is not clear tha
 [[asciidoc-admonitions, Admonitions]]
 === Admonitions
 
-Use admonitions are used to help draw the reader's attention to content.
+Use admonitions to help draw the reader's attention to content.
 AsciiDoc supports five admonition types represented by the following labels: 
 
 * `NOTE`: Provides additional information.
@@ -490,16 +516,25 @@ For source code, it also may involve syntax highlighting with color or other tex
 ==== Listing blocks
 
 The basic listing block is used to denote text that should be rendered verbatim.
-This is most often used to present output from a command issued in a command-line terminal, or just to present weirdly-formatted text.
+This is most often used to present output from a command issued in a command-line terminal, or just to present specifically-spaced text.
 
 [source, asciidoc]
 -----
 
 [listing]
 ----
-This   text has      really weird      spacing   that is    preserved.
+The spacing      of       this text      must be       preserved.
 
-Line spacing is also preserved.
+      00   01   02   03   04   05
+      01   02   03   04   05   00
+      02   03   04   05   00   01
+
+drwxr-xr-x 1 geeko geeko 1.3K May 27 16:04 adoc
+drwxr-xr-x 1 geeko geeko   86 Apr 30 15:28 build
+-rw-r--r-- 1 geeko geeko  963 Jan 22  2025 DC-suse-trd_contrib-guide
+lrwxrwxrwx 1 geeko geeko    5 Jun  7  2023 images -> media
+drwxr-xr-x 1 geeko geeko    6 Jun  7  2023 media
+-rw-r--r-- 1 geeko geeko  546 Jan 22  2025 README.md
 ----
 
 -----
