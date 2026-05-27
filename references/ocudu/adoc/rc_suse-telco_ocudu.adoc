@@ -64,7 +64,7 @@ The following individuals contributed to the creation of this document:
 It provides a complete infrastructure stack optimized for telco-specific requirements including real-time processing, deterministic latency, and hardware acceleration.
 
 ==== Core Technology Stack
-* {slemicro} RT: A real-time capable operating system based on SLE Micro, featuring the PREEMPT_RT kernel patch for microsecond-level latency guarantees. 
+* {slemicro} RT: A real-time capable operating system based on {slemicro}, featuring the PREEMPT_RT kernel patch for microsecond-level latency guarantees. 
 This OS is immutable, providing enhanced security and reliability through transactional updates.
 
 * RKE2 (Rancher Kubernetes Engine 2): A CNCF-certified Kubernetes distribution hardened for security and compliance. 
@@ -170,12 +170,13 @@ Size the RAN workloads from the radio configuration first, then allocate observa
 ====
 
 ==== Test Mode Capabilities
-{ocudu} test mode exercises the complete software stack without requiring real UEs or RUs. Depending on the test use case, {ocudu} can be tested with a physical radio unit or with the radio side fully emulated in software. 
+{ocudu} test mode exercises the complete software stack without requiring real UEs or RUs. 
+Depending on the test use case, {ocudu} can be tested with a physical radio unit or with the radio side fully emulated in software. 
 This makes it useful for both lab validation and performance testing before integrating physical RAN hardware.
 
 In this reference architecture, we use the {ocudu} RU emulator to fully exercise the {ocudu} RAN stack and produce meaningful results in a controlled software-based environment.
 
-==== Configuration Parameters:
+**Configuration Parameters:**
 
 * `nof_ues`: Number of emulated users.
 * `rnti`: Radio Network Temporary Identifier used for the emulated UE.
@@ -183,7 +184,7 @@ In this reference architecture, we use the {ocudu} RU emulator to fully exercise
 * `ri`: Rank Indicator for the number of downlink MIMO layers. In this reference architecture we use 4x4 MIMO in downlink and a single layer in uplink.
 * `pusch_active` / `pdsch_active`: Enable uplink and downlink traffic generation.
 
-==== Reference Test Configuration:
+**Reference Test Configuration:**
 
 * Downlink: 4x4 MIMO with QAM256.
 * Uplink: Single-layer in uplink.
@@ -210,7 +211,8 @@ End-to-end behavior with real UEs, physical RF conditions, and a production 5G C
 
 === Deployment Topology
 
-==== Scenario 1: Single Node Deployment
+**Scenario 1: Single Node Deployment**
+
 This scenario co-locates the {ocudu-gnb} and the RU emulator on the same physical server. 
 It is useful for lab validation because the DU and RU emulator can use the same clock source and therefore remain synchronized without additional PTP or SyncE setup.
 
@@ -246,7 +248,8 @@ For dual-node deployments, use the E810-XXVDA4T or an external PTP Grandmaster (
 The `du_mac_addr` in gNB config must match the VF MAC, and `ru_mac_addr` in RU config must match its VF MAC. Mismatches cause packet drops.
 ====
 
-==== Scenario 2: Dual Node Deployment
+**Scenario 2: Dual Node Deployment**
+
 This scenario separates the DU and RU onto different physical servers, simulating a real distributed deployment where the DU is centralized and RUs are at cell sites.
 
 image::duel-node-deploy.svg[title="Dual Node Deployment", Dual Node Deployment, align="center", width=100%]
@@ -341,7 +344,7 @@ Why This Architecture?
 
 === Deployment Steps
 
-==== Step 1: Bare Metal Host Enrollment
+**Step 1: Bare Metal Host Enrollment**
 
 Create a `BareMetalHost` custom resource to register physical servers with Metal3. 
 This resource encapsulates BMC credentials, hardware identifiers, and provisioning state.
@@ -414,7 +417,7 @@ Troubleshooting BMH:
 
 ====
 
-==== Step 2: CAPI Cluster Definition
+**Step 2: CAPI Cluster Definition**
 
 The `Cluster` resource is the top-level abstraction representing a Kubernetes cluster. It references infrastructure-specific and control-plane implementations.
 
@@ -470,7 +473,7 @@ Network Configuration:
 * Control Plane Endpoint: In single-node deployments, use the node's IP. In multi-node, use a VIP managed by MetalLB or keepalived.
 
 
-==== Step 3: RKE2 Control Plane Configuration
+**Step 3: RKE2 Control Plane Configuration**
 
 The `RKE2ControlPlane` defines Kubernetes version, CNI selection, and node-level customizations.
 
@@ -567,7 +570,7 @@ Why Calico + Multus?
 ====
 
 
-==== Step 4: Metal3MachineTemplate Definition
+**Step 4: Metal3MachineTemplate Definition**
 
 The `Metal3MachineTemplate` defines the infrastructure-specific configuration for control plane machines, including host selection, image provisioning, and OS customization via Ignition.
 
@@ -1316,7 +1319,7 @@ To avoid manually reconfiguring the EAL arguments for every deployment, the gNB 
 
 === Deployment Verification
 
-==== Step 1: Apply BMH and CAPI Manifests
+**Step 1: Apply BMH and CAPI Manifests**
 
 [source]
 ----
@@ -1341,7 +1344,7 @@ To avoid manually reconfiguring the EAL arguments for every deployment, the gNB 
         # single-node-cluster2   true    10m
 ----
 
-==== Step 2: Access Downstream Cluster
+**Step 2: Access Downstream Cluster**
 
 [source]
 ----
@@ -1364,7 +1367,7 @@ To avoid manually reconfiguring the EAL arguments for every deployment, the gNB 
         # Should show VFs for ens6f0np0 and ens6f1np1
 ----
 
-==== Step 3: Verify {ocudu} Pods
+**Step 3: Verify {ocudu} Pods**
 
 [source]
 ----
