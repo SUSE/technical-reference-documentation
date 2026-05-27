@@ -387,100 +387,59 @@ image::Third-party-array-diagram.png[title="Third-party Array Diagram", Third-pa
 
 == Deployment
 
-This section outlines the high-level deployment workflow.
-For complete step-by-step instructions, exact commands, and configuration files, refer to the fully detailed deployment documentation.
+This section outlines the high-level deployment workflow. For complete step-by-step instructions, exact commands, and configuration files, please refer to {ref-modern-virt-pxe-fa}[Modern Virtualization with SUSE and Everpure: Integrating Portworx Enterprise and Everpure FlashArray Storage with SUSE Virtualization].
 
-=== Preparing for deployment
+=== Preparatory configurations
 
-Before deploying {px} on {svirt-long}, ensure the following preparatory steps are completed:
+. *Multipath setup:* Deploy a Harvester CloudInit resource to configure node-level `udev` rules and multipath settings tailored for the {pxe-provider} FlashArray, then restart the cluster nodes to apply the changes.
 
-. *Multipath setup*: Deploy a Harvester CloudInit resource to configure node-level udev rules and multipath settings tailored for the Everpure {pfa}.
-After applying the configuration, restart the cluster nodes to ensure the changes take effect.
+. *Array credentials:* Configure user access within the {pxe-provider} FlashArray and create a corresponding Kubernetes secret in the {px} namespace to securely store these credentials.
 
-. *Array credentials*: Configure user access within the Everpure {pfa}.
-Create a corresponding Kubernetes secret in the {px} namespace to securely store these credentials for authentication.
+=== Generate the {px} installation specifications
 
-=== Generating the {px} installation specifications
+. *{px} Central configuration:* Access the {px} Central Web portal to generate a customized installation spec for the {pxe-provider} FlashArray platform.
 
-{px} installation specifications are generated using the {px} Central portal.
+. *Basic and storage settings:* Define your Kubernetes environment details, select the built-in `etcd` option, and configure your storage parameters (such as enabling PX-StoreV2, selecting Fibre Channel, and defining capacity mapping and maximum node distribution).
 
-. *{px} Central configuration*: Access the {px} Central Web portal to generate a customized installation specification for the Everpure {pfa} platform.
+. *Network and customization:* Ensure the {px} services starting port is correctly assigned, select the Rancher Kubernetes Engine (RKE) environment, and generate the installation specifications.
 
-. *Basic and storage settings*: Define the Kubernetes environment details and select the built-in etcd option.
-Configure storage parameters such as enabling PX-Storev2, selecting Fibre Channel connectivity, and defining capacity mapping along with maximum node distribution.
+=== Install the {pxo} and `StorageCluster`
 
-. *Network and customization*: Ensure the {px} services starting port is correctly configured.
-Select the Rancher Kubernetes Engine (RKE) environment and generate the installation specifications.
+. *Deploy the {pxo}:* Execute the first generated installation spec on the {svirt-long} management node.
 
-=== Installing the {pxo} and StorageCluster
+. *Configure the Stork snapshot (Optional):* If you are running a compatible version of {svirt-long} (`v1.6.0` or higher), configure and apply a Stork Snapshot `StorageClass`.
 
-After generating the installation specifications, deploy the required {px} components.
+. *Deploy the {px} `StorageCluster`:* Execute the second generated spec to initiate the deployment of the actual {px} `StorageCluster`.
 
-. *Deploy the {px} Operator*: Execute the first generated installation specification on the {svirt-long} management node.
+=== `StorageClass` and CSI driver configuration
 
-. *Configure the Stork snapshot (Optional)*: If running a compatible version of {svirt-long} (v1.6.0 or later), configure and apply a Stork Snapshot StorageClass.
+. *Add the `StorageClass`:* Create and apply a new default Kubernetes `StorageClass` configured to use the {px} provisioner. Ensure any pre-existing default storage classes (such as Longhorn) are unset to prevent conflicts.
 
-. *Deploy the {px} StorageCluster*: Execute the second generated specification to initiate deployment of the {px} StorageCluster.
-
-=== Configuring the StorageClass and CSI driver
-
-Once the {px} cluster is deployed, configure storage integration with Kubernetes and {svirt-long}.
-
-. *Add the StorageClass*: Create and apply a new default Kubernetes StorageClass configured to use the {px} provisioner.
-Ensure that any pre-existing default storage classes (such as Longhorn) are unset to avoid conflicts.
-
-. *Update {svirt-long} UI settings*: Navigate to the advanced settings in the {svirt-long} UI under `csi-driver-config`.
-Map the new CSI driver provisioner and define the appropriate volume snapshot class name.
+. *Update {svirt-long} UI settings:* Navigate to the advanced settings within the {svirt-long} UI (under `csi-driver-config`) to map the new CSI driver provisioner and define the appropriate volume snapshot class name.
 
 == Validation
 
-This section outlines the high-level validation workflow.
-For detailed validation steps and troubleshooting guidance, refer to the complete deployment documentation.
+This section outlines the high-level validation workflow. For detailed validation steps and troubleshooting guidance, refer to the complete deployment documentation.
 
-=== Environment readiness
+. *Environment readiness:* Verify that the {pxo} and `StorageCluster` are in a healthy state and that the {px} CSI driver is registered. Confirm that the {px} `StorageClass` is available and set as the default.
 
-Before validating the deployment, ensure that the environment is correctly configured and operational:
+. *Provision a test VM:* From the {svirt-long} UI, create a virtual machine and assign its primary writable root disk to the {px} `StorageClass`.
 
-. *{px} health*: Verify that the {px} Operator and StorageCluster are in a healthy state.
+. *Verify provisioning:* Confirm that the `PersistentVolumeClaim` is successfully created and bound to a {px}-provisioned volume using the correct CSI driver.
 
-. *CSI driver registration*: Ensure that the {px} CSI driver is successfully registered within the cluster.
+. *Validate operation:* Start the virtual machine and verify that it reaches a running state with the root disk attached and accessible.
 
-. *StorageClass verification*: Confirm that the {px} StorageClass is available and configured as the default StorageClass.
-
-=== Functional validation
-
-Perform the following steps to validate storage provisioning and integration with {svirt-long}:
-
-. *Provision a test VM*: From the {svirt-long} UI, create a virtual machine and assign its primary writable root disk to the {px} StorageClass.
-
-. *Verify provisioning*: Confirm that the PersistentVolumeClaim (PVC) is successfully created and bound to a {px}-provisioned volume using the correct CSI driver.
-
-. *Validate operation*: Start the virtual machine and verify that it reaches a running state with the root disk properly attached and accessible.
-
-=== Optional validation checks
-
-Additional validation steps can be performed to further verify functionality:
-
-. *Snapshot validation*: If snapshot functionality is enabled, validate successful creation of volume snapshots.
-
-. *Persistence check*: Restart the virtual machine and confirm that data persists across reboots.
 [NOTE]
 ====
-These optional checks help ensure advanced storage features and data durability within the {px} environment.
+Optional checks:
+* If snapshot functionality is enabled, validate snapshot creation.
+* Optionally, restart the VM to confirm storage persistence.
 ====
 
+== Conclusion
+Organizations are modernizing their applications and infrastructure, transitioning from traditional virtual machine deployments to modern cloud-native technologies such as containers and Kubernetes. {svirt-long} provides a flexible platform that enables container and virtual machine workloads to run side-by-side on the same unified infrastructure. {pxe} by {pxe-provider} brings resilient, scalable, and efficient storage services for mission-critical workloads, supporting enterprise availability, mobility, and data protection needs. Together, {svirt-long} and {px} present enterprises with a robust, flexible infrastructure platform to support their mission-critical virtualized and cloud-native workloads.
 
-== Summary
-
-This reference configuration provides architectural design considerations, operational best practices, and deployment guidance for integrating {svirt-long} with {pxe-long} and {pfa-long}s.
-
-Organizations are modernizing their applications and infrastructure, transitioning from traditional, virtual machine deployments to modern, cloud-native technologies, such as containers and Kubernetes.
-{svirt-long} provides a flexible platform that enables containers and virtual machines to run side-by-side, on the same, unified infrastructure.
-{pxe-long} brings resilient, scalable, and efficient storage services for mission-critical workloads, supporting enterprise availability, mobility, and data protection needs.
-Together, {svirt-long} and {px} by {pxe-provider} present enterprises with a robust, flexible infrastructure platform to support their mission-critical, virtualized and cloud-native workloads.
-
-By implementing this a flexible, resilient, and scalable platform, enterprises can overcome the complexity, scalability, and resilience limitations of traditional infrastructure solutions while experiencing lower operational and capital costs.
-
+This guide provides an overview of this unified infrastructure platform along with detailed steps for configuring and validating the integration of {svirt-long} with {pxe} and an {pxe-provider} FlashArray to deliver a unified infrastructure platform.
 
 Continue your learning journey by exploring the following technical resources:
 
