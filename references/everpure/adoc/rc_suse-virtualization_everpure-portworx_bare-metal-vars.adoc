@@ -1,0 +1,267 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: suse-virt-portworx-everpure-baremetal
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+//-
+:rev1-date: 2026-03-17
+:rev1-description: Initial version
+:docdate: {rev1-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components,
+//   such as full product names, versions, websites, documentation
+//   URLs, and so on.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Each component can have a series of variables that follow a
+//   simple pattern:
+//     compX[-MODIFIER]
+//   where:
+//     compX is a short name for the component.
+//       You can use something generic, such as:
+//       'comp3', 'os', 'server', 'gpu', and so on.
+//       Or, you can use a more specific variable name, such as:
+//       'sles', 'rancher', 'portworx', 'powerflex', etc.
+//     -MODIFIER is text that identifies the stored information.
+//       Some MODIFIER values include:
+//         - provider: Name of company or project providing the component
+//             (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//         - long: The full name of the product.
+//             (e.g., 'SUSE Rancher Prime', 'Portworx Enterprise by Pure Storage')
+//         - version1: The relevant product version referenced in
+//             the document (e.g., '15 SP7', '3.2.4', 'v1.7.1')
+//             If additional product versions are called out in the
+//             document, record them in separate variables
+//             (e.g., '-version2', '-version3')
+//             NOTE: Documents are often created around a single version
+//                   with sufficient certainty that certain later versions
+//                   will work.
+//                   This can be called out with text like,
+//                   "{comp1-version1} and later."
+//         - website: Product website (e.g., https://www.suse.com/products/server/)
+//         - docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//             It can also be useful to form variables for specific sections in
+//             a component's documentation.
+//             For example, you could link to the section for creating a VM
+//             in SUSE Virtualization with:
+//             :svirt-docs-createvm: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/virtual-machines/create-vm.html
+//
+//   You can create your own modifiers to fit your needs.
+//
+// IMPORTANT: The 'comp1', 'comp2' examples provided here are also
+//            used in the docinfo file.
+//            If you use different variable names or additional
+//            components in your solution, you will need to edit
+//            the docinfo file to reflect this.
+// -
+:svirt-provider: SUSE
+:svirt-brand: SUSE® Virtualization
+:svirt-long: SUSE Virtualization
+:svirt: {svirt-long}
+:svirt-version1: v1.6.1
+:svirt-website: https://www.suse.com/products/rancher/virtualization/
+:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/
+:svirt-docs-intro: {svirt-docs}introduction/overview.html
+:svirt-docs-reqs: {svirt-docs}installation-setup/requirements.html
+:svirt-docs-create-vm: {svirt-docs}virtual-machines/create-vm.html
+
+:srancher-brand: SUSE® Rancher Prime
+:srancher-long: SUSE Rancher Prime
+:srancher: SUSE Rancher
+:srancher-website: https://www.suse.com/products/rancher/
+
+:px-provider: Everpure
+:px: Portworx
+:px-brand: Portworx® by Everpure™
+:px-long: Portworx by Everpure
+
+
+:pxe: {px} Enterprise
+:pxe-provider: {px-provider}
+:pxe-brand: {px}® Enterprise by Everpure™
+:pxe-long: {px} Enterprise by Everpure
+:pxe-version1: 25.2.2
+:pxe-website: https://portworx.com/products/portworx-enterprise/
+:pxe-docs: https://docs.portworx.com/portworx-enterprise
+// :pxe-reqs: {pxe-docs}/platform/kubernetes/flasharray/before-you-begin#environment-prerequisites
+// :pxe-flasharray-user-access: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/install-flasharray-cd-da#set-up-user-access-in-flasharray
+// :pxe-k8s-secret: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/fa-multi-tenancy#create-a-kubernetes-secret
+// :pxe-manage-rwx-block: {pxe-docs}/platform/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
+:pxe-central: https://central.portworx.com/
+:pxo: {px} Operator
+:pxo-version1: 25.5.0
+:pxe-suse-virt: https://docs.portworx.com/portworx-enterprise/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
+:pxe-flasharray-user-access: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/install-flasharray-cd-da#set-up-user-access-in-flasharray
+:pxe-k8s-secret: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/fa-multi-tenancy#create-a-kubernetes-secret
+:pxe-manage-rwx-block: {pxe-docs}/platform/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
+
+:pfa-provider: Everpure
+:pfa: FlashArray
+:pfa-brand: Everpure™ FlashArray™
+:pfa-long: Everpure FlashArray
+:pfa-website: https://www.purestorage.com/products/unified-block-file-storage.html
+:pfa-docs: https://support.purestorage.com/category/m_flasharray
+
+:ref-modern-virt-pxe-fa: https://documentation.suse.com/trd/everpure/html/gs_virtualization_portworx_everpure-flasharray/index.html
+:ref-svirt-pxe-wp: https://links.imagerelay.com/cdn/3404/ql/c67bb8f363744ccea209fbbe4242605c/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
+//:suse-pxe-dep-guide: https://portworx.com/wp-content/uploads/2025/11/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title: (<75 characters) Concisely identify the subject of the document.
+//         (e.g.: "Deploying Kubeflow with SUSE Rancher Prime")
+// subititle: (<75 characters) Expound on the subject of the document.
+//             (e.g., "Validated solution design for Telco-native AI")
+// usecase: (<55 characters) Identify the use case or purpose of the
+//          documented solution.
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) Give a brief description of what this
+//              document is about.
+// description-social: (<55 characters) Condense the description to be
+//                     suitable for social media.
+// executive-summary: (<300 characters) Provide a brief summary of the
+//                    the document, typically with business case and
+//                    technical components.
+//                    This text appears near the beginning of the rendered
+//                    document.
+//
+// TIP: You can reference defined variables when defining new variables.
+//      For example:
+//        Say that you have defined above these component variables:
+//          :comp1-long : SUSE Linux Enterprise Server
+//          :comp2-long: JupyterLab
+//        Then, you could reference them when you define the title
+//        variable like this:
+//          :title: Simplify deployment of {comp2-long} with {comp1-long}
+//        When rendered, the variables will be expanded and the title
+//        will appear as:
+//          "Simplify deployment of JupyterLab with SUSE Linux Enterprise Server"
+// -
+:doctitle: {svirt-long} with {pxe-long} on Bare Metal
+
+:docsubtitle: A reference design for a modern virtualization platform
+
+:usecase: Modern Virtualization
+
+:description: Deploy a high-performance, scalable virtualization platform on bare metal using {svirt-long} with {pxe-long} storage.
+
+:description-social: Modern virtualization with {svirt-long} and {px-long}
+
+:executive-summary: This reference configuration provides guidance for deploying {svirt-brand} with {pxe-brand} and {pfa-brand} on bare metal infrastructure. It outlines architecture, storage, and networking best practices to deliver a scalable, resilient platform for running virtual machines and containerized workloads with enterprise-grade performance and data protection.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//   Typically, no more than three tasks defined per
+//     document.
+//
+//   Tasks must be one of these supported values:
+//     Administration, Artificial Intelligence, Auditing, Authentication,
+//     Automation, Backup &amp; Recovery, Certification, Cloud,
+//     Clustering, Compliance, Configuration, Containerization,
+//     Container Management, Data Intelligence, Deployment, Design,
+//     Encryption, High Availability, Image Building, Implementation,
+//     Installation, Integration, Maintenance, Migration, Monitoring,
+//     Packaging, Security, Storage, Subscription Management,
+//     Troubleshooting, Upgrade &amp; Update, Virtualization,
+//     Vulnerability, Web
+//
+//   For example:
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: Design
+:metatask2: Deployment
+:metatask3: Integration
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//
+//   Follow the pattern below to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//
+//   TIP: Other contributors and editors are typically listed in
+//        an Acknowledgments section.
+//        To list additional authors or contributors on the cover page,
+//        you must edit the docinfo file, too.
+// -
+:author1-firstname: Gopala
+:author1-surname: Krishnan
+:author1-jobtitle: Partner Solution Architect
+:author1-orgname: SUSE
+:author2-firstname: Suresh
+:author2-surname: S
+:author2-jobtitle: Partner Solution Architect
+:author2-orgname: SUSE
+:author3-firstname: Terry
+:author3-surname: Smith
+:author3-jobtitle: Partner Solution Innovation Director
+:author3-orgname: SUSE
+
+
+//:author2-firstname: first (given) name
+//:contrib1-firstname: first (given) name
+//:editor1-firstname: first (given) name
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

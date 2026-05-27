@@ -1,0 +1,559 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+include::./rc_suse-virtualization_everpure-portworx_bare-metal-vars.adoc[]
+[#art-{article-id}]
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Reference Configuration
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define variables (document attributes) in the vars file.
+// 2. Develop content and reference variables in the adoc file.
+// 3. Update the docinfo.xml file as needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+= {doctitle}: {docsubtitle}
+
+
+
+== Introduction
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide a motivation for the document in 2-4 sentences to identify:
+//   - what the document is about
+//   - why it may be of interest to the reader
+//   - what products are being highlighted
+// Include an approved SUSE | Partner logo lock-up if relevant/possible
+// Include any additional, relevant details
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+This document is intended as a supplement to {ref-modern-virt-pxe-fa}[Modern Virtualization with {svirt-long} and {pxe-provider}: Integrating {pxe-long} and {pfa-long} Storage with {svirt-long}]. It provides additional design and deployment considerations for running {svirt-long} with {pxe-long} in bare metal environments.
+
+The objective is to help organizations seamlessly integrate {svirt-long} with {pxe-long}, ensuring deployments that deliver optimized performance, scalability, and reliability for virtualized workloads.
+
+
+
+
+=== Scope
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Specify what this guide covers in no more than 2 sentences.
+// E.g., "This document ..."
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This document provides:
+
+* Architectural guidance for deploying {svirt-long} with {pxe-long} on bare metal
+* Best practices for installation, scaling, monitoring, and lifecycle management
+* Recommendations for running stateful, virtualized workloads backed by {pfa-long} storage
+
+
+
+=== Audience
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Identify for whom this document is intended, perhaps with:
+//   - topics of interests (e.g., machine learning, security, etc.)
+//   - job roles (e.g., developer, administrator, platform architect, etc.)
+//   - required skills
+// E.g., "The intended audience for this guide includes ..."
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+This guide is intended for platform engineers, system administrators, DevOps engineers, and IT professionals responsible for designing, deploying, managing, and maintaining IT infrastructure solutions to support cloud native and virtual machine workloads.
+
+Familiarity with Kubernetes, virtualization, and storage concepts is assumed.
+
+
+
+////
+=== Acknowledgments
+
+The authors wish to acknowledge the contributions of the following individuals, whose collaboration on the This document is intended to supplement to the {ref-svirt-pxe-wp}[{svirt-long} and {pxe-long}] white paper inspired this document:
+
+* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+* {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
+////
+
+
+== Business aspect
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Provide high-level statement of the business value and challenges addressed.
+// Expand on these in the following sections.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Enterprises are under pressure to modernize IT infrastructure while maintaining high levels of performance, resilience, and cost efficiency.
+Deploying {svirt-long} with {pxe-long} and {pfa-long} on bare metal helps address these challenges by providing a scalable and reliable foundation for virtualized workloads.
+This integrated solution reduces operational complexity, protects critical data, accelerates workload deployment, and maximizes infrastructure investments, enabling organizations to support digital transformation with confidence.
+
+
+=== Business problem
+
+Enterprises are facing increasing challenges in managing modern, data-intensive applications while supporting diverse infrastructure needs across data centers, edge sites, and hybrid environments. Traditional virtualization and storage approaches often lack the agility, scalability, and resilience required for today’s workloads, creating bottlenecks that affect multiple stakeholders.
+
+* *Developers* struggle with slow provisioning and lack of persistent storage for stateful applications.
+
+* *IT operators and platform engineers* face complexity in managing storage, ensuring high availability, and handling disaster recovery across distributed environments.
+
+* *Line of business managers* are impacted by delays in application delivery, leading to missed opportunities and reduced competitiveness.
+
+* *C-suite executives* must balance modernization with cost efficiency, risk reduction, and alignment to digital transformation goals.
+
+These challenges highlight the need for an integrated solution that simplifies operations, enhances resilience, and delivers enterprise-grade scalability for virtualized and cloud-native workloads.
+
+
+
+=== Business value
+
+By addressing the complexity, scalability, and resiliency limitations of traditional virtualization and storage, {svirt} with {pxe} and {pfa-long} on bare metal empowers organizations to streamline operations while preparing for future growth.
+Developers gain faster access to persistent storage, enabling rapid innovation and accelerated application delivery.
+IT operators and platform engineers benefit from simplified management, automated scaling, and built-in data protection, all of which significantly reduce operational overhead.
+
+{svirt} enhances infrastructure efficiency by supporting both container and virtual machine workloads on the same platform.
+This unified approach minimizes infrastructure sprawl, optimizes resource utilization, and simplifies operations across diverse environments.
+
+For business leaders, these capabilities translate into improved agility, faster time-to-market, and stronger returns on infrastructure investments, while also reducing overall business risk.
+Together, {svirt} and {px-long} provide a robust foundation not only for current enterprise workloads but also for forward-looking initiatives such as hybrid cloud expansion, edge computing, and digital transformation.
+
+
+== Architecture
+// // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// // Provide an architecture diagram that illustrates the solution and its
+// // core software and compute platform (hardware or cloud) components.
+// // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+//
+// This section provides an architectural overview for integrating {svirt-long} and {px-long} on bare metal.
+// The focus is to create a high-level design that ensures scalability, reliability, security, and performance.
+// It outlines the key architectural components and their interactions, as well as illustrates the overall structure of the system to enable clear understanding of how the various elements work together to support your production workloads.
+//
+// === Architecture
+
+This section provides a planning and architecture overview for deploying {svirt-website}[{svirt-long}] with {pxe-suse-virt}[{px}] on bare metal.
+The focus is to describe a high-level design that ensures scalability, reliability, security, and performance by identifying the key architectural components and their interactions within the context of the integrated solution and how this can support your production workloads.
+The integration brings together {svirt-long} and {px} Enterprise by {pxe-website}[{px-provider}] to deliver compute, storage, and orchestration layers for a modern, adaptable, and scalable, enterprise virtualization solution. Rather than focusing on low-level hypervisor internals, the architecture highlights how {svirt-long} and {px} Enterprise work together to provide a flexible, scalable, and enterprise-grade platform.
+
+image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of {svirt} with {px-long}", General Architecture of {svirt} with {px-long}, align="center", scaledwidth=90%]
+
+
+
+
+=== {svirt-long}
+
+{svirt-website}[{svirt-long}] is a lightweight, hyperconverged infrastructure solution,enabling the management of virtual machines and containers side-by-side on a unified, cloud-native platform.
+To ensure a secure and optimized base, {svirt-long} is deployed on SUSE Linux Micro, an immutable, enterprise-grade operating system purpose-built for containerized and virtual workloads.
+Furthermore, the platform integrates natively with {srancher-website}[{srancher-long}] This integration equips the architecture with centralized authentication, access control, observability, and built-in security, empowering operators to manage diverse workloads across data center and edge environments using a consistent operational model.
+
+=== {pxe-brand}
+
+{pxe-website}[{px}] Enterprise serves as the enterprise-grade storage layer for both VM and container workloads.
+It ensures consistent storage reliability across on-premises, hybrid, and edge deployments by delivering persistent volumes, high availability, automated failover, backup and disaster recovery, performance optimization, and encryption.
+A critical component to this deployment is the {px} Operator.
+Deployed natively into the cluster, the {px} Operator is designed to efficiently automate and manage the installation, configuration, and ongoing upgrade workflows of all {px} components.
+
+
+
+=== Compute platform
+
+The entire solution is deployed on bare-metal physical infrastructure.
+This includes the host and worker nodes, networking components (switches, NICs, load balancers), and enterprise storage devices such as an {px-provider} {pfa}.
+These physical components provide the raw performance, connectivity, and resiliency required to support large-scale virtualized and containerized workloads.
+
+
+== Design considerations
+
+
+The diagram below shows a high-level, reference design for {svirt} integrated with {pxe} deployed on bare-metal nodes along with a {pfa-long}.
+By implementing this design, a platform engineering team can automate the provisioning of a well-defined architecture following best practices that includes high availability, operations management, observability, business continuity, performance, and security.
+
+image::suse-portworx-arc-diagram.png[title="Reference Design", Reference Design, align="center", width=90%]
+
+
+The foundation of the deployment is the bare metal compute nodes that will host both the {svirt} hypervisor and the {px} storage layer.
+
+
+
+=== Preparing the {svirt-long} environment
+
+Before deploying {px}, you must prepare the {svirt-long} platform and underlying nodes to ensure they meet the specific storage requirements.
+Review the following configurations to ensure a stable and performant integration.
+
+* *Node Count*: While three storage nodes establish quorum, six nodes are recommended for production environments.
+In a six-node cluster, losing one node affects only one-sixth of its capacity, allowing the remaining nodes to distribute the load effectively.
+
+* *Fault Domains*: Distribute nodes evenly across multiple availability zones or racks to ensure a
+single physical failure does not take down the entire storage cluster.
+If running {svirt-long} nested on top of other hypervisors, apply anti-affinity rules to prevent storage nodes from residing on the same physical host.
+
+* *Resource Requirements*: Each bare metal node requires a minimum of 8 vCPUs and 32 GB of RAM.
+Verify that all nodes run the same kernel version and SUSE Linux Enterprise Server release to prevent compatibility issues.
+
+* *OS Prerequisites*: Configure NTP for strict time synchronization, ensure proper DNS resolution, and disable swap on all storage nodes.
+Update firewall, SELinux, and AppArmor policies to permit {px} communication ports.
+
+* *Node Labeling*: Apply the label `portworx.io/node-type=storage` to all nodes contributing storage so the operator can automatically discover devices.
+
+
+=== Storage and networking infrastructure
+
+Designing a robust and efficient network is essential for achieving optimal performance and reliability when deploying {px} with {svirt-long}.
+A well-planned network architecture ensures seamless communication between nodes, maintains data consistency, and supports high availability across the storage cluster.
+This section outlines the key networking considerations and best practices specific to {px} running on {svirt-long}.
+
+
+By carefully structuring the network layout particularly around management and data interfaces you can enhance both the stability and performance of your {px} deployment.
+Additionally, properly configured firewall rules and VLAN segmentation can provide improved security and traffic isolation within your virtualized environment.
+
+==== Management and data interfaces
+
+When planning network configurations for {px} on {svirt-long}, several best practices should be observed to ensure efficient data flow and scalability.
+Some considerations are noted below.
+
+* *Dedicated network interfaces*: Assign separate virtual or physical NICs for management and data traffic.
+Management traffic (cluster operations, control plane) should be isolated from data plane traffic (replication, volume access) to prevent congestion and performance degradation.
+
+* *Use of bridge or macvtap interfaces*: In KVM-based {svirt-long} environments, configure Linux bridges or MacvTap interfaces to provide direct network access to {px} nodes.
+This reduces latency and improves throughput for data replication and I/O operations.
+
+* *Consistent network configuration across hosts*: Ensure that all {svirt-long} hosts maintain identical interface names, IP schemes, and VLAN configurations.
+Consistency helps avoid issues when migrating or scaling {px} nodes.
+
+
+* *Jumbo frames and MTU settings*: For high-throughput storage workloads, enable jumbo frames (MTU 9000) on the data interfaces to improve performance, provided that the entire network path supports it.
+
+* *Bandwidth and QoS*: Reserve sufficient bandwidth for {px} data traffic.
+Implement Quality of Service (QoS) policies if the network is shared with other workloads, ensuring predictable latency and throughput.
+
+* *Redundancy and bonding*: Use NIC bonding or teaming (e.g., mode 4 LACP) for redundancy and load balancing across both management and data networks, ensuring high availability and fault tolerance.
+
+* *Firewall and security rules*: Configure firewalls to allow required {px} communication ports (control, data, and API) between nodes.
+Limit external access to management interfaces to secure administrative operations.
+
+* *DNS and time synchronization*: Verify that all nodes have consistent DNS resolution and NTP synchronization, as {px} relies on stable name resolution and accurate timekeeping for cluster operations.
+
+* *NIC usage*: By default, {px} utilizes the same network interface cards used by the Kubernetes cluster for both management traffic and data replication.
+This configuration simplifies the initial setup of the {px} storage cluster but may lead to potential network congestion as both types of traffic share the same physical network resources.
+The default NIC for {px} can be used for labs or development environments to ease setup, but it should be avoided for production environments where storage performance is critical.
+
+image::Portworx-default-network-configuration.png[title="{px} Default Network Configuration", {px} Default Network Configuration, align="center", width=90%]
+
+* *Dedicated data networks*: To optimize network performance and reduce congestion, {px} can be configured to use a dedicated NIC specifically for handling data replication between nodes.
+This approach segregates data replication traffic from the management and application traffic, ensuring that the NICs used by {svirt-long} for managing VMs and containerized workloads, remain uncongested and perform efficiently.
+Implementing a dedicated data network can enhance the overall throughput and reliability of the storage cluster, especially with high data replication demands.
+
+image::Portworx-dedicated-network-configuration.png[title="{px} Dedicated Data Network Configuration", {px} Dedicated Data Network Configuration, align="center", width=90%]
+
+
+==== Bandwidth and latency
+
+The physical network infrastructure significantly impacts how efficiently data can be written and replicated across nodes in a {svirt-long} cluster using {px} storage.
+Because {px} must replicate data to a secondary node before confirming a write operation, both network bandwidth and latency directly affect application write performance and overall storage throughput.
+Some considerations are noted below.
+
+* *Consistency*: Ensure that all storage nodes use network interfaces (NICs) of the same speed and configuration to maintain consistent and predictable performance.
+
+* *Bandwidth*: 10 Gbps or higher is recommended for production environments.
+Data-intensive or latency-sensitive workloads may require 25 Gbps or greater. 1 Gbps may be sufficient for some non-production scenarios, such as configuration testing.
+
+* *Latency*: 10 ms between storage nodes is required for synchronous replication.
+
+==== Backing disks and storage arrays
+
+When configuring a {px} storage cluster on {svirt-long}, the choice and configuration of backing disks are critical for achieving optimal performance, reliability, and scalability.
+Below are key considerations to guide you in selecting and configuring backing disks for your {px} storage cluster:
+
+* *Block devices*: {px} requires block storage devices as the backing storage for the {px} storage cluster.
+Each storage node must be provisioned with raw block devices rather than pre-formatted file systems or logical volumes.
+These block devices can be sourced from local disks within the bare metal worker nodes or from a hardware storage array, such as an {px-provider} {pfa} or other SAN systems, that can present block devices to the servers.
+Ensure that the block devices to be used by {px} are recognized by the host operating system of the worker nodes.
+
+* *Disk type and performance*: The block devices used by {px} determine the overall capacity, I/O performance, and throughput of the storage cluster.
+When selecting disks, consider the type, size, and performance capabilities.
+Faster devices, such as NVMe SSDs, provide better performance for Kubernetes applications utilizing {px} for persistent volumes (PVs) compared to slower devices like traditional hard disk drives.
+
+* *Disk redundancy and fault tolerance*: {px} allows application owners to specify the level of redundancy for their stateful data through replication factors. This ensures that replicas are stored on multiple nodes in the cluster.
+Additionally, using a RAID configuration (such as RAID1) at the hardware controller level can provide per-node disk redundancy that allows for single disk failures within a node without triggering a re-sync of replicas to another node.
+This extra layer of protection does incur higher hardware costs.
+
+* *Capacity planning*: The size and configuration of the backing disks determines the total capacity of the {px} storage cluster.
+While {px} requires a small amount of overhead for metadata and journal writes, most of the capacity is used for persistent volumes and replicas.
+When planning capacity, consider the expected number of replicas per application to ensure sufficient storage.
+Disks can be resized, or additional devices can be added to expand the total storage cluster capacity for future needs.
+
+* *Storage pool configuration*: {px} requires at least one storage pool to operate, but multiple pools can be configured to segregate different types of workloads or create storage tiers for performance optimization.
+Each storage pool should consist of drives with identical specifications to ensure consistent storage performance across the nodes in the cluster.
+This configuration helps maintain uniformity in storage performance for all replicas.
+
+By carefully considering these factors, you can ensure that your {px} storage cluster on {svirt-long} is well-equipped to handle the demands of your applications, providing high performance, reliability, and scalability.
+
+==== Storage pools and single-volume strategy
+
+By following these guidelines, organizations can deploy a robust and scalable {px} architecture on {svirt-long}, ensuring high availability and optimal performance for their applications.
+
+A storage pool in {px} is a logical grouping of a node's physical drives.
+{px} uses the space in these storage pools to dynamically create virtual volumes for containers.
+Storage pools consist of a collection of drives with the same capacity and type.
+When you create a pool, {px} categorizes it based on its latency and performance in random and sequential IOPS.
+
+To set up a storage pool, you need a minimum of one disk per node. {px} evaluates each disk through a benchmark process, categorizing it based on its throughput into one of three I/O priorities: low, medium, or high. Disks that share the same I/O priority and size within a node are grouped into a pool.
+This categorization allows you to align various applications with the appropriate tier of storage based on their performance requirements.
+For instance, database applications can be placed on flash devices for high performance, while applications managing logging data can utilize less performant options.
+
+For future scalability, consider the methods available to increase storage capacity in the cluster.
+This can be either by expanding an existing disk (vertical scaling) or by adding additional disks to the storage pool (horizontal scaling).
+While both methods increase capacity, horizontal scaling necessitates an intensive and time-consuming rebalancing process Vertical scaling is preferred, as it does not require rebalancing. In an enterprise setting, the "disk" in the storage pool is often provided by a logical unit in a storage array, simplifying capacity expansion and providing other enterprise features like centralized management.
+
+image::storage-cluster.png[title="Portworx Storage Pool Architecture", Portworx Storage Pool Architecture, align="center", width=90%]
+
+==== Journal devices
+
+A journal device is dedicated storage used to improve the performance and reliability of write operations by logging these operations before they are finalized in main storage volumes. *Configuring a journal device is recommended*.
+Some additional recommendations are provided below.
+
+* Since journal writes are small and frequent, fast storage, like a solid-state drive (SSD) or NVMe device is strongly recommended.
+The journal device must be at least as fast as the fastest storage device on the node participating in the {px} storage cluster.
+If the journal device performs slower, the overall cluster write performance will be limited to the speed of the journal device.
+
+* The journal device should have a capacity of 3 GB, as {px} utilizes only this amount of space for journaling.
+Allocating a larger device does not improve performance unless the increased capacity also provides additional IOPS, such as in many cloud environments.
+
+* For nodes using *local drives* as backing disks, configure the journal device to be *automatically created* from existing disks rather than dedicating a separate physical disk for the 3 GB requirement.
+This reduces hardware cost and complexity.
+
+* For environments using *storage arrays* that can easily provision and present multiple volumes or LUNs to worker nodes, create a *dedicated 3 GB volume* specifically for the journal device to achieve better metadata write performance.
+
+[TIP]
+====
+Using a high-performance SSD or NVMe device for journaling can significantly improve metadata throughput and overall I/O responsiveness in {px} storage clusters.
+====
+
+==== {px} KVDB
+
+{px} relies on a *key-value database (KVDB)* to store critical operational data such as cluster state, configuration, and volume metadata. Because this information is essential to cluster operation, it must be highly available, resilient, and protected from node or device failures.
+When deploying {px} on {svirt-long}, you can configure the KVDB using one of the following options:
+
+* *Internal KVDB*
++
+The *internal KVDB* is integrated directly into the {px} deployment and is the *recommended configuration* for most environments.
++
+This approach simplifies deployment by removing the need for an external database cluster, reducing management overhead and potential points of failure. The internal KVDB provides a stable and efficient mechanism for maintaining cluster metadata and configuration state.
+
+* *External etcd cluster*
++
+Alternatively, {px} can utilize an *external etcd cluster* as its KVDB.
++
+This option is suitable for organizations that already maintain a production etcd infrastructure or require advanced features, such as *SyncDR (Synchronous Disaster Recovery)*.
+
+[NOTE]
+====
+SyncDR depends on an external etcd cluster to maintain *data consistency and high availability* across geographically distributed sites. However, using an external etcd cluster introduces additional setup and management complexity. When using this option, ensure the etcd cluster is deployed across *multiple fault domains* to maintain quorum during node or site outages.
+====
+
+image::kvdb-reference-portworx.png[title="KVDB reference", KVDB reference, align="center", width=90%]
+
+==== Third-Party Storage Considerations
+
+A hardware storage array can be used to provide the block devices as backing disks for the {px} storage cluster.
+A storage array is a centralized storage system that consists of multiple storage devices (HDDs, SSDs, NVMe devices) to provide expanded storage capacity for servers and applications, often with high performance, redundancy, scalability features.
+A storage array may offer other benefits, such as deduplication and compression, that can lower total cost of ownership when hosting replicas for a {px} storage cluster.
+
+When providing backing disks to {px} storage nodes from a hardware array, special considerations should be taken.
+This section outlines design considerations when using an external storage array for {px} backing disks.
+
+Consider the following guidance when using a storage array to provide backing for your {px} storage cluster:
+
+* *Block devices* are typically presented to physical hosts ({svirt-long} worker nodes) via Fibre-Channel or iSCSI connections.
+* *Interface redundancy:* {px} recommends using a minimum of two iSCSI or Fibre-Channel interfaces per node to present storage to the cluster.
+A pair of interfaces provides high availability in the case of hardware failure, and with multi-pathing, can deliver additional bandwidth to the backing storage array.
+* *Fibre-Channel configuration:* Ensure proper zoning in the Storage Array Network Fabric for the nodes.
+* *iSCSI configuration:* Dedicate Ethernet interfaces solely for storage traffic, rather than sharing them with {svirt-long} traffic.
+Configure jumbo frames on these interfaces and any in-line network devices, including physical switches and the storage array, to enhance performance.
+
+For storage cluster disks, {px} recommends presenting *a single volume per storage node* based on your sizing decisions.
+Using a single volume reduces performance impact if resizing operations are required later.
+If your storage array supports volume resizing, these volumes can be expanded to increase the total storage of the {px} storage cluster *without triggering a rebalancing task*, which is a costly storage operation involving data copying.
+
+Creating additional volumes of a desired size is straightforward with an external hardware array. In scenarios using an external hardware array, {px} recommends creating *3 GB volumes* from the array and presenting them to the worker nodes to be used as the *journal device*.
+
+image::Third-party-array-diagram.png[title="Third-party Array Diagram", Third-party Array Diagram, align="center", width=90%]
+
+
+== Deployment
+
+This section outlines the high-level deployment workflow. For complete step-by-step instructions, exact commands, and configuration files, please refer to {ref-modern-virt-pxe-fa}[Modern Virtualization with SUSE and Everpure: Integrating Portworx Enterprise and Everpure FlashArray Storage with SUSE Virtualization].
+
+=== Preparatory configurations
+
+. *Multipath setup:* Deploy a Harvester CloudInit resource to configure node-level `udev` rules and multipath settings tailored for the {pxe-provider} FlashArray, then restart the cluster nodes to apply the changes.
+
+. *Array credentials:* Configure user access within the {pxe-provider} FlashArray and create a corresponding Kubernetes secret in the {px} namespace to securely store these credentials.
+
+=== Generate the {px} installation specifications
+
+. *{px} Central configuration:* Access the {px} Central Web portal to generate a customized installation spec for the {pxe-provider} FlashArray platform.
+
+. *Basic and storage settings:* Define your Kubernetes environment details, select the built-in `etcd` option, and configure your storage parameters (such as enabling PX-StoreV2, selecting Fibre Channel, and defining capacity mapping and maximum node distribution).
+
+. *Network and customization:* Ensure the {px} services starting port is correctly assigned, select the Rancher Kubernetes Engine (RKE) environment, and generate the installation specifications.
+
+=== Install the {pxo} and `StorageCluster`
+
+. *Deploy the {pxo}:* Execute the first generated installation spec on the {svirt-long} management node.
+
+. *Configure the Stork snapshot (Optional):* If you are running a compatible version of {svirt-long} (`v1.6.0` or higher), configure and apply a Stork Snapshot `StorageClass`.
+
+. *Deploy the {px} `StorageCluster`:* Execute the second generated spec to initiate the deployment of the actual {px} `StorageCluster`.
+
+=== `StorageClass` and CSI driver configuration
+
+. *Add the `StorageClass`:* Create and apply a new default Kubernetes `StorageClass` configured to use the {px} provisioner. Ensure any pre-existing default storage classes (such as Longhorn) are unset to prevent conflicts.
+
+. *Update {svirt-long} UI settings:* Navigate to the advanced settings within the {svirt-long} UI (under `csi-driver-config`) to map the new CSI driver provisioner and define the appropriate volume snapshot class name.
+
+== Validation
+
+This section outlines the high-level validation workflow. For detailed validation steps and troubleshooting guidance, refer to the complete deployment documentation.
+
+. *Environment readiness:* Verify that the {pxo} and `StorageCluster` are in a healthy state and that the {px} CSI driver is registered. Confirm that the {px} `StorageClass` is available and set as the default.
+
+. *Provision a test VM:* From the {svirt-long} UI, create a virtual machine and assign its primary writable root disk to the {px} `StorageClass`.
+
+. *Verify provisioning:* Confirm that the `PersistentVolumeClaim` is successfully created and bound to a {px}-provisioned volume using the correct CSI driver.
+
+. *Validate operation:* Start the virtual machine and verify that it reaches a running state with the root disk attached and accessible.
+
+[NOTE]
+====
+Optional checks:
+* If snapshot functionality is enabled, validate snapshot creation.
+* Optionally, restart the VM to confirm storage persistence.
+====
+
+== Conclusion
+Organizations are modernizing their applications and infrastructure, transitioning from traditional virtual machine deployments to modern cloud-native technologies such as containers and Kubernetes. {svirt-long} provides a flexible platform that enables container and virtual machine workloads to run side-by-side on the same unified infrastructure. {pxe} by {pxe-provider} brings resilient, scalable, and efficient storage services for mission-critical workloads, supporting enterprise availability, mobility, and data protection needs. Together, {svirt-long} and {px} present enterprises with a robust, flexible infrastructure platform to support their mission-critical virtualized and cloud-native workloads.
+
+This guide provides an overview of this unified infrastructure platform along with detailed steps for configuring and validating the integration of {svirt-long} with {pxe} and an {pxe-provider} FlashArray to deliver a unified infrastructure platform.
+
+Continue your learning journey by exploring the following technical resources:
+
+* {svirt-docs-intro}[SUSE Virtualization documentation]
+* {pxe-manage-rwx-block}[Manage Portworx RWX Block Volumes on SUSE Virtualization]
+* {pfa-docs}[Pure Storage FlashArray]
+
+
+
+== Frequently Asked Questions (FAQs)
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// If possible provide an unordered list of frequently asked questions
+// with the respective answers.
+// Answers are contained in open blocks associated with each question.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+. *What problem does {svirt-long} with {px} on bare metal solve?*
++
+--
+This solution addresses the challenges of running modern, stateful virtualized workloads with high availability, performance, and operational consistency.
+It provides a unified platform to run virtual machines and containers together while ensuring enterprise-grade persistent storage, resiliency, and simplified lifecycle management.
+--
+
+. *Why deploy {svirt-long} on bare metal instead of a traditional hypervisor stack?*
++
+--
+Deploying on bare metal removes unnecessary abstraction layers, improves performance, and provides greater control over hardware resources.
+It also enables tighter integration with Kubernetes, allowing organizations to manage virtual machines and containers using the same cloud-native operational model.
+--
+
+. *How does {px} integrate with {svirt-long}?*
++
+--
+{px} integrates as the persistent storage layer for {svirt-long} by providing block storage volumes to both virtual machines and container workloads.
+It runs as a Kubernetes-native service and manages replication, failover, backup, and storage lifecycle operations transparently.
+--
+
+. *Is {pxe-provider} FlashArray required for this architecture?*
++
+--
+{pxe-provider} FlashArray is recommended and validated in this reference configuration due to its performance, reliability, and enterprise features.
+However, {px} can also work with other supported hardware storage arrays or local disks, provided they can present raw block devices to the {svirt-long} nodes.
+--
+
+. *What is the minimum cluster size for production deployments?*
++
+--
+{px} requires a minimum of three storage nodes to establish quorum. For production environments, six storage nodes are recommended to improve fault tolerance, capacity distribution, and I/O performance during node failures or maintenance operations.
+--
+
+. *Can this architecture support both virtual machines and containers?*
++
+--
+Yes. {svirt-long} is designed to run virtual machines and Kubernetes workloads side by side on the same cluster.
+{px} provides persistent storage services for both workload types, enabling consistent data management across VMs and containers.
+--
+
+. *Is a dedicated storage network required?*
++
+--
+A dedicated storage network is strongly recommended for production environments.
+Separating management and data traffic reduces contention and improves storage replication performance. For high-performance workloads, 25 Gbps or higher network bandwidth is preferred.
+--
+. *What are the recommended storage pool and backing disk configurations?*
++
+--
+{px} recommends using a single backing disk per node to create the storage pool.
+This approach simplifies capacity expansion, especially when using external storage arrays that support volume resizing, and avoids costly data rebalancing operations.
+--
+
+. *How does this architecture support future scalability and growth?*
++
+--
+The solution supports horizontal scaling by adding nodes and vertical scaling by expanding backing disks.
+It also provides a foundation for hybrid cloud, edge deployments, and mixed VM/container workloads without requiring architectural changes.
+--
+
+. *Does this reference configuration support disaster recovery?*
++
+--
+Yes. {px} provides built-in backup and disaster recovery capabilities. Advanced DR features, including synchronous replication across sites, are supported when integrated with an external etcd cluster and appropriate network connectivity.
+--
+
+. *Is this solution suitable for edge or remote deployments?*
++
+--
+Yes. {svirt-long} and {px} are well-suited for edge environments due to their lightweight footprint, Kubernetes-native management, and ability to operate consistently across centralized data centers and remote locations.
+--
+
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Do not modify below this break.
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end
