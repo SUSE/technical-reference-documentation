@@ -268,6 +268,8 @@ For example:
 ----
 == Preparing the cluster
 
+or
+
 == Prepare the cluster
 ----
 
@@ -724,7 +726,7 @@ Neither result is what you want.
 When you want verbatim interpretation, the best practice is not to use the `subs="attributes+"` option.
 
 If you do need some substitutions but not others, you can use {asciidoc-docs}subs/prevent/[escaping] to let the rendering engine know your intentions.
-By simply placing a backslash ( `\` ) just before each of the curly braces, you designate the curly braces as literal characters.
+By simply placing a backslash ( `\` ) just before each of the curly braces, you designate the curly brace as a literal character.
 
 Here is an example:
 
@@ -768,16 +770,26 @@ If providing a series of element selections, separate each element with the grea
 [source, asciidoc]
 ----
 
-. Open _myfile_.
+. Open `myfile.txt`.
 
 .. Click __File__ > __Open__.
 
-.. Select __myfile__ from the list.
+.. Select `myfile.txt` from the list.
 
 .. Click __Open__.
 
 ----
 
+Additional considerations for graphical user interface elements:
+
+* Prefer using UI element labels rather than trying to describe or embed graphical icons.
+
+* Match capitalization of UI element labels exactly as they appear in the UI itself.
+
+* Do not include ending punctuation ( such as `:` or `...` ) in UI element labels.
+
+* Avoid identifying UI elements by type (button, text box, and so on). +
+For example, say "Click __OK__" rather than "Click the __OK__ button."
 
 
 [[asciidoc-links, Links]]
