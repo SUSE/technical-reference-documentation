@@ -916,41 +916,106 @@ See {asciidoc-docs-images}[AsciiDoc Docs: Images] for further details.
 [[asciidoc-continuation, Continuation]]
 === Continuation
 
-
-
-Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of an AsciiDoc document.
-The most common type of block is a paragraph, which is a contiguous set of lines of text, bounded by one or more blank lines.
-Other block elements include sections, lists, tables, image macros, listing blocks, source blocks, and admonitions.
-Thus, an image or a source block is treated by the rendering engine somewhat like a paragraph.
-
-To see what this means, consider the following example:
-
+Continuation is a useful technique for "attaching" one block element to another.
+The need for continuation arises most often in lists.
+Consider the following example:
 
 [source, asciidoc]
 -----
-
-. Verify that `kernel-default` has been installed.
+. List the versions of `kernel-default` installed on your system.
 [source, console]
 ----
-sudo zypper se kernel-default
+rpm -q kernel-default
 ----
-[IMPORTANT]
-====
-After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
-====
+-----
 
-. Reboot each node to enable the `kernel-default` kernel.
+This is rendered as:
+
+. List the versions of `kernel-default` installed on your system.
+[source, console]
+----
+rpm -q kernel-default
+----
+
+Even though there is no empty line between the list element and the command, the command is not properly aligned with the list element.
+
+Continuation allows you to fix this by simply inserting a plus sign ( `+` ) between the list item text and the source code block, as follows:
+
+[source, asciidoc]
+-----
+. List the versions of `kernel-default` installed on your system.
++
+[source, console]
+----
+rpm -q kernel-default
+----
+-----
+
+Now, this renders as:
+
+. List the versions of `kernel-default` installed on your system.
++
+[source, console]
+----
+rpm -q kernel-default
+----
+
+You can proceed to continue the list item with as many block elements as required.
+For example:
+
+[source, asciidoc]
+-----
+. List the versions of `kernel-default` installed on your system.
++
+[source, console]
+----
+rpm -q kernel-default
+----
+This should yield output like the following:
++
+[listing]
+----
+kernel-default-7.0.5-1.1.x86_64
+kernel-default-7.0.10-2.1.x86_64
+----
++
 [TIP]
 ====
-Learn more about the `zypper` command:
+Learn more about the `rpm` command with:
 
 [source, console]
 ----
-man zypper
+man rpm
 ----
 ====
 
 -----
+
+
+. List the versions of `kernel-default` installed on your system.
++
+[source, console]
+----
+rpm -q kernel-default
+----
+This should yield output like the following:
++
+[listing]
+----
+kernel-default-7.0.5-1.1.x86_64
+kernel-default-7.0.10-2.1.x86_64
+----
++
+[TIP]
+====
+Learn more about the `rpm` command with:
+
+[source, console]
+----
+man rpm
+----
+====
+
 
 Rendered, this code looks like:
 
@@ -976,7 +1041,7 @@ man zypper
 ====
 
 
-Notice that the      and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
+Notice that the and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
 As a bonus, there is a source block inside and properly aligned with `TIP` admonition.
 
 By understanding blocks and continuation, you can create complex and beautifully rendered documents.
