@@ -9,13 +9,17 @@
 AsciiDoc is a lightweight and semantic markup language.
 It has an intuitive syntax and is designed for technical writing.
 
-This section provides an introduction to AsciiDoc with examples to help you get started.
+This section provides an introduction to various aspects of AsciiDoc with examples to help you get started.
 
 For additional reference, see:
 
 * {sdocs-style-url}[SUSE Documentation Style Guide (AsciiDoc)]
 * {asciidoc-docs}[Asciidoctor Docs: AsciiDoc Language Reference]
 * {asciidoc-recommended}[AsciiDoc Recommended Practices]
+
+
+**ADD TOC HERE**
+
 
 
 
@@ -917,24 +921,25 @@ See {asciidoc-docs-images}[AsciiDoc Docs: Images] for further details.
 === Continuation
 
 Continuation is a useful technique for "attaching" one block element to another.
+
 The need for continuation arises most often in lists.
 Consider the following example:
 
 [source, asciidoc]
 -----
-. List the versions of `kernel-default` installed on your system.
+. Log your system's current uptime to the file, `my-uptime.log`.
 [source, console]
 ----
-rpm -q kernel-default
+uptime | tee -a uptime.log
 ----
 -----
 
 This is rendered as:
 
-. List the versions of `kernel-default` installed on your system.
+. Log your system's current uptime to the file, `my-uptime.log`.
 [source, console]
 ----
-rpm -q kernel-default
+uptime | tee -a my-uptime.log
 ----
 
 Even though there is no empty line between the list element and the command, the command is not properly aligned with the list element.
@@ -943,105 +948,98 @@ Continuation allows you to fix this by simply inserting a plus sign ( `+` ) betw
 
 [source, asciidoc]
 -----
-. List the versions of `kernel-default` installed on your system.
+. Log your system's current uptime to the file, `my-uptime.log`.
 +
 [source, console]
 ----
-rpm -q kernel-default
+uptime | tee -a my-uptime.log
 ----
 -----
 
 Now, this renders as:
 
-. List the versions of `kernel-default` installed on your system.
+. Log your system's current uptime to the file, `my-uptime.log`.
 +
 [source, console]
 ----
-rpm -q kernel-default
+uptime | tee -a my-uptime.log
 ----
 
-You can proceed to continue the list item with as many block elements as required.
+
+You can proceed to "continue" that same list item with as many block elements as required.
 For example:
 
 [source, asciidoc]
 -----
-. List the versions of `kernel-default` installed on your system.
+. Log your system's current uptime to the file, `my-uptime.log`.
 +
 [source, console]
 ----
-rpm -q kernel-default
+uptime | tee -a my-uptime.log
 ----
-This should yield output like the following:
+You should see output like:
 +
 [listing]
 ----
-kernel-default-7.0.5-1.1.x86_64
-kernel-default-7.0.10-2.1.x86_64
+16:54:54  up   8:23,  2 users,  load average: 0.47, 0.48, 0.48
 ----
 +
 [TIP]
 ====
-Learn more about the `rpm` command with:
+The `-a` option tells `tee` to append the output to the end of the file.
+====
 
+. Verify that the time was written to the end of the log.
++
 [source, console]
 ----
-man rpm
+tail -1 my-uptime.log
 ----
-====
++
+[listing]
+----
+16:54:54  up   8:23,  2 users,  load average: 0.47, 0.48, 0.48
+----
 
 -----
 
 
-. List the versions of `kernel-default` installed on your system.
+This is now properly rendered as:
+
+. Log your system's current uptime to the file, `my-uptime.log`.
 +
 [source, console]
 ----
-rpm -q kernel-default
+uptime | tee -a my-uptime.log
 ----
-This should yield output like the following:
+You should see output like:
 +
 [listing]
 ----
-kernel-default-7.0.5-1.1.x86_64
-kernel-default-7.0.10-2.1.x86_64
+16:54:54  up   8:23,  2 users,  load average: 0.47, 0.48, 0.48
 ----
 +
 [TIP]
 ====
-Learn more about the `rpm` command with:
+The `-a` option tells `tee` to append the output to the end of the file.
+====
 
+. Verify that the time was written to the end of the log.
++
 [source, console]
 ----
-man rpm
+tail -1 my-uptime.log
 ----
-====
-
-
-Rendered, this code looks like:
-
-. Verify that `kernel-default` has been installed.
-[source, console]
++
+[listing]
 ----
-sudo zypper se kernel-default
+16:54:54  up   8:23,  2 users,  load average: 0.47, 0.48, 0.48
 ----
-[IMPORTANT]
+
+
+
+[CAUTION]
 ====
-After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
+Use continuation with caution.
+Improper use of continuation can produce unexpected results and be difficult to debug.
 ====
-
- . Reboot each node to enable the `kernel-default` kernel.
-[TIP]
-====
-Learn more about the `zypper` command:
-
-[source, console]
-----
-man zypper
-----
-====
-
-
-Notice that the and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
-As a bonus, there is a source block inside and properly aligned with `TIP` admonition.
-
-By understanding blocks and continuation, you can create complex and beautifully rendered documents.
