@@ -164,7 +164,7 @@ The arbiter ensures that the surviving node can make authoritative decisions wit
 == Architecture
 
 The solution integrates {svirt-long} with {pxe-long} on a Kubernetes-based platform to provide a unified infrastructure for running both virtualized and containerized workloads in edge and far-edge environments.
-It uses a Two-Node with Arbiter (TNA) topology, consisting of two worker nodes that provide compute and storage capabilities, and a third arbiter (witness) node that participates in cluster quorum without hosting application workloads or storing data.
+It uses a Two-Node with Arbiter (TNA) topology, consisting of two worker nodes that provide compute and storage capabilities and also serve as Kubernetes control-plane nodes, and a third arbiter (witness) node that participates in cluster quorum without hosting application workloads or storing data.
 
 {svirt-long} enables the deployment and management of virtual machines alongside containerized applications within the same platform.
 {pxe-long} provides container-native storage services, including persistent volumes, data replication, and high availability storage.
@@ -204,13 +204,13 @@ A critical component to this deployment is the {pxo}.
 Deployed natively into the cluster, the {pxo} is designed to efficiently automate and manage the installation, configuration, and ongoing upgrade workflows of all {px} components.
 
 
-=== Supermicro IOT/Embedded Systems
+=== {smss-provider} IOT/Embedded Systems
 
 {sm-website}[{smss-provider}] provides the physical compute foundation for this reference design with its IoT and Embedded product line.
 The {smss403-website}[{smss403}] is a compact, short-depth edge server that is purpose-built for deployment in space- and power-constrained environments.
 This platform delivers enterprise-grade compute performance in a wall-mountable, fanless-compatible form factor suited for edge and far-edge locations.
 Each node is equipped with Intel Xeon 6700/6500 series processors, dual hot-swap NVMe bays, dual 10 GbE network ports, and a dedicated IPMI/BMC management interface to provide the storage I/O throughput, network redundancy, and out-of-band manageability required to run production-grade Kubernetes and virtualized workloads at the edge.
-With three identical nodes deployed in the TNA topology, the platform delivers a consistent, repeatable hardware baseline that simplifies rollout across distributed edge sites at scale.
+While all three nodes use the same server platform, the arbiter node is configured with a different storage profile to support its quorum and metadata responsibilities, whereas the remaining nodes provide the primary storage capacity for the cluster.
 
 == Design considerations
 
@@ -393,7 +393,7 @@ It offers native Container Storage Interface (CSI) integration, providing driver
 The {pxo} is designed to efficiently manage the installation and upgrade workflow of all {px} components.
 The following pages provide guidance for configuring and installing {pxe} via the {pxo}.
 
-=== Installing and configuring SUSE Virtualization
+=== Installing and configuring {svirt-long}
 
 . Download the full Harvester ISO (`harvester-{svirt-version1}-rc5-amd64.iso`) from the Harvester GitHub releases page.
 +
@@ -428,7 +428,7 @@ See Cluster Network for networking configuration details.
 
 . Configure a reliable NTP server during installation, as accurate time synchronization is mandatory for Kubernetes cluster stability.
 
-=== Configuring the Portworx Operator
+=== Configuring the {pxo}
 
 . Log in to {pxe-central}
 
@@ -438,15 +438,19 @@ See Cluster Network for networking configuration details.
 
 . Click `Customize` at the bottom of the menu.
 
-. After the {px} version is validated, set the Kubernetes version to `1.34.2` to match the RKE2 version running on your {svirt-long} cluster (downgraded from the default `1.35.2` to meet the PX `3.6` maximum supported version).
+. After the {px} version is validated, set the Kubernetes version to match the version running on your {svirt-long} cluster. Verify that the selected {px} and Kubernetes versions are supported. Provide the desired namespace name (for example, `portworx`) and select *Built-in etcd* as the KVDB option.
 +
-Provide the desired namespace name (for example, `portworx`) and select `Built-in etcd` as the KVDB option.
+[NOTE]
+====
+Before generating the specification, verify compatibility between the {px} Enterprise version, Kubernetes version, and RKE2 release by consulting the {pxe-support-matrix}[{px} support matrix].
 
+For example, at the time of writing, {px} Enterprise 3.6 supports Kubernetes 1.34.x. If your environment uses different versions, select the Kubernetes version that matches your cluster and is supported by the selected {px} release.
+====
 +
 
 image::suse-portworx-basic-configuration-built-in-kvdb.png[title="SUSE Virtualization and Portworx Basic Configuration with Built-in KVDB", align="center", width=90%]
 
-. In the Storage section, select Cloud Drive type as “None / Use Existing Disks” since Portworx will consume locally attached NVMe devices. Do not use the global "Use All Disks" option.
+. In the Storage section, select Cloud Drive type as “None / Use Existing Disks” since {px} will consume locally attached NVMe devices. Do not use the global "Use All Disks" option.
 Explicit per-node device paths will be defined directly in the StorageCluster manifest after download. Enable PX-StoreV2 as the storage engine.
 Set the maximum storage nodes per availability zone to 2, reflecting the two full storage worker nodes in the TNA topology (the arbiter node must not be counted as a storage node).
 
@@ -454,7 +458,7 @@ Set the maximum storage nodes per availability zone to 2, reflecting the two ful
 
 image::suse-portworx-storage-config-tna.png[title="SUSE Virtualization and Portworx Storage Configuration", align="center", width=90%]
 
-. In the Network section, retain the default Portworx service port of 9001 unless your edge network environment requires a different port.
+. In the Network section, retain the default {px} service port of 9001 unless your edge network environment requires a different port.
 
 +
 
@@ -468,7 +472,7 @@ image::suse-portworx-customize-rke2-configuration.png[title="SUSE Virtualization
 
 
 . The spec is generated next and kubectl commands appear in the UI. Do not apply them yet. First, download and edit the Operator YAML to add the SUSE Virtualization-specific tolerations for node-role.kubernetes.io/control-plane (NoSchedule) and node-role.kubernetes.io/etcd (NoExecute).
-Without these, Portworx pods will not schedule on the arbiter or control-plane nodes.
+Without these, {px} pods will not schedule on the arbiter or control-plane nodes.
 Save the commands for reference before making these edits.
 
 +
@@ -591,8 +595,6 @@ curl -o new_stc.yaml 'https://install.portworx.com/3.6?operator=true&mc=false&kb
 ----
 
 * Open `new_stc.yaml` and apply the following TNA-specific modifications before deploying.
-
-.. Set `certManager.enabled: false` to use {svirt-long} embedded cert-manager and avoid CRD ownership conflicts.
 
 .. Add the same tolerances from Step 3 under `spec.placement.tolerations` so {px} agent pods can schedule on the arbiter node.
 
