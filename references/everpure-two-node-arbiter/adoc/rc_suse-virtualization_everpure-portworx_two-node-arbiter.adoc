@@ -117,16 +117,14 @@ At the edge, provisioning three heavy-weight nodes per site is prohibitively exp
 
 * *Operational complexity at scale:* Enterprises with hundreds of edge sites cannot staff each with
 a skilled infrastructure engineer.
-Automation, consistency, and simplified deployment procedures are
-non-negotiable.
+Automation, consistency, and simplified deployment procedures are non-negotiable.
 
 
 === Value
 
-This TNA architecture enables {px} to provide highly available storage using only two full storage nodes
-plus one lightweight arbiter node.
-The arbiter node does not store workload data. Instead, it stores only metadata, allowing it to participate
-in KVDB quorum decisions.
+This TNA architecture enables {px} to deliver highly available storage for {svirt} VMs and containers using only two storage nodes and one lightweight arbiter (witness) node.
+The arbiter node does not store workload data.
+Instead, it stores only metadata, allowing it to participate in KVDB quorum decisions.
 This dramatically lowers the hardware footprint while providing resilient, production-grade storage
 for workloads.
 
@@ -160,11 +158,15 @@ Infrastructure hardware typically consists of commodity x86 systems with local s
 
 The following diagram illustrates the overall architecture and interaction between the core components.
 
+
+image::suse-portworx-arc-diagram.png[title="SUSE Virtualization and Portworx Two Node with Arbiter Topology", align="center", width=90%]
+
+
 [NOTE]
 ====
 TNA Quorum Logic: {px} requires a majority of KVDB members to agree before making cluster state changes.
 
-A quorum of 2 is always achievable as long as either:
+A quorum of two is always achievable as long as either:
 
 * Both storage nodes are functioning
 * One storage node and the arbiter are functioning
@@ -172,44 +174,42 @@ A quorum of 2 is always achievable as long as either:
 This enables the cluster to survive a single storage node failure without data loss.
 ====
 
-image::suse-portworx-arc-diagram.png[title="SUSE Virtualization and Portworx Two Node with Arbiter Topology", align="center", width=90%]
-
 
 === {svirt-long}
 
-{svirt-website}[{svirt-long}] {svirt-version1} and later is a lightweight, hyperconverged infrastructure solution, enabling the management of virtual machines and containers side-by-side on a unified, cloud-native platform.
+{svirt-website}[{svirt-long}] is a lightweight, hyperconverged infrastructure solution, enabling the management of virtual machines and containers side-by-side on a unified, cloud-native platform.
 To ensure a secure and optimized base, {svirt-long} is deployed on SUSE Linux Micro, an immutable, enterprise-grade operating system purpose-built for containerized and virtual workloads.
-Furthermore, the platform integrates natively with {srancher-long}.
-This integration equips the architecture with centralized authentication, access control, observability, and built-in security, empowering operators to manage diverse workloads across data center and edge environments using a consistent operational model.
+Furthermore, the platform integrates natively with {srancher-long}, equipping the solution with centralized authentication, access control, observability, and built-in security.
+This empowers operators to manage diverse workloads across data center and edge environments using a consistent operational model.
 
 
 === {pxe-long}
 
-{pxe-website}[{px}] {pxe-version1} and later serves as the enterprise-grade storage layer for both VM and container workloads.
-It ensures consistent storage reliability across on-premises, hybrid, and edge deployments by delivering persistent volumes, high availability, automated failover, backup and disaster recovery, performance optimization, and encryption.
+{pxe-website}[{px}] serves as the enterprise-grade storage layer for both VM and container workloads.
+It ensures consistent storage reliability across on-premises, hybrid, and edge deployments by delivering persistent volumes, high availability, automated failover, disaster recovery, performance optimization, and encryption.
 A critical component to this deployment is the {pxo}.
-Deployed natively into the cluster, the {pxo} is designed to efficiently automate and manage the installation, configuration, and ongoing upgrade workflows of all {px} components.
+Deployed into the {svirt} cluster, the {pxo} is designed to efficiently automate and manage the installation, configuration, and ongoing upgrade workflows of all {px} components.
 
 
-=== {smss-provider} IOT/Embedded Systems
+=== {smss-long}
 
-{smss-website}[{smss-provider}] provides the physical compute foundation for this reference design with its IoT and Embedded product line.
+{smss-website}[{smss-long}] provides the physical compute foundation for this reference design.
 The {smss403-website}[{smss403}] is a compact, short-depth edge server that is purpose-built for deployment in space- and power-constrained environments.
 This platform delivers enterprise-grade compute performance in a wall-mountable, fanless-compatible form factor suited for edge and far-edge locations.
 Each node is equipped with Intel Xeon 6700/6500 series processors, dual hot-swap NVMe bays, dual 10 GbE network ports, and a dedicated IPMI/BMC management interface to provide the storage I/O throughput, network redundancy, and out-of-band manageability required to run production-grade Kubernetes and virtualized workloads at the edge.
 While all three nodes use the same server platform, the arbiter node is configured with a different storage profile to support its quorum and metadata responsibilities, whereas the remaining nodes provide the primary storage capacity for the cluster.
 
-== Design considerations
 
-When implementing the TNA topology, several architectural and environmental factors must be addressed to ensure stability, performance, and recoverability.
-These considerations span from specific Kubernetes scheduling logic to low-level hardware identification on bare-metal systems.
+== Implementation considerations
 
+The TNA topology introduces two implementation details that must be addressed.
 
-* StorageCluster Health-Check Annotations
-
-The {px} preflight checker and health-check subsystem count storage nodes and will fail initialization if fewer than 3 nodes report storage capacity.
-Because the arbiter explicitly hosts only metadata, these checks must be bypassed with annotations on the `StorageCluster` resource:
-
+. StorageCluster Health-Check Annotations +
+{px} will fail to initialize if the {px} preflight checker and health-check subsystem count fewer than three nodes with storage capacity.
+//
++
+Because the arbiter intentionally hosts only metadata, these checks must be bypassed with annotations with a `StorageCluster` resource:
++
 [source,yaml]
 ----
 metadata:
@@ -219,17 +219,16 @@ metadata:
 ----
 
 
-* Disk Identification and Mixed Layouts
-
-On bare-metal servers, NVMe device assignments such as `nvme0n1` or `nvme1n1` are determined by system firmware and PCIe slot positioning.
-Because these names can change, persistent storage configurations for {px} must employ persistent identifiers.
-Utilizing the filesystem UUID or symbolic link paths within `/dev/disk/by-id/` ensures reliable disk mapping and prevents storage initialization failures.
+. Disk Identification and Mixed Layouts +
+On bare-metal servers, NVMe device identifiers (such as `nvme0n1` or `nvme1n1`) are determined by system firmware and PCIe slot positioning.
+This means that the identifiers can change.
+Because {px} requires persistent identifiers, you should always reference the filesystem UUID or symbolic link paths within `/dev/disk/by-id/` to ensure reliable disk mapping and prevent storage initialization failures.
 
 
 == Preparation
 
-Before deploying the {pxo}, two preparatory tasks must be completed on each storage worker node: disk partitioning and Augeas binary installation.
-These steps address hardware-level disk layout requirements and OS immutability respectively.
+Before deploying the {pxo}, three preparatory tasks must be completed on each storage worker node: partitioning the disks, wiping residual filesystem partition signatures, and installing the Augeas binary.
+These steps address hardware-level disk layout requirements and OS immutability, respectively.
 
 
 === Partitioning the disks
@@ -265,10 +264,10 @@ partprobe /dev/nvme1n1
 ----
 lsblk /dev/nvme1n1
 ----
-
-You should see the following three partitions:
-
-[source,text]
++
+You should see three partitions:
++
+[listing]
 ----
 NAME                               MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINTS
 nvme1n1                            259:0    0 894.3G  0 disk
@@ -281,7 +280,7 @@ This partition layout maps directly to the `StorageCluster spec.nodes` configura
 
 [IMPORTANT]
 ====
-Repeat this partitioning procedure on the other node’s designated data disk before proceeding.
+Repeat this partitioning procedure on the designated data disk of each of the other nodes before proceeding.
 Do not perform this procedure on the OS boot disk.
 Verify the correct device with `lsblk` before executing `parted`.
 ====
@@ -309,14 +308,14 @@ P3 CLEAN
 ----
 
 
-=== Install Augeas
+=== Installing Augeas
 
 {svirt-long} features SUSE Linux Micro as the host operating system.
 This provides an immutable root file system for added security and stability.
 During installation, the {px} `px-storev2` engine performs a runtime dependency check that attempts to install the `augeas` package.
 Since `transactional-update` is not supported in {svirt-long} and `/usr/bin` is read-only, this action fails and {px} pods enter a `CrashLoopBackOff` state.
 
-The resolution is to manually extract the `augeas` binary from an OpenSUSE Tumbleweed RPM and install it into `/usr/local/bin`, which is writable on {svirt-long} and already included in the system `PATH` variable.
+Resolve this by manually extracting the `augeas` binary from an OpenSUSE Tumbleweed RPM and installing it into `/usr/local/bin`, which is writable on {svirt-long} and already included in the system `PATH` variable.
 
 . Download the Augeas RPM into a temporary directory.
 +
@@ -373,6 +372,7 @@ The binaries persist across pod restarts but may need to be reinstalled after a 
 Be sure to include this step in your upgrade runbook.
 ====
 
+
 == Deployment
 
 {pxe-long} is a cloud-native storage and data management platform for Kubernetes.
@@ -380,24 +380,28 @@ It offers native Container Storage Interface (CSI) integration, providing driver
 The {pxo} is designed to efficiently manage the installation and upgrade workflow of all {px} components.
 The following pages provide guidance for configuring and installing {pxe} via the {pxo}.
 
+
 === Installing and configuring {svirt-long}
 
 . Download the full Harvester ISO (`harvester-{svirt-version1}-rc5-amd64.iso`) from the Harvester GitHub releases page.
 +
 Always use the full ISO (not the net-install variant) to ensure all container images are preloaded critical for edge environments with restricted Internet access.
-. Mount the ISO via IPMI Virtual Media (recommended) using the Supermicro BMC management port, or flash to a USB 3.0 drive and insert into the front panel.
+
+. Mount the ISO via IPMI Virtual Media (recommended) using the Supermicro BMC management port, or flash it to a USB drive that you can directly plug into the system.
 +
-For detailed media options, see USB Installation.
+See {svirt-docs-install}[{svirt}: Installation Methods] for more information.
+
 . Enable UEFI boot mode, Intel VT-x, and VT-d in the Supermicro BIOS before booting.
 +
 Legacy BIOS boot is deprecated in {svirt-version1}.
+
 . On the first node, select `Create a new Harvester cluster`.
 +
 On subsequent nodes, select `Join an existing Harvester cluster` using the Cluster VIP join token generated after the first node boots.
 +
 Assign the Witness role to the third node to designate it as a storageless etcd arbiter.
 +
-See Witness Node for details.
+See {svirt-docs-witness}[{svirt}: Witness Node] for details.
 
 . When selecting disks, assign only the OS NVMe as the installation disk.
 +
@@ -415,55 +419,48 @@ See Cluster Network for networking configuration details.
 
 . Configure a reliable NTP server during installation, as accurate time synchronization is mandatory for Kubernetes cluster stability.
 
+
 === Configuring the {pxo}
 
 . Log in to {pxe-central}
 
-. Select *{pxe}* -> *Generate Spec*.
+. Select __{pxe}__ > __Generate Spec__.
 
-. Choose {px} Version `3.6.0` and select `Others (or Generic/Upstream Kubernetes)` as the Platform, since this deployment uses local NVMe drives, not a {pfa-brand} backend.
+. Choose the supported {px} Version and select `Others (or Generic/Upstream Kubernetes)` as the Platform, since this deployment uses local NVMe drives, not a {pfa-long} backend.
 
-. Click `Customize` at the bottom of the menu.
+. Click __Customize__ at the bottom of the menu.
 
-. After the {px} version is validated, set the Kubernetes version to match the version running on your {svirt-long} cluster. Verify that the selected {px} and Kubernetes versions are supported. Provide the desired namespace name (for example, `portworx`) and select *Built-in etcd* as the KVDB option.
+. After the {px} version is validated, set the Kubernetes version to match the version running on your {svirt-long} cluster.
+Verify that the selected {px} and Kubernetes versions are supported.
+Provide the desired namespace name (for example, `portworx`) and select *Built-in etcd* as the KVDB option.
 +
-[NOTE]
+[TIP]
 ====
-Before generating the specification, verify compatibility between the {px} Enterprise version, Kubernetes version, and RKE2 release by consulting the {pxe-support-matrix}[{px} support matrix].
+You can verify compatibility between the {pxe} version and Kubernetes (RKE2) version by consulting the {pxe-support-matrix}[{px} support matrix] and {svirt-support-matrix-url}[{svirt-support-matrix}].
 
-For example, at the time of writing, {px} Enterprise 3.6 supports Kubernetes 1.34.x. If your environment uses different versions, select the Kubernetes version that matches your cluster and is supported by the selected {px} release.
+For example, {pxe} {pxe-version1} supports Kubernetes {rke2-version1}, which is included with {svirt} {svirt-version1}.
 ====
 +
-
-image::suse-portworx-basic-configuration-built-in-kvdb.png[title="SUSE Virtualization and Portworx Basic Configuration with Built-in KVDB", align="center", width=90%]
+image::suse-portworx-basic-configuration-built-in-kvdb.png[title="{svirt} and {px} Basic Configuration with Built-in KVDB", {svirt} and {px} Basic Configuration with Built-in KVDB, align="center", width=90%]
 
 . In the Storage section, select Cloud Drive type as “None / Use Existing Disks” since {px} will consume locally attached NVMe devices. Do not use the global "Use All Disks" option.
 Explicit per-node device paths will be defined directly in the StorageCluster manifest after download. Enable PX-StoreV2 as the storage engine.
 Set the maximum storage nodes per availability zone to 2, reflecting the two full storage worker nodes in the TNA topology (the arbiter node must not be counted as a storage node).
-
 +
-
 image::suse-portworx-storage-config-tna.png[title="SUSE Virtualization and Portworx Storage Configuration", align="center", width=90%]
 
 . In the Network section, retain the default {px} service port of 9001 unless your edge network environment requires a different port.
-
 +
-
 image::suse-portworx-network-configuration.png[title="SUSE Virtualization and Portworx Network Configuration", align="center", width=90%]
 
 . In the Customize section, select “Rancher Kubernetes Engine 2 (RKE2)” to match the Kubernetes engine embedded in SUSE Virtualization.
-
 +
-
 image::suse-portworx-customize-rke2-configuration.png[title="SUSE Virtualization and Portworx RKE2 Customization", align="center", width=90%]
-
 
 . The spec is generated next and kubectl commands appear in the UI. Do not apply them yet. First, download and edit the Operator YAML to add the SUSE Virtualization-specific tolerations for node-role.kubernetes.io/control-plane (NoSchedule) and node-role.kubernetes.io/etcd (NoExecute).
 Without these, {px} pods will not schedule on the arbiter or control-plane nodes.
 Save the commands for reference before making these edits.
-
 +
-
 image::suse-portworx-operator-spec-generation.png[title="SUSE Virtualization and Portworx Operator Spec Generation", align="center", width=90%]
 
 
