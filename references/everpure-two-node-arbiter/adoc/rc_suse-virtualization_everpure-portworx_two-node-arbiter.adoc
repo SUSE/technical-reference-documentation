@@ -28,38 +28,25 @@ include::./rc_suse-virtualization_everpure-portworx_two-node-arbiter-vars.adoc[]
 
 == Introduction
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide a motivation for the document in 2-4 sentences to identify:
-//   - what the document is about
-//   - why it may be of interest to the reader
-//   - what products are being highlighted
-// Include an approved SUSE | Partner logo lock-up if relevant/possible
-// Include any additional, relevant details
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 Organizations increasingly need to extend their application environments beyond centralized data centers to edge and far-edge locations, where infrastructure constraints, operational complexity, and cost sensitivity are significantly higher.
 These environments require solutions that deliver enterprise-grade availability and performance while operating within a minimal hardware footprint.
 The motivation behind this solution is to address these challenges by enabling a unified platform for running both virtualized and containerized workloads at the edge.
 Traditional approaches often require separate infrastructure stacks for virtual machines and containers, increasing costs, operational overhead, and governance complexity.
 In contrast, this reference configuration provides a consolidated architecture that simplifies operations while maintaining resilience, scalability, and governance.
 
-The purpose of this document is to present a validated reference architecture that combines SUSE and partner technologies to support modern edge use cases.
+This document presents a validated reference architecture that combines {svirt-long}, {px-long}, and {smss-long} technologies to support modern edge use cases.
 By leveraging a Two-Node with Arbiter (TNA) topology, the solution delivers high availability using only two primary nodes and a lightweight arbiter node, reducing infrastructure requirements without compromising business continuity.
 
 
 
 === Scope
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Specify what this guide covers in no more than 2 sentences.
-// E.g., "This document ..."
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 This document provides a validated, reference design for deploying {svirt-long} with Portworx Enterprise using a Two-Node with Arbiter (TNA) topology.
 It describes the overall solution architecture and explains how the core components work together to support both virtualized and containerized workloads in edge and far-edge environments.
 It is intended to serve as a practical framework that organizations can use to implement a consistent, resilient, and cost-efficient platform tailored to their specific operational needs.
 
-This guide references {svirt-long} (Harvester) v1.7 and later, Portworx Enterprise 3.6 and later, RKE2 Kubernetes, Portworx Operator 26.1.0, and supporting software components validated for this reference architecture.
+This reference design was validated with {svirt-long} (Harvester) {svirt-version1}, {pxe-long} {pxe-version1}, and {smss-long} ({smss403}).
+The design and implementation guidance should require little to no modification to apply to newer versions and models.
 
 
 === Audience
@@ -100,9 +87,8 @@ To effectively follow this guide, readers should have:
 // NOTE: If there are none, comment out this section.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The following individuals contributed to the creation of this document:
+The authors wish to thank {smss-provider} for providing access to hardware for the validation of this solution.
 
-{contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
 
 
 == Business aspect
@@ -111,15 +97,13 @@ The following individuals contributed to the creation of this document:
 // Expand on these in the following sections.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Organizations are increasingly extending their infrastructure to edge and distributed environments, where
-they must operate with limited resources while maintaining high availability and consistent performance.
-These environments introduce challenges related to infrastructure footprint, operational complexity, and
-the need to efficiently support both virtualized and containerized workloads.
+Organizations are increasingly extending their infrastructure to edge and distributed environments, where they must operate with limited resources while maintaining high availability and consistent performance.
+These environments introduce challenges related to infrastructure footprint, operational complexity, and the need to efficiently support both virtualized and containerized workloads.
 
-This solution addresses these challenges by providing a unified platform based on {svirt-long} and
-{pxe-long}. This Two-Node with Arbiter (TNA) architecture enables organizations to reduce
-infrastructure requirements while maintaining resilience and simplifying operations, making it well suited
-for cost-efficient edge and far-edge deployments.
+This solution addresses these challenges by providing a unified platform based on {svirt-long},
+{px-long}, and {smss-long}.
+This Two-Node with Arbiter (TNA) architecture enables organizations to reduce infrastructure requirements while maintaining resilience and simplifying operations, making it well suited for cost-efficient edge and far-edge deployments.
+
 
 === Challenge
 
@@ -136,6 +120,7 @@ a skilled infrastructure engineer.
 Automation, consistency, and simplified deployment procedures are
 non-negotiable.
 
+
 === Value
 
 This TNA architecture enables {px} to provide highly available storage using only two full storage nodes
@@ -144,6 +129,7 @@ The arbiter node does not store workload data. Instead, it stores only metadata,
 in KVDB quorum decisions.
 This dramatically lowers the hardware footprint while providing resilient, production-grade storage
 for workloads.
+
 
 === Use cases
 
@@ -188,6 +174,7 @@ This enables the cluster to survive a single storage node failure without data l
 
 image::suse-portworx-arc-diagram.png[title="SUSE Virtualization and Portworx Two Node with Arbiter Topology", align="center", width=90%]
 
+
 === {svirt-long}
 
 {svirt-website}[{svirt-long}] {svirt-version1} and later is a lightweight, hyperconverged infrastructure solution, enabling the management of virtual machines and containers side-by-side on a unified, cloud-native platform.
@@ -206,7 +193,7 @@ Deployed natively into the cluster, the {pxo} is designed to efficiently automat
 
 === {smss-provider} IOT/Embedded Systems
 
-{sm-website}[{smss-provider}] provides the physical compute foundation for this reference design with its IoT and Embedded product line.
+{smss-website}[{smss-provider}] provides the physical compute foundation for this reference design with its IoT and Embedded product line.
 The {smss403-website}[{smss403}] is a compact, short-depth edge server that is purpose-built for deployment in space- and power-constrained environments.
 This platform delivers enterprise-grade compute performance in a wall-mountable, fanless-compatible form factor suited for edge and far-edge locations.
 Each node is equipped with Intel Xeon 6700/6500 series processors, dual hot-swap NVMe bays, dual 10 GbE network ports, and a dedicated IPMI/BMC management interface to provide the storage I/O throughput, network redundancy, and out-of-band manageability required to run production-grade Kubernetes and virtualized workloads at the edge.

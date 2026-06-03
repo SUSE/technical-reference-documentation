@@ -19,7 +19,7 @@
 //   This is typically a series of words (often from the document title)
 //   separated by hyphens (-).
 //   (e.g., "rancher-kubflow-deployment")
-:article-id: unique-article-id
+:article-id: suse-virtualization_everpure-portworx_tna-topology
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -95,7 +95,7 @@
 :svirt-brand: SUSE® Virtualization
 :svirt-long: SUSE Virtualization
 :svirt: {svirt-long}
-:svirt-version1: v1.7.0
+:svirt-version1: 1.7
 :svirt-website: https://www.suse.com/products/rancher/virtualization/
 :svirt-docs: https://documentation.suse.com/cloudnative/virtualization/
 :svirt-docs-intro: {svirt-docs}introduction/overview.html
@@ -106,6 +106,8 @@
 :srancher-long: SUSE Rancher Prime
 :srancher: SUSE Rancher
 :srancher-website: https://www.suse.com/products/rancher/
+
+:rke2-version1: 1.34
 :rke2-website: https://documentation.suse.com/cloudnative/rke2/
 :OSUSE-Augeas-Repo: https://download.opensuse.org/tumbleweed/repo/oss/x86_64/
 
@@ -120,7 +122,7 @@
 :pxe-provider: {px-provider}
 :pxe-brand: {px}® Enterprise by Everpure™
 :pxe-long: {px} Enterprise by Everpure
-:pxe-version1: 25.2.2
+:pxe-version1: 3.6
 :pxe-website: https://portworx.com/products/portworx-enterprise/
 :pxe-docs: https://docs.portworx.com/portworx-enterprise
 // :pxe-reqs: {pxe-docs}/platform/kubernetes/flasharray/before-you-begin#environment-prerequisites
@@ -146,10 +148,13 @@
 
 :ref-svirt-pxe-wp: https://links.imagerelay.com/cdn/3404/ql/c67bb8f363744ccea209fbbe4242605c/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
 
-:sm-website: https://www.supermicro.com/en/products/edge/compact-edge-servers
-:smss403-website: https://store.supermicro.com/us_en/iot-embedded-sys-e403-14b-frn2t.html
-:smss403: SYS-E403-14B-FRN2T
 :smss-provider: Supermicro
+:smss-long: {smss-provider} Compact Edge Servers
+:smss-website: https://www.supermicro.com/en/products/edge/compact-edge-servers
+:smss403: SYS-E403-14B-FRN2T
+:smss403-website: https://store.supermicro.com/us_en/iot-embedded-sys-e403-14b-frn2t.html
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -194,11 +199,11 @@
 :usecase: Edge Deployments, Application Modernization, High Availability, Cost Optimization
 
 
-:description: Complete reference configuration for running a Portworx TNA architecture on {svirt-long} HCI
+:description: Reference configuration for running a Two-Node with Arbiter topology with {svirt-long}, {px-long}, and {smss-long}.
 
 :description-social: Deploy highly available Portworx storage at the edge using only two storage nodes and an arbiter on {svirt-long}.
 
-:executive-summary: A complete, step-by-step technical implementation for deploying Portworx Enterprise in a Two-Node with Arbiter (TNA) topology on SUSE Virtualization, providing highly available, cloud-native virtualization for edge workloads
+:executive-summary: This document provides step-by-step technical guidance for deploying Portworx Enterprise in a Two-Node with Arbiter (TNA) topology on SUSE Virtualization, providing highly available, cloud-native virtualization for edge workloads.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -260,10 +265,10 @@
 :author3-surname: Smith
 :author3-jobtitle: Partner Solution Innovation Director
 :author3-orgname: SUSE
-:contrib1-firstname: Bhumitra
-:contrib1-surname: Nagar
-:contrib1-jobtitle: Member of Technical Staff
-:contrib1-orgname: Everpure
+:author4-firstname: Bhumitra
+:author4-surname: Nagar
+:author4-jobtitle: Member of Technical Staff
+:author4-orgname: Everpure
 //:author2-firstname: first (given) name
 //:contrib1-firstname: first (given) name
 //:editor1-firstname: first (given) name
