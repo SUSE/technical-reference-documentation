@@ -1,0 +1,248 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// Getting Started Guide
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// For further guidance, see
+//   https://github.com/SUSE/technical-reference-documentation/blob/main/common/templates/start/README.md
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: gs-suse-virt-portworx-everpure
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+//-
+:rev2-date: 2026-03-31
+:rev2-description: Updated to SUSE Virtualization v1.6.1
+:rev1-date: 2025-10-15
+:rev1-description: Original version
+:docdate: {rev2-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Variable names follow a simple pattern:
+//   - compX[-MODIFIER]
+//   where:
+//   - X is an integer starting from 1 for the primary component,
+//     2 for a secondary component, and so on.
+//   - -MODIFIER is text that identifies the stored information.
+//   Some -MODIFIER values include:
+//   - EMPTY: If the modifier is missing, the variable contains
+//     the name of the component
+//     E.g.: 'SUSE Linux Enterprise Server', 'SUSE Rancher Prime',
+//           'Kubeflow', 'Veeam Kasten', 'SQL Server'
+//     NOTE: Be sure to use approved product names.
+//   - -provider: Name of company or project providing the component
+//                (e.g., 'SUSE', 'HPE', 'Microsoft', 'Veeam')
+//   - -version1: A relevant product version (e.g., '15 SP6', '3.1.2')
+//                Additional product versions must be listed separately
+//                (e.g., '-version2: '2.9.5')
+//   - -website: Product website (e.g., https://www.suse.com/products/server/)
+//   - -docs: Product documentation (e.g., https://documentation.suse.com/sles/)
+//
+//   You can create additional modifiers as needed.
+//
+// -
+:svirt-provider: SUSE
+:svirt-brand: {svirt-provider}® Virtualization
+:svirt-long: {svirt-provider} Virtualization
+:svirt: {svirt-long}
+:svirt-version1: v1.6.0
+:svirt-website: https://www.suse.com/products/rancher/virtualization/
+:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/v1.6/en/
+:svirt-docs-intro: {svirt-docs}introduction/overview.html
+:svirt-docs-reqs: {svirt-docs}installation-setup/requirements.html
+:svirt-docs-create-vm: {svirt-docs}virtual-machines/create-vm.html
+
+:pfa: FlashArray
+:pfa-provider: Everpure
+:pfa-brand: {pfa-provider}™ {pfa}™
+:pfa-long: {pfa-provider} {pfa}
+:pfa-website: https://www.purestorage.com/products/unified-block-file-storage.html
+:pfa-docs: https://support.purestorage.com/category/m_flasharray
+
+:px: Portworx
+:px-provider: {pfa-provider}
+:px-brand: {px}® by {px-provider}™
+:px-long: {px} by {px-provider}
+:pxe-provider: {px-provider}
+:pxe: {px} Enterprise
+:pxe-brand: {pxe}® by {pxe-provider}™
+:pxe-long: {pxe} by {pxe-provider}
+:pxe-version1: 3.5
+:pxe-website: https://portworx.com/products/portworx-enterprise/
+:pxe-docs: https://docs.portworx.com/portworx-enterprise
+:pxe-reqs: {pxe-docs}/platform/kubernetes/flasharray/before-you-begin#environment-prerequisites
+:pxe-flasharray-user-access: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/install-flasharray-cd-da#set-up-user-access-in-flasharray
+:pxe-k8s-secret: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/fa-multi-tenancy#create-a-kubernetes-secret
+:pxe-manage-rwx-block: {pxe-docs}/platform/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
+:pxe-central: https://central.portworx.com/
+:pxo: {px} Operator
+:pxo-version1: 25.5.0
+
+:slmicro-provider: SUSE
+:slmicro-brand: {slmicro-provider}® Linux Micro
+:slmicro: SUSE Linux Micro
+:slmicro-website: https://www.suse.com/products/micro/
+
+:rke2-provider: SUSE
+:rke2-brand: {rke2-provider}® RKE2
+:rke2: RKE2
+:rke2-docs: https://documentation.suse.com/cloudnative/rke2/
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title - (<75 characters) concisely identify the guide.
+//         (e.g.: "Kubeflow with SUSE Rancher Prime")
+// subititle - (<75 characters) expound on the title.
+//             (e.g., "Deploying Kubeflow onto an RKE2 Cluster with SUSE Rancher Prime")
+// usecase: (<55 characters) key words or phrases that identify the
+//          use case of this guide
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) brief description of what this guide
+//              provides (e.g.: "Deploy Kubeflow with SUSE Rancher Primer")
+// description-social: (<55 characters) condensed description suitable for
+//                     social media (e.g.: "Kubeflow with SUSE Rancher")
+// executive-summary: (<300 characters) brief summary of the guide that
+//                    appears near the beginning of the rendered document
+//                    (e.g.: "Kubeflow simplifies deployment of machine
+//                            learning (ML) workflows on Kubernetes clusters.
+//                            This document provides step-by-step guidance
+//                            for deploying Kubeflow on an RKE2 cluster with
+//                            SUSE Rancher Prime."
+//
+// NOTE: You can reference component variables in titles.
+//       E.g., If you have the component variables:
+//             :comp1: SUSE Linux Enterprise Server
+//             :comp2: JupyterLab
+//             you can reference them to define new variables, like:
+//             :doctitle: Simplify deployment of {comp2} with {comp1}
+// -
+:doctitle: Modern Virtualization with {svirt-provider} and {px-provider}
+
+:docsubtitle: Integrating {pxe} and {pfa-long} Storage with {svirt-long}
+
+:usecase: modern virtualization
+
+:description: Learn how to deploy a modern, cloud-native environment to support both container and virtual machine workloads with {svirt-long} and {px-long}.
+
+:description-social: Modern Virtualization with {svirt} and {px-long}
+
+:executive-summary: In this getting started guide, learn how to integrate {svirt-brand} with {pxe-brand} and an {pfa-brand} to provide a flexible, enterprise platform that enables running both containers and virtual machines with unparalleled high availability, data protection, hybrid-cloud mobility, and multi-cluster support.
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//
+//   A task must be one of these supported values:
+//    Administration, Artificial Intelligence, Auditing, Authentication,
+//    Automation, Backup &amp; Recovery, Certification, Cloud,
+//    Clustering, Compliance, Configuration, Containerization,
+//    Container Management, Data Intelligence, Deployment, Design,
+//    Encryption, High Availability, Image Building, Implementation,
+//    Installation, Integration, Maintenance, Migration, Monitoring,
+//    Packaging, Security, Storage, Subscription Management,
+//    Troubleshooting, Upgrade &amp; Update, Virtualization,
+//    Vulnerability, Web
+//
+//  E.g.,
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: Deployment
+:metatask2: Virtualization
+:metatask3: High Availability
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//   Follow the pattern to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//   NOTE: Other contributors and editors are typically listed in
+//         an Acknowledgements section.
+//         To list additional authors or contributors on the cover page,
+//         you must edit the docinfo.xml file as well.
+// -
+:author1-firstname: Gopala
+:author1-surname: Krishnan
+:author1-jobtitle: Partner Solution Architect
+:author1-orgname: SUSE
+:author2-firstname: Suresh
+:author2-surname: S
+:author2-jobtitle: Partner Solution Architect
+:author2-orgname: SUSE
+:author3-firstname: Terry
+:author3-surname: Smith
+:author3-jobtitle: Partner Solution Innovation Director
+:author3-orgname: SUSE
+:author4-firstname: Bhumitra
+:author4-surname: Nager
+:author4-jobtitle: Member of Technical Staff
+:author4-orgname: {pxe-provider}
+:author5-firstname: James
+:author5-surname: McShane
+:author5-jobtitle: Consulting Cloud Native Architect
+:author5-orgname: {pxe-provider}
+//:contrib1-firstname: first (given) name
+//:editor1-firstname: first (given) name
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

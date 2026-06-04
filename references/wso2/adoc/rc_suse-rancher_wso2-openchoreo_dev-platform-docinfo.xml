@@ -62,7 +62,7 @@
 
 
 
-<!-- Technical components
+<!-- Technical componentscomp1-website
      - Use the template below to specify each component by name and version.
      - Be sure to reference the long (full) name of each component.
      - Multiple versions of the same component must be listed separately.
@@ -71,8 +71,8 @@
      - This list is NOT visible in the rendered document.
 -->
 <meta name="productname">
-  <productname version="">{sai-brand}</productname>
-  <productname version="">{cml-long}</productname>
+  <productname>{srancher-long}</productname>
+  <productname>{ws-long}</productname> 
 </meta>
 
 
@@ -81,7 +81,7 @@
        respective versions.
      - This list appears above the title in the rendered document.
 -->
-<productname>{sai} {sai-version}, {cml} {cml-version}</productname>
+<productname>{srancher}, {ws}</productname>
 
 
 
@@ -90,15 +90,15 @@
      - However, in the meantime, mirror the component content
        of the productname metadata above.
 -->
-<meta name="platform">{sai-brand}</meta>
-<meta name="platform">{cml-brand}</meta>
+<meta name="platform">{srancher-long}</meta>
+<meta name="platform">{ws-long}</meta>
 
 
 <!-- Partner metadata
      Identify ONLY ONE technical partner (business or organization name)
      supplying a primary component of the solution.
 -->
-<meta name="techpartner">{cml-provider}</meta>
+<meta name="techpartner">{ws-provider}</meta>
 
 
 <!-- author metadata
@@ -175,10 +175,10 @@
 <cover role="logos">
   <mediaobject>
     <imageobject role="fo">
-      <imagedata fileref="logo-lockup_suse-clearml_hor_bglt.svg" width="10em"/>
+      <imagedata fileref="suse.svg" width="5em"/>
     </imageobject>
     <imageobject role="html">
-      <imagedata fileref="logo-lockup_suse-clearml_hor_bglt.svg" width="300px"/>
+      <imagedata fileref="suse.svg" width="152px"/>
     </imageobject>
   </mediaobject>
 </cover>
@@ -191,12 +191,6 @@
      - Each revision must include the date and description.
 -->
 <revhistory xml:id="rh-art-{article-id}">
-  <revision>
-    <date>{rev2-date}</date>
-    <revdescription>
-      <para>{rev2-description}</para>
-    </revdescription>
-  </revision>
   <revision>
     <date>{rev1-date}</date>
     <revdescription>
