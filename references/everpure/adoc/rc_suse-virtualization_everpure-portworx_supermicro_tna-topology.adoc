@@ -233,9 +233,9 @@ The following pages provide guidance for configuring and installing {pxe} via th
 
 === Installing and configuring {svirt-long}
 
-. Download the full Harvester ISO (`harvester-{svirt-version1}-rc5-amd64.iso`) from the {github-harv-download}[Harvester GitHub releases] page.
+. Download the full ISO image for the supported {svirt} (Harvester) version from the {github-harv-download}[Harvester GitHub repository].
 +
-Always use the full ISO (not the net-install variant) to ensure all container images are preloaded critical for edge environments with restricted Internet access.
+Always use the full ISO (not the net-install variant) to ensure all container images critical for edge environments are available even in restricted Internet access environments.
 
 . Mount the ISO via IPMI Virtual Media (recommended) using the Supermicro BMC management port, or flash it to a USB drive that you can directly plug into the system.
 +
@@ -243,13 +243,13 @@ See {svirt-docs-install}[{svirt}: Installation Methods] for more information.
 
 . Enable UEFI boot mode, Intel VT-x, and VT-d in the Supermicro BIOS before booting.
 +
-Legacy BIOS boot is deprecated in {svirt-version1}.
+Legacy BIOS boot is deprecated in version {svirt-version1} and later.
 
 . On the first node, select `Create a new Harvester cluster`.
 +
 On subsequent nodes, select `Join an existing Harvester cluster` using the Cluster VIP join token generated after the first node boots.
 +
-Assign the Witness role to the third node to designate it as a storageless etcd arbiter.
+Assign the Witness role to the third node to designate it as a storageless, etcd arbiter.
 +
 See {svirt-docs-witness}[{svirt}: Witness Node] for details.
 
@@ -269,7 +269,7 @@ See {svirt-docs-network}[{svirt}: Cluster Network] for networking configuration 
 
 . Configure a reliable NTP server during installation, as accurate time synchronization is mandatory for Kubernetes cluster stability.
 
-=== Preparation
+=== Preparing for {px} installation
 
 Before deploying the {pxo}, three preparatory tasks must be completed on each storage worker node: partitioning the disks, wiping residual filesystem partition signatures, and installing the Augeas binary.
 These steps address hardware-level disk layout requirements and OS immutability, respectively.
@@ -416,6 +416,7 @@ The binaries persist across pod restarts but may need to be reinstalled after a 
 Be sure to include this step in your upgrade runbook.
 ====
 
+
 === Configuring the {pxo}
 
 . Log in to {pxe-central}
@@ -461,9 +462,18 @@ image::suse-portworx-operator-spec-generation-tna.png[title="SUSE Virtualization
 
 
 
-=== Installing the {pxo} and the {px} StorageCluster
+=== Deploying {px}
 
-In this section, you deploying the {pxo}, defining a Stork Snapshot StorageClass, and creating the {px} StorageCluster.
+Deploy {px} involves three main steps:
+
+. Installing the {pxo}: The {pxo} efficiently automates and manages installation, configuration, and ongoing upgrade workflows for all {px} components.
+
+. Creating a Stork Snapshot StorageClass: Stork adds support for orchestrating volume snapshots through Kubernetes, allowing users to take snapshots of PVCs and restore those snapshots to other PVCs through Kubernetes.
+
+. Creating the {px} StorageCluster: The StorageCluster object acts as a definition for the {px} cluster and provides a Kubernetes-native experience, allowing you to manage your Portworx cluster like other Kubernetes applications.
+
+These steps are covered in detail in the following sections.
+
 
 ==== Installing the {pxo}
 
@@ -554,7 +564,7 @@ storageclass.storage.k8s.io/stork-snapshot-sc created
 
 ==== Creating the {px} StorageCluster
 
-. Download the StorageClass manifest.
+. Download the StorageCluster manifest.
 +
 [source,console]
 ----
@@ -603,7 +613,10 @@ px-cluster-tna-25284                1/1     Running   0          4m
 px-cluster-tna-5cmlx                1/1     Running   0          4m
 ----
 
+
 === Updating the CSI driver configuration
+
+The final step is to configure {svirt} to use the {px} cluster.
 
 . Log in to the {svirt-long} UI.
 
@@ -630,19 +643,10 @@ image::suse-portworx-volume-snapshot-configuration.png[title="SUSE Virtualizatio
 image::svirt-portworx-volume-snapshot-configuration.png[title="Set Provisioner to pxd.portworx.com and enable True", Set Provisioner to pxd.portworx.com and enable True, align="center", width=90%]
 
 
-== Validation
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Provide validation steps for testing that the solution deployment
-// was successful and configured properly.
-// This could entail a list of specific checks (e.g., commands and
-// expected output), running an automated tool for performing these
-// checks, or implementing a functional demonstration.
-// Include commands, output, and screenshots, as needed.
-// Remember to represent steps as an ordered list.
-// Use subsections if needed for clarity.
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+== Validating the TNA deployment
 
-Validation of the {px} TNA deployment proceeds in two layers.
+You can check that the {px} cluster is operational in the TNA topology with the steps below.
+
 
 . Verify that all {px} pods are in the `Running` state with no `CrashLoopBackOff` or `Error` conditions.
 +
@@ -659,7 +663,7 @@ portworx    px-cluster-tna-25284               1/1     Running   0           32m
 portworx    px-cluster-tna-5cmlx               1/1     Running   0           32m
 ----
 
-. Check that `pxctl status` reports the correct TNA topology, 2 storage nodes online and 1 storageless arbiter online.
+. Check that `pxctl status` reports the correct TNA topology with the two storage nodes and one storageless arbiter node online.
 +
 [source,console]
 ----
@@ -695,7 +699,7 @@ Cluster Summary
 
         IP              ID                                      SchedulerNodeName       Auth            StorageNode     Used    Capacity        Status  StorageStatus   Version         Kernel               OS
         172.24.131.46   f11b2ad2-6029-405d-bda3-7dece346178f    harvtwo                 Disabled        Yes(PX-StoreV2) 36 GiB  811 GiB         Online  Up              3.6.0.0-a81cf43 6.4.0-36-default     Harvester v1.7.0-rc5
-        172.24.131.47   b893ea8a-141b-47d3-baa8-6073e01f53ec    arbitrary               Disabled        Yes(PX-StoreV2) 0 B     0 B             Online  No Storage      3.6.0.0-a81cf43 6.4.0-36-default     Harvester v1.7.0-rc5
+        172.24.131.47   b893ea8a-141b-47d3-baa8-6073e01f53ec    arbiter                 Disabled        Yes(PX-StoreV2) 0 B     0 B             Online  No Storage      3.6.0.0-a81cf43 6.4.0-36-default     Harvester v1.7.0-rc5
         172.24.131.45   a910fb93-e66f-45d0-830f-015b11c5a657    harvone                 Disabled        Yes(PX-StoreV2) 36 GiB  811 GiB         Online  Up (This node)  3.6.0.0-a81cf43 6.4.0-36-default     Harvester v1.7.0-rc5
 
 Global Storage Pool
@@ -710,37 +714,26 @@ Notice that:
 --
 * `harvone`: Storage node with PX-StoreV2 engine, 782 GiB usable pool from `/dev/nvme1n1p3`, with `/dev/nvme1n1p2` as the dedicated KVDB metadata device.
 
-* `arbitrary`: Online with `No Storage`, participating in KVDB quorum as a storageless arbiter, exactly as designed.
+* `arbiter`: Online with `No Storage`, participating in KVDB quorum as a storageless arbiter, exactly as designed.
 
 * `Total Nodes: 2 node(s) with storage`: the cluster recognizes the TNA topology correctly.
 --
 
-== Summary
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Summarize:
-// - Solution description
-// - Motivation for the solution
-// - What was covered in this document
-// - Suggested next steps for the learning journey
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-This document is a complete, step-by-step technical implementation guide for deploying {pxe-long} in a Two-Node with Arbiter (TNA) topology on {svirt-long}.
-The architecture delivers highly available, enterprise-grade storage at the edge using only two full storage nodes and one lightweight arbiter node, dramatically reducing hardware costs while preserving production-level resilience.
-Organizations extending workloads beyond centralized data centers face a familiar trilemma.how to maintain high availability, minimize hardware expenditure, and operate with limited on-site expertise.
-Traditional storage HA mandates at least three full storage nodes. The TNA architecture dissolves that constraint ,the arbiter node participates only in quorum decisions and carries no data, cutting the hardware bill by roughly one-third while retaining full fault-tolerance semantics.
-This reference configuration pairs {svirt-long}, a Kubernetes-native hyperconverged infrastructure platform, with {pxe-long}'s cloud-native CSI storage.
-Together they create a single, unified substrate on which virtual machines and containerized applications co-exist without separate management planes.
+== Summary
+
+This document provides a reference design with step-by-step, implementation guidance for integrating {svirt-long} and {pxe-long} in a Two-Node with Arbiter (TNA) topology on {smss-long}.
+The architecture delivers highly available, enterprise-grade storage at the edge using only two full storage nodes and one lightweight arbiter node to dramatically reduce hardware costs while preserving production-level resilience.
+
+Organizations extending workloads beyond centralized data centers face a familiar dilemma: how do you maintain high availability, minimize hardware expenditure, and operate with limited on-site expertise.
+Traditional storage HA mandates at least three full storage nodes.
+The TNA architecture dissolves this constraint by leveraging an arbiter node, carrying no workload data while participating only in quorum decisions.
+This can dramatically cut hardware costs at scale while retaining full fault-tolerance.
+
+By combining {svirt}, {px}, and {smss-long} in this TNA topology, organizations create a scalable, resilient, and cost-efficient solution for edge and other use cases.
 
 
 == Frequently Asked Questions (FAQs)
-
-. *Why is third-party storage support important for {svirt-long}?*
-+
---
-Broad third-party storage support gives customers the flexibility to leverage existing storage investments and select solutions that best match their specific performance, cost, and operational requirements.
-It eliminates vendor lock-in, enabling organizations to adopt best-of-breed storage technologies, such as {px} for cloud-native HA storage, without being constrained to a single vendor's ecosystem.
-This is particularly valuable in edge environments, where cost sensitivity and integration with legacy infrastructure are primary concerns.
---
 
 . *What exactly is the Two-Node with Arbiter (TNA) topology?*
 +
@@ -749,6 +742,14 @@ TNA is a {px} deployment topology designed for resource-constrained environments
 It consists of exactly two full storage worker nodes that hold application data with synchronous replication between them, plus one lightweight arbiter node.
 The arbiter participates in the internal {px} KVDB quorum as a tie-breaker during network partitions or node failures.This means the cluster can achieve a quorum majority (2 of 3 KVDB members) even when one storage node is unavailable.
 The arbiter does not store any application data, making it suitable for deployment on a smaller, less expensive server.
+--
+
+. *Why is third-party storage support important for {svirt-long}?*
++
+--
+Broad third-party storage support gives customers the flexibility to leverage existing storage investments and select solutions that best match their specific performance, cost, and operational requirements.
+It eliminates vendor lock-in, enabling organizations to adopt best-of-breed storage technologies, such as {px} for cloud-native HA storage, without being constrained to a single vendor's ecosystem.
+This is particularly valuable in edge environments, where cost sensitivity and integration with legacy infrastructure are primary concerns.
 --
 
 . *Can the arbiter node be virtualized?*
@@ -763,7 +764,7 @@ This makes it a good candidate for virtualization, a small ARM-based server, or 
 . *What happens if both a storage node and the arbiter fail simultaneously?*
 +
 --
-With only 1 of 3 KVDB members available, quorum cannot be achieved, and the cluster enters a read-only protective state to prevent data divergence (split-brain).
+With only one of three KVDB members available, quorum cannot be achieved, and the cluster enters a read-only protective state to prevent data divergence (split-brain).
 This is the correct and expected behavior.
 Recovery requires restoring at least one failed member.
 For edge environments, maintain an out-of-band management path (IPMI/BMC) to each node to facilitate remote recovery.
@@ -831,6 +832,9 @@ For edge environments, maintain an out-of-band management path (IPMI/BMC) to eac
 
 == Appendix
 
+
+=== Server hardware specifications
+
 All three nodes in this reference deployment are built on the Supermicro SYS-E403-14B-FRN2T, a compact IoT/Edge SuperServer from Supermicro's Compact Edge Server product line.
 This platform was selected for its short-depth form factor, NVMe storage support, and suitability for edge and far-edge environments where rack space and power budgets are constrained.
 
@@ -841,7 +845,7 @@ This platform was selected for its short-depth form factor, NVMe storage support
 |Server Platform
 |Supermicro SYS-E403-14B-FRN2T
 |3
-|2x Storage Workers (`harveone`, `harvetwo`) + 1x Arbiter (`arbitrary`)
+|2x Storage Workers (`harveone`, `harvetwo`) + 1x Arbiter (`arbiter`)
 
 |Form Factor
 |Compact / Short-Depth (10.5" x 4.62" x 16")
@@ -890,7 +894,7 @@ This platform was selected for its short-depth form factor, NVMe storage support
 
 |===
 
-=== Per-Node Storage Layout
+=== Per-node storage layout
 
 Each storage worker node (`harveone`, `harvetwo`) carries two 2.5" NVMe drives.
 The data NVMe is partitioned into three GPT partitions as described in the Pre-Installation Preparation section.
