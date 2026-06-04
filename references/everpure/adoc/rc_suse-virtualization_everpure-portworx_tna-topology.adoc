@@ -439,7 +439,7 @@ For example, {pxe} {pxe-version1} supports Kubernetes {rke2-version1}, which is 
 ====
 +
 //image::suse-portworx-basic-configuration-built-in-kvdb.png[title="{svirt} and {px} Basic Configuration with Built-in KVDB", {svirt} and {px} Basic Configuration with Built-in KVDB, align="center", width=90%]
-image::suse-portworx-basic-configuration-built-in-kvdb.png[title="{svirt} and {px} Basic Configuration with Built-in KVDB", {svirt} and {px} Basic Configuration with Built-in KVDB, align="center", width=90%]
+image::suse-portworx-basic-configuration-built-in-kvdb-tna.png[title="{svirt} and {px} Basic Configuration with Built-in KVDB", {svirt} and {px} Basic Configuration with Built-in KVDB, align="center", width=90%]
 
 . In the Storage section, select Cloud Drive type as “None / Use Existing Disks” since {px} will consume locally attached NVMe devices. Do not use the global "Use All Disks" option.
 Explicit per-node device paths will be defined directly in the StorageCluster manifest after download. Enable PX-StoreV2 as the storage engine.
@@ -451,19 +451,19 @@ image::suse-portworx-storage-config-tna.png[title="SUSE Virtualization and Portw
 . In the Network section, retain the default {px} service port of 9001 unless your edge network environment requires a different port.
 +
 //image::suse-portworx-network-configuration.png[title="SUSE Virtualization and Portworx Network Configuration", align="center", width=90%]
-image::suse-portworx-network-configuration.png[title="SUSE Virtualization and Portworx Network Configuration", SUSE Virtualization and Portworx Network Configuration, align="center", width=90%]
+image::suse-portworx-network-configuration-tna.png[title="SUSE Virtualization and Portworx Network Configuration", SUSE Virtualization and Portworx Network Configuration, align="center", width=90%]
 
 . In the Customize section, select “Rancher Kubernetes Engine 2 (RKE2)” to match the Kubernetes engine embedded in SUSE Virtualization.
 +
 //image::suse-portworx-customize-rke2-configuration.png[title="SUSE Virtualization and Portworx RKE2 Customization", align="center", width=90%]
-image::suse-portworx-customize-rke2-configuration.png[title="SUSE Virtualization and Portworx RKE2 Customization", SUSE Virtualization and Portworx RKE2 Customization, align="center", width=90%]
+image::suse-portworx-customize-rke2-configuration-tna.png[title="SUSE Virtualization and Portworx RKE2 Customization", SUSE Virtualization and Portworx RKE2 Customization, align="center", width=90%]
 
 . The spec is generated next and kubectl commands appear in the UI. Do not apply them yet. First, download and edit the Operator YAML to add the SUSE Virtualization-specific tolerations for node-role.kubernetes.io/control-plane (NoSchedule) and node-role.kubernetes.io/etcd (NoExecute).
 Without these, {px} pods will not schedule on the arbiter or control-plane nodes.
 Save the commands for reference before making these edits.
 +
 //image::suse-portworx-operator-spec-generation.png[title="SUSE Virtualization and Portworx Operator Spec Generation", align="center", width=90%]
-image::suse-portworx-operator-spec-generation.png[title="SUSE Virtualization and Portworx Operator Spec Generation", SUSE Virtualization and Portworx Operator Spec Generation, align="center", width=90%]
+image::suse-portworx-operator-spec-generation-tna.png[title="SUSE Virtualization and Portworx Operator Spec Generation", SUSE Virtualization and Portworx Operator Spec Generation, align="center", width=90%]
 
 
 
