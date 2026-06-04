@@ -1,6 +1,6 @@
 :docinfo:
 include::./common_docinfo_vars.adoc[]
-include::rc_suse-virtualization_everpure-portworx_tna-topology-vars.adoc[]
+include::rc_suse-virtualization_everpure-portworx_supermicro_tna-topology-vars.adoc[]
 [#art-{article-id}]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -154,11 +154,10 @@ It uses a Two-Node with Arbiter (TNA) topology, consisting of two worker nodes t
 {pxe-long} provides container-native storage services, including persistent volumes, data replication, and high availability storage.
 Supporting this, Kubernetes orchestrates the deployment, scheduling, and lifecycle management of both workloads and storage services across the cluster.
 
-//Infrastructure hardware typically consists of commodity x86 systems with local storage devices and standard networking, making the solution suitable for resource-constrained environments.
 
 Infrastructure hardware consists of compact edge servers with local NVMe storage and integrated networking, providing a resilient platform for deploying virtualized and containerized workloads in edge and far-edge environments.
 
-//image::suse-portworx-arc-diagram.png[title="SUSE Virtualization and Portworx Two Node with Arbiter Topology", align="center", width=90%]
+
 image::suse-portworx-tna-arc-diagram.png[title="SUSE Virtualization and Portworx Two Node with Arbiter Topology", SUSE Virtualization and Portworx Two Node with Arbiter Topology, align="center", width=90%]
 
 
@@ -234,7 +233,7 @@ The following pages provide guidance for configuring and installing {pxe} via th
 
 === Installing and configuring {svirt-long}
 
-. Download the full Harvester ISO (`harvester-{svirt-version1}-rc5-amd64.iso`) from the Harvester GitHub releases page.
+. Download the full Harvester ISO (`harvester-{svirt-version1}-rc5-amd64.iso`) from the {github-harv-download}[Harvester GitHub releases] page.
 +
 Always use the full ISO (not the net-install variant) to ensure all container images are preloaded critical for edge environments with restricted Internet access.
 
@@ -266,7 +265,7 @@ Node IPs cannot be changed after cluster formation without breaking the cluster.
 +
 Physical switch ports must be configured as trunk ports.
 +
-See Cluster Network for networking configuration details.
+See {svirt-docs-network}[{svirt}: Cluster Network] for networking configuration details.
 
 . Configure a reliable NTP server during installation, as accurate time synchronization is mandatory for Kubernetes cluster stability.
 
@@ -438,65 +437,49 @@ You can verify compatibility between the {pxe} version and Kubernetes (RKE2) ver
 For example, {pxe} {pxe-version1} supports Kubernetes {rke2-version1}, which is included with {svirt} {svirt-version1}.
 ====
 +
-//image::suse-portworx-basic-configuration-built-in-kvdb.png[title="{svirt} and {px} Basic Configuration with Built-in KVDB", {svirt} and {px} Basic Configuration with Built-in KVDB, align="center", width=90%]
 image::suse-portworx-basic-configuration-built-in-kvdb-tna.png[title="{svirt} and {px} Basic Configuration with Built-in KVDB", {svirt} and {px} Basic Configuration with Built-in KVDB, align="center", width=90%]
 
 . In the Storage section, select Cloud Drive type as “None / Use Existing Disks” since {px} will consume locally attached NVMe devices. Do not use the global "Use All Disks" option.
 Explicit per-node device paths will be defined directly in the StorageCluster manifest after download. Enable PX-StoreV2 as the storage engine.
 Set the maximum storage nodes per availability zone to 2, reflecting the two full storage worker nodes in the TNA topology (the arbiter node must not be counted as a storage node).
 +
-//image::suse-portworx-storage-config-tna.png[title="SUSE Virtualization and Portworx Storage Configuration", align="center", width=90%]
 image::suse-portworx-storage-config-tna.png[title="SUSE Virtualization and Portworx Storage Configuration", SUSE Virtualization and Portworx Storage Configuration, align="center", width=90%]
 
 . In the Network section, retain the default {px} service port of 9001 unless your edge network environment requires a different port.
 +
-//image::suse-portworx-network-configuration.png[title="SUSE Virtualization and Portworx Network Configuration", align="center", width=90%]
 image::suse-portworx-network-configuration-tna.png[title="SUSE Virtualization and Portworx Network Configuration", SUSE Virtualization and Portworx Network Configuration, align="center", width=90%]
 
 . In the Customize section, select “Rancher Kubernetes Engine 2 (RKE2)” to match the Kubernetes engine embedded in SUSE Virtualization.
 +
-//image::suse-portworx-customize-rke2-configuration.png[title="SUSE Virtualization and Portworx RKE2 Customization", align="center", width=90%]
 image::suse-portworx-customize-rke2-configuration-tna.png[title="SUSE Virtualization and Portworx RKE2 Customization", SUSE Virtualization and Portworx RKE2 Customization, align="center", width=90%]
 
 . The spec is generated next and kubectl commands appear in the UI. Do not apply them yet. First, download and edit the Operator YAML to add the SUSE Virtualization-specific tolerations for node-role.kubernetes.io/control-plane (NoSchedule) and node-role.kubernetes.io/etcd (NoExecute).
 Without these, {px} pods will not schedule on the arbiter or control-plane nodes.
 Save the commands for reference before making these edits.
 +
-//image::suse-portworx-operator-spec-generation.png[title="SUSE Virtualization and Portworx Operator Spec Generation", align="center", width=90%]
 image::suse-portworx-operator-spec-generation-tna.png[title="SUSE Virtualization and Portworx Operator Spec Generation", SUSE Virtualization and Portworx Operator Spec Generation, align="center", width=90%]
 
 
 
-=== Installing the {pxo} and the {px} Cluster
+=== Installing the {pxo} and the {px} StorageCluster
+
+In this section, you deploying the {pxo}, defining a Stork Snapshot StorageClass, and creating the {px} StorageCluster.
+
+==== Installing the {pxo}
 
 . Log in to the {svirt-long} management node command-line interface (CLI) with root access.
 
-. Before applying the Operator manifest, download it locally so the {svirt-long}-specific tolerations can be added.
+. Download the {pxo} manifest.
 +
-
 [source,console]
 ----
 curl -o portworx-operator.yaml 'https://install.portworx.com/3.6?comp=pxoperator&kbver=1.34.2&ns=portworx'
 ----
 
-* You should see the following as the Operator is deployed.
-+
-
-[source,text]
-----
-namespace/portworx created
-serviceaccount/portworx-operator created
-clusterrole.rbac.authorization.k8s.io/portworx-operator created
-clusterrolebinding.rbac.authorization.k8s.io/portworx-operator created
-deployment.apps/portworx-operator created
-----
-
 . Open `portworx-operator.yaml` and locate the Deployment resource for the `portworx-operator`.
-
-. Under `spec.template.spec`, add the following tolerations block to allow the Operator pod to schedule on {svirt-long}'s tainted control-plane and etcd nodes.
+Under `spec.template.spec`, add the following tolerations block to allow the Operator pod to schedule on {svirt-long}:
 +
-
-[source,console]
+[source,yaml]
 ----
 tolerations:
   - key: "node-role.kubernetes.io/control-plane"
@@ -507,17 +490,15 @@ tolerations:
     effect: "NoExecute"
 ----
 
-* Apply the edited manifest to install the {pxo}.
+. Apply the edited manifest to install the {pxo}.
 +
-
 [source,console]
 ----
 kubectl apply -f portworx-operator.yaml
 ----
-
-* You should see the following output confirming the Operator is deployed.
 +
-
+You should see the following output confirming the Operator is deployed.
++
 [listing]
 ----
 namespace/portworx created
@@ -527,7 +508,7 @@ clusterrolebinding.rbac.authorization.k8s.io/portworx-operator created
 deployment.apps/portworx-operator created
 ----
 
-* Verify that the Operator pod reaches `Running` state before proceeding.
+. Verify that the Operator pod reaches `Running` state before proceeding.
 +
 [source,console]
 ----
@@ -539,12 +520,12 @@ kubectl get pods -n portworx
 NAME                                  READY   STATUS    RESTARTS   AGE
 portworx-operator-f466b7f5b-l5586     1/1     Running   0          2m
 ----
-+
-. Create the Stork Snapshot StorageClass.
 
-* Create a file named `stork-snapshot-sc.yaml` with the following contents.
+==== Creating the Stork Snapshot StorageClass
+
+. Create `stork-snapshot-sc.yaml` with the following contents:
 +
-[source,console]
+[source,yaml]
 ----
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -559,7 +540,7 @@ reclaimPolicy: Delete
 volumeBindingMode: Immediate
 ----
 
-* Apply the StorageClass.
+. Apply the StorageClass.
 +
 [source,console]
 ----
@@ -571,7 +552,9 @@ kubectl apply -f stork-snapshot-sc.yaml
 storageclass.storage.k8s.io/stork-snapshot-sc created
 ----
 
-. Similarly, before applying the `StorageCluster` manifest, download it locally to define the TNA-specific configuration.
+==== Creating the {px} StorageCluster
+
+. Download the StorageClass manifest.
 +
 [source,console]
 ----
@@ -580,31 +563,32 @@ curl -o new_stc.yaml 'https://install.portworx.com/3.6?operator=true&mc=false&kb
 
 . Open `new_stc.yaml` and apply the following TNA-specific modifications before deploying.
 
-.. Add the same tolerances from Step 3 under `spec.placement.tolerations` so {px} agent pods can schedule on the arbiter node.
+.. Add the tolerances defined earlier under `spec.placement.tolerations` so the {px} agent pods can schedule on the arbiter node.
 
-.. Add the following annotations under `metadata.annotations` to prevent false node-count failures, since the arbiter is storageless.
+.. Add the following annotations under `metadata.annotations` to prevent false node-count failures, since the arbiter is storageless:
 +
-[source,console]
+[source,yaml]
 ----
 portworx.io/health-check: "skip"
 portworx.io/preflight-check: "skip"
 ----
-* Apply the edited `StorageCluster` manifest.
+
+. Apply the edited `StorageCluster` manifest.
 +
 [source,console]
 ----
 kubectl apply -f new_stc.yaml -n portworx
 ----
-* You should see:
 +
-
+You should see:
++
 [listing]
 ----
 storagecluster.core.libopenstorage.org/px-cluster-tna created
 ----
-* Monitor the {px} pods as they initialize.
 
-. Full startup typically takes 3–5 minutes on NVMe hardware.
+. Monitor the {px} pods as they initialize. +
+Full startup typically takes 3–5 minutes on NVMe hardware.
 +
 [source,console]
 ----
@@ -618,13 +602,6 @@ portworx-operator-f466b7f5b-l5586   1/1     Running   0          10m
 px-cluster-tna-25284                1/1     Running   0          4m
 px-cluster-tna-5cmlx                1/1     Running   0          4m
 ----
-
-[NOTE]
-====
-{px} uses two distinct partitions on each data NVMe drive, `p2` is reserved exclusively for internal KVDB metadata storage, and `p3` is the data partition exposed to workloads as {px} storage pool capacity.
-Never point either of these partitions at an OS disk or boot partition, as {px} will format them during initialization.
-====
-
 
 === Updating the CSI driver configuration
 
@@ -642,7 +619,6 @@ Never point either of these partitions at an OS disk or boot partition, as {px} 
 +
 This setting points to the name of the `VolumeSnapshotClass` used for creating volume snapshots or VM snapshots.
 +
-//image::suse-portworx-volume-snapshot-configuration.png[title="SUSE Virtualization and Portworx Volume Snapshot Configuration", align="center", width=90%]
 image::suse-portworx-volume-snapshot-configuration.png[title="SUSE Virtualization and Portworx Volume Snapshot Configuration", SUSE Virtualization and Portworx Volume Snapshot Configuration, align="center", width=90%]
 
 . Find and select __csi-online-expand-validation__.
@@ -650,10 +626,9 @@ image::suse-portworx-volume-snapshot-configuration.png[title="SUSE Virtualizatio
 . Select __⋮__ > __Edit Setting__ to access the configuration options.
 
 . Set the Provisioner to the third-party CSI driver, `pxd.portworx.com`, and the value to `True`.
-
 +
-//image::svirt-portworx-volume-snapshot-configuration.png[title="Set Provisioner to pxd.portworx.com and enable True", align="center", width=90%]
 image::svirt-portworx-volume-snapshot-configuration.png[title="Set Provisioner to pxd.portworx.com and enable True", Set Provisioner to pxd.portworx.com and enable True, align="center", width=90%]
+
 
 == Validation
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -667,37 +642,29 @@ image::svirt-portworx-volume-snapshot-configuration.png[title="Set Provisioner t
 // Use subsections if needed for clarity.
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-Validation of the {px} TNA deployment proceeds in three layers.
+Validation of the {px} TNA deployment proceeds in two layers.
 
-* Pod Layer: All {px} pods are in `Running` state with no `CrashLoopBackOff` or `Error` conditions.
-
+. Verify that all {px} pods are in the `Running` state with no `CrashLoopBackOff` or `Error` conditions.
 +
 [source,console]
 ----
 kubectl get pods -n portworx
 ----
-
 +
 [listing]
 ----
 NAMESPACE   NAME                               READY   STATUS    RESTARTS    AGE
 portworx    portworx-operator-f466b7f5b-l5586  1/1     Running   1(9m6s)     60m
-portworx    px-cluster-tna-25284               1/1     Running   0            32m
-portworx    px-cluster-tna-5cmlx               1/1     Running   0            32m
+portworx    px-cluster-tna-25284               1/1     Running   0           32m
+portworx    px-cluster-tna-5cmlx               1/1     Running   0           32m
 ----
 
-+
-All three pods are `Running`: the Operator pod plus one {px} agent pod on each of the two storage worker nodes (`harveone` and `harvetwo`).
-The arbiter node runs only a lightweight KVDB participant, not a full {px} storage agent pod.
-
-* Cluster Layer: `pxctl status` reports the correct TNA topology, 2 storage nodes online and 1 storageless arbiter online.
-
+. Check that `pxctl status` reports the correct TNA topology, 2 storage nodes online and 1 storageless arbiter online.
 +
 [source,console]
 ----
 pxctl status
 ----
-
 +
 [listing]
 ----
@@ -737,20 +704,16 @@ Global Storage Pool
 
 Collected at: 2026-05-11 10:19:51 UTC
 ----
-
 +
-The `pxctl` output confirms the expected TNA state.
-
+Notice that:
 +
-** `harvone`: Storage node with PX-StoreV2 engine, 782 GiB usable pool from `/dev/nvme1n1p3`, with `/dev/nvme1n1p2` as the dedicated KVDB metadata device.
+--
+* `harvone`: Storage node with PX-StoreV2 engine, 782 GiB usable pool from `/dev/nvme1n1p3`, with `/dev/nvme1n1p2` as the dedicated KVDB metadata device.
 
-** `arbitrary`: Online with `No Storage`, participating in KVDB quorum as a storageless arbiter, exactly as designed.
+* `arbitrary`: Online with `No Storage`, participating in KVDB quorum as a storageless arbiter, exactly as designed.
 
-** `Total Nodes: 2 node(s) with storage`: the cluster recognizes the TNA topology correctly.
-
-* Storage Layer: At least one storage pool is `Online` with usable capacity reported from the correct NVMe device.
-
-
+* `Total Nodes: 2 node(s) with storage`: the cluster recognizes the TNA topology correctly.
+--
 
 == Summary
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
