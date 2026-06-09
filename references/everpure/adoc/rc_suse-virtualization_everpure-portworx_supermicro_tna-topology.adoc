@@ -716,15 +716,12 @@ Notice in the individual node details that:
 * `harvone` and `harvetwo` (the storage nodes) show a StorageStatus of “Up” with PX-StoreV2 engine, 811 GiB of total capacity.
 
 * `arbiter`: Online with `No Storage`, participating in KVDB quorum as a storageless arbiter, exactly as designed.
-=======
 //* `arbitrary`: Online with `No Storage`, participating in KVDB quorum as a storageless arbiter, exactly as designed.
 * `Arbiter` (the witness node) shows Online with a StorageStatus of “No Storage,” since it only participates in KVDB quorum.
 
 //* `Total Nodes: 2 node(s) with storage`: the cluster recognizes the TNA topology correctly.
 --
 
-
-=======
 === Resilience validation
 
 Validate TNA high availability by testing the following two failure scenarios with active VM workloads.
@@ -742,7 +739,8 @@ Validate TNA high availability by testing the following two failure scenarios wi
 harvone:~ # shutdown -h now
 ----
 +
-When Kubernetes detects harvone as NotReady, it triggers live migration for all VMs that were running on it. Within approximately 2 minutes, you should see all VMs are Running on harvtwo.
+When Kubernetes detects harvone as NotReady, it triggers live migration for all VMs that were running on it.
+Within approximately 2 minutes, you should see all VMs are Running on harvtwo.
 
 . Verify that harvone is marked as Offline.
 +
@@ -883,12 +881,14 @@ The additional interruption compared to Scenario 1 reflects the time required fo
 [NOTE]
 ====
 The Kubernetes API server briefly reported `etcdserver: no leader` during the window between the arbiter going offline and harvtwo assuming sole etcd authority.
-This is expected behaviour — once harvtwo re-established etcd leadership, the API server recovered and VM scheduling resumed normally. The two storage nodes together hold majority quorum (2 of 3 KVDB members) and can operate without the arbiter.
+This is expected behaviour — once harvtwo re-established etcd leadership, the API server recovered and VM scheduling resumed normally.
+The two storage nodes together hold majority quorum (2 of 3 KVDB members) and can operate without the arbiter.
 ====
 
 == Upgrading and Lifecycle Management
 
-Lifecycle management is an important consideration to ensure continuous platform interoperability, maintain data availability for stateful workloads, and close critical security gaps. The components of this solution run natively on a unified Kubernetes-based control plane, making coordinated lifecycle management essential for maintaining compatibility and operational stability.
+Lifecycle management is an important consideration to ensure continuous platform interoperability, maintain data availability for stateful workloads, and close critical security gaps.
+The components of this solution run natively on a unified Kubernetes-based control plane, making coordinated lifecycle management essential for maintaining compatibility and operational stability.
 
 Proper lifecycle management impacts this solution across several key operational areas:
 
@@ -922,15 +922,6 @@ For supported upgrade paths, compatibility requirements, and operational guidanc
 * {pxe-long} Documentation: {pxe-website}
 
 
-
-== Summary
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Summarize:
-// - Solution description
-// - Motivation for the solution
-// - What was covered in this document
-// - Suggested next steps for the learning journey
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
 == Summary
