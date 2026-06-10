@@ -572,6 +572,8 @@ curl -o new_stc.yaml 'https://install.portworx.com/3.6?operator=true&mc=false&kb
 ----
 
 . Open `new_stc.yaml` and apply the following TNA-specific modifications before deploying.
++
+For reference, see <<Sample StorageCluster manifest for TNA (`new_stc.yaml`)>>.
 
 .. Add the tolerances defined earlier under `spec.placement.tolerations` so the {px} agent pods can schedule on the arbiter node.
 
@@ -922,8 +924,6 @@ For supported upgrade paths, compatibility requirements, and operational guidanc
 * {pxe-long} Documentation: {pxe-website}
 
 
-
-
 == Summary
 
 This document provides a reference design with step-by-step, implementation guidance for integrating {svirt-long} and {pxe-long} in a Two-Node with Arbiter (TNA) topology on {smss-long}.
@@ -1036,6 +1036,128 @@ For edge environments, maintain an out-of-band management path (IPMI/BMC) to eac
 
 == Appendix
 
+The following sections provide additional information and resources.
+
+=== Sample files and output
+
+==== Sample StorageCluster manifest for TNA (`new_stc.yaml`)
+
+[source,yaml]
+----
+apiVersion: core.libopenstorage.org/v1
+kind: StorageCluster
+metadata:
+  name: px-cluster-tna-gk
+  namespace: portworx
+  annotations:
+    portworx.io/install-source: "https://install.portworx.com/3.6?operator=true&mc=false&kbver=1.34.2&ns=portworx&b=true&kvdbtls=true&certmgr=true&dmthin=true&node1Name=harveone&node1Device=%2Fdev%2Fnvme0n1&node1ClusterDomain=Node1&node2Name=harvetwo&node2Device=%2Fdev%2Fnvme1n1&node2ClusterDomain=Node2&arbiterNode=arbitrary&kvdbDevice=%2Fdev%2Fnvme1n1&node3ClusterDomain=witness&iop=6&c=px-cluster-tna&stork=true&csi=true&mon=true&aut=true&tel=true&st=k8s&promop=true"
+    portworx.io/health-check: "skip"
+    portworx.io/preflight-check: "skip"
+    portworx.io/misc-args: "-rt_opts small_conf=1 -T px-storev2"
+
+spec:
+  image: docker.io/portworx/oci-monitor:3.6.0
+  imagePullPolicy: Always
+
+  kvdb:
+    internal: true
+    enableTLS: false
+
+  secretsProvider: k8s
+
+  nodes:
+    - clusterDomain: "Node1"
+      selector:
+        nodeName: "harvone"
+      storage:
+        systemMetadataDevice: /dev/nvme1n1p1
+        devices:
+          - /dev/nvme1n1p2
+        useAll: false
+
+    - clusterDomain: "Node2"
+      selector:
+        nodeName: "harvtwo"
+      storage:
+        systemMetadataDevice: /dev/nvme1n1p1
+        devices:
+          - /dev/nvme1n1p2
+        useAll: false
+
+    - clusterDomain: "witness"
+      selector:
+        nodeName: "arbitrary"
+      storage:
+        kvdbDevice: /dev/nvme1n1p2
+        useAll: false
+
+  placement:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: px/enabled
+                operator: NotIn
+                values:
+                  - "false"
+    tolerations:
+      - key: "node-role.kubernetes.io/etcd"
+        operator: "Exists"
+        effect: "NoExecute"
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+
+  stork:
+    enabled: true
+    args:
+      webhook-controller: "true"
+
+  autopilot:
+    enabled: true
+    prometheusAlerts: true
+    providers:
+      - name: default
+        type: prometheus
+        params:
+          url: http://px-prometheus:9090
+
+  runtimeOptions:
+    default-io-profile: "6"
+
+  csi:
+    enabled: true
+    installSnapshotController: true
+
+  monitoring:
+    telemetry:
+      enabled: true
+      metricsCollector:
+        enabled: true
+    prometheus:
+      enabled: true
+      exportMetrics: true
+
+  certManager:
+    enabled: false
+
+  deleteStrategy:
+    type: UninstallAndWipe
+    ignoreVolumes: true
+
+  revisionHistoryLimit: 10
+  startPort: 9001
+
+  updateStrategy:
+    rollingUpdate:
+      disruption:
+        allow: true
+      maxUnavailable: 1
+    type: RollingUpdate
+----
 
 === Server hardware specifications
 
