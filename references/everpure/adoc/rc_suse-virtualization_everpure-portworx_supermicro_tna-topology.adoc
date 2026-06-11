@@ -370,6 +370,8 @@ cd /tmp
 curl -LO \
 https://download.opensuse.org/tumbleweed/repo/oss/x86_64/augeas-<version>.x86_64.rpm
 ----
++
+Be sure to replace `<version>` in the above command to match the augeas package name.
 
 . Extract the RPM contents.
 +
@@ -483,8 +485,10 @@ These steps are covered in detail in the following sections.
 +
 [source,console]
 ----
-curl -o portworx-operator.yaml 'https://install.portworx.com/3.6?comp=pxoperator&kbver=1.34.2&ns=portworx'
+curl -o portworx-operator.yaml 'https://install.portworx.com/<px-version>?comp=pxoperator&kbver=<k8s-version>&ns=portworx'
 ----
++
+Be sure to replace `<px-version>` and `<k8s-version>` in the above command with the supported versions you are using.  For example, ‘3.6’ and ‘1.34.2’, respectively.
 
 . Open `portworx-operator.yaml` and locate the Deployment resource for the `portworx-operator`.
 Under `spec.template.spec`, add the following tolerations block to allow the Operator pod to schedule on {svirt-long}:
@@ -568,12 +572,14 @@ storageclass.storage.k8s.io/stork-snapshot-sc created
 +
 [source,console]
 ----
-curl -o new_stc.yaml 'https://install.portworx.com/3.6?operator=true&mc=false&kbver=1.34.2&ns=portworx&b=true&iop=6&mz=2&c=px-cluster-tna&stork=true&csi=true&mon=true&tel=true&st=k8s&promop=true'
+curl -o new_stc.yaml 'https://install.portworx.com/<px-version>?operator=true&mc=false&kbver=<k8s-version>&ns=portworx&b=true&iop=6&mz=2&c=px-cluster-tna&stork=true&csi=true&mon=true&tel=true&st=k8s&promop=true'
 ----
++
+Be sure to replace `<px-version>` and `<k8s-version>` in the above command with the supported versions you are using.  For example, ‘3.6’ and ‘1.34.2’, respectively.
 
 . Open `new_stc.yaml` and apply the following TNA-specific modifications before deploying.
 +
-For reference, see <<Sample StorageCluster manifest for TNA (`new_stc.yaml`)>>.
+For reference, see example file <<Sample StorageCluster manifest for TNA (`new_stc.yaml`)>>.
 
 .. Add the tolerances defined earlier under `spec.placement.tolerations` so the {px} agent pods can schedule on the arbiter node.
 
@@ -714,15 +720,20 @@ Collected at: 2026-05-11 10:19:51 UTC
 Notice in the individual node details that:
 +
 --
-//* `harvone`: Storage node with PX-StoreV2 engine, 782 GiB usable pool from `/dev/nvme1n1p3`, with `/dev/nvme1n1p2` as the dedicated KVDB metadata device.
-* `harvone` and `harvetwo` (the storage nodes) show a StorageStatus of “Up” with PX-StoreV2 engine, 811 GiB of total capacity.
+* `harvone` and `harvetwo` (the storage nodes) show a StorageStatus of Up with PX-StoreV2 engine, 811 GiB of total capacity.
 
 * `arbiter`: Online with `No Storage`, participating in KVDB quorum as a storageless arbiter, exactly as designed.
-//* `arbitrary`: Online with `No Storage`, participating in KVDB quorum as a storageless arbiter, exactly as designed.
-* `Arbiter` (the witness node) shows Online with a StorageStatus of “No Storage,” since it only participates in KVDB quorum.
 
-//* `Total Nodes: 2 node(s) with storage`: the cluster recognizes the TNA topology correctly.
+* `Arbiter` (the witness node) shows Online with a StorageStatus of No Storage, since it only participates in KVDB quorum.
+
 --
+
+[NOTE]
+====
+The `pxctl status` output reports three online Portworx cluster, including the arbiter node.
+However, the arbiter is a storageless witness node that participates only in KVDB quorum and metadata services.
+Storage capacity is provided solely by `harvone` and `harvtwo`.
+====
 
 === Resilience validation
 
@@ -794,11 +805,14 @@ From 1778873153 to 1778873155
 TOTAL downtime: 1 seconds
 ----
 
-In the authors’ validation testing, the full recovery timeline from node failure to all VMs confirmed Running and Ready on harvtwo was approximately 2 minutes.
+[NOTE]
+====
+In the authors’ validation testing, the full recovery timeline from node failure until all VMs were confirmed as Running and Ready on harvtwo was approximately 2 minutes.
+====
 
 ==== Scenario 2: Cascading Failure: Arbiter Then Storage Node
 
-.  With the cluster fully healthy and all 6 VMs running across both nodes, shut down the arbiter node (arbitrary) first.
+.  With the cluster fully healthy and all six VMs running across both nodes, shut down the arbiter node (arbiter) first.
 Verify that both storage nodes remain operational and the cluster continues serving workloads normally the two storage nodes together hold majority quorum without the arbiter.
 +
 [source, console]
@@ -809,7 +823,7 @@ harvone:~ # kubectl get nodes -o wide
 [listing]
 ----
 NAME        STATUS     ROLES                AGE   VERSION
-arbitrary   NotReady   etcd                 11d   v1.34.2+rke2r1
+arbiter     NotReady   etcd                 11d   v1.34.2+rke2r1
 harvone     Ready      control-plane,etcd   11d   v1.34.2+rke2r1
 harvtwo     Ready      control-plane,etcd   11d   v1.34.2+rke2r1
 ----
@@ -822,8 +836,8 @@ harvtwo     Ready      control-plane,etcd   11d   v1.34.2+rke2r1
 ----
 harvone:~ # shutdown -h now
 ----
-+
-When Kubernetes detects harvone as NotReady, it triggers live migration for all VMs that were running on it. Verify that all VMs are Running on harvtwo.
+
+. When Kubernetes detects harvone as NotReady, it triggers live migration for all VMs that were running on it. Verify that all VMs are Running on harvtwo.
 +
 [source, console]
 ----
@@ -853,7 +867,7 @@ harvetwo:~ # pxctl status
 Status: PX is operational
 Total Nodes: 3 node(s) with storage (2 online)
 harvtwo    Online   Up (This node)
-arbitrary  Offline  No Storage
+arbiter  Offline  No Storage
 harvone    Offline  Down
 ----
 
@@ -877,14 +891,14 @@ Downtime: 1 seconds
 TOTAL downtime: 8 seconds
 ----
 
-In the authors' validation testing, the total observed I/O interruption across the cascading failure event was 8 seconds.
-The additional interruption compared to Scenario 1 reflects the time required for etcd to detect the second failure and for harvtwo to re-establish leadership without the arbiter. Once harvtwo assumed sole etcd authority, the API server recovered and all VM workloads resumed normally on harvtwo.
-
 [NOTE]
 ====
-The Kubernetes API server briefly reported `etcdserver: no leader` during the window between the arbiter going offline and harvtwo assuming sole etcd authority.
-This is expected behaviour — once harvtwo re-established etcd leadership, the API server recovered and VM scheduling resumed normally.
-The two storage nodes together hold majority quorum (2 of 3 KVDB members) and can operate without the arbiter.
+In the authors' validation testing, the total observed I/O interruption across the cascading failure event was 8 seconds.
+The additional interruption compared to Scenario 1 reflects the time required for etcd to detect the second failure and for harvtwo to re-establish leadership without the arbiter.
+
+During this period, the Kubernetes API server briefly reported `etcdserver: no leader` while leadership was being re-established.
+This is expected behaviour in a cascading failure scenario. Once harvtwo assumed sole etcd authority, the API server recovered and all VM workloads resumed normally on harvtwo.
+The two storage nodes together hold majority quorum (2 of 3 KVDB members) and can continue operating without the arbiter.
 ====
 
 == Upgrading and Lifecycle Management
@@ -959,10 +973,9 @@ This is particularly valuable in edge environments, where cost sensitivity and i
 . *Can the arbiter node be virtualized?*
 +
 --
-Yes.
-The arbiter node's role is computationally lightweight, it only participates in KVDB quorum decisions.
-It does not serve storage I/O or run application workloads.
-This makes it a good candidate for virtualization, a small ARM-based server, or an existing edge gateway appliance, further reducing hardware costs.
+Yes. The arbiter node’s role is computationally lightweight and it only participates in KVDB quorum decisions.
+It does not serve storage I/O or run application workloads. This makes it a good candidate for virtualization, a small server, or an existing edge gateway appliance, provided it meets the {svirt-support-matrix}[minimum supported hardware requirements for SUSE Virtualization].
+Because the arbiter stores only KVDB metadata and quorum information, it does not require the same storage capacity as the Portworx storage nodes.
 --
 
 . *What happens if both a storage node and the arbiter fail simultaneously?*
@@ -1050,7 +1063,7 @@ metadata:
   name: px-cluster-tna-gk
   namespace: portworx
   annotations:
-    portworx.io/install-source: "https://install.portworx.com/3.6?operator=true&mc=false&kbver=1.34.2&ns=portworx&b=true&kvdbtls=true&certmgr=true&dmthin=true&node1Name=harveone&node1Device=%2Fdev%2Fnvme0n1&node1ClusterDomain=Node1&node2Name=harvetwo&node2Device=%2Fdev%2Fnvme1n1&node2ClusterDomain=Node2&arbiterNode=arbitrary&kvdbDevice=%2Fdev%2Fnvme1n1&node3ClusterDomain=witness&iop=6&c=px-cluster-tna&stork=true&csi=true&mon=true&aut=true&tel=true&st=k8s&promop=true"
+    portworx.io/install-source: "https://install.portworx.com/3.6?operator=true&mc=false&kbver=1.34.2&ns=portworx&b=true&kvdbtls=true&certmgr=true&dmthin=true&node1Name=harveone&node1Device=%2Fdev%2Fnvme0n1&node1ClusterDomain=Node1&node2Name=harvetwo&node2Device=%2Fdev%2Fnvme1n1&node2ClusterDomain=Node2&arbiterNode=arbiter&kvdbDevice=%2Fdev%2Fnvme1n1&node3ClusterDomain=witness&iop=6&c=px-cluster-tna&stork=true&csi=true&mon=true&aut=true&tel=true&st=k8s&promop=true"
     portworx.io/health-check: "skip"
     portworx.io/preflight-check: "skip"
     portworx.io/misc-args: "-rt_opts small_conf=1 -T px-storev2"
@@ -1086,7 +1099,7 @@ spec:
 
     - clusterDomain: "witness"
       selector:
-        nodeName: "arbitrary"
+        nodeName: "arbiter"
       storage:
         kvdbDevice: /dev/nvme1n1p2
         useAll: false
@@ -1159,6 +1172,11 @@ spec:
     type: RollingUpdate
 ----
 
+[NOTE]
+====
+The sample configuration explicitly defines the storage devices used by each node by setting `useAll: false` and specifying the metadata and data devices. If you want Portworx to automatically consume all available storage devices on a node, set `useAll: true` and omit the explicit device list. Review the available storage devices carefully before enabling this option.
+====
+
 === Server hardware specifications
 
 All three nodes in this reference deployment are built on the Supermicro SYS-E403-14B-FRN2T, a compact IoT/Edge SuperServer from Supermicro's Compact Edge Server product line.
@@ -1219,6 +1237,12 @@ This platform was selected for its short-depth form factor, NVMe storage support
 |Local console access during initial setup
 
 |===
+
+
+[NOTE]
+====
+The arbiter node participates only in KVDB quorum and does not host workloads or contribute to storage capacity. Therefore, it can be sized smaller than the storage nodes. However, it must still meet the  {svirt-support-matrix}[minimum supported hardware requirements for SUSE Virtualization].
+====
 
 === Per-node storage layout
 
