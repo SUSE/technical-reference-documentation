@@ -490,21 +490,7 @@ curl -o portworx-operator.yaml 'https://install.portworx.com/<px-version>?comp=p
 +
 Be sure to replace `<px-version>` and `<k8s-version>` in the above command with the supported versions you are using.  For example, ‘3.6’ and ‘1.34.2’, respectively.
 
-. Open `portworx-operator.yaml` and locate the Deployment resource for the `portworx-operator`.
-Under `spec.template.spec`, add the following tolerations block to allow the Operator pod to schedule on {svirt-long}:
-+
-[source,yaml]
-----
-tolerations:
-  - key: "node-role.kubernetes.io/control-plane"
-    operator: "Exists"
-    effect: "NoSchedule"
-  - key: "node-role.kubernetes.io/etcd"
-    operator: "Exists"
-    effect: "NoExecute"
-----
-
-. Apply the edited manifest to install the {pxo}.
+. Apply the manifest to install the {pxo}.
 +
 [source,console]
 ----
@@ -581,14 +567,25 @@ Be sure to replace `<px-version>` and `<k8s-version>` in the above command with 
 +
 For reference, see example file <<Sample StorageCluster manifest for TNA (`new_stc.yaml`)>>.
 
-.. Add the tolerances defined earlier under `spec.placement.tolerations` so the {px} agent pods can schedule on the arbiter node.
-
 .. Add the following annotations under `metadata.annotations` to prevent false node-count failures, since the arbiter is storageless:
 +
 [source,yaml]
 ----
 portworx.io/health-check: "skip"
 portworx.io/preflight-check: "skip"
+----
+
+.. Under `spec` add the following tolerations block to allow Portworx agent pods to be scheduled on the arbiter node.
++
+[source,yaml]
+----
+tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+  - key: "node-role.kubernetes.io/etcd"
+    operator: "Exists"
+    effect: "NoExecute"
 ----
 
 . Apply the edited `StorageCluster` manifest.
@@ -897,7 +894,8 @@ In the authors' validation testing, the total observed I/O interruption across t
 The additional interruption compared to Scenario 1 reflects the time required for etcd to detect the second failure and for harvtwo to re-establish leadership without the arbiter.
 
 During this period, the Kubernetes API server briefly reported `etcdserver: no leader` while leadership was being re-established.
-This is expected behaviour in a cascading failure scenario. Once harvtwo assumed sole etcd authority, the API server recovered and all VM workloads resumed normally on harvtwo.
+This is expected behaviour in a cascading failure scenario.
+Once harvtwo assumed sole etcd authority, the API server recovered and all VM workloads resumed normally on harvtwo.
 The two storage nodes together hold majority quorum (2 of 3 KVDB members) and can continue operating without the arbiter.
 ====
 
@@ -910,9 +908,11 @@ Proper lifecycle management impacts this solution across several key operational
 
 === Sustaining Hyperconverged Interoperability
 
-* *API synchronization:* {svirt-long} and {pxe-long} interact natively through the Container Storage Interface (CSI). Maintaining supported software versions helps prevent data-path failures caused by incompatible Kubernetes dependencies.
+* *API synchronization:* {svirt-long} and {pxe-long} interact natively through the Container Storage Interface (CSI).
+Maintaining supported software versions helps prevent data-path failures caused by incompatible Kubernetes dependencies.
 
-* *Operating system compatibility:* {svirt-long} nodes utilize SUSE Linux Micro. Lifecycle management helps ensure that Portworx kernel components remain compatible with the host operating system.
+* *Operating system compatibility:* {svirt-long} nodes utilize SUSE Linux Micro.
+Lifecycle management helps ensure that Portworx kernel components remain compatible with the host operating system.
 
 === Guaranteeing Zero-Downtime Operations
 
