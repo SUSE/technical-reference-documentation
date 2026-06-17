@@ -19,7 +19,7 @@
 //   This is typically a series of words (often from the document title)
 //   separated by hyphens (-).
 //   (e.g., "rancher-kubflow-deployment")
-:article-id: suse-virt-portworx-everpure-baremetal
+:article-id: suse-virtualization_everpure-portworx_tna-topology
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,8 +35,8 @@
 //   :rev1-description: Original version
 // Set docdate to the most recent revision.
 //-
-:rev1-date: 2026-03-17
-:rev1-description: Initial version
+:rev1-date: YYYY-MM-DD
+:rev1-description: Original version
 :docdate: {rev1-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -95,17 +95,26 @@
 :svirt-brand: SUSE® Virtualization
 :svirt-long: SUSE Virtualization
 :svirt: {svirt-long}
-:svirt-version1: v1.6.1
+:svirt-version1: 1.7
 :svirt-website: https://www.suse.com/products/rancher/virtualization/
-:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/
+:svirt-support-matrix: https://documentation.suse.com/cloudnative/virtualization/latest/en/installation-setup/requirements.html
+:svirt-support-matrix-url: https://www.suse.com/suse-harvester/support-matrix/all-supported-versions/
+:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/latest/en/
 :svirt-docs-intro: {svirt-docs}introduction/overview.html
 :svirt-docs-reqs: {svirt-docs}installation-setup/requirements.html
+:svirt-docs-install: {svirt-docs}installation-setup/methods/iso-install.html
 :svirt-docs-create-vm: {svirt-docs}virtual-machines/create-vm.html
-
+:svirt-docs-witness: {svirt-docs}hosts/witness-node.html
+:svirt-docs-network: {svirt-docs}networking/cluster-network.html
 :srancher-brand: SUSE® Rancher Prime
 :srancher-long: SUSE Rancher Prime
 :srancher: SUSE Rancher
 :srancher-website: https://www.suse.com/products/rancher/
+:github-harv-download: https://github.com/harvester/harvester/releases
+:rke2-version1: 1.34
+:rke2-website: https://documentation.suse.com/cloudnative/rke2/
+:OSUSE-Augeas-Repo: https://download.opensuse.org/tumbleweed/repo/oss/x86_64/
+
 
 :px-provider: Everpure
 :px: Portworx
@@ -117,7 +126,7 @@
 :pxe-provider: {px-provider}
 :pxe-brand: {px}® Enterprise by Everpure™
 :pxe-long: {px} Enterprise by Everpure
-:pxe-version1: 25.2.2
+:pxe-version1: 3.6
 :pxe-website: https://portworx.com/products/portworx-enterprise/
 :pxe-docs: https://docs.portworx.com/portworx-enterprise
 // :pxe-reqs: {pxe-docs}/platform/kubernetes/flasharray/before-you-begin#environment-prerequisites
@@ -131,6 +140,7 @@
 :pxe-flasharray-user-access: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/install-flasharray-cd-da#set-up-user-access-in-flasharray
 :pxe-k8s-secret: {pxe-docs}/platform/kubernetes/flasharray/install/install-flasharray/fa-multi-tenancy#create-a-kubernetes-secret
 :pxe-manage-rwx-block: {pxe-docs}/platform/provision-storage/kubevirt-vms/manage-kubevirt-vms-rwx-block/suse-virtualization
+:pxe-support-matrix: https://docs.portworx.com/portworx-enterprise/support-matrix/supported-kubernetes-versions
 
 :pfa-provider: Everpure
 :pfa: FlashArray
@@ -141,7 +151,14 @@
 
 
 :ref-svirt-pxe-wp: https://links.imagerelay.com/cdn/3404/ql/c67bb8f363744ccea209fbbe4242605c/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
-//:suse-pxe-dep-guide: https://portworx.com/wp-content/uploads/2025/11/whitepaper_suse-portworx_modern-virtualization_deployment-guide.pdf
+
+:smss-provider: Supermicro
+:smss-long: {smss-provider} Compact Edge Servers
+:smss-website: https://www.supermicro.com/en/products/edge/compact-edge-servers
+:smss403: SYS-E403-14B-FRN2T
+:smss403-website: https://store.supermicro.com/us_en/iot-embedded-sys-e403-14b-frn2t.html
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -174,22 +191,23 @@
 //          :comp2-long: JupyterLab
 //        Then, you could reference them when you define the title
 //        variable like this:
-//          :title: Simplify deployment of {comp2-long} with {comp1-long}
+//          :doctitle: Simplify deployment of {comp2-long} with {comp1-long}
 //        When rendered, the variables will be expanded and the title
 //        will appear as:
 //          "Simplify deployment of JupyterLab with SUSE Linux Enterprise Server"
 // -
-:doctitle: {svirt-long} with {pxe-long} on Bare Metal
+:doctitle: {svirt-long} with {pxe-long} in a Two-Node with Arbiter Topology
 
-:docsubtitle: A reference design for a modern virtualization platform
+:docsubtitle: Deliver Highly Available, Cloud-Native Virtualization at the Edge
 
-:usecase: Modern Virtualization
+:usecase: Edge Deployments, Application Modernization, High Availability, Cost Optimization
 
-:description: Deploy a high-performance, scalable virtualization platform on bare metal using {svirt-long} with {pxe-long} storage.
 
-:description-social: Modern virtualization with {svirt-long} and {px-long}
+:description: Reference configuration for running a Two-Node with Arbiter topology with {svirt-long}, {px-long}, and {smss-long}.
 
-:executive-summary: This reference configuration provides guidance for deploying {svirt-brand} with {pxe-brand} and {pfa-brand} on bare metal infrastructure. It outlines architecture, storage, and networking best practices to deliver a scalable, resilient platform for running virtual machines and containerized workloads with enterprise-grade performance and data protection.
+:description-social: Deploy highly available Portworx storage at the edge using only two storage nodes and an arbiter on {svirt-long}.
+
+:executive-summary: This document provides step-by-step technical guidance for deploying Portworx Enterprise in a Two-Node with Arbiter (TNA) topology on SUSE Virtualization, providing highly available, cloud-native virtualization for edge workloads.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -222,6 +240,7 @@
 :metatask1: Design
 :metatask2: Deployment
 :metatask3: Integration
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -238,20 +257,22 @@
 //        To list additional authors or contributors on the cover page,
 //        you must edit the docinfo file, too.
 // -
-:author1-firstname: Gopala
-:author1-surname: Krishnan
+:author1-firstname: Suresh
+:author1-surname: S
 :author1-jobtitle: Partner Solution Architect
 :author1-orgname: SUSE
-:author2-firstname: Suresh
-:author2-surname: S
+:author2-firstname: Gopala
+:author2-surname: Krishnan
 :author2-jobtitle: Partner Solution Architect
 :author2-orgname: SUSE
 :author3-firstname: Terry
 :author3-surname: Smith
 :author3-jobtitle: Partner Solution Innovation Director
 :author3-orgname: SUSE
-
-
+:author4-firstname: Bhumitra
+:author4-surname: Nagar
+:author4-jobtitle: Member of Technical Staff
+:author4-orgname: Everpure
 //:author2-firstname: first (given) name
 //:contrib1-firstname: first (given) name
 //:editor1-firstname: first (given) name
