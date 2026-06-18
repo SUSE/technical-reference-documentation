@@ -28,14 +28,16 @@ include::rc_suse-virtualization_everpure-portworx_supermicro_tna-topology-vars.a
 
 == Introduction
 
-Organizations increasingly need to extend their application environments beyond centralized data centers to edge and far-edge locations, where infrastructure constraints, operational complexity, and cost sensitivity are significantly higher.
-These environments require solutions that deliver enterprise-grade availability and performance while operating within a minimal hardware footprint.
-The motivation behind this solution is to address these challenges by enabling a unified platform for running both virtualized and containerized workloads at the edge.
-Traditional approaches often require separate infrastructure stacks for virtual machines and containers, increasing costs, operational overhead, and governance complexity.
-In contrast, this reference configuration provides a consolidated architecture that simplifies operations while maintaining resilience, scalability, and governance.
+Organizations increasingly need to extend their application environments beyond centralized data centers to edge and far-edge locations, 
+where infrastructure constraints, operational complexity, and cost sensitivity are significantly higher. These environments require 
+solutions that deliver enterprise-grade availability and performance within a minimal hardware footprint. This reference configuration 
+addresses these challenges by providing a consolidated architecture that runs both virtualized and containerized workloads on a 
+unified platform, at the edge. This eliminates the separate infrastructure stacks traditional approaches require, reducing costs, 
+operational overhead, and governance complexity while maintaining resilience and scalability.
 
-This document presents a validated reference architecture that combines {svirt-long}, {px-long}, and {smss-long} technologies to support modern edge use cases.
-By leveraging a Two-Node with Arbiter (TNA) topology, the solution delivers high availability using only two primary nodes and a lightweight arbiter node, reducing infrastructure requirements without compromising business continuity.
+This document presents a validated reference architecture that combines {svirt-long}, {px-long}, and {smss-long} technologies to 
+support modern edge use cases. By leveraging a Two-Node with Arbiter (TNA) topology, the solution delivers high availability 
+using only two primary nodes and a lightweight arbiter node, reducing infrastructure requirements without compromising business continuity.
 
 
 
@@ -46,7 +48,7 @@ It describes the overall solution architecture and explains how the core compone
 It is intended to serve as a practical framework that organizations can use to implement a consistent, resilient, and cost-efficient platform tailored to their specific operational needs.
 
 This reference design was validated with {svirt-long} (Harvester) {svirt-version1}, {pxe-long} {pxe-version1}, and {smss-long} ({smss403}).
-The design and implementation guidance should require little to no modification to apply to newer versions and models.
+The design and implementation guidance, however, should require little to no modification to apply to newer versions and models.
 
 
 === Audience
@@ -66,13 +68,13 @@ This document is intended for the following roles:
 * System Administrators
 * DevOps Engineers
 
-To effectively follow this guide, readers should have:
+To effectively follow this guide, readers should have
 
-* A working knowledge of Kubernetes, including persistent storage concepts such as storage classes and persistent volumes
-* Familiarity with virtualization technologies and {pxe-long}
-* An understanding of distributed storage concepts, including replication and quorum
-* Experience with Linux system administration
-* A basic understanding of networking concepts relevant to clustered environments
+* a working knowledge of Kubernetes, including persistent storage concepts such as storage classes and persistent volumes.
+* familiarity with virtualization technologies and {pxe-long}.
+* an understanding of distributed storage concepts, including replication and quorum.
+* experience with Linux system administration.
+* a basic understanding of networking concepts relevant to clustered environments.
 
 
 === Acknowledgments
@@ -131,24 +133,31 @@ for workloads.
 
 === Use cases
 
-* *Application Modernization:* Many organizations operate a mixed portfolio: legacy applications that are tightly coupled to virtual machines, and modern microservices written for Kubernetes.
+The combination of {svirt-long}, {px-long}, and {smss-long} addresses several critical enterprise use cases:
+
+* *Application Modernization* 
++
+Many organizations operate a mixed portfolio: legacy applications that are tightly coupled to virtual machines, and modern microservices written for Kubernetes.
 Migrating everything to containers in a single step can be risky and impractical.
 {svirt-long} allows both types of workloads to co-exist on the same cluster, with Portworx providing consistent storage semantics for both VM block volumes and container PersistentVolumeClaims.
 
-* *Edge and Far-Edge Cost Optimization:* A retail chain with 500 stores, or a telecom operator with 1,000 base stations, would prefer to avoid the expense of three-server storage clusters at every location.
+* *Edge and Far-Edge Cost Optimization* 
++
+A retail chain with 500 stores, or a telecom operator with 1,000 base stations, would prefer to avoid the expense of three-server storage clusters at every location.
 With this TNA architecture, each site requires only two NVMe-equipped servers and one lightweight arbiter (witness) node.
-This can reduce per-site storage infrastructure cost by 25-35%.
+This can reduce per-site storage infrastructure cost by 25-35 percent.
 
-* *High Availability Without Complexity:* The {px} storage layer performs synchronous data replication between the two storage worker nodes.
+* *High Availability Without Complexity* 
++
+The {px} storage layer performs synchronous data replication between the two storage worker nodes.
 If one node fails, the surviving node has a complete copy of all data and continues serving storage I/O without interruption.
 The arbiter ensures that the surviving node can make authoritative decisions without requiring a third storage node.
-
 
 
 == Architecture
 
 The solution integrates {svirt-long} with {pxe-long} on a Kubernetes-based platform to provide a unified infrastructure for running both virtualized and containerized workloads in edge and far-edge environments.
-It uses a Two-Node with Arbiter (TNA) topology, consisting of two worker nodes that provide compute and storage capabilities and also serve as Kubernetes control-plane nodes, and a third arbiter (witness) node that participates in cluster quorum without hosting application workloads or storing data.
+It uses a Two-Node with Arbiter (TNA) topology, consisting of two worker nodes that provide compute and storage capabilities and serve as Kubernetes control-plane nodes, and a third arbiter (witness) node that participates in cluster quorum without hosting application workloads or storing data.
 
 {svirt-long} enables the deployment and management of virtual machines alongside containerized applications within the same platform.
 {pxe-long} provides container-native storage services, including persistent volumes, data replication, and high availability storage.
@@ -163,14 +172,14 @@ image::suse-portworx-tna-arc-diagram.png[title="SUSE Virtualization and Portworx
 
 [NOTE]
 ====
-TNA Quorum Logic: {px} requires a majority of KVDB members to agree before making cluster state changes.
+TNA Quorum Logic: {px} requires a majority of key-value database (KVDB) members to agree before making cluster state changes.
 
-A quorum of two is always achievable as long as either:
+In a TNA topology, a quorum of two is always achievable as long as either of the following conditions is met:
 
-* Both storage nodes are functioning
-* One storage node and the arbiter are functioning
+* Both storage nodes are functioning.
+* One storage node and the arbiter node are functioning.
 
-This enables the cluster to survive a single storage node failure without data loss.
+This quorum logic enables the cluster to survive a single storage node failure without split-brain scenarios or data loss.
 ====
 
 
@@ -195,8 +204,16 @@ Deployed into the {svirt} cluster, the {pxo} is designed to efficiently automate
 {smss-website}[{smss-long}] provides the physical compute foundation for this reference design.
 The {smss403-website}[{smss403}] is a compact, short-depth edge server that is purpose-built for deployment in space- and power-constrained environments.
 This platform delivers enterprise-grade compute performance in a wall-mountable, fanless-compatible form factor suited for edge and far-edge locations.
-Each node is equipped with Intel Xeon 6700/6500 series processors, dual hot-swap NVMe bays, dual 10 GbE network ports, and a dedicated IPMI/BMC management interface to provide the storage I/O throughput, network redundancy, and out-of-band manageability required to run production-grade Kubernetes and virtualized workloads at the edge.
-While all three nodes use the same server platform, the arbiter node is configured with a different storage profile to support its quorum and metadata responsibilities, whereas the remaining nodes provide the primary storage capacity for the cluster.
+Each node is equipped with 
+
+* Intel Xeon 6700/6500 series processors, 
+* dual hot-swap NVMe bays, 
+* dual 10 GbE network ports, 
+* and a dedicated IPMI/BMC management interface 
+
+to provide the storage I/O throughput, network redundancy, and out-of-band manageability required to run production-grade Kubernetes and virtualized workloads at the edge.
+Although all three nodes use the same server platform, the arbiter node is configured with a different storage profile to handle 
+quorum and metadata responsibilities, while the primary nodes provide the cluster's storage capacity.
 
 
 == Implementation considerations
@@ -221,7 +238,7 @@ metadata:
 . Disk Identification and Mixed Layouts +
 On bare-metal servers, NVMe device identifiers (such as `nvme0n1` or `nvme1n1`) are determined by system firmware and PCIe slot positioning.
 This means that the identifiers can change.
-Because {px} requires persistent identifiers, use persistent disk identifiers from the `/dev/disk/by-id/` directory (or filesystem UUIDs) when referencing storage devices. For example, use `/dev/disk/by-id/nvme-eui.36363530599182970025384e00000001-part1` and `/dev/disk/by-id/nvme-eui.36363530599182970025384e00000001-part2` instead of transient device names such as `/dev/nvme1n1p1` and `/dev/nvme1n1p2`. This ensures reliable disk mapping across reboots and helps prevent storage initialization failures.
+Because {px} requires persistent identifiers, use persistent disk identifiers from the `/dev/disk/by-id/` directory (or file system UUIDs) when referencing storage devices. For example, use `/dev/disk/by-id/nvme-eui.36363530599182970025384e00000001-part1` and `/dev/disk/by-id/nvme-eui.36363530599182970025384e00000001-part2` instead of transient device names such as `/dev/nvme1n1p1` and `/dev/nvme1n1p2`. This ensures reliable disk mapping across reboots and helps prevent storage initialization failures.
 
 == Deployment
 
@@ -271,7 +288,7 @@ See {svirt-docs-network}[{svirt}: Cluster Network] for networking configuration 
 
 === Preparing for {px} installation
 
-Before deploying the {pxo}, three preparatory tasks must be completed on each storage worker node: partitioning the disks, wiping residual filesystem partition signatures, and installing the Augeas binary.
+Before deploying the {pxo}, three preparatory tasks must be completed on each storage worker node: partitioning the disks, wiping residual file system partition signatures, and installing the Augeas binary.
 These steps address hardware-level disk layout requirements and OS immutability, respectively.
 
 
@@ -332,7 +349,7 @@ Verify the correct device with `lsblk` before executing `parted`.
 
 ==== Wiping partition signatures
 
-After partitioning, wipe any residual filesystem signatures from the `p2` and `p3` partitions to ensure {px} initializes them cleanly.
+After partitioning, wipe any residual file system signatures from the `p2` and `p3` partitions to ensure {px} initializes them cleanly.
 
 [source,console]
 ----
@@ -359,7 +376,7 @@ This provides an immutable root file system for added security and stability.
 During installation, the {px} `px-storev2` engine performs a runtime dependency check that attempts to install the `augeas` package.
 Since `transactional-update` is not supported in {svirt-long} and `/usr/bin` is read-only, this action fails and {px} pods enter a `CrashLoopBackOff` state.
 
-Resolve this by manually extracting the `augeas` binary from an OpenSUSE Tumbleweed RPM and installing it into `/usr/local/bin`, which is writable on {svirt-long} and already included in the system `PATH` variable.
+Resolve this by manually extracting the `augeas` binary from an openSUSE Tumbleweed RPM and installing it into `/usr/local/bin`, which is writable on {svirt-long} and already included in the system `PATH` variable.
 
 . Download the Augeas RPM into a temporary directory.
 +
@@ -425,7 +442,7 @@ Be sure to include this step in your upgrade runbook.
 
 . Select __{pxe}__ > __Generate Spec__.
 
-. Choose the supported {px} Version and select `Others (or Generic/Upstream Kubernetes)` as the Platform, since this deployment uses local NVMe drives, not a {pfa-long} backend.
+. Choose the supported {px} Version and select `Others (or Generic/Upstream Kubernetes)` as the Platform, since this deployment uses local NVMe drives, not an {pfa-long} back-end.
 
 . Click __Customize__ at the bottom of the menu.
 
@@ -479,7 +496,7 @@ These steps are covered in detail in the following sections.
 
 ==== Installing the {pxo}
 
-. Log in to the {svirt-long} management node command-line interface (CLI) with root access.
+. Log in to the {svirt-long} management node command line interface (CLI) with root access.
 
 . Download the {pxo} manifest.
 +
@@ -603,7 +620,7 @@ storagecluster.core.libopenstorage.org/px-cluster-tna created
 ----
 
 . Monitor the {px} pods as they initialize. +
-Full startup typically takes 3–5 minutes on NVMe hardware.
+Full start-up typically takes 3–5 minutes on NVMe hardware.
 +
 [source,console]
 ----
@@ -958,7 +975,7 @@ By combining {svirt}, {px}, and {smss-long} in this TNA topology, organizations 
 --
 TNA is a {px} deployment topology designed for resource-constrained environments.
 It consists of exactly two full storage worker nodes that hold application data with synchronous replication between them, plus one lightweight arbiter node.
-The arbiter participates in the internal {px} KVDB quorum as a tie-breaker during network partitions or node failures.This means the cluster can achieve a quorum majority (2 of 3 KVDB members) even when one storage node is unavailable.
+The arbiter participates in the internal {px} KVDB quorum as a tie-breaker during network partitions or node failures. This means the cluster can achieve a quorum majority (2 of 3 KVDB members) even when one storage node is unavailable.
 The arbiter does not store any application data, making it suitable for deployment on a smaller, less expensive server.
 --
 
@@ -999,7 +1016,7 @@ For edge environments, maintain an out-of-band management path (IPMI/BMC) to eac
 * Portworx Enterprise Documentation {pxe-website}
 * Portworx Central (Operator/StorageCluster manifest generation){pxe-central}
 * RKE2 Documentation {rke2-website}
-* OpenSUSE Augeas RPM Repository {OSUSE-Augeas-Repo}
+* openSUSE Augeas RPM Repository {OSUSE-Augeas-Repo}
 
 
 == Glossary
@@ -1248,7 +1265,7 @@ The arbiter node participates only in KVDB quorum and does not host workloads or
 
 Each storage worker node (`harveone`, `harvetwo`) carries two 2.5" NVMe drives.
 The data NVMe is partitioned into three GPT partitions as described in the Pre-Installation Preparation section.
-The arbiter node uses the same platform but is configured as a storageless KVDB witness, it does not contribute NVMe capacity to the {px} storage pool and can be provisioned with a smaller NVMe drive.
+The arbiter node uses the same server platform but is configured as a storageless KVDB witness. It does not contribute NVMe capacity to the {px} storage pool and can be provisioned with a smaller NVMe drive.
 
 [cols="1,1,3,2",options="header"]
 |===
