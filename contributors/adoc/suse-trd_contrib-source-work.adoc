@@ -1,0 +1,222 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section: Working with source files
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+{trd} is built from documentation-as-code, contained in source files.
+Source files provide content, structure, and metadata for your document.
+No matter where you create your content, it must be encoded in source files within the structure of the {trd} repository.
+
+
+=== Source files
+
+Every technical reference is built or rendered from multiple source files.
+These include:
+
+* *Doc Config (DC) file* +
+The DC file specifies the location of the main content, the stylesheet to use for formatting, the draft state, and more.
+There is only one DC file per technical reference, located at the root of your project directory, and its name always begins with `DC-`.
+You typically only need to edit this file once, when you are ready to publish and you turn off draft mode.
+
+* *DocBook metadata (docinfo) file* +
+Information about your document is provided by the docinfo file.
+It is located in your project's `adoc` directory, and its file name always ends in `-docinfo.xml`.
+The standard template makes heavy use of variables to minimize the edits you must make to this file.
+Typical edits include updating variable names to match the ones you define in the vars file, identifying additional products or authors, and expanding the revision history.
+
+* *Variables (vars) file* +
+{trd-alt} make heavy use of variables (or document attributes), most of which are defined in your vars file.
+Your vars file located in your project's `adoc` directory and its file name always ends in `-vars.adoc`.
+Using variables helps ensure consistency throughout your document and also simplifies future revisions.
+The standard template provides stubs for required and recommended variable definitions.
+One of your first editing tasks is to define the variables you will use in your document.
+
+* *Main content file* +
+Your main content file, located in your project's `adoc` directory, is identified in the DC file.
+This is where you add your main content, formatted with the AsciiDoc markup language.
+The standard template provide the framework for your selected document type.
+You can have multiple content files, but they must all be linked (with the AsciiDoc `include` directive) into your main content file.
+
+* *common content files* +
+These are source files that are included automatically when your document is rendered, providing such things as the open source documentation license and standard disclaimer.
+The `{setupscript}` script creates symbolic links to these common files in your project's `adoc` directory, but you do not edit them.
+
+* *media files* +
+In practice, 'media' refers to images that are included in your rendered document.
+These can include logos (for example, the SUSE logo is automatically included on the cover page), diagrams, screenshots, and so on.
+//
++
+Many image file types are supported, but preference is given to:
++
+--
+* https://www.w3.org/Graphics/SVG/[Scaled Vector Graphics] or 'SVG' is a widely-deployed, royalty-free, vector graphics format developed and maintained by the W3C.
+A vector graphics image is rendered from a set of instructions that defines the image from basic, geometric shapes.
+This allows SVGs to be resized without loss of clarity.
+SVGs are typically used for logos and architectural diagrams.
+Copy any SVGs you wish to include into your `media/src/svg` directory.
+
+* https://en.wikipedia.org/wiki/PNG[Portable Network Graphics] or 'PNG' is a raster graphics format.
+A raster image encodes information (like position, color, or brightness)  for each pixel (picture element) that makes up the image.
+PNG uses lossless compression, allowing PNGs to be edited and resaved without loss of clarity (unlike Joint Photographic Experts Group or 'JPEG' images).
+Scaling raster images can introduce artifacts.
+This is particularly apparent when images are enlarged.
+Choose image resolutions to minimize these artifacts.
+Copy any PNGs or JPGs you wish to use into your `media/src/png` or `media/src/jpg` directory, respectively.
+--
+
+[TIP]
+====
+Save yourself effort by using the `{setupscript}` script to set up your project.
+See <<projstart>> for for information.
+====
+
+
+=== Development workflow
+
+However you develop your content, in the end, it must be encoded into source files in the {trd} repository.
+You may choose to edit source files yourself or share the joy with others.
+In both cases, it is important to make use of your GitHub fork (`origin`) to preserve your work, allow for asynchronous collaboration, and submit your completed project.
+
+[NOTE]
+====
+Recall that, during setup, you established two _remotes_ for your local clone:
+
+* `origin`: created automatically by the cloning process points to your GitHub fork.
+
+* `upstream`: added by you to point to the upstream {trd} repository.
+====
+
+While editing locally, it is good practice to keep in sync with your GitHub fork (`origin`).
+Do this by:
+
+. Frequently committing your changes and pushing them to `origin`, especially at the end of every editing session.
+
+. Pulling (fetching and merging) any changes from `origin` at the start of every new editing session.
+
+
+This workflow is detailed below.
+
+. Enter the local directory containing the clone of your GitHub fork (`origin`).
++
+[source, console]
+----
+cd ~/git/GITHUB-USER/YOUR-REPO-NAME/references
+----
+
+. Check out your project's branch.
++
+[source, console]
+----
+git checkout my-tuxy-project
+----
++
+[TIP]
+====
+Always remember to work in your branch.
+If you make edits in the wrong branch, back out all the changes you made before switching to the correct branch to work on your project.
+====
+
+. Update the clone from your `origin` remote.
+//
++
+This allows you to integrate any edits or other content from your contributors, helping you minimize merge conflicts later.
++
+[source, console]
+----
+git pull origin
+----
++
+[TIP]
+====
+It is not necessary to specify the `origin` remote, since it is configured as your default for tracking.
+====
++
+[IMPORTANT]
+====
+Be sure to fix any merge errors before proceeding.
+====
+
+. Create your content.
+//
++
+A typical content session involves editing source files and copying assets (such as image files) into appropriate project directories.
+For content style and formatting guidance, see <<style>> and <<asciidoc>>.
+
+. Render your document with DAPS to verify content, layout, and style.
++
+[NOTE]
+====
+You may get validation errors if you have invalid AsciiDoc syntax.
+You must then find and correct these errors.
+====
+
+. Commit your changes locally.
+//
++
+Add new and changed files to the index (staging area).
++
+[source, console]
+----
+git add .
+----
++
+Commit the contents of the index to the current branch.
++
+[source, console]
+----
+git commit -m "updated section 5; added screenshot"
+----
++
+[TIP]
+====
+Always include a commit message as a reminder to yourself and to let your collaboration team know what changes you made in this commit.
+====
+
+. Push the commit to your `origin` remote.
++
+[source, console]
+----
+git push origin
+----
++
+[NOTE]
+====
+The first time you push a commit on your branch, you will see a warning like:
+
+[listing]
+----
+fatal: The current branch my-tuxy-project has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin my-tuxy-project
+
+To have this happen automatically for branches without a tracking
+upstream, see 'push.autoSetupRemote' in 'git help config'.
+----
+
+Simply follow the instructions to fix the issue.
+
+You only need to do this once.
+====
+
+. Repeat these steps until you are finished with all content edits.
++
+[TIP]
+====
+It is a good idea to break up long content creation sessions by pausing to commit and push edits to your `origin` remote.
+====
+
+. Unset the "DRAFT" designation for your documentation project. +
+Your document is marked as "DRAFT" by default when using the standard templates.
+Unset "draft mode" before submitting your document with the following steps:
+
+.. Edit your DC file.
+
+.. Locate the line containing "DRAFT=yes" and prefix it with a hash mark ('#'). +
+That is,
++
+[source, asciidoc]
+----
+#DRAFT=yes
+----
+
+With your content complete and no longer marked as "DRAFT," you can proceed to <<projsubmit>>.

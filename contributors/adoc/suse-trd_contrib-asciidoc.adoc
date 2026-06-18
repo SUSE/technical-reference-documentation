@@ -1,14 +1,30 @@
+[[asciidoc-intro, Introduction]]
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // Section: AsciiDoc
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-{product1} documentation is rendered from plain text files.
-Formatting (including structure and text styling) is indicated with https://asciidoc.org/[AsciiDoc].
-This is a lightweight and semantic markup language with an intuitive syntax that is primarily designed for writing technical documentation.
+
+{trd} uses {asciidoc-url}[AsciiDoc] for content formatting and structure.
+AsciiDoc is a lightweight and semantic markup language.
+It has an intuitive syntax and is designed for technical writing.
+
+This section provides an introduction to various aspects of AsciiDoc with examples to help you get started.
+
+For additional reference, see:
+
+* {sdocs-style-url}[SUSE Documentation Style Guide (AsciiDoc)]
+* {asciidoc-docs}[Asciidoctor Docs: AsciiDoc Language Reference]
+* {asciidoc-recommended}[AsciiDoc Recommended Practices]
 
 
-=== General guidelines
+**ADD TOC HERE**
+
+
+
+
+[[asciidoc-general, General guidance]]
+=== General guidance
 
 When creating your content:
 
@@ -16,109 +32,200 @@ When creating your content:
 
 * Ensure files are encoded to https://en.wikipedia.org/wiki/UTF-8[UTF-8].
 
-* Start each line in the first column.
-//
-+
-There should be no leading whitespace.
+* Start each sentence on a new line, even if it is part of the same paragraph. +
+This makes it easier to edit and handle Git merge conflicts.
 
-* Strip trailing whitespace from lines.
-
-* End lines with the line feed character only.
-//
-+
+* End lines with the newline (or line feed) character only. +
 Some operating systems add both a carriage return and a line feed to the end of a line.
 You must strip these carriage return characters from your files before submission.
 This can also be done by https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings?platform=windows[configuring Git to handle line endings].
 
-* Do not edit files outside the scope of your project.
-//
-+
-This includes common files, scripts, and the files associated with other published documentation.
+* Start each line in the first column. +
+There should be no leading whitespace.
 
-* Start each sentence on a new line, even if it is part of the same paragraph.
-//
-+
-This makes it easier to edit and handle Git merge conflicts.
+* Strip trailing whitespace from lines.
+
+* Do not edit files outside the scope of your project. +
+This includes common files, scripts, and the files associated with other published documentation.
 
 
 The following sections address specific aspects of document structure and text styling with AsciiDoc.
 
 
-=== Document attributes and variables
+[[asciidoc-blocks, Blocks]]
+=== Blocks
+
+Blocks (or block elements) are discrete, line-oriented chunks of content that form the basic structure of your AsciiDoc document.
+The most common type of block is the paragraph, which is a contiguous set of lines of text, bounded by one or more empty lines.
+Other frequently used block types include sections, lists, tables, images, listing blocks, source code blocks, and admonitions.
+
+How a block is processed and rendered is determined by its content model, context, and style.
+These are implied or explicitly declared by the syntax you use.
+This section is primarily an overview of syntax for using common block types.
+
+To learn more about blocks and block characteristics, see {asciidoc-docs-blocks}[AsciiDoc Docs: Blocks].
 
 
-{asciidoc-docs}attributes/document-attributes/[Document attributes] are name-value pairs that you can use to configure the AsciiDoc processor, define document metadata, and create reusable content.
-Think of document attributes as document-scoped variables.
-Document attributes can be defined anywhere in your document and used from that point forward.
+[[asciidoc-comments, Comments]]
+=== Comments
 
-{product1} uses document attributes to define some required content, such as document title, author information, and product names.
-You can define your own document attributes and reference them throughout your document for frequently repeated content.
+A comment is a useful way to include a note that is only visible in the code and not rendered into the published document.
 
-The definition of a document attribute takes the form:
+Some uses for comments include:
+
+* A reminder, explanation, or suggestion for yourself, your collaboration team, or a future editor.
+
+* To temporarily hide content that is not yet ready for publication.
+
+* To help with debugging your AsciiDoc code.
+
+* To create a separation between two, adjacent blocks of the same type (such as two ordered lists).
+
+AsciiDoc provides two types of comments, described below.
+
+Comment line::
+Create a single-line comment by prefixing the text with two forward slashes ( `//` ).
+For example:
++
 [source, asciidoc]
 ----
- :name-of-an-attribute: value of the attribute
+This text will be rendered.
+
+// This text is a comment and will not be rendered.
+
+This text will be rendered.
+----
++
+[TIP]
+====
+It is customary to follow the two slashes with a space for human readability.
+====
+
+
+Comment block::
+Designate several lines as commentary by delimiting it with four forward slashes ( `////` ):
++
+[source, asciidoc]
+----
+////
+This line and the list below are ignored by the AsciiDoc processor and will not be rendered.
+
+* apples
+
+* bananas
+
+* pears
+////
+----
++
+Another way to designate a comment block is:
++
+[source, asciidoc]
+-----
+
+[comment]
+--
+This line and the list below are ignored by the AsciiDoc processor and will not be rendered.
+
+* apples
+
+* bananas
+
+* pears
+--
+
+-----
+
+
+
+[[asciidoc-variables, Document attributes and variables]]
+=== Document attributes and variables
+
+In AsciiDoc, _document attributes_ are name-value pairs that you can use to configure the AsciiDoc processor, define document metadata, and create reusable content.
+Think of document attributes as document-scoped _variables_.
+They can be defined anywhere in your document and used from that point forward as you would variables in other programming languages.
+
+[TIP]
+====
+For best practice, define all variables in one place (your vars file).
+
+Using the standard templates, your vars file is imported at the beginning of your main content file.
+This ensures that these variables have document-wide scope.
+====
+
+A variable definition has the form:
+[source, asciidoc]
+----
+:name-of-an-attribute: value of the attribute
 ----
 
-Once defined, you can reference your document attributes in your text by surrounding the attribute name with curly braces ( `{` and `}` ).
+The definition begins with the variable name surrounded by colons ( : ) and is followed by a space and the value that is to be assigned.
+The value then includes everything between the space and the newline character.
+
+[TIP]
+====
+Some variable definition stubs are provided in the vars file template.
+If you modify the provided variable names, be sure to modify them everywhere they are referenced.
+This may include your main content file, your docinfo file, and even later in your vars file.
+====
+
+Some example variable definitions are shown below.
+
+[source, asciidoc]
+----
+:srancher-brand: SUSE® Rancher Prime
+:srancher-long: SUSE Rancher Prime
+:srancher: SUSE Rancher
+:srancher-version1: 2.13
+:srancher-website: https://www.suse.com/products/rancher/
+:srancher-docs: https://documentation.suse.com/cloudnative/rancher-manager/latest/en/
+:srancher-docs-ports: {srancher-docs}installation-and-upgrade/requirements/port-requirements.html
+:doctitle: Enterprise AI on {srancher-long}
+----
+
+[TIP]
+====
+It is a good practice to use variables for various aspects of the products featured in your technical reference.
+This helps you maintain consistency, minimize typing errors, and streamline future updates.
+====
+
+
+After defining a variable, you can reference it by surrounding the variable name with curly braces ( `{` and `}` ).
+You can even define new variables with references to already-defined variables (see the `srancher-docs-ports` and `doctitle` variables in the previous example).
+
+
+[[asciidoc-titles, Document title and subtitle]]
+=== Document title and subtitle
+
+The document title is typically specified on the first line of an AsciiDoc document.
+It is a line prefixed by a single equal sign ( `=` ).
+An optional subtitle can be included on the same line, separated from the title by a colon and a space ( `:&#160;` ).
+
+With the standard {trd} templates, you define your document title and subtitle in your vars file with the `doctitle` and `docsubtitle` variables.
 
 For example:
 [source, asciidoc]
 ----
- :comp1-full: Rancher Prime by SUSE
- :comp1-website: https://www.suse.com/solutions/enterprise-container-management/#rancher-product
- :comp2-full: Kubeflow
- :kubeflow_website: https://www.kubeflow.org/
- :title: Deploy {comp2-full} with {comp1-full}
- :executive-summary: Learn how to deploy {comp2-website}[{comp2-full}] to a cluster managed by {comp1-website}[comp1-full}.
+:doctitle: {svirt-long} and {xbackup-long}
+:docsubtitle: Implement Disaster Recovery for your Cloud Native Virtualization Environment
 ----
 
-
-=== Document title and subtitle
-
-With AsciiDoc, the title of your document is usually placed on the first line of the main content file and is prefixed by a single equal sign ( `=` ).
-An optional subtitle can be included on the same line, separated from the title by a colon and a space ( `:&#160;` ).
-
+These variables are then referenced in your main content file as follows:
 [source, asciidoc]
 ----
-
- = My Document Title: My Document Subtitle
-
+= {doctitle}: {docsubtitle}
 ----
 
-
-For getting started guides, you define title and subtitle as document attributes:
-
+The document title and subtitle are also referenced as metadata (describing your document) in your docinfo file with the following lines:
 [source, asciidoc]
 ----
-
- :title: Rancher by SUSE and Priority Support on AWS Marketplace
- :subtitle: Deploy Rancher on Elastic Kubernetes Service (EKS)
-
-----
-
-and reference them in your adoc file as:
-
-[source, asciidoc]
-----
-
- = {title}: {subtitle}
-
-----
-
-and in your docinfo file as:
-
-[source, asciidoc]
-----
-
- <title>{title}</title>
- <subtitle>{subtitle}</subtitle>
-
+<title>{doctitle}</title>
+<subtitle>{docsubtitle}</subtitle>
 ----
 
 
-Titles and subtitles use title-style capitalization.
-You can implement title-style by following a few rules:
+
+When defining your title and subtitle, use title-style capitalization by following these rules:
 
 * Capitalize the first and last word.
 
@@ -134,26 +241,26 @@ You can implement title-style by following a few rules:
 
 
 
+[[asciidoc-sections, Sections]]
 === Sections
 
 Sections help you group and organize related text.
-Each section is marked by a section title or heading.
-This is short text, prefixed by a section marker that indicates the section level.
-Section markers are two or more equal signs ( `==`, `===`, and so on).
+
+Start a new section with a section header, designated by two or more equal signs.
+
+For example:
 
 [source, asciidoc]
 ----
+== Section title level 1
 
- == Section title level 1
+=== Section title level 2
 
- === Section title level 2
-
- ==== Section title level 3
-
+==== Section title level 3
 ----
 
 
-Guidance for section titles:
+Use the following guidance for section headings:
 
 * Choose a section title that clearly identifies what contents to expect.
 
@@ -163,148 +270,175 @@ For example:
 +
 [source, asciidoc]
 ----
- == Preparing the cluster
+== Preparing the cluster
 
- == Prepare the cluster
+or
+
+== Prepare the cluster
 ----
 
-* Use sentence case.
-//
-+
-That is, only the first word and proper nouns should be capitalized.
+* Use sentence case. +
+Only the first word and proper nouns should be capitalized.
 
-* Minimize section title length (typically, 1 to 4 words).
+* Minimize heading length. +
+1 to 4 words should be sufficient.
 
-* Avoid using more than three section levels.
+* Avoid using more than three (`====`) section levels.
 
-* Ensure all sections have content.
-//
-+
-This means that a subsection title should never immediately follow section title without some intervening text.
+* Ensure all sections have content. +
+A subsection heading should never immediately follow a section heading without some intervening text.
 
-
-Consider this example:
+Consider the following example:
 
 [source, asciidoc]
 ----
+== Enabling Podman
 
- == Enabling Podman
-
- Podman, which is short for Pod Manager, is a daemonless, open source tool ...
-
-
- === Install Podman
-
- Podman is not installed by default in SLES 15, but you can install it with these steps.
- ...
+Podman, which is short for Pod Manager, is a daemonless, open source tool ...
 
 
- === Define subordinate UIDs and GIDs
+=== Installing the Podman package
 
- By default, only the root user can run Podman containers.  Running ...
- ...
+If Podman is not already installed, you can install it with `zypper` ...
 
 
- == Creating container images
+=== Configuring Podman
 
- You can build an application container image ...
+By default, only the root user can run Podman containers.
+You can enable non-privileged users to use Podman by ...
 
- === Make a build directory
 
- You need a place in your file system to contain ...
+== Using Podman
+
+This section provides an overview of a typical Podman workflow.
+
+=== Creating a build directory
+
+You need a place in your file system to contain ...
 
 ----
 
+[TIP]
+====
+Every section header automatically becomes a {asciidoc-docs-xref}[cross reference].
+This lets you create an internal link to a section from anywhere within your document.
+
+To do this, simply use the text of the section header enclosed in double angle brackets ( `<<` and `>>` ).
+
+For example:
+
+[source, asciidoc]
+----
+Learn more about <<Configuring Podman>>.
+----
+====
 
 
+[[asciidoc-lists, Lists]]
 === Lists
 
 Lists can provide structure to your content.
 
 Unordered list::
-is a series of items in no particular order and is sometimes called a bulleted list.
+An unordered list is a series of items in no particular order and is sometimes called a bulleted list.
 +
+--
 * Prefix an item by an asterisk ( `*` ) in the first column.
+
 * Create subordinate or nested lists by adding more asterisks.
-* Avoid creating more than three nest levels.
+
+* Do not indent list items.
+
+* Avoid creating more than three nested levels ( `***` ).
+
+* Insert a blank line between list items.
+--
 +
 [source, asciidoc]
 ----
+* Security and compliance
 
- * Security and compliance
+** Prompt response by SUSE engineers to security incidents
 
- ** Prompt response by SUSE engineers to security incidents
+** Premium quality security updates
 
- ** Premium quality security updates
+** Configuration, auditing, and automation features
 
- ** Configuration, auditing, and automation features
 
- * Adaptability
+* Adaptability
 
- ** Modular design
+** Modular design
 
- ** Broad hardware architecture support
-
+** Broad hardware architecture support
 ----
 
 
 Ordered list::
-is a series of items for which order matters, such as a series of instructions.
+An ordered list is a series of items for which order matters, such as a series of instructions.
 +
-* Prefix an item with a period or full stop ( `.` ) in the first column.
-//
-+
-The rendering engine will replace the period with an appropriate number or letter.
+--
+* Prefix an item with a period or full stop ( `.` ) in the first column. +
+The rendering engine will replace the period with the appropriate number or letter.
+
 * Create subordinate or nested lists by adding more periods.
-* Avoid creating more than three levels.
+
+* Avoid creating more than three levels ( `...` ).
+
+* Do not indent list items.
+
+* Insert a blank line between list items.
+--
 +
 [source, asciidoc]
 ----
+. Verify the target hardware support.
 
- . Verify target hardware support.
+.. Confirm the CPU capabilities.
 
- .. Confirm CPU capabilities.
+.. Confirm the RAM size.
 
- .. Confirm RAM size.
+.. Confirm space on the target hard disk.
 
- .. Confirm space on target hard disk.
+. Install the system.
 
- . Install system.
+.. Prepare the installation media.
 
- .. Prepare installation media.
+.. Boot the installation media.
 
- .. Boot installation media.
+.. Follow the installation wizard.
 
- .. Follow installation wizard.
-
- . Reboot into new system.
+. Reboot into the new system.
 
 ----
 
 
 Description list::
-is a collection of terms and their descriptions.
+A description list is a collection of terms and their descriptions or definitions.
 +
-* Start a term-description item with the term followed by two colons ( `::` ).
+--
+* Start a description list item with the term followed by two colons ( `::` ).
+
 * Place the description on the next line without any indentation.
+
 * Include at least one blank line between each term-description pair.
+--
 +
 [source, asciidoc]
 ----
+Cluster::
+A set of worker machines, called nodes, that run containerized applciations.
+Every cluster has at least one worker node.
 
- Cluster::
- A set of worker machines, called nodes, that run containerized applciations.
- Every cluster has at least one worker node.
+Pod::
+The smallest deployable unit of computing that you can create and manage in Kubernetes.
 
- Pod::
- The smallest deployable unit of computing that you can create and manage in Kubernetes.
-
- Control plane::
- The container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.
-
+Control plane::
+The container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.
 ----
 
 
+
+[[asciidoc-filenames, File and directory names]]
 === File and directory names
 
 Use the grave accent or back tick ( ``` ) to delimit file and directory names.
@@ -312,25 +446,29 @@ Use the grave accent or back tick ( ``` ) to delimit file and directory names.
 For example:
 
 [source, asciidoc]
-....
-
+----
 The `manifest.yaml` file is located in the `$HOME/my-tuxy-project` directory.
-
-....
+----
 
 For directory names, a trailing slash ( `/` ) can be used if it is not clear that you are referring to a directory.
 
 
+
+[[asciidoc-admonitions, Admonitions]]
 === Admonitions
 
-Use admonitions are used to help draw the reader's attention to content.
+Use admonitions to help draw the reader's attention to content.
 AsciiDoc supports five admonition types represented by the following labels: 
 
-* `NOTE`: provide additional information
-* `TIP`: suggest a helpful tip
-* `IMPORTANT`: highlight an important point
-* `CAUTION`: advise that care should be taken
-* `WARNING`: inform of danger, harm, or consequences
+* `NOTE`: Provides additional information.
+
+* `TIP`: Suggests helpful guidance.
+
+* `IMPORTANT`: Highlights an important point.
+
+* `CAUTION`: Advises that care should be taken.
+
+* `WARNING`: Informs of danger, harm, or consequences.
 
 
 The basic admonition style places the admonition label followed by a colon ( `:` ) at the beginning of a line of text.
@@ -338,306 +476,422 @@ This is useful for short admonitions that do not contain a line break.
 For example:
 
 [source, asciidoc]
-....
+----
+TIP: By default, some `zypper` commands perform `refresh` automatically.
+----
 
- TIP: By default, some `zypper` commands perform `refresh` automatically.
-....
-
-This is rendered as:
+This renders as:
 
 TIP: By default, some `zypper` commands perform `refresh` automatically.
 
 
-
-The block admonition style provides more flexibility for the content, as illustrated with this example:
-
-[source, asciidoc]
-....
-
- [IMPORTANT]
- ====
- When working with snapshots to restore data, it is important to know
- that there are two fundamentally different scenarios Snapper can handle:
-
- Undoing changes::
- When undoing changes as described in the following, two snapshots are
- being compared and the changes between these two snapshots are made undone.
- Using this method also allows to explicitly select the files that should be
- restored.
-
- Rollback::
- When doing rollbacks as described in <<System rollback>>, the system is
- reset to the state at which the snapshot was taken.
-
- ====
-
-....
-
-
-
-=== Source code, commands, and output
-
-Technical guides often need to present source code, commands, and other console output.
-AsciiDoc provides listing blocks for these purposes, in which text is rendered with a fixed-width font and other features to present this special content.
-
-The basic listing block presents text verbatim.
-That is, text is rendered just as it is entered in terms of line and character spacing.
-The form of a listing block is:
+The block admonition style is preferred, as it provides more flexibility for the content.
+The following example illustrates a block admonition:
 
 [source, asciidoc]
-....
+----
 
- [listing]
- ----
- This   text has      really weird      spacing   that is    preserved.
+[IMPORTANT]
+====
+When working with snapshots to restore data, it is important to know
+that there are two fundamentally different scenarios Snapper can handle:
 
- Line spacing is also preserved.
- ----
+Undoing changes::
+When undoing changes as described in the following, two snapshots are
+being compared and the changes between these two snapshots are made undone.
+Using this method also allows to explicitly select the files that should be
+restored.
 
-....
+Rollback::
+When doing rollbacks as described in <<System rollback>>, the system is
+reset to the state at which the snapshot was taken.
+====
+
+----
 
 
-A source code block is a special version of a listing block that enables syntax highlighting, using color and text styles to distinguish code structures (such as keywords, variables, constants, comments, and so on).
+[[asciidoc-verbatim, Verbatim and source blocks]]
+=== Verbatim and source blocks
 
-To illustrate, review the following Python code snippet.
+Technical guides often need to present source code, commands, and console output as they appear in a code editor or on the console screen.
+This usually means rendering content with a fixed-width font to preserve spacing and structure.
+For source code, it also may involve syntax highlighting with color or other text styles.
+
+
+[[asciidoc-listing, Listing blocks]]
+==== Listing blocks
+
+The basic listing block is used to denote text that should be rendered verbatim.
+This is most often used to present output from a command issued in a command-line terminal, or just to present specifically-spaced text.
 
 [source, asciidoc]
-....
+-----
 
- [source, python]  <1>
- ----  <2>
- # import libraries
- import matplotlib.pyplot as plt
- import numpy as np
+[listing]
+----
+The spacing      of       this text      must be       preserved.
+
+      00   01   02   03   04   05
+      01   02   03   04   05   00
+      02   03   04   05   00   01
+
+drwxr-xr-x 1 geeko geeko 1.3K May 27 16:04 adoc
+drwxr-xr-x 1 geeko geeko   86 Apr 30 15:28 build
+-rw-r--r-- 1 geeko geeko  963 Jan 22  2025 DC-suse-trd_contrib-guide
+lrwxrwxrwx 1 geeko geeko    5 Jun  7  2023 images -> media
+drwxr-xr-x 1 geeko geeko    6 Jun  7  2023 media
+-rw-r--r-- 1 geeko geeko  546 Jan 22  2025 README.md
+----
+
+-----
+
+
+[[asciidoc-source, Source code blocks]]
+==== Source code blocks
+
+A source code block (or source block) is a special version of a listing block that enables syntax highlighting, using color and text styles to distinguish code structures (such as keywords, variables, constants, comments, and so on).
+
+A snippet of Python code is illustrated below.
+
+[source, asciidoc]
+-----
+
+[source, python]
+----
+# import libraries
+import matplotlib.pyplot as plt
+import numpy as np
  
- # define data points
- xpoints = np.array([1, 2, 5, 12])
- ypoints = np.array([5, 3, 11, 6])
+# define data points
+xpoints = np.array([1, 2, 5, 12])
+ypoints = np.array([5, 3, 11, 6])
  
- plt.plot(xpoints, ypoints)
- plt.show()
- ----
+plt.plot(xpoints, ypoints)
+plt.show()
+----
 
-....
-<1> `[source, python]` identifies this as a source code block and the source language as Python.
+-----
+
+The key elements of the source block are:
+
+* the explicit block style and language designation (`[source, python]`) +
+The style designation identifies the block as a verbatim block containing source code in the specified programming language. +
 Some common source language identifiers are: bash, c, html, python, sql, yaml, and xml.
 
-<2> `----` delimits the beginning and end of the block.
-
-[NOTE]
-====
-As with ordinary listing blocks, line spacing is preserved.
-====
+* the delimiter (`----`) +
+The delimiter marks the start and the end of the block content.
 
 
-Commands entered on the command line are like source code, so they are handled with source code blocks but with `console` as the source language identifier.
+
+[[asciidoc-commands, Commands]]
+==== Commands
+
+There are two ways to handle commands: inline and as a source block.
+
+Short commands can be identified inline with other text by delimiting the command with the backtick character ( ``` ), as shown below.
+
+[source, asciidoc]
+----
+The `zypper` command can be used to install, update, or remove software, manage software repositories, perform queries, and more.
+----
+
+For full command examples, the best practice is to use a source block with `console` as the language identifier.
+
 For example:
 
 [source, asciidoc]
-....
+-----
 
- [source, console]
- ----
- sudo zypper install vim
- ----
+[source, console]
+----
+sudo zypper install vim
+----
 
-....
-
-
-Commands can also be included inline with other text by using grave accents (or back ticks) to enclose the command, as in:
-
-[source, asciidoc]
-....
-
- Use `zypper refresh` to update your enabled repositories.
-
-....
+-----
 
 
-A helpful feature of AsciiDoc is that document attributes can be referenced inside your source code blocks.
-You do this with the `subs` option.
-Consider this example:
+In {trd}, it is common to combine a command-line instruction with the resulting output.
+This is illustrated below.
 
 [source, asciidoc]
-....
+-----
 
- // attribute in your document
- :myPath: /home/geeko/myproject/
+. Learn more about the `vim` package by issuing the following command:
++
+[source, console]
+----
+zypper info vim
+----
++
+[listing]
+----
+Information for package vim:
+----------------------------
+Repository     : Main Repository (OSS)
+Name           : vim
+Version        : 9.2.0219-1.1
+Arch           : x86_64
+Vendor         : openSUSE
+Installed Size : 5.2 MiB
+Installed      : Yes (automatically)
+Status         : out-of-date (version 9.2.0010-1.1 installed)
+Source package : vim-9.2.0219-1.1.src
+Upstream URL   : https://www.vim.org/
+Summary        : Vi IMproved
+Description    :
+    Vim (Vi IMproved) is an almost compatible version of the UNIX editor
+    vi. Almost every possible command can be performed using only ASCII
+    characters. Only the 'Q' command is missing (you do not need it). Many
+    new features have been added: multilevel undo, command line history,
+    file name completion, block operations, and editing of binary data.
+----
 
- // attribute referenced in source code block
- [source, console, subs="attributes+"]
- ----
+-----
 
-  tree {myPath}
+[IMPORTANT]
+====
+In this example, the plus symbol ( `+` ) is used to connect these blocks to the list item and preserve indentation.
 
- ----
+See <<asciidoc-continuation>> for more on this topic.
+====
 
-....
+
+[[asciidoc-subs, Attribute substitutions]]
+==== Attribute substitutions
+
+Imagine that you need to illustrate several commands that reference the same, long, and complex argument,  such as a file name.
+Each time you type the argument, you risk making a typo.
+
+This is a perfect use for a variable (document attribute), but listing and source blocks are verbatim.
+So, variable references inside the blocks are ignored by default.
+To overcome this, you can use the `subs="attributes+"` block attribute.
+
+Consider this simple example:
+
+In your vars file, define a variable:
+
+[source, asciidoc]
+----
+// attribute in your vars file
+:myPath: /home/geeko/myproject/
+----
+
+In your main content file, reference the variable inside a source block as follows:
+
+[source, asciidoc]
+-----
+
+// attribute referenced in source code block
+[source, console, subs="attributes+"]
+----
+
+tree {myPath}
+
+----
+
+-----
+
+By including `subs="attributes+"`, this is rendered as:
 
 :myPath: /home/geeko/myproject/
-This renders as:
-[listing, subs="attributes+"]
-....
+[source, console, subs="attributes+"]
+----
 tree {myPath}
-....
+----
 :!myPath:
 
-[TIP]
+
+[CAUTION]
 ====
 Attribute substitution can be tricky.
-The AsciiDoc rendering engine has no way of knowing if curly braces enclosing text in your code should be treated literally or substituted with the value of a document attribute.
 
-In Bash, for instance, it is common to reference variables as `$\{myVariable\}`.
-It may be important for `$\{myVariable\}` to appear in your code as-is.
-However, if attribute substitutions are enabled, the rendering engine would try to find an attribute, named `myVariable`, and substitute its value.
-If there is no such attribute, the render would fail.
+For example, the Bash shell also uses curly braces in referencing variables (such as, `$\{PATH\}`).
+With `subs="attributes+"` in your block designation, the rendering engine treats any "words" surrounded by curly braces as AsciiDoc variables and tries to render them.
 
-One way to solve this is to not use the `subs="attributes+"` option.
-But, if you need some substitutions in your code block and not others, you can use {asciidoc-docs}subs/prevent/[escaping] to let the rendering engine know your intentions.
-Simply place a backslash (`\`) just before each of the curly braces.
-This lets the rendering engine know to treat the curly braces as literal characters and not as indication of an attribute reference.
+Consider the following example:
+
+[source, asciidoc]
+-----
+
+Determine your current display server type by issuing the following command:
+
+[source, console, subs="attributes+"]
+----
+echo ${XDG_SESSION_TYPE}
+----
+
+-----
+
+Your goal is to display this command verbatim, but the rendering engine tries to find an AsciiDoc definition for `XDG_SESSION_TYPE`.
+If it finds one, it substitutes the value.
+If it does not find one, the rendering fails.
+Neither result is what you want.
+
+When you want verbatim interpretation, the best practice is not to use the `subs="attributes+"` option.
+
+If you do need some substitutions but not others, you can use {asciidoc-docs}subs/prevent/[escaping] to let the rendering engine know your intentions.
+By simply placing a backslash ( `\` ) just before each of the curly braces, you designate the curly brace as a literal character.
 
 Here is an example:
 
 [source, asciidoc]
-....
+-----
 
- :myPrompt: geeko@mangrove.lane:~/myproject:
+:myPrompt: geeko@mangrove.lane:~/myproject:
 
- [source, console, subs="attributes+"]
- ----
+[source, console, subs="attributes+"]
+----
 
- {myPrompt} echo "My stored value is $\{myVariable\}."
+{myPrompt} echo "My stored value is in the variable, $\{myVariable\}."
 
- ----
+----
 
-....
+-----
 
-With `myPrompt` defined in your document, this code block would render as:
+This source block renders as:
 
 :myPrompt: geeko@mangrove.lane:~/myproject:
 [source, console, subs="attributes+"]
 ----
-{myPrompt} echo "My stored value is $\{myVariable\}."
+{myPrompt} echo "My stored value is in the variable, $\{myVariable\}."
 ----
 :!myPrompt:
 
 ====
 
-For command output, use a simple listing block.
 
-[source, asciidoc]
-....
-
- [listing]
- ----
- Type   | # |     | Cleanup | Description           | Userdata
- -------+---+ ... +---------+-----------------------+--------------
- single | 0 |     |         | current               |
- single | 1 |     | number  | first root filesystem |
- single | 2 |     | number  | after installation    | important=yes
- single | 3 |     | number  | rollback backup of #1 | important=yes
- single | 4 |     |         |                       |
- ----
-
-....
+For more on substitutions, see {asciidoc-docs-subs}[Asciidoctor Docs: Customize the Substitutions Applied to Blocks].
 
 
+
+[[asciidoc-gui, Graphical user interface elements]]
 === Graphical user interface elements
 
 As with commands on the command line, you may need to reference named elements of an application's graphical user interface (GUI).
 Use a double underscore ( `__` ) to delimit each element.
-If providing a series of element selections, separate each element with the greater than symbol ( `>` ).
+If providing a series of element selections, separate each element with the greater than symbol ( `>` ) preceded and followed by a space.
 
 [source, asciidoc]
-....
+----
 
- . Open _myfile_.
+. Open `myfile.txt`.
 
- .. Click __File__ > __Open__.
+.. Click __File__ > __Open__.
 
- .. Select _myfile_ from the list.
+.. Select `myfile.txt` from the list.
 
- .. Click __Open__.
+.. Click __Open__.
 
-....
+----
+
+Additional considerations for graphical user interface elements:
+
+* Prefer using UI element labels rather than trying to describe or embed graphical icons.
+
+* Match capitalization of UI element labels exactly as they appear in the UI itself.
+
+* Do not include ending punctuation ( such as `:` or `...` ) in UI element labels.
+
+* Avoid identifying UI elements by type (button, text box, and so on). +
+For example, say "Click __OK__" rather than "Click the __OK__ button."
 
 
+[[asciidoc-links, Links]]
 === Links
 
-AsciiDoc hyperlinks, allowing you to provide direct links to external, addressable resources.
+AsciiDoc allows you to provide clickable links to external, addressable resources in your documents.
 
 A link consists of two parts:
 
 target::
-This is the external resource and is represented by an address, known as a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier[Uniform Resource Identifier] (URI).
-A common type of URI is the familiar https://en.wikipedia.org/wiki/URL[Uniform Resource Locator] (URL) or address of a Web page.
+This is the external resource and is represented by an address, known as a {wiki-uri}[Uniform Resource Identifier] (URI).
+A common type of URI is the familiar {wiki-url}[Uniform Resource Locator] (URL) or address of a Web page.
 
 link text::
 This is the text you wish the reader to see (typically in place of the URI) and be able to click to open the remote resource in an appropriate application (such as a Web browser).
 
-The AsciiDoc processor detects common URL protocols, including HTTP, HTTPS, FTP, IRC, and MAILTO.
-That is, if you include a URL (such as https://documentation.suse.com/) in your text, it will be rendered as a link with the URL itself as the link text.
-However, the preference is to use custom link text in place of the URL.
+The AsciiDoc rendering engine detects common URL protocols, including HTTP, HTTPS, FTP, IRC, and MAILTO.
+These are then rendered as a clickable link with the URL itself as the link text.
 
-To use a custom link text, append it to the URL enclosed in square brackets (`[` and `]`).
-That is,
+For best practices, use custom link text in place of the URL.
+To do this, append the URL with the desired text enclosed in square brackets (`[` and `]`).
+
+For example:
+
+[source, asciidoc, subs="attributes+"]
+----
+
+Manage your subscriptions and support cases at the {scc-url}[{scc}].
+
+----
+
+This is rendered as:
+
+Manage your subscriptions and support cases at the {scc-url}[{scc}].
+
+
+[TIP]
+====
+You can minimize typos and simplify future updates by using variables in your links.
+
+Start by defining the variables you need in your vars file:
 
 [source, asciidoc]
-....
+----
 
- https://target-URL[custom link text]
+:scc: SUSE Customer Center
+:scc-url: https://scc.suse.com
 
-....
+----
 
-
-Consider this example:
+Then, reference them in your content file:
 
 [source, asciidoc]
-....
+----
 
- Visit https://documentation.suse.com/[SUSE Documentation] to continue your learning journey.
+Manage your subscriptions and support cases at the {scc-url}[{scc}].
 
-....
+----
 
-When rendered, it appears as:
-====
-Visit https://documentation.suse.com/[SUSE Documentation] to continue your learning journey.
 ====
 
 
+
+[[asciidoc-images, Images]]
 === Images
 
 You can enhance your document with graphical content, such as diagrams, screenshots, logos, and more.
+
 In AsciiDoc, the most common way to insert an image is with a block image macro.
 This takes the form:
 
 [source, asciidoc]
-....
+----
 
- image::TARGET[ATTRIBUTES]
+image::TARGET[ATTRIBUTES]
 
-....
+----
 
 where:
 
-* `image::` designates the block image macro.
+* `image::` informs the rendering engine that this is a block image macro.
 
-* `TARGET` is typically is your target image file.
+* `TARGET` specifies your target image file.
 +
 --
-AsciiDoc supports many image formats, but https://www.w3.org/Graphics/SVG/[Scaled Vector Graphics] (SVG) and https://en.wikipedia.org/wiki/PNG[Portable Network Graphics] (PNG) are preferred.
+AsciiDoc supports many image formats, but {svg-url}[Scaled Vector Graphics] (SVG) and {png-url}[Portable Network Graphics] (PNG) are preferred.
 
 Place your image files in the appropriate subdirectory of `media/src` by type.
-For example, if you are using a SVG file for a diagram, it would be located in `media/src/svg`.
-If you do this, you do not need to specify the path to the file.
+For example, if you use an SVG file for a diagram, place it in `media/src/svg`.
+Likewise, if you use a PNG for a screenshot, place it in `media/src/png`.
+By properly locating these files in this directory structure, you do not need to specify the file paths to reference them.
 --
 
 * `[ATTRIBUTES]` is a comma-delimited list of attributes, as key=value pairs.
 //
 +
 --
-The most common attributes you will use include:
+The attributes you should include with every image:
 
 * _alt text_: alternate text that briefly identifies the image.
 It is useful for text-to-speech readers and situations when the image cannot be displayed.
@@ -647,91 +901,145 @@ This is typically specified as a percentage of the content width (area between m
 
 * _align_: suggest horizontal alignment for the image (that is, left, center, and right).
 --
++
+Optionally, with the __title__ attribute, you can include an image title that is displayed below the image.
 
-Thus, to display the image, `media/src/svg/my-tuxy-architecture.svg` at 75 percent of the page width and centered horizontally, you would use:
-
-[source, asciidoc]
-....
-
- image::my-tuxy-architecture.svg[Tuxy Architecture, scaledwidth="75%", align="center"]
-
-....
-
-
-=== Blocks and continuations
-
-Block elements (or blocks) are discrete, line-oriented chunks of content that form the basic structure of an AsciiDoc document.
-
-The most common type of block is a paragraph, which is a contiguous set of lines of text, bounded by one or more blank lines.
-Sections, lists, and tables are also types of blocks.
-And, obviously, block image macros, listing blocks, code blocks, and admonitions are as well.
-
-[TIP]
-====
-Blocks should always be bounded by an empty line (or document boundary), except when "attached" using list continuation.
-====
-
-{asciidoc-docs}lists/continuation/#list-continuation[List continuation] (explicitly denoted by a plus symbol (`+`) by itself on the line between two blocks) can be used to join two adjacent blocks together.
-The most common use for this is to allow a list item to contain one or more blocks, ensuring alignment of elements.
-
-Consider the example AsciiDoc code below.
+Thus, you could display the image, `media/src/png/tuxy-ui-dashboard.png` at 75 percent of the page width and centered horizontally with:
 
 [source, asciidoc]
-....
+----
 
- . Verify that `kernel-default` has been installed.
- +
- [source, console]
- ----
- sudo zypper se kernel-default
- ----
- +
- [IMPORTANT]
- ====
- After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
- ====
+image::tuxy-ui-dashboard.png[title="Tuxy UI Dashboard", Tuxy UI Dashboard, scaledwidth="75%", align="center"]
 
- . Reboot each node to enable the `kernel-default` kernel.
+----
 
- [TIP]
- ====
- Learn more about the `zypper` command:
+See {asciidoc-docs-images}[AsciiDoc Docs: Images] for further details.
 
- [source, console]
- ----
- man zypper
- ----
- ====
 
-....
 
-Rendered, this code looks like:
+[[asciidoc-continuation, Continuation]]
+=== Continuation
 
-. Verify that `kernel-default` has been installed.
+Continuation is a useful technique for "attaching" one block element to another.
+
+The need for continuation arises most often in lists.
+Consider the following example:
+
+[source, asciidoc]
+-----
+. Log your system's current uptime to the file, `my-uptime.log`.
+[source, console]
+----
+uptime | tee -a uptime.log
+----
+-----
+
+This is rendered as:
+
+. Log your system's current uptime to the file, `my-uptime.log`.
+[source, console]
+----
+uptime | tee -a my-uptime.log
+----
+
+Even though there is no empty line between the list element and the command, the command is not properly aligned with the list element.
+
+Continuation allows you to fix this by simply inserting a plus sign ( `+` ) between the list item text and the source code block, as follows:
+
+[source, asciidoc]
+-----
+. Log your system's current uptime to the file, `my-uptime.log`.
 +
 [source, console]
 ----
-sudo zypper se kernel-default
+uptime | tee -a my-uptime.log
 ----
+-----
+
+Now, this renders as:
+
+. Log your system's current uptime to the file, `my-uptime.log`.
 +
-[IMPORTANT]
-====
-After `kernel-default` has been installed, be sure to remove `kernel-default-base`.
-====
-
- . Reboot each node to enable the `kernel-default` kernel.
-
-[TIP]
-====
-Learn more about the `zypper` command:
-
 [source, console]
 ----
-man zypper
+uptime | tee -a my-uptime.log
 ----
+
+
+You can proceed to "continue" that same list item with as many block elements as required.
+For example:
+
+[source, asciidoc]
+-----
+. Log your system's current uptime to the file, `my-uptime.log`.
++
+[source, console]
+----
+uptime | tee -a my-uptime.log
+----
+You should see output like:
++
+[listing]
+----
+16:54:54  up   8:23,  2 users,  load average: 0.47, 0.48, 0.48
+----
++
+[TIP]
+====
+The `-a` option tells `tee` to append the output to the end of the file.
 ====
 
-Notice that the code block and `IMPORTANT` admonition are correctly aligned under the list item, but the `TIP` admonition is aligned with the document margin.
-As a bonus, there is a source code block inside and properly aligned with `TIP` admonition.
+. Verify that the time was written to the end of the log.
++
+[source, console]
+----
+tail -1 my-uptime.log
+----
++
+[listing]
+----
+16:54:54  up   8:23,  2 users,  load average: 0.47, 0.48, 0.48
+----
 
-By understanding blocks and continuation, you can create complex and beautifully rendered documents.
+-----
+
+
+This is now properly rendered as:
+
+. Log your system's current uptime to the file, `my-uptime.log`.
++
+[source, console]
+----
+uptime | tee -a my-uptime.log
+----
+You should see output like:
++
+[listing]
+----
+16:54:54  up   8:23,  2 users,  load average: 0.47, 0.48, 0.48
+----
++
+[TIP]
+====
+The `-a` option tells `tee` to append the output to the end of the file.
+====
+
+. Verify that the time was written to the end of the log.
++
+[source, console]
+----
+tail -1 my-uptime.log
+----
++
+[listing]
+----
+16:54:54  up   8:23,  2 users,  load average: 0.47, 0.48, 0.48
+----
+
+
+
+[CAUTION]
+====
+Use continuation with caution.
+Improper use of continuation can produce unexpected results and be difficult to debug.
+====

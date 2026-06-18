@@ -1,0 +1,137 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section: Submitting your project
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+You submit your project for inclusion in the {trd} with a Git pull request (PR).
+A PR is a request to merge the changes contained in one branch into another branch of a Git repository.
+In your case, your PR will request to merge the changes in your project branch into the 'main' branch of the upstream {trd} repository.
+
+
+=== Preparing for submission
+
+When submitting your documentation project, you first need to make sure your fork is up-to-date with the upstream repository.
+You can do this locally, then push to your fork (`origin` remote).
+
+. Open a local terminal and change to your clone directory.
++
+[source, console]
+----
+cd ~/git/GITHUB_USER/technical-reference-documentation
+----
+
+. Check out your 'main' branch.
++
+[source, console]
+----
+git checkout main
+----
+
+. Merge the upstream 'main' branch into your local 'main' branch.
++
+[source, console]
+----
+git pull upstream main
+----
+
+. Push these updates to your `origin` remote.
++
+[source, console]
+----
+git push origin
+----
+
+. Check out your project branch. +
+For example:
++
+[source, console]
+----
+git checkout my-tuxy-project
+----
+
+. Merge the upstream 'main' branch into your local project branch.
++
+[source, console]
+----
+git pull upstream main
+----
+
+. Push these updates to your `origin` remote.
++
+[source, console]
+----
+git push origin
+----
+
+
+=== Creating a pull request
+
+You can submit a pull request (PR) in the GitHub UI.
+
+. Log into your GitHub account.
+
+. Select your fork of the upstream repository (your `origin` remote).
+
+. Select your branch (for example, 'my-tuxy-project').
+
+. Click __Compare & pull request__.
++
+image::suse-trd_github_pr_01.png[GitHub PR Creation - select branch, scaledwidth="85%"]
+
+. Verify that your branch is able to be merged and click __Create pull request__.
+//
++
+You can add any helpful notes to the reviewer in the provided space.
++
+image::suse-trd_github_pr_02.png[GitHub PR Creation - compare changes, scaledwidth="85%"]
+
+. Follow the status of your pull request in the GitHub __Pull requests__ page of the upstream repository.
+//
++
+Respond to comments or suggestions from the reviwer in the __Conversation__ tab.
++
+image::suse-trd_github_pr_03.png[GitHub PR Creation - review, scaledwidth="85%"]
++
+[NOTE]
+====
+When all identified issues have been addressed, your project is merged into the upstream 'main' branch and scheduled for publication.
+====
+
+
+=== Following up after publication
+
+After your new technical reference has been published, do the following:
+
+. Visit the {trd-portal}[{trd} portal] and confirm that you can access all published versions (HTML and PDF).
+
+. Verify that the content appears as expected.
+
+. Celebrate the new technical reference by sharing it.
+
+. Clean up your workspace.
+
+.. Delete your project branch.
++
+[source, console]
+----
+git checkout main
+----
++
+[source, console]
+----
+git branch -d my-tuxy-project
+----
+
+.. Merge upstream changes to your local clone.
++
+[source, console]
+----
+git pull upstream main
+----
+
+.. Synchronize your local clone with your fork on GitHub.
++
+[source, console]
+----
+git push origin
+----
+

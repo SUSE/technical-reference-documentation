@@ -1,0 +1,330 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section: Starting your project
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+When you have your workspace set up, you are ready to start a new documentation project.
+This involves two main activities:
+
+. Creating a Git branch to contain your project
+//
++
+All {trd} development work must be performed in a unique, Git branch.
+This rule applies whether you are creating a new document or editing an existing one.
+Branches help you keep your project work separate from other projects.
+
+. Creating the source file and directory structure for your project
+//
++
+Your technical reference is built from multiple source files, which must be located in the directory structure described in <<Repository structure>>.
+You can use the `{setupscript}` script to automatically create the required structure along with standard file templates.
+
+
+Details for both activities are providing in the following sections.
+
+
+
+=== Creating a branch
+
+. From a terminal, change to the `references` directory in your local clone.
+//
++
+For example:
++
+[source, console]
+----
+cd ~/git/GITHUB-USER/YOUR-REPO-NAME/references
+----
+
+. Check out your the 'main' branch in your local clone.
++
+[source, console]
+----
+git checkout main
+----
+
+. Make sure your main branch is up-to-date with the 'main' branch of the upstream repository (your `upstream` remote).
++
+[source console]
+----
+git fetch upstream main
+git merge upstream/main
+----
++
+or
++
+[source, console]
+----
+git pull upstream main
+----
+
+. Create a branch for your project.
+//
++
+For example:
++
+[source, console]
+----
+git branch my-tuxy-project
+----
+
+. To work in this branch, you have to switch to it using the `git checkout` command.
++
+[source, console]
+----
+git checkout my-tuxy-project
+----
++
+[TIP]
+====
+You can create and check out a branch at the same time with:
+
+[source, console]
+----
+git checkout -b my-tuxy-project
+----
+
+====
++
+[IMPORTANT]
+====
+It is a good practice to make sure your branch is active at the start of each editing session.
+You can verify your current branch with:
+
+[source, console]
+----
+git branch --show-current
+----
+
+====
+
+With your branch ready, you can move on to creating the file and directory structure for your project.
+
+
+=== Setting up the project structure
+
+. If you have not already done so, change to the `references` directory in your local clone of the source repository.
++
+[source, console]
+----
+cd /home/geeko/git/geeko/trd-geeko/references
+----
+
+
+. If you have not switched to your project branch, do so.
++
+[source, console]
+----
+git checkout my-tuxy-project
+----
+
+. Excecute the `{setupscript}` script located in the `bin` directory.
++
+[source, console, subs="attributes+"]
+----
+./bin/{setupscript}
+----
++
+This interactive script prompts you for information about your project and uses this to create the project directory structure with source files based on the standard templates.
++
+[TIP]
+====
+As you proceed, you can enter `help` at various prompts to get more information about your input options.
+====
++
+[listing]
+----
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+= Set up workspace for a new technical reference document   =
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ This script will prompt you for information about your
+ document, then use your responses to create the directories
+ and template files you will need.
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - Before proceeding make sure you have:
+  - 1. created a local branch: `git branch myproject`
+  - 2. checked out your new branch: `git checkout myproject`
+  - 3. changed to the 'references' directory
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Are you ready to proceed?
+Press ENTER to continue or CTRL+C to cancel.
+----
++
+Press ENTER to continue.
+
+.. Enter the abbreviation for the desired document type.
++
+[listing]
+----
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- Gathering some information
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+>> Document type (gs, ri, rc, ea, help) : rc
+----
+
+.. Enter the abbreviation for a featured SUSE component.
++
+[listing]
+----
+- - - - - -
+- Identify the featured SUSE products by entering
+- one product abbreviation at a time.
+- When done, press ENTER with no value.
+-
+- TIPS:
+-   - You do not need to list all products, only
+-     the featured one or ones.
+-   - When featuring multiple products, start at
+-     the top of the software stack.
+-     For example: 'rancher' then 'rke2' then 'sles'
+-
+- Additional options:
+-   'help': display accepted abbreviations.
+-   'clear': clear the product list and start over.
+-   Press CTRL+C to cancel and exit the script.
+- - - - - -
+
+>> SUSE product : rancher
+----
++
+You are then presented with confirmation of your entry and a prompt for an additional SUSE product.
++
+[listing]
+----
+Featured SUSE products: "rancher"
+
+>> SUSE product :
+----
++
+This is not required.
+If you only want to feature one SUSE product, just press ENTER to leave the loop and proceed to the next prompt.
+
+.. Enter the name of the primary partner you wish to feature.
++
+[listing]
+----
+- - - - - -
+- Enter the name of the primary partner.
+-
+- TIP: Select one partner whose product is at the top
+-      of the software stack and provides the key
+-      functionality for the featured use case.
+- - - - - -
+
+>> Primary partner : tuxy
+----
++
+[NOTE]
+====
+If you selected `ri` or reference implementation as your document type, you are not prompted for partner information.
+====
+
+.. Enter the name of the primary partner's product.
++
+[listing]
+----
+- - - - - -
+- Enter the name of the primary partner's product.
+-
+-   TIP: If the primary partner and the product
+-        share the same name, you can leave the
+-        partner product blank to avoid repetition.
+-
+- - - - - -
+
+>> Primary partner's product : snow
+----
+
+.. If desired, enter additional text to distinguish this document from others that feature this combination of SUSE and partner products.
++
+[listing]
+----
+- - - - - -
+- OPTIONAL
+-
+- If a solution can address multiple use cases,
+- it may be useful to create a separate guide to
+- address unique concerns of each use case.
+-
+-   NOTE:  This option appends the text to the document's
+-          file name, so it should be used sparingly to
+-          avoid especially long file names.
+- - - - - -
+
+>> Distinctive text :
+----
++
+[NOTE]
+====
+If you need to feature an additional partner and product, you can do so here.
+Follow the pattern: `partner-product`.
+====
+
+.. Information gathering is complete, now review the proposed structure.
++
+[listing]
+----
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - Preparing to create the following structure:
+  -
+  -   references
+  -   └── tuxy
+  -       ├── DC-rc_suse-rancher_tuxy-snow
+  -       ├── adoc
+  -       │   ├── rc_suse-rancher_tuxy-snow.adoc
+  -       │   ├── rc_suse-rancher_tuxy-snow-docinfo.xml
+  -       │   └── rc_suse-rancher_tuxy-snow-vars.adoc
+  -       ├── images -> media
+  -       └── media
+  -           └── src
+  -               ├── png
+  -               └── svg
+  -
+  - NOTE: Several symbolic links will also be created.
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+>> Press ENTER to create document structure or CTRL+C to cancel.
+----
++
+Press ENTER to create it.
++
+[listing]
+----
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+= Workspace for your new guide has been set up.
+=
+= Access your workspace in:
+=   references/tuxy
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+----
+
+.. Verify that the structure satisfies your requirements.
++
+[source, console]
+----
+tree tuxy
+----
++
+[listing]
+----
+tuxy
+├── adoc
+│   ├── common_docinfo_vars.adoc -> ../../../common/adoc/common_docinfo_vars.adoc
+│   ├── common_gfdl1.2_i.adoc -> ../../../common/adoc/common_gfdl1.2_i.adoc
+│   ├── common_sbp_legal_notice.adoc -> ../../../common/adoc/common_sbp_legal_notice.adoc
+│   ├── common_trd_legal_notice.adoc -> ../../../common/adoc/common_trd_legal_notice.adoc
+│   ├── rc_suse-rancher_tuxy-snow.adoc
+│   ├── rc_suse-rancher_tuxy-snow-docinfo.xml
+│   └── rc_suse-rancher_tuxy-snow-vars.adoc
+├── DC-rc_suse-rancher_tuxy-snow
+├── images -> media
+└── media
+    └── src
+----
+
+With your project set up, you can proceed to building your content by working with the source files.
+
+

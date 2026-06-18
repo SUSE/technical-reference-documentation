@@ -1,0 +1,123 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section: Source repository structure
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The {trd-repo}[{trd-long} source Git repository] is hosted on GitHub to facilitate management and collaboration.
+A Git repository is a directory or folder in a file system along with metadata and tooling for tracking and managing file revisions.
+One of your first steps as a contributor is to clone the repository to your local system, where you will edit the source files for your document.
+Thus, it is helpful to have a general understanding of the repository's structure and contents.
+
+The top-level directory structure of the {trd} source repository is illustrated in the listing below.
+
+[listing]
+----
+.
+├── common <1>
+├── contributors <2>
+├── kubernetes <3>
+├── linux
+└── references <4>
+----
+<1> `common` contains shared content, scripts, and templates.
+<2> `contributors` contains source files for this contributors' guide.
+<3> `kubernetes` and `linux` contain archived reference sources.
+<4> `references` contains *source files for current references*.
+
+
+As a contributor, your efforts will be focused inside the `references` directory.
+
+[listing]
+----
+references
+├── bin -> ../common/bin
+...
+├── everpure
+...
+├── jupyter
+...
+├── hitachi
+...
+├── kubeflow
+...
+├── supermicro
+...
+├── suse
+...
+├── veeam
+...
+----
+
+Here, you find subdirectories that identify the featured technology partner or community project.
+For example, the source files for a reference featuring JupyterHub, which is part of Project Jupyter, would be found in the `jupyter` directory.
+If an appropriate directory for your technical references does not already exist, you can create one during the workspace setup process.
+There is also a `suse` directory (containing document sources that feature only SUSE components) and a symbolic link to a `bin` directory (containing helpful scripts for contributors).
+
+
+[TIP]
+====
+For a technical reference featuring more than one component provider, select only one for the directory name.
+As a general rule, the selected partner provides the component at the top of the software stack that delivers a unique, highlighted capability.
+If important, additional component providers can be noted in the names of your source files.
+====
+
+
+Your work as a contributor is inside a provider directory.
+The structure and contents of an example provider directory are illustrated below for a simple getting started guide.
+
+[listing]
+----
+provider
+├── DC-gs_suse-prod_partner-product <1>
+├── adoc <2>
+│   ├── common_docinfo_vars.adoc -> ../../../common/adoc/common_docinfo_vars.adoc <3>
+│   ├── common_gfdl1.2_i.adoc -> ../../../common/adoc/common_gfdl1.2_i.adoc
+│   ├── common_sbp_legal_notice.adoc -> ../../../common/adoc/common_sbp_legal_notice.adoc
+│   ├── common_trd_legal_notice.adoc -> ../../../common/adoc/common_trd_legal_notice.adoc
+│   ├── gs_suse-prod_partner-product.adoc <4>
+│   ├── gs_suse-prod_partner-product-docinfo.xml <5>
+│   └── gs_suse-prod_partner-product-vars.adoc <6>
+├── images -> media
+└── media <7>
+    └── src
+        ├── png
+        │   ├──  suse-prod_partner-prod_architecture.png
+        │   └──  suse-prod_partner-prod_ui.png
+        └── svg
+            └── suse.svg -> ../../../../../common/images/src/svg/suse.svg
+----
+<1> *Doc Config (DC) file* +
+There is only one DC file per technical reference.
+It specifies the location of the main content, the stylesheet to use for formatting, the draft state, and more.
+You typically only need to edit this file once, when you are ready to publish and you turn off draft mode.
+
+<2> *`adoc` directory* +
+The `adoc` directory contains content and metadata files, as described below.
+
+<3> *Common files* +
+Your published document automatically includes standard content contained in these symbolically linked files.
+
+<4> *Main content file* +
+Your main content file, in AsciiDoc markup language, is where you add the content you wish to see in the published document.
+
+<5> *DocBook metadata (docinfo.xml) file* +
+The docinfo.xml file provides information about your document.
+You typically only need to make minor edits to the standard template.
+
+<6> *Vars file* +
+The vars file contains variable (or document attribute) definitions.
+These include the product names and versions, website and documentation URLs, document title, author names, and more.
+These variables are then substituted for text in the main content file and DocBook metadata file to ensure consistency throughout your document.
+Additionally, using variables makes it easier to make future updates, such as if a product name or website URL change.
+
+<7> *`media` directory* +
+The `media` directory contains all media files, such as diagrams and screenshots, you wish to appear in your published document.
+Media files must be organized by file type under `media/src`.
++
+[NOTE]
+====
+Legacy processes referenced an `images` directory.
+Today, `images` is simply a symbolic link to the `media` directory and is maintained for compatibility.
+====
+
+
+See <<sourcefiles>> for more about the contents of your project directory.

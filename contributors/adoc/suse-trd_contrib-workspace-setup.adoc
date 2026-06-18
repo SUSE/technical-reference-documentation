@@ -1,0 +1,149 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// Section: Workspace setup
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+{trd-alt} are rendered from source files maintained on GitHub in the {trd-repo}[{trd} source repository].
+You do not work directly with the repository.
+Instead, you work in your own workspace.
+This workspace consists of two parts:
+
+. a _fork_ or copy of the {trd} repository in your own GitHub account
+
+. a _clone_ of your fork downloaded to your local system
+
+
+These steps are detailed below.
+
+[NOTE]
+====
+You typically only need to set up your workspace once.
+====
+
+
+=== Forking the {trd} repository
+
+The first step to setting up your workspace is to create a _fork_ of the _upstream_ {trd} source repository into your own GitHub account.
+
+[NOTE]
+====
+If you work for SUSE or a partner company, you should use your company-sanctioned GitHub account.
+====
+
+Create your fork of the upstream {trd} repository by following the steps detailed below.
+
+. Open your Web browser and log into your GitHub account.
+
+. Navigate to the {trd} {trd-repo}[source repository].
+
+. Fork this repository into your own account.
+
+.. In the GitHub UI, click __Fork__, then __+ Create a new fork__.
++
+image::suse-trd_github_fork_01.png[Fork the SUSE TRD GitHub repo, scaledwidth="85%"]
+
+.. In the _Create a new fork_ dialog, give your repository a different name to distinguish make it easier to distinguish from upstream and also include a description.
++
+image::suse-trd_github_fork_02.png[Fork the SUSE TRD GitHub repo, scaledwidth="85%"]
+
+.. Click __Create fork__.
+
+
+
+=== Cloning the fork
+
+After creating your fork, you need to _clone_ it on your local system.
+When you clone a Git repository, you download a full copy of the repository data at that point in time.
+This includes not just source files but Git metadata, too.
+Clone your fork by following the steps detailed below.
+
+. Launch a terminal on your local system.
+
+. On the command line, change to the directory where you will store the clone, creating it if necessary.
+//
++
+For example,
++
+[source, console]
+----
+mkdir -p ~/git/GITHUB-USER
+cd ~/git/GITHUB-USER
+----
+where `GITHUB-USER` is your GitHub username.
++
+[NOTE]
+====
+This directory structure is recommended for good housekeeping but is not strictly required.
+====
+
+. Clone your fork.
++
+[source, console]
+----
+git clone git@github.com:GITHUB-USER/YOUR-REPO-NAME.git
+----
++
+where `YOUR-REPO-NAME` is the name you gave to your repository fork.
++
+[TIP]
+====
+To find the URL of your fork in the GitHub UI:
+
+. Log into GitHub and go to your fork.
+
+. Click __<> Code__.
+
+. Select the __Local__ tab.
+
+. Click __SSH__.
+
+. Click the "copy" icon to copy the URL to your clipboard.
+====
+
+. Enter the top-level directory of your clone.
++
+[source, console]
+----
+cd YOUR-REPO-NAME
+----
+
+. Configure the {trd} source repository as your `upstream` remote.
++
+[source, console]
+----
+git remote add upstream git@github.com:SUSE/technical-reference-documentation.git
+----
++
+[NOTE]
+====
+Git uses the concept of _remotes_ to communicate with repositories beyond the clone on your local system.
+When you created your local clone, your fork on GitHub was assigned the name `origin`.
+And, because the {trd} source repository is upstream of your fork, you assign it the name `upstream` here.
+====
+
+. Verify your remotes.
++
+[source, bash]
+----
+git remote -v
+----
++
+[listing]
+----
+origin  git@github.com:GITHUB-USER/YOUR-REPO-NAME.git (fetch)
+origin  git@github.com:GITHUB-USER/YOUR-REPO-NAME.git (push)
+upstream        git@github.com:SUSE/technical-reference-documentation.git (fetch)
+upstream        git@github.com:SUSE/technical-reference-documentation.git (push)
+----
+
+
+[IMPORTANT]
+====
+Your workspace typically only needs to be set up once, but it must be maintained.
+Two critical maintenance activities include:
+
+* keeping your workspace up-to-date with the upstream and origin repositories
+* trimming branches
+
+These topics are discussed elsewhere in this guide.
+====

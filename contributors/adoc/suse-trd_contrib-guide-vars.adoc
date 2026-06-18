@@ -1,0 +1,194 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: suse-trd_contrib-guide
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+//-
+:rev2-date: 2026-02-28
+:rev2-description: Refactor for simplified structure
+:rev1-date: 2023-12-18
+:rev1-description: Original publication
+:rev-date: {rev2-date}
+:rev-description: {rev2-description}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components,
+//   such as full product names, versions, websites, documentation
+//   URLs, and so on.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+// -
+:trd-provider: SUSE
+:trd-brand: SUSE® Technical Reference Documentation
+:trd-long: SUSE Technical Reference Documentation
+:trd: SUSE TRD
+:trd-alt: SUSE Technical References
+:trd-portal: https://documentation.suse.com/?tab=trd
+:trd-repo: https://github.com/SUSE/technical-reference-documentation
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title: (<75 characters) Concisely identify the subject of the document.
+//         (e.g.: "Deploying Kubeflow with SUSE Rancher Prime")
+// subititle: (<75 characters) Expound on the subject of the document.
+//             (e.g., "Validated solution design for Telco-native AI")
+// usecase: (<55 characters) Identify the use case or purpose of the
+//          documented solution.
+//          (e.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                 "Kubernetes-native object storage")
+// description: (<150 characters) Give a brief description of what this
+//              document is about.
+// description-social: (<55 characters) Condense the description to be
+//                     suitable for social media.
+// executive-summary: (<300 characters) Provide a brief summary of the
+//                    the document, typically with business case and
+//                    technical components.
+//                    This text appears near the beginning of the rendered
+//                    document.
+//
+// TIP: You can reference defined variables when defining new variables.
+//      For example:
+//        Say that you have defined above these component variables:
+//          :comp1-long : SUSE Linux Enterprise Server
+//          :comp2-long: JupyterLab
+//        Then, you could reference them when you define the title
+//        variable like this:
+//          :title: Simplify deployment of {comp2-long} with {comp1-long}
+//        When rendered, the variables will be expanded and the title
+//        will appear as:
+//          "Simplify deployment of JupyterLab with SUSE Linux Enterprise Server"
+// -
+:doctitle: {trd-long} Contributors' Guide
+
+:docsubtitle: How to contribute to {trd-alt}
+
+:usecase: Documentation
+
+:description: Guidance for contributing to {trd-long}, the open collection of high-quality technical guidance for solutions that address real-world use cases with SUSE and third-party technologies.
+
+:description-social: Contributing to {trd-alt}
+
+:executive-summary: Learn how to contribute to {trd-long}, the open collection of high-quality technical guidance for solutions that address real-world use cases with SUSE and third-party technologies.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//     SUSE Documentation portal.
+//   Typically, no more than three tasks defined per
+//     document.
+//
+//   Tasks must be one of these supported values:
+//     Administration, Artificial Intelligence, Auditing, Authentication,
+//     Automation, Backup &amp; Recovery, Certification, Cloud,
+//     Clustering, Compliance, Configuration, Containerization,
+//     Container Management, Data Intelligence, Deployment, Design,
+//     Encryption, High Availability, Image Building, Implementation,
+//     Installation, Integration, Maintenance, Migration, Monitoring,
+//     Packaging, Security, Storage, Subscription Management,
+//     Troubleshooting, Upgrade &amp; Update, Virtualization,
+//     Vulnerability, Web
+//
+//   For example:
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: Design
+:metatask2: Implementation
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+// -
+:author1-firstname: Terry
+:author1-surname: Smith
+:author1-jobtitle: Ecosystem Solutions Innovation Director
+:author1-orgname: SUSE
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+:setupscript: refsetup.sh
+
+:sdocs-style-url: https://documentation.suse.com/style/current/html/style-guide-adoc/
+
+:asciidoc-url: https://asciidoc.org/
+:asciidoc-docs: https://docs.asciidoctor.org/asciidoc/latest/
+:asciidoc-docs-attributes: {asciidoc-docs}attributes/document-attributes/
+:asciidoc-recommended: https://asciidoctor.org/docs/asciidoc-recommended-practices/
+:asciidoc-docs-blocks: {asciidoc-docs}blocks/
+:asciidoc-docs-subs: {asciidoc-docs}subs/apply-subs-to-blocks/
+:asciidoc-docs-prevent: {asciidoc-docs}subs/prevent/
+:asciidoc-docs-images: {asciidoc-docs}macros/images/
+:asciidoc-docs-continuation: {asciidoc-docs}lists/continuation/#list-continuation
+:asciidoc-docs-xref: {asciidoc-docs}macros/xref/
+
+:docbook-url: https://docbook.org
+:daps-install-url: https://opensuse.github.io/daps/doc/cha.daps.user.inst.html#sec.daps.user.inst
+:daps2docker-url: https://github.com/openSUSE/daps2docker
+:suse-xsl-url: https://github.com/openSUSE/suse-xsl
+:git-line-endings-url: https://docs.github.com/en/get-started/git-basics/configuring-git-to-handle-line-endings?versionId=free-pro-team%40latest&productId=get-started&platform=windows
+:github-url: https://github.com/
+:daps-vscode-url: https://marketplace.visualstudio.com/items?itemName=opensuse.daps
+:vscode-url: https://code.visualstudio.com/
+:wiki-uri: https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+:wiki-url: https://en.wikipedia.org/wiki/URL
+:svg-url: https://www.w3.org/Graphics/SVG/
+:png-url: https://en.wikipedia.org/wiki/PNG
+:scc: SUSE Customer Center
+:scc-url: https://scc.suse.com
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
