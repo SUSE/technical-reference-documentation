@@ -156,6 +156,8 @@ Be sure hardware virtualization (VT-x/AMD-V) is enabled on each node.
 See {svirt-docs-overview}[official documentation] for detailed guidance.
 
 . After deployment, confirm you have access to the cluster through the {svirt} UI and CLI.
+//
++
 For tips, see {svirt-docs-authentication}[{svirt}: Authentication] and {svirt-docs-faq}[{svirt}: Troubleshooting - FAQ].
 
 
@@ -407,14 +409,20 @@ kubectl create secret generic ontap-secret -n trident \
 The preferred installation method uses `tridentctl`, which is demonstrated in the following steps.
 Be sure to check the {trident-docs-install}[{trident-provider} {trident} Installation Guide] for the latest details about obtaining and using `tridentctl`.
 
-.. Download the `trident-install` package.
+.. Download the `trident-installer` package. +
+You can obtain the installer package from the Assets section on the {trident-installer-repo}[{trident-long} GitHub repository].
+Copy the package's URL and download it on the command line with `wget`. +
+For example:
 +
 [source, console, subs="attributes+"]
 ----
 wget {trident-installer-url}
 ----
++
+Be sure to use the URL for the version you wish to install.
 
-.. Extract the `trident-install` and associated files.
+.. Extract the `trident-installer` and associated files. +
+For example:
 +
 [source, console, subs="attributes+"]
 ----
