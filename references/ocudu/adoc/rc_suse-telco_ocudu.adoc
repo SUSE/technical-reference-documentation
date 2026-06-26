@@ -28,9 +28,15 @@ include::./rc_suse-telco_ocudu-vars.adoc[]
 
 == Introduction
 
-The rapid evolution of 5G and edge computing demands a cloud-native infrastructure capable of delivering deterministic performance, real-time processing, and operational scalability. 
-This reference architecture demonstrates how {ocudu-brand} can be deployed on {stelco-brand} using {stelco-edge} technologies such as RKE2, Metal3, Cluster API, and SR-IOV networking. 
-The document focuses on validating hardware readiness, benchmarking RAN workloads, and enabling reproducible O-RAN {ocudu-splite} {ocudu-splite-version} deployments through a software-defined environment.
+Communication Service Providers (CSPs) are transitioning to open, disaggregated, and AI-native network architectures to reduce costs, eliminate vendor lock-in, and accelerate innovation in 5G and 6G services. 
+This shift requires tight integration between carrier-grade infrastructure platforms and high-performance RAN software that can run efficiently on general-purpose hardware.
+
+
+This joint reference architecture documents the technical integration of the {ocudu-brand} RAN stack with {stelco-brand}, aligned with Project Sylva, enabling deployment of RAN with AI-native workloads. 
+Validated in collaboration with Software Radio Systems (SRS), the technical contributor of {ocudu}, it provides a single-node deployment model using Cluster API (CAPI) for hardware readiness validation and resource sizing. 
+The setup focuses on an O-RAN {ocudu-splite} {ocudu-splite-version} gNB configuration with an RU emulator, enabling fully software-based testing and repeatable performance measurements. 
+It demonstrates production-grade performance characteristics including low latency, 1,000+ users per cell, and hardware efficiency gains of 30-50% CAPEX reduction compared to proprietary systems.
+
 
 === Acknowledgments
 
@@ -47,11 +53,71 @@ The following individuals contributed to the creation of this document:
  * {editor3-firstname} {editor3-surname}, {editor3-jobtitle}, {editor3-orgname}
  * {editor4-firstname} {editor4-surname}, {editor4-jobtitle}, {editor4-orgname}
 
+
+
+== Market Challenges
+
+
+The telco industry continues to operate under significant structural fragmentation. 
+Most 5G deployments still rely on proprietary, vertically integrated hardware and software stacks from a small number of vendors. 
+This approach creates deep vendor lock-in, inflates both capital and operational expenses, and limits operators’ ability to select best-of-breed components.
+
+Operators face three interconnected problems. 
+First, the lack of standardized reference architectures forces custom, site-specific integration work for every new deployment, binding CSPs to individual vendor roadmaps and increasing complexity. 
+Second, existing open source telco infrastructure has historically fallen short of the extreme performance, deterministic latency, and resiliency requirements demanded by modern RAN workloads, especially those incorporating AI. 
+Third, managing distributed edge environments with consistent operations remains difficult when each site uses different hardware platforms and deployment processes.
+
+These challenges directly constrain operators. 
+They result in prolonged deployment timelines, higher lifecycle costs, reduced innovation velocity, and slower delivery of new AI-native 5G and future 6G services that require sub-millisecond latency and high user density. 
+Without a unified, horizontal foundation, operators struggle to scale efficiently, control their infrastructure choices, or fully capitalize on the business opportunities of edge computing and programmable networks. 
+Also, a key gap has been the lack of validated, carrier-grade Open RAN implementations that operators can confidently deploy at scale.
+
+
+== The Solution
+
+
+{stelco-provider} and {ocudu-provider} have jointly developed a fully disaggregated, carrier-grade Open RAN stack anchored in the Project Sylva reference architecture. 
+This solution was demonstrated at MWC 2026, validating its readiness for real-world telco deployments.
+
+The stack is structured as a horizontal, integrated platform that begins with general-purpose hardware and extends through the infrastructure layers to the RAN workloads. 
+At the foundation lies high-performance commodity hardware featuring Intel® Xeon® 6 SoC processors and Supermicro edge servers. 
+This choice delivers the necessary compute density and efficiency while avoiding proprietary silos, enabling significant improvements in power consumption and server utilization.
+
+Above the hardware, {stelco-long} provides the operating system and Kubernetes infrastructure layer. 
+{sle-micro}, an immutable and real-time Linux distribution, combined with RKE2, creates a hardened, Sylva-compliant Container-as-a-Service platform. 
+This layer ensures deterministic low-latency performance, CPU isolation, SR-IOV networking with DPDK, and NUMA-aware resource management, all critical for meeting the stringent timing and throughput requirements of RAN workloads.
+
+
+image::image-architecture1.png[title="{stelco-long} architecture", {stelco-long} architecture, align="center", width=110%]
+
+
+{suse-rancher-prime} supplies unified orchestration and management across distributed edge sites. 
+It enables centralized control, consistent policy enforcement, and zero-touch operations through declarative GitOps workflows and Cluster API (CAPI), allowing operators to manage hundreds of edge locations with a single operational model.
+
+At the workload layer, {ocudu} delivers AI-native, software-defined Central Unit (CU) and Distributed Unit (DU) network functions. 
+Designed as a cloud-native implementation of the 5G RAN stack (supporting O-RAN {ocudu-splite} {ocudu-splite-version}), {ocudu} brings intelligence directly into the RAN, incorporating native design elements for AI/ML-driven optimization, scheduling, and performance enhancement. 
+This enables operators to run intelligent RAN workloads directly on the {stelco-long} platform with consistent, carrier-grade behavior. 
+As a foundational component for AI-RAN, {ocudu} allows seamless integration of real-time AI capabilities into the RAN stack, accelerating the transition toward intelligent, adaptive 5G and 6G networks.
+
+Together, these components create a complete horizontal solution anchored in the Project Sylva reference architecture and delivered through {stelco-long}. 
+By using Kubernetes as the interoperability layer where telco software converges, the stack fully decouples RAN software from proprietary hardware. 
+This architecture directly addresses the fragmentation and lock-in challenges outlined earlier by providing operators with a standardized, portable, and consistent operating model. 
+It eliminates the need for site-specific custom integrations, dramatically reduces deployment times from weeks to minutes, lowers CAPEX through hardware efficiency, and enables true "Develop Once, Deploy Anywhere" portability, all while delivering carrier-grade performance at scale.
+
+
+== Architecture Overview and Deployment
+
+This reference architecture defines a single-node deployment designed for hardware validation, performance benchmarking, and resource sizing of AI-native RAN workloads. 
+It integrates OCUDU’s gNB implementation with {stelco-long}, following Project Sylva principles for a consistent, cloud-native telco stack.
+
+
+image::image-architecture2.png[title="Architecture Overview and Deployment", Architecture Overview and Deployment, align="center", width=100%]
+
+The architecture follows O-RAN {ocudu-splite} {ocudu-splite-version}, with all CU and DU functions consolidated in a single gNB pod running alongside an RU emulator. 
+This configuration enables complete software-based testing of the DU-to-RU path over the Open Fronthaul interface without requiring physical radio hardware.
+
+
 == Product Overview
-
-
-
-
 
 ===  {stelco-long} ({stelco-edge})
 
@@ -98,7 +164,7 @@ Directed network provisioning: Automated cluster deployment with advanced networ
 === {ocudu}
 
 {ocudu} is a cloud-native implementation of 5G RAN components, providing deployment options for the gNB, CU, DU, CU-CP, and CU-UP. In this article, we focus on the gNB deployment variant, where all applications are combined into a single monolithic binary. 
-{ocudu} supports O-RAN {ocudu-splite} {ocudu-splite-version}, as well as Split 6 and Split 8. In this blog post, we use {ocudu-splite} {ocudu-splite-version}.
+{ocudu} supports O-RAN {ocudu-splite} {ocudu-splite-version}, as well as {ocudu-splite} 6 and {ocudu-splite} 8. In this blog post, we use {ocudu-splite} {ocudu-splite-version}.
 
 image::architecture.svg[title=" O-RAN {ocudu-splite} {ocudu-splite-version} in this Reference Architecture", O-RAN {ocudu-splite} {ocudu-splite-version} in this Reference Architecture, align="center", width=110%]
 
@@ -114,7 +180,7 @@ In this reference architecture, {ocudu-splite} {ocudu-splite-version} defines wh
 * O-DU-low: Contains the lower DU processing shown in the diagram. For {ocudu-splite} {ocudu-splite-version}, this is the {ocudu} component that connects to the O-RU over the O-RAN Open Fronthaul interface.
 * O-RU: Represents the O-RAN Radio Unit. It sits outside {ocudu} and connects to the DU over the {ocudu-splite} {ocudu-splite-version} fronthaul interface.
 
-The diagram also shows Split 6 and 8 as an alternative lower-layer split option. This blog post focuses on {ocudu-splite} {ocudu-splite-version}, where the DU-to-RU connection uses the O-RAN Open Fronthaul model.
+The diagram also shows {ocudu-splite} 6 and 8 as an alternative lower-layer split option. This blog post focuses on {ocudu-splite} {ocudu-splite-version}, where the DU-to-RU connection uses the O-RAN Open Fronthaul model.
 
 ==== {ocudu} RAN Workloads
 
@@ -1549,51 +1615,37 @@ The repository includes Python parsers to extract KPIs from logs and compare aga
         # Validates against thresholds and generates pass/fail report
 ----
 
-== Conclusion
-
-This reference architecture demonstrates how {ocudu} can be deployed on {stelco-long}
-            for hardware validation and RAN workload sizing. The measured resource requirements can
-            then be used as input for planning and sizing a production deployment. This setup is not
-            intended to represent a full production deployment. Instead, it shows how to verify whether
-            the underlying platform is powerful enough and configured correctly for a selected RAN
-            configuration.
-
-The deployment can be used to validate key infrastructure capabilities, including:
-
-* **Declarative provisioning:** Using CAPI and Metal3 to build the cluster
-                through an infrastructure-as-code workflow.
-* **High-performance networking:** Using SR-IOV Virtual Functions and DPDK
-                for direct, low-overhead packet processing.
-* **Real-time readiness:** Using the PREEMPT_RT kernel, CPU isolation,
-                hugepages, and tuned profiles to reduce jitter and improve determinism.
-* **O-RAN {ocudu-splite} {ocudu-splite-version} validation:** Exercising the DU-to-RU path through the
-                O-RAN Open Fronthaul interface using the RU emulator.
-* **Observability:** Using logs, metrics, and dashboards to identify
-                configuration mistakes, resource bottlenecks, timing issues, and performance limits.
-In the single-node scenario, the {ocudu} gNB and RU emulator run on the same host. This makes
-            the setup well suited for validating CPU allocation, memory configuration, hugepages,
-            SR-IOV device assignment, DPDK configuration, and overall platform readiness without
-            requiring a separate physical RU.
-
-The same validation approach can be adapted to different scenarios, including smaller
-            functional tests, larger benchmark systems, dual-node DU/RU deployments, or multi-cell
-            configurations. The important point is that the RAN configuration and the hardware profile
-            must be evaluated together: bandwidth, MIMO layers, antenna configuration, traffic model,
-            and enabled features determine how much compute, memory, and I/O capacity the deployment
-            needs.
+== Conclusion and Next Steps
 
 
+This reference architecture demonstrates how the {ocudu} RAN stack can be deployed on {stelco-long} for hardware validation and RAN workload sizing. 
+The measured resource requirements serve as key input for planning and sizing production deployments. 
+The setup functions as a validation environment that confirms whether the underlying platform delivers sufficient performance and correct configuration for a chosen RAN profile.
+
+The deployment validates several key infrastructure capabilities required for carrier-grade Open RAN:
+
+* **Declarative provisioning** using CAPI and Metal3 to build the cluster through an infrastructure-as-code workflow.
+
+* **High-performance networking** using SR-IOV Virtual Functions and DPDK for direct, low-overhead packet processing.
+
+* **Real-time readiness** using the PREEMPT_RT kernel, CPU isolation, hugepages, and tuned profiles to reduce jitter and improve determinism.
+
+* **O-RAN {ocudu-splite} {ocudu-splite-version} validation** by exercising the DU-to-RU path through the O-RAN Open Fronthaul interface using the RU emulator.
+
+* **Comprehensive observability** through logs, metrics, and dashboards to identify configuration issues, resource bottlenecks, timing problems, and performance limits.
+
+In the single-node scenario, the {ocudu} gNB and RU emulator run on the same host. 
+This makes the setup particularly effective for validating CPU allocation, memory configuration, hugepages, SR-IOV device assignment, DPDK configuration, and overall platform readiness without requiring a separate physical RU.
+
+The same validation approach can be adapted to different scenarios, including smaller functional tests, larger benchmark systems, dual-node DU/RU deployments, or multi-cell configurations. 
+The critical consideration is that the RAN configuration and hardware profile must be evaluated together. 
+Factors such as bandwidth, MIMO layers, antenna configuration, traffic model, and enabled features directly determine the required compute, memory, and I/O capacity.
+
+By combining {stelco-long}’s robust, Sylva-compliant infrastructure with the {ocudu} AI-native RAN stack, operators gain a practical path to overcome ecosystem fragmentation. 
+This joint solution delivers standardized operations, reduced deployment complexity, lower infrastructure costs, and the flexibility to scale AI-native 5G and 6G services across diverse edge environments.
 
 
-
-
-
-
-
-
-
-
-
+**Ready to get started?** Contact the {stelco-long} team today to schedule a dedicated technical workshop, review the {ocudu} Getting Started Guide, or initiate your own validation deployment with {ocudu} RAN on {stelco-long}.
 
 
 
