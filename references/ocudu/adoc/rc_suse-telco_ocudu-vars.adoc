@@ -19,7 +19,7 @@
 //   This is typically a series of words (often from the document title)
 //   separated by hyphens (-).
 //   (e.g., "rancher-kubflow-deployment")
-:article-id: unique-article-id
+:article-id: rc-suse-telco-ocudu
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,7 +35,7 @@
 //   :rev1-description: Original version
 // Set docdate to the most recent revision.
 //-
-:rev1-date: 2026-06-29
+:rev1-date: 2026-06-26
 :rev1-description: Original version
 :docdate: {rev1-date}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -102,7 +102,6 @@
 :suse-rancher-prime: SUSE Rancher Prime
 :sle-micro: SUSE Linux Micro
 :stelco-edge-version: 3.5
-:stelco-version1:
 :slemicro: SUSE Linux Micro
 :eib: Edge Image Builder
 :stelco-website: https://www.suse.com/products/edge-for-telco/
@@ -117,13 +116,11 @@
 :ocudu: OCUDU
 :ocudu-brand: {ocudu}®
 :ocudu-long: {ocudu}
-:ocudu-version1:
 :ocudu-gnb: OCUDU gNB
 :ocudu-splite: Split
 :ocudu-splite-version: 7.2
 :ocudu-website: https://ocudu.org/
 :ocudu-docs: https://ocudu-docs-604e90.gitlab.io/
-:ocudu-contact: 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -159,15 +156,15 @@
 //        will appear as:
 //          "Integrating SUSE Virtualization with Hitachi VSP Storage"
 // -
-:doctitle: AI-Native Disaggregated RAN
+:doctitle: AI-Native disaggregated RAN
 
-:docsubtitle: Project Sylva Reference Architecture with {stelco-long} and {ocudu} RAN stack
+:docsubtitle: Project Sylva reference architecture with {stelco-long} and {ocudu} RAN stack
 
-:usecase: (<55 characters) use case
+:usecase: Validate hardware readiness and size 5G RAN
 
-:description: (<150 characters) description
+:description: Reference architecture for integrating {ocudu} RAN with {stelco-long} to measure resource sizing using an RU emulator over O-RAN {ocudu-splite} {ocudu-splite-version}.
 
-:description-social: (<55 characters) social media description
+:description-social: Deploy AI-native 5G Open RAN via {stelco-long}.
 
 :executive-summary: This document provides a technical reference for using {ocudu} on {stelco-long} to validate hardware readiness and size resources for a selected 5G RAN configuration. The goal is not to describe a full production deployment. Instead, this reference architecture shows how to exercise the {ocudu} stack, measure the resources required by the chosen RAN configuration, and use those measurements as input for planning a production deployment. In this setup, {ocudu} runs in the gNB deployment variant together with an RU emulator. This allows the DU-to-RU path to be validated with O-RAN {ocudu-splite} {ocudu-splite-version} and Open Fronthaul behavior while keeping the test environment fully software-based and reproducible.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -195,7 +192,7 @@
 //
 //   For example:
 //    :metatask1: Configuration
-//    :metatask2: Installation
+//    :metatask2: Integration
 //    :metatask3: Deployment
 // -
 :metatask1: Configuration

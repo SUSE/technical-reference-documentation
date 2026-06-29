@@ -55,7 +55,7 @@ The following individuals contributed to the creation of this document:
 
 
 
-== Market Challenges
+== Market challenges
 
 
 The telco industry continues to operate under significant structural fragmentation. 
@@ -73,7 +73,7 @@ Without a unified, horizontal foundation, operators struggle to scale efficientl
 Also, a key gap has been the lack of validated, carrier-grade Open RAN implementations that operators can confidently deploy at scale.
 
 
-== The Solution
+== The solution
 
 
 {stelco-provider} and {ocudu-provider} have jointly developed a fully disaggregated, carrier-grade Open RAN stack anchored in the Project Sylva reference architecture. 
@@ -88,7 +88,7 @@ Above the hardware, {stelco-long} provides the operating system and Kubernetes i
 This layer ensures deterministic low-latency performance, CPU isolation, SR-IOV networking with DPDK, and NUMA-aware resource management, all critical for meeting the stringent timing and throughput requirements of RAN workloads.
 
 
-image::image-architecture1.png[title="{stelco-long} architecture", {stelco-long} architecture, align="center", width=110%]
+image::image-architecture1.png[title="{stelco-long} architecture", {stelco-long} architecture, align="center", scaledwidth=90%]
 
 
 {suse-rancher-prime} supplies unified orchestration and management across distributed edge sites. 
@@ -105,19 +105,19 @@ This architecture directly addresses the fragmentation and lock-in challenges ou
 It eliminates the need for site-specific custom integrations, dramatically reduces deployment times from weeks to minutes, lowers CAPEX through hardware efficiency, and enables true "Develop Once, Deploy Anywhere" portability, all while delivering carrier-grade performance at scale.
 
 
-== Architecture Overview and Deployment
+== Architecture overview and deployment
 
 This reference architecture defines a single-node deployment designed for hardware validation, performance benchmarking, and resource sizing of AI-native RAN workloads. 
 It integrates OCUDU’s gNB implementation with {stelco-long}, following Project Sylva principles for a consistent, cloud-native telco stack.
 
 
-image::image-architecture2.png[title="Architecture Overview and Deployment", Architecture Overview and Deployment, align="center", width=100%]
+image::image-architecture2.png[title="Architecture Overview and Deployment", Architecture Overview and Deployment, align="center", scaledwidth=100%]
 
 The architecture follows O-RAN {ocudu-splite} {ocudu-splite-version}, with all CU and DU functions consolidated in a single gNB pod running alongside an RU emulator. 
 This configuration enables complete software-based testing of the DU-to-RU path over the Open Fronthaul interface without requiring physical radio hardware.
 
 
-== Product Overview
+== Product overview
 
 ===  {stelco-long} ({stelco-edge})
 
@@ -129,7 +129,7 @@ This configuration enables complete software-based testing of the DU-to-RU path 
 {stelco-edge} {stelco-edge-version} is an enterprise-grade platform purpose-built for edge computing and telecommunications workloads. 
 It provides a complete infrastructure stack optimized for telco-specific requirements including real-time processing, deterministic latency, and hardware acceleration.
 
-==== Core Technology Stack
+==== Core technology stack
 * {slemicro} RT: A real-time capable operating system based on {slemicro}, featuring the PREEMPT_RT kernel patch for microsecond-level latency guarantees. 
 This OS is immutable, providing enhanced security and reliability through transactional updates.
 
@@ -142,7 +142,7 @@ Metal3 treats physical servers as cloud resources, enabling declarative infrastr
 * Cluster API (CAPI): A Kubernetes sub-project providing declarative APIs to automate cluster lifecycle management. CAPI enables consistent cluster provisioning, upgrading, and scaling across different infrastructure providers.
 * SR-IOV Network Operator: Automates the discovery, configuration, and lifecycle management of SR-IOV network devices in Kubernetes clusters, enabling high-performance networking for CNF workloads.
 
-==== Image Builder
+==== Edge Image Builder
 {stelco-provider} provides the {eib} (EIB), a tooling ecosystem that creates customized OS images containing:
 
 * Pre-installed packages (real-time kernel, DPDK, tuned profiles)
@@ -152,10 +152,10 @@ Metal3 treats physical servers as cloud resources, enabling declarative infrastr
 
 The declarative image-building process ensures consistent, reproducible deployments across hardware fleets.
 
-==== Key Features for Telco Workloads
+==== Key features for telco workloads
 * Real-time kernel (PREEMPT_RT): Provides deterministic task scheduling with sub-millisecond latency, critical for RAN processing where timing violations can cause call drops.
 * CPU isolation: Kernel parameters (`isolcpus`, `nohz_full`, `rcu_nocbs`) dedicate cores exclusively to workloads, preventing kernel interference.
-* Huge pages: 1GB and 2MB page support for DPDK applications, reducing TLB misses and improving memory access performance by up to 30%.
+* Huge pages: 1 GB and 2 MB page support for DPDK applications, reducing TLB misses and improving memory access performance by up to 30%.
 * SR-IOV: Hardware-accelerated network virtualization bypassing the kernel network stack, achieving near-native NIC performance with CPU offload.
 
 Directed network provisioning: Automated cluster deployment with advanced networking using nmstate for static IPs, VLANs, bonding, and dual-stack configurations.
@@ -166,10 +166,11 @@ Directed network provisioning: Automated cluster deployment with advanced networ
 {ocudu} is a cloud-native implementation of 5G RAN components, providing deployment options for the gNB, CU, DU, CU-CP, and CU-UP. In this article, we focus on the gNB deployment variant, where all applications are combined into a single monolithic binary. 
 {ocudu} supports O-RAN {ocudu-splite} {ocudu-splite-version}, as well as {ocudu-splite} 6 and {ocudu-splite} 8. In this blog post, we use {ocudu-splite} {ocudu-splite-version}.
 
-image::architecture.svg[title=" O-RAN {ocudu-splite} {ocudu-splite-version} in this Reference Architecture", O-RAN {ocudu-splite} {ocudu-splite-version} in this Reference Architecture, align="center", width=110%]
+image::architecture.svg[title="O-RAN {ocudu-splite} {ocudu-splite-version}", O-RAN {ocudu-splite} {ocudu-splite-version}, align="center", scaledwidth=90%]
 
 
-==== O-RAN {ocudu-splite} {ocudu-splite-version} in this Reference Architecture
+==== O-RAN {ocudu-splite} {ocudu-splite-version}
+
 The diagram above shows how {ocudu} maps the 5G RAN protocol stack onto O-RAN logical components. The blue area represents the {ocudu} implementation, while the O-RU is shown as the external radio unit connected through the fronthaul interface.
 
 In this reference architecture, {ocudu-splite} {ocudu-splite-version} defines where the DU connects to the O-RAN Radio Unit over the O-RAN Open Fronthaul interface. {ocudu} provides the CU and DU-side functionality shown in the blue area of the diagram, including O-CU-CP, O-CU-UP, O-DU-high, and O-DU-low. The O-RU sits outside {ocudu} and exchanges fronthaul traffic with the DU using the {ocudu-splite} {ocudu-splite-version} interface.
@@ -182,7 +183,7 @@ In this reference architecture, {ocudu-splite} {ocudu-splite-version} defines wh
 
 The diagram also shows {ocudu-splite} 6 and 8 as an alternative lower-layer split option. This blog post focuses on {ocudu-splite} {ocudu-splite-version}, where the DU-to-RU connection uses the O-RAN Open Fronthaul model.
 
-==== {ocudu} RAN Workloads
+==== {ocudu} RAN workloads
 
 
 [cols="1,3,3",options="header"]
@@ -205,7 +206,7 @@ The diagram also shows {ocudu-splite} 6 and 8 as an alternative lower-layer spli
 |===
 
 
-==== Observability Components
+==== Observability components
 The observability stack is lightweight compared to the RAN workloads. For a minimal working example, InfluxDB3, Grafana, and Telegraf can run on a single Kubernetes CPU core with approximately 500 MB of RAM. Increase these resources when collecting more metrics, using shorter collection intervals, retaining data for longer periods, or serving more dashboard users.
 
 
@@ -235,14 +236,14 @@ Resource sizing principle:
 Size the RAN workloads from the radio configuration first, then allocate observability resources based on the amount of telemetry you want to collect and retain.
 ====
 
-==== Test Mode Capabilities
+==== Test mode capabilities
 {ocudu} test mode exercises the complete software stack without requiring real UEs or RUs. 
 Depending on the test use case, {ocudu} can be tested with a physical radio unit or with the radio side fully emulated in software. 
 This makes it useful for both lab validation and performance testing before integrating physical RAN hardware.
 
 In this reference architecture, we use the {ocudu} RU emulator to fully exercise the {ocudu} RAN stack and produce meaningful results in a controlled software-based environment.
 
-**Configuration Parameters:**
+**Configuration parameters:**
 
 * `nof_ues`: Number of emulated users.
 * `rnti`: Radio Network Temporary Identifier used for the emulated UE.
@@ -250,7 +251,7 @@ In this reference architecture, we use the {ocudu} RU emulator to fully exercise
 * `ri`: Rank Indicator for the number of downlink MIMO layers. In this reference architecture we use 4x4 MIMO in downlink and a single layer in uplink.
 * `pusch_active` / `pdsch_active`: Enable uplink and downlink traffic generation.
 
-**Reference Test Configuration:**
+**Reference test configuration:**
 
 * Downlink: 4x4 MIMO with QAM256.
 * Uplink: Single-layer in uplink.
@@ -273,11 +274,11 @@ End-to-end behavior with real UEs, physical RF conditions, and a production 5G C
 ====
 
 
-== Reference Architecture
+== Reference architecture
 
-=== Deployment Topology
+=== Deployment topology
 
-**Scenario 1: Single Node Deployment**
+**Scenario 1: Single node deployment**
 
 This scenario co-locates the {ocudu-gnb} and the RU emulator on the same physical server. 
 It is useful for lab validation because the DU and RU emulator can use the same clock source and therefore remain synchronized without additional PTP or SyncE setup.
@@ -294,7 +295,7 @@ The DU and RU emulator connection must use the same physical NIC. If different N
 Keeping both sides on the same NIC avoids this additional synchronization requirement for the single-node scenario.
 ====
 
-image::single-node-deploy.svg[title="Single-Node Deployment",  Single-Node Deployment, align="center", width=100%]
+image::single-node-deploy.svg[title="Single-Node Deployment",  Single-Node Deployment, align="center", scaledwidth=90%]
 
 
 [IMPORTANT]
@@ -310,33 +311,33 @@ The E810 (Columbiaville) family provides hardware timestamping and low jitter.
 While PTP synchronization works on many NICs, the E810 has been validated for this deployment. 
 For dual-node deployments, use the E810-XXVDA4T or an external PTP Grandmaster (PTP GM).
 
-* MAC Address Consistency: 
+* MAC address consistency: 
 The `du_mac_addr` in gNB config must match the VF MAC, and `ru_mac_addr` in RU config must match its VF MAC. Mismatches cause packet drops.
 ====
 
-**Scenario 2: Dual Node Deployment**
+**Scenario 2: Dual node deployment**
 
 This scenario separates the DU and RU onto different physical servers, simulating a real distributed deployment where the DU is centralized and RUs are at cell sites.
 
-image::duel-node-deploy.svg[title="Dual Node Deployment", Dual Node Deployment, align="center", width=100%]
+image::duel-node-deploy.svg[title="Dual Node Deployment", Dual Node Deployment, align="center", scaledwidth=90%]
 
 
-Additional Requirements for Dual-Node:
+Additional requirements for dual-node:
 
 
-* PTP Synchronization: Both nodes must synchronize their system clocks using IEEE 1588v2 PTP (Precision Time Protocol). 
+* PTP synchronization: Both nodes must synchronize their system clocks using IEEE 1588v2 PTP (Precision Time Protocol). 
 The E810-XXVDA4T variant provides sufficient PTP accuracy. 
 Alternatively you can use a PTP Grandmaster (GM) of PTP class C.
 
-* Timing Accuracy: OFH requires a mean error to be smaller than 20ns. 
+* Timing accuracy: OFH requires a mean error to be smaller than 20ns. 
 Class C PTP hardware is required.
 
-* VLAN Configuration: If using VLANs, configure them identically on both nodes. 
+* VLAN configuration: If using VLANs, configure them identically on both nodes. 
 Uncomment `vlan_tag_cp` and `vlan_tag_up` in the configs.
 
 
-=== Hardware Specifications
-Flexibility Note: {ocudu} can run on a wide range of hardware platforms, from small single-board computers (e.g., Raspberry Pi) to large dual-socket servers with 256 cores per NUMA node. 
+=== Hardware specifications
+Flexibility Note: {ocudu} can run on a wide range of hardware platforms, from small single-board computers (for example, Raspberry Pi) to large dual-socket servers with 256 cores per NUMA node. 
 The application is designed for performance benchmarking and can adapt to virtually any Kubernetes-capable hardware. 
 The specifications below represent a validated reference configuration for telco-grade performance testing.
 
@@ -352,7 +353,7 @@ The specifications below represent a validated reference configuration for telco
 
 |Memory
 |64 GB+ RAM Scales based on workload requirements
-|Reference: 40 GB for 1GB hugepages, rest for OS and Kubernetes. Adjust hugepage allocation based on total memory.
+|Reference: 40 GB for 1 GB hugepages, rest for OS and Kubernetes. Adjust hugepage allocation based on total memory.
 
 |NIC
 |SR-IOV capable NIC (25GbE recommended) Intel E810-XXVDA4/T validated
@@ -369,15 +370,15 @@ The specifications below represent a validated reference configuration for telco
 
 [IMPORTANT]
 ====
-Hardware Compatibility Notes:
+Hardware compatibility notes:
 
-* Platform Flexibility: {ocudu} can benchmark performance on any Kubernetes-capable platform. 
+* Platform flexibility: {ocudu} can benchmark performance on any Kubernetes-capable platform. 
 Resource requirements scale with target throughput and cell count.
 
 * AVX-512 (Optional): The {ocudu} AVX-512 image (`ocudu_nightly_avx512`) provides DSP optimizations for x86 platforms. 
 Non-AVX-512 platforms can use alternative builds.
 
-* NUMA Awareness: For multi-socket systems, pin workloads to a single NUMA node using Kubernetes 
+* NUMA awareness: For multi-socket systems, pin workloads to a single NUMA node using Kubernetes 
 `topologyManagerPolicy: single-numa-node` to minimize memory access latency.
 
 * TSC (x86): Ensure constant TSC (Time Stamp Counter) for DPDK timing on x86 platforms. Check `/proc/cpuinfo` for `constant_tsc` flag.
@@ -385,32 +386,32 @@ Non-AVX-512 platforms can use alternative builds.
 ====
 
 
-== CAPI Workflow and Deployment
+== CAPI workflow and deployment
 
-=== Management Cluster Architecture: 
+=== Management cluster architecture 
 
 A persistent management cluster provisions downstream or workload clusters. This separation provides operational flexibility and centralized lifecycle management.
 
 
-image::management-cluster.svg[title="Management Cluster Architecture", Management Cluster Architecture, align="center", width=100%]
+image::management-cluster.svg[title="Management Cluster Architecture", Management Cluster Architecture, align="center", scaledwidth=90%]
 
 
-Why This Architecture?
+Why this architecture?
 
 
-* Blast Radius Containment: Workload cluster failures don't affect management cluster stability.
+* Blast radius containment: Workload cluster failures don't affect management cluster stability.
 
 * Scalability: One management cluster can provision hundreds of edge clusters.
 
 * Upgrades: Upgrade workload clusters independently without disrupting management operations.
 
-* Multi-Tenancy: Isolate different teams/applications into separate clusters with shared management.
+* Multi-tenancy: Isolate different teams/applications into separate clusters with shared management.
 
 
 
 === Deployment Steps
 
-**Step 1: Bare Metal Host Enrollment**
+**Step 1: Bare metal host enrollment**
 
 Create a `BareMetalHost` custom resource to register physical servers with Metal3. 
 This resource encapsulates BMC credentials, hardware identifiers, and provisioning state.
@@ -445,7 +446,7 @@ spec:
 ----
 
 
-Field Explanations:
+Field explanations:
 
 * bootMACAddress: Identifies the network interface for PXE boot. Must match the NIC configured for management network (not the SR-IOV data plane NIC).
 
@@ -456,7 +457,7 @@ Field Explanations:
 * labels.cluster-role: Selector for Metal3MachineTemplate. Enables grouping hosts by role (control-plane vs. worker).
 
 
-State Transitions:
+State transitions:
 
 * Registering: Metal3 authenticates to BMC and powers on the host.
 
@@ -483,7 +484,7 @@ Troubleshooting BMH:
 
 ====
 
-**Step 2: CAPI Cluster Definition**
+**Step 2: CAPI cluster definition**
 
 The `Cluster` resource is the top-level abstraction representing a Kubernetes cluster. It references infrastructure-specific and control-plane implementations.
 
@@ -530,7 +531,7 @@ spec:
 ----
 
 
-Network Configuration:
+Network configuration:
 
 * Pod CIDR: `192.168.0.0/18` provides 16,384 IP addresses for pods. Calico CNI assigns /26 blocks per node (64 IPs per node supports 256 nodes).
 
@@ -539,7 +540,7 @@ Network Configuration:
 * Control Plane Endpoint: In single-node deployments, use the node's IP. In multi-node, use a VIP managed by MetalLB or keepalived.
 
 
-**Step 3: RKE2 Control Plane Configuration**
+**Step 3: RKE2 control plane configuration**
 
 The `RKE2ControlPlane` defines Kubernetes version, CNI selection, and node-level customizations.
 
@@ -610,9 +611,9 @@ spec:
         - node.kubernetes.io/instance-type=baremetal
 ----
 
-Critical Settings Explained:
+Critical settings explained:
 
-* `version`: RKE2 versions include Kubernetes version + RKE2 patch (e.g., v1.34.2+rke2r1 = K8s 1.34.2 with RKE2 revision 1).
+* `version`: RKE2 versions include Kubernetes version + RKE2 patch (for example, v1.34.2+rke2r1 = K8s 1.34.2 with RKE2 revision 1).
 
 * `cniMultusEnable`: true: Enables Multus meta-CNI plugin, allowing pods to attach to multiple networks. Required for SR-IOV secondary interfaces.
 
@@ -636,7 +637,7 @@ Why Calico + Multus?
 ====
 
 
-**Step 4: Metal3MachineTemplate Definition**
+**Step 4: `Metal3MachineTemplate` Definition**
 
 The `Metal3MachineTemplate` defines the infrastructure-specific configuration for control plane machines, including host selection, image provisioning, and OS customization via Ignition.
 
@@ -667,7 +668,7 @@ spec:
           namespace: default
 ----
 
-**Key Configuration Points:**
+**Key configuration points:**
 
 * `hostSelector.matchLabels`: Selects BareMetalHosts with `cluster-role: control-plane` label. This enables grouping hosts by role (control-plane vs. worker).
 * `image.url`: HTTP-accessible raw disk image built with {eib} (EIB). Must include RT kernel, RKE2, and telco packages.
@@ -678,7 +679,7 @@ spec:
 [IMPORTANT]
 ====
 
-Image Server Requirements:
+Image server requirements:
 
 The image URL must be accessible from the target bare metal host's provisioning network. 
 Typically served via HTTP from the management cluster or a dedicated artifact server. 
@@ -686,20 +687,20 @@ The checksum file should contain only the SHA256 hash value.
 
 ====
 
-== Configuration Deep Dive
+== Configuration deep dive
 
-=== Ignition Configuration Framework
+=== Ignition configuration framework
 
 The `agentConfig.additionalUserData` section uses **Ignition** format (Fedora CoreOS-style declarative configuration). Ignition runs early in the boot process, before RKE2 starts, to configure the OS and inject files.
 
-**Ignition Capabilities:**
+**Ignition capabilities:**
 
-* **File Injection**: Write Kubernetes manifests, systemd units, scripts to specific paths
-* **Systemd Units**: Create, enable, and start services
-* **Kernel Parameters**: Add boot arguments for performance tuning
-* **User Management**: Create users, set SSH keys
+* **File injection**: Write Kubernetes manifests, systemd units, scripts to specific paths
+* **Systemd units**: Create, enable, and start services
+* **Kernel parameters**: Add boot arguments for performance tuning
+* **User management**: Create users, set SSH keys
 
-=== {ocudu} gNB Helm Chart Configuration
+=== {ocudu} gNB helm chart configuration
 
 The gNB is deployed through RKE2's built-in `HelmChart` CRD, which applies the
             Helm release automatically during cluster bootstrap. For this proof of concept, we use the
@@ -750,14 +751,14 @@ spec:
       privileged: false
 ----
 
-**Resource Allocation Explained:**
+**Resource allocation explained:**
 
 * **CPU**: 24 cores with `limits == requests` triggers Kubernetes static CPU manager, guaranteeing exclusive core allocation. Cores are pinned from the isolated set (8-39).
 * **Memory**: 16Gi standard RAM. DPDK applications allocate most memory from hugepages, not regular RAM.
-* **Huge Pages**: 2Gi of 1GB pages (`hugepages-1Gi`). DPDK mmap()s these for zero-copy packet buffers, reducing TLB misses.
+* **Huge pages**: 2Gi of 1GB pages (`hugepages-1Gi`). DPDK mmap()s these for zero-copy packet buffers, reducing TLB misses.
 * **SR-IOV**: `rancher.io/odu: 1` requests one VF from the `odu` resource pool. The SR-IOV device plugin advertises VF availability to the kubelet.
 
-==== Security Context
+==== Security context
 
 The {ocudu-gnb} container does not need to run as a privileged container. Instead, the
             deployment uses a minimum-privilege security context that grants only the Linux
@@ -791,7 +792,7 @@ This minimum-privilege setup expects the container image to include the required
 
 ====
 
-==== SR-IOV Networking
+==== SR-IOV networking
 
 SR-IOV must be enabled for this deployment. The gNB uses SR-IOV Virtual Functions to access
             high-performance network interfaces without relying on the host network namespace.
@@ -805,7 +806,7 @@ sriovConfig:
 This requires the SR-IOV device plugin to be deployed in the Kubernetes cluster and the
             relevant physical NICs to be configured to expose Virtual Functions.
 
-==== Host Network and NetworkPolicy
+==== Host network and networkPolicy
 
 For this deployment, `hostNetwork` must remain disabled. When a pod uses
             `hostNetwork: true`, it joins the host network namespace and bypasses Kubernetes
@@ -825,7 +826,7 @@ NetworkPolicy can be enabled when the cluster CNI supports
             `networking.k8s.io/v1` policies. It is only effective when
             `hostNetwork` is set to `false`.
 
-=== gNB Configuration File (gnb-config.yml)
+=== gNB configuration file (gnb-config.yml)
 
 The gNB configuration embedded in the Helm Chart defines cell parameters, OFH timing, test mode settings, and logging.
 
@@ -913,9 +914,9 @@ test_mode:
     pdsch_active: true  # Enable downlink traffic
 ----
 
-**Configuration Highlights:**
 
-==== OFH Timing Parameters
+
+==== OFH timing parameters
 
 The `t1a` and `ta4` windows define when packets are valid. Packets arriving outside these windows are dropped as "early" or "late". These values are tuned empirically:
 
@@ -923,49 +924,48 @@ The `t1a` and `ta4` windows define when packets are valid. Packets arriving outs
 * **ta4_max: 350**: DU expects User-Plane UL packets within 80-350 microseconds after the slot boundary.
 * Misconfigurations cause timing violations logged as `RX_EARLY`, `RX_LATE`, `TX_EARLY`, `TX_LATE`.
 
-==== IQ Compression
+==== IQ compression
 
 Block Floating Point (BFP) compression reduces OFH bandwidth from ~25 Gbps to ~15 Gbps for 100MHz:
 
 * **9-bit samples**: Each I/Q sample is 9 bits (vs. 16-bit uncompressed)
 * **Shared exponent**: BFP groups samples and shares a single exponent, trading precision for bandwidth
 
-==== TDD Pattern
+==== TDD pattern
 
 The 7:2 DL:UL slot ratio is optimized for high downlink throughput (streaming, video):
 
-* **DL**: 7 slots + 6 symbols = 7.6ms of DL per 10ms frame (76%)
-* **UL**: 2 slots + 4 symbols = 2.4ms of UL per 10ms frame (24%)
-* **Special Slot**: Contains guard period (GP) for TX/RX switching
+* **DL**: 7 slots + 6 symbols = 7.6 ms of DL per 10 ms frame (76%)
+* **UL**: 2 slots + 4 symbols = 2.4 ms of UL per 10 ms frame (24%)
+* **Special slot**: Contains guard period (GP) for TX/RX switching
 
-==== MIMO Configuration
+==== MIMO configuration
 
 4x1 MIMO (4 TX antennas, 1 RX) with RI=4 enables 4-layer spatial multiplexing:
 
-* **Peak Throughput**: 4 layers × 100 MHz × 30 kHz SCS × QAM256 ≈ 1.4 Gbps theoretical
+* **Peak throughput**: 4 layers × 100 MHz × 30 kHz SCS × QAM256 ≈ 1.4 Gbps theoretical
 * **Measured**: ~1.4 Gbps in test mode (overhead from PDCCH, DMRS, guard bands)
 
 
-== Network Configuration
+== Network configuration
 
-=== SR-IOV Architecture
+=== SR-IOV architecture
 
 Single Root I/O Virtualization (SR-IOV) is a hardware-based virtualization technology that creates virtual functions (VFs) from a physical NIC. Each VF appears as an independent PCIe device, enabling near-native performance without hypervisor overhead.
 
-==== How SR-IOV Works
+==== How SR-IOV works
 
-image::sriov-architecture.svg[title="SR-IOV Architecture", SR-IOV Architecture, align="center", width=100%]
+image::sriov-architecture.svg[title="SR-IOV Architecture", SR-IOV Architecture, align="center", scaledwidth=90%]
 
 
-
-**Benefits:**
+**The benefits of SR-IOV include:**
 
 * **Performance**: DPDK bypasses kernel, achieving line-rate throughput with minimal CPU usage
 * **Isolation**: Each VF has dedicated queues, preventing noisy neighbor interference
-* **Hardware Offload**: TX/RX checksum, segmentation offload, RSS (Receive Side Scaling)
-* **Low Latency**: Direct DMA to userspace memory (DPDK), avoiding context switches
+* **Hardware offload**: TX/RX checksum, segmentation offload, RSS (Receive Side Scaling)
+* **Low latency**: Direct DMA to userspace memory (DPDK), avoiding context switches
 
-=== SR-IOV Configuration
+=== SR-IOV configuration
 
 {stelco-long} automates SR-IOV setup using a custom ConfigMap consumed by a systemd service.
 
@@ -997,7 +997,7 @@ data:
 ----
 
 
-**Configuration Fields:**
+**Configuration fields:**
 
 [cols="1,3,3",options="header"]
 |===
@@ -1027,7 +1027,7 @@ data:
 |===
 
 
-==== Systemd Service: sriov-custom-auto-vfs.service
+==== Systemd service `sriov-custom-auto-vfs.service`
 
 This service reads the ConfigMap and creates VFs:
 
@@ -1054,20 +1054,26 @@ KillMode=process
 WantedBy=multi-user.target
 ----
 
-**Execution Flow:**
+**The execution flow is:**
 
-1. Wait for RKE2 cluster to be ready (all nodes in Ready state)
-2. Execute `/opt/sriov/sriov-auto-filler.sh` which:
+. Wait for RKE2 cluster to be ready (all nodes in Ready state)
+. Execute `/opt/sriov/sriov-auto-filler.sh` which:
                 
-Reads ConfigMap via kubectl
-Creates VFs: `echo 1 > /sys/class/net/ens6f1np1/device/sriov_numvfs`
-Binds VFs to vfio-pci driver: `dpdk-devbind.py --bind=vfio-pci 0000:53:11.0`
-Advertises resources to kubelet
++
+--
+* Reads ConfigMap via kubectl
 
-=== MAC Address Override Service
+* Creates VFs: `echo 1 > /sys/class/net/ens6f1np1/device/sriov_numvfs`
 
-Critical for {ocudu}: SR-IOV VF MAC addresses are randomized by default. The gNB and RU emulator configurations hardcode specific MACs, requiring manual override.
+* Binds VFs to vfio-pci driver: `dpdk-devbind.py --bind=vfio-pci 0000:53:11.0`
 
+* Advertises resources to kubelet
+--
+
+=== MAC address override service
+
+Critical for {ocudu}: The gNB and RU emulator configurations hardcode specific MAC addresses, but SR-IOV VF MAC addresses are randomized by default.  
+It is critical for {ocudu} to override this.
 [source]
 ----
 [Unit]
@@ -1101,7 +1107,7 @@ WantedBy=multi-user.target
 * **Failure Mode**: Mismatched MACs cause 100% packet drops. gNB logs show "Missed incoming User-Plane uplink messages" continuously.
 ====
 
-**Verification Commands:**
+**Verify as follows:**
 
 [source]
 ----
@@ -1122,7 +1128,7 @@ kubectl describe node | grep -A5 "Capacity"
 # Should show: rancher.io/odu: 1, rancher.io/oru: 1
 ----
 
-=== Network Attachment Definition (Multus)
+=== Network attachment definition (Multus)
 
 Multus requires NetworkAttachmentDefinition resources to attach secondary interfaces to pods. The SR-IOV CNI uses these definitions.
 
@@ -1151,12 +1157,15 @@ spec:
   }'
 ----
 
-**Note**: For DPDK applications, IPAM is often irrelevant since packets bypass the kernel IP stack. The SR-IOV CNI primarily handles VF assignment and passthrough.
+[NOTE]
+====
+For DPDK applications, IPAM is often irrelevant since packets bypass the kernel IP stack. The SR-IOV CNI primarily handles VF assignment and passthrough.
+====
 
 
-== Performance Tuning
+== Performance tuning
 
-=== Kernel Parameters
+=== Kernel parameters
 
 Kernel boot parameters configure the OS for real-time, low-latency operation. These are defined in the CAPI manifest's `kernel_arguments.should_exist` section.
 
@@ -1186,7 +1195,7 @@ kernelArguments:
     - rcupdate.rcu_task_stall_timeout=0
 ----
 
-**Parameter Explanations:**
+**Parameter explanations:**
 
 [cols="1,3,3",options="header"]
 |===
@@ -1204,15 +1213,15 @@ kernelArguments:
 
 | `idle`
 | poll
-| Disable CPU idle states (C-states). CPUs spin-wait instead of sleeping, reducing wakeup latency from ~100μs to 0
+| Disable CPU idle states (C-states). CPUs spin-wait instead of sleeping, reducing wakeup latency from ~100 μs to 0
 
 | `hugepagesz`
 | 1G
-| Default hugepage size (1GB pages for DPDK)
+| Default hugepage size (1 GB pages for DPDK)
 
 | `hugepages`
 | 40
-| Allocate 40 × 1GB = 40GB of hugepages at boot
+| Allocate 40 × 1 GB = 40 GB of hugepages at boot
 
 | `default_hugepagesz`
 | 1G
@@ -1256,10 +1265,10 @@ kernelArguments:
 ====
 * **Cores 0-7 (System Cores)**: Handle OS tasks, Kubernetes components, system daemons, interrupts. These cores remain under normal scheduler control.
 * **Cores 8-39 (Isolated Cores)**: Dedicated to {ocudu} workloads. The kernel scheduler does not place tasks here unless explicitly pinned (via cgroups/cpusets). Timer ticks are disabled (adaptive-tick), and RCU callbacks are offloaded, minimizing OS interference.
-* **Result**: Isolated cores achieve deterministic performance with <10μs jitter, suitable for real-time RAN processing.
+* **Result**: Isolated cores achieve deterministic performance with <10 μs jitter, suitable for real-time RAN processing.
 ====
 
-=== CPU Partitioning (Tuned Profile)
+=== CPU partitioning (tuned profile)
 
 The `cpu-partitioning` tuned profile optimizes isolated cores further by adjusting scheduler, memory, and power settings.
 
@@ -1282,12 +1291,14 @@ The `cpu-partitioning` tuned profile optimizes isolated cores further by adjusti
         WantedBy=multi-user.target
 ----
 
-**Tuned Optimizations:**
+**Tuned optimizations:**
 
-* **CPU Governor**: Set to `performance` (fixed maximum frequency, no power scaling)
-* **IRQ Balancing**: Disable irqbalance service on isolated cores
+* **CPU governor**: Set to `performance` (fixed maximum frequency, no power scaling)
+* **IRQ balancing**: Disable irqbalance service on isolated cores
 * **Scheduler**: Reduce scheduling quantum on system cores to improve responsiveness
 * **Memory**: Disable zone reclaim on NUMA nodes
+
+
 **Verification:**
 
 [source]
@@ -1305,7 +1316,7 @@ The `cpu-partitioning` tuned profile optimizes isolated cores further by adjusti
         # Output: performance (repeated for each core)
 ----
 
-=== Kubelet Configuration
+=== Kubelet configuration
 
 Kubelet configuration enforces CPU and memory topology policies.
 
@@ -1318,18 +1329,24 @@ apiVersion: kubelet.config.k8s.io/v1beta1
         topologyManagerPolicy: single-numa-node  # Enforce single-NUMA allocation
 ----
 
-**Policy Explanations:**
+**These policy options are explained in the following sections.**
 
-==== cpuManagerPolicy: static
-
+cpuManagerPolicy: static::
++
+--
 Static CPU manager allocates exclusive CPUs to Guaranteed pods (those with `limits == requests` for CPU).
 
 * **Behavior**: When a pod requests CPU resources, kubelet assigns specific cores from the non-reserved set (8-39) using cpusets.
+
 * **Isolation**: No other pods or system processes can use these cores.
+
 * **Requirement**: Pod must be QoS class "Guaranteed" (all containers have CPU/memory limits == requests).
 
-==== reservedSystemCPUs: 0-7
+--
 
+reservedSystemCPUs: 0-7::
++
+--
 Reserves cores 0-7 for:
 
 * kubelet daemon
@@ -1337,28 +1354,30 @@ Reserves cores 0-7 for:
 * System daemons (sshd, systemd, etc.)
 * Kubernetes system pods (kube-proxy, calico, multus)
 This prevents system load from interfering with workload cores.
+--
 
-==== topologyManagerPolicy: single-numa-node
+topologyManagerPolicy: single-numa-node::
++
+--
 
 Enforces that all resources for a pod (CPUs, memory, devices) come from a single NUMA node.
 
 * **Why**: Cross-NUMA memory access has 2-3x higher latency (~100ns local vs. ~200ns remote).
 * **Benefit**: For DPDK applications, keeping CPU, hugepages, and NIC on the same NUMA node maximizes throughput and minimizes jitter.
-* **Failure Mode**: If resources span NUMA nodes, pod admission is rejected.
+* **Failure mode**: If resources span NUMA nodes, pod admission is rejected.
+--
 
-=== DPDK Core Binding
+=== DPDK core binding
 
-DPDK's EAL (Environment Abstraction Layer) arguments control which CPU cores are used by
-            DPDK threads. When SR-IOV is enabled, the exact CPU cores assigned to the gNB pod are not
-            known until runtime. Kubernetes assigns those cores dynamically, and the allocation can
-            change between deployments.
+DPDK's EAL (Environment Abstraction Layer) arguments control which CPU cores are used by DPDK threads. 
+When SR-IOV is enabled, the exact CPU cores assigned to the gNB pod are not known until runtime. 
+Kubernetes assigns those cores dynamically, and the allocation can change between deployments.
 
-To avoid manually reconfiguring the EAL arguments for every deployment, the gNB entrypoint
-            script updates the core list at startup. It reads the CPU allocation available to the
-            container and replaces the configured core values with the cores assigned to the pod at
-            runtime. The entrypoint script can only replace the lcores correctly if you follow this
-            format: `--lcores (lcores)@(physical_cores)`. Keep the lcores braket set to `(0-1)`
-            and the second one `(0-11)` or similar. The same applies for the RU emulator.
+To avoid manually reconfiguring the EAL arguments for every deployment, the gNB entrypoint script updates the core list at startup. 
+It reads the CPU allocation available to the container and replaces the configured core values with the cores assigned to the pod at runtime. 
+The entrypoint script can only replace the lcores correctly if you follow this format: `--lcores (lcores)@(physical_cores)`. 
+Keep the lcores braket set to `(0-1)` and the second one `(0-11)` or similar. 
+The same applies for the RU emulator.
 
 [source]
 ----
@@ -1381,12 +1400,12 @@ To avoid manually reconfiguring the EAL arguments for every deployment, the gNB 
 * DPDK logical core 1 can run on any of physical cores 0-11
 * DPDK scheduler distributes work threads across these cores
 
-== Validation and Monitoring
+== Validation and monitoring
 
-=== Deployment Verification
+=== Deployment verification
 
-**Step 1: Apply BMH and CAPI Manifests**
-
+. Apply BMH and CAPI Manifests.
++
 [source]
 ----
 # Apply Bare Metal Host
@@ -1410,8 +1429,8 @@ To avoid manually reconfiguring the EAL arguments for every deployment, the gNB 
         # single-node-cluster2   true    10m
 ----
 
-**Step 2: Access Downstream Cluster**
-
+. Access Downstream Cluster.
++
 [source]
 ----
 # Get kubeconfig from management cluster
@@ -1433,8 +1452,8 @@ To avoid manually reconfiguring the EAL arguments for every deployment, the gNB 
         # Should show VFs for ens6f0np0 and ens6f1np1
 ----
 
-**Step 3: Verify {ocudu} Pods**
-
+. Verify {ocudu} Pods.
++
 [source]
 ----
 # Check pods in srs namespace
@@ -1463,16 +1482,20 @@ To avoid manually reconfiguring the EAL arguments for every deployment, the gNB 
         # Look for: "RU emulator started successfully"
 ----
 
-=== Performance Validation
+=== Performance validation
 
-==== Expected Throughput
+. Expected throughput
++
+--
 
 For **1 cell, 1 UE, 100MHz TDD, 4x1 MIMO, QAM256**:
 
 * **Target DL**: ~1.4 Gbps
 * **Target UL**: ~100 Mbps
+--
 
-==== Grafana Dashboard Access
+. Grafana dashboard access
++
 
 [source]
 ----
@@ -1488,7 +1511,7 @@ For **1 cell, 1 UE, 100MHz TDD, 4x1 MIMO, QAM256**:
         # - Dashboard → OFH Metrics (RX_ON_TIME, RX_EARLY, RX_LATE)
 ----
 
-==== Key Metrics to Monitor
+. Key metrics to monitor
 
 
 
@@ -1549,8 +1572,8 @@ For **1 cell, 1 UE, 100MHz TDD, 4x1 MIMO, QAM256**:
 
 The repository includes Python parsers to extract KPIs from logs and compare against thresholds.
 
-==== gNB Log Parser
-
+. gNB log parser
++
 [source]
 ----
 # Collect gNB logs from hostPath persistence
@@ -1570,8 +1593,8 @@ The repository includes Python parsers to extract KPIs from logs and compare aga
         # - Error/warning counts
 ----
 
-==== RU Emulator Log Parser
-
+. RU emulator log parser
++
 [source]
 ----
 # Collect RU logs
@@ -1591,8 +1614,8 @@ The repository includes Python parsers to extract KPIs from logs and compare aga
         # rx_err_drop_pct_max: 0.1
 ----
 
-==== InfluxDB3 KPI Parser
-
+. InfluxDB3 KPI parser
++
 [source]
 ----
 # Port-forward InfluxDB3 service
@@ -1615,7 +1638,7 @@ The repository includes Python parsers to extract KPIs from logs and compare aga
         # Validates against thresholds and generates pass/fail report
 ----
 
-== Conclusion and Next Steps
+== Conclusion and next steps
 
 
 This reference architecture demonstrates how the {ocudu} RAN stack can be deployed on {stelco-long} for hardware validation and RAN workload sizing. 
