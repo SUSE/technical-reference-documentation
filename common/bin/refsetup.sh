@@ -458,11 +458,33 @@ fi
 
 # update interdocument references
 # ensure adoc file includes correct vars file
-[ -f "${destdir}/adoc/${documentbase}.adoc" ] && sed -i "s/include::\.\/template_vars\[\]/include::.\/${documentbase}-vars.adoc\[\]/g" ${destdir}/adoc/${documentbase}.adoc
+[ -w "${destdir}/adoc/${documentbase}.adoc" ] && sed -i "s/include::\.\/template_vars\[\]/include::.\/${documentbase}-vars.adoc\[\]/g" ${destdir}/adoc/${documentbase}.adoc
 # ensure DC file references correct adoc file
-[ -f "${destdir}/DC-${documentbase}" ] && sed -i "s/MAIN=\"template_main\"/MAIN=\"${documentbase}.adoc\"/g" ${destdir}/DC-${documentbase}
+[ -w "${destdir}/DC-${documentbase}" ] && sed -i "s/MAIN=\"template_main\"/MAIN=\"${documentbase}.adoc\"/g" ${destdir}/DC-${documentbase}
 
-# update docinfo file to the correct document type
+# define the document type variable
+if [ -w "${destdir}/adoc/${documentbase}-vars.adoc" ]; then
+  case $doctype in
+    'gs')
+       sed -i "s/:doctype:.*/:doctype: Getting Started/g" "${destdir}/adoc/${documentbase}-vars.adoc"
+    ;;
+    'rc')
+       sed -i "s/:doctype:.*/:doctype: Reference Configuration/g" "${destdir}/adoc/${documentbase}-vars.adoc"
+    ;;
+    'ri')
+       sed -i "s/:doctype:.*/:doctype: Reference Implementation/g" "${destdir}/adoc/${documentbase}-vars.adoc"
+    ;;
+    'ea')
+       sed -i "s/:doctype:.*/:doctype: Enterprise Architecture/g" "${destdir}/adoc/${documentbase}-vars.adoc"
+    ;;
+  esac
+fi
+
+# define the article-id based on the base file name
+if [ -w "${destdir}/adoc/${documentbase}-vars.adoc" ]; then
+  artid=$(echo ${documentbase} | sed "s/_/-/g")
+  sed -i "s/:article-id:.*/:article-id: ${artid}/g" "${destdir}/adoc/${documentbase}-vars.adoc"
+fi
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
