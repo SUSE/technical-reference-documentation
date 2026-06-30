@@ -482,7 +482,8 @@ fi
 
 # define the article-id based on the base file name
 if [ -w "${destdir}/adoc/${documentbase}-vars.adoc" ]; then
-
+  artid=$(echo ${documentbase} | sed "s/_/-/g")
+  sed -i "s/:article-id:.*/:article-id: ${artid}/g" "${destdir}/adoc/${documentbase}-vars.adoc"
 fi
 
 
