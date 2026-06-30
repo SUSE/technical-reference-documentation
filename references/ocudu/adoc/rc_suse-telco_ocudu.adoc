@@ -32,8 +32,8 @@ Communication Service Providers (CSPs) are transitioning to open, disaggregated,
 This shift requires tight integration between carrier-grade infrastructure platforms and high-performance RAN software that can run efficiently on general-purpose hardware.
 
 
-This joint reference architecture documents the technical integration of the {ocudu-brand} RAN stack with {stelco-brand}, aligned with Project Sylva, enabling deployment of RAN with AI-native workloads. 
-Validated in collaboration with Software Radio Systems (SRS), the technical contributor of {ocudu}, it provides a single-node deployment model using Cluster API (CAPI) for hardware readiness validation and resource sizing. 
+This joint reference architecture documents the technical integration of the {ocudu-projects}[{ocudu-brand}]  RAN stack with {stelco-website}[{stelco-brand}], aligned with {sylvaproject}[Project Sylva], enabling deployment of RAN with AI-native workloads. 
+Validated in collaboration with {srs-website}[Software Radio Systems (SRS)], the technical contributor of {ocudu}, it provides a single-node deployment model using Cluster API (CAPI) for hardware readiness validation and resource sizing. 
 The setup focuses on an O-RAN {ocudu-splite} {ocudu-splite-version} gNB configuration with an RU emulator, enabling fully software-based testing and repeatable performance measurements. 
 It demonstrates production-grade performance characteristics including low latency, 1,000+ users per cell, and hardware efficiency gains of 30-50% CAPEX reduction compared to proprietary systems.
 
@@ -76,22 +76,22 @@ Also, a key gap has been the lack of validated, carrier-grade Open RAN implement
 == The solution
 
 
-{stelco-provider} and {ocudu-provider} have jointly developed a fully disaggregated, carrier-grade Open RAN stack anchored in the Project Sylva reference architecture. 
-This solution was demonstrated at MWC 2026, validating its readiness for real-world telco deployments.
+{suse-website}[{stelco-provider}] and {ocudu-provider} have jointly developed a fully disaggregated, carrier-grade Open RAN stack anchored in the {sylvaproj-architecture}[Project Sylva reference architecture]. 
+This solution was {mwc-demo}[demonstrated at MWC 2026], validating its readiness for real-world telco deployments.
 
 The stack is structured as a horizontal, integrated platform that begins with general-purpose hardware and extends through the infrastructure layers to the RAN workloads. 
-At the foundation lies high-performance commodity hardware featuring Intel® Xeon® 6 SoC processors and Supermicro edge servers. 
+At the foundation lies high-performance commodity hardware featuring {intel-xeon}[Intel® Xeon® 6 SoC processors] and {supermicro-servers}[Supermicro edge servers]. 
 This choice delivers the necessary compute density and efficiency while avoiding proprietary silos, enabling significant improvements in power consumption and server utilization.
 
 Above the hardware, {stelco-long} provides the operating system and Kubernetes infrastructure layer. 
-{sle-micro}, an immutable and real-time Linux distribution, combined with RKE2, creates a hardened, Sylva-compliant Container-as-a-Service platform. 
+{sle-micro-website}[{sle-micro}], an immutable and real-time Linux distribution, combined with {rke2-doc}[RKE2], creates a hardened, Sylva-compliant Container-as-a-Service platform. 
 This layer ensures deterministic low-latency performance, CPU isolation, SR-IOV networking with DPDK, and NUMA-aware resource management, all critical for meeting the stringent timing and throughput requirements of RAN workloads.
 
 
 image::image-architecture1.png[title="{stelco-long} architecture", {stelco-long} architecture, align="center", scaledwidth=90%]
 
 
-{suse-rancher-prime} supplies unified orchestration and management across distributed edge sites. 
+{rancher-website}[{suse-rancher-prime}] supplies unified orchestration and management across distributed edge sites. 
 It enables centralized control, consistent policy enforcement, and zero-touch operations through declarative GitOps workflows and Cluster API (CAPI), allowing operators to manage hundreds of edge locations with a single operational model.
 
 At the workload layer, {ocudu} delivers AI-native, software-defined Central Unit (CU) and Distributed Unit (DU) network functions. 
@@ -111,7 +111,7 @@ This reference architecture defines a single-node deployment designed for hardwa
 It integrates OCUDU’s gNB implementation with {stelco-long}, following Project Sylva principles for a consistent, cloud-native telco stack.
 
 
-image::image-architecture2.png[title="Architecture Overview and Deployment", Architecture Overview and Deployment, align="center", scaledwidth=100%]
+image::OCUDU-on-suse-telco.png[title="Architecture Overview and Deployment", Architecture Overview and Deployment, align="center", scaledwidth=90%]
 
 The architecture follows O-RAN {ocudu-splite} {ocudu-splite-version}, with all CU and DU functions consolidated in a single gNB pod running alongside an RU emulator. 
 This configuration enables complete software-based testing of the DU-to-RU path over the Open Fronthaul interface without requiring physical radio hardware.
@@ -1668,7 +1668,7 @@ By combining {stelco-long}’s robust, Sylva-compliant infrastructure with the {
 This joint solution delivers standardized operations, reduced deployment complexity, lower infrastructure costs, and the flexibility to scale AI-native 5G and 6G services across diverse edge environments.
 
 
-**Ready to get started?** Contact the {stelco-long} team today to schedule a dedicated technical workshop, review the {ocudu} Getting Started Guide, or initiate your own validation deployment with {ocudu} RAN on {stelco-long}.
+**Ready to get started?** {suse-contact}[Contact the {stelco-long} team] today to schedule a dedicated technical workshop, review the {ocudu-guide}[{ocudu} Getting Started Guide], or initiate your own validation deployment with {ocudu} RAN on {stelco-long}.
 
 
 
