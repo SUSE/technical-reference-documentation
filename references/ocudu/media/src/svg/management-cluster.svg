@@ -1,0 +1,77 @@
+<svg viewBox="0 0 1100 610" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 1100px; height: auto;">
+                <!-- Management Cluster -->
+                <rect x="50" y="20" width="1000" height="240" fill="#e3f2fd" stroke="#1976d2" stroke-width="3" rx="8"></rect>
+                <text x="550" y="50" text-anchor="middle" font-size="20" font-weight="bold" fill="#1565c0">Management Cluster</text>
+                <text x="550" y="73" text-anchor="middle" font-size="13" fill="#1976d2">Persistent infrastructure orchestration layer</text>
+
+                <!-- Control Plane Components -->
+                <rect x="100" y="90" width="900" height="150" fill="#bbdefb" stroke="#1976d2" stroke-width="2" rx="5"></rect>
+                <text x="550" y="110" text-anchor="middle" font-size="14" font-weight="bold" fill="#0d47a1">Control Plane Components</text>
+
+                <!-- Metal3 -->
+                <rect x="130" y="125" width="240" height="100" fill="#90caf9" stroke="#1565c0" stroke-width="2" rx="5"></rect>
+                <text x="250" y="147" text-anchor="middle" font-size="13" font-weight="bold" fill="#0d47a1">Metal3</text>
+                <text x="250" y="167" text-anchor="middle" font-size="11" fill="#1565c0">• Ironic (bare metal provisioning)</text>
+                <text x="250" y="185" text-anchor="middle" font-size="11" fill="#1565c0">• Baremetal Operator</text>
+                <text x="250" y="203" text-anchor="middle" font-size="11" fill="#1565c0">• BMC management</text>
+
+                <!-- CAPI Operator -->
+                <rect x="400" y="125" width="240" height="100" fill="#90caf9" stroke="#1565c0" stroke-width="2" rx="5"></rect>
+                <text x="520" y="147" text-anchor="middle" font-size="13" font-weight="bold" fill="#0d47a1">CAPI Operator</text>
+                <text x="520" y="167" text-anchor="middle" font-size="11" fill="#1565c0">• Cluster bootstrap</text>
+                <text x="520" y="185" text-anchor="middle" font-size="11" fill="#1565c0">• Lifecycle management</text>
+                <text x="520" y="203" text-anchor="middle" font-size="11" fill="#1565c0">• Infrastructure abstraction</text>
+
+                <!-- Rancher -->
+                <rect x="670" y="125" width="240" height="100" fill="#90caf9" stroke="#1565c0" stroke-width="2" rx="5"></rect>
+                <text x="790" y="147" text-anchor="middle" font-size="13" font-weight="bold" fill="#0d47a1">Rancher</text>
+                <text x="790" y="167" text-anchor="middle" font-size="11" fill="#1565c0">• Multi-cluster mgmt</text>
+                <text x="790" y="185" text-anchor="middle" font-size="11" fill="#1565c0">• Cluster import</text>
+                <text x="790" y="203" text-anchor="middle" font-size="11" fill="#1565c0">• Centralized monitoring</text>
+
+                <!-- Arrow to Downstream Cluster -->
+                <line x1="550" y1="260" x2="550" y2="320" stroke="#1976d2" stroke-width="4" marker-end="url(#arrowblue2)"></line>
+                <text x="550" y="295" text-anchor="middle" font-size="12" font-weight="bold" fill="#1565c0">Provisions &amp; Bootstraps</text>
+
+                <!-- Downstream Workload Cluster -->
+                <rect x="50" y="320" width="1000" height="270" fill="#e8f5e9" stroke="#388e3c" stroke-width="3" rx="8"></rect>
+                <text x="550" y="350" text-anchor="middle" font-size="18" font-weight="bold" fill="#2e7d32">Downstream Workload Cluster (OCUDU Cluster)</text>
+
+                <!-- Cluster Stack -->
+                <rect x="100" y="370" width="900" height="60" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="550" y="395" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">RKE2 + Calico + Multus + SR-IOV Operator + OCUDU Stack</text>
+
+                <!-- Application Pods -->
+                <rect x="130" y="445" width="240" height="80" fill="#a5d6a7" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="250" y="470" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">ocudu-gnb</text>
+                <text x="250" y="490" text-anchor="middle" font-size="11" fill="#2e7d32">gNB DU</text>
+                <text x="250" y="507" text-anchor="middle" font-size="11" fill="#2e7d32">24 cores, 16Gi RAM</text>
+
+                <rect x="400" y="445" width="240" height="80" fill="#a5d6a7" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="520" y="470" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">ru-emulator</text>
+                <text x="520" y="490" text-anchor="middle" font-size="11" fill="#2e7d32">Radio Unit</text>
+                <text x="520" y="507" text-anchor="middle" font-size="11" fill="#2e7d32">6 cores, 8Gi RAM</text>
+
+                <rect x="670" y="445" width="240" height="80" fill="#a5d6a7" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="790" y="470" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">Monitoring Stack</text>
+                <text x="790" y="490" text-anchor="middle" font-size="11" fill="#2e7d32">Grafana + InfluxDB3</text>
+                <text x="790" y="507" text-anchor="middle" font-size="11" fill="#2e7d32">+ Telegraf</text>
+
+                <!-- Management Notes -->
+                <rect x="100" y="540" width="900" height="35" fill="#dcedc8" stroke="#689f38" stroke-width="1" rx="3"></rect>
+                <text x="550" y="555" text-anchor="middle" font-size="11" fill="#558b2f">• Managed independently but monitored from management cluster</text>
+                <text x="550" y="568" text-anchor="middle" font-size="11" fill="#558b2f">• Can be imported into Rancher for centralized observability</text>
+
+                <!-- Arrow definitions -->
+                <defs>
+                    <marker id="arroworange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#f57c00"></path>
+                    </marker>
+                    <marker id="arrowgreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"></path>
+                    </marker>
+                    <marker id="arrowblue2" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L10,3 z" fill="#1976d2"></path>
+                    </marker>
+                </defs>
+            </svg>

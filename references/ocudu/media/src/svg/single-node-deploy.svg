@@ -1,0 +1,73 @@
+<svg viewBox="0 0 1100 800" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 1100px; height: auto;">
+                <!-- Bare Metal Server Container -->
+                <rect x="20" y="20" width="1060" height="760" fill="#f5f5f5" stroke="#333" stroke-width="3" rx="8"></rect>
+                <text x="550" y="50" text-anchor="middle" font-size="20" font-weight="bold" fill="#333">Bare Metal Server - Single Node Deployment</text>
+
+                <!-- RKE2 Kubernetes Cluster -->
+                <rect x="50" y="80" width="1000" height="380" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="5"></rect>
+                <text x="550" y="105" text-anchor="middle" font-size="16" font-weight="bold" fill="#1565c0">RKE2 Kubernetes Cluster (v1.34.2)</text>
+
+                <!-- ocudu-gnb Pod -->
+                <rect x="100" y="130" width="420" height="300" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="310" y="155" text-anchor="middle" font-size="14" font-weight="bold" fill="#2e7d32">ocudu-gnb Pod (Namespace: srs)</text>
+                <rect x="130" y="175" width="360" height="230" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="310" y="195" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">SR-IOV VF (ODU)</text>
+                <text x="310" y="215" text-anchor="middle" font-size="11" fill="#2e7d32">Interface: net1</text>
+                <text x="310" y="235" text-anchor="middle" font-size="11" fill="#2e7d32">PCI: 0000:53:11.0</text>
+                <text x="310" y="255" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">MAC: 00:11:22:33:00:11</text>
+                <line x1="150" y1="270" x2="470" y2="270" stroke="#388e3c" stroke-width="1"></line>
+                <text x="310" y="290" text-anchor="middle" font-size="11" fill="#2e7d32">DPDK Binding</text>
+                <text x="310" y="310" text-anchor="middle" font-size="11" fill="#2e7d32">vfio-pci driver</text>
+                <text x="310" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">CPU: 24 cores | RAM: 16Gi</text>
+                <text x="310" y="350" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">Hugepages: 2Gi (1GB pages)</text>
+                <text x="310" y="370" text-anchor="middle" font-size="11" fill="#2e7d32">rancher.io/odu: 1</text>
+
+                <!-- ru-emulator Pod -->
+                <rect x="580" y="130" width="420" height="300" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="5"></rect>
+                <text x="790" y="155" text-anchor="middle" font-size="14" font-weight="bold" fill="#e65100">ru-emulator Pod (Namespace: srs)</text>
+                <rect x="610" y="175" width="360" height="230" fill="#ffe0b2" stroke="#f57c00" stroke-width="2" rx="5"></rect>
+                <text x="790" y="195" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">SR-IOV VF (ORU)</text>
+                <text x="790" y="215" text-anchor="middle" font-size="11" fill="#e65100">Interface: net1</text>
+                <text x="790" y="235" text-anchor="middle" font-size="11" fill="#e65100">PCI: 0000:53:01.0</text>
+                <text x="790" y="255" text-anchor="middle" font-size="11" font-weight="bold" fill="#bf360c">MAC: 00:11:22:33:00:01</text>
+                <line x1="630" y1="270" x2="950" y2="270" stroke="#f57c00" stroke-width="1"></line>
+                <text x="790" y="290" text-anchor="middle" font-size="11" fill="#e65100">DPDK Binding</text>
+                <text x="790" y="310" text-anchor="middle" font-size="11" fill="#e65100">vfio-pci driver</text>
+                <text x="790" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="#bf360c">CPU: 6 cores | RAM: 8Gi</text>
+                <text x="790" y="350" text-anchor="middle" font-size="11" font-weight="bold" fill="#bf360c">Hugepages: 2Gi (1GB pages)</text>
+                <text x="790" y="370" text-anchor="middle" font-size="11" fill="#e65100">rancher.io/oru: 1</text>
+
+                <!-- Arrow between pods -->
+                <line x1="310" y1="435" x2="310" y2="480" stroke="#1976d2" stroke-width="3"></line>
+                <line x1="790" y1="435" x2="790" y2="480" stroke="#1976d2" stroke-width="3"></line>
+                <line x1="310" y1="480" x2="790" y2="480" stroke="#1976d2" stroke-width="3"></line>
+                <text x="550" y="475" text-anchor="middle" font-size="11" font-weight="bold" fill="#1565c0">OFH Traffic (25 Gbps)</text>
+
+                <!-- Intel E810 NIC -->
+                <rect x="50" y="500" width="1000" height="210" fill="#fce4ec" stroke="#c2185b" stroke-width="2" rx="5"></rect>
+                <text x="550" y="525" text-anchor="middle" font-size="16" font-weight="bold" fill="#880e4f">Intel E810-XXVDA4 NIC (Dual Port, 25GbE)</text>
+
+                <!-- PF 1 -->
+                <rect x="110" y="550" width="400" height="140" fill="#f8bbd0" stroke="#c2185b" stroke-width="2" rx="5"></rect>
+                <text x="310" y="575" text-anchor="middle" font-size="14" font-weight="bold" fill="#880e4f">PF 1: ens6f1np1</text>
+                <rect x="140" y="590" width="340" height="80" fill="#f48fb1" stroke="#c2185b" stroke-width="1" rx="3"></rect>
+                <text x="310" y="610" text-anchor="middle" font-size="12" font-weight="bold" fill="#880e4f">VF 0 → ocudu-gnb</text>
+                <text x="310" y="630" text-anchor="middle" font-size="11" fill="#ad1457">MAC: 00:11:22:33:00:11</text>
+                <text x="310" y="648" text-anchor="middle" font-size="11" fill="#ad1457">Driver: vfio-pci</text>
+
+                <!-- PF 0 -->
+                <rect x="590" y="550" width="400" height="140" fill="#f8bbd0" stroke="#c2185b" stroke-width="2" rx="5"></rect>
+                <text x="790" y="575" text-anchor="middle" font-size="14" font-weight="bold" fill="#880e4f">PF 0: ens6f0np0</text>
+                <rect x="620" y="590" width="340" height="80" fill="#f48fb1" stroke="#c2185b" stroke-width="1" rx="3"></rect>
+                <text x="790" y="610" text-anchor="middle" font-size="12" font-weight="bold" fill="#880e4f">VF 0 → ru-emulator</text>
+                <text x="790" y="630" text-anchor="middle" font-size="11" fill="#ad1457">MAC: 00:11:22:33:00:01</text>
+                <text x="790" y="648" text-anchor="middle" font-size="11" fill="#ad1457">Driver: vfio-pci</text>
+
+                <!-- Arrows from VFs to Pods -->
+                <line x1="310" y1="550" x2="310" y2="480" stroke="#c2185b" stroke-width="2" stroke-dasharray="5,5"></line>
+                <line x1="790" y1="550" x2="790" y2="480" stroke="#c2185b" stroke-width="2" stroke-dasharray="5,5"></line>
+
+                <!-- Hardware Specs Box -->
+                <rect x="50" y="730" width="1000" height="30" fill="#fff9c4" stroke="#f9a825" stroke-width="2" rx="3"></rect>
+                <text x="70" y="750" font-size="11" font-weight="bold" fill="#f57f17">HW: Intel Xeon 40 cores (0-7: System, 8-39: Isolated) | 64GB RAM (40GB hugepages) | NVMe SSD | Same VLAN Required</text>
+            </svg>

@@ -1,0 +1,61 @@
+<svg viewBox="0 0 1000 650" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 1000px; height: auto;">
+                <!-- Physical Server Container -->
+                <rect x="20" y="20" width="960" height="610" fill="#f5f5f5" stroke="#333" stroke-width="3" rx="8"></rect>
+                <text x="500" y="50" text-anchor="middle" font-size="18" font-weight="bold" fill="#333">Physical Server - SR-IOV Architecture</text>
+
+                <!-- Pod Container -->
+                <rect x="60" y="80" width="880" height="180" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+                <text x="500" y="105" text-anchor="middle" font-size="15" font-weight="bold" fill="#2e7d32">Pod: ocudu-gnb (Namespace: srs)</text>
+
+                <!-- Network Interfaces in Pod -->
+                <rect x="100" y="125" width="800" height="120" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" rx="5"></rect>
+
+                <!-- eth0 (Calico) -->
+                <rect x="130" y="145" width="340" height="50" fill="#81c784" stroke="#388e3c" stroke-width="1" rx="3"></rect>
+                <text x="300" y="165" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">eth0 (Primary - Calico CNI)</text>
+                <text x="300" y="182" text-anchor="middle" font-size="11" fill="#2e7d32">Cluster management traffic</text>
+
+                <!-- net1 (SR-IOV) -->
+                <rect x="510" y="145" width="360" height="50" fill="#a5d6a7" stroke="#388e3c" stroke-width="1" rx="3"></rect>
+                <text x="690" y="165" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">net1 (Secondary - SR-IOV VF)</text>
+                <text x="690" y="182" text-anchor="middle" font-size="11" fill="#2e7d32">OFH data plane (DPDK vfio-pci)</text>
+
+                <!-- Passthrough Details -->
+                <rect x="130" y="205" width="740" height="30" fill="#dcedc8" stroke="#689f38" stroke-width="1" rx="3"></rect>
+                <text x="500" y="225" text-anchor="middle" font-size="11" fill="#558b2f">Direct passthrough • Kernel bypass • Zero-copy DMA to userspace</text>
+
+                <!-- Arrow from Pod to Device Plugin -->
+                <line x1="500" y1="260" x2="500" y2="300" stroke="#1976d2" stroke-width="3" marker-end="url(#arrowblue3)"></line>
+
+                <!-- SR-IOV Device Plugin -->
+                <rect x="60" y="300" width="880" height="120" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="5"></rect>
+                <text x="500" y="325" text-anchor="middle" font-size="15" font-weight="bold" fill="#1565c0">SR-IOV Device Plugin (DaemonSet)</text>
+                <rect x="100" y="345" width="800" height="60" fill="#bbdefb" stroke="#1976d2" stroke-width="1" rx="3"></rect>
+                <text x="500" y="365" text-anchor="middle" font-size="12" fill="#0d47a1">1. Discovers VFs from physical functions (PFs)</text>
+                <text x="500" y="383" text-anchor="middle" font-size="12" fill="#0d47a1">2. Advertises VF resources to kubelet (rancher.io/odu, rancher.io/oru)</text>
+                <text x="500" y="401" text-anchor="middle" font-size="12" fill="#0d47a1">3. Allocates VFs to pod requests based on extended resource claims</text>
+
+                <!-- Arrow from Device Plugin to NIC -->
+                <line x1="500" y1="420" x2="500" y2="460" stroke="#c2185b" stroke-width="3" marker-end="url(#arrowpink)"></line>
+
+                <!-- Intel E810 NIC -->
+                <rect x="60" y="460" width="880" height="150" fill="#fce4ec" stroke="#c2185b" stroke-width="2" rx="5"></rect>
+                <text x="500" y="485" text-anchor="middle" font-size="15" font-weight="bold" fill="#880e4f">Intel E810 NIC - Physical Function (PF)</text>
+
+                <!-- PF Details -->
+                <rect x="100" y="505" width="800" height="90" fill="#f8bbd0" stroke="#c2185b" stroke-width="2" rx="5"></rect>
+                <text x="500" y="530" text-anchor="middle" font-size="13" font-weight="bold" fill="#880e4f">PF: ens6f1np1 (25 GbE)</text>
+                <rect x="130" y="545" width="740" height="40" fill="#f48fb1" stroke="#c2185b" stroke-width="1" rx="3"></rect>
+                <text x="500" y="565" text-anchor="middle" font-size="12" fill="#ad1457">VF 0 (allocated to ocudu-gnb pod)</text>
+                <text x="500" y="580" text-anchor="middle" font-size="11" fill="#ad1457">PCI: 0000:53:11.0 | MAC: 00:11:22:33:00:11 | Driver: vfio-pci</text>
+
+                <!-- Arrow definitions -->
+                <defs>
+                    <marker id="arrowblue3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"></path>
+                    </marker>
+                    <marker id="arrowpink" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#c2185b"></path>
+                    </marker>
+                </defs>
+            </svg>

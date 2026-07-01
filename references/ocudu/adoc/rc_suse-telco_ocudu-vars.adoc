@@ -1,0 +1,292 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: rc-suse-telco-ocudu
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+//-
+:rev1-date: 2026-06-26
+:rev1-description: Original version
+:docdate: {rev1-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components,
+//   such as full product names, versions, websites, documentation
+//   URLs, and so on.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Variables are especially useful for referring to various
+//   aspects of the solution components, such as properly written names,
+//   product/project versions, website URLs, and so on.
+//   Keep in mind the following best practices for variable names:
+//     1. Be consistent.
+//     2. Prefer recognizable variable names over generic ones.
+//        E.g.: 'sles' and 'srancher' are better variable
+//        names than 'comp1' and 'component2'.
+//     3. Prefer short variable names over long ones.
+//        E.g.: 'sles' is better than 'suselinux', and
+//        'svirt' is better than 'susevirtualization'.
+//     4. Consider following a simple pattern to associate related variables,
+//        such as `base[-modifier]'.
+//        E.g.: 'svirt-brand', 'srancher-docs', 'sles-version'.
+//        Some standard '-modifiers' could include:
+//         -provider: Name of company or project providing the component
+//            E.g.: 'SUSE', 'HPE', 'Microsoft', 'Veeam'
+//         -long: Full name of the product without trademark symbols
+//            E.g.: 'SUSE Rancher Prime', 'Portworx Enterprise by Everpure'
+//         -brand: Branded, full name of the component
+//            E.g.: 'SUSE® Virtualization', 'NetApp® Trident™'
+//         -version: The relevant product version referenced in
+//            the document
+//            E.g.: '15 SP7', '3.2.4'
+//            If additional product versions are called out in the
+//            document, you could store them in separate variables.
+//            E.g.: 'k3s-version1', 'k3s-version2')
+//         -website: Product website
+//            E.g.: 'https://www.suse.com/products/server/'
+//         -docs: Product documentation
+//            E.g.: 'https://documentation.suse.com/sles/'
+//
+// IMPORTANT: The templates leverage generic variable names, such as
+//            'comp1' and 'comp2-version1'.
+//            Be sure to replace these generic variable names with your
+//            own variables wherever they occur, including:
+//            in the Vars file, the Docinfo file, and your Main content file.
+// -
+
+
+
+
+
+
+:stelco-provider: SUSE
+:stelco-brand: SUSE® Telco Cloud
+:stelco-long: SUSE Telco Cloud
+:stelco: {stelco-long}
+:stelco-edge: SUSE Edge
+:suse-rancher-prime: SUSE Rancher Prime
+:sle-micro: SUSE Linux Micro
+:stelco-edge-version: 3.5
+:slemicro: SUSE Linux Micro
+:eib: Edge Image Builder
+:stelco-website: https://www.suse.com/products/edge-for-telco/
+:stelco-docs: https://documentation.suse.com/suse-edge/3.5/html/edge/
+:stelco-docs-atip: {stelco-docs}atip.html
+:stelco-contact: https://www.suse.com/contact/
+:suse-website: https://www.suse.com/
+:mwc-demo: https://www.suse.com/c/suse-and-sylva-tackling-telco-ecosystem-fragmentation-challenges/
+:sle-micro-website: https://www.suse.com/products/micro/
+:rke2-doc: https://documentation.suse.com/cloudnative/rke2/
+:rancher-website: https://www.suse.com/products/rancher/
+:suse-contact: https://www.suse.com/contact/
+
+
+
+:ocudu-provider: SRS
+:ocudu: OCUDU
+:ocudu-brand: {ocudu}®
+:ocudu-long: {ocudu}
+:ocudu-gnb: OCUDU gNB
+:ocudu-splite: Split
+:ocudu-splite-version: 7.2
+:ocudu-website: https://ocudu.org/
+:ocudu-docs: https://ocudu-docs-604e90.gitlab.io/
+:ocudu-projects: https://ocudu.org/projects/
+:ocudu-guide: https://gitlab.com/ocudu/community/Governance/-/wikis/home
+:sylvaproject: https://sylvaproject.org/
+:sylvaproj-architecture: https://sylvaproject.org/architecture-benefits/
+:srs-website: https://srs.io/
+:intel-xeon: https://www.intel.com/content/www/us/en/products/details/processors/xeon/edge.html
+:supermicro-servers: https://www.supermicro.com/en/products/system/iot/1u/sys-112d-42c-fn8p
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title: (<75 characters) Concise subject of the document
+//        E.g.: "Enterprise AI Lifecycle with SUSE AI and ClearML"
+// subititle: (<75 characters) Expanded subject of the document
+//            E.g.: "Delivering a Secure, Scalable, and Observable Platform for AI Workloads"
+// usecase: (<55 characters) A use case for or purpose of the solution
+//          E.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                "Kubernetes-native object storage"
+// description: (<150 characters) Brief description of the document subject
+// description-social: (<55 characters) Condensed description suitable for
+//                     social media.
+// executive-summary: (<300 characters) A brief summary of the the document,
+//                    typically noting business case and technical components
+//                    NOTE: This text appears near the beginning of the rendered
+//                    document.
+//
+// TIP: You can reference defined variables when defining new variables.
+//      For example:
+//        Say that you have defined above these component variables:
+//          :svirt-long : SUSE Virtualization
+//          :vsp-long: Hitachi VSP Storage
+//        Then, you could reference them when you define the title
+//        variable like this:
+//          :doctitle: Integrating {svirt-long} with {vsp-long}
+//        When rendered, the variables will be expanded and the title
+//        will appear as:
+//          "Integrating SUSE Virtualization with Hitachi VSP Storage"
+// -
+:doctitle: AI-Native Disaggregated RAN
+
+:docsubtitle: Project Sylva Reference Architecture with {stelco-long} and {ocudu} RAN Stack
+
+:usecase: Validate hardware readiness and size 5G RAN
+
+:description: Reference architecture for integrating {ocudu} RAN with {stelco-long} to measure resource sizing using an RU emulator over O-RAN {ocudu-splite} {ocudu-splite-version}.
+
+:description-social: Deploy AI-native 5G Open RAN via {stelco-long}.
+
+:executive-summary: This document provides a technical reference for using {ocudu} on {stelco-long} to validate hardware readiness and size resources for a selected 5G RAN configuration. The goal is not to describe a full production deployment. Instead, this reference architecture shows how to exercise the {ocudu} stack, measure the resources required by the chosen RAN configuration, and use those measurements as input for planning a production deployment. In this setup, {ocudu} runs in the gNB deployment variant together with an RU emulator. This allows the DU-to-RU path to be validated with O-RAN {ocudu-splite} {ocudu-splite-version} and Open Fronthaul behavior while keeping the test environment fully software-based and reproducible.
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//   SUSE Documentation portal.
+//   Typically, no more than three tasks defined per
+//   document.
+//
+//   Tasks must be one of these supported values:
+//     Administration, Artificial Intelligence, Auditing, Authentication,
+//     Automation, Backup &amp; Recovery, Certification, Cloud,
+//     Clustering, Compliance, Configuration, Containerization,
+//     Container Management, Data Intelligence, Deployment, Design,
+//     Encryption, High Availability, Image Building, Implementation,
+//     Installation, Integration, Maintenance, Migration, Monitoring,
+//     Packaging, Security, Storage, Subscription Management,
+//     Troubleshooting, Upgrade &amp; Update, Virtualization,
+//     Vulnerability, Web
+//
+//   For example:
+//    :metatask1: Configuration
+//    :metatask2: Integration
+//    :metatask3: Deployment
+// -
+:metatask1: Configuration
+:metatask2: Installation
+:metatask3: Deployment
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//
+//   Follow the pattern below to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//
+//   TIP: Other contributors and editors are typically listed in
+//        an Acknowledgments section.
+//
+//   NOTE:
+//         To list additional authors or contributors on the cover page,
+//         you must add the variables here AND edit the Docinfo file.
+// -
+
+:author1-firstname: Alberto
+:author1-surname: Morgante
+:author1-jobtitle: Principal Telco Engineer
+:author1-orgname: SUSE
+
+:author2-firstname: Nils
+:author2-surname: Fürste
+:author2-jobtitle: DevOps Engineer
+:author2-orgname: Software Radio Systems
+
+:author3-firstname: Andre
+:author3-surname: Puschmann
+:author3-jobtitle: VP of Engineering
+:author3-orgname: Software Radio Systems
+
+:author4-firstname: Antonio Alonso 
+:author4-surname: Alarcon
+:author4-jobtitle: Senior Telco Engineer
+:author4-orgname: SUSE
+
+:author5-firstname: Tim
+:author5-surname: Irnich
+:author5-jobtitle: Senior Distinguished Telco Product Manager
+:author5-orgname: SUSE
+
+//:author2-firstname: first (given) name
+//:contrib1-firstname: first (given) name
+
+:editor1-firstname: Vesselin
+:editor1-surname: Matev
+:editor1-jobtitle: Partner Solutions Manager
+:editor1-orgname: SUSE
+
+:editor2-firstname: Jivaji
+:editor2-surname: Ihare
+:editor2-jobtitle: Partner Solution Architect
+:editor2-orgname: SUSE
+
+:editor3-firstname: Terry
+:editor3-surname: Smith
+:editor3-jobtitle: Ecosystem Solution Innovation Director
+:editor3-orgname: SUSE
+
+:editor4-firstname: Andrés
+:editor4-surname: Valero
+:editor4-jobtitle: Principal Technology Advocate
+:editor4-orgname: SUSE
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
