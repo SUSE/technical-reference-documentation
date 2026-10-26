@@ -167,18 +167,21 @@ Use CloudInit to create a persistent configuration of the iSCSI initiator.
 
 . Define the configuration of the iSCSI initiator.
 
-.. Create the `01_iscsi_ip.yaml` CloudInit resource file listed below in the `/oem` directory on each cluster node.
+.. Create a CloudInit resource file for each cluster node, as shown below for the first node.
++
+Each node needs its own CloudInit resource with a unique `metadata.name` and `spec.filename`, and with the host name, interface names, and IP addresses of that node.
+{svirt} rejects a CloudInit resource whose `spec.filename` is already used by another CloudInit resource.
 +
 [source, yaml]
 ----
 apiVersion: node.harvesterhci.io/v1beta1
 kind: CloudInit
 metadata:
-  name: iscsi-ip-config
+  name: iscsi-ip-node1
 spec:
-  matchSelector: {}
+  matchSelector:
     kubernetes.io/hostname: harvester-node-1 # Replace with actual hostname
-  filename: 01_iscsi_ip.yaml
+  filename: 01_iscsi_ip_node1.yaml
   contents: |
     stages:
       initramfs:
@@ -196,7 +199,7 @@ spec:
                 autoconnect=true
                 [ipv4]
                 method=manual
-                addresses=192.168.100.87/24 # Replace the IP address
+                addresses=192.168.100.87/24
                 never-default=true
             - path: /etc/NetworkManager/system-connections/iscsi-path2.nmconnection
               owner: 0
@@ -210,31 +213,37 @@ spec:
                 autoconnect=true
                 [ipv4]
                 method=manual
-                addresses=192.168.200.87/24 # Replace the IP address
+                addresses=192.168.200.87/24
                 never-default=true
 ----
++
+NOTE: Do not add comments at the end of lines in the `.nmconnection` content.
+NetworkManager reads such a comment as part of the value and does not load the connection.
 
 
-.. Apply the configuration on each node.
+.. Apply the CloudInit resource of each node.
 +
 [source, console]
 ----
-kubectl apply -f 01_iscsi_ip.yaml
+kubectl apply -f 01_iscsi_ip_node1.yaml
 ----
 
-.. Verify the iSCSI initiator is deployed.
+.. Verify that the CloudInit resources are created.
 +
 [source, console]
 ----
 kubectl get cloudinit
-NAME               AGE
-iscsi-ip-config    20s
+NAME              AGE
+iscsi-ip-node1    20s
 
 ----
 
 . Enable the iSCSI service daemon.
 
-.. Create `99_iscsid.yaml` in the `/oem` directory any node.
+.. Create the `99_iscsid.yaml` CloudInit resource file.
++
+{trident} requires `node.session.scan = manual` in `/etc/iscsi/iscsid.conf`, so the CloudInit resource also sets this value.
+With manual scanning, logging in to an iSCSI target does not add its LUNs to the node; {trident} scans the LUNs that it maps.
 +
 [source, yaml]
 ----
@@ -248,6 +257,9 @@ spec:
   contents: |
     stages:
       network:
+        - name: "Set manual iSCSI session scanning"
+          commands:
+            - sed -i 's/^node.session.scan = .*/node.session.scan = manual/' /etc/iscsi/iscsid.conf
         - name: "Enable and start iscsid"
           systemctl:
             enable:
@@ -262,34 +274,6 @@ spec:
 [source, console]
 ----
 kubectl apply -f 99_iscsid.yaml
-----
-
-.. Verify the status of `iscsid` on each node.
-+
-[source, console]
-----
-systemctl status iscsid
-----
-+
-[listing]
-----
-● iscsid.service - Open-iSCSI
-     Loaded: loaded (/usr/lib/systemd/system/iscsid.service; disabled;)
-     Active: active (running) since Fri 2026-03-27 20:59:47 IST; 8s ago
-TriggeredBy: ● iscsid.socket
-       Docs: man:iscsid(8)
-             man:iscsiuio(8)
-             man:iscsiadm(8)
-   Main PID: 27651 (iscsid)
-     Status: "Ready to process requests"
-      Tasks: 1
-        CPU: 3ms
-     CGroup: /system.slice/iscsid.service
-             └─27651 /sbin/iscsid -f
-
-Mar 27 20:59:47 docserver systemd[1]: Starting Open-iSCSI...
-Mar 27 20:59:47 docserver systemd[1]: Started Open-iSCSI.
-
 ----
 
 // === Provision a LUN from and map it to cluster
@@ -354,7 +338,7 @@ spec:
               - multipathd
 ----
 
-. Apply the configuration on any node.
+. Apply the configuration.
 +
 [source, console]
 ----
@@ -362,7 +346,60 @@ kubectl apply -f 99_multipathd.yaml
 ----
 
 
-. Verify the status of `multipathd`.
+. Reboot the nodes one at a time.
++
+{svirt} writes each CloudInit resource to the `/oem` directory of the matching nodes, and the node applies it at the next boot.
+Wait until a node is back in the `Ready` state before you reboot the next node.
+
+. After each node reboots, verify the configuration on that node.
+
+.. Verify that the iSCSI interfaces have their IP addresses.
++
+[source, console]
+----
+ip -br -4 addr show eno3np0
+ip -br -4 addr show eno4np1
+----
++
+[listing]
+----
+eno3np0          UP             192.168.100.87/24
+eno4np1          UP             192.168.200.87/24
+----
+
+.. Verify the status of `iscsid`.
++
+[source, console]
+----
+systemctl status iscsid
+----
++
+[listing]
+----
+● iscsid.service - Open-iSCSI
+     Loaded: loaded (/usr/lib/systemd/system/iscsid.service; enabled; preset: disabled)
+     Active: active (running) since Mon 2026-10-26 14:50:03 UTC; 1min 50s ago
+TriggeredBy: ● iscsid.socket
+       Docs: man:iscsid(8)
+             man:iscsiuio(8)
+             man:iscsiadm(8)
+   Main PID: 2041 (iscsid)
+     Status: "Ready to process requests"
+----
+
+.. Verify that manual iSCSI session scanning is set.
++
+[source, console]
+----
+grep "^node.session.scan" /etc/iscsi/iscsid.conf
+----
++
+[listing]
+----
+node.session.scan = manual
+----
+
+.. Verify the status of `multipathd`.
 +
 [source, console]
 ----
@@ -372,18 +409,14 @@ systemctl status multipathd
 [listing]
 ----
 ● multipathd.service - Device-Mapper Multipath Device Controller
-     Loaded: loaded (/usr/lib/systemd/system/multipathd.service; disabled;)
-     Active: active (running) since Fri 2026-03-27 21:01:08 IST; 11s ago
+     Loaded: loaded (/etc/systemd/system/multipathd.service; enabled; preset: disabled)
+     Active: active (running) since Mon 2026-10-26 14:50:04 UTC; 1min 49s ago
 TriggeredBy: ○ multipathd.socket
-   Main PID: 28854 (multipathd)
+   Main PID: 2087 (multipathd)
      Status: "up"
       Tasks: 7
-        CPU: 18ms
      CGroup: /system.slice/multipathd.service
-             └─28854 /sbin/multipathd -d -s
-
-Mar 27 21:01:08 docserver systemd[1]: Starting Device-Mapper Multipath Device Controller...
-Mar 27 21:01:08 docserver multipathd[28854]: multipathd v0.10.2+122+suse.51e02cc: start up
+             └─2087 /usr/sbin/multipathd -d -s
 ----
 
 
