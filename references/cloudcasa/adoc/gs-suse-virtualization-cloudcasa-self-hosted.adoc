@@ -161,7 +161,7 @@ packages into the isolated network environment using approved media or secure tr
 hosts.
 
 . *Populate local registry and mirror*: Import the container images into an internal container
-registry (e.g., Harbor or an internal OCI registry) and host the Helm chart in an internal
+registry (for example, Harbor or an internal OCI registry) and host the Helm chart in an internal
 repository. Update your `cloudcasa-values.yaml` configuration file to reference the internal
 registry mirrors and credentials.
 
@@ -321,7 +321,7 @@ helm repo update
 ----
 
 . Create `cloudcasa-values.yaml` with your configuration.
-The credentials under `auth.local.users` are new credentials you define yourself for logging into the CloudCasa UI and are not related to the ACR or Helm credentials above.
+The credentials under `auth.local.users` are new credentials you define yourself for logging in to the CloudCasa UI and are not related to the ACR or Helm credentials above.
 +
 [source,yaml]
 ----
@@ -418,7 +418,7 @@ After deploying {ccasa-long}, configure the {svirt-long} environment as the prot
 
 . Ensure local.cloudcasa.io is resolvable by adding an A record in your internal DNS server pointing to the IP address of your {ccasa} host.
 
-. Log in to the {ccasa} UI at {ccasa-ui-url}.
+. Log in to the {ccasa} UI at \https://local.cloudcasa.io.
 
 . Open the Add cluster Wizard.
 
