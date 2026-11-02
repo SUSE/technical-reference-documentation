@@ -136,13 +136,11 @@ Together, {svirt} and {px-long} provide a robust foundation not only for current
 //
 // === Architecture
 
-This section provides a planning and architecture overview for deploying {svirt-website}[{svirt-long}] with {pxe-suse-virt}[{px}] on bare metal.
-The focus is to describe a high-level design that ensures scalability, reliability, security, and performance by identifying the key architectural components and their interactions within the context of the integrated solution and how this can support your production workloads.
-The integration brings together {svirt-long} and {px} Enterprise by {pxe-website}[{px-provider}] to deliver compute, storage, and orchestration layers for a modern, adaptable, and scalable, enterprise virtualization solution. Rather than focusing on low-level hypervisor internals, the architecture highlights how {svirt-long} and {px} Enterprise work together to provide a flexible, scalable, and enterprise-grade platform.
+The reference design for this solution features {svirt-website}[{svirt-long}] and {pxe-website}[{px-long}], deployed on bare metal, with an {pfa-website}[{pfa-long}].
+This is illustrated in the architecture diagram below, which identifies the key components.
+By integrating these compute, storage, and orchestration layers, organizations enable an adaptable and scalable, and manageable virtualization platform.
 
-image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Architecture of {svirt} with {px-long}", General Architecture of {svirt} with {px-long}, align="center", scaledwidth=90%]
-
-
+image::suse-portworx-arc-diagram.png[title="Reference Architecture Design", Reference Architecture Design, align="center", width=90%]
 
 
 === {svirt-long}
@@ -151,33 +149,27 @@ image::SUSE-Virtualization-Architecture-Portworx-storage.png[title="General Arch
 To ensure a secure and optimized base, {svirt-long} is deployed on SUSE Linux Micro, an immutable, enterprise-grade operating system purpose-built for containerized and virtual workloads.
 Furthermore, the platform integrates natively with {srancher-website}[{srancher-long}] This integration equips the architecture with centralized authentication, access control, observability, and built-in security, empowering operators to manage diverse workloads across data center and edge environments using a consistent operational model.
 
+
 === {pxe-brand}
 
-{pxe-website}[{px}] Enterprise serves as the enterprise-grade storage layer for both VM and container workloads.
+{pxe-website}[{pxe}] serves as the enterprise-grade storage layer for both VM and container workloads.
 It ensures consistent storage reliability across on-premises, hybrid, and edge deployments by delivering persistent volumes, high availability, automated failover, backup and disaster recovery, performance optimization, and encryption.
 A critical component to this deployment is the {px} Operator.
 Deployed natively into the cluster, the {px} Operator is designed to efficiently automate and manage the installation, configuration, and ongoing upgrade workflows of all {px} components.
 
 
-
 === Compute platform
 
 The entire solution is deployed on bare-metal physical infrastructure.
-This includes the host and worker nodes, networking components (switches, NICs, load balancers), and enterprise storage devices such as an {px-provider} {pfa}.
+This includes the host and worker nodes, networking components (switches, NICs, load balancers), and enterprise storage devices such as an {pfa-website}[{pfa-long}].
 These physical components provide the raw performance, connectivity, and resiliency required to support large-scale virtualized and containerized workloads.
+
 
 
 == Design considerations
 
-
-The diagram below shows a high-level, reference design for {svirt} integrated with {pxe} deployed on bare-metal nodes along with a {pfa-long}.
-By implementing this design, a platform engineering team can automate the provisioning of a well-defined architecture following best practices that includes high availability, operations management, observability, business continuity, performance, and security.
-
-image::suse-portworx-arc-diagram.png[title="Reference Design", Reference Design, align="center", width=90%]
-
-
-The foundation of the deployment is the bare metal compute nodes that will host both the {svirt} hypervisor and the {px} storage layer.
-
+A platform engineering team can customize this reference design to meet specific technical and business requirements.
+A well-defined architecture follows best practices with considerations for availability, business continuity, performance, security, operational efficiency, and so on.
 
 
 === Preparing the {svirt-long} environment
@@ -486,7 +478,7 @@ Continue your learning journey by exploring the following technical resources:
 
 * {svirt-docs-intro}[SUSE Virtualization documentation]
 * {pxe-manage-rwx-block}[Manage Portworx RWX Block Volumes on SUSE Virtualization]
-* {pfa-docs}[Pure Storage FlashArray]
+* {pfa-docs}[{pfa-long} documentation]
 
 
 
