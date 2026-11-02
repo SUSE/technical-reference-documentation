@@ -5,11 +5,13 @@
 
 :article-id: gs-suse-virtualization-netapp-trident-iscsi
 
+:rev3-date: 2026-11-02
+:rev3-description: Fix CloudInit examples (Correct matchSelector in the iSCSI network CloudInit and use a unique metadata.name and spec.filename per node; remove end-of-line comments from the nmconnection content; apply the CloudInit resources with kubectl instead of creating them in /oem; set node.session.scan = manual for iscsid, as required by Trident; reboot the nodes one at a time; and verify the configuration after the reboot).
 :rev2-date: 2026-06-24
 :rev2-description: Updated links
 :rev1-date: 2025-03-24
 :rev1-description: Initial publication
-:docdate: {rev2-date}
+:docdate: {rev3-date}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TECHNICAL COMPONENTS
@@ -107,9 +109,10 @@
 
 :author3-firstname: Terry
 :author3-surname: Smith
-:author3-jobtitle: Ecosystem Solution Innovations Director
+:author3-jobtitle: Partner Ecosystem Solution Innovation Director
 :author3-orgname: SUSE
 
+////
 :author4-firstname: Arun
 :author4-surname: Kumar C
 :author4-jobtitle:
@@ -119,5 +122,9 @@
 :author5-surname: George
 :author5-jobtitle:
 :author5-orgname:
+////
 
-
+:contrib1-firstname: Gustavo
+:contrib1-surname: Varela
+:contrib1-jobtitle: Solution Architect
+:contrib1-orgname: SUSE

@@ -44,21 +44,16 @@ To successfully follow this guide, you should have:
 
 
 
-////
-These individuals are named as authors, so they do not need to be named here.
-If you prefer to list these individuals here, remove them from the author metadata tags.
-
 === Acknowledgments
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// Contributors
+// Additional contributors
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-The authors wish to acknowledge the contributions of the following individuals:
+The authors wish to acknowledge the contributions of:
 
-* Martin George
-* Arun Kumar C
-////
+* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+
 
 
 === Prerequisites
@@ -167,7 +162,7 @@ Use CloudInit to create a persistent configuration of the iSCSI initiator.
 
 . Define the configuration of the iSCSI initiator.
 
-.. Create a CloudInit resource file for each cluster node, as shown below for the first node.
+.. Create a CloudInit resource file for each cluster node, as shown below for the first node (`harvester-node-1`).
 +
 Each node needs its own CloudInit resource with a unique `metadata.name` and `spec.filename`, and with the host name, interface names, and IP addresses of that node.
 {svirt} rejects a CloudInit resource whose `spec.filename` is already used by another CloudInit resource.
@@ -177,11 +172,11 @@ Each node needs its own CloudInit resource with a unique `metadata.name` and `sp
 apiVersion: node.harvesterhci.io/v1beta1
 kind: CloudInit
 metadata:
-  name: iscsi-ip-node1
+  name: iscsi-ip-node1 <1>
 spec:
   matchSelector:
-    kubernetes.io/hostname: harvester-node-1 # Replace with actual hostname
-  filename: 01_iscsi_ip_node1.yaml
+    kubernetes.io/hostname: harvester-node-1 <2>
+  filename: 01_iscsi_ip_node1.yaml <3>
   contents: |
     stages:
       initramfs:
@@ -199,7 +194,7 @@ spec:
                 autoconnect=true
                 [ipv4]
                 method=manual
-                addresses=192.168.100.87/24
+                addresses=192.168.100.87/24 <4>
                 never-default=true
             - path: /etc/NetworkManager/system-connections/iscsi-path2.nmconnection
               owner: 0
@@ -213,15 +208,19 @@ spec:
                 autoconnect=true
                 [ipv4]
                 method=manual
-                addresses=192.168.200.87/24
+                addresses=192.168.200.87/24 <5>
                 never-default=true
 ----
 +
-NOTE: Do not add comments at the end of lines in the `.nmconnection` content.
-NetworkManager reads such a comment as part of the value and does not load the connection.
+<1> Set a distinct metadata name.
+<2> Use the node's actual host name.
+<3> Use a distinct file name.
+<4> Set the correct IP address for the first path.
+<5> Set the correct IP address for the second path.
 
 
-.. Apply the CloudInit resource of each node.
+.. Apply the CloudInit resource of each node. +
+For example, apply the CloudInit resource to the first node with:
 +
 [source, console]
 ----
@@ -233,6 +232,10 @@ kubectl apply -f 01_iscsi_ip_node1.yaml
 [source, console]
 ----
 kubectl get cloudinit
+----
++
+[listing]
+----
 NAME              AGE
 iscsi-ip-node1    20s
 
@@ -240,8 +243,7 @@ iscsi-ip-node1    20s
 
 . Enable the iSCSI service daemon.
 
-.. Create the `99_iscsid.yaml` CloudInit resource file.
-+
+.. Create the `99_iscsid.yaml` CloudInit resource file. +
 {trident} requires `node.session.scan = manual` in `/etc/iscsi/iscsid.conf`, so the CloudInit resource also sets this value.
 With manual scanning, logging in to an iSCSI target does not add its LUNs to the node; {trident} scans the LUNs that it maps.
 +
