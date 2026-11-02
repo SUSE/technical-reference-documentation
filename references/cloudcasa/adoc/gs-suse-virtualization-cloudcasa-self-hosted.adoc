@@ -1,0 +1,682 @@
+:docinfo:
+include::./common_docinfo_vars.adoc[]
+include::./gs-suse-virtualization-cloudcasa-self-hosted-vars.adoc[]
+[#art-{article-id}]
+
+
+= {doctitle}: {docsubtitle}
+
+
+== Key takeaways
+
+Deploying {svirt-website}[{svirt-long}] and {ccasa-website}[{ccasa-long}] together provides:
+
+* Full control for regulated or air-gapped environments via self-hosting.
+
+* Business continuity for container and Kubernetes-native virtual machine workloads.
+
+* Centralized backup and recovery for virtual machines and persistent volumes.
+
+* Validated end-to-end backup and recovery workflows.
+
+
+
+== Introduction
+
+Modern enterprises are turning to open-source, Kubernetes-based virtualization platforms such as **{svirt-long}** to break down infrastructure silos, lower licensing expenses, and unify the management of virtual machines (VMs) alongside cloud native containers.
+Maintaining a robust data protection strategy is crucial, even within isolated or air-gapped environments.
+**{ccasa-long}** offers a cloud native backup and recovery solution designed to protect critical workloads, ensure operational continuity, and streamline disaster recovery.
+
+Key objectives covered in this guide include:
+
+* Setting up a proof-of-concept environment by deploying {ccasa-long} alongside a {svirt-long} cluster.
+
+* Verifying the backup and restoration process for virtual machines.
+
+
+=== Scope
+
+This guide covers the deployment of {ccasa-long} onto a {rke2-long} cluster alongside an existing {svirt-long} cluster environment.
+Deployment includes installation and configuration of {sles-long} on a host system, deployment of {rke2} on this host, and installation of {ccasa}.
+After installation, the guide provides a simple validation by backing up and restoring a virtual machine.
+
+
+=== Audience
+
+This guide is intended for IT administrators, Kubernetes administrators, virtualization administrators, backup administrators, and solution architects responsible for deploying and managing {ccasa-long} to protect {svirt-long} workloads.
+
+
+=== Acknowledgments
+
+The authors wish to acknowledge the contributions of the following individuals to the creation
+of this document:
+
+* {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
+* {editor1-firstname} {editor1-surname}, {editor1-jobtitle}, {editor1-orgname}
+
+
+== Architecture
+
+{ccasa-long} is cloud native and is deployed onto a Kubernetes cluster.
+In this architecture, the {ccasa} backup server is deployed onto a single-node {rke2-long} cluster, running on a {sles-long} virtual machine with network access to a {svirt} cluster.
+
+image::arch-svirt-cloudcasa-selfhosted.png[title="Architecture Overview", Architecture Overview, scaledwidth="80%", align="center"]
+
+The technical components of the solution include:
+
+{ccasa-website}[{ccasa-long}]::
+{ccasa} (v{ccasa-version} or later) is a data protection and mobility solution for Kubernetes and cloud native applications.
+It was originally developed as a SaaS-only offering, but it is also available as this self-hosted option for installation on-premises or in customer cloud environments.
+{ccasa-long} consists of a server, a database, agents installed on each client cluster, and external S3-compatible or Azure object storage used to store the backup data.
+
+{svirt-website}[{svirt-long}]::
+{svirt-long} (v{svirt-version} or later) is the open source, cloud native, hyperconverged infrastructure (HCI) solution for organizations that need to run virtual machines and containers together in the data center, public clouds, and at the edge.
+
+
+{rke2-website}[{rke2-long}]::
+{rke2} (v{rke2-version} or later) is SUSE’s enterprise-ready next-generation Kubernetes distribution.
+It is a fully conformant Kubernetes distribution that focuses on security and compliance within the U.S. Federal Government sector.
+To meet these goals, {rke2} provides defaults and configuration options that allow clusters to pass CIS Kubernetes Benchmarks with minimal operator intervention, enables FIPS 140-3 compliance, is regularly scanned for CVEs using trivy in SUSE's build pipeline.
+
+{sles-website}[{sles-long}]::
+{sles} ({sles-version} or later) is a modern, modular Linux operating system that provides a secure and stable platform for mission-critical workloads.
+
+
+
+== Preparing your environment
+
+Before you begin the deployment, ensure that the required infrastructure, software access, and credentials are available. This guide assumes that a {svirt-long} environment is available as the target platform for backup and restore validation.
+
+
+=== Sizing and configuration guidance
+
+Deploy a virtual machine with the following minimum specifications:
+
+* *vCPU*: 4 minimum
+
+* *RAM*: 8GB minimum, 16GB recommended
+
+* *OS disk*: 100 GB
+
+* *Network*: static IP (recommended) with access to the {svirt-long} cluster management network.
+
+
+
+=== Ensuring network access
+
+. Make sure your firewall is configured to allow communication between the {ccasa} backup server and the {svirt} cluster nodes on port 443/tcp.
+
+. Defining a local A DNS record to for the VM that will host the {ccasa} backup server, such as 'local.cloudcasa.io'.
+
+[NOTE]
+====
+The DNS record for local.cloudcasa.io must resolve to the SLES VM IP address across all client machines accessing the CloudCasa UI and any target Kubernetes cluster nodes. The local Envoy ingress server handles internal routing and TLS termination for CloudCasa traffic.
+====
+
+
+=== Setting up the SUSE Virtualization environment
+
+Deploy and configure a {svirt-long} cluster (if you do not already have one).
+For detailed installation and configuration steps, refer to the {svirt-docs}[{svirt} Documentation].
+
+After deployment, verify that the {svirt-long} cluster is operational and that you can access its management interface.
+
+
+=== Preparing {ccasa} access and credentials
+
+Before installing {ccasa-long}, ensure that you have the required credentials and license information.
+Do this by completing the following steps:
+
+. Obtain access to the {ccasa-support}[{ccasa} Support Portal] using your email address and one-time login code.
+
+. Download the {ccasa} license file from the Support Portal.
+
+. Obtain the following credentials from the {ccasa} team:
++
+--
+* Helm repository credentials.
+
+* Azure Container Registry (ACR) credentials required to pull {ccasa} container images.
+--
+
+[IMPORTANT]
+====
+Treat the Helm repository and container registry credentials as sensitive information. Follow your organization's security practices and rotate credentials after completing the proof-of-concept evaluation.
+====
+
+
+=== Air-gapped environment considerations
+
+For deployments in strict air-gapped or restricted network environments where direct access to
+external repositories (such as Helm and Azure Container Registry) is not permitted, perform the
+following preparation steps on an internet-connected host prior to installation:
+
+. *Download Helm charts and images*: Pre-pull the CloudCasa Helm chart and required container
+images from cloudcasa.azurecr.io on an internet-connected system using tools such as helm pull
+and docker pull or crane.
+
+. *Transfer assets to the air-gapped environment*: Export container images to archive files
+using docker save or bundle them with crane export, then transfer the archives and chart
+packages into the isolated network environment using approved media or secure transfer jump
+hosts.
+
+. *Populate local registry and mirror*: Import the container images into an internal container
+registry (e.g., Harbor or an internal OCI registry) and host the Helm chart in an internal
+repository. Update your `cloudcasa-values.yaml` configuration file to reference the internal
+registry mirrors and credentials.
+
+
+== Installing {sles-long} and {rke2}
+
+This section describes how to prepare the operating system and deploy a single-node {rke2} cluster that will host the {ccasa-long} services.
+
+For additional product information, refer to the following documentation:
+
+* {sles-docs}[{sles-long} Documentation]
+
+* {rke2-docs}[{rke2-long} Documentation]
+
+. Register the SLES system using SUSEConnect and enable the required modules.
++
+[source,console]
+----
+SUSEConnect -r <YOUR_SUSE_REGISTRATION_CODE> -e <YOUR_EMAIL_ADDRESS>
+SUSEConnect -p sle-module-basesystem/<15.7>/x86_64
+SUSEConnect -p sle-module-server-applications/15.7/x86_64
+----
++
+[NOTE]
+====
+This example illustrates registering the required modules for SUSE Linux Enterprise Server 15 SP7.
+If you are using a later version, be sure to adjust the module names accordingly.
+====
+
+. Install the required base packages.
++
+[source,console]
+----
+sudo zypper install -y curl wget tar nfs-client jq
+----
+
+. Install and enable the iSCSI daemon for CSI/PV support.
++
+[source,console]
+----
+sudo zypper install -y open-iscsi
+sudo systemctl enable --now iscsid
+----
+
+. Install and start the {rke2} Kubernetes cluster.
++
+[source,console]
+----
+curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="<RKE2_VERSION>" sh -
+sudo systemctl enable rke2-server.service
+sudo systemctl start rke2-server.service
+----
++
+[NOTE]
+====
+Replace `<RKE2_VERSION>` with the appropriate value, such as `v1.34.2+rke2r1`.
+====
+
+. Configure kubectl access for your environment, matching the installed Kubernetes version, and confirm the node is ready.
++
+[source,console]
+----
+mkdir -p ~/.kube
+sudo ln -s /var/lib/rancher/rke2/bin/kubectl /usr/local/bin/kubectl
+export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
+echo 'export KUBECONFIG=/etc/rancher/rke2/rke2.yaml' >> ~/.bashrc
+echo 'export PATH=$PATH:/var/lib/rancher/rke2/bin' >> ~/.bashrc
+----
+
+. Deploy the local-path-provisioner as the default storage class.
++
+[source,console]
+----
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/<LPP-VERSION>/deploy/local-path-storage.yaml
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+----
++
+[NOTE]
+====
+Be sure to specify the appropriate stable release version of the local-path-provisioner in place of `<LPP_VERSION>`
+====
++
+[IMPORTANT]
+====
+The local-path provisioner is used here for simplicity. For production environments, it is best practice *not* to use local-path storage, as data may be lost if the pod is rescheduled.
+====
+
+== Installing {ccasa}
+
+This section describes how to deploy {ccasa-long} on the {rke2} cluster using Helm.
+The deployment includes configuring the required Kubernetes resources, creating the image pull secret, deploying the {ccasa} server, and configuring ingress to access the {ccasa} Web interface.
+
+For detailed product information and the latest deployment guidance, refer {ccasa-docs}[{ccasa-long} Documentation]
+
+. Install Helm 3 to manage Kubernetes packages.
++
+[source,console]
+----
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | DESIRED_VERSION="<HELM_VERSION>" bash
+----
++
+[NOTE]
+====
+Replace `<HELM_VERSION>` with the appropriate version, such as `v3.12.3` or later.
+====
+
+. Install cert-manager and create a self-signed issuer for the proof-of-concept.
++
+[source,console]
+----
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+
+helm install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version <CERT_MANAGER_VERSION> \
+  --set installCRDs=true
+
+kubectl create ns cloudcasa-server
+
+kubectl -n cloudcasa-server apply -f - <<EOF
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+   name: selfsigned-issuer
+spec:
+   selfSigned: {}
+EOF
+----
++
+[NOTE]
+====
+Be sure to replace <CERT_MANAGER_VERSION> with the desired version (v1.12.4 or later).
+====
+
+. Create the image pull secret using the ACR credentials provided by the {ccasa} team.
+These allow Kubernetes to pull container images from cloudcasa.azurecr.io.
++
+[source,console]
+----
+kubectl create secret docker-registry myregistrykey \
+   --docker-server=https://cloudcasa.azurecr.io \
+   --docker-username='<YOUR_ACR_USERNAME>' \
+   --docker-password='<YOUR_ACR_PASSWORD>' \
+   --namespace=cloudcasa-server
+----
+
+. Add the {ccasa} Helm repository using the Helm credentials provided by the {ccasa} team.
+These are separate from the ACR credentials above and are used only to download the Helm chart.
++
+[source,console]
+----
+helm repo add cloudcasa https://helm.cloudcasa.io \
+   --username '<YOUR_CLOUDCASA_USERNAME>' --password '<YOUR_HELM_PASSWORD>'
+helm repo update
+----
+
+. Create `cloudcasa-values.yaml` with your configuration.
+The credentials under `auth.local.users` are new credentials you define yourself for logging into the CloudCasa UI and are not related to the ACR or Helm credentials above.
++
+[source,yaml]
+----
+storageClassName: local-path
+licenseKey: <YOUR_DOWNLOADED_LICENSE_KEY>
+auth:
+  local:
+    enabled: true
+    users:
+      - email: "<YOUR_EMAIL_ADDRESS>"
+        username: "<YOUR_USERNAME>"
+        password: "<YOUR_PASSWORD>"
+  ldap:
+    enabled: false
+  oidc:
+    enabled: false
+  cognito:
+    enabled: false
+  microsoft:
+    enabled: false
+  google:
+    enabled: false
+  allowedUsers: "<YOUR_EMAIL_ADDRESS>"
+  siteadminUsers: "<YOUR_EMAIL_ADDRESS>"
+
+serviceType: NodePort
+
+amdsEnvoyUrl: local.cloudcasa.io
+amdsEnvoyPort: 443
+----
+
+. Install the {ccasa} server using Helm.
++
+[source,console]
+----
+helm install cloudcasa-server cloudcasa/cloudcasa-server --create-namespace \
+   --namespace cloudcasa-server --wait --timeout 15m0s \
+   --values cloudcasa-values.yaml
+----
+
+. Set the external URL, upgrade the deployment, and restart the Envoy TLS services.
++
+[source,console]
+----
+helm upgrade cloudcasa-server cloudcasa/cloudcasa-server --wait \
+  --namespace cloudcasa-server --values cloudcasa-values.yaml
+kubectl -n cloudcasa-server delete secret amds-envoy.tls
+kubectl -n cloudcasa-server rollout restart deployments/amds-envoy
+----
+
+. Create and apply the Ingress manifest to expose the Envoy gRPC/HTTP API service externally on port 443.
++
+[source,yaml]
+----
+kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: amds-envoy-grpcapi
+  namespace: cloudcasa-server
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPCS"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  labels:
+    amds-app: envoy
+    amds.component: envoy
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: local.cloudcasa.io
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        backend:
+          service:
+            name: amds-envoy-grpcapi
+            port:
+              number: 443
+EOF
+----
++
+[NOTE]
+====
+It is best practice for production environments to configure a {ccasa-catalog-url}[catalog backup] to ensure metadata protection.
+====
+
+
+== Configuring {svirt-long}
+
+After deploying {ccasa-long}, configure the {svirt-long} environment as the protected environment.
+{ccasa-long} runs independently on the {rke2} cluster and connects to {svirt-long} to discover and protect workloads.
+
+. Ensure local.cloudcasa.io is resolvable by adding an A record in your internal DNS server pointing to the IP address of your {ccasa} host.
+
+. Log in to the {ccasa} UI at {ccasa-ui-url}.
+
+. Open the Add cluster Wizard.
+
+. From the Dashboard, navigate to Clusters from the top navigation bar and select Add cluster.
++
+image::cloudcasa_dashboard_shortcuts.png[title="Dashboard Shortcuts and Add Cluster", alt="Dashboard Shortcuts and Add Cluster", scaledwidth="75%", align="center"]
+
++
+[NOTE]
+====
+A browser certificate warning is expected if using a self-signed certificate. For production, replace the self-signed certificate with one issued by your internal CA.
+====
+
+. In the __Add cluster__ dialog, enter the following information:
++
+* *Name*: Enter the name of your {svirt-long} cluster (for example, `SUSE Virt`).
+* *Description (Optional)*: Provide a description for the cluster.
+* *Tags (Optional)*: Add tags in the format `key:value` if required.
+* *Enable CloudCasa DR (Optional)*: Toggle if disaster recovery is required.
+
+. Expand __Advanced options__ only if additional configuration is needed.
+
+. Click __Register__ to register the cluster with CloudCasa.
+
+
+=== Installing the {ccasa} agent
+
+After clicking __Register__, the __Install Agent__ dialog appears.
+
+. Ensure the __Manual (kubectl)__ tab is selected.
++
+image::cloudcasa_agent_installation.png[title="CloudCasa Agent Installation Command", alt="CloudCasa Agent Installation Command", scaledwidth="75%", align="center"]
+
+. Click the __Copy__ icon to copy the generated `kubectl apply` command.
+
+. Log in to the {svirt-long} CLI (or a management host) that has:
++
+--
+* `kubectl` installed.
+* Access to the {svirt-long} Kubernetes cluster.
+* The `kubeconfig` for the target cluster.
+--
+
+. Paste and execute the copied command in the terminal.
++
+--
+*Example:*
+[source, console]
+----
+kubectl apply -f https://<cloudcasa-server>/api/kubeclusteragents/<agent-id>.yaml
+----
+
+[NOTE]
+====
+For {ccasa-long} deployments using a self-signed certificate, enable the __CloudCasa service is installed with self-signed certificate__ option before copying the command, if applicable.
+====
+--
+
+
+=== Verify {ccasa} agent installation
+
+. Wait a few minutes for the agent to start.
+
+. Verify that the {ccasa} agent pods are running.
++
+[source, console]
+----
+kubectl get pods -n cloudcasa-io
+----
+
+. You should see the {ccasa} agent pods in the `Running` state.
+
+
+=== Confirm the cluster is active
+
+. Return to the {ccasa} UI.
+
+. Click __Close__ on the __Install Agent__ dialog.
+
+. Click __Done__ in the __Add Cluster__ pane.
+
+. Navigate to __Clusters__ > __Overview__.
+
+. Wait for the cluster status to change from `REGISTERED` to `ACTIVE`.
++
+image::cloudcasa_cluster_active.png[title="SUSE Virtualization Cluster Active in CloudCasa", alt="SUSE Virtualization Cluster Active in CloudCasa", scaledwidth="75%", align="center"]
+
+. In the CloudCasa UI, navigate to __Configuration__ > __Storage__.
+
+. Add your target backup storage location, such as object storage (for example, AWS S3 or Azure Blob) or file storage (for example, NFS or CIFS).
+
+. Ensure that the storage status is validated and active before proceeding to define and run backup jobs.
+
+[NOTE]
+====
+Only after the cluster becomes `ACTIVE` can you perform backup, restore, replication, or migration operations.
+====
+
+
+== Validating the solution
+
+To demonstrate that {ccasa} correctly protects and recovers a VM in your {svirt} cluster:
+
+. Define and run a VM backup.
+
+. Simulate data loss by deleting the VM.
+
+. Restore the VM from backup.
+
+. Verify VM data has survived.
+
+
+=== Defining and running a backup
+
+. Log in to the {ccasa} UI.
+From the top menu, navigate to __Clusters__.
+
+. Select the __Backups__ tab, then click __Define Backup+__.
+
+. In the __Define Cluster Backup__ wizard, select the target cluster and click __Next__.
++
+image::cloudcasa_backup_select_cluster.png[title="Select Cluster in Backup Wizard", alt="Select Cluster in Backup Wizard", scaledwidth="75%", align="center"]
+
+. On the __VMs/PVCs__ tab, enable __Copy to backup storage__ to ensure persistent volumes are copied, then click __Select resources__.
+
+. In the __Browse cluster resources__ window, select the namespace and virtual machine to protect. Click __Confirm__, then __Next__.
++
+image::cloudcasa_backup_browse_resources.png[title="Browse Cluster Resources to Protect", alt="Browse Cluster Resources to Protect", scaledwidth="75%", align="center"]
+
+. On the __Summary__ screen, provide a name for the backup job, set the retention period (for example, `7` days), enable __Run now__, and click __Create__.
++
+image::cloudcasa_backup_summary.png[title="Define Cluster Backup Summary", alt="Define Cluster Backup Summary", scaledwidth="75%", align="center"]
+
+. Monitor the job from the Backups list. Open the __Activity details__ to track progress. The job type displays as `K8S COPY`, and the __PV Details__ tab shows persistent volumes as they are copied, mounted, and snapshotted.
++
+image::cloudcasa_backup_activity_details.png[title="Backup Job Activity Details", alt="Backup Job Activity Details", scaledwidth="75%", align="center"]
+
+. Wait until the job status changes to `COMPLETED` before proceeding.
++
+[IMPORTANT]
+====
+Do not proceed to the next step until the backup status shows `COMPLETED`. Restoring from an in-progress backup produces inconsistent results.
+====
+
+
+=== Simulating data loss
+
+To simulate a genuine loss scenario, delete the VM along with its underlying data volumes.
+
+. Switch to the {svirt-long} (Harvester) UI.
+
+. Locate the virtual machine backed up in the previous procedure.
+
+. Select the virtual machine and delete it, acknowledging the warning that associated snapshots and volumes are also removed.
++
+image::harvester_delete_vm_confirmation.png[title="Confirm VM Deletion in Harvester", alt="Confirm VM Deletion in Harvester", scaledwidth="75%", align="center"]
+
+
+=== Restoring the virtual machine
+
+. Return to the {ccasa} UI and navigate to __Clusters__ > __Restores__.
+
+. Click __Define Restore+__.
+
+. Select the source cluster and click __Next__.
+
+. On the __Recovery Point__ screen, select the backup job created in the previous procedure from the list of available snapshots and copies.
+
+. Click __Select resources__. In the __Recovery Point Browser__, expand __Virtual Machines__ and select the virtual machine to restore. Click __Confirm__.
++
+image::cloudcasa_restore_select_vm.png[title="Select VM in Recovery Point Browser", alt="Select VM in Recovery Point Browser", scaledwidth="75%", align="center"]
+
+. For __Destination__, select __Use existing cluster__ and choose the original source cluster. Review the __Restore Transforms__ options and click __Next__.
++
+image::cloudcasa_restore_destination.png[title="Select Restore Destination Cluster", alt="Select Restore Destination Cluster", scaledwidth="75%", align="center"]
+
+. On the __Summary__ page, provide a name for the restore job and click __Save & Restore__ to start the process.
+
+. Monitor the restore job until it completes successfully.
++
+image::cloudcasa_restore_activity_details.png[title="Restore Job Activity Details", alt="Restore Job Activity Details", scaledwidth="75%", align="center"]
+
+
+=== Validating the restoration
+
+. Return to the {svirt-long} UI and navigate to __Virtual Machines__.
+
+. Confirm that the restored virtual machine appears in its original namespace.
+It starts in an `Off` state.
++
+image::harvester_restored_vm_starting.png[title="Restored VM in Harvester UI", alt="Restored VM in Harvester UI", scaledwidth="75%", align="center"]
+
+. Power on the virtual machine and open the console.
+
+. Log in and verify that data created before the backup is still present (for example, read back a test file written before the backup procedure).
++
+image::harvester_vm_console_data_validation.png[title="VM Console Showing Restored Data Verification", alt="VM Console Showing Restored Data Verification", scaledwidth="75%", align="center"]
+
+This successfully demonstrates that {ccasa} correctly restored both the virtual machine definition and its persistent data.
+
+
+[IMPORTANT]
+====
+This does not validate Longhorn DR replication or the CloudCasa DR plan workflow.
+====
+
+== Transitioning to production
+
+The deployment described in this guide is intended as a proof-of-concept (POC) environment. For production environments, it is recommended to deploy a multi-node cluster with adequate memory resources and proper persistent volume (PV) storage rather than local-path storage. Additionally, authentication should be integrated with your organization's authentication scheme, such as LDAP or OIDC. For further details, refer to the {ccasa-admin-guide}[CloudCasa Self-Hosted Admin Guide].
+
+== Summary
+
+This guide provides a reference design and guidance for a proof-of-concept deployment of {ccasa-long} to provide data protection for virtual machines in an isolated {svirt-long} environment.
+Contact {svirt-provider} or {ccasa-provider} to explore production options to meet your unique business and technical requirements.
+
+
+== Frequently asked questions
+
+. **What is {ccasa-long}?**
++
+--
+{ccasa-long} provides you with the ability to deploy {ccasa} data protection in your own Kubernetes environment instead of using the {ccasa} SaaS platform. This approach addresses the data protection needs for isolated and air-gapped environments, where external network access is not possible.
+--
+
+. **Can I use an identity provider like LDAP or OIDC?**
++
+--
+Yes, {ccasa} supports LDAP and OIDC integration.
+--
+
+. **Is Docker required?**
++
+--
+No, {ccasa-long} is runtime-agnostic and {rke2-long} uses the industry-standard container runtime, containerd.
+--
+
+. **Do I need a valid {ccasa} license to deploy this proof-of-concept?**
++
+--
+Yes. A valid {ccasa-long} license is required to deploy and evaluate the proof-of-concept described in this guide.  Before you begin, obtain a license file and the required deployment credentials (such as the Helm repository and container registry credentials) from the {ccasa} Support Team.  If you do not have access, contact {ccasa-provider} Support to request the necessary evaluation resources.
+--
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+
+== Legal notice
+include::common_trd_legal_notice.adoc[]
+
+++++
+<?pdfpagebreak?>
+++++
+
+
+:leveloffset: 0
+include::common_gfdl1.2_i.adoc[]
+
+//end

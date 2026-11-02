@@ -1,0 +1,267 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// SUSE Technical Reference Documentation
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+// DOCUMENT ATTRIBUTES AND VARIABLES
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// 1. Define and use variables (document attributes) in this file.
+// 2. Develop content in the adoc file.
+// 3. Update the docinfo.xml file, if needed.
+// 4. Update DC file (at a minimum, deactivate DRAFT mode)
+//
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Provide a unique article identifier.
+//   This is typically a series of words (often from the document title)
+//   separated by hyphens (-).
+//   (e.g., "rancher-kubflow-deployment")
+:article-id: gs-suse-virtualization-cloudcasa-self-hosted
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// ARTICLE IDENTIFIER
+//   Set the document type.
+//   Options include:
+//   - Getting Started
+//   - Reference Configuration
+//   - Reference Implementation
+//   - Enterprise Architecture
+:trdtype: Getting Started
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT REVISION HISTORY
+//
+// Provide a complete revision history in reverse chronological order.
+// E.g.:
+//   :rev3-date: 2026-01-25
+//   :rev3-description: Updated product versions
+//   :rev2-date: 2025-05-18
+//   :rev2-description: Fixed installation script typo
+//   :rev1-date: 2024-09-06
+//   :rev1-description: Original version
+// Set docdate to the most recent revision.
+// NOTE: You must also edit your docinfo file to include additional revisions.
+//-
+:rev1-date: 2026-09-15
+:rev1-description: Initial release
+:docdate: {rev1-date}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// TECHNICAL COMPONENTS
+//   Identify the technical components featured in the guide.
+//   Use variables to store information about the solution components,
+//   such as full product names, versions, websites, documentation
+//   URLs, and so on.
+//   This makes it much easier to update the document for future
+//   version upgrades, URL changes, etc.
+//
+//   Variables are especially useful for referring to various
+//   aspects of the solution components, such as properly written names,
+//   product/project versions, website URLs, and so on.
+//   Keep in mind the following best practices for variable names:
+//     1. Be consistent.
+//     2. Prefer recognizable variable names over generic ones.
+//        E.g.: 'sles' and 'srancher' are better variable
+//        names than 'comp1' and 'component2'.
+//     3. Prefer short variable names over long ones.
+//        E.g.: 'sles' is better than 'suselinux', and
+//        'svirt' is better than 'susevirtualization'.
+//     4. Consider following a simple pattern to associate related variables,
+//        such as `base[-modifier]'.
+//        E.g.: 'svirt-brand', 'srancher-docs', 'sles-version'.
+//        Some standard '-modifiers' could include:
+//         -provider: Name of company or project providing the component
+//            E.g.: 'SUSE', 'HPE', 'Microsoft', 'Veeam'
+//         -long: Full name of the product without trademark symbols
+//            E.g.: 'SUSE Rancher Prime', 'Portworx Enterprise by Everpure'
+//         -brand: Branded, full name of the component
+//            E.g.: 'SUSE® Virtualization', 'NetApp® Trident™'
+//         -version: The relevant product version referenced in
+//            the document
+//            E.g.: '15 SP7', '3.2.4'
+//            If additional product versions are called out in the
+//            document, you could store them in separate variables.
+//            E.g.: 'k3s-version1', 'k3s-version2')
+//         -website: Product website
+//            E.g.: 'https://www.suse.com/products/server/'
+//         -docs: Product documentation
+//            E.g.: 'https://documentation.suse.com/sles/'
+//
+// IMPORTANT: The templates leverage generic variable names, such as
+//            'comp1' and 'comp2-version1'.
+//            Be sure to replace these generic variable names with your
+//            own variables wherever they occur, including:
+//            in the Vars file, the Docinfo file, and your Main content file.
+// -
+// SLES Variables
+:sles-provider: SUSE
+:sles-brand: {sles-provider}® Linux Enterprise Server
+:sles-long: {sles-provider} Linux Enterprise Server
+:sles: {sles-long}
+:sles-version: 15 SP7
+:sles-website: https://www.suse.com/products/server/
+:sles-docs: https://documentation.suse.com/sles/
+
+// RKE2 Variables
+//:rke2-provider: SUSE
+:rke2-brand: SUSE® Rancher Kubernetes Engine (RKE2)
+:rke2-long: SUSE Rancher Kubernetes Engine (RKE2)
+:rke2: RKE2
+:rke2-version: 1.34
+:rke2-website: https://documentation.suse.com/cloudnative/rke2/latest/en/introduction.html
+:rke2-docs: https://documentation.suse.com/cloudnative/rke2/
+
+// SUSE Virtualization Variables
+:svirt-provider: SUSE
+:svirt-brand: {svirt-provider}® Virtualization
+:svirt-long: {svirt-provider} Virtualization
+:svirt: SUSE Virtualization
+:svirt-version: 1.8
+:svirt-website: https://www.suse.com/products/rancher/virtualization/
+:svirt-docs: https://documentation.suse.com/cloudnative/virtualization/
+
+// CloudCasa Variables
+:ccasa-provider: Catalogic Software
+:ccasa-brand: CloudCasa™ Self-Hosted
+:ccasa-long: CloudCasa Self-Hosted
+:ccasa: CloudCasa
+:ccasa-website: https://cloudcasa.io/resources/cloudcasa-selfhosted-datasheet/
+:ccasa-docs: https://docs.cloudcasa.io/help/self-hosted/
+:ccasa-support: https://support.cloudcasa.io/
+:ccasa-version: 1.6.7
+:ccasa-catalog-url: https://docs.cloudcasa.io/self-hosted-admin-guide/catalog.html
+:ccasa-ui-url: https://local.cloudcasa.io
+:ccasa-admin-guide: https://docs.cloudcasa.io/self-hosted-admin-guide/
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// DOCUMENT TITLES AND DESCRIPTIONS
+//   Describe the guide by its purpose, use case, value.
+//
+// title: (<75 characters) Concise subject of the document
+//        E.g.: "Enterprise AI Lifecycle with SUSE AI and ClearML"
+// subititle: (<75 characters) Expanded subject of the document
+//            E.g.: "Delivering a Secure, Scalable, and Observable Platform for AI Workloads"
+// usecase: (<55 characters) A use case for or purpose of the solution
+//          E.g.: "Database-as-a-Service", "edge analytics in healthcare",
+//                "Kubernetes-native object storage"
+// description: (<150 characters) Brief description of the document subject
+// description-social: (<55 characters) Condensed description suitable for
+//                     social media.
+// executive-summary: (<300 characters) A brief summary of the the document,
+//                    typically noting business case and technical components
+//                    NOTE: This text appears near the beginning of the rendered
+//                    document.
+//
+// TIP: You can reference defined variables when defining new variables.
+//      For example:
+//        Say that you have defined above these component variables:
+//          :svirt-long : SUSE Virtualization
+//          :vsp-long: Hitachi VSP Storage
+//        Then, you could reference them when you define the title
+//        variable like this:
+//          :doctitle: Integrating {svirt-long} with {vsp-long}
+//        When rendered, the variables will be expanded and the title
+//        will appear as:
+//          "Integrating SUSE Virtualization with Hitachi VSP Storage"
+// -
+:doctitle: {ccasa-long} with {svirt-long}
+
+:docsubtitle: Data protection for isolated virtual machine environments
+
+:usecase: data protection, backup, disaster recovery, migration, and replication
+
+:description: Guide for deploying {ccasa-long} for cloud-native backups in air-gapped, {svirt-long} environments
+
+:description-social: Air-gapped deployment of {ccasa-long} with {svirt}
+
+:executive-summary: This guide provides step-by-step instructions for deploying {ccasa-brand} to protect your air-gapped {svirt-brand} environment with cloud native backup, disaster recovery, migration, and replication.
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Tasks
+//   Identify the tasks detailed or outlined in the guide.
+//
+//   Tasks are used to for filtering documents in the
+//   SUSE Documentation portal.
+//   Typically, no more than three tasks defined per
+//   document.
+//
+//   Tasks must be one of these supported values:
+//     Administration, Artificial Intelligence, Auditing, Authentication,
+//     Automation, Backup &amp; Recovery, Certification, Cloud,
+//     Clustering, Compliance, Configuration, Containerization,
+//     Container Management, Data Intelligence, Deployment, Design,
+//     Encryption, High Availability, Image Building, Implementation,
+//     Installation, Integration, Maintenance, Migration, Monitoring,
+//     Packaging, Security, Storage, Subscription Management,
+//     Troubleshooting, Upgrade &amp; Update, Virtualization,
+//     Vulnerability, Web
+//
+//   For example:
+//    :metatask1: Configuration
+//    :metatask2: Installation
+//    :metatask3: Deployment
+// -
+:metatask1: Backup & Recovery
+:metatask2: Installation
+:metatask3: Configuration
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// CONTRIBUTORS
+//   Specify information about authors, editors, and other
+//   contributors here.
+//
+//   Follow the pattern below to provide fist name, surname, job title,
+//   and organization name for each contributor.
+//
+//   TIP: Other contributors and editors are typically listed in
+//        an Acknowledgments section.
+//
+//   NOTE:
+//         To list additional authors or contributors on the cover page,
+//         you must add the variables here AND edit the Docinfo file.
+// -
+:author1-firstname: Gopala
+:author1-surname: Krishnan A
+:author1-jobtitle: Partner Solution Architect
+:author1-orgname: SUSE
+
+:author2-firstname: Suresh
+:author2-surname: Sekar
+:author2-jobtitle: Partner Solution Architect
+:author2-orgname: SUSE
+
+:editor1-firstname: Terry
+:editor1-surname: Smith
+:editor1-jobtitle: Partner Ecosystem Solution Innovations Director
+:editor1-orgname: SUSE
+
+:contrib1-firstname: Jonathan
+:contrib1-surname: Garner
+:contrib1-jobtitle: Senior Platform Engineer
+:contrib1-orgname: Catalogic Software
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// MISCELLANEOUS ATTRIBUTES
+//   Define any additional variables here for use within the document.
+// -
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
