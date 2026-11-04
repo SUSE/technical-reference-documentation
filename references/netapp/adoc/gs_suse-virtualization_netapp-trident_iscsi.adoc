@@ -28,7 +28,7 @@ By leveraging {trident-brand}, you can deliver high-performance storage for virt
 === Scope
 
 This guide covers the detailed steps required for setting up a three-node {svirt-long} cluster to consume {ontap-provider} storage.
-It includes steps for LUN provisioning, multipath configuration, {trident} installation, StorageClass definition, and basic validation.
+It includes the {ontap} prerequisites, multipath configuration, {trident} installation, StorageClass definition, and basic validation.
 
 
 === Audience
@@ -75,6 +75,16 @@ This guide applies to {svirt-long} v{svirt-version1} and newer.
 //
 +
 {ontap-website}[{ontap-long}] intelligent data infrastructure must be available and accessible by the {svirt-long} cluster nodes over a network.
+//
++
+{trident} creates the LUNs and the initiator groups dynamically, so you do not need to provision LUNs in advance.
+On the {ontap} side, prepare the following:
++
+--
+* A storage virtual machine (SVM) with the iSCSI protocol enabled and an aggregate assigned to it.
+* An iSCSI data LIF on each iSCSI network that you configure in <<Configuring iSCSI>>.
+* A management LIF that {trident} can reach, with an account that can manage the SVM.
+--
 //
 +
 This guide applies to {ontap} {ontap-version1} and newer.
@@ -429,15 +439,6 @@ TriggeredBy: ○ multipathd.socket
 Before installing {trident-long}, ensure that each {svirt-long} node meets the prerequisites for Kubernetes storage integration.
 Follow the official {trident-provider} documentation for {trident-docs-worker-prep}[Worker Node Preparation for {trident} CSI].
 
-. Create a Kubernetes secret for your {ontap-long} storage controller credentials.
-+
-[source, console]
-----
-kubectl create secret generic ontap-secret -n trident \
-  --from-literal=username=admin \
-  --from-literal=password='YourPassword'
-----
-
 . Install {trident-long}.
 //
 +
@@ -497,7 +498,18 @@ trident-node-linux-zhx9n                  2/2     Running   0          2m37s
 
 . Configure the {trident} back-end.
 
+.. Create a Kubernetes secret for your {ontap-long} storage controller credentials.
+The `trident` namespace is created by the installation, so create the secret after installing {trident}.
++
+[source, console]
+----
+kubectl create secret generic ontap-secret -n trident \
+  --from-literal=username=admin \
+  --from-literal=password='YourPassword'
+----
+
 .. Create a back-end configuration file, `ontap-backend.json` as below.
+The `credentials` field references the secret, so the password is not stored in the file.
 +
 [source, json]
 ----
@@ -505,13 +517,17 @@ trident-node-linux-zhx9n                  2/2     Running   0          2m37s
   "version": 1,
   "storageDriverName": "ontap-san",
   "managementLIF": "10.10.10.50",
-  "dataLIF": "192.168.100.10",
   "svm": "harvester_svm",
-  "username": "admin",
-  "password": "YourPassword",
-  "igroupName": "harvester_igroup"
+  "credentials": {"name": "ontap-secret", "type": "secret"}
 }
 ----
++
+[NOTE]
+====
+Do not set `dataLIF` or `igroupName`.
+{trident} discovers the iSCSI LIFs of the SVM, so each LUN gets a path through every iSCSI network, and it creates one initiator group per node.
+{trident} ignores both fields for SAN back-ends and logs a warning.
+====
 
 .. Apply the back-end.
 +
@@ -549,8 +565,6 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: netapp-storageclass
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
 provisioner: csi.trident.netapp.io
 parameters:
   fsType: ext4
@@ -577,7 +591,7 @@ kubectl get storageclass
 [listing]
 ----
 NAME            PROVISIONER            VOLUMEBINDINGMODE ALLOWVOLUMEEXPANSION
-netapp-storage  csi.trident.netapp.io  Immediate         true
+netapp-storageclass  csi.trident.netapp.io  Immediate         true
 ----
 
 
@@ -626,9 +640,23 @@ netapp-snapclass   csi.trident.netapp.io   Delete           6s
 
 . Set the provisioner to `csi.trident.netapp.io`.
 
+. Set the __Volume Snapshot Class Name__ to `netapp-snapclass`.
++
+{svirt} uses this VolumeSnapshotClass for VM and volume snapshots on `netapp-storageclass`.
+Without it, VM snapshots are rejected.
+
 . Click __Save__.
++
+[NOTE]
+====
+A VM backup to the {svirt} backup target also requires the __Backup Volume Snapshot Class Name__.
+For volumes on `netapp-storageclass`, the backup target stores only the VM metadata.
+The volume data stays on {ontap} as volume snapshots, so plan the protection of that data on the {ontap} side.
+====
 
 . Configure the {trident-provider} CSI driver as the default StorageClass.
++
+{svirt} accepts only one default StorageClass, so unset Longhorn first.
 
 .. Unset Longhorn as the default StorageClass.
 +
@@ -650,6 +678,44 @@ kubectl patch storageclass netapp-storageclass \
 == Validation
 
 Verify that you can create a virtual machine configured with the {trident-provider} StorageClass and which is backed by {ontap-long} iSCSI storage.
+
+
+=== Creating an ISO image on {ontap} storage
+
+The CD-ROM volume of a VM is created from the image.
+If the image is stored in Longhorn, which is the default image back-end, a CD-ROM volume on `netapp-storageclass` is created empty and the VM cannot boot from it.
+Create the image with the `cdi` back-end on `netapp-storageclass`, so that it is stored on {ontap} and the CD-ROM volume is cloned from it.
+
+. Create a file, named `iso-image.yaml`, as shown below.
++
+[source, yaml]
+----
+apiVersion: harvesterhci.io/v1beta1
+kind: VirtualMachineImage
+metadata:
+  name: <image-name>
+  namespace: <namespace>
+spec:
+  displayName: <image-name>
+  sourceType: download
+  url: <ISO-URL>
+  backend: cdi
+  targetStorageClassName: netapp-storageclass
+----
+
+. Apply the image.
++
+[source, console]
+----
+kubectl apply -f iso-image.yaml
+----
+
+. Wait until the image shows a progress of `100`.
++
+[source, console]
+----
+kubectl get virtualmachineimage <image-name> -n <namespace>
+----
 
 
 === Creating a VM
@@ -688,7 +754,7 @@ One writable root disk is created by default.
 
 .. Click __Add Disk__ and select `cd-rom` as the disk type.
 
-.. Select the ISO image you uploaded and set its boot order to `1`.
+.. Select the ISO image that you created on `netapp-storageclass` and set its boot order to `1`.
 
 .. Choose the StorageClass named `netapp-storageclass`, which is provisioned by {trident}.
 
@@ -727,6 +793,8 @@ kubectl get pvc -n <namespace>
 ----
 
 . Confirm that the *STORAGECLASS* column shows `netapp-storageclass`.
+
+. Open the VM console and confirm that the VM boots from the ISO image.
 
 
 
@@ -779,6 +847,13 @@ When multiple network paths exist between {svirt} nodes and the {ontap-provider}
 Setting `netapp-storageclass` as the default ensures that newly created volumes automatically use {ontap-provider}-backed storage unless another StorageClass is explicitly selected.
 
 This simplifies VM provisioning and guarantees that persistent volumes are dynamically created through {trident} using the {ontap-long} back-end.
+--
+
+. *Can you expand a volume on `netapp-storageclass` while the VM is running?*
++
+--
+No. {svirt} rejects the expansion of a volume on `netapp-storageclass` while the VM is running.
+Stop the VM, expand the volume, and start the VM again.
 --
 
 . *Can you deploy the {trident} CSI using methods other than `tridentctl`?*
