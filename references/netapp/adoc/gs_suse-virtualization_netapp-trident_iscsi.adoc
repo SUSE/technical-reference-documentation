@@ -84,6 +84,9 @@ On the {ontap} side, prepare the following:
 * A storage virtual machine (SVM) with the iSCSI protocol enabled and an aggregate assigned to it.
 * An iSCSI data LIF on each iSCSI network that you configure in <<Configuring iSCSI>>.
 * A management LIF that {trident} can reach, with an account that can manage the SVM.
++
+{trident-provider} recommends the SVM-scoped `vsadmin` role for this account over the cluster-scoped `admin` role shown later in this guide, when {trident} only needs to manage a single SVM ({trident-docs-ontap-san-prep}[ONTAP SAN Login Role Recommendations for {trident}]).
+A `vsadmin` account authenticates through a management LIF that belongs to the SVM itself, not the cluster management LIF.
 --
 //
 +
@@ -527,6 +530,13 @@ The `credentials` field references the secret, so the password is not stored in 
 Do not set `dataLIF` or `igroupName`.
 {trident} discovers the iSCSI LIFs of the SVM, so each LUN gets a path through every iSCSI network, and it creates one initiator group per node.
 {trident} ignores both fields for SAN back-ends and logs a warning.
+====
++
+[TIP]
+====
+The example above authenticates with a cluster-scoped `admin` account.
+To use the SVM-scoped `vsadmin` role instead, as recommended in <<Prerequisites>>, point `managementLIF` at a management LIF that belongs to the SVM itself and remove the `svm` field: {trident} infers the SVM from an SVM-scoped management LIF, so the field becomes redundant.
+The `vsadmin` login needs the same `http` and `ontapi` applications enabled as `admin`.
 ====
 
 .. Apply the back-end.
