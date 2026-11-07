@@ -664,6 +664,29 @@ For volumes on `netapp-storageclass`, the backup target stores only the VM metad
 The volume data stays on {ontap} as volume snapshots, so plan the protection of that data on the {ontap} side.
 ====
 
+. Allow online expansion of volumes on `netapp-storageclass`.
++
+By default, {svirt} only allows online expansion -- growing a volume while a VM is running -- for `driver.longhorn.io`.
+Expanding a volume on any other provisioner while it is attached to a running VM fails with `PVC_EXPAND: pvc <namespace>/<name> is not online expandable with its provider`, even though {trident} and {ontap} support it.
+
+.. Go to __Advanced__ > __Settings__ > __csi-online-expand-validation__.
+
+.. Click __Edit Setting__.
+
+.. Click __Add__, select `csi.trident.netapp.io` as the provisioner, and set its value to `True`.
+
+.. Click __Save__.
++
+[TIP]
+====
+The same change from the command line, keeping the existing `driver.longhorn.io` entry (the setting replaces its whole value, it does not merge per provisioner):
+[source, console]
+----
+kubectl patch settings.harvesterhci.io csi-online-expand-validation --type merge \
+  -p '{"value":"{\"driver.longhorn.io\":true,\"csi.trident.netapp.io\":true}"}'
+----
+====
+
 . Configure the {trident-provider} CSI driver as the default StorageClass.
 +
 {svirt} accepts only one default StorageClass, so unset Longhorn first.
@@ -862,8 +885,10 @@ This simplifies VM provisioning and guarantees that persistent volumes are dynam
 . *Can you expand a volume on `netapp-storageclass` while the VM is running?*
 +
 --
-No. {svirt} rejects the expansion of a volume on `netapp-storageclass` while the VM is running.
-Stop the VM, expand the volume, and start the VM again.
+Yes, after you allow it in the __csi-online-expand-validation__ setting, as described in <<Registering the {trident-provider} CSI driver in {svirt-long}>>.
+
+Without that change, {svirt} rejects the expansion with `PVC_EXPAND: pvc <namespace>/<name> is not online expandable with its provider`, because the setting only allows `driver.longhorn.io` to expand online by default -- regardless of what the underlying CSI driver itself supports.
+With the setting updated, growing the PVC while the VM is running resizes the device live and the VM sees the new size on its existing disk, with no restart.
 --
 
 . *Can you deploy the {trident} CSI using methods other than `tridentctl`?*
