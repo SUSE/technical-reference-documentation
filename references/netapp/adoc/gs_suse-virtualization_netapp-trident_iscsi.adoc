@@ -14,6 +14,19 @@ include::./gs_suse-virtualization_netapp-trident_iscsi-vars.adoc[]
 = {title}: {subtitle}
 
 
+== Key takeaways
+
+
+* **Unified Enterprise Platform:** Unifies traditional virtual machines and Kubernetes hyperconverged infrastructure (SUSE Virtualization) with high-performance NetApp ONTAP storage, maximizing existing enterprise storage investments.
+
+* **Automated Storage Management:** Uses the NetApp Trident CSI driver over iSCSI to dynamically provision, manage, and expand persistent storage volumes for VMs without manual storage admin overhead.
+
+* **Built-in Resilience and High Availability:** Incorporates dual-path iSCSI networking, host multipathing (`multipathd`), and volume snapshot classes to deliver continuous I/O and robust data protection.
+
+* **Complete Implementation Blueprint:** Provides a validated, step-by-step technical guide covering host node setup (CloudInit), Trident deployment, default storage class definition, and test VM provisioning.
+
+
+
 == Introduction
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -54,51 +67,71 @@ The authors wish to acknowledge the contributions of:
 
 * {contrib1-firstname} {contrib1-surname}, {contrib1-jobtitle}, {contrib1-orgname}
 
+* {contrib2-firstname} {contrib2-surname}, {contrib2-jobtitle}, {contrib2-orgname}
+
 
 
 === Prerequisites
 
 You will need the following, minimum resources to implement the described integration:
 
-* *{svirt-long} cluster* with at least three nodes for high availability
+*{svirt-long} cluster*::
+{svirt-website}[{svirt-long}] is an open, interoperable, cloud native hyperconverged infrastructure (HCI) solution.
+Built on the upstream open source project {harv-website}[{harv}], it provides a Kubernetes-based environment to run virtual machines alongside containers.
+It provides integrated virtualization and distributed storage.
+{svirt} runs on bare metal servers.
+You require at least three server nodes for high availability.
+See {svirt-docs-reqs}[{svirt}: Hardware and network requirements] for specific recommendations.
 //
 +
-{svirt-website}[{svirt-long}] is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes.
-It is an open source alternative designed for operators seeking a cloud-native HCI solution. {svirt} runs on bare metal servers and provides integrated virtualization and distributed storage capabilities.
-+
-See {svirt-docs-reqs}[{svirt}: Hardware and Network Requirements] and {trident-docs-reqs}[{trident}: Requirements] for more details.
+Find answers to frequently asked questions in the {svirt-docs-faq}[{svirt}: Troubleshooting FAQ].
 //
 +
-This guide applies to {svirt-long} v{svirt-version1} and newer.
+This guide was validated on {svirt-long} v{svirt-version1} and v{svirt-version2} as well as upstream {harv} v{harv-version1}.
 
-* *{ontap-long} storage*
+
+*{trident-long} CSI driver*::
+{trident-docs}[{trident}] is an open source storage provisioner and orchestrator maintained by {trident-provider}.
+It enables you to create storage volumes for containerized applications in Kubernetes.
 //
 +
-{ontap-website}[{ontap-long}] intelligent data infrastructure must be available and accessible by the {svirt-long} cluster nodes over a network.
+Review {trident-docs-reqs}[{trident} requirements] before provisioning your cluster environment.
 //
 +
-{trident} creates the LUNs and the initiator groups dynamically, so you do not need to provision LUNs in advance.
-On the {ontap} side, prepare the following:
+This guide has been validated with multiple versions of {trident}, including v{trident-version1}, v{trident-version2}, and v{trident-version3}.
+
+
+*{ontap-long} storage*::
+{ontap-website}[{ontap-long}] data management software unifies storage for applications that read and write block or file data.
+{ontap} works with a variety of NetApp-engineered local storage systems and cloud-based storage offerings.
+See {ontap-docs-platforms}[Learn about {ontap} storage platforms].
+//
++
+Ensure your {ontap} storage is accessible to your {svirt} cluster nodes over a network.
+{trident} dynamically creates logical unit numbers (LUNs) and initiator groups.
+You do not need to provision these in advance.
+//
++
+For {ontap}, prepare the following:
 +
 --
-* A storage virtual machine (SVM) with the iSCSI protocol enabled and an aggregate assigned to it.
-* An iSCSI data LIF on each iSCSI network that you configure in <<Configuring iSCSI>>.
-* A management LIF that {trident} can reach, with an account that can manage the SVM.
+* A storage virtual machine (SVM) with the iSCSI protocol enabled and an aggregate assigned to it
+* An iSCSI data logical interface (LIF) on each iSCSI network configured in <<Configuring iSCSI>>
+* A management LIF with an account authorized to manage the SVM
 +
-{trident-provider} recommends the SVM-scoped `vsadmin` role for this account over the cluster-scoped `admin` role shown later in this guide, when {trident} only needs to manage a single SVM ({trident-docs-ontap-san-prep}[ONTAP SAN Login Role Recommendations for {trident}]).
-A `vsadmin` account authenticates through a management LIF that belongs to the SVM itself, not the cluster management LIF.
+[IMPORTANT]
+====
+{trident} requires a credentialed account that can communicate with the {ontap} back-end.
+{trident-provider} recommends using standard, pre-defined roles, such as `admin` or `vsadmin`, to maximize compatibility across ONTAP versions.
+This guide illustrates use of the cluster-scoped `admin` role.
+In production environments, {trident-provider} recommends the SVM-scoped `vsadmin` role.
+A `vsadmin` account authenticates through a management LIF that belongs to the SVM itself, not to the cluster management LIF.
+For further details, see {trident-docs-ontap-san-prep}[Prepare to configure back-end with {ontap} SAN drivers].
+====
 --
 //
 +
-This guide applies to {ontap} {ontap-version1} and newer.
-
-* *{trident-long} CSI driver*
-//
-+
-{trident-docs}[{trident}] is an open source storage provisioner and orchestrator maintained by {trident-provider} that enables you to create storage volumes for containerized applications in Kubernetes.
-//
-+
-This guide applies to {trident} {trident-version1} and newer.
+This guide was validated with {ontap} {ontap-version1}.
 
 * *Administrative access:* Ensure that you have administrative access to the {svirt} UI and the underlying Kubernetes cluster to apply configurations and manage resources.
 //
@@ -525,17 +558,17 @@ The `credentials` field references the secret, so the password is not stored in 
 }
 ----
 +
-[NOTE]
+[TIP]
 ====
 Do not set `dataLIF` or `igroupName`.
 {trident} discovers the iSCSI LIFs of the SVM, so each LUN gets a path through every iSCSI network, and it creates one initiator group per node.
 {trident} ignores both fields for SAN back-ends and logs a warning.
 ====
 +
-[TIP]
+[NOTE]
 ====
 The example above authenticates with a cluster-scoped `admin` account.
-To use the SVM-scoped `vsadmin` role instead, as recommended in <<Prerequisites>>, point `managementLIF` at a management LIF that belongs to the SVM itself and remove the `svm` field: {trident} infers the SVM from an SVM-scoped management LIF, so the field becomes redundant.
+To use the SVM-scoped `vsadmin` role instead, point `managementLIF` at a management LIF that belongs to the SVM itself and remove the `svm` field. {trident} infers the SVM from an SVM-scoped management LIF, so the field becomes redundant.
 The `vsadmin` login needs the same `http` and `ontapi` applications enabled as `admin`.
 ====
 
@@ -666,8 +699,16 @@ The volume data stays on {ontap} as volume snapshots, so plan the protection of 
 
 . Allow online expansion of volumes on `netapp-storageclass`.
 +
-By default, {svirt} only allows online expansion -- growing a volume while a VM is running -- for `driver.longhorn.io`.
-Expanding a volume on any other provisioner while it is attached to a running VM fails with `PVC_EXPAND: pvc <namespace>/<name> is not online expandable with its provider`, even though {trident} and {ontap} support it.
+--
+By default, {svirt} only allows online expansion (growing a volume while a VM is running) for `driver.longhorn.io`.
+Expanding a volume on any other provisioner while it is attached to a running VM fails with the following error:
+
+[listing]
+----
+`PVC_EXPAND: pvc <namespace>/<name> is not online expandable with its provider`.
+----
+
+Enable online expansion for `netapp-storageclass` volumes in the SUSE Virtualization UI:
 
 .. Go to __Advanced__ > __Settings__ > __csi-online-expand-validation__.
 
@@ -676,16 +717,21 @@ Expanding a volume on any other provisioner while it is attached to a running VM
 .. Click __Add__, select `csi.trident.netapp.io` as the provisioner, and set its value to `True`.
 
 .. Click __Save__.
-+
+
+
 [TIP]
 ====
-The same change from the command line, keeping the existing `driver.longhorn.io` entry (the setting replaces its whole value, it does not merge per provisioner):
+The same change can be made from the command line:
 [source, console]
 ----
 kubectl patch settings.harvesterhci.io csi-online-expand-validation --type merge \
   -p '{"value":"{\"driver.longhorn.io\":true,\"csi.trident.netapp.io\":true}"}'
 ----
+This patch replaces the whole value.
+To keep the existing `driver.longhorn.io` entry, you must specify both provisioners.
 ====
+
+--
 
 . Configure the {trident-provider} CSI driver as the default StorageClass.
 +
@@ -807,6 +853,7 @@ Optionally, you can add additional interfaces (`VLAN`, `bridge`, `masquerade`).
 
 You can use the {svirt} UI or CLI to verify that the VM is backed by {trident-provider} CSI and the {ontap} iSCSI back-end.
 
+
 ==== Verifying with the {svirt} UI
 
 . Open __Virtual Machines__ > __<Your VM>__ > __Volumes__.
@@ -885,10 +932,11 @@ This simplifies VM provisioning and guarantees that persistent volumes are dynam
 . *Can you expand a volume on `netapp-storageclass` while the VM is running?*
 +
 --
-Yes, after you allow it in the __csi-online-expand-validation__ setting, as described in <<Registering the {trident-provider} CSI driver in {svirt-long}>>.
+Yes, you can expand `netapp-storageclass` volumes attached to a running VM, but you must enable it in the __csi-online-expand-validation__ setting.
 
-Without that change, {svirt} rejects the expansion with `PVC_EXPAND: pvc <namespace>/<name> is not online expandable with its provider`, because the setting only allows `driver.longhorn.io` to expand online by default -- regardless of what the underlying CSI driver itself supports.
-With the setting updated, growing the PVC while the VM is running resizes the device live and the VM sees the new size on its existing disk, with no restart.
+See <<Registering the {trident-provider} CSI driver in {svirt-long}>>.
+
+{svirt} allows online expansion for `driver.longhorn.io` volumes by default.  After making the recommended change, growing the PVC while the VM is running resizes the volume live and the VM sees the new size without requiring a restart.
 --
 
 . *Can you deploy the {trident} CSI using methods other than `tridentctl`?*
