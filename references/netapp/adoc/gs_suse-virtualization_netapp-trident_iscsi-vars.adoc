@@ -5,6 +5,8 @@
 
 :article-id: gs-suse-virtualization-netapp-trident-iscsi
 
+:rev4-date: 2026-11-12
+:rev4-description: Added details about online expansion; added vsadmin recommendation
 :rev3-date: 2026-11-02
 :rev3-description: Fix CloudInit examples (Correct matchSelector in the iSCSI network CloudInit and use a unique metadata.name and spec.filename per node; remove end-of-line comments from the nmconnection content; apply the CloudInit resources with kubectl instead of creating them in /oem; set node.session.scan = manual for iscsid, as required by Trident; reboot the nodes one at a time; and verify the configuration after the reboot).
 :rev2-date: 2026-06-24
@@ -23,6 +25,7 @@
 :svirt-long: SUSE Virtualization
 :svirt: {svirt-long}
 :svirt-version1: 1.6.0
+:svirt-version2: 1.8.2
 :svirt-website: https://www.suse.com/products/harvester
 :svirt-support-matrix: https://www.suse.com/suse-harvester/support-matrix/all-supported-versions/
 :svirt-docs: https://documentation.suse.com/cloudnative/virtualization/
@@ -34,6 +37,9 @@
 :svirt-docs-faq: {svirt-docs-root}troubleshooting/faq.html
 :svirt-docs-pw-reset: {svirt-docs-root}{svirt-docs-faq}#_how_can_i_reset_the_administrator_password
 
+:harv: Harvester
+:harv-version1: 1.9.0
+:harv-website: https://harvesterhci.io
 
 // Component 2: NetApp ONTAP Data Management Software
 :ontap: ONTAP
@@ -43,7 +49,7 @@
 :ontap-version1: 9
 :ontap-website: https://www.netapp.com/ontap-data-management-software/
 :ontap-docs: https://docs.netapp.com/us-en/ontap/
-
+:ontap-docs-platforms: https://docs.netapp.com/us-en/ontap/concepts/ontap-platforms-concept.html
 
 // Component 3: Trident CSI
 :trident: Trident
@@ -51,11 +57,14 @@
 :trident-brand: NetApp® Trident™
 :trident-long: NetApp Trident
 :trident-version1: 25.10.0
+:trident-version2: 26.06.1
+:trident-version3: 26.10.1
 :trident-website: https://github.com/NetApp/trident?tab=readme-ov-file#readme
 :trident-docs: https://docs.netapp.com/us-en/trident/
 :trident-docs-install: {trident-docs}trident-install/kubernetes-deploy.html
 :trident-docs-reqs: https://docs.netapp.com/us-en/trident/trident-get-started/requirements.html
 :trident-docs-worker-prep: https://docs.netapp.com/us-en/trident/trident-use/worker-node-prep.html#iscsi-self-healing-capabilities
+:trident-docs-ontap-san-prep: https://docs.netapp.com/us-en/trident/trident-use/ontap-san-prep.html
 :trident-installer-file: trident-installer-<TRIDENT-VERSION>.tar.gz
 :trident-installer-repo: https://github.com/NetApp/trident/releases/latest
 :trident-installer-file: trident-installer-{trident-version1}.tar.gz
@@ -66,17 +75,17 @@
 // DOCUMENT TITLES AND DESCRIPTIONS
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-:title: Integrating {svirt-brand} with {ontap-provider}® Storage
+:title: Integrating {svirt-long} with {ontap-provider} Storage
 
 :subtitle: Enabling Persistent Storage for Virtual Machines Using {ontap-long} and {trident}
 
 :usecase: Persistent Storage for Virtual Machines
 
-:description: This guide details installation and configuration of {ontap-brand} and {trident-brand} to deliver persistent storage for virtual machines hosted in {svirt} clusters.
+:description: This guide details installation and configuration of {ontap-long} and {trident-long} to deliver persistent storage for virtual machines hosted in {svirt-long} clusters.
 
 :description-social: {svirt-long} with {ontap-provider} storage
 
-:executive-summary: This guide covers how to integrate {ontap-provider}® external storage with {svirt-brand} to provide persistent storage for virtual machines. It provides detailed steps for provisioning LUNs, configuring iSCSI and multipath, installing and configuring {trident}™ Container Storage Interface (CSI), and using a NetApp-backed StorageClass to create and attach volumes to virtual machines.
+:executive-summary: This guide covers how to integrate {ontap-provider}® external storage with {svirt-brand} to provide persistent storage for virtual machines. It provides detailed steps for provisioning LUNs, configuring iSCSI and multipath, installing and configuring the {trident-brand} Container Storage Interface (CSI), and using a NetApp-backed StorageClass to create and attach volumes to virtual machines.
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // MISCELLANEOUS ATTRIBUTES
@@ -128,3 +137,9 @@
 :contrib1-surname: Varela
 :contrib1-jobtitle: Solution Architect
 :contrib1-orgname: SUSE
+
+:contrib2-firstname: Alejandro
+:contrib2-surname: Bonilla
+:contrib2-jobtitle: Domain Solution Architect
+:contrib2-orgname: SUSE
+
