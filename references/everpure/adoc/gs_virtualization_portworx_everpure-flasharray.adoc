@@ -238,16 +238,8 @@ kubectl apply -f pure-multipath.yaml
 . {pxe-flasharray-user-access}[Configure user access] in the {pfa-long}.
 
 
-. {pxe-k8s-secret}[Create a Kubernetes secret], named `px-pure-secret`, to securely store your {pfa} credentials.
-
-.. Create a file, named `pure.json`, containing your {pfa} credentials.
-
-.. Add the secret to your `portworx` namespace.
-+
-[source, console]
-----
-kubectl create secret generic px-pure-secret --namespace portworx --from-file=pure.json
-----
+. Create a file, named `pure.json`, containing your {pfa} credentials.
+You add this file to a {pxe-k8s-secret}[Kubernetes secret] after deploying the {pxo}, which creates the `portworx` namespace.
 
 
 [#sec-gen-spec]
@@ -287,7 +279,7 @@ image::suse-portworx-modvirt_px-spec_02_storage.png[title="{px}: Generate Spec -
 .. Set __Select Cloud Platform__ to `Pure FlashArray`.
 .. Set __Select type of disk__ to `Create Using a Spec`.
 .. Enable __PX-StoreV2__.
-.. Select `Fiber Channel` for __Type of  storage area network__.
+.. Select `Fibre Channel` for __Type of  storage area network__.
 .. Enter the desired __Size__ of the disk to be mapped to the {svirt} cluster.
 .. Update the __Max storage nodes per availability zone__ to `3` (for your 3-node cluster).
 .. Click __Next__.
@@ -325,7 +317,7 @@ The command should be similar to:
 +
 [source, console]
 ----
-kubectl apply -f 'https://install.portworx.com/3.3?comp=pxoperator&kbver=1.3.0&ns=portworx'
+kubectl apply -f 'https://install.portworx.com/3.5?comp=pxoperator&kbver=1.33.3&ns=portworx'
 ----
 +
 You should see output like:
@@ -339,6 +331,13 @@ clusterrolebinding.rbac.authorization.k8s.io/portworx-operator created
 deployment.apps/portworx-operator created
 ----
 
+. Create a Kubernetes secret, named `px-pure-secret`, in the `portworx` namespace to securely store your {pfa} credentials.
++
+[source, console]
+----
+kubectl create secret generic px-pure-secret --namespace portworx --from-file=pure.json
+----
+
 . If you are using {svirt} {svirt-version1} or later, add a Stork Snapshot StorageClass.
 
 .. Create the YAML file, `stork-snapshot-sc.yaml`, with the following contents:
@@ -350,7 +349,7 @@ kind: StorageClass
 metadata:
   name: stork-snapshot-sc
   annotations:
-cdi.harvesterhci.io/storageProfileVolumeModeAccessModes: '{"Block":["ReadWriteOnce"]}'
+    cdi.harvesterhci.io/storageProfileVolumeModeAccessModes: '{"Block":["ReadWriteOnce"]}'
 provisioner: stork-snapshot
 allowVolumeExpansion: true
 reclaimPolicy: Delete
@@ -376,7 +375,7 @@ The command should look something like:
 +
 [source, console]
 ----
-kubectl apply -f 'https://install.portworx.com/3.3?operator=true&mc=false&kbver=1.3.0&ns=portworx&b=true&iop=6&mz=3&s=%22size%3D1000%22&pureSanType=FC&ce=pure&dmthin=true&c=px-cluster-82af5d7d-f249-4f45-9e80-d1590e7bfce4&stork=true&csi=true&mon=true&tel=true&st=k8s&promop=true'
+kubectl apply -f 'https://install.portworx.com/3.5?operator=true&mc=false&kbver=1.33.3&ns=portworx&b=true&iop=6&mz=3&s=%22size%3D1000%22&pureSanType=FC&ce=pure&dmthin=true&c=px-cluster-82af5d7d-f249-4f45-9e80-d1590e7bfce4&stork=true&csi=true&mon=true&tel=true&st=k8s&promop=true'
 ----
 +
 If successful, the command generates output like:
@@ -469,14 +468,32 @@ This setting points to the name of the VolumeSnapshotClass used for creating vol
 
 image::suse-portworx-modvirt_csi-driver-config-external.png[title="{svirt}: csi-driver-config", {svirt}: csi-driver-config, scaledwidth="90%", align="center"]
 
+[NOTE]
+====
+* {svirt} rejects online expansion of volumes from third-party CSI drivers by default.
+To expand `data-disk-storage` volumes while the VM is running, add `"pxd.portworx.com":true` to the `csi-online-expand-validation` setting, for example `{"driver.longhorn.io":true,"pxd.portworx.com":true}`.
+* {svirt} VM backups work only with Longhorn volumes.
+A VM backup of a VM with `data-disk-storage` volumes is rejected because no __Backup VolumeSnapshot Class Name__ is configured for `pxd.portworx.com`.
+VM snapshots work.
+====
+
 
 
 == Validating the integration
 
 Ensure that {pxe} is correctly integrated with {svirt} by verifying that a virtual machine (VM) can be provisioned with storage backed by the {pfa}.
 
-. Create a new VM. +
-For guidance, refer to the {svirt-docs-create-vm}[SUSE Virtualization: Create a Virtual Machine] and be sure to select the StorageClass provisioned by {px} (`data-disk-storage`) for your VM disk volume.
+. Create a VM image stored on {px}.
+In the {svirt} UI, go to __Images__ > __Create__ and, on the __Storage__ tab, select the `data-disk-storage` StorageClass.
++
+[NOTE]
+====
+The root disk of a VM is created in the StorageClass of its image.
+If you use an image stored on Longhorn and set `data-disk-storage` for the root disk, the VM starts with an empty disk and cannot boot.
+====
+
+. Create a new VM from that image. +
+For guidance, refer to the {svirt-docs-create-vm}[SUSE Virtualization: Create a Virtual Machine].
 
 . Verify that the VM was provisioned with {px} storage in the {svirt} UI.
 
